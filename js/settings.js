@@ -1,5 +1,5 @@
 const settingsObject = {
-	baseUrl: 'js',
+	baseUrl: "js",
 	config: {
 		text: {
 			useXhr: function (url, protocol, hostname, port) {
@@ -8,65 +8,65 @@ const settingsObject = {
 		},
 	},
 	packages: [{
-			name: "databindings",
-			location: "extensions/bindings"
-		},
-		{
-			name: "cohortdefinitionviewer",
-			location: "components/cohortdefinitionviewer"
-		},
-		{
-			name: "circe",
-			location: "components/circe"
-		},
-		{
-			name: "cyclops",
-			location: "components/cyclops"
-		},
-		{
-			name: "evidence",
-			location: "components/evidence"
-		},
-		{
-			name: "extenders",
-			location: "extenders"
-		},
-		{
-			name: "featureextraction",
-			location: "components/featureextraction"
-		},
-		{
-			name: "pages",
-			location: "pages",
-		},
-		{
-			name: "lodash",
-			location: "../node_modules/lodash",
-			main: "lodash",
-		},
-		{
-			name: "urijs",
-			location: "../node_modules/urijs/src",
-			main: "URI"
-		},
-		{
-			name: "facets",
-			location: "../node_modules/facets",
-			main: "facets"
-		},
-		{
-			name: "bootstrap-datetimepicker.css",
-			location: "../node_modules/bootstrap-datetimepicker/src/less",
-			main: "less!bootstrap-datetimepicker.less",
-		},
+		name: "databindings",
+		location: "extensions/bindings"
+	},
+	{
+		name: "cohortdefinitionviewer",
+		location: "components/cohortdefinitionviewer"
+	},
+	{
+		name: "circe",
+		location: "components/circe"
+	},
+	{
+		name: "cyclops",
+		location: "components/cyclops"
+	},
+	{
+		name: "evidence",
+		location: "components/evidence"
+	},
+	{
+		name: "extenders",
+		location: "extenders"
+	},
+	{
+		name: "featureextraction",
+		location: "components/featureextraction"
+	},
+	{
+		name: "pages",
+		location: "pages",
+	},
+	{
+		name: "lodash",
+		location: "../node_modules/lodash",
+		main: "lodash",
+	},
+	{
+		name: "urijs",
+		location: "../node_modules/urijs/src",
+		main: "URI"
+	},
+	{
+		name: "facets",
+		location: "../node_modules/facets",
+		main: "facets"
+	},
+	{
+		name: "bootstrap-datetimepicker.css",
+		location: "../node_modules/bootstrap-datetimepicker/src/less",
+		main: "less!bootstrap-datetimepicker.less",
+	},
 	],
 	shim: {
 		"colorbrewer": {
-			exports: 'colorbrewer'
+			exports: "colorbrewer"
 		},
 		"bootstrap": {
 			"deps": [
-				'jquery'
+				"jquery"
 			]
 		},
 		"prism": {
@@ -80,13 +80,13 @@ const settingsObject = {
 	},
 	map: {
 		"*": {
-			'jqueryui/jquery.ddslick': 'assets/jqueryui/jquery.ddslick',
-			'jqueryui/autoGrowInput': 'assets/jqueryui/autoGrowInput',
-			'd3-color': 'd3',
-			'd3-interpolate': 'd3',
-			'd3-selection': 'd3',
-			'd3-collection': 'd3',
-			'services/VocabularyProvider': 'services/Vocabulary'
+			"jqueryui/jquery.ddslick": "assets/jqueryui/jquery.ddslick",
+			"jqueryui/autoGrowInput": "assets/jqueryui/autoGrowInput",
+			"d3-color": "d3",
+			"d3-interpolate": "d3",
+			"d3-selection": "d3",
+			"d3-collection": "d3",
+			"services/VocabularyProvider": "services/Vocabulary"
 		}
 	},
 	paths: {
@@ -177,7 +177,7 @@ const settingsObject = {
 	},
 };
 
-if (typeof define !== 'undefined') {
+if (typeof define !== "undefined") {
 	define(() => settingsObject);
 } else {
 	module.exports = settingsObject;
