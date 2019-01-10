@@ -59,6 +59,23 @@ define([
             return "Bearer " + self.token();
         };
 
+        self.onLoginSuccessful = function(data, textStatus, jqXHR) {
+			self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER));
+			self.errorMsg(null);
+			self.isBadCredentials(false);
+		};
+
+        self.onLoginFailed = function(jqXHR, defaultMessage) {
+			self.resetAuthParams();
+			self.isBadCredentials(true);
+			const msg = jqXHR.getResponseHeader('x-auth-error');
+			self.errorMsg(msg || defaultMessage);
+        };
+
+        self.onLoginComplete = function (data) {
+			self.isInProgress(false);
+		};
+
         self.signinWithLoginPass = function(data) {
             self.isInProgress(true);
             $.ajax({
@@ -68,20 +85,9 @@ define([
                     login: data.elements.lg_username.value,
                     password: data.elements.lg_password.value
                 },
-                success: function (data, textStatus, jqXHR) {
-                    self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER));
-                    self.errorMsg(null);
-                    self.isBadCredentials(false);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    self.resetAuthParams();
-                    self.isBadCredentials(true);
-                    var msg = jqXHR.getResponseHeader('x-auth-error');
-                    self.errorMsg(msg || "Bad credentials");
-                },
-                complete: function (data) {
-                    self.isInProgress(false);
-                }
+                success: self.onLoginSuccessful,
+                error: (jqXHR, textStatus, errorThrown) => onLoginFailed(jqXHR, 'Bad credentials'),
+                complete: self.onLoginComplete,
             });
         };
 
@@ -101,19 +107,9 @@ define([
                     xhrFields: {
                         withCredentials: true
                     },
-                    success: function (data, textStatus, jqXHR) {
-                        self.setAuthParams(jqXHR);
-                        self.errorMsg(null);
-                        self.isBadCredentials(false);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        self.resetAuthParams();
-                        self.errorMsg("Login failed.");
-                        self.isBadCredentials(true);
-                    },
-                    complete: function (data) {
-                        self.isInProgress(false);
-                    }
+                    success: self.onLoginSuccessful,
+                    error: (jqXHR, textStatus, errorThrown) => onLoginFailed(jqXHR, 'Login failed'),
+					complete: self.onLoginComplete,
                 });
             } else {
                 document.location = loginUrl;
