@@ -128,11 +128,12 @@ define([
     };
     
     checkSourceConnection(source) {
-      sourceApi.checkSourceConnection(source.sourceKey).then(
-        () => source.connectionCheck(sourceApi.connectionCheckState.success), 
-        () => source.connectionCheck(sourceApi.connectionCheckState.failed)
-      );
-      source.connectionCheck(sourceApi.connectionCheckState.checking);
+      sourceApi.checkSourceConnection(source.sourceKey)
+        .then( ({ data }) =>
+           source.connectionCheck(data.sourceId === undefined ?
+               sourceApi.connectionCheckState.failed : sourceApi.connectionCheckState.success))
+        .catch(() => {source.connectionCheck(sourceApi.connectionCheckState.failed);});
+        source.connectionCheck(sourceApi.connectionCheckState.checking);
     };
     
     getCheckButtonStyles(source) {
