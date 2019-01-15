@@ -46,6 +46,9 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
+            this.isNameCorrect = ko.computed(() => {
+                return this.design() && this.design().name();
+            });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
@@ -56,9 +59,6 @@ define([
                 design: this.design,
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
-            });
-            this.isNameCorrect = ko.computed(() => {
-                return this.design() && this.design().name();
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
