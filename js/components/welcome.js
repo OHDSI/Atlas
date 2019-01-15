@@ -86,7 +86,7 @@ define([
                     password: data.elements.lg_password.value
                 },
                 success: self.onLoginSuccessful,
-                error: (jqXHR, textStatus, errorThrown) => onLoginFailed(jqXHR, 'Bad credentials'),
+                error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Bad credentials'),
                 complete: self.onLoginComplete,
             });
         };
@@ -108,7 +108,7 @@ define([
                         withCredentials: true
                     },
                     success: self.onLoginSuccessful,
-                    error: (jqXHR, textStatus, errorThrown) => onLoginFailed(jqXHR, 'Login failed'),
+                    error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
 					complete: self.onLoginComplete,
                 });
             } else {
