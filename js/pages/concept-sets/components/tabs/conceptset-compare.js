@@ -275,7 +275,7 @@ define([
 			conceptSet.id = 0;
 			conceptSet.name = this.compareNewConceptSetName;
 			const selectedConcepts = [];
-			$.each(dtItems, (item) => {
+			$.each(dtItems, (index, item) => {
 				const concept = {
 					CONCEPT_CLASS_ID: item.conceptClassId,
 					CONCEPT_CODE: item.conceptCode,
