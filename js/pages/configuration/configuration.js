@@ -116,7 +116,7 @@ define([
     updateEvidencePriority() {
       var newEvidenceUrl = sharedState.evidenceUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
-      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Evidence');
+      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'CEM');
       return true;
     };
 
