@@ -198,10 +198,10 @@ define(function (require, exports) {
 	}
 
 	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
+		var vocabUrl = sourceKey === undefined ? sharedState.vocabularyUrl() : (url || config.webAPIRoot) + 'vocabulary/' + sourceKey;
 
 		var getOptimizedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
+			url:  vocabUrl + 'optimize',
 			data: JSON.stringify(conceptSetItems),
 			method: 'POST',
 			contentType: 'application/json',
