@@ -11,8 +11,10 @@
         <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() }">
           <i class="fa fa-copy"></i>
         </button>
+        <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
         <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canEdit() && !canCreate() }">Optimize</button>
         <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete() }"><i class="fa fa-trash-o"></i></button>
+        <!-- /ko -->
       </div>
     </div>
     <div data-bind="visible: !isNameCorrect()" class="empty-name-error">
