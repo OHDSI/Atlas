@@ -38,7 +38,8 @@ define([
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Results: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
-    Evidence: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
+    CEM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
+    CEMResults: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Temp: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
   };
 
