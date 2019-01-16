@@ -40,8 +40,12 @@ define([
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
-
 			this.loading = ko.observable(false);
+
+			this.isNameCorrect = ko.computed(() => {
+				return this.design() && this.design().name();
+			});
+			
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
@@ -57,9 +61,6 @@ define([
 					return 'Cohort Pathway #' + this.design().id;
 				}
 				return 'New Cohort Pathway';
-			});
-			this.isNameCorrect = ko.computed(() => {
-				return this.design() && this.design().name();
 			});
 		}
 
