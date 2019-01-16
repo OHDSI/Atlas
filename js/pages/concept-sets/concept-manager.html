@@ -84,7 +84,7 @@
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-											{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},
+											{ title: 'Distance', data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
@@ -112,7 +112,7 @@
 												{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 												{ title: 'RC', data: 'RECORD_COUNT'},
 												{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-												{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},
+												{ title: 'Distance', data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
 												{ title: 'Domain', data: 'DOMAIN_ID' },
 												{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 										]
@@ -142,7 +142,7 @@
 											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
 											{ title: 'RC', data: 'RECORD_COUNT'},
 											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-											{ title: 'Distance', data: function (d) { return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;}))}},
+											{ title: 'Distance', data: function (d) { return String(Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
 											{ title: 'Domain', data: 'DOMAIN_ID' },
 											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
 									]
