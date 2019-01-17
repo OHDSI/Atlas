@@ -295,6 +295,20 @@ define(
 					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
+				this.appInitializationError = ko.computed(() => {
+					return (
+						this.currentView() != 'loading' &&
+						!(this.currentView() === 'ohdsi-configuration'&& sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable) &&
+						this.appInitializationStatus() !== constants.applicationStatuses.running
+					)
+				});
+				this.appInitializationErrorMessage =  ko.computed(() => {
+					if (this.noSourcesAvailable()) {
+						return 'the current webapi has no sources defined.<br/>please add one or more on <a href="#/configure">configuration</a> page.'
+					} else if (this.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable) {
+						return 'unable to connect to an instance of the webapi.<br/>please contact your administrator to resolve this issue.'
+					}
+				});
 				this.pageTitle = ko.pureComputed(() => {
 					let pageTitle = "ATLAS";
 					switch (this.currentView()) {
