@@ -44,13 +44,13 @@ define((require, exports) => {
 		{
 			title: 'Created',
 			className: classes('tbl-col', 'created'),
-			type: 'date',
+			type: 'datetime-formatted',
 			render: datatableUtils.getDateFieldFormatter(),
 		},
 		{
 			title: 'Updated',
 			className: classes('tbl-col', 'updated'),
-			type: 'date',
+			type: 'datetime-formatted',
 			render: datatableUtils.getDateFieldFormatter(),
 		},
 		{
