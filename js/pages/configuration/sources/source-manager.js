@@ -282,7 +282,14 @@ define([
               this.goToConfigure();
             });
         })
-        .catch(() => { this.loading(false); });
+        .catch(({data}) => {
+          this.loading(false);
+          if (!confirm('Source is not saved. ' +
+                  (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
+                      data.payload.message : 'Please contact your administrator to resolve this issue.'))) {
+              return;
+          }
+        });
     }
 
     close() {
