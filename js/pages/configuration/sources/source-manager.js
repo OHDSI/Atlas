@@ -284,9 +284,9 @@ define([
         })
         .catch(({data}) => {
           this.loading(false);
-         alert('Source is not saved. ' +
-                  (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
-                   data.payload.message : 'Please contact your administrator to resolve this issue.'));
+          alert('Source is not saved. ' +
+            (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
+             data.payload.message : 'Please contact your administrator to resolve this issue.'));
          });
     }
 
