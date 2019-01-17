@@ -1220,7 +1220,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			onRouterParamsChanged( params ) {
 				if (params !== undefined && params.errorMsg !== undefined) {
-					this.errorMsg = params.errorMsg;
+					this.errorMsg(params.errorMsg);
 				}
 			}
 	}
