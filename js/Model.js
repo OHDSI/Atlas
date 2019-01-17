@@ -373,8 +373,7 @@ define(
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
-			resolveConceptSetExpression() {
-				this.resolvingConceptSetExpression(true);
+			resolveConceptSetExpression(resolveAgainstServer = true) {
         this.includedConcepts.removeAll();
         this.includedSourcecodes.removeAll();
 				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
@@ -386,7 +385,7 @@ define(
 				}
 				this.currentConceptIdentifierList(conceptIdentifierList.join(','));
 
-				return this.resolveConceptSetExpressionSimple(conceptSetExpression);
+				return resolveAgainstServer ? this.resolveConceptSetExpressionSimple(conceptSetExpression) : null;
 			}
 
 			resolveConceptSetExpressionSimple(expression, success) {
@@ -398,6 +397,7 @@ define(
 							this.conceptSetInclusionCount(info.length);
 							this.resolvingConceptSetExpression(false);
 						};
+				this.resolvingConceptSetExpression(true);
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression);
 				resolvingPromise.then(callback);
 				resolvingPromise.catch((err) => {
@@ -835,7 +835,7 @@ define(
 			clearConceptSet() {
 				this.currentConceptSet(null);
 				sharedState.clearSelectedConcepts();
-				this.resolveConceptSetExpression();
+				this.resolveConceptSetExpression(false);
 				this.currentConceptSetDirtyFlag().reset();
 			}
 
