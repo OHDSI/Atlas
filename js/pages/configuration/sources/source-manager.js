@@ -284,12 +284,10 @@ define([
         })
         .catch(({data}) => {
           this.loading(false);
-          if (!confirm('Source is not saved. ' +
+         alert('Source is not saved. ' +
                   (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
-                      data.payload.message : 'Please contact your administrator to resolve this issue.'))) {
-              return;
-          }
-        });
+                   data.payload.message : 'Please contact your administrator to resolve this issue.'));
+         });
     }
 
     close() {
