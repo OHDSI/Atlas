@@ -27,26 +27,34 @@ define([
       this.isModalShown = ko.observable(false);
       this.saveConceptSetFn = params.saveConceptSetFn;
       this.saveConceptSetShow = params.saveConceptSetShow;
-      const currentConceptSetItems = sharedState.selectedConcepts().map((conceptSetItem) => {
-        const item = {
-          concept: conceptSetItem.concept,
-          includeDescendants: conceptSetItem.includeDescendants(),
-          includeMapped: conceptSetItem.includeMapped(),
-          isExcluded: conceptSetItem.isExcluded(),
-        }
-        return item;
-      });
-      this.currentConceptSet = ko.observableArray(currentConceptSetItems);
       this.compareCS1Id = ko.observable(this.model.currentConceptSet().id); // Init to the currently loaded cs
       this.compareCS1Caption = ko.observable(this.model.currentConceptSet().name());
-      this.compareCS1ConceptSet = ko.observableArray(this.currentConceptSet());
+      this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());
+      this.compareCS1ConceptSetExpression = ko.pureComputed(() => {
+        if (this.compareCS1Id === this.model.currentConceptSet().id) {
+          return ko.toJS(sharedState.selectedConcepts());
+        } else {
+          return ko.toJS(this.compareCS1ConceptSet);
+        }
+      });
       this.compareCS2Id = ko.observable(0);
       this.compareCS2Caption = ko.observable();
-      this.compareCS2ConceptSet = ko.observableArray(null);
+      this.compareCS2ConceptSet = ko.observable(null);
+      this.compareCS2ConceptSetExpression = ko.pureComputed(() => {
+        if (this.compareCS2Id === this.model.currentConceptSet().id) {
+          return ko.toJS(sharedState.selectedConcepts());
+        } else {
+          return ko.toJS(this.compareCS2ConceptSet);
+        }
+      })
       this.compareResults = ko.observable();
-      this.compareIds = ko.observable(null);
+      this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
-        return (this.compareCS1Id() == this.compareCS2Id())
+        return (
+          this.compareCS1Id() > 0 && 
+          this.compareCS2Id() > 0 && 
+          (this.compareCS1Id() == this.compareCS2Id())
+        )
       });
       this.compareReady = ko.pureComputed(() => {
         // both are specified & not the same
@@ -84,9 +92,9 @@ define([
         // results was changed. In that case, we do not want to show the
         // current results
         let currentComparisonCriteriaUnchanged = true;
-        if (conceptSetsSpecifiedAndDifferent && this.compareIds()) {
+        if (conceptSetsSpecifiedAndDifferent && this.comparisonTargets()) {
           // Check to see if the comparison crtieria has changed
-          currentComparisonCriteriaUnchanged = (this.compareIds() == (this.compareCS1Id() + "-" + this.compareCS2Id()))
+          currentComparisonCriteriaUnchanged = (ko.toJSON(this.comparisonTargets()) === ko.toJSON(this.getCompareTargets()));
         }
 
         return (conceptSetsSpecifiedAndDifferent && currentComparisonCriteriaUnchanged);
@@ -227,7 +235,7 @@ define([
 		clearCS1() {
 			this.compareCS1Id(0);
 			this.compareCS1Caption(null);
-			this.compareCS1ConceptSet.removeAll();
+			this.compareCS1ConceptSet(null);
 			this.compareResults(null);
 		}
 
@@ -241,17 +249,21 @@ define([
 		clearCS2() {
 			this.compareCS2Id(0);
 			this.compareCS2Caption(null);
-			this.compareCS2ConceptSet.removeAll();
+			this.compareCS2ConceptSet(null);
 			this.compareResults(null);
+    }
+
+    getCompareTargets() {
+      return [{
+				items: this.compareCS1ConceptSetExpression()
+			}, {
+				items: this.compareCS2ConceptSetExpression()
+			}];
     }
     
 		compareConceptSets() {
 			this.compareLoading(true);
-			const compareTargets = [{
-				items: this.compareCS1ConceptSet()
-			}, {
-				items: this.compareCS2ConceptSet()
-			}];
+			const compareTargets = this.getCompareTargets();
 			vocabularyProvider.compareConceptSet(compareTargets)
 				.then((compareResults) => {
 					const conceptIds = compareResults.map((o, n) => {
@@ -261,7 +273,7 @@ define([
 						.then((rowcounts) => {
 							//this.compareResults(null);
 							this.compareResults(compareResults);
-							this.compareIds(this.compareCS1Id() + "-" + this.compareCS2Id()); // Stash the currently selected concept ids so we can use this to determine when to show/hide results
+							this.comparisonTargets(compareTargets); // Stash the currently selected concept sets so we can use this to determine when to show/hide results
 							this.compareLoading(false);
 						});
 				});
