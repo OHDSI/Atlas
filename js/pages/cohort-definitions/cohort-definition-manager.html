@@ -1,3 +1,7 @@
+<!-- ko if: errorMsg -->
+<empty-state params="message: errorMsg"></empty-state>
+<!-- /ko -->
+<!-- ko ifnot: errorMsg -->
 <div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko ifnot: hasAccess -->
@@ -618,3 +622,4 @@
 </div>
 
 <conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
+<!-- /ko -->
