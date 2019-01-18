@@ -70,14 +70,14 @@ define([
 				},
 				{
 					title: 'Created',
-					type: 'date',
+					type: 'datetime-formatted',
 					render: function (s, p, d) {
 						return momentApi.formatDateTimeUTC(d.createdDate);
 					}
 				},
 				{
 					title: 'Updated',
-					type: 'date',
+					type: 'datetime-formatted',
 					render: function (s, p, d) {
 						return momentApi.formatDateTimeUTC(d.modifiedDate);
 					}
