@@ -3,6 +3,7 @@ define(
     const pageTitle = 'Estimation';
     const ko = require('knockout');  
     const config = require('appConfig');
+    const _ = require('lodash');
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
@@ -55,8 +56,8 @@ define(
     const options = {
       removeButton: `<button type="button" class="btn btn-danger btn-xs btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>`,
       copyButton: `<button type="button" class="btn btn-primary btn-xs btn-copy"><i class="fa fa-clone" aria-hidden="true"></i>&nbsp;Copy</button>`,
-      numberOfStrataOptions: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-      maxRatioOptions: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+      numberOfStrataOptions: _.range(1,11).map(v => '' + v),
+      maxRatioOptions: _.range(0,11).map(v => '' + v),
       dayOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'],
       maxCohortSizeOptions: ['0', '1000', '5000', '10000', '50000', '100000'],
       maxCohortSizeForFittingOptions: ['250000', '150000', '100000', '50000', '10000', '5000', '0'],

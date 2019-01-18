@@ -3,6 +3,7 @@ define(
     const pageTitle = 'Prediction';
     const ko = require('knockout');  
     const config = require('appConfig');
+    const _ = require('lodash');
 
     const apiPaths = {
       downloadPackage: (id, name) => `prediction/${id}/download?packageName=${name}`,
@@ -362,8 +363,8 @@ define(
         domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         //'<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
       },
-      nfoldOptions: ['2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'],
-	    dayOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'],
+      nfoldOptions: _.range(2,16).map(v => '' + v),
+	  dayOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'],
       sampleSizeOptions: ['1000', '5000', '10000', '50000', '100000'],
       delCovariatesSmallCount: ['5', '10', '15', '20', '25', '50', '75', '100', '150', '200', '500'],
       yesNoOptions: [{
