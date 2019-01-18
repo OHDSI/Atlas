@@ -85,7 +85,11 @@ define([
 		return source.daimons.find(daimon => daimon.daimonType == 'Results') !== undefined;
 	}
 
-	function renderConceptSetItemSelector(s, p, d) {
+	function hasVocabulary(source) {
+		return source.daimons.find(daimon => daimon.daimonType == 'Vocabulary') !== undefined;
+	}
+
+function renderConceptSetItemSelector(s, p, d) {
 		let css = '';
 		let tag = 'i';
 		if (sharedState.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
@@ -180,6 +184,7 @@ define([
 		contextSensitiveLinkColor,
 		hasCDM,
 		hasResults,
+		hasVocabulary,
 		renderConceptSetItemSelector,
 		renderLink,
 		renderBoundLink,
