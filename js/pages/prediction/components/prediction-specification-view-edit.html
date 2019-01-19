@@ -142,7 +142,7 @@
                         <i class="fa fa-cog"></i> Execution Settings
                     </div>
                     <div class="panel-body">
-                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs"></execution-settings-editor>
+                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></execution-settings-editor>
                     </div>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                     <i class="fa fa-cog"></i> Training Settings
                     </div>
                     <div class="panel-body">
-                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs"></evaluation-settings-editor>
+                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></evaluation-settings-editor>
                     </div>
                 </div>
                 </div>

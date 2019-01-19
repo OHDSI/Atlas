@@ -21,8 +21,8 @@ define([
 		constructor(params) {
             super(params);
 
-            this.modelSettings = params.modelSettings;
             this.editor = params.editor;
+            this.editorSettings = params;
 		}
 	}
 

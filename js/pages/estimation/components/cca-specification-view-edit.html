@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('descriptionEntry'), value: $component.estimationAnalysis().description" maxlength="1000"></textarea>
+            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis().description" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
                 <div class="row">
@@ -105,7 +105,7 @@
                                     </div>
                                 </div>
                                 <div data-bind="visible: $component.estimationAnalysis().doPositiveControlSynthesis">
-                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis().positiveControlSynthesisArgs"></positive-control-synthesis-settings-editor>
+                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis().positiveControlSynthesisArgs, subscriptions: $component.subscriptions"></positive-control-synthesis-settings-editor>
                                 </div>
                             </div>
                             </div>

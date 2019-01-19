@@ -10,9 +10,10 @@ define([
 	class ModelSettingsEditorComponent extends Component {
 		constructor(params) {
 			super(params);
-            this.modelSettings = params[this.constructor.name];
+            this.modelSettings = params.modelSettings[this.constructor.name];
             this.defaultModelSettings = utils.getDefaultModelSettings(this.constructor.name);
             this.utils = utils;
+            this.subscriptions = params.subscriptions;
         }
 
         modelSettingDescription(settingName) {
@@ -26,7 +27,7 @@ define([
         }
         isDefault(settingName) {
             var setting = this.getModelSettingByName(settingName);
-            return setting() == utils.getDefaultModelSettingValue(this.defaultModelSettings, settingName);
+            return JSON.stringify(setting()) === JSON.stringify(utils.getDefaultModelSettingValue(this.defaultModelSettings, settingName));
         }
         setToDefault(settingName) {
             var setting = this.getModelSettingByName(settingName);

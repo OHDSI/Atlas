@@ -25,13 +25,13 @@ define([
 				value: ko.observable(this.modelSettings.alpha() && this.modelSettings.alpha().length > 0 ? this.modelSettings.alpha().join() : ''),
 			};	
 
-			this.size.value.subscribe(newValue => {
+			this.subscriptions.push(this.size.value.subscribe(newValue => {
 				this.modelSettings.size(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.alpha.value.subscribe(newValue => {
+			this.subscriptions.push(this.alpha.value.subscribe(newValue => {
 				this.modelSettings.alpha(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 		}
 	}
 

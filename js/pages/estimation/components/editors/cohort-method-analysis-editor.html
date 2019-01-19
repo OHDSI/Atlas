@@ -1,8 +1,8 @@
 <div class="paddedWrapper">
     <div>
         <div class="row">
-            <div data-bind="css: classes('analysisNameContainer')"><label data-bind="css: classes('analysisName')">Analysis name:</label></div>
-            <div><input class="form-control" type="text" data-bind="css: classes('analysisName', 'analysisNameInput'), textInput: $component.analysis.description" /></div>
+            <div data-bind="css: classes('analysis-name-container')"><label data-bind="css: classes('analysis-name')">Analysis name:</label></div>
+            <div><input class="form-control" type="text" data-bind="css: classes('analysis-name', 'analysis-name-input'), textInput: $component.analysis.description" /></div>
         </div>
     </div>
     <div id="filters" data-bind="css: classes('filter-group-bordered')">
@@ -289,7 +289,7 @@
             </div>
             <div class="panel-body">
                 <div>
-                    <outcome-model-args-editor params="matchStratifySelection: $component.matchStratifySelection, outcomeModelArgs: $component.analysis.fitOutcomeModelArgs"></outcome-model-args-editor>
+                    <outcome-model-args-editor params="matchStratifySelection: $component.matchStratifySelection, outcomeModelArgs: $component.analysis.fitOutcomeModelArgs, subscriptions: $component.subscriptions"></outcome-model-args-editor>
                 </div>
             </div>
         </div>    
@@ -312,7 +312,7 @@
     showModal: showCovariateSelector,
     modifiers: ['lg'],
     iconClass: 'fa fa-shopping-cart',
-    title: 'Select Concept Set...',
+    title: 'Select Covariates...',
     data: {
         covariateSettings: $component.analysis.getDbCohortMethodDataArgs.covariateSettings,
         showCovariateSelector: $component.showCovariateSelector,

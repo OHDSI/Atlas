@@ -32,17 +32,17 @@ define([
 				value: this.modelSettings.varImp,
 			};
 
-			this.mtries.value.subscribe(newValue => {
+			this.subscriptions.push(this.mtries.value.subscribe(newValue => {
 				this.modelSettings.mtries(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.ntrees.value.subscribe(newValue => {
+			this.subscriptions.push(this.ntrees.value.subscribe(newValue => {
 				this.modelSettings.ntrees(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.maxDepth.value.subscribe(newValue => {
+			this.subscriptions.push(this.maxDepth.value.subscribe(newValue => {
 				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 		}
 	}
 

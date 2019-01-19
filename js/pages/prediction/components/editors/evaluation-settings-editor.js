@@ -21,21 +21,22 @@ define([
 			this.isInteger = RegExp('^[1-9][0-9]*$');
 			this.runPlpArgs = params.runPlpArgs();
 			this.options = constants.options;
+			this.subscriptions = params.subscriptions;
 			this.splitSeed = ko.observable(this.runPlpArgs.splitSeed() !== null && this.runPlpArgs.splitSeed() !== 0 ? this.runPlpArgs.splitSeed() : '');
 			this.testFraction = ko.observable(this.runPlpArgs.testFraction() ? dataTypeConverterUtils.convertFromPercent(this.runPlpArgs.testFraction()) : '');
 
-			this.splitSeed.subscribe(newValue => {
+			this.subscriptions.push(this.splitSeed.subscribe(newValue => {
 				if (newValue === '' || !this.isInteger.test(newValue)) {
 					this.runPlpArgs.splitSeed(null);
 					this.splitSeed('');
 				} else {
 					this.runPlpArgs.splitSeed(newValue);
 				}
-			});
+			}));
 
-			this.testFraction.subscribe(newValue => {
+			this.subscriptions.push(this.testFraction.subscribe(newValue => {
 				this.runPlpArgs.testFraction(dataTypeConverterUtils.convertToPercent(newValue));
-			});
+			}));
 		}
 	}
 

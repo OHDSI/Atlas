@@ -40,21 +40,21 @@ define([
 				value: this.modelSettings.plot,
 			};
 
-			this.maxDepth.value.subscribe(newValue => {
+			this.subscriptions.push(this.maxDepth.value.subscribe(newValue => {
 				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.minSamplesSplit.value.subscribe(newValue => {
+			this.subscriptions.push(this.minSamplesSplit.value.subscribe(newValue => {
 				this.modelSettings.minSamplesSplit(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.minSamplesLeaf.value.subscribe(newValue => {
+			this.subscriptions.push(this.minSamplesLeaf.value.subscribe(newValue => {
 				this.modelSettings.minSamplesLeaf(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.minImpurityDecrease.value.subscribe(newValue => {
+			this.subscriptions.push(this.minImpurityDecrease.value.subscribe(newValue => {
 				this.modelSettings.minImpurityDecrease(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 		}
 	}
 

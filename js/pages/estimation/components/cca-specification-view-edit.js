@@ -1,6 +1,7 @@
 define([
 	'knockout', 
 	'text!./cca-specification-view-edit.html',	
+	'utils/AutoBind',
 	'components/Component',
 	'utils/CommonUtils',
 	'../inputTypes/ComparativeCohortAnalysis/CohortMethodAnalysis',
@@ -13,18 +14,20 @@ define([
 ], function (
 	ko, 
 	view, 
+	AutoBind,
 	Component,
 	commonUtils,
 	CohortMethodAnalysis,
 	Comparison,
 	constants,
 ) {
-	class ComparativeCohortAnalysisSpecificationViewEdit extends Component {
+	class ComparativeCohortAnalysisSpecificationViewEdit extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
 			this.specificationPillMode = ko.observable('all');
 			this.comparisons = params.comparisons;
 			this.cohortMethodAnalysisList = params.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList;
+			this.subscriptions = params.subscriptions;
 			this.editorComponentName = ko.observable(null);
 			this.editorComponentParams = ko.observable({});
 			this.editorDescription = ko.observable();
@@ -34,37 +37,37 @@ define([
 			this.loading = params.loading;
 			this.managerMode = ko.observable('summary');
 			this.defaultCovariateSettings = params.defaultCovariateSettings;
+		}
 
-			this.comparisonTableRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.comparisons, obj, rowIndex);
-				} else if (
-					obj.target.className.indexOf("btn-copy") >= 0 ||
-					obj.target.className.indexOf("fa-clone") >= 0
-				) {
-					this.copyComparison(obj, rowIndex);
-				} else {
-					this.editComparison(data);
-				}
+		comparisonTableRowClickHandler(data, obj, tableRow, rowIndex) {
+			if (
+				obj.target.className.indexOf("btn-remove") >= 0 ||
+				obj.target.className.indexOf("fa-times") >= 0
+			) {
+				this.deleteFromTable(this.comparisons, obj, rowIndex);
+			} else if (
+				obj.target.className.indexOf("btn-copy") >= 0 ||
+				obj.target.className.indexOf("fa-clone") >= 0
+			) {
+				this.copyComparison(obj, rowIndex);
+			} else {
+				this.editComparison(data);
 			}
+		}
 
-			this.analysisSettingsTableRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.cohortMethodAnalysisList, obj, rowIndex);
-				} else if (
-					obj.target.className.indexOf("btn-copy") >= 0 ||
-					obj.target.className.indexOf("fa-clone") >= 0
-				) {
-					this.copyAnalysisSettings(obj, rowIndex);
-				} else {
-					this.editAnalysis(data);
-				}
+		analysisSettingsTableRowClickHandler(data, obj, tableRow, rowIndex) {
+			if (
+				obj.target.className.indexOf("btn-remove") >= 0 ||
+				obj.target.className.indexOf("fa-times") >= 0
+			) {
+				this.deleteFromTable(this.cohortMethodAnalysisList, obj, rowIndex);
+			} else if (
+				obj.target.className.indexOf("btn-copy") >= 0 ||
+				obj.target.className.indexOf("fa-clone") >= 0
+			) {
+				this.copyAnalysisSettings(obj, rowIndex);
+			} else {
+				this.editAnalysis(data);
 			}
 		}
 
@@ -83,6 +86,7 @@ define([
 			this.editorComponentName('cohort-method-analysis-editor');
 			this.editorComponentParams({ 
 				analysis: analysis,
+				subscriptions: this.subscriptions,
 			});
 			this.managerMode('editor')
 		}
@@ -109,6 +113,7 @@ define([
 			this.editorComponentName('comparison-editor');
 			this.editorComponentParams({ 
 				comparison: comparison,
+				subscriptions: this.subscriptions,
 			});
 			this.managerMode('editor')
 		}

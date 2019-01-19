@@ -36,21 +36,21 @@ define([
 				value: ko.observable(this.modelSettings.learnRate() && this.modelSettings.learnRate().length > 0 ? this.modelSettings.learnRate().join() : ''),
 			};
 
-			this.ntrees.value.subscribe(newValue => {
+			this.subscriptions.push(this.ntrees.value.subscribe(newValue => {
 				this.modelSettings.ntrees(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.maxDepth.value.subscribe(newValue => {
+			this.subscriptions.push(this.maxDepth.value.subscribe(newValue => {
 				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.minRows.value.subscribe(newValue => {
+			this.subscriptions.push(this.minRows.value.subscribe(newValue => {
 				this.modelSettings.minRows(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.learnRate.value.subscribe(newValue => {
+			this.subscriptions.push(this.learnRate.value.subscribe(newValue => {
 				this.modelSettings.learnRate(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 		}
 	}
 

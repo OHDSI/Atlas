@@ -110,18 +110,18 @@ define([
             return commonUtils.routeTo('/estimation/cca/' + this.componentParams().estimationId() + '/' + key);
         }
 
-		delete() {
+		async delete() {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
 
-			EstimationService.deleteEstimation(this.selectedAnalysisId()).then((analysis) => {
-				this.loading(true);
-				this.estimationAnalysis(null);
-				this.selectedAnalysisId(null);
-				this.comparisons.removeAll();
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.estimationAnalysis()));
-				document.location = constants.multiAnalysisPaths.browser()
-			});
+			const analysis = await EstimationService.deleteEstimation(this.selectedAnalysisId());
+			
+			this.loading(true);
+			this.estimationAnalysis(null);
+			this.selectedAnalysisId(null);
+			this.comparisons.removeAll();
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.estimationAnalysis()));
+			document.location = constants.multiAnalysisPaths.browser()
 		}
 
 		save() {

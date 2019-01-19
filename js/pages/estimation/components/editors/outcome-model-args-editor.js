@@ -22,6 +22,7 @@ define([
 			this.outcomeModelArgs = params.outcomeModelArgs;
 			this.matchStratifySelection = params.matchStratifySelection;
             this.options = constants.options;
+			this.subscriptions = params.subscriptions;
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);
 			this.showCovariateDisplay = ko.observable(false);
@@ -29,17 +30,17 @@ define([
 			this.includeCovariateIds = ko.observable(this.outcomeModelArgs.includeCovariateIds() && this.outcomeModelArgs.includeCovariateIds().length > 0 ? this.outcomeModelArgs.includeCovariateIds().join() : '');
 			this.interactionCovariateIds = ko.observable(this.outcomeModelArgs.interactionCovariateIds() && this.outcomeModelArgs.interactionCovariateIds().length > 0 ? this.outcomeModelArgs.interactionCovariateIds().join() : '');
 
-			this.includeCovariateIds.subscribe(newValue => {
+			this.subscriptions.push(this.includeCovariateIds.subscribe(newValue => {
 				this.outcomeModelArgs.includeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.excludeCovariateIds.subscribe(newValue => {
+			this.subscriptions.push(this.excludeCovariateIds.subscribe(newValue => {
 				this.outcomeModelArgs.excludeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.interactionCovariateIds.subscribe(newValue => {
+			this.subscriptions.push(this.interactionCovariateIds.subscribe(newValue => {
 				this.outcomeModelArgs.interactionCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
 			this.stratified = ko.pureComputed(() => {
 				var stratified = (this.matchStratifySelection() !== "none");

@@ -1,6 +1,7 @@
 define([
 	'knockout', 
-	'text!./prediction-specification-view-edit.html',	
+	'text!./prediction-specification-view-edit.html',
+	'utils/AutoBind',	
 	'components/Component',
 	'utils/CommonUtils',
 	'../const',
@@ -15,6 +16,7 @@ define([
 ], function (
 	ko, 
 	view, 
+	AutoBind,
 	Component,
 	commonUtils,
 	constants,
@@ -23,10 +25,10 @@ define([
 	CreateStudyPopulationArgs,
 	PredictionCovariateSettings,
 ) {
-	class PredictionSpecificationViewEdit extends Component {
+	class PredictionSpecificationViewEdit extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-
+			this.subscriptions = params.subscriptions;
 			this.editorComponentName = ko.observable(null);
 			this.editorComponentParams = ko.observable({});
 			this.editorDescription = ko.observable();
@@ -44,48 +46,48 @@ define([
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 			this.modelSettingsOptions = ModelSettings.options;
 			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
-
-			this.removeTargetCohort = (data, obj, tableRow, rowIndex) => {
-				this.deleteFromTable(this.targetCohorts, obj, rowIndex);
-			}
-	
-			this.removeOutcomeCohort = (data, obj, tableRow, rowIndex) => {
-				this.deleteFromTable(this.outcomeCohorts, obj, rowIndex);
-			}
-	
-			this.modelSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.modelSettings, obj, rowIndex);
-				} else {
-					this.editModelSettings(data);
-				}		
-			}
-	
-			this.covariateSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.patientLevelPredictionAnalysis().covariateSettings, obj, rowIndex);
-				} else {
-					this.editCovariateSettings(data);
-				}
-			}
-	
-			this.populationSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.patientLevelPredictionAnalysis().populationSettings, obj, rowIndex);
-				} else {
-					this.editPopulationSettings(data);
-				}
-			}			
 		}
+
+		removeTargetCohort(data, obj, tableRow, rowIndex) {
+			this.deleteFromTable(this.targetCohorts, obj, rowIndex);
+		}
+
+		removeOutcomeCohort(data, obj, tableRow, rowIndex) {
+			this.deleteFromTable(this.outcomeCohorts, obj, rowIndex);
+		}
+
+		modelSettingRowClickHandler(data, obj, tableRow, rowIndex) {
+			if (
+				obj.target.className.indexOf("btn-remove") >= 0 ||
+				obj.target.className.indexOf("fa-times") >= 0
+			) {
+				this.deleteFromTable(this.modelSettings, obj, rowIndex);
+			} else {
+				this.editModelSettings(data);
+			}		
+		}
+
+		covariateSettingRowClickHandler(data, obj, tableRow, rowIndex) {
+			if (
+				obj.target.className.indexOf("btn-remove") >= 0 ||
+				obj.target.className.indexOf("fa-times") >= 0
+			) {
+				this.deleteFromTable(this.patientLevelPredictionAnalysis().covariateSettings, obj, rowIndex);
+			} else {
+				this.editCovariateSettings(data);
+			}
+		}
+
+		populationSettingRowClickHandler(data, obj, tableRow, rowIndex) {
+			if (
+				obj.target.className.indexOf("btn-remove") >= 0 ||
+				obj.target.className.indexOf("fa-times") >= 0
+			) {
+				this.deleteFromTable(this.patientLevelPredictionAnalysis().populationSettings, obj, rowIndex);
+			} else {
+				this.editPopulationSettings(data);
+			}
+		}			
 
 		addTarget() {
 			this.currentCohortList(this.targetCohorts);
@@ -149,9 +151,11 @@ define([
 			this.editorComponentName('prediction-covar-settings-editor');
 			this.editorComponentParams({
 				covariateSettings: settings, 
+				subscriptions: this.subscriptions,				
 			});
 			this.managerMode('editor');
 		}
+
 		addModelSettings(d) {
 			this.modelSettings.push(d.action());
 			var index = this.modelSettings().length - 1;
@@ -160,12 +164,16 @@ define([
 
 		editModelSettings(modelSettings, editor) {
 			var option = ModelSettings.GetOptionsFromObject(modelSettings);
+			if (editor === undefined) {
+				editor = option.editor;
+			}
 			this.editorHeading(option.name + ' Model Settings');
 			this.editorDescription('Use the options below to edit the model settings');
 			this.editorComponentName('model-settings-editor');
 			this.editorComponentParams({ 
+				subscriptions: this.subscriptions,
 				modelSettings: modelSettings,
-				editor: editor
+				editor: editor,
 			});
 			this.managerMode('editor');
 		}
@@ -183,7 +191,8 @@ define([
 			this.editorDescription('Add or update the population settings');
 			this.editorComponentName('population-settings-editor');
 			this.editorComponentParams({ 
-				populationSettings: settings, 
+				populationSettings: settings,
+				subscriptions: this.subscriptions,
 			});
 			this.managerMode('editor');
 		}		

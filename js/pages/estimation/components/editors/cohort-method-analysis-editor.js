@@ -28,6 +28,7 @@ define([
 
 			this.analysis = params.analysis;
 			this.options = constants.options;
+			this.subscriptions = params.subscriptions;
 			this.editorMode = ko.observable('all');
 			this.showCovariateSelector = ko.observable(false);
 			this.showControlDisplay = ko.observable(false);
@@ -45,39 +46,40 @@ define([
 			this.studyStartDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyStartDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyStartDate()) : null);
 			this.studyEndDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyEndDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyEndDate()) : null);
 
-			this.includeCovariateIds.subscribe(newValue => {
+			this.subscriptions.push(this.includeCovariateIds.subscribe(newValue => {
 				this.analysis.createPsArgs.includeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.excludeCovariateIds.subscribe(newValue => {
+			this.subscriptions.push(this.excludeCovariateIds.subscribe(newValue => {
 				this.analysis.createPsArgs.excludeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.cvIncludeCovariateIds.subscribe(newValue => {
+			this.subscriptions.push(this.cvIncludeCovariateIds.subscribe(newValue => {
 				this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
+			}));
 
-			this.trimFraction.subscribe(newValue => {
+			this.subscriptions.push(this.trimFraction.subscribe(newValue => {
 				this.analysis.trimByPsArgs.trimFraction(dataTypeConverterUtils.convertToPercent(newValue));
-			});
+			}));
 
-			this.bounds.subscribe(newValue => {
+			this.subscriptions.push(this.bounds.subscribe(newValue => {
 				this.analysis.trimByPsToEquipoiseArgs.bounds(dataTypeConverterUtils.commaDelimitedListToPercentArray(newValue));
-			});
+			}));
 
-			this.studyStartDate.subscribe(newValue => {
+			this.subscriptions.push(this.studyStartDate.subscribe(newValue => {
 				this.analysis.getDbCohortMethodDataArgs.studyStartDate(dataTypeConverterUtils.convertToDateForR(newValue));
-			});
+			}));
 
-			this.studyEndDate.subscribe(newValue => {
+			this.subscriptions.push(this.studyEndDate.subscribe(newValue => {
 				this.analysis.getDbCohortMethodDataArgs.studyEndDate(dataTypeConverterUtils.convertToDateForR(newValue));
-			});
+			}));
 			
-			this.trimSelection.subscribe(newValue => {
+			this.subscriptions.push(this.trimSelection.subscribe(newValue => {
 				this.analysis.trimByPs(this.trimSelection() == "byPercent");
 				this.analysis.trimByPsToEquipoise(this.trimSelection() == "toEquipoise");
 				this.setCreatePs();
-			});
+			}));
+
 			// Initialize trimSelection
 			if (this.analysis.trimByPs()) {
 				this.trimSelection("byPercent")
@@ -101,13 +103,13 @@ define([
 			}
 
 			// Set the subscription
-			this.matchStratifySelection.subscribe(newValue => {
+			this.subscriptions.push(this.matchStratifySelection.subscribe(newValue => {
 				this.analysis.matchOnPs(this.matchStratifySelection() == "matchOnPs");
 				this.analysis.matchOnPsAndCovariates(this.matchStratifySelection() == "matchOnPsAndCovariates");
 				this.analysis.stratifyByPs(this.matchStratifySelection() == "stratifyByPs");
 				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() == "stratifyOnPsAndCovariates");
 				this.setCreatePs();
-			});
+			}));
 		}
 
 		toggleControlDisplay() {

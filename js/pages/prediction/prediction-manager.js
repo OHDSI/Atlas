@@ -148,19 +148,19 @@ define([
 			document.location = constants.multiAnalysisPaths.browser();
 		}
 
-		delete() {
+		async delete() {
 			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
 				return;
 
-			PredictionService.deletePrediction(this.selectedAnalysisId()).then((analysis) => {
-				this.loading(true);
-				this.patientLevelPredictionAnalysis(null);
-				this.selectedAnalysisId(null);
-				this.targetCohorts.removeAll();
-				this.outcomeCohorts.removeAll();
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
-				document.location = constants.multiAnalysisPaths.browser()
-			});
+			const analysis = PredictionService.deletePrediction(this.selectedAnalysisId());
+
+			this.loading(true);
+			this.patientLevelPredictionAnalysis(null);
+			this.selectedAnalysisId(null);
+			this.targetCohorts.removeAll();
+			this.outcomeCohorts.removeAll();
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
+			document.location = constants.multiAnalysisPaths.browser()
 		}
 
 		copy() {
