@@ -33,7 +33,7 @@ define([
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
-
+			this.model = params.model;
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
@@ -90,9 +90,11 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = setInterval(() => this.loadData({
-					silently: true
-				}), 10000)
+				this.intervalId = setInterval(() => {
+					if (this.model.isPageForeground()) {
+						this.loadData({ silently: true });
+					}
+				}, 10000)
 			}
 		}
 

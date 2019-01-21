@@ -18,6 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
+		'visibilityjs',
 		'less!app.less',
 	],
 	(
@@ -140,6 +141,10 @@ define(
 				this.currentRoleId = ko.observable();
 				this.roles = sharedState.roles;
 				this.signInOpened = authApi.signInOpened;
+
+				this.isPageForeground = ko.observable(Visibility.state() === "visible");
+				Visibility.change((e, state) => this.isPageForeground(state === "visible"));
+
 
 				this.plpCss = ko.pureComputed(() => {
 					if (this.currentPatientLevelPrediction())
