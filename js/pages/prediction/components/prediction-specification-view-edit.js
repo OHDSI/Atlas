@@ -5,7 +5,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'../const',
-	'analysis/Cohort',
+	'services/analysis/Cohort',
 	'../inputTypes/ModelSettings',
 	'../inputTypes/CreateStudyPopulationArgs',
 	'../inputTypes/PredictionCovariateSettings',

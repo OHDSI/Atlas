@@ -8,10 +8,6 @@ const settingsObject = {
 		},
 	},
 	packages: [{
-			name: "analysis",
-			location: "components/analysis"
-		},
-		{
 			name: "databindings",
 			location: "extensions/bindings"
 		},

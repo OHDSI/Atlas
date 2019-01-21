@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'analysis/RLangClass',
+    'services/analysis/RLangClass',
     'lodash'
 ], 
 function (

@@ -5,7 +5,7 @@ define([
 	'utils/CommonUtils',
 	'../../const',
 	'utils/DataTypeConverterUtils',
-	'analysis/ConceptSet',
+	'services/analysis/ConceptSet',
 	'databindings',
 	'cyclops',
 	'./match-args-editor',

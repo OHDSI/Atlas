@@ -1,6 +1,6 @@
 define([
     'knockout', 
-    'analysis/RLangClass',
+    'services/analysis/RLangClass',
     'cyclops/InputTypes/Prior',
     'cyclops/InputTypes/Control',
 	'databindings',

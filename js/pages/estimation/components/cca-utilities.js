@@ -9,7 +9,7 @@ define([
 	'../const',
 	'clipboard',
 	'../inputTypes/ComparativeCohortAnalysis/FullAnalysis',
-	'analysis/Cohort',
+	'services/analysis/Cohort',
 	'../inputTypes/TargetComparatorOutcome',
 	'faceted-datatable',
 ], function (

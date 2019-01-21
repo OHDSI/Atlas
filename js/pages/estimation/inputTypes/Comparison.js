@@ -1,7 +1,7 @@
 define([
     'knockout',
-    'analysis/Cohort',
-    'analysis/ConceptSet'
+    'services/analysis/Cohort',
+    'services/analysis/ConceptSet'
 ], function (
     ko,
     Cohort,

@@ -1,5 +1,5 @@
 define([
-    'analysis/Cohort'
+    'services/analysis/Cohort'
 ], function (
     Cohort
 ) {

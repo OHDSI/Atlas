@@ -5,7 +5,7 @@ define([
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
 	'../../const',
-	'analysis/ConceptSet',
+	'services/analysis/ConceptSet',
 	'databindings',
 	'featureextraction/components/covariate-settings-editor',
 	'circe',

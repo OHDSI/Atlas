@@ -2,7 +2,7 @@ define([
     'knockout',
     '../../../components/cohortbuilder/CohortDefinition',
     'conceptsetbuilder/InputTypes/ConceptSet',
-    'analysis/ConceptSetCrossReference',
+    'services/analysis/ConceptSetCrossReference',
     "./PositiveControlSynthesisArgs",
     './NegativeControl',
     './NegativeControlExposureCohortDefinition',
