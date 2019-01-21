@@ -85,7 +85,7 @@ define([
 		return source.daimons.find(daimon => daimon.daimonType == 'Results') !== undefined;
 	}
 
-function renderConceptSetItemSelector(s, p, d) {
+	function renderConceptSetItemSelector(s, p, d) {
 		let css = '';
 		let tag = 'i';
 		if (sharedState.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
