@@ -52,6 +52,14 @@ define(
 					}, document.getElementsByTagName('html')[0]);
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
+					if (config.userAuthenticationEnabled) {
+						try {
+							await authApi.loadUserInfo();
+						} catch (e) {
+							reject(e.message);
+						}
+
+					}
 					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
 					this.router.setCurrentViewHandler(this.pageModel.handleViewChange);
 					this.router.setModelGetter(() => this.pageModel);

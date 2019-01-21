@@ -49,7 +49,7 @@ define([
 					title: 'Date',
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
-					type: 'date'
+					type: 'datetime-formatted'
 				},
 				{
 					title: 'Design',

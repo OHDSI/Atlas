@@ -45,23 +45,25 @@ define(function(require, exports) {
     var permissions = ko.observable();
 
     const loadUserInfo = function() {
-        return $.ajax({
+        return new Promise((resolve, reject) => $.ajax({
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info) {
                 subject(info.login);
                 permissions(info.permissions.map(p => p.permission));
+                resolve();
             },
             error: function (err) {
-                console.log('User is not authed');
-                subject(null);
+                if (err.status === 401) {
+                    console.log('User is not authed');
+                    subject(null);
+                    resolve();
+                } else {
+                    reject('Cannot retrieve user info');
+                }
             }
-        });
+        }));
     };
-
-    if (config.userAuthenticationEnabled) {
-        loadUserInfo();
-    }
 
     var tokenExpirationDate = ko.pureComputed(function() {
         if (!token()) {

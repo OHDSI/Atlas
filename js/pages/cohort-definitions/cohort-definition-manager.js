@@ -168,6 +168,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
+			this.errorMsg = ko.observable('');
 			this.generatedSql = {};
 			this.generatedSql.mssql = ko.observable('');
 			this.generatedSql.oracle = ko.observable('');
@@ -221,7 +222,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.model.currentCohortDefinition() && (this.model.currentCohortDefinition().id() == 0);
-				var canGenerate = !(isDirty || isNew);
+				const hasInitialEvent = this.model.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
+				var canGenerate = !(isDirty || isNew) && hasInitialEvent;
 				return (canGenerate);
 			});
 
@@ -1215,6 +1217,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			setExpressionJson(value) {
 				this.modifiedJSON = value;
+			}
+
+			onRouterParamsChanged( params ) {
+				if (params !== undefined && params.errorMsg !== undefined) {
+					this.errorMsg(params.errorMsg);
+				}
 			}
 	}
 
