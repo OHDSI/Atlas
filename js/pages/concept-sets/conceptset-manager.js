@@ -80,6 +80,15 @@ define([
 				}
 			});
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
+			this.canOptimize = ko.computed(() => {
+				return (
+					this.currentConceptSet() 
+					&& this.currentConceptSet().id != 0 
+					&& sharedState.selectedConcepts().length > 1
+					&& this.canCreate()
+					&& this.canEdit()
+				);
+			}); 
 			this.optimalConceptSet = ko.observable(null);
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
