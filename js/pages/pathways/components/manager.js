@@ -55,7 +55,6 @@ define([
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
-				model: params.model,
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
