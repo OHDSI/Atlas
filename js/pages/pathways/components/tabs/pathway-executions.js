@@ -13,6 +13,7 @@ define([
 	'utils/DatatableUtils',
 	'services/Source',
 	'lodash',
+	'PollService',
 	'less!./pathway-executions.less'
 ], function(
 	ko,
@@ -28,12 +29,13 @@ define([
 	commonUtils,
 	datatableUtils,
 	SourceService,
-	lodash
+	lodash,
+	PollService
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
-			this.model = params.model;
+			
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
@@ -90,16 +92,14 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = setInterval(() => {
-					if (this.model.isPageForeground()) {
-						this.loadData({ silently: true });
-					}
+				this.intervalId = PollService.add(() => {
+					this.loadData({ silently: true });
 				}, 10000)
 			}
 		}
 
 		dispose() {
-			clearInterval(this.intervalId);
+			PollService.stop(this.intervalId);
 		}
 
 		isViewGenerationsPermittedResolver() {

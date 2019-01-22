@@ -14,6 +14,7 @@ define([
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
+	'services/Poll',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding'
@@ -32,7 +33,8 @@ define([
 	datatableUtils,
 	SourceService,
 	lodash,
-	jobDetailsService
+	jobDetailsService,
+	PollService,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -97,14 +99,14 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = setInterval(() => this.loadData({
+				this.intervalId = PollService.add(() => this.loadData({
 					silently: true
 				}), 10000)
 			}
 		}
 
 		dispose() {
-			clearInterval(this.intervalId);
+			PollService.stop(this.intervalId);
 		}
 
 		isViewGenerationsPermittedResolver() {
