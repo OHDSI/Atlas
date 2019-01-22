@@ -392,12 +392,16 @@ define(
 			resolveConceptSetExpressionSimple(expression, success) {
 				const callback = typeof success === 'function'
 					? success
-					: ({ data: info }) => {
-							this.conceptSetInclusionIdentifiers(info);
-							this.currentIncludedConceptIdentifierList(info.join(','));
-							this.conceptSetInclusionCount(info.length);
-							this.resolvingConceptSetExpression(false);
-						};
+					: ({ data }) => {
+						let info = data;
+						if (!Array.isArray(info)) {
+							info = [];
+						}
+						this.conceptSetInclusionIdentifiers(info);
+						this.currentIncludedConceptIdentifierList(info.join(','));
+						this.conceptSetInclusionCount(info.length);
+						this.resolvingConceptSetExpression(false);
+					};
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression);
 				resolvingPromise.then(callback);
 				resolvingPromise.catch((err) => {
