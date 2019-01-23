@@ -13,7 +13,7 @@ define([
 	'utils/DatatableUtils',
 	'services/Source',
 	'lodash',
-	'PollService',
+	'services/Poll',
 	'less!./pathway-executions.less'
 ], function(
 	ko,

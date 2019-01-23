@@ -1,4 +1,4 @@
-define('PollService', ['knockout', 'visibilityjs'], (ko) => {
+define(['knockout', 'visibilityjs'], (ko) => {
   const callbacks = new Map();
   
   const isPageForeground = ko.observable(Visibility.state() === "visible");
