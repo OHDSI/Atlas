@@ -12,7 +12,7 @@ define(
     options.minCVData = _.range(100,400,100).map(v => '' + v);
     options.maxIterationOptions = ['1000', '500', '100'];
     options.toleranceOptions = ['0.000001', '0.00001', '0.0001', '0.001', '0.01', '0.1'];
-    options.startingVariance = _.range(-1,4).map(v => '' + v);
+    options.startingVariance = ['-1', '-0.01', '0', '0.01', '1'];
     options.tuneSwindle = _.range(10,0).map(v => '' + v);
 
     options.yesNoOptions = [{
