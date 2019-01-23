@@ -223,7 +223,7 @@ define([
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
-            data.statType.subscribe(() => this.data.design([]));
+            data.statType.subscribe(() => this.data().design([]));
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
             this.previousDesign = { [type]: parsedDesign };
@@ -260,7 +260,7 @@ define([
             return {
                 name: ko.observable(''), 
                 criteriaType: 'WindowedCriteria',
-                expression: ko.observable(new WindowedCriteria(data, this.data.conceptSets)),
+                expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
             };
         }
 
@@ -278,7 +278,7 @@ define([
 
         addWindowedCriteria(type) {
             const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
-            this.data.design([...this.data.design(), criteria]);
+            this.data().design([...this.data().design(), criteria]);
         }
 
         removeCriteria(index) {
