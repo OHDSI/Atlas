@@ -10,18 +10,21 @@ define([
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'lodash',
+	'services/Poll',
 	'less!./user-bar.less'
 ], function (ko,
-             view,
-             AutoBind,
-             appConfig,
-             state,
-             Component,
-             commonUtils,
-             authApi,
-             jobDetailsService,
-             momentApi,
-			 lodash) {
+			view,
+			AutoBind,
+			appConfig,
+			state,
+			Component,
+			commonUtils,
+			authApi,
+			jobDetailsService,
+			momentApi,
+			lodash,
+			PollService,	
+		) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);
@@ -94,11 +97,11 @@ define([
 		}
 
 		startPolling() {
-			this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
+			this.pollInterval = PollService.add(() => this.updateJobStatus(), appConfig.pollInterval);
 		};
 
 		stopPolling() {
-			clearInterval(this.pollInterval);
+			PollService.stop(this.pollInterval);
 		};
 
 		getExisting(n) {
