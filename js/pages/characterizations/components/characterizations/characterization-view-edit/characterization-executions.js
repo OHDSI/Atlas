@@ -87,7 +87,7 @@ define([
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-'; // ${d.reportCount}
+						return d.status() === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-'; // ${d.reportCount}
 					}
 				}
 			];
@@ -172,16 +172,21 @@ define([
 		generate(source) {
 			let confirmPromise;
 
-			if ((this.executionGroups().find(g => g.sourceKey === source) || {}).status === this.ccGenerationStatusOptions.STARTED) {
-				confirmPromise = new Promise((resolve, reject) => {
-					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-						resolve();
-					} else {
-						reject();
-					}
-				})
+			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+			if (!executionGroup) {
+				confirmPromise = new Promise((resolve, reject) => reject());
 			} else {
-				confirmPromise = new Promise(res => res());
+				if (executionGroup.status() === this.ccGenerationStatusOptions.STARTED) {
+					confirmPromise = new Promise((resolve, reject) => {
+						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
+							resolve();
+						} else {
+							reject();
+						}
+					})
+				} else {
+					confirmPromise = new Promise(res => res());
+				}
 			}
 
 			confirmPromise
