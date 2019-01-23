@@ -41,7 +41,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@ohdsi/atlascharts": "^1.5.0",
+    "@ohdsi/atlascharts": "^1.6.0",
     "@ohdsi/ui-toolbox": "^1.0.2",
     "bootstrap": "^3.3.7",
     "bootstrap-datetimepicker": "^0.0.7",
