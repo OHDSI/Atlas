@@ -198,10 +198,10 @@ define(function (require, exports) {
 	}
 
 	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
+		var vocabUrl = sourceKey === undefined ? sharedState.vocabularyUrl() : (url || config.webAPIRoot) + 'vocabulary/' + sourceKey;
 
 		var getOptimizedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
+			url:  vocabUrl + 'optimize',
 			data: JSON.stringify(conceptSetItems),
 			method: 'POST',
 			contentType: 'application/json',
@@ -212,10 +212,10 @@ define(function (require, exports) {
 	}
 
 	function compareConceptSet(compareTargets, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/compare';
+		var vocabUrl = sourceKey === undefined ? sharedState.vocabularyUrl() : (url || config.webAPIRoot) + 'vocabulary/' + sourceKey;
 
 		var getComparedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
+			url: vocabUrl + 'compare',
 			data: JSON.stringify(compareTargets),
 			method: 'POST',
 			contentType: 'application/json',
