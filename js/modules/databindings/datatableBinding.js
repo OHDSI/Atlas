@@ -1,4 +1,23 @@
-define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.net-buttons', 'colvis', 'datatables.net-buttons-html5'], function ($, ko, dataTables, config, filterXSS) {
+define([
+	'jquery',
+	'knockout',
+	'datatables.net',
+	'appConfig',
+	'xss',
+	'moment',
+	'webapi/MomentAPI',
+	'datatables.net-buttons',
+	'colvis',
+	'datatables.net-buttons-html5',
+], function (
+	$,
+	ko,
+	dataTables,
+	config,
+	filterXSS,
+	moment,
+	momentApi
+	) {
 
 	function renderSelected(s, p, d) {
 		return '<span class="fa fa-check-circle"></span>';
@@ -34,10 +53,57 @@ define(['jquery', 'knockout', 'datatables.net', 'appConfig', 'xss', 'datatables.
     );
 	}
 
+	function sortAbs(x, y) {
+        const abxX = Math.abs(x);
+        const absY = Math.abs(y);
+        return abxX < absY ? -1 : abxX>absY ? 1 : 0;
+	}
+
+	function formatDates(first, second) {
+		if (second.isAfter(first)) {
+			return -1;
+		} else if (first.isAfter(second)) {
+			return 1;
+		}
+
+		return 0;
+	}
+
+	function parseDates(x, y) {		
+		let first = moment(x, momentApi.DATE_TIME_FORMAT);
+		let second = moment(y, momentApi.DATE_TIME_FORMAT);
+		if (!first.isValid()) {
+			first = moment(0);
+		}
+		if (!second.isValid()) {
+			second = moment(0);
+		}
+
+		return { first, second };
+	}
+
 	ko.bindingHandlers.dataTable = {
 	
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-			
+
+            jQuery.fn.dataTableExt.oSort["numberAbs-desc"] = function(x, y) {
+                return -1 * sortAbs(x, y);
+            };
+
+            jQuery.fn.dataTableExt.oSort["numberAbs-asc"] = function(x, y) {
+                return sortAbs(x, y);
+						}
+						
+						jQuery.fn.dataTableExt.oSort["datetime-formatted-asc"] = (x, y) => {
+							const { first, second } = parseDates(x, y);
+							return formatDates(first, second);
+						}
+
+						jQuery.fn.dataTableExt.oSort["datetime-formatted-desc"] = (x, y) => {
+							const { first, second } = parseDates(x, y);
+							return formatDates(second, first);
+						}
+
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			// If the binding is an object with an options field,
 			// initialise the dataTable with those options.

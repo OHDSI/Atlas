@@ -38,6 +38,10 @@ define(function (require, exports) {
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
+    PARSE_FORMAT,
+    DATE_TIME_FORMAT,
+    DATE_FORMAT,
+    DURATION_FORMAT,
   };
 
   return api;

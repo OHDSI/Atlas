@@ -54,14 +54,16 @@ define(['knockout', 'jquery', 'text!./plp-browser.html', 'appConfig', 'webapi/Mo
 				render: function(s, p, d){
 					return momentApi.formatDateTimeUTC(d.createdDate);
 				},
-				sType: 'date-uk'
+				sType: 'date-uk',
+				type: 'datetime-formatted'
 			},
 			{
 				title: 'Modified',
 				render: function (s, p, d) {
           return momentApi.formatDateTimeUTC(d.modifiedDate);
 				},
-        sType: 'date-uk'
+				sType: 'date-uk',
+				type: 'datetime-formatted'
 			},
 			{
 				title: 'Author',
