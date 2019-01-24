@@ -16,7 +16,10 @@
 <!-- ko if: $root.loadingIncluded -->
   <loading></loading>
 <!-- /ko -->
-<!-- ko ifnot: $root.loadingIncluded -->
+<!-- ko if: $component.hasErrors -->
+  <empty-state params="message: 'Could not load included concept sets'"></empty-state>
+<!-- /ko -->
+<!-- ko if: !$root.loadingIncluded() && !$component.hasErrors() -->
 <faceted-datatable params="{
   columns: $component.searchConceptsColumns,
   options: $component.searchConceptsOptions,
