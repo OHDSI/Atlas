@@ -38,7 +38,6 @@ define(function (require, exports) {
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
-    diffInDays,
     PARSE_FORMAT,
     DATE_TIME_FORMAT,
     DATE_FORMAT,

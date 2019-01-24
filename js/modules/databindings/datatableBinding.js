@@ -5,7 +5,7 @@ define([
 	'appConfig',
 	'xss',
 	'moment',
-	'services/MomentAPI',
+	'webapi/MomentAPI',
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
