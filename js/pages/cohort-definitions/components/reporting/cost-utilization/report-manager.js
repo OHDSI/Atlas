@@ -1518,7 +1518,7 @@ define([
 												return node.relative_risk;
 											},
 											getcolorrange: function () {
-												return colorbrewer.RR[3];
+												return colorbrewer.Reds[3];
 											},
 											getcolorscale: function () {
 												return [-6, 0, 5];
@@ -1660,7 +1660,7 @@ define([
 												return node.relative_risk;
 											},
 											getcolorrange: function () {
-												return colorbrewer.RR[3];
+												return colorbrewer.Reds[3];
 											},
 											getcolorscale: function () {
 												return [-6, 0, 5];
@@ -1795,7 +1795,7 @@ define([
 												return node.relative_risk;
 											},
 											getcolorrange: function () {
-												return colorbrewer.RR[3];
+												return colorbrewer.Reds[3];
 											},
 											getcolorscale: function () {
 												return [-6, 0, 5];
@@ -2374,7 +2374,7 @@ define([
 								},
 								colors: d3.scaleOrdinal()
 									.domain(conditionType)
-									.range(colorbrewer.Paired[10])
+									.range(colorbrewer.Spectral[10])
 							});
 						}
 
@@ -2486,7 +2486,7 @@ define([
 							},
 							colors: d3.scaleOrdinal()
 								.domain(drugsByType)
-								.range(colorbrewer.Paired[10])
+								.range(colorbrewer.Spectral[10])
 						});
 
 						// prevalence by month
