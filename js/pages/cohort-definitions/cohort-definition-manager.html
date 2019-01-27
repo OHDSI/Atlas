@@ -318,6 +318,9 @@
 									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'netezza' }, click: function() { $component.exportSqlMode('netezza') };">
 										<a>Netezza</a>
 									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'bigquery' }, click: function() { $component.exportSqlMode('bigquery') };">
+										<a>BigQuery</a>
+									</li>
 								</ul>
 							</div>
 							<div class="col-md-3" style="text-align: right">
@@ -353,6 +356,9 @@
 								</div>
 								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'netezza' && !$component.isLoadingSql()">
 									<pre data-bind="text: $component.generatedSql.netezza"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'bigquery' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.bigquery"></pre>
 								</div>
 							</div>
 						</div>
