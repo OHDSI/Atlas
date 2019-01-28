@@ -648,7 +648,8 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,
+											onRowClick: node => this.procedureDrilldown(node.id, node.name),
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -763,7 +764,8 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,
+											onRowClick: node => this.drugExposureDrilldown(node.id, node.name),
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -873,7 +875,8 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,
+											onRowClick: node => this.drugeraDrilldown(node.id, node.name),
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -987,7 +990,8 @@ define([
 											],
 											lengthChange: false,
 											deferRender: true,
-											destroy: true
+											destroy: true,
+											onRowClick: node => this.conditionDrilldown(node.id, node.name),
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -1374,7 +1378,8 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,
+											onRowClick: node => this.conditionEraDrilldown(node.id, node.name),
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -1448,21 +1453,6 @@ define([
 											};
 										});
 
-										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
-												let datatable = this.datatables[$(this)
-													.parents('.treemap_table')
-													.attr('id')];
-												let data = datatable.data()[datatable.row(this)[0]];
-												if (data) {
-													let did = data.concept_id;
-													let concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
-														.parents('.treemap_table')
-														.attr('type'));
-												}
-											});
-
 										let datatable = $('#drugs-by-index-table')
 											.DataTable({
 												order: [5, 'desc'],
@@ -1501,7 +1491,8 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true
+												destroy: true,
+												onRowClick: node => this.drilldown(node.id, node.name, 'drug'),
 											});
 										this.datatables['drugs-by-index-table'] = datatable;
 
@@ -1585,20 +1576,6 @@ define([
 											};
 										});
 
-										$(document)
-											.on('click', '.treemap_table tbody tr', () => {
-												let datatable = this.datatables[$(this)
-													.parents('.treemap_table')
-													.attr('id')];
-												let data = datatable.data()[datatable.row(this)[0]];
-												if (data) {
-													let did = data.concept_id;
-													let concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
-														.parents('.treemap_table')
-														.attr('type'));
-												}
-											});
 
 										let datatable = $('#condition_table')
 											.DataTable({
@@ -1643,7 +1620,8 @@ define([
 												],
 												lengthChange: false,
 												deferRender: true,
-												destroy: true
+												destroy: true,
+												onRowClick: node => this.drilldown(node.id, node.name, 'condition'),
 											});
 										this.datatables['condition_table'] = datatable;
 
@@ -1725,21 +1703,6 @@ define([
 											};
 										});
 
-										$(document)
-											.on('click', '.treemap_table tbody tr', () => {
-												let datatable = this.datatables[$(this)
-													.parents('.treemap_table')
-													.attr('id')];
-												let data = datatable.data()[datatable.row(this)[0]];
-												if (data) {
-													let did = data.concept_id;
-													let concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
-														.parents('.treemap_table')
-														.attr('type'));
-												}
-											});
-
 										let datatable = $('#procedure_table')
 											.DataTable({
 												order: [6, 'desc'],
@@ -1778,7 +1741,8 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true
+												destroy: true,
+												onRowClick: node => this.drilldown(node.id, node.name, 'procedure'),
 											});
 										this.datatables['procedure_table'] = datatable;
 
