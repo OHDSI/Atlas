@@ -1,4 +1,4 @@
-define(['knockout', 'visibilityjs'], (ko) => {
+define(['knockout', 'visibilityjs'], (ko, Visibility) => {
   const callbacks = new Map();
   
   const isPageForeground = ko.observable(Visibility.state() === "visible");
