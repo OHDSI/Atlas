@@ -394,20 +394,20 @@ define(
 					: ({ data }) => {
 						let info = data;
 						if (!Array.isArray(info)) {
-							info = [];
+							throw new Error('Resolving concept set failed. Check vocabulary data source');
 						}
 						this.conceptSetInclusionIdentifiers(info);
 						this.currentIncludedConceptIdentifierList(info.join(','));
 						this.conceptSetInclusionCount(info.length);
 					};
 				this.resolvingConceptSetExpression(true);
-				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression);
-				resolvingPromise.then(callback);
-				resolvingPromise.catch((err) => {
-					console.error('Resolving concept set expression failed', err);
-					this.resolvingConceptSetExpression(false);
-					document.location = '#/configure';
-				});
+				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
+					.then(callback)
+					.catch((err) => {
+						alert(err);
+						this.resolvingConceptSetExpression(false);
+						document.location = '#/configure';
+					});
 
 				return resolvingPromise;
 			}
