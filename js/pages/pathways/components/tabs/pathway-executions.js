@@ -13,6 +13,7 @@ define([
 	'utils/DatatableUtils',
 	'services/Source',
 	'lodash',
+	'services/Poll',
 	'less!./pathway-executions.less'
 ], function(
 	ko,
@@ -28,12 +29,13 @@ define([
 	commonUtils,
 	datatableUtils,
 	SourceService,
-	lodash
+	lodash,
+	PollService
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
-
+			
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
@@ -90,14 +92,14 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = setInterval(() => this.loadData({
-					silently: true
-				}), 10000)
+				this.intervalId = PollService.add(() => {
+					this.loadData({ silently: true });
+				}, 10000)
 			}
 		}
 
 		dispose() {
-			clearInterval(this.intervalId);
+			PollService.stop(this.intervalId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -160,16 +162,21 @@ define([
 		generate(source) {
 			let confirmPromise;
 
-			if ((this.executionGroups().find(g => g.sourceKey === source) || {}).status === this.pathwayGenerationStatusOptions.STARTED) {
-				confirmPromise = new Promise((resolve, reject) => {
-					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-						resolve();
-					} else {
-						reject();
-					}
-				})
+			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+			if (!executionGroup) {
+				confirmPromise = new Promise((resolve, reject) => reject());
 			} else {
-				confirmPromise = new Promise(res => res());
+				if (executionGroup.status() === this.pathwayGenerationStatusOptions.STARTED) {
+					confirmPromise = new Promise((resolve, reject) => {
+						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
+							resolve();
+						} else {
+							reject();
+						}
+					})
+				} else {
+					confirmPromise = new Promise(res => res());
+				}
 			}
 
 			confirmPromise

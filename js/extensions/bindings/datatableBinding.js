@@ -69,6 +69,19 @@ define([
 		return 0;
 	}
 
+	function parseDates(x, y) {		
+		let first = moment(x, momentApi.DATE_TIME_FORMAT);
+		let second = moment(y, momentApi.DATE_TIME_FORMAT);
+		if (!first.isValid()) {
+			first = moment(0);
+		}
+		if (!second.isValid()) {
+			second = moment(0);
+		}
+
+		return { first, second };
+	}
+
 	ko.bindingHandlers.dataTable = {
 	
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -82,14 +95,12 @@ define([
 						}
 						
 						jQuery.fn.dataTableExt.oSort["datetime-formatted-asc"] = (x, y) => {
-							const first = moment(x, momentApi.DATE_TIME_FORMAT);
-							const second = moment(y, momentApi.DATE_TIME_FORMAT);
+							const { first, second } = parseDates(x, y);
 							return formatDates(first, second);
 						}
 
 						jQuery.fn.dataTableExt.oSort["datetime-formatted-desc"] = (x, y) => {
-							const first = moment(x, momentApi.DATE_TIME_FORMAT);
-							const second = moment(y, momentApi.DATE_TIME_FORMAT);
+							const { first, second } = parseDates(x, y);
 							return formatDates(second, first);
 						}
 

@@ -22,6 +22,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
+	'services/Poll',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -63,6 +64,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	commonUtils,
 	costUtilConst,
 	authApi,
+	PollService
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -469,13 +471,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.model.reportSourceKey.subscribe(source => {
 				const cd = this.model.currentCohortDefinition();
 				if ((!cd || !cd.id() || !source) && pollHeraclesStatus) {
-					clearInterval(pollHeraclesStatus);
+					PollService.stop(pollHeraclesStatus);
 				} else if (source) {
 					if (pollHeraclesStatus) {
-						clearInterval(pollHeraclesStatus);
+						PollService.stop(pollHeraclesStatus);
 					}
 					this.queryHeraclesJob(cd, source);
-					pollHeraclesStatus = setInterval(() => this.queryHeraclesJob(cd, source), 3000);
+					pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 3000);
 				}
 			});
 
