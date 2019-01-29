@@ -768,7 +768,8 @@ define(
 			loadAndApplyAncestors(data) {
 				const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 				const ids = [];
-				$.each(data, (element) => {
+				$.each(data, idx => {
+					const element = data[idx];
 					if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
 						ids.push(element.CONCEPT_ID);
 					}
@@ -777,7 +778,8 @@ define(
 					if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
 						this.loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
 							const map = this.includedConceptsMap();
-							$.each(data, (line) => {
+							$.each(data, idx => {
+								const line = data[idx];
 								const ancArray = ancestors[line.CONCEPT_ID];
 								if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
 									line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);

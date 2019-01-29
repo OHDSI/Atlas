@@ -193,7 +193,8 @@ define([
         }
 
         removeStrata(index) {
-			this.design().stratas.remove((s, i) => i === index);
+			const strataToRemove = this.design().stratas()[index];
+			this.design().stratas.remove(strataToRemove);
         }
 
         showParameterCreateModal() {
