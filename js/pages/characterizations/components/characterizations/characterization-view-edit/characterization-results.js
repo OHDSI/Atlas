@@ -471,9 +471,9 @@ define([
         convertPrevalenceAnalysis(analysis) {
             let columns = [ this.covNameColumn ];
 
-            let data = {};
+            const data = [];
 
-            let strataNames = {};
+            const strataNames = [];
 
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
@@ -487,11 +487,12 @@ define([
             }
 
             const mapCovariate = (data, report) => (rd) => {
-                if (data[rd.covariateName] === undefined) {
-                    data[rd.covariateName] = new PrevalenceStat(rd);
+                let cov = data.find(stat => stat.covariateId === rd.covariateId);
+                if (!cov) {
+                    cov = new PrevalenceStat(rd);
+                    data.push(cov);
                 }
 
-                const cov = data[rd.covariateName];
                 if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
                   cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
                 }
@@ -503,16 +504,16 @@ define([
                     cov.pct[rd.strataId] = [];
                 }
                 cov.pct[rd.strataId].push(rd.pct);
-                if (rd.strataId > 0 && strataNames[rd.strataId] === undefined) {
-                    strataNames[rd.strataId] = {
+                const strata = strataNames.find(st => st.strataId === rd.strataId);
+                if (rd.strataId > 0 && !strata) {
+                    strataNames.push({
                         strataId: rd.strataId,
                         strataName: rd.strataName,
-                    }
+                    });
                 }
             };
 
             analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data, r)));
-            strataNames = Object.values(strataNames);
             analysis.reports.forEach((r, i) => {
               if (!analysis.strataOnly) {
                 columns.push(this.getCountColumn(0, i));
@@ -524,7 +525,6 @@ define([
               });
             });
 
-            data = Object.values(data);
             analysis.strataOnly = analysis.strataOnly && data.length > 0;
 
             if (!analysis.strataOnly && analysis.reports.length === 2) {
