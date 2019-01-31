@@ -4,8 +4,8 @@
 <!-- ko ifnot: errorMsg -->
 <div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-	<!-- ko ifnot: hasAccess -->
-		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
+	<!-- ko if: !hasAccess -->
+		<access-denied params="isAuthenticated: isAuthenticated, isFlexed: true"></access-denied>
 	<!-- /ko -->
 	<!-- ko if: hasAccess -->
 	<div data-bind="$root.currentCohortDefinition() != null">

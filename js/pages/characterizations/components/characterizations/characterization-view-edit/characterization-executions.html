@@ -1,6 +1,6 @@
-<div data-bind="ifnot: $component.isViewGenerationsPermitted(), css: `${$component.isViewGenerationsPermitted() ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
-</div>
+<!-- ko if: !isViewGenerationsPermitted() -->
+    <access-denied params="isAuthenticated: isAuthenticated, isFlexed: true"></access-denied>
+<!-- /ko -->
 
 <div data-bind="if: $component.isViewGenerationsPermitted(), css: classes()">
     <loading data-bind="visible: loading()" params="status: 'Loading executions...'"></loading>
@@ -48,7 +48,7 @@
                 ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
-						attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
+                        attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
                         click: () => $component.generate(sourceKey)"
                     >
                         <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status() -->
@@ -67,8 +67,8 @@
                 ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
-						attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
-						click: () => $component.goToLatestResults(sourceKey)
+                        attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+                        click: () => $component.goToLatestResults(sourceKey)
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
                         View latest result
@@ -81,7 +81,7 @@
                  ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
-						attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+                        attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
                         click: toggleSection
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>

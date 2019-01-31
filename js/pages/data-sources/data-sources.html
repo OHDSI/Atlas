@@ -1,7 +1,7 @@
 <heading-title params="name: 'Data Sources', icon: 'area-chart', theme: 'dark'"></heading-title>
 
-<!-- ko ifnot: canViewCdmResults -->
-<access-denied class="flexed" params="isAuthenticated: $component.isAuthenticated"></access-denied>
+<!-- ko if: !canViewCdmResults -->
+	<access-denied params="isAuthenticated: isAuthenticated, isFlexed: true"></access-denied>
 <!-- /ko -->
 
 <div data-bind="if: canViewCdmResults, css:classes()">

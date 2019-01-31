@@ -1,6 +1,7 @@
-<div data-bind="ifnot: $component.isViewPermitted(), css: `${$component.isViewPermitted() ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
-</div>
+<!-- ko if: !isViewPermitted() -->
+    <access-denied params="isAuthenticated: isAuthenticated, isFlexed: true"></access-denied>
+<!-- /ko -->
+
 <div data-bind="if: $component.isViewPermitted(), css: classes()">
     <loading data-bind="visible: loading()" params="status: 'Loading Cohort Characterization design...'">loading</loading>
     <p data-bind="css: classes('descr')">
