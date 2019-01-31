@@ -471,9 +471,9 @@ define([
         convertPrevalenceAnalysis(analysis) {
             let columns = [ this.covNameColumn ];
 
-            const data = [];
+            const data = new Map();
 
-            const strataNames = [];
+            const strataNames = new Map();
 
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
@@ -487,10 +487,12 @@ define([
             }
 
             const mapCovariate = (data, report) => (rd) => {
-                let cov = data.find(stat => stat.covariateId === rd.covariateId);
-                if (!cov) {
+                let cov;
+                if (!data.has(rd.covariateId)) {
                     cov = new PrevalenceStat(rd);
-                    data.push(cov);
+                    data.set(rd.covariateId, cov);
+                } else {
+                    cov = data.get(rd.covariateId);
                 }
 
                 if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
@@ -504,12 +506,8 @@ define([
                     cov.pct[rd.strataId] = [];
                 }
                 cov.pct[rd.strataId].push(rd.pct);
-                const strata = strataNames.find(st => st.strataId === rd.strataId);
-                if (rd.strataId > 0 && !strata) {
-                    strataNames.push({
-                        strataId: rd.strataId,
-                        strataName: rd.strataName,
-                    });
+                if (rd.strataId > 0 && !strataNames.has(rd.strataId)) {
+                    strataNames.set(rd.strataId, rd.strataName);
                 }
             };
 
@@ -519,9 +517,9 @@ define([
                 columns.push(this.getCountColumn(0, i));
                 columns.push(this.getPctColumn(0, i));
               }
-              strataNames.forEach(st => {
-                columns.push(this.getCountColumn(st.strataId, i));
-                columns.push(this.getPctColumn(st.strataId, i));
+              strataNames.forEach((strataId) => {
+                columns.push(this.getCountColumn(strataId, i));
+                columns.push(this.getPctColumn(strataId, i));
               });
             });
 
@@ -538,8 +536,8 @@ define([
             return {
                 ...analysis,
                 columns: columns,
-                data: data,
-                strataNames,
+                data: Array.from(data.values()),
+                strataNames: Array.from(strataNames.values()),
             };
         }
 
