@@ -8,14 +8,6 @@ define(function(require, exports) {
             this.errorMsg = ko.observable();
         }
 
-        setMessage(msg) {
-            this.errorMsg(msg);
-        }
-
-        getMessage(){
-            return this.errorMsg();
-        }
-
         clearMessage(){
             this.errorMsg(undefined);
         }

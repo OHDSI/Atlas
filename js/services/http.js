@@ -1,8 +1,7 @@
 define(function(require, exports) {
   const ko = require('knockout');
   const config = require('appConfig');
-  const OHDSIApi = require('ohdsi-api').Api;
-  const STATUS = require('ohdsi-api').STATUS;
+  const { Api:OHDSIApi, STATUS } = require('ohdsi-api');
   const JSON_RESPONSE_TYPE = 'application/json';
   const TEXT_RESPONSE_TYPE = 'text/plain';
   const EventBus = require('services/EventBus');
@@ -15,7 +14,7 @@ define(function(require, exports) {
 
     handleNotFoundError(responseJson) {
       if (responseJson !== undefined && responseJson.payload !== undefined) {
-        EventBus.setMessage(responseJson.payload.message);
+        EventBus.errorMsg(responseJson.payload.message);
       }
       document.location = '#' + '/not-found';
     }

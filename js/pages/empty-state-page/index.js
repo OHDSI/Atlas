@@ -3,7 +3,7 @@ define(
     const buildRoutes = require('./routes');
 
     return {
-      title: 'Empty State',
+      title: 'Entity cannot be found',
       buildRoutes,
       navUrl: () => '#/empty-state-page',
         hiddenFromMenu: true,

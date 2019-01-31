@@ -18,7 +18,7 @@ define([
 
         constructor(params) {
             super(params);
-            this.message = EventBus.getMessage() || 'No data';
+            this.message = EventBus.errorMsg() || 'An entity cannot be found';
             EventBus.clearMessage();
             return this;
         }
