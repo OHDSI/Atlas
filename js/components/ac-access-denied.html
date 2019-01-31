@@ -1,4 +1,4 @@
-<div class = "access-denied" data-bind="css: classes(isFlexed ? 'flexed-message' : '')">
+<div data-bind="css: `${classes()} ${isFlexed ? 'flexed' : ''}`">
     <!-- ko if: isAuthenticated -->
         <forbidden />
     <!-- /ko -->
