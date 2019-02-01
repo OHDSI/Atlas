@@ -48,3 +48,8 @@
     position:relative;
     min-width: 110px
 }
+
+.cohort-definition-manager__exit-message {
+     width: 100%;
+     height: 600px;
+}

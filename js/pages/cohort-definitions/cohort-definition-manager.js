@@ -19,6 +19,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'pages/cohort-definitions/const',
 	'pages/Page',
 	'utils/AutoBind',
+	'utils/Clipboard',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
@@ -37,6 +38,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
+	'components/modal-exit-message',
 ], function (
 	$,
 	ko,
@@ -61,6 +63,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	cohortConst,
 	Page,
 	AutoBind,
+	Clipboard,
 	commonUtils,
 	costUtilConst,
 	authApi,
@@ -81,7 +84,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
 
-	class CohortDefinitionManager extends AutoBind(Page) {
+	class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
 			this.pollTimeout = null;
@@ -93,6 +96,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.warningCount = ko.observable(0);
 			this.infoCount = ko.observable(0);
 			this.criticalCount = ko.observable(0);
+			this.isExitMessageShown = ko.observable();
+			this.exitMessage = ko.observable();
 			this.service = cohortDefinitionService;
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter(commonUtils.hasCDM);
@@ -1030,6 +1035,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return info.status();
 			}
 
+			getStatusTemplate(item) {
+				return item.status === 'FAILED' ? 'failed-status-tmpl' : 'success-status-tmpl';
+			}
+
+			showExitMessage(sourceKey) {
+				const info = this.model.cohortDefinitionSourceInfo().find(i => i.sourceKey === sourceKey) || { failMessage: 'Failed without any message' };
+				this.exitMessage(info.failMessage);
+				this.isExitMessageShown(true);
+			}
+
 			calculateProgress (j) {
 				return j.progress() + '%';
 			}
@@ -1161,24 +1176,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				else
 					return "unknownCriteriaType";
 			};
-
-			copyToClipboard (clipboardButtonId, clipboardButtonMessageId) {
-				var currentClipboard = new clipboard(clipboardButtonId);
-
-				currentClipboard.on('success', (e) => {
-					console.log('Copied to clipboard');
-					e.clearSelection();
-					$(clipboardButtonMessageId).fadeIn();
-						setTimeout(() => {
-						$(clipboardButtonMessageId).fadeOut();
-					}, 1500);
-				});
-
-				currentClipboard.on('error', (e) => {
-					console.log('Error copying to clipboard');
-					console.log(e);
-				});
-			}
 
 			copyExpressionToClipboard () {
 				this.copyToClipboard('#btnCopyExpressionClipboard', '#copyExpressionToClipboardMessage');
