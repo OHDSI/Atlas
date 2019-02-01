@@ -188,6 +188,9 @@ define([
 				} else {
 					this.isRunning(false);
 				}
+			})
+			.catch(() => {
+                this.close();
 			});
 		}
 
@@ -248,15 +251,20 @@ define([
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
-				return;
-			}
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.sources().forEach(function (source) {
 				source.info(null);
 			});
+		}
+
+		closeAndShowList() {
+
+			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
+				return;
+			}
+			this.close()
 			document.location = constants.apiPaths.analysis();
 		}
 
