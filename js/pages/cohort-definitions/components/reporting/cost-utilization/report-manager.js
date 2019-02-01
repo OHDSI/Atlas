@@ -2939,6 +2939,14 @@ define([
 				});
 			};
 
+			this.handleGenericRowClick = (event, drilldownType, tableId) => {
+				let dataTable = $(`#${tableId}`).DataTable();
+				let rowIndex = event.target._DT_CellIndex.row;
+				let rowData = dataTable.row(rowIndex).data();
+				
+				this.drilldown(rowData.concept_id, rowData.name, drilldownType);
+			}
+
 			this.drilldown = (id, name, type) => {
 				this.model.loadingReportDrilldown(true);
 				this.model.activeReportDrilldown(false);
