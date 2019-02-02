@@ -170,16 +170,21 @@ define([
 			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
 				var hasPending = false;
 				data.forEach((info) => {
-					var source = this.sources().find((s) => {
-						return s.source.sourceId == info.executionInfo.id.sourceId
-					});
+					const source = this.sources().find(s => s.source.sourceId == info.executionInfo.id.sourceId);
 					if (source) {
-						if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+						// if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
 							source.info(info);
 						if (info.executionInfo.status != "COMPLETE")
 							hasPending = true;
 					}
 				});
+				this.sources().forEach(s => s.info() == null && s.info({
+					summaryList: [],
+					executionInfo: {
+						status: 'COMPLETE',
+						isValid: true,
+					}
+				}));
 
 				if (hasPending) {
 					this.pollTimeout = setTimeout(() => {
@@ -284,9 +289,7 @@ define([
 
 		removeResult(analysisResult) {
 			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				var source = this.sources().filter(function (s) {
-					return s.source.sourceId == analysisResult.source.sourceId
-				})[0];
+				const source = this.sources().find(s => s.source.sourceId == analysisResult.source.sourceId);
 				source.info(null);
 			});
 		}
@@ -296,7 +299,23 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 		};
 
-		onExecuteClick(sourceItem) {
+		execute(sourceItem) {
+			if (sourceItem.info()) {
+				sourceItem.info().executionInfo.status = "PENDING";
+				sourceItem.info.notifySubscribers();
+			}
+			else {
+				// creating 'fake' temporary source info makes the UI respond to the generate action.
+				const tempInfo = {
+					source: sourceItem,
+					executionInfo: {
+						id: {sourceId: sourceItem.source.sourceId}
+					},
+					summaryList: []
+				};
+				sourceItem.info(tempInfo);
+			}
+			this.isRunning(true);
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
@@ -332,36 +351,6 @@ define([
 							source: source,
 							info: ko.observable()
 						});
-					}
-				});
-				this.generateActionsSettings.actionOptions = sourceList.map((sourceItem) => {
-					return {
-						text: sourceItem.source.sourceName,
-						selected: false,
-						description: "Perform Study on source: " + sourceItem.source.sourceName,
-						action: () => {
-							if (sourceItem.info()) {
-								sourceItem.info().executionInfo.status = "PENDING";
-								sourceItem.info.notifySubscribers();
-							}
-							else {
-								// creating 'fake' temporary source info makes the UI respond to the generate action.
-								const tempInfo = {
-									source: sourceItem,
-									executionInfo: {
-										id: {sourceId: sourceItem.source.sourceId}
-									},
-									summaryList: []
-								};
-								sourceItem.info(tempInfo);
-							}
-							this.isRunning(true);
-							IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
-								.then(({data}) => {
-									jobDetailsService.createJob(data);
-									this.pollForInfo();
-								});
-						}
 					}
 				});
 

@@ -6,7 +6,9 @@ define([
 	'services/MomentAPI',
 	'components/Component',
 	'utils/CommonUtils',
-	'databindings'
+	'atlas-state',
+	'databindings',
+	'less!./results.less'
 ], function (
 	ko,
 	$,
@@ -14,7 +16,8 @@ define([
 	IRAnalysisService,
 	momentApi,
 	Component,
-	commonUtils
+	commonUtils,
+	sharedState
 ) {
 
 	class IRAnalysisResultsViewer extends Component {
@@ -23,6 +26,7 @@ define([
 			this.sources = params.sources;
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
+			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.selectedSource = ko.observable();
 			this.selectedReport = ko.observable();
 			this.rateMultiplier = ko.observable(1000);
@@ -71,9 +75,15 @@ define([
 		getSummaryData(summaryList) {
 			var targetId = this.selectedTarget();
 			var outcomeId = this.selectedOutcome();			
-			return summaryList.filter(function (item) {
-					return (item.targetId == targetId && item.outcomeId == outcomeId);
-				})[0] || {totalPersons: 0, cases: 0, timeAtRisk: 0};
+			const summary = summaryList.find(item => item.targetId == targetId && item.outcomeId == outcomeId) || {};
+			const na = (values, converter = v => v) => values.filter(v => v === undefined).length > 0 ? 'n/a' : converter.apply(null, values);
+			return {
+				totalPersons: na([summary.totalPersons], tp => tp.toLocaleString()),
+				cases: na([summary.cases], tp => tp.toLocaleString()),
+				proportion: na([summary.cases, summary.totalPersons], (c, tp) => this.calculateProportion(c, tp)),
+				timeAtRisk: na([summary.timeAtRisk], tar => tar.toLocaleString()),
+				rate: na([summary.cases, summary.timeAtRisk], (c, tar) => this.calculateRate(c, tar)),
+			};
 		}
 		
 		// viewmodel behaviors
@@ -121,6 +131,11 @@ define([
 				this.isLoading(false);
 			});
 		};
+
+		closeReport() {
+			this.selectedSource(null);
+			this.selectedReport(null);
+		}
 
 		msToTime(s) {
 			return momentApi.formatDuration(s);
