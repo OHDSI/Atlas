@@ -1627,7 +1627,7 @@ define([
 
 										let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
 										let treemap = new atlascharts.treemap();
-										treemap.render(tree, '#conditionindex_treemap_container', width, height, {
+										treemap.render(tree, '#condition_treemap_container', width, height, {
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'condition');
 											},
