@@ -46,6 +46,8 @@ define([
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
+			this.stopping = ko.observable({});
+			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 
 			this.execColumns = [{
 					title: 'Date',
@@ -68,6 +70,7 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
+					render: (value) => value === 'STOPPED' ? 'CANCELED' : value,
 				},
 				{
 					title: 'Duration',
@@ -161,6 +164,7 @@ define([
 
 		generate(source) {
 			let confirmPromise;
+			this.stopping({...this.stopping(), [source.sourceKey]: false});
 
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
 			if (!executionGroup) {
@@ -183,6 +187,13 @@ define([
 				.then(() => PathwayService.generate(this.analysisId(), source))
 				.then(() => this.loadData())
 				.catch(() => {});
+		}
+
+		cancelGenerate(source) {
+			this.stopping({...this.stopping(), [source.sourceKey]: true});
+			if (confirm('Do you want to stop generation?')) {
+				PathwayService.cancelGeneration(this.analysisId(), source.sourceKey);
+			}
 		}
 
 		showExecutionDesign(executionId) {

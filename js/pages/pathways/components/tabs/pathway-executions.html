@@ -42,19 +42,21 @@
                     css: classes({ element: 'action' }),
                     tooltip: !$component.isGenerationPermitted(sourceKey) ? 'Not enough permissions to generate' : null,
                 ">
+                    <!-- ko if: $component.pathwayGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
 																			 css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 																			 attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) },
 																			 click: () => $component.generate(sourceKey)">
-                        <!-- ko if: $component.pathwayGenerationStatusOptions.STARTED === status() -->
-                            <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
-                            <span data-bind="css: classes('action-text')">Generating...</span>
-                        <!-- /ko -->
-                        <!-- ko if: $component.pathwayGenerationStatusOptions.COMPLETED === status() -->
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
                             <span data-bind="css: classes('action-text')">Generate</span>
-                        <!-- /ko -->
                     </button>
+                    <!-- /ko -->
+                    <!-- ko if: $component.pathwayGenerationStatusOptions.STARTED === status() -->
+                    <a role="button" class="btn btn-sm btn-danger"
+                       data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
+                        <i class="fa fa-spinner fa-spin"></i> Cancel
+                    </a>
+                    <!-- /ko -->
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
 															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null">

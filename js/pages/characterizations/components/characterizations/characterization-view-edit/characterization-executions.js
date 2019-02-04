@@ -53,6 +53,8 @@ define([
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
+			this.stopping = ko.observable({});
+			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 
 			this.execColumns = [{
 					title: 'Date',
@@ -75,6 +77,7 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
+					render: (value) => value === 'STOPPED' ? 'CANCELED' : value,
 				},
 				{
 					title: 'Duration',
@@ -149,7 +152,7 @@ define([
 				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 
 				sourceList.forEach(s => {
-					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
+					let group = this.executionGroups().find(g => g.sourceKey === s.sourceKey);
 					if (!group) {
 						group = {
 							sourceKey: s.sourceKey,
@@ -166,7 +169,7 @@ define([
 						this.ccGenerationStatusOptions.STARTED :
 						this.ccGenerationStatusOptions.COMPLETED);
 
-				})
+				});
 				this.loading(false);
 			});
 		}
@@ -174,6 +177,7 @@ define([
 		generate(source) {
 			let confirmPromise;
 
+			this.stopping({...this.stopping(), [source.sourceKey]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
 			if (!executionGroup) {
 				confirmPromise = new Promise((resolve, reject) => reject());
@@ -198,6 +202,13 @@ define([
 					this.loadData()
 				})
 				.catch(() => {});
+		}
+
+		cancelGenerate(source) {
+			this.stopping({...this.stopping(), [source.sourceKey]: true});
+			if (confirm('Do you want to stop generation?')) {
+				CharacterizationService.cancelGeneration(this.characterizationId(), source.sourceKey);
+			}
 		}
 
 		showExecutionDesign(executionId) {
