@@ -2108,18 +2108,19 @@ define([
 									deferRender: true,
 									destroy: true
 								});
+								const context = this;
 
 								$(document).on('click', '#care_site_table tbody tr', function () {
 									$('#care_site_table tbody tr.selected').removeClass('selected');
 									$(this).addClass('selected');
-
-									let institution_id = this.careSiteDatatable.data()[this.careSiteDatatable.row(this)[0]].institution;
+									
+									let institution_id = context.careSiteDatatable.data()[context.careSiteDatatable.row(this)[0]].institution;
 
 									let entropyData = ChartUtils.normalizeArray(data.filter(function (d) {
 										return d.insitution == institution_id;
 									}), true);
 									if (!entropyData.empty) {
-										let byDateSeries = this.mapDateDataToSeries(entropyData, {
+										let byDateSeries = context.mapDateDataToSeries(entropyData, {
 
 											dateField: 'date',
 											yValue: 'entropy',
@@ -2169,7 +2170,7 @@ define([
 
 				this.currentAgeGroup('Age group of: ' + oneBarData.covariance);
 				svg = d3.select("#dataCompletenessSvgDiv").append("svg");
-				margin = {
+				const margin = {
 					top: 20,
 					right: 20,
 					bottom: 30,
@@ -2177,8 +2178,8 @@ define([
 				}
 				svg.attr("width", 960)
 				svg.attr("height", 500)
-				width = svg.attr("width") - margin.left - margin.right
-				height = svg.attr("height") - margin.top - margin.bottom;
+				const width = svg.attr("width") - margin.left - margin.right
+				const height = svg.attr("height") - margin.top - margin.bottom;
 
 				let tooltip = d3.select("body").append("div").style('position', 'absolute')
 					.style('display', 'none')
