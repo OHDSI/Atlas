@@ -477,7 +477,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						PollService.stop(pollHeraclesStatus);
 					}
 					this.queryHeraclesJob(cd, source);
-					pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 3000);
+					pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
 				}
 			});
 
