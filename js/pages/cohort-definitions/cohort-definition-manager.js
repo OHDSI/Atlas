@@ -470,12 +470,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			let pollHeraclesStatus = null;
 			this.model.reportSourceKey.subscribe(source => {
 				const cd = this.model.currentCohortDefinition();
-				if ((!cd || !cd.id() || !source) && pollHeraclesStatus) {
-					PollService.stop(pollHeraclesStatus);
-				} else if (source) {
-					if (pollHeraclesStatus) {
-						PollService.stop(pollHeraclesStatus);
-					}
+				PollService.stop(pollHeraclesStatus);
+				if (source) {
 					this.queryHeraclesJob(cd, source);
 					pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
 				}
