@@ -513,7 +513,6 @@ define(
 
 				Promise.all([infoPromise, definitionPromise])
 					.then(() => {
-						this.routerParams({...this.routerParams(), errorMsg: ''});
 						// Now that we have loaded up the cohort definition, we'll need to
 						// resolve all of the concepts embedded in the concept set collection
 						// to ensure they have all of the proper properties for editing in the cohort
@@ -614,15 +613,9 @@ define(
 							});
 					})
 					.catch((xhr) => {
-						switch (xhr.status) {
-						case 500:
-							this.routerParams({...this.routerParams(), errorMsg: xhr.json.payload.message});
-							break;
-						case 403:
-						case 401:
-							break;
-						};
-						this.currentView(viewToShow);
+						if (xhr.status == 403 || xhr.status == 401) {
+							this.currentView(viewToShow);
+						}
 					});
 			}
 
