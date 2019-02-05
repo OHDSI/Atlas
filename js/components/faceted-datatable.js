@@ -135,6 +135,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		});
 
 		self.reference.valueHasMutated(); // init component
+        self.stateSaveCallback = params.stateSaveCallback;
+        self.stateLoadCallback = params.stateLoadCallback;
 	};
 
 	var component = {
