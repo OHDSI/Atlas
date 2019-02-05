@@ -49,6 +49,7 @@ define([
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
+			this.isNewEntity = this.isNewEntityResolver();
 
 			this.selectedTabKey = ko.observable("design");
 			this.componentParams = {
@@ -101,6 +102,10 @@ define([
 				return ko.computed(
 						() => (this.analysisId() ? PermissionService.isPermittedDelete(this.analysisId()) : false)
 				);
+		}
+
+		isNewEntityResolver() {
+			return ko.computed(() => this.design() && this.analysisId() === 0);
 		}
 		
 
