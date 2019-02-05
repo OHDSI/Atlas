@@ -33,6 +33,10 @@ define([
         return request = httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
     }
 
+    function copyCharacterization(id) {
+        return httpService.doPost(config.webAPIRoot + 'cohort-characterization/' + id).then(res => res.data);
+    }
+
     function updateCharacterization(id, design) {
         return httpService.doPut(config.webAPIRoot + 'cohort-characterization/' + id, design).then(res => res.data);
     }
@@ -85,6 +89,7 @@ define([
         loadCharacterizationDesign,
         loadCharacterizationExportDesign,
         createCharacterization,
+        copyCharacterization,
         updateCharacterization,
         deleteCharacterization,
         loadCharacterizationExecutionList,

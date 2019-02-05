@@ -52,6 +52,7 @@ define([
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
+            this.canCopy = this.canCopyResolver();
 
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
@@ -102,6 +103,10 @@ define([
             );
         }
 
+        canCopyResolver() {
+            return ko.computed(() => !this.designDirtyFlag().isDirty() && PermissionService.isPermittedCopyCC(this.characterizationId()));
+        }
+
         setupSection(section) {
             const tabKey = section === 'results' ? 'executions' : section;
             this.selectedTabKey(tabKey);
@@ -150,6 +155,11 @@ define([
                         this.loading(false);
                     });
             }
+        }
+
+        copyCc() {
+          CharacterizationService.copyCharacterization(this.characterizationId())
+            .then(res => commonUtils.routeTo(`cc/characterizations/${res.id}`));
         }
 
         deleteCc() {
