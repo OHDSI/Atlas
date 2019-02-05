@@ -467,13 +467,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingAvailableReports.removeAll();
 			});
 
-			let pollHeraclesStatus = null;
+			this.pollHeraclesStatus = null;
 			this.model.reportSourceKey.subscribe(source => {
 				const cd = this.model.currentCohortDefinition();
-				PollService.stop(pollHeraclesStatus);
+				PollService.stop(this.pollHeraclesStatus);
 				if (source) {
 					this.queryHeraclesJob(cd, source);
-					pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
+					this.pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
 				}
 			});
 
@@ -1121,6 +1121,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.sortedConceptSets.dispose();
 				this.reportingState.dispose();
 				this.showReportNameDropdown.dispose();
+				PollService.stop(this.pollHeraclesStatus);
 			}
 
 			getCriteriaIndexComponent (data) {
