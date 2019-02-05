@@ -59,7 +59,7 @@ define([
 
 	function cancelGeneration(id, sourceKey) {
 		return httpService
-			.doGet(`${servicePath}/${id}/generation/${sourceKey}/cancel`)
+			.doDelete(`${servicePath}/${id}/generation/${sourceKey}`)
 			.then(res => res.data);
 	}
 	

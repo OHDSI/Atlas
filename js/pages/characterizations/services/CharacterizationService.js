@@ -81,7 +81,7 @@ define([
 
     function cancelGeneration(ccId, sourceKey) {
         return httpService
-          .doGet(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourceKey + '/cancel')
+          .doDelete(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourceKey)
           .then(res => res.data);
     }
 
