@@ -64,6 +64,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
         event.preventDefault();
         self.onFixCallback(value);
         self.onDiagnose();
+        self.isFixConceptSetCalled = false;
       };
 
       function showWarnings(result){

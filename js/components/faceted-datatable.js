@@ -135,8 +135,31 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		});
 
 		self.reference.valueHasMutated(); // init component
-        self.stateSaveCallback = params.stateSaveCallback;
-        self.stateLoadCallback = params.stateLoadCallback;
+		self.stateSaveCallback = params.stateSaveCallback;
+		self.stateLoadCallback = params.stateLoadCallback;
+		
+		self.options = {
+			dom: self.dom,
+			colVis: self.colVis,
+			language: self.language,
+			buttons: self.buttons,
+			rowCallback: self.rowCallback,
+			lengthMenu: self.lengthMenu,
+			orderClasses: self.orderClasses,
+			ordering: self.ordering,
+			order: self.order,
+			columns: self.columns,
+			autoWidth: self.autoWidth,
+			deferRender: self.deferRender,
+			pageLength: self.pageLength,
+			drawCallback: self.drawCallback,
+		};
+		if (self.stateSaveCallback !== undefined) {
+			self.options = {...self.options, stateSaveCallback: self.stateSaveCallback, stateSave: true}
+		}
+		if (self.stateLoadCallback !== undefined) {
+			self.options = {...self.options, stateLoadCallback: self.stateLoadCallback}
+		}
 	};
 
 	var component = {

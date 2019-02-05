@@ -848,10 +848,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			saveConceptSet () {
 				this.saveConceptSetShow(false);
-      	var conceptSet = {
-        	id: 0,
+				var conceptSet = {
+					id: 0,
 					name: this.newConceptSetName(),
-      	};
+				};
 				var conceptSetItems = conceptSetUitls.toConceptSetItems(this.selectedConcepts());
 				var conceptSetId;
 				var itemsPromise = (data) => {
@@ -860,7 +860,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				};
 				conceptSetService.saveConceptSet(conceptSet)
 					.then(itemsPromise);
-    	};
+			};
 
 			createConceptSet() {
 				var newConceptSet = new ConceptSet();
