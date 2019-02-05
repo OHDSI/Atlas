@@ -91,7 +91,7 @@ define([
 				this.cohortSource = ko.observable();
 				this.person = ko.observable();
 				this.loadingPerson = ko.observable(false);
-				this.cantFindPerson = ko.observable(true);
+				this.cantFindPerson = ko.observable(false);
 				this.shadedRegions = ko.observable([]);
 
 				this.setSourceKey = (d) => {
@@ -308,7 +308,7 @@ define([
 			}
 
 			loadPerson() {
-				this.cantFindPerson(true);
+				this.cantFindPerson(false);
 				this.loadingPerson(true);
 
 				let url = constants.paths.person(this.sourceKey(), this.personId());
@@ -358,7 +358,7 @@ define([
 						this.person(person);
 					})
 					.catch(() => {
-						this.cantFindPerson(false);
+						this.cantFindPerson(true);
 						this.loadingPerson(false);
 					});
 			}

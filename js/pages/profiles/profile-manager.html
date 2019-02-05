@@ -76,7 +76,7 @@
 				</div>
 			</div>
 		</form>
-		<div style="margin-top:5px;" data-bind="visible:person && cantFindPerson() && !loadingPerson(), with:person">
+		<div style="margin-top:5px;" data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person">
 			<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
 			<span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
 			<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -89,11 +89,11 @@
 	<loading params="status: loadingStatus"></loading>
 	<!-- /ko -->
 	
-	<div data-bind="visible: !cantFindPerson()" class="loading">Can't find
+	<div data-bind="visible: cantFindPerson()" class="loading">Can't find
 		<span data-bind="text:personId" />
 	</div>
 
-	<div data-bind="visible: cantFindPerson() && !loadingPerson()">
+	<div data-bind="visible: !cantFindPerson() && !loadingPerson()">
 		<div data-bind="css: classes()">
 			<div data-bind="css: classes({ element: 'profile-control', extra: 'row' })">
 				<div data-bind="if: person, attr: { class: 'col-xs-12'}">
