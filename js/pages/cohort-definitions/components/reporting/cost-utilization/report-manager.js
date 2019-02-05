@@ -240,9 +240,6 @@ define([
 					.modal('show');
 			};
 
-			this.donutWidth = 500;
-			this.donutHeight = 300;
-
 			this.datatables = {};
 
 			this.tornadoChart = function (target, data, profiles, profilesSelected) {
@@ -2365,7 +2362,7 @@ define([
 							.remove();
 						if (conditionType) {
 							let donut = new atlascharts.donut();
-							donut.render(conditionType, "#conditionsByType", 260, 130, {
+							donut.render(conditionType, "#conditionsByType", size12.width, size12.height, {
 								margin: {
 									top: 5,
 									left: 5,
@@ -2477,7 +2474,7 @@ define([
 						// drug  type visualization
 						let donut = new atlascharts.donut();
 						let drugsByType = this.mapConceptData(data.drugsByType);
-						donut.render(drugsByType, "#drugsByType", this.donutWidth, this.donutHeight, {
+						donut.render(drugsByType, "#drugsByType", size12.width, size12.height, {
 							margin: {
 								top: 5,
 								left: 5,
@@ -2889,7 +2886,7 @@ define([
 						// procedure type visualization
 						if (data.proceduresByType && data.proceduresByType.length > 0) {
 							let donut = new atlascharts.donut();
-							donut.render(this.mapConceptData(data.proceduresByType), "#proceduresByType", this.donutWidth, this.donutHeight, {
+							donut.render(this.mapConceptData(data.proceduresByType), "#proceduresByType", size12.width, size12.height, {
 								margin: {
 									top: 5,
 									left: 5,
