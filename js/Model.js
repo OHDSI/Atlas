@@ -40,7 +40,7 @@ define(
 		d3,
 		authApi,
 		momentApi,
-        EventBus,
+		EventBus,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			constructor() {
@@ -294,7 +294,6 @@ define(
 						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
 					));
 				});
-
 
 				this.currentView.subscribe(() => {
 					EventBus.errorMsg(undefined);

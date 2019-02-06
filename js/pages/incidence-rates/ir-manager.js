@@ -190,7 +190,7 @@ define([
 				}
 			})
 			.catch(() => {
-                this.close();
+				this.close();
 			});
 		}
 
