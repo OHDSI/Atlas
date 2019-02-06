@@ -18,6 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
+		'services/EventBus',
 		'less!app.less',
 	],
 	(
@@ -39,6 +40,7 @@ define(
 		d3,
 		authApi,
 		momentApi,
+		EventBus,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			constructor() {
@@ -69,6 +71,7 @@ define(
 				this.reportCohortDefinitionId = ko.observable();
 				this.reportReportName = ko.observable();
 				this.reportSourceKey = ko.observable();
+				this.EventBus = EventBus;
 				this.reportValid = ko.computed(() => {
 					return (
 						this.reportReportName() != undefined
@@ -291,6 +294,11 @@ define(
 						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
 					));
 				});
+
+				this.currentView.subscribe(() => {
+					EventBus.errorMsg(undefined);
+				});
+
 				this.noSourcesAvailable = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});
@@ -513,7 +521,6 @@ define(
 
 				Promise.all([infoPromise, definitionPromise])
 					.then(() => {
-						this.routerParams({...this.routerParams(), errorMsg: ''});
 						// Now that we have loaded up the cohort definition, we'll need to
 						// resolve all of the concepts embedded in the concept set collection
 						// to ensure they have all of the proper properties for editing in the cohort
@@ -614,15 +621,9 @@ define(
 							});
 					})
 					.catch((xhr) => {
-						switch (xhr.status) {
-						case 500:
-							this.routerParams({...this.routerParams(), errorMsg: xhr.json.payload.message});
-							break;
-						case 403:
-						case 401:
-							break;
-						};
-						this.currentView(viewToShow);
+						if (xhr.status == 403 || xhr.status == 401) {
+							this.currentView(viewToShow);
+						}
 					});
 			}
 
