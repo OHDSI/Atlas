@@ -16,7 +16,6 @@ define(function(require, exports) {
       if (responseJson !== undefined && responseJson.payload !== undefined) {
         EventBus.errorMsg(responseJson.payload.message);
       }
-      document.location = '#' + '/not-found';
     }
 
     checkStatusError(response) {

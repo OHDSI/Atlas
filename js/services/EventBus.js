@@ -7,10 +7,6 @@ define(function(require, exports) {
         constructor() {
             this.errorMsg = ko.observable();
         }
-
-        clearMessage(){
-            this.errorMsg(undefined);
-        }
     }
 
     return new EventBus();

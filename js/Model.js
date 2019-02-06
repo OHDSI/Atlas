@@ -18,6 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
+		'services/EventBus',
 		'less!app.less',
 	],
 	(
@@ -39,6 +40,7 @@ define(
 		d3,
 		authApi,
 		momentApi,
+        EventBus,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			constructor() {
@@ -69,6 +71,7 @@ define(
 				this.reportCohortDefinitionId = ko.observable();
 				this.reportReportName = ko.observable();
 				this.reportSourceKey = ko.observable();
+				this.EventBus = EventBus;
 				this.reportValid = ko.computed(() => {
 					return (
 						this.reportReportName() != undefined
@@ -291,6 +294,12 @@ define(
 						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
 					));
 				});
+
+
+				this.currentView.subscribe(() => {
+					EventBus.errorMsg(undefined);
+				});
+
 				this.noSourcesAvailable = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});

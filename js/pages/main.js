@@ -14,7 +14,6 @@ define(
 		const jobs = require('./jobs/index');
 		const configuration = require('./configuration/index');
 		const feedback = require('./feedback/index');
-		const emptyState = require('./empty-state-page/index');
 
 		// order of nav items in left-nav will appear in the following order:
 		return {
@@ -32,7 +31,6 @@ define(
 			jobs,
 			configuration,
 			feedback,
-            emptyState,
 		};
 	}
 );
