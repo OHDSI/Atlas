@@ -252,6 +252,16 @@ define([
 					}
 				})
 
+				const lineHeight = 30;
+				const linesCount = Math.max(...data.reduce((a, d) => {
+					if (d.genderConceptId === 8532) {
+						a[0]++;
+					} else {
+						a[1]++;
+					}
+					return a;
+				}, [0, 0]));
+				
 				let margin = {
 						top: 20,
 						right: 20,
@@ -259,7 +269,7 @@ define([
 						left: 60
 					},
 					width = 600 - margin.left - margin.right,
-					height = 300 - margin.top - margin.bottom;
+					height = linesCount * lineHeight - margin.top - margin.bottom;
 
 				let x = d3.scaleLinear()
 					.range([0, width]);
