@@ -168,7 +168,8 @@ define([
 			}
 			this.heelDataColumns = [{
 				title: 'Message Type',
-				data: 'attributeName'
+				data: 'attributeName',
+				width: "10%"
 			}, {
 				title: 'Message',
 				data: 'attributeValue'
