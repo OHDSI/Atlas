@@ -648,8 +648,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,
-											onRowClick: node => this.procedureDrilldown(node.id, node.name),
+											destroy: true,											
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -764,8 +763,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,
-											onRowClick: node => this.drugExposureDrilldown(node.id, node.name),
+											destroy: true,											
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -875,8 +873,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,
-											onRowClick: node => this.drugeraDrilldown(node.id, node.name),
+											destroy: true,											
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -990,8 +987,7 @@ define([
 											],
 											lengthChange: false,
 											deferRender: true,
-											destroy: true,
-											onRowClick: node => this.conditionDrilldown(node.id, node.name),
+											destroy: true,											
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -1378,8 +1374,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,
-											onRowClick: node => this.conditionEraDrilldown(node.id, node.name),
+											destroy: true,											
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -1436,7 +1431,7 @@ define([
 
 									if (!drugEraPrevalence.empty) {
 										table_data = drugEraPrevalence.conceptPath.map((d, i) => {
-											let conceptDetails = this.conceptPath[i].split('||');
+											let conceptDetails = d.split('||');
 											return {
 												concept_id: drugEraPrevalence.conceptId[i],
 												atc1: conceptDetails[0],
@@ -1452,7 +1447,7 @@ define([
 												risk_difference: this.formatFixed(drugEraPrevalence.riskDiffAfterBefore[i])
 											};
 										});
-
+										
 										let datatable = $('#drugs-by-index-table')
 											.DataTable({
 												order: [5, 'desc'],
@@ -1491,8 +1486,7 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true,
-												onRowClick: node => this.drilldown(node.id, node.name, 'drug'),
+												destroy: true,												
 											});
 										this.datatables['drugs-by-index-table'] = datatable;
 
@@ -1558,7 +1552,7 @@ define([
 									let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.conditionOccurrencePrevalence, true));
 									if (!normalizedData.empty) {
 										table_data = normalizedData.conceptPath.map((d, i) => {
-											let conceptDetails = normalizedData.conceptPath[i].split('||');
+											let conceptDetails = d.split('||');
 											return {
 												concept_id: normalizedData.conceptId[i],
 												soc: conceptDetails[0],
@@ -1620,8 +1614,7 @@ define([
 												],
 												lengthChange: false,
 												deferRender: true,
-												destroy: true,
-												onRowClick: node => this.drilldown(node.id, node.name, 'condition'),
+												destroy: true,												
 											});
 										this.datatables['condition_table'] = datatable;
 
@@ -1686,7 +1679,7 @@ define([
 									let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.procedureOccurrencePrevalence, true));
 									if (!normalizedData.empty) {
 										table_data = normalizedData.conceptPath.map((d, i) => {
-											let conceptDetails = normalizedData.conceptPath[i].split('||');
+											let conceptDetails = d.split('||');
 											return {
 												concept_id: normalizedData.conceptId[i],
 												level_4: conceptDetails[0],
@@ -1741,8 +1734,7 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true,
-												onRowClick: node => this.drilldown(node.id, node.name, 'procedure'),
+												destroy: true,												
 											});
 										this.datatables['procedure_table'] = datatable;
 
@@ -2958,6 +2950,7 @@ define([
 						contentType: "application/json; charset=utf-8"
 					})
 					.done((result) => {
+						this.model.loadingReportDrilldown(false);
 						if (result && result.length > 0) {
 							$("#" + type + "DrilldownScatterplot")
 								.empty();
@@ -3021,8 +3014,7 @@ define([
 										}
 									}
 								]
-							});
-							this.model.loadingReportDrilldown(false);
+							});							
 						}
 					});
 			}
