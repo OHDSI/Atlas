@@ -208,7 +208,7 @@ define(function (require, exports) {
                     setting: 'varImp',
                     name: 'Perform an initial variable selection',
                     description: 'Perform an initial variable selection prior to fitting the model to select the useful variables',
-                    defaultValue: true,
+                    defaultValue: [true],
                 },
             ]
         },

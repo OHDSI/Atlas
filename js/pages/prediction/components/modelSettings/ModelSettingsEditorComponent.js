@@ -26,7 +26,7 @@ define([
         }
         isDefault(settingName) {
             var setting = this.getModelSettingByName(settingName);
-            return setting() == utils.getDefaultModelSettingValue(this.defaultModelSettings, settingName);
+            return _.isEqual(setting(), utils.getDefaultModelSettingValue(this.defaultModelSettings, settingName));
         }
         setToDefault(settingName) {
             var setting = this.getModelSettingByName(settingName);

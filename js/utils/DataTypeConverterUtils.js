@@ -15,6 +15,12 @@ define(
         }
       }
 
+      const commaDelimitedListToBooleanArray = function(newValue) {
+          const list = this.commaDelimitedListToArray(newValue);
+          return list.filter(element => ['true', 'false'].includes(element.toLowerCase()))
+                 .map((element) => { return element.toLowerCase() === 'true' });
+      }
+
       const commaDelimitedListToNumericArray = function(newValue) {
           const list = this.commaDelimitedListToArray(newValue);
           return list.map((element) => { return +element });
@@ -64,6 +70,7 @@ define(
         convertFromPercent: convertFromPercent,
         convertToPercent: convertToPercent,
         percentArrayToCommaDelimitedList: percentArrayToCommaDelimitedList,
+        commaDelimitedListToBooleanArray: commaDelimitedListToBooleanArray,
       };
     }
   );

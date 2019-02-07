@@ -17,32 +17,40 @@ define([
 			
 			this.mtries = {
 				name: 'mtries',
-				value: ko.observable(this.modelSettings.mtries() && this.modelSettings.mtries().length > 0 ? this.modelSettings.mtries().join() : ''),
+				value: ko.pureComputed({
+					read: () => this.modelSettings.mtries() && this.modelSettings.mtries().length > 0 ? this.modelSettings.mtries().join() : '',
+					write: (newValue) => {
+						this.modelSettings.mtries(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+					}
+				})
 			};
 			this.ntrees = {
 				name: 'ntrees',
-				value: ko.observable(this.modelSettings.ntrees() && this.modelSettings.ntrees().length > 0 ? this.modelSettings.ntrees().join() : ''),
+				value: ko.pureComputed({
+					read: () => this.modelSettings.ntrees() && this.modelSettings.ntrees().length > 0 ? this.modelSettings.ntrees().join() : '',
+					write: (newValue) => {
+						this.modelSettings.ntrees(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+					}
+				})
 			};
 			this.maxDepth = {
 				name: 'maxDepth',
-				value: ko.observable(this.modelSettings.maxDepth() && this.modelSettings.maxDepth().length > 0 ? this.modelSettings.maxDepth().join() : ''),
+				value: ko.pureComputed({
+					read: () => this.modelSettings.maxDepth() && this.modelSettings.maxDepth().length > 0 ? this.modelSettings.maxDepth().join() : '',
+					write: (newValue) => {
+						this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
+					}
+				})
 			};
 			this.varImp = {
 				name: 'varImp',
-				value: this.modelSettings.varImp,
+				value: ko.pureComputed({
+					read: () => this.modelSettings.varImp() && this.modelSettings.varImp().length > 0 ? this.modelSettings.varImp().join() : '',
+					write: (newValue) => {
+						this.modelSettings.varImp(dataTypeConverterUtils.commaDelimitedListToBooleanArray(newValue));
+					}
+				})
 			};
-
-			this.mtries.value.subscribe(newValue => {
-				this.modelSettings.mtries(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
-
-			this.ntrees.value.subscribe(newValue => {
-				this.modelSettings.ntrees(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
-
-			this.maxDepth.value.subscribe(newValue => {
-				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			});
 		}
 	}
 
