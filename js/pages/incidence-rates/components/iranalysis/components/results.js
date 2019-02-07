@@ -8,7 +8,8 @@ define([
 	'utils/CommonUtils',
 	'atlas-state',
 	'databindings',
-	'less!./results.less'
+	'less!./results.less',
+	'components/generation/select-sources-btn'
 ], function (
 	ko,
 	$,
@@ -24,6 +25,12 @@ define([
 		constructor(params) {
 			super(params);
 			this.sources = params.sources;
+			this.generationSources = ko.computed(() => params.sources().map(s => ({
+				...s.source,
+				disabled: IRAnalysisResultsViewer.isInProgress(s),
+				disabledReason: IRAnalysisResultsViewer.isInProgress(s) ? 'Generation is in progress' : null,
+			})));
+			this.execute = params.execute;
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -70,6 +77,11 @@ define([
 			this.stepDown = this.stepDown.bind(this);
 			this.selectSource = this.selectSource.bind(this);
 			this.dispose = this.dispose.bind(this);
+			this.runGenerations = this.runGenerations.bind(this);
+		}
+
+		static isInProgress(sourceItem) {
+			return sourceItem.info() && ['RUNNING', 'PENDING'].includes(sourceItem.info().executionInfo.status);
 		}
 		
 		getSummaryData(summaryList) {
@@ -131,6 +143,10 @@ define([
 				this.isLoading(false);
 			});
 		};
+
+		runGenerations(sourceKeys) {
+			sourceKeys.forEach(key => this.execute(key));
+		}
 
 		closeReport() {
 			this.selectedSource(null);

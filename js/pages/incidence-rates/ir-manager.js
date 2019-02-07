@@ -92,11 +92,6 @@ define([
 			this.activeTab = ko.observable(params.activeTab || 'definition');
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
-			this.filteredSources = ko.pureComputed(() => {
-				return this.sources().filter(function (source) {
-					return source.info();
-				});
-			});
 
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
@@ -178,13 +173,6 @@ define([
 							hasPending = true;
 					}
 				});
-				this.sources().forEach(s => s.info() == null && s.info({
-					summaryList: [],
-					executionInfo: {
-						status: 'COMPLETE',
-						isValid: true,
-					}
-				}));
 
 				if (hasPending) {
 					this.pollTimeout = setTimeout(() => {
@@ -299,8 +287,10 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 		};
 
-		execute(sourceItem) {
-			if (sourceItem.info()) {
+		execute(sourceKey) {
+			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+
+			if (sourceItem && sourceItem.info()) {
 				sourceItem.info().executionInfo.status = "PENDING";
 				sourceItem.info.notifySubscribers();
 			}
@@ -315,6 +305,7 @@ define([
 				};
 				sourceItem.info(tempInfo);
 			}
+			this.sources.notifySubscribers();
 			this.isRunning(true);
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {

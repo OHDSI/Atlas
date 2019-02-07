@@ -1,0 +1,17 @@
+<button type="button" data-bind="css: classes({ extra: 'btn btn-sm btn-primary' }), click: $component.shouldSuggestSelection() ? $component.showPopup : $component.generate">
+    <i data-bind="css: classes({ element: 'ico', extra: 'fa ' + ($component.wasGenerated ? 'fa-repeat' : 'fa-play') })"></i>
+    <!-- ko if: $component.label -->
+        <span data-bind="css: classes('label'), text: $component.label"></span>
+    <!-- /ko -->
+</button>
+
+<!-- ko if: $component.shouldSuggestSelection() -->
+    <modal-pick-options params="{
+		showModal: $component.isPopupShown,
+		title: 'Select sources',
+		extraClasses: $component.classes('popup'),
+		options: $component.sourceOptions,
+		submitLabel: 'Run',
+		submit: $component.generate
+	}"></modal-pick-options>
+<!-- /ko -->

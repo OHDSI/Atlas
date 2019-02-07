@@ -10,6 +10,7 @@ define([
     function ModalPickOptions(params) {
         this.showModal = params.showModal;
         this.title = params.title;
+        this.extraClasses = params.extraClasses || '';
         // options object looks like:
         // { 
         //     section1: { title:'Section One Title', options: array, selectedOptions: observableArray }
@@ -21,6 +22,8 @@ define([
 
         const bemHelper = new BemHelper(componentName);
         this.classes = bemHelper.run.bind(bemHelper);
+
+        this.isSingleSection = ko.computed(() => ko.unwrap(params.options).options && ko.unwrap(params.options).selectedOptions);
     }
 
     var component = {

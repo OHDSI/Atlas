@@ -13,6 +13,10 @@
 		</select>
 	</div>
 	<div>
+		<select-sources-btn
+			data-bind="css: classes('generate-btn')"
+			params="sources: $component.generationSources, callback: $component.runGenerations"
+		></select-sources-btn>
 		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
 	</div>
 </div>
@@ -49,10 +53,7 @@
 			<tr>
 				<td data-bind="css: $component.classes('tbl-col')" nowrap>
 					<!-- ko if: info().executionInfo.status == "COMPLETE" -->
-						<button class="btn btn-sm btn-primary execute">
-							<i class="fa fa-play"></i>
-							Generate
-						</button>
+						<select-sources-btn params="sources: () => [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun'"></select-sources-btn>
 					<!-- /ko -->
 				</td>
 				<td data-bind="css: $component.classes('tbl-col'), text: source.sourceName"></td>
