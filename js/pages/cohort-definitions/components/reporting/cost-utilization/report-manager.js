@@ -252,7 +252,7 @@ define([
 					}
 				})
 
-				const lineHeight = 30;
+				const lineHeight = 50;
 				const linesCount = Math.max(...data.reduce((a, d) => {
 					if (d.genderConceptId === 8532) {
 						a[0]++;
@@ -298,6 +298,8 @@ define([
 					})
 
 				let svg = d3.select(target)
+					.attr("width", width)
+					.attr("height", height)
 					.attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
 					.append("g")
 					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
