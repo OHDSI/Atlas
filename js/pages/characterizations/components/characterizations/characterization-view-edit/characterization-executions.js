@@ -177,7 +177,7 @@ define([
 		generate(source) {
 			let confirmPromise;
 
-			this.stopping({...this.stopping(), [source.sourceKey]: false});
+			this.stopping({...this.stopping(), [source]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
 			if (!executionGroup) {
 				confirmPromise = new Promise((resolve, reject) => reject());
