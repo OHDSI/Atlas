@@ -166,7 +166,10 @@ define([
 
         copyCc() {
           CharacterizationService.copyCharacterization(this.characterizationId())
-            .then(res => commonUtils.routeTo(`cc/characterizations/${res.id}`));
+            .then(res => {
+                this.setupDesign(new CharacterizationAnalysis(res));
+                commonUtils.routeTo(`cc/characterizations/${res.id}`);
+						});
         }
 
         deleteCc() {
