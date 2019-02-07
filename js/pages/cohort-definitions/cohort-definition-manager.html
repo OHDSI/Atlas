@@ -1,7 +1,3 @@
-<!-- ko if: errorMsg -->
-<empty-state params="message: errorMsg"></empty-state>
-<!-- /ko -->
-<!-- ko ifnot: errorMsg -->
 <div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko ifnot: hasAccess -->
@@ -638,4 +634,3 @@
 <script type="text/html" id="failed-status-tmpl">
 	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $data.status"></a>
 </script>
-<!-- /ko -->

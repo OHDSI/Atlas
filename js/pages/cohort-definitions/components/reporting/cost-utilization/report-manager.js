@@ -168,7 +168,8 @@ define([
 			}
 			this.heelDataColumns = [{
 				title: 'Message Type',
-				data: 'attributeName'
+				data: 'attributeName',
+				width: "10%"
 			}, {
 				title: 'Message',
 				data: 'attributeValue'
@@ -239,9 +240,6 @@ define([
 				$('#cohortDefinitionChooser')
 					.modal('show');
 			};
-
-			this.donutWidth = 500;
-			this.donutHeight = 300;
 
 			this.datatables = {};
 
@@ -648,7 +646,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,											
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -763,7 +761,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,											
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -873,7 +871,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,											
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -987,7 +985,7 @@ define([
 											],
 											lengthChange: false,
 											deferRender: true,
-											destroy: true
+											destroy: true,											
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -1374,7 +1372,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true
+											destroy: true,											
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -1431,7 +1429,7 @@ define([
 
 									if (!drugEraPrevalence.empty) {
 										table_data = drugEraPrevalence.conceptPath.map((d, i) => {
-											let conceptDetails = this.conceptPath[i].split('||');
+											let conceptDetails = d.split('||');
 											return {
 												concept_id: drugEraPrevalence.conceptId[i],
 												atc1: conceptDetails[0],
@@ -1447,22 +1445,7 @@ define([
 												risk_difference: this.formatFixed(drugEraPrevalence.riskDiffAfterBefore[i])
 											};
 										});
-
-										$(document)
-											.on('click', '.treemap_table tbody tr', function () {
-												let datatable = this.datatables[$(this)
-													.parents('.treemap_table')
-													.attr('id')];
-												let data = datatable.data()[datatable.row(this)[0]];
-												if (data) {
-													let did = data.concept_id;
-													let concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
-														.parents('.treemap_table')
-														.attr('type'));
-												}
-											});
-
+										
 										let datatable = $('#drugs-by-index-table')
 											.DataTable({
 												order: [5, 'desc'],
@@ -1501,7 +1484,7 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true
+												destroy: true,												
 											});
 										this.datatables['drugs-by-index-table'] = datatable;
 
@@ -1518,7 +1501,7 @@ define([
 												return node.relative_risk;
 											},
 											getcolorrange: function () {
-												return colorbrewer.RR[3];
+												return colorbrewer.Reds[3];
 											},
 											getcolorscale: function () {
 												return [-6, 0, 5];
@@ -1567,7 +1550,7 @@ define([
 									let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.conditionOccurrencePrevalence, true));
 									if (!normalizedData.empty) {
 										table_data = normalizedData.conceptPath.map((d, i) => {
-											let conceptDetails = normalizedData.conceptPath[i].split('||');
+											let conceptDetails = d.split('||');
 											return {
 												concept_id: normalizedData.conceptId[i],
 												soc: conceptDetails[0],
@@ -1585,20 +1568,6 @@ define([
 											};
 										});
 
-										$(document)
-											.on('click', '.treemap_table tbody tr', () => {
-												let datatable = this.datatables[$(this)
-													.parents('.treemap_table')
-													.attr('id')];
-												let data = datatable.data()[datatable.row(this)[0]];
-												if (data) {
-													let did = data.concept_id;
-													let concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
-														.parents('.treemap_table')
-														.attr('type'));
-												}
-											});
 
 										let datatable = $('#condition_table')
 											.DataTable({
@@ -1643,13 +1612,13 @@ define([
 												],
 												lengthChange: false,
 												deferRender: true,
-												destroy: true
+												destroy: true,												
 											});
 										this.datatables['condition_table'] = datatable;
 
 										let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
 										let treemap = new atlascharts.treemap();
-										treemap.render(tree, '#conditionindex_treemap_container', width, height, {
+										treemap.render(tree, '#condition_treemap_container', width, height, {
 											onclick: (node) => {
 												this.drilldown(node.id, node.name, 'condition');
 											},
@@ -1660,7 +1629,7 @@ define([
 												return node.relative_risk;
 											},
 											getcolorrange: function () {
-												return colorbrewer.RR[3];
+												return colorbrewer.Reds[3];
 											},
 											getcolorscale: function () {
 												return [-6, 0, 5];
@@ -1708,7 +1677,7 @@ define([
 									let normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data.procedureOccurrencePrevalence, true));
 									if (!normalizedData.empty) {
 										table_data = normalizedData.conceptPath.map((d, i) => {
-											let conceptDetails = normalizedData.conceptPath[i].split('||');
+											let conceptDetails = d.split('||');
 											return {
 												concept_id: normalizedData.conceptId[i],
 												level_4: conceptDetails[0],
@@ -1724,21 +1693,6 @@ define([
 												risk_difference: this.formatFixed(normalizedData.riskDiffAfterBefore[i])
 											};
 										});
-
-										$(document)
-											.on('click', '.treemap_table tbody tr', () => {
-												let datatable = this.datatables[$(this)
-													.parents('.treemap_table')
-													.attr('id')];
-												let data = datatable.data()[datatable.row(this)[0]];
-												if (data) {
-													let did = data.concept_id;
-													let concept_name = data.name;
-													this.drilldown(did, concept_name, $(this)
-														.parents('.treemap_table')
-														.attr('type'));
-												}
-											});
 
 										let datatable = $('#procedure_table')
 											.DataTable({
@@ -1778,7 +1732,7 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true
+												destroy: true,												
 											});
 										this.datatables['procedure_table'] = datatable;
 
@@ -1795,7 +1749,7 @@ define([
 												return node.relative_risk;
 											},
 											getcolorrange: function () {
-												return colorbrewer.RR[3];
+												return colorbrewer.Reds[3];
 											},
 											getcolorscale: function () {
 												return [-6, 0, 5];
@@ -2144,18 +2098,19 @@ define([
 									deferRender: true,
 									destroy: true
 								});
+								const context = this;
 
 								$(document).on('click', '#care_site_table tbody tr', function () {
 									$('#care_site_table tbody tr.selected').removeClass('selected');
 									$(this).addClass('selected');
-
-									let institution_id = this.careSiteDatatable.data()[this.careSiteDatatable.row(this)[0]].institution;
+									
+									let institution_id = context.careSiteDatatable.data()[context.careSiteDatatable.row(this)[0]].institution;
 
 									let entropyData = ChartUtils.normalizeArray(data.filter(function (d) {
 										return d.insitution == institution_id;
 									}), true);
 									if (!entropyData.empty) {
-										let byDateSeries = this.mapDateDataToSeries(entropyData, {
+										let byDateSeries = context.mapDateDataToSeries(entropyData, {
 
 											dateField: 'date',
 											yValue: 'entropy',
@@ -2205,7 +2160,7 @@ define([
 
 				this.currentAgeGroup('Age group of: ' + oneBarData.covariance);
 				svg = d3.select("#dataCompletenessSvgDiv").append("svg");
-				margin = {
+				const margin = {
 					top: 20,
 					right: 20,
 					bottom: 30,
@@ -2213,8 +2168,8 @@ define([
 				}
 				svg.attr("width", 960)
 				svg.attr("height", 500)
-				width = svg.attr("width") - margin.left - margin.right
-				height = svg.attr("height") - margin.top - margin.bottom;
+				const width = svg.attr("width") - margin.left - margin.right
+				const height = svg.attr("height") - margin.top - margin.bottom;
 
 				let tooltip = d3.select("body").append("div").style('position', 'absolute')
 					.style('display', 'none')
@@ -2365,7 +2320,7 @@ define([
 							.remove();
 						if (conditionType) {
 							let donut = new atlascharts.donut();
-							donut.render(conditionType, "#conditionsByType", 260, 130, {
+							donut.render(conditionType, "#conditionsByType", size12.width, size12.height, {
 								margin: {
 									top: 5,
 									left: 5,
@@ -2374,7 +2329,7 @@ define([
 								},
 								colors: d3.scaleOrdinal()
 									.domain(conditionType)
-									.range(colorbrewer.Paired[10])
+									.range(colorbrewer.Spectral[10])
 							});
 						}
 
@@ -2477,7 +2432,7 @@ define([
 						// drug  type visualization
 						let donut = new atlascharts.donut();
 						let drugsByType = this.mapConceptData(data.drugsByType);
-						donut.render(drugsByType, "#drugsByType", this.donutWidth, this.donutHeight, {
+						donut.render(drugsByType, "#drugsByType", size12.width, size12.height, {
 							margin: {
 								top: 5,
 								left: 5,
@@ -2486,7 +2441,7 @@ define([
 							},
 							colors: d3.scaleOrdinal()
 								.domain(drugsByType)
-								.range(colorbrewer.Paired[10])
+								.range(colorbrewer.Spectral[10])
 						});
 
 						// prevalence by month
@@ -2889,7 +2844,7 @@ define([
 						// procedure type visualization
 						if (data.proceduresByType && data.proceduresByType.length > 0) {
 							let donut = new atlascharts.donut();
-							donut.render(this.mapConceptData(data.proceduresByType), "#proceduresByType", this.donutWidth, this.donutHeight, {
+							donut.render(this.mapConceptData(data.proceduresByType), "#proceduresByType", size12.width, size12.height, {
 								margin: {
 									top: 5,
 									left: 5,
@@ -2975,6 +2930,14 @@ define([
 				});
 			};
 
+			this.handleGenericRowClick = (event, drilldownType, tableId) => {
+				let dataTable = $(`#${tableId}`).DataTable();
+				let rowIndex = event.target._DT_CellIndex.row;
+				let rowData = dataTable.row(rowIndex).data();
+				
+				this.drilldown(rowData.concept_id, rowData.name, drilldownType);
+			}
+
 			this.drilldown = (id, name, type) => {
 				this.model.loadingReportDrilldown(true);
 				this.model.activeReportDrilldown(false);
@@ -2985,6 +2948,7 @@ define([
 						contentType: "application/json; charset=utf-8"
 					})
 					.done((result) => {
+						this.model.loadingReportDrilldown(false);
 						if (result && result.length > 0) {
 							$("#" + type + "DrilldownScatterplot")
 								.empty();
@@ -3048,8 +3012,7 @@ define([
 										}
 									}
 								]
-							});
-							this.model.loadingReportDrilldown(false);
+							});							
 						}
 					});
 			}

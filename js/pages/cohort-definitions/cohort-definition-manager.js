@@ -175,7 +175,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
-			this.errorMsg = ko.observable('');
 			this.generatedSql = {};
 			this.generatedSql.mssql = ko.observable('');
 			this.generatedSql.oracle = ko.observable('');
@@ -1216,12 +1215,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			setExpressionJson(value) {
 				this.modifiedJSON = value;
-			}
-
-			onRouterParamsChanged( params ) {
-				if (params !== undefined && params.errorMsg !== undefined) {
-					this.errorMsg(params.errorMsg);
-				}
 			}
 	}
 

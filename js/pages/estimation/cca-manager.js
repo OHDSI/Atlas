@@ -97,6 +97,8 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
+			this.isNewEntity = this.isNewEntityResolver();
+
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
 				return (
 					this.comparisons().length > 0 &&
@@ -189,6 +191,10 @@ define([
 			}
 	
 			this.init();
+		}
+
+		isNewEntityResolver() {
+			return ko.computed(() => this.estimationAnalysis() && this.estimationAnalysis().id() < 1);
 		}
 		
 		delete() {
