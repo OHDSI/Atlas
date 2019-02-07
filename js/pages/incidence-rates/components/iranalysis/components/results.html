@@ -76,8 +76,11 @@
 					<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: $component.msToTime(info().executionInfo.executionDuration)"></td>
 					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports'), click:$parent.selectSource">
 						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid">
-							<i class="fa fa-eye"></i> View Reports
+							<i class="fa fa-eye"></i> Reports
 						</button>
+						<button class="btn btn-sm btn-danger removeResult">
+                            <i class="fa fa-trash"></i>
+                        </button>
 					</td>
 				<!-- /ko -->
 				<!-- ko ifnot: info().executionInfo.status == "COMPLETE" -->
