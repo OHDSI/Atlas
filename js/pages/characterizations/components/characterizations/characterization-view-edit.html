@@ -9,8 +9,10 @@
             <div class="input-group-btn">
                 <button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
                 <button type="button" class="btn btn-primary" data-bind="click: $component.closeCharacterization"><i class="fa fa-times"></i></button>
+                <!-- ko ifnot: isNewEntity() -->
                 <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !$component.canCopy()}" title="Create a copy of this cohort characterization"><i class="fa fa-copy"></i></button>
                 <button type="button" class="btn btn-danger"  data-bind="click: $component.deleteCc, css: {disabled: !$component.isDeletePermitted()}"><i class="fa fa-trash-o"></i></button>
+                <!-- /ko -->
             </div>
         </div>
         <div data-bind="visible: !isNameCorrect()" class="empty-name-error">

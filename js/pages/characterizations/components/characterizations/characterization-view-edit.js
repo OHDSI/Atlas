@@ -53,6 +53,7 @@ define([
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
             this.canCopy = this.canCopyResolver();
+            this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
@@ -105,6 +106,12 @@ define([
 
         canCopyResolver() {
             return ko.computed(() => !this.designDirtyFlag().isDirty() && PermissionService.isPermittedCopyCC(this.characterizationId()));
+        }
+
+        isNewEntityResolver() {
+            return ko.computed(
+              () => this.design() && this.characterizationId() === 0
+            );
         }
 
         setupSection(section) {
