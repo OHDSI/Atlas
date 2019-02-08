@@ -103,9 +103,18 @@
 				<!-- /ko -->
 				<!-- /ko -->
 
+				<!-- ko ifnot: EventBus.errorMsg() -->
 				<div data-bind="if: currentViewAccessible" class="flexed">
 					<div id="currentComponent" class="flexed" data-bind='component: {name: $data.currentView, params: { routerParams: routerParams, model: $data } }'></div>
 				</div>
+				<!-- /ko -->
+
+				<div data-bind="if: EventBus.errorMsg()" class="flexed">
+					<div class="empty-state flexed">
+						<span class="empty-state empty-state__message" data-bind="text: EventBus.errorMsg()"></span>
+					</div>
+				</div>
+
 			</div>
 		</div>
 	</div>

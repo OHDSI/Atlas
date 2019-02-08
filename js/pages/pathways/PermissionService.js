@@ -48,9 +48,14 @@ define([
 		return AuthAPI.isPermitted(`pathway-analysis:${id}:export:get`);
 	}
 
+	function isPermittedCopy(id) {
+		return AuthAPI.isPermitted(`pathway-analysis:${id}:post`);
+	}
+
 
 	return {
 		isPermittedCreate,
+		isPermittedCopy,
 		isPermittedImport,
 		isPermittedList,
 		isPermittedLoad,

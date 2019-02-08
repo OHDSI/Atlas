@@ -13,7 +13,9 @@
                     <button class="btn btn-success" data-bind="click: save, enable: canSave()"><i class="fa fa-save"></i></button>
                 </div>
                 <button class="btn btn-primary" title="Close" data-bind="click: closeAnalysis"><i class="fa fa-times"></i></button>
+                <!-- ko ifnot: isNewEntity -->
                 <button class="btn btn-danger" title="Delete" data-bind="click: deleteFeature, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+                <!-- /ko -->
             </div>
         </div>
         <div data-bind="visible: !isNameCorrect()" class="empty-name-error">

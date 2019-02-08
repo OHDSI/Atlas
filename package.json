@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@ohdsi/atlascharts": "^1.6.0",
-    "@ohdsi/ui-toolbox": "^1.0.2",
+    "@ohdsi/ui-toolbox": "^1.0.3",
     "@ohdsi/visibilityjs": "^2.0.2",
     "bootstrap": "^3.3.7",
     "bootstrap-datetimepicker": "^0.0.7",
