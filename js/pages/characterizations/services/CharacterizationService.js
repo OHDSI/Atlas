@@ -83,6 +83,12 @@ define([
           .then(res => res.data);
     }
 
+    function cancelGeneration(ccId, sourceKey) {
+        return httpService
+          .doDelete(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourceKey)
+          .then(res => res.data);
+    }
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -98,5 +104,6 @@ define([
         loadCharacterizationExportDesignByGeneration,
         runGeneration,
         getPrevalenceStatsByGeneration,
+        cancelGeneration
     };
 });
