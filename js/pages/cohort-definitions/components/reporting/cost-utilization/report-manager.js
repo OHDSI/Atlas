@@ -252,16 +252,7 @@ define([
 					}
 				})
 
-				const lineHeight = 50;
-				const linesCount = Math.max(...data.reduce((a, d) => {
-					if (d.genderConceptId === 8532) {
-						a[0]++;
-					} else {
-						a[1]++;
-					}
-					return a;
-				}, [0, 0]));
-				
+				let lineHeight;				
 				let margin = {
 						top: 20,
 						right: 20,
@@ -269,7 +260,7 @@ define([
 						left: 60
 					},
 					width = 600 - margin.left - margin.right,
-					height = linesCount * lineHeight - margin.top - margin.bottom;
+					height = 100 * 20; // 100 age groups max
 
 				let x = d3.scaleLinear()
 					.range([0, width]);
@@ -314,6 +305,15 @@ define([
 				let bar = svg.selectAll(".bar")
 					.data(data)
 
+
+				lineHeight = y(99); // minimal offset
+				const getBarOffset = (d) => {
+					return y(d.ageGroup);
+				}
+				const getTextOffset = (d) => {
+					return getBarOffset(d) + lineHeight / 2;
+				}
+
 				bar.enter().append("rect")
 					.attr("class", function (d) {
 						return "bar bar--" + (d.personCount < 0 ? "negative" : "positive");
@@ -327,13 +327,11 @@ define([
 						}
 						return xPos - correction;
 					})
-					.attr("y", function (d) {
-						return y(d.ageGroup) - (height / 11);
-					})
+					.attr("y", getBarOffset)
 					.attr("width", function (d) {
 						return Math.max(Math.abs(x(d.personCount) - x(0)), 5);
 					})
-					.attr("height", height / 11)
+					.attr("height", lineHeight)
 					.on('click', d => {
 						let filteredProfiles = profiles.filter(s => {
 							return s.genderConceptId == d.genderConceptId && s.ageGroup == d.ageGroup;
@@ -354,9 +352,7 @@ define([
 						}
 						return xPos + correction;
 					})
-					.attr("y", function (d, i) {
-						return y(d.ageGroup - 5) - (height / 11);
-					})
+					.attr("y", getTextOffset)
 					.text(function (d) {
 						return Math.abs(d.personCount);
 					})
@@ -374,9 +370,7 @@ define([
 						}
 						return xPos + correction;
 					})
-					.attr("y", function (d, i) {
-						return y(d.ageGroup - 5) - (height / 11);
-					})
+					.attr("y", getTextOffset)
 					.text(function (d) {
 						return Math.abs(d.personCount);
 					})
