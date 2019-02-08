@@ -2205,15 +2205,16 @@ define([
 
 				this.currentAgeGroup('Age group of: ' + oneBarData.covariance);
 				svg = d3.select("#dataCompletenessSvgDiv").append("svg");
-				margin = {
+				svg.attr("width", 960)
+				svg.attr("height", 500)
+
+				let margin = {
 					top: 20,
 					right: 20,
 					bottom: 30,
 					left: 80
-				}
-				svg.attr("width", 960)
-				svg.attr("height", 500)
-				width = svg.attr("width") - margin.left - margin.right
+				},
+				width = svg.attr("width") - margin.left - margin.right,
 				height = svg.attr("height") - margin.top - margin.bottom;
 
 				let tooltip = d3.select("body").append("div").style('position', 'absolute')
@@ -2231,7 +2232,7 @@ define([
 				let g = svg.append("g")
 					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				let barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP +
+					let barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP +
 					"}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP +
 					"}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
 
@@ -2286,7 +2287,7 @@ define([
 					});
 			}
 
-			this.dataCompleteRowClick = function (d) {
+			this.dataCompleteRowClick = d => {
 				this.showHorizontalBar(d);
 			}
 
