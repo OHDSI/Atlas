@@ -52,12 +52,17 @@
 		<tbody data-bind="foreach: sources().filter(function(source) { return source.info() != null; })">
 			<tr>
 				<td data-bind="css: $component.classes('tbl-col')" nowrap>
-					<!-- ko if: info().executionInfo.status == "COMPLETE" -->
+					<!-- ko ifnot: $component.isInProgress($data) -->
 						<select-sources-btn params="sources: () => [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun'"></select-sources-btn>
+					<!-- /ko -->
+					<!-- ko if: $component.isInProgress($data) -->
+						<a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelExecution(source.sourceKey), attr: {disabled: $component.stoppingSources()[source.sourceKey] }">
+							<i class="fa fa-spinner fa-spin"></i> Cancel
+						</a>
 					<!-- /ko -->
 				</td>
 				<td data-bind="css: $component.classes('tbl-col'), text: source.sourceName"></td>
-				<!-- ko if: info().executionInfo.status == "COMPLETE" -->
+				<!-- ko ifnot: $component.isInProgress($data) -->
 					<!-- ko if: info().executionInfo.isValid -->
 						<!-- ko with: $component.getSummaryData(info().summaryList) -->
 						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' })">
@@ -70,7 +75,14 @@
 						<!-- /ko -->
 					<!-- /ko -->
 					<!-- ko ifnot: info().executionInfo.isValid -->
-					<td data-bind="css: $component.classes('tbl-col')" colspan="4"><div class="overflow-ellipsis" style="width:345px" data-bind="text: 'Error: ' + info().executionInfo.message, attr:{title: info().executionInfo.message}"></div></td>
+						<td data-bind="css: $component.classes('tbl-col')" colspan="5">
+							<!-- ko if: info().executionInfo.isCanceled -->
+								CANCELED
+							<!-- /ko -->
+							<!-- ko if: !info().executionInfo.isCanceled -->
+								<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage(source.sourceKey)">FAILED</a>
+							<!-- /ko -->
+						</td>
 					<!-- /ko -->
 					<td data-bind="css: $component.classes('tbl-col', 'exec-start', 'dataCol'), text: $component.formatDateTime(info().executionInfo.startTime)"></td>
 					<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: $component.msToTime(info().executionInfo.executionDuration)"></td>
@@ -83,7 +95,7 @@
                         </button>
 					</td>
 				<!-- /ko -->
-				<!-- ko ifnot: info().executionInfo.status == "COMPLETE" -->
+				<!-- ko if: $component.isInProgress($data) -->
 					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
 				<!-- /ko -->
 			</tr>
@@ -102,4 +114,11 @@
 <!-- /ko -->
 
 <div data-bind="visible: isLoading()" class="loading">loading</div>
-	
+
+
+<modal-exit-message params="{
+        showModal: $component.isExitMessageShown,
+        title: 'Execution Exit Message',
+        exitMessage: $component.exitMessage,
+    }">
+</modal-exit-message>

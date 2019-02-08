@@ -92,6 +92,7 @@ define([
 			this.activeTab = ko.observable(params.activeTab || 'definition');
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
+			this.stoppingSources = ko.observable({});
 
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
@@ -169,7 +170,7 @@ define([
 					if (source) {
 						// if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
 							source.info(info);
-						if (info.executionInfo.status != "COMPLETE")
+						if (constants.isInProgress(info.executionInfo.status))
 							hasPending = true;
 					}
 				});
@@ -297,9 +298,10 @@ define([
 
 		execute(sourceKey) {
 			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+			this.stoppingSources({ ...this.stoppingSources(), [sourceKey]: false });
 
 			if (sourceItem && sourceItem.info()) {
-				sourceItem.info().executionInfo.status = "PENDING";
+				sourceItem.info().executionInfo.status = constants.status.PENDING;
 				sourceItem.info.notifySubscribers();
 			}
 			else {
@@ -320,6 +322,14 @@ define([
 					jobDetailsService.createJob(data);
 					this.pollForInfo();
 				});
+		}
+
+		cancelExecution(sourceKey) {
+			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+			this.stoppingSources({ ...this.stoppingSources(), [sourceKey]: true });
+
+			IRAnalysisService
+				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
 		import() {

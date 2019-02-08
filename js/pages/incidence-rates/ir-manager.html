@@ -59,7 +59,7 @@
 																				{ event: 'click', selector: 'button.removeResult', callback: removeResult},
 																				{ event: 'click', selector: 'button.exportAnalysisCSV', callback: exportAnalysisCSV},
 																			]" class="tab-pane">
-				<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute"></ir-analysis-results>
+				<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources"></ir-analysis-results>
 			</div>		
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
                 <div class="paddedWrapper">

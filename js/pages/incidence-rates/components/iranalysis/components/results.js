@@ -2,35 +2,43 @@ define([
 	'knockout',
 	'jquery',
 	'text!./results.html',
+	'utils/AutoBind',
 	'services/IRAnalysis',
+	'pages/incidence-rates/const',
 	'services/MomentAPI',
 	'components/Component',
 	'utils/CommonUtils',
 	'atlas-state',
 	'databindings',
 	'less!./results.less',
-	'components/generation/select-sources-btn'
+	'components/generation/select-sources-btn',
+	'components/modal-exit-message'
 ], function (
 	ko,
 	$,
 	view,
+	AutoBind,
 	IRAnalysisService,
+	constants,
 	momentApi,
 	Component,
 	commonUtils,
 	sharedState
 ) {
 
-	class IRAnalysisResultsViewer extends Component {
+	class IRAnalysisResultsViewer extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
 			this.sources = params.sources;
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
-				disabled: IRAnalysisResultsViewer.isInProgress(s),
-				disabledReason: IRAnalysisResultsViewer.isInProgress(s) ? 'Generation is in progress' : null,
+				disabled: this.isInProgress(s),
+				disabledReason: this.isInProgress(s) ? 'Generation is in progress' : null,
 			})));
 			this.execute = params.execute;
+			this.cancelExecution = params.cancelExecution;
+			this.stoppingSources = params.stoppingSources;
+
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -43,6 +51,9 @@ define([
 			this.formatDateTime = function(date){
 				return momentApi.formatDateTime(new Date(date));
 			};
+
+			this.isExitMessageShown = ko.observable(false);
+			this.exitMessage = ko.observable();
 			
 			this.irCaption = ko.pureComputed(() => {
 				var multiplier = this.rateMultiplier();
@@ -69,19 +80,15 @@ define([
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
 			});
-
-			this.getSummaryData = this.getSummaryData.bind(this);
-			this.calculateRate = this.calculateRate.bind(this);
-			this.calculateProportion = this.calculateProportion.bind(this);
-			this.stepUp = this.stepUp.bind(this);
-			this.stepDown = this.stepDown.bind(this);
-			this.selectSource = this.selectSource.bind(this);
-			this.dispose = this.dispose.bind(this);
-			this.runGenerations = this.runGenerations.bind(this);
 		}
 
-		static isInProgress(sourceItem) {
-			return sourceItem.info() && ['RUNNING', 'PENDING'].includes(sourceItem.info().executionInfo.status);
+		isInProgress(sourceItem) {
+			return sourceItem.info() && constants.isInProgress(sourceItem.info().executionInfo.status);
+		}
+
+		showExitMessage(sourceKey) {
+			this.exitMessage(this.sources().find(si => si.source.sourceKey === sourceKey).info().executionInfo.message);
+			this.isExitMessageShown(true);
 		}
 		
 		getSummaryData(summaryList) {
