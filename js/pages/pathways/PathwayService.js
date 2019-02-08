@@ -56,6 +56,12 @@ define([
 			.doPost(`${servicePath}/${id}/generation/${sourcekey}`)
 			.then(res => res.data);
 	}
+
+	function cancelGeneration(id, sourceKey) {
+		return httpService
+			.doDelete(`${servicePath}/${id}/generation/${sourceKey}`)
+			.then(res => res.data);
+	}
 	
 	function loadExportDesign(id) {
 		return httpService
@@ -85,6 +91,7 @@ define([
 		getExecution,
 		getResults,
 		generate,
+		cancelGeneration,
 		loadExportDesign,
 		loadExportDesignByGeneration,
 		importPathwayDesign

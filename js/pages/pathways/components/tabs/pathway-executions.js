@@ -47,6 +47,8 @@ define([
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
+			this.stopping = ko.observable({});
+			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
@@ -72,7 +74,15 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
-					render: (s, p, d) => s === 'FAILED' ? `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>` : s,
+					render: (s, p, d) => {
+						if (s === 'FAILED') {
+							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
+						} else if (s === 'STOPPED') {
+							return 'CANCELED';
+						} else {
+							return s;
+						}
+					},
 				},
 				{
 					title: 'Duration',
@@ -166,6 +176,7 @@ define([
 
 		generate(source) {
 			let confirmPromise;
+			this.stopping({...this.stopping(), [source]: false});
 
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
 			if (!executionGroup) {
@@ -196,6 +207,13 @@ define([
 			if (submission && submission.exitMessage) {
 				this.exitMessage(submission.exitMessage);
 				this.isExitMessageShown(true);
+			}
+		}
+
+		cancelGenerate(source) {
+			this.stopping({...this.stopping(), [source.sourceKey]: true});
+			if (confirm('Do you want to stop generation?')) {
+				PathwayService.cancelGeneration(this.analysisId(), source.sourceKey);
 			}
 		}
 
