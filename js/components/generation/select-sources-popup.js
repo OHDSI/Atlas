@@ -33,7 +33,7 @@ define([
 				{
 					data: 'key',
 					class: this.classes({ element: 'col', modifiers: 'selector', extra: 'text-center' }),
-					render: () => renderers.renderCheckbox('selected'),
+					render: () => renderers.renderCheckbox('selected', false),
 					searchable: false,
 					orderable: false,
 				},
