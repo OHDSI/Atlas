@@ -517,10 +517,10 @@ define([
                 columns.push(this.getCountColumn(0, i));
                 columns.push(this.getPctColumn(0, i));
               }
-              strataNames.forEach((strataId) => {
+              for(let strataId of strataNames.keys()) {
                 columns.push(this.getCountColumn(strataId, i));
                 columns.push(this.getPctColumn(strataId, i));
-              });
+              }
             });
 
             analysis.strataOnly = analysis.strataOnly && data.length > 0;
