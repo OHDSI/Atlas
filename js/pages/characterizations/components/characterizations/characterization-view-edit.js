@@ -52,6 +52,7 @@ define([
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
+            this.canCopy = this.canCopyResolver();
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
@@ -101,6 +102,10 @@ define([
             return ko.computed(
                 () => PermissionService.isPermittedDeleteCC(this.characterizationId())
             );
+        }
+
+        canCopyResolver() {
+            return ko.computed(() => !this.designDirtyFlag().isDirty() && PermissionService.isPermittedCopyCC(this.characterizationId()));
         }
 
         isNewEntityResolver() {
@@ -157,6 +162,14 @@ define([
                         this.loading(false);
                     });
             }
+        }
+
+        copyCc() {
+          CharacterizationService.copyCharacterization(this.characterizationId())
+            .then(res => {
+                this.setupDesign(new CharacterizationAnalysis(res));
+                commonUtils.routeTo(`cc/characterizations/${res.id}`);
+						});
         }
 
         deleteCc() {

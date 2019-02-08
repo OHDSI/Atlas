@@ -27,6 +27,10 @@ define([
 		return httpService.doPut(`${servicePath}/${id}`, design).then(res => res.data);
 	}
 
+	function copy(id) {
+		return httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
+	}
+
 	function del(id) {
 		return httpService
 			.doDelete(`${servicePath}/${id}`)
@@ -84,6 +88,7 @@ define([
 	return {
 		list,
 		create,
+		copy,
 		load,
 		save,
 		del,

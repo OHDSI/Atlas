@@ -48,6 +48,10 @@ define([
         return AuthAPI.isPermitted(`cohort-characterization:${id}:export:get`);
     }
 
+    function isPermittedCopyCC(id) {
+        return AuthAPI.isPermitted(`cohort-characterization:${id}:post`);
+    }
+
     //
 
     function isPermittedGetFaList() {
@@ -82,6 +86,7 @@ define([
         isPermittedGetCCGenerationResults,
         isPermittedExportGenerationDesign,
         isPermittedExportCC,
+        isPermittedCopyCC,
         //
         isPermittedGetFaList,
         isPermittedCreateFa,
