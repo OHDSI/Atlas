@@ -77,6 +77,7 @@ define([
                 return this.dataDirtyFlag().isDirty() && this.areRequiredFieldsFilled() && (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
             this.canDelete = this.isDeletePermittedResolver();
+            this.isNewEntity = this.isNewEntityResolver();
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
@@ -134,6 +135,10 @@ define([
 
         isDeletePermittedResolver(id) {
             return ko.computed(() => PermissionService.isPermittedDeleteFa(this.featureId()));
+        }
+
+        isNewEntityResolver() {
+            return ko.computed(() => this.featureId() === 0);
         }
 
         areRequiredFieldsFilled() {

@@ -33,6 +33,13 @@
 	</div>
 </atlas-modal>
 
+<modal-exit-message params="{
+        showModal: $component.isExitMessageShown,
+        title: 'Execution Exit Message',
+        exitMessage: $component.exitMessage,
+    }">
+</modal-exit-message>
+
 <script type="text/html" id="pathway-view-edit-execution-group">
 	<div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
         <div data-bind="css: classes('heading')">

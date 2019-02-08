@@ -24,7 +24,7 @@ define([
 	Component,
 	AutoBind,
 	httpService,
-	contstants,
+	constants,
 	commonUtils,
 	vocabularyProvider
 ) {
@@ -294,7 +294,7 @@ define([
 		}
 
 		getVocabularies() {
-			httpService.doGet(contstants.apiPaths.vocabularies())
+			httpService.doGet(constants.apiPaths.vocabularies())
 				.then(({ data }) => {
 					const vocabularies = data.sort(function (a, b) {
 						return (a.VOCABULARY_ID.toUpperCase() < b.VOCABULARY_ID.toUpperCase()) ? -1 : (a.VOCABULARY_ID.toUpperCase() > b.VOCABULARY_ID.toUpperCase()) ? 1 : 0;
@@ -308,7 +308,7 @@ define([
 		}
 
 		getDomains() {
-			httpService.doGet(contstants.apiPaths.domains())
+			httpService.doGet(constants.apiPaths.domains())
 				.then(({ data }) => {
 					this.domains(data);
 				})
