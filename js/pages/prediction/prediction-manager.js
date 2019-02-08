@@ -29,6 +29,7 @@ define([
 	'featureextraction/components/TemporalCovariateSettingsEditor',
 	'components/cohort-definition-browser',
 	'faceted-datatable',
+	'./components/plp-generation',
 	'less!./prediction-manager.less',
 ], function (
 	ko, 
