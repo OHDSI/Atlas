@@ -6,12 +6,10 @@
 </button>
 
 <!-- ko if: $component.shouldSuggestSelection() -->
-    <modal-pick-options params="{
+    <select-sources-popup params="{
 		showModal: $component.isPopupShown,
-		title: 'Select sources',
-		extraClasses: $component.classes('popup'),
-		options: $component.sourceOptions,
-		submitLabel: 'Run',
+		sources: $component.sources,
+		selectedSources: $component.selectedSources,
 		submit: $component.generate
-	}"></modal-pick-options>
+	}"></select-sources-popup>
 <!-- /ko -->

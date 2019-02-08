@@ -6,6 +6,7 @@ define([
 	'utils/CommonUtils',
 	'less!./select-sources-btn.less',
 	'components/modal-pick-options',
+	'./select-sources-popup',
 ], function(
 	ko,
 	view,
@@ -22,18 +23,14 @@ define([
 			this.label = typeof params.label === 'undefined' ? 'Generate' : params.label;
 			this.wasGenerated = typeof params.wasGenerated === 'undefined' ? false : params.wasGenerated;
 
-			this.sources = params.sources;
-			this.selectedSources = ko.observableArray(this.sources().length === 1 ? [this.sources()[0].sourceKey] : []);
-
-			this.sourceOptions = ko.computed(() => ({
-				options: this.sources().map(s => ({
-					label: s.sourceName,
-					value: s.sourceKey,
-					disabled: typeof s.disabled !== 'undefined' ? s.disabled : false,
-					disabledReason: s.disabledReason,
-				})),
-				selectedOptions: this.selectedSources,
-			}));
+			this.sources = ko.computed(() => params.sources().map(s => ({
+				name: s.sourceName,
+				key: s.sourceKey,
+				disabled: typeof s.disabled !== 'undefined' ? s.disabled : false,
+				disabledReason: s.disabledReason,
+				selected: ko.observable()
+			})));
+			this.selectedSources = ko.observableArray((this.sources().length === 1 && !this.sources().disabled) ? [this.sources()[0].key] : []);
 			this.callback = params.callback;
 
 			this.shouldSuggestSelection = ko.computed(() => this.sources().length > 1);
