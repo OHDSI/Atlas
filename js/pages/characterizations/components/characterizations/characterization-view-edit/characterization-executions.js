@@ -17,7 +17,8 @@ define([
 	'services/Poll',
 	'less!./characterization-executions.less',
 	'./characterization-results',
-	'databindings/tooltipBinding'
+	'databindings/tooltipBinding',
+	'components/modal-exit-message',
 ], function(
 	ko,
 	CharacterizationService,
@@ -53,6 +54,8 @@ define([
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
+			this.isExitMessageShown = ko.observable(false);
+			this.exitMessage = ko.observable();
 
 			this.execColumns = [{
 					title: 'Date',
@@ -75,6 +78,7 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
+					render: (s, p, d) => s === 'FAILED' ? `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>` : s,
 				},
 				{
 					title: 'Duration',
@@ -210,6 +214,15 @@ define([
 					this.executionDesign(res);
 					this.loading(false);
 				});
+		}
+
+		showExitMessage(sourceKey, id) {
+			const group = this.executionGroups().find(g => g.sourceKey === sourceKey) || { submissions: ko.observableArray() };
+			const submission = group.submissions().find(s => s.id === id);
+			if (submission && submission.exitMessage) {
+				this.exitMessage(submission.exitMessage);
+				this.isExitMessageShown(true);
+			}
 		}
 
 		toggleSection(idx) {

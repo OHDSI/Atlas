@@ -52,6 +52,7 @@ define([
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
+            this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
@@ -99,6 +100,12 @@ define([
         isDeletePermittedResolver() {
             return ko.computed(
                 () => PermissionService.isPermittedDeleteCC(this.characterizationId())
+            );
+        }
+
+        isNewEntityResolver() {
+            return ko.computed(
+              () => this.design() && this.characterizationId() === 0
             );
         }
 

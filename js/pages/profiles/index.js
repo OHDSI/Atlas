@@ -7,7 +7,7 @@ define(
       buildRoutes,
       navUrl: () => '#/profiles',
       icon: 'user',
-			statusCss: () => ''
+        statusCss: () => ''
     };
   }
 );

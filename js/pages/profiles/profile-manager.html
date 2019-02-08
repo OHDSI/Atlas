@@ -76,7 +76,7 @@
 				</div>
 			</div>
 		</form>
-		<div style="margin-top:5px;" data-bind="visible:person, with:person">
+		<div style="margin-top:5px;" data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person">
 			<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
 			<span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
 			<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -85,40 +85,43 @@
 		</div>
 	</div>
 
-<!-- ko if:loadingPerson -->
-<loading params="status: loadingStatus"></loading>
-<!-- /ko -->
+	<!-- ko if:loadingPerson -->
+	<loading params="status: loadingStatus"></loading>
+	<!-- /ko -->
+	
+	<div data-bind="visible: cantFindPerson()" class="loading">Can't find
+		<span data-bind="text:personId" />
+	</div>
 
-<div data-bind="visible: cantFindPerson" class="loading">Can't find
-	<span data-bind="text:personId" />
-</div>
-
-<div data-bind="css: classes()">
-	<div data-bind="css: classes({ element: 'profile-control', extra: 'row' })">
-		<div data-bind="if: person, attr: { class: 'col-xs-12'}">
-			<div data-bind="
-				css: classes('chart')
-				attr: {
-						style:`padding-bottom:${aspectRatio()*100}%`
-					},
-				visible:showSection.profileChart,
-				profileChart:{
-						xfObservable:xfObservable,
-						highlightRecs:highlightRecs,
-						aspectRatio: aspectRatio,
-						short: showSection.datatable(),
-						shadedRegions: shadedRegions,
-						xfDimensions: xfDimensions
-					}"></div>
-			<div data-bind="css: classes('profile-manager-table')">
-				<faceted-datatable data-bind="visible:showSection.datatable" params="{
-							reference: personRecords,
-							xfObservable: xfObservable,
-							columns: columns,
-							options: options,
-							order: [[3,'asc']],
-							searchFilter: searchHighlight
-						}"></faceted-datatable>
+	<div data-bind="visible: !cantFindPerson() && !loadingPerson()">
+		<div data-bind="css: classes()">
+			<div data-bind="css: classes({ element: 'profile-control', extra: 'row' })">
+				<div data-bind="if: person, attr: { class: 'col-xs-12'}">
+					<div data-bind="
+					css: classes('chart')
+					attr: {
+							style:`padding-bottom:${aspectRatio()*100}%`
+						},
+					visible:showSection.profileChart,
+					profileChart:{
+							xfObservable:xfObservable,
+							highlightRecs:highlightRecs,
+							aspectRatio: aspectRatio,
+							short: showSection.datatable(),
+							shadedRegions: shadedRegions,
+							xfDimensions: xfDimensions
+						}"></div>
+					<div data-bind="css: classes('profile-manager-table')">
+						<faceted-datatable data-bind="visible:showSection.datatable" params="{
+								reference: personRecords,
+								xfObservable: xfObservable,
+								columns: columns,
+								options: options,
+								order: [[3,'asc']],
+								searchFilter: searchHighlight
+							}"></faceted-datatable>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -14,7 +14,8 @@ define([
 	'services/Source',
 	'lodash',
 	'services/Poll',
-	'less!./pathway-executions.less'
+	'less!./pathway-executions.less',
+	'components/modal-exit-message',
 ], function(
 	ko,
 	PathwayService,
@@ -47,6 +48,9 @@ define([
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
 
+			this.isExitMessageShown = ko.observable();
+			this.exitMessage = ko.observable();
+
 			this.execColumns = [{
 					title: 'Date',
 					className: this.classes('col-exec-date'),
@@ -68,6 +72,7 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
+					render: (s, p, d) => s === 'FAILED' ? `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>` : s,
 				},
 				{
 					title: 'Duration',
@@ -183,6 +188,15 @@ define([
 				.then(() => PathwayService.generate(this.analysisId(), source))
 				.then(() => this.loadData())
 				.catch(() => {});
+		}
+
+		showExitMessage(sourceKey, id) {
+			const group = this.executionGroups().find(g => g.sourceKey === sourceKey) || { submissions: ko.observableArray() };
+			const submission = group.submissions().find(s => s.id === id);
+			if (submission && submission.exitMessage) {
+				this.exitMessage(submission.exitMessage);
+				this.isExitMessageShown(true);
+			}
 		}
 
 		showExecutionDesign(executionId) {
