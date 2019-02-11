@@ -80,6 +80,11 @@ define([
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
 			});
+
+			this.isExecutionDisabled = ko.computed(() => {
+				return this.dirtyFlag().isDirty();
+			});
+			this.executionDisabledReason = () => 'Save changes to generate';
 		}
 
 		isInProgress(sourceItem) {

@@ -25,6 +25,8 @@ define([
 
 			this.sources = params.sources || ko.observableArray();
 			this.selectedSources = params.selectedSources || ko.observableArray();
+			this.disabled = typeof params.disabled !== 'undefined' ? params.disabled : () => false;
+			this.disabledReason = params.disabledReason;
 			this.callback = params.callback;
 
 			this.shouldSuggestSelection = ko.computed(() => this.sources().length > 1);
