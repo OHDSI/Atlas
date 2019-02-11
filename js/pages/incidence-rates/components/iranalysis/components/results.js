@@ -151,8 +151,8 @@ define([
 			});
 		};
 
-		runGenerations(sourceKeys) {
-			sourceKeys.forEach(key => this.execute(key));
+		runGenerations(selectedSources) {
+			selectedSources.forEach(source => this.execute(source.sourceKey));
 		}
 
 		closeReport() {

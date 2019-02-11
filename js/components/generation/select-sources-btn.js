@@ -23,14 +23,8 @@ define([
 			this.label = typeof params.label === 'undefined' ? 'Generate' : params.label;
 			this.wasGenerated = typeof params.wasGenerated === 'undefined' ? false : params.wasGenerated;
 
-			this.sources = ko.computed(() => params.sources().map(s => ({
-				name: s.sourceName,
-				key: s.sourceKey,
-				disabled: typeof s.disabled !== 'undefined' ? s.disabled : false,
-				disabledReason: s.disabledReason,
-				selected: ko.observable()
-			})));
-			this.selectedSources = ko.observableArray((this.sources().length === 1 && !this.sources().disabled) ? [this.sources()[0].key] : []);
+			this.sources = params.sources || ko.observableArray();
+			this.selectedSources = params.selectedSources || ko.observableArray();
 			this.callback = params.callback;
 
 			this.shouldSuggestSelection = ko.computed(() => this.sources().length > 1);
@@ -46,10 +40,12 @@ define([
 		}
 
 		generate() {
-			if (this.selectedSources().length === 0) {
+			const selectedSources = ko.utils.unwrapObservable(this.selectedSources);
+			
+			if (selectedSources.length === 0) {
 				alert('Pick at least one source to generate')
 			}
-			this.callback(this.selectedSources());
+			this.callback(selectedSources);
 			this.hidePopup();
 		}
 

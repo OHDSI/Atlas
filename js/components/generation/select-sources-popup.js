@@ -24,14 +24,13 @@ define([
 
 			this.showModal = params.showModal;
 			this.selectedSources = params.selectedSources;
-			this.sources = ko.computed(() => params.sources().map(s => ({ ...s, selected: this.selectedSources().includes(s.key) })));
+			this.sourceOptions = ko.computed(() => params.sources().map(s => ({ source: s, selected: ko.computed(() => this.selectedSources().includes(s)) })));
 			this.submit = params.submit;
 
 			this.tableDom = "Bfrt";
 
 			this.columns = [
 				{
-					data: 'key',
 					class: this.classes({ element: 'col', modifiers: 'selector', extra: 'text-center' }),
 					render: () => renderers.renderCheckbox('selected', false),
 					searchable: false,
@@ -40,43 +39,38 @@ define([
 				{
 					class: this.classes({ element: 'col', modifiers: 'name' }),
 					title: 'Name',
-					data: 'name',
-					render: (d, t, r) => `<span>${d}` + (r.disabledReason ? `<span class="${this.classes('disabled-reason')}">(${r.disabledReason})</span>` : '') + '</span>',
+					data: 'source.sourceName',
+					render: (d, t, r) => `<span>${d}` + (r.source.disabledReason ? `<span class="${this.classes('disabled-reason')}">(${r.source.disabledReason})</span>` : '') + '</span>',
 				}
 			];
 
 			this.buttons = [
 				{
-					text: 'Select All', action: () => this.toggleSelected(true), className: this.classes({ element: 'select-all', extra: 'btn btn-sm btn-success' }),
+					text: 'Select All', action: () => this.toggleAll(true), className: this.classes({ element: 'select-all', extra: 'btn btn-sm btn-success' }),
 					init: this.removeClass('dt-button')
 				},
 				{
-					text: 'Deselect All', action: () => this.toggleSelected(false), className: this.classes({ element: 'deselect-all', extra: 'btn btn-sm btn-primary' }),
+					text: 'Deselect All', action: () => this.toggleAll(false), className: this.classes({ element: 'deselect-all', extra: 'btn btn-sm btn-primary' }),
 					init: this.removeClass('dt-button')
 				}
 			];
 
 			this.onRowCreated = function( row, data, dataIndex ) {
-				data.disabled && row.classList.add('disabled');
+				data.source.disabled && row.classList.add('disabled');
 			};
 		}
 
-		isSelected(key) {
-			return this.selectedSources().includes(key);
-		}
-
-		toggle(source) {
-			if (!source.disabled) {
+		toggle(sourceOption) {
+			if (!sourceOption.source.disabled) {
 				const ss = this.selectedSources();
-				const key = source.key;
-				ss.includes(key) ? ss.splice( ss.indexOf(key), 1 ) : ss.push(key);
+				ss.includes(sourceOption.source) ? ss.splice( ss.indexOf(sourceOption.source), 1 ) : ss.push(sourceOption.source);
 				this.selectedSources(ss);
 			}
 		}
 
 		toggleAll(selected) {
 			if (selected) {
-				this.selectedSources(this.sources().filter(s => !s.disabled).map(s => s.key));
+				this.selectedSources(this.sourceOptions().filter(o => !o.source.disabled).map((o) => o.source));
 			} else {
 				this.selectedSources([]);
 			}
