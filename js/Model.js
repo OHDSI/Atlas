@@ -705,7 +705,8 @@ define(
 				conceptSetService.loadConceptSet(conceptSetId)
 					.then((conceptset) => {
 						return conceptSetService.loadConceptSetExpression(conceptSetId)
-							.then((expression) => {
+							.then((data) => {
+								const expression = _.isEmpty(data) ? { items: [] } : data;
 								this.setConceptSet(conceptset, expression.items);
 								this.handleViewChange(viewToShow, { conceptSetId, mode });
 								return this.resolveConceptSetExpression()
