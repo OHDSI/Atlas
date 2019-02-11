@@ -24,7 +24,7 @@ define([
 
 			this.showModal = params.showModal;
 			this.selectedSources = params.selectedSources;
-			this.sources = ko.computed(() => params.sources().map(s => ({ ...s, selected: ko.computed(() => this.selectedSources().includes(s.source)) })));
+			this.sourceOptions = ko.computed(() => params.sources().map(s => ({ source: s, selected: ko.computed(() => this.selectedSources().includes(s)) })));
 			this.submit = params.submit;
 
 			this.tableDom = "Bfrt";
@@ -39,8 +39,8 @@ define([
 				{
 					class: this.classes({ element: 'col', modifiers: 'name' }),
 					title: 'Name',
-					data: 'name',
-					render: (d, t, r) => `<span>${d}` + (r.disabledReason ? `<span class="${this.classes('disabled-reason')}">(${r.disabledReason})</span>` : '') + '</span>',
+					data: 'source.sourceName',
+					render: (d, t, r) => `<span>${d}` + (r.source.disabledReason ? `<span class="${this.classes('disabled-reason')}">(${r.source.disabledReason})</span>` : '') + '</span>',
 				}
 			];
 
@@ -56,12 +56,12 @@ define([
 			];
 
 			this.onRowCreated = function( row, data, dataIndex ) {
-				data.disabled && row.classList.add('disabled');
+				data.source.disabled && row.classList.add('disabled');
 			};
 		}
 
 		toggle(sourceOption) {
-			if (!sourceOption.disabled) {
+			if (!sourceOption.source.disabled) {
 				const ss = this.selectedSources();
 				ss.includes(sourceOption.source) ? ss.splice( ss.indexOf(sourceOption.source), 1 ) : ss.push(sourceOption.source);
 				this.selectedSources(ss);
@@ -70,7 +70,7 @@ define([
 
 		toggleAll(selected) {
 			if (selected) {
-				this.selectedSources(this.sources().filter(s => !s.disabled).map((o) => o.source));
+				this.selectedSources(this.sourceOptions().filter(o => !o.source.disabled).map((o) => o.source));
 			} else {
 				this.selectedSources([]);
 			}

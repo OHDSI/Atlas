@@ -23,16 +23,11 @@ define([
 			this.label = typeof params.label === 'undefined' ? 'Generate' : params.label;
 			this.wasGenerated = typeof params.wasGenerated === 'undefined' ? false : params.wasGenerated;
 
-			this.sourceOptions = ko.computed(() => (ko.utils.unwrapObservable(params.sources) || []).map(s => ({
-				name: s.sourceName,
-				disabled: typeof s.disabled !== 'undefined' ? s.disabled : false,
-				disabledReason: s.disabledReason,
-				source: s
-			})));
+			this.sources = params.sources || ko.observableArray();
 			this.selectedSources = params.selectedSources || ko.observableArray();
 			this.callback = params.callback;
 
-			this.shouldSuggestSelection = ko.computed(() => this.sourceOptions().length > 1);
+			this.shouldSuggestSelection = ko.computed(() => this.sources().length > 1);
 			this.isPopupShown = ko.observable(false);
 		}
 
