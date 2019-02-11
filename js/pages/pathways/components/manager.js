@@ -49,6 +49,8 @@ define([
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
+			this.isNewEntity = this.isNewEntityResolver();
+			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
 			this.componentParams = {
@@ -102,7 +104,14 @@ define([
 						() => (this.analysisId() ? PermissionService.isPermittedDelete(this.analysisId()) : false)
 				);
 		}
-		
+
+		isNewEntityResolver() {
+			return ko.computed(() => this.design() && this.analysisId() === 0);
+		}
+
+		canCopyResolver() {
+			return ko.computed(() => !this.dirtyFlag().isDirty() && PermissionService.isPermittedCopy(this.analysisId()));
+		}
 
 		async load(id) {
 			if (this.design() && (this.design().id || 0 == id)) return; // this design is already loaded.
@@ -129,6 +138,12 @@ define([
 				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
 				this.loading(false);
 			}
+		}
+
+		async copyPathway() {
+			const copiedAnalysis = await PathwayService.copy(this.design().id);
+			this.setupDesign(new PathwayAnalysis(copiedAnalysis));
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(copiedAnalysis.id, 'design'));
 		}
 
 		async del() {

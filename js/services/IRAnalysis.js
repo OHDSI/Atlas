@@ -101,6 +101,9 @@ define(function (require, exports) {
 		return promise
 			.then(({ data }) => data)
 			.catch(response => {
+				if (response.status === 404) {
+					throw new Error("Not found entity");
+				}
 				authApi.handleAccessDenied(response);
 				return response;
 			});
