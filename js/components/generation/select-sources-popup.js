@@ -24,14 +24,13 @@ define([
 
 			this.showModal = params.showModal;
 			this.selectedSources = params.selectedSources;
-			this.sources = ko.computed(() => params.sources().map(s => ({ ...s, selected: this.selectedSources().includes(s.key) })));
+			this.sources = ko.computed(() => params.sources().map(s => ({ ...s, selected: ko.computed(() => this.selectedSources().includes(s.source)) })));
 			this.submit = params.submit;
 
 			this.tableDom = "Bfrt";
 
 			this.columns = [
 				{
-					data: 'key',
 					class: this.classes({ element: 'col', modifiers: 'selector', extra: 'text-center' }),
 					render: () => renderers.renderCheckbox('selected', false),
 					searchable: false,
@@ -47,11 +46,11 @@ define([
 
 			this.buttons = [
 				{
-					text: 'Select All', action: () => this.toggleSelected(true), className: this.classes({ element: 'select-all', extra: 'btn btn-sm btn-success' }),
+					text: 'Select All', action: () => this.toggleAll(true), className: this.classes({ element: 'select-all', extra: 'btn btn-sm btn-success' }),
 					init: this.removeClass('dt-button')
 				},
 				{
-					text: 'Deselect All', action: () => this.toggleSelected(false), className: this.classes({ element: 'deselect-all', extra: 'btn btn-sm btn-primary' }),
+					text: 'Deselect All', action: () => this.toggleAll(false), className: this.classes({ element: 'deselect-all', extra: 'btn btn-sm btn-primary' }),
 					init: this.removeClass('dt-button')
 				}
 			];
@@ -61,22 +60,17 @@ define([
 			};
 		}
 
-		isSelected(key) {
-			return this.selectedSources().includes(key);
-		}
-
-		toggle(source) {
-			if (!source.disabled) {
+		toggle(sourceOption) {
+			if (!sourceOption.disabled) {
 				const ss = this.selectedSources();
-				const key = source.key;
-				ss.includes(key) ? ss.splice( ss.indexOf(key), 1 ) : ss.push(key);
+				ss.includes(sourceOption.source) ? ss.splice( ss.indexOf(sourceOption.source), 1 ) : ss.push(sourceOption.source);
 				this.selectedSources(ss);
 			}
 		}
 
 		toggleAll(selected) {
 			if (selected) {
-				this.selectedSources(this.sources().filter(s => !s.disabled).map(s => s.key));
+				this.selectedSources(this.sources().filter(s => !s.disabled).map((o) => o.source));
 			} else {
 				this.selectedSources([]);
 			}

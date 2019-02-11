@@ -8,7 +8,7 @@
 <!-- ko if: $component.shouldSuggestSelection() -->
     <select-sources-popup params="{
 		showModal: $component.isPopupShown,
-		sources: $component.sources,
+		sources: $component.sourceOptions,
 		selectedSources: $component.selectedSources,
 		submit: $component.generate
 	}"></select-sources-popup>
