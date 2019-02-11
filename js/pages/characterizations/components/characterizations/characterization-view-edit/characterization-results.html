@@ -61,7 +61,7 @@
                                                 <th data-bind="css: $component.classes('th-cov-pct'), attr: { rowspan: $parent.stratified ? 2 : 1 }">%</th>
                                             <!-- /ko -->
                                             <!-- ko foreach: $parent.strataNames -->
-                                            <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: strataName"></th>
+                                            <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: $data"></th>
                                             <!-- /ko -->
                                         <!-- /ko -->
                                     </tr>
