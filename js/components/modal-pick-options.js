@@ -11,7 +11,7 @@ define([
         this.showModal = params.showModal;
         this.title = params.title;
         // options object looks like:
-        // { 
+        // {
         //     section1: { title:'Section One Title', options: array, selectedOptions: observableArray }
         //     section2: { title:'Second Section Title', options: array, selectedOptions: observableArray }
         // }

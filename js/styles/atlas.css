@@ -994,14 +994,6 @@ pre {
   border-radius: 0
 }
 
-.ir-header {
-  display: block;
-}
-
-.ir-name {
-  width: 600px !important;
-}
-
 .fe-save-btn {
   display: inline-block;
 }

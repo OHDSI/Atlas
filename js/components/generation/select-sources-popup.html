@@ -1,0 +1,24 @@
+<atlas-modal params="showModal: $component.showModal,
+										 title: 'Select sources',
+										 dialogExtraClasses: [$component.classes('dialog')],
+										 data: {
+										 	sourceOptions: $component.sourceOptions,
+										 	columns: $component.columns,
+										 	buttons: $component.buttons,
+										 	tableDom: $component.tableDom,
+										 	toggle: $component.toggle,
+										 	onRowCreated: $component.onRowCreated,
+										 	selectedSources: $component.selectedSources,
+										 	generate: $component.generate,
+										 	classes: $component.classes
+										 }">
+	<faceted-datatable
+	    data-bind="css: classes('tbl')"
+        params="order: [1, 'asc'], reference: sourceOptions, columns: columns, buttons: buttons, dom: tableDom, options: { pageLength: 50 }, createdRow: onRowCreated, rowClick: toggle "
+    ></faceted-datatable>
+    <div data-bind="css: classes('footer')">
+        <button type="button" data-bind="click: generate, css: classes({ element: 'gen-btn', extra: 'btn btn-sm btn-primary' }), disable: selectedSources().length <= 0">
+            Generate
+        </button>
+    </div>
+</atlas-modal>
