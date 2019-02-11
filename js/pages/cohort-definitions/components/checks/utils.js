@@ -6,7 +6,7 @@ define(['knockout', './const'], function(ko, consts){
   }
 
    function renderMessage(value, c, data) {
-    if ((data.type === 'ConceptSetWarning' && data.conceptSetId) ||
+    if ((data.type === 'ConceptSetWarning' && Number.isInteger(data.conceptSetId)) ||
       (data.type === 'IncompleteRuleWarning' && data.ruleName)) {
       return '<span class="warning-message">' + value +
         '</span><a href="#" class="btn-fix">Fix It</a>';

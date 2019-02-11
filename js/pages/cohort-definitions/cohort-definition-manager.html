@@ -1,7 +1,3 @@
-<!-- ko if: errorMsg -->
-<empty-state params="message: errorMsg"></empty-state>
-<!-- /ko -->
-<!-- ko ifnot: errorMsg -->
 <div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko ifnot: hasAccess -->
@@ -393,7 +389,7 @@
 							</td>
 							<td class="nowrap" data-bind="text:name"></td>
 							<td class="statusIndicator text-right nowrap">
-								<span data-bind="text: $component.getStatusMessage($data)"></span>
+								<span data-bind="template: { name: $component.getStatusTemplate, data: { item: $data, status: $component.getStatusMessage($data)} }"></span>
 							</td>
 							<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.personCount)">
 							</td>
@@ -621,7 +617,20 @@
 		submit: $component.generateHealthcareAnalyses,
 	}"></modal-pick-options>
 	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>
+
+	<modal-exit-message params="{
+		showModal: isExitMessageShown,
+		title: 'Generation Exit Message',
+		exitMessage: $component.exitMessage,
+	}"></modal-exit-message>
 </div>
 
 <conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
-<!-- /ko -->
+
+<script type="text/html" id="success-status-tmpl">
+	<span data-bind="text: $data.status"></span>
+</script>
+
+<script type="text/html" id="failed-status-tmpl">
+	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $data.status"></a>
+</script>
