@@ -6,14 +6,14 @@
     <div class="input-group">
       <input class="form-control" id="txtConceptSetName" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameCorrect() }"/>
       <div class="input-group-btn">
-        <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() }"><i class="fa fa-save"></i></button>
-        <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet"><i class="fa fa-times"></i></button>
-        <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() }">
+        <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() || isProcessing()}">
           <i class="fa fa-copy"></i>
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
-        <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() }">Optimize</button>
-        <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete() }"><i class="fa fa-trash-o"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() || isProcessing() }">Optimize</button>
+        <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
         <!-- /ko -->
       </div>
     </div>

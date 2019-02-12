@@ -189,6 +189,13 @@ define([
 					this.editAnalysis(data);
 				}
 			}
+
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
 	
 			this.init();
 		}
@@ -200,7 +207,8 @@ define([
 		delete() {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			EstimationService.deleteEstimation(this.selectedAnalysisId()).then((analysis) => {
 				this.loading(true);
 				this.estimationAnalysis(null);
@@ -212,12 +220,14 @@ define([
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
 			var payload = this.prepForSave();
 			EstimationService.saveEstimation(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				document.location =  constants.apiPaths.ccaAnalysis(this.estimationAnalysis().id());
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}
@@ -322,9 +332,11 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			EstimationService.copyEstimation(this.selectedAnalysisId()).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.apiPaths.ccaAnalysis(this.estimationAnalysis().id());
 			});	
