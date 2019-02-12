@@ -402,7 +402,7 @@ define(
 					: ({ data }) => {
 						let info = data;
 						if (!Array.isArray(info)) {
-							throw new Error('Resolving concept set failed. Check vocabulary data source');
+							throw new Error();
 						}
 						this.conceptSetInclusionIdentifiers(info);
 						this.currentIncludedConceptIdentifierList(info.join(','));
@@ -410,12 +410,7 @@ define(
 					};
 				this.resolvingConceptSetExpression(true);
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
-					.then(callback)
-					.catch((err) => {
-						alert(err);
-						this.resolvingConceptSetExpression(false);
-						document.location = '#/configure';
-					});
+					.then(callback);
 
 				return resolvingPromise;
 			}
@@ -682,7 +677,7 @@ define(
 				}
 			}
 			
-			loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
+			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
@@ -702,21 +697,21 @@ define(
 					return;
 				}
 				this.currentView('loading');
-				conceptSetService.loadConceptSet(conceptSetId)
-					.then((conceptset) => {
-						return conceptSetService.loadConceptSetExpression(conceptSetId)
-							.then((data) => {
-								const expression = _.isEmpty(data) ? { items: [] } : data;
-								this.setConceptSet(conceptset, expression.items);
-								this.handleViewChange(viewToShow, { conceptSetId, mode });
-								return this.resolveConceptSetExpression()
-									.then(() => {
-										this.currentConceptSetMode(mode);
-										$('#conceptSetLoadDialog').modal('hide');
-									});
-							});
-					})
-				.catch(er => authApi.handleAccessDenied(er));
+				try {
+					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
+					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
+					const expression = _.isEmpty(data) ? { items: [] } : data;
+					this.setConceptSet(conceptset, expression.items);						
+					await this.resolveConceptSetExpression();
+					this.currentConceptSetMode(mode);
+					$('#conceptSetLoadDialog').modal('hide');
+				} catch(er) {
+					alert('Resolving concept set failed. Check vocabulary data source');
+					console.error(er);
+					this.resolvingConceptSetExpression(false);
+					document.location = '#/configure';
+				}
+				this.handleViewChange(viewToShow, { conceptSetId, mode });
 			}
 			
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
