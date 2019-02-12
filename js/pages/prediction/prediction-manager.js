@@ -201,8 +201,13 @@ define([
 					this.editPopulationSettings(data);
 				}
 			}
-	
-            this.init();
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+			this.init();
 		}
 
 		isNewEntityResolver() {
@@ -262,7 +267,8 @@ define([
 		delete() {
 			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			PredictionService.deletePrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loading(true);
 				this.patientLevelPredictionAnalysis(null);
@@ -275,21 +281,25 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			PredictionService.copyPrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.apiPaths.analysis(this.patientLevelPredictionAnalysis().id());
-			});	
+			});
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
 			var payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				document.location =  constants.apiPaths.analysis(this.patientLevelPredictionAnalysis().id());
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}

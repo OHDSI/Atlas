@@ -157,6 +157,12 @@ define([
 				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
 			});
 			this.error = ko.observable();
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
 
 			// startup actions
 			this.init();
@@ -234,11 +240,13 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.selectedAnalysisId(analysis.id)
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.apiPaths.analysis(analysis.id);
 			});
@@ -263,11 +271,13 @@ define([
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id)
+				document.location = constants.apiPaths.analysis(analysis.id);
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}
@@ -275,7 +285,8 @@ define([
 		delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
 				this.selectedAnalysis(null);

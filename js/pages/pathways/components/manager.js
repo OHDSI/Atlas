@@ -64,6 +64,12 @@ define([
 				}
 				return 'New Cohort Pathway';
 			});
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
 		}
 
 		onRouterParamsChanged({analysisId, section, subId}) {
@@ -129,28 +135,34 @@ define([
 		}
 		
 		async save() {
+			this.isSaving(true);
 			if (!this.design().id) {
 				const newAnalysis = await PathwayService.create(this.design());
 				this.dirtyFlag().reset();
+				this.isSaving(false);
 				commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
 			} else {
 				const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
 				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
+				this.isSaving(false);
 				this.loading(false);
 			}
 		}
 
 		async copyPathway() {
+			this.isCopying(true);
 			const copiedAnalysis = await PathwayService.copy(this.design().id);
 			this.setupDesign(new PathwayAnalysis(copiedAnalysis));
+			this.isCopying(false);
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(copiedAnalysis.id, 'design'));
 		}
 
 		async del() {
 			if (confirm('Are you sure?')) {
+				this.isDeleting(true);
 				this.loading(true);
 				await PathwayService.del(this.design().id);
-				this.dirtyFlag().reset();					
+				this.dirtyFlag().reset();
 				this.loading(false);
 				this.close();
 			}
