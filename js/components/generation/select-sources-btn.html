@@ -1,0 +1,21 @@
+<span data-bind="tooltip: $component.disabled() ? $component.disabledReason() : null">
+    <button type="button" data-bind="
+        css: classes({ extra: 'btn btn-sm btn-primary' }),
+        click: $component.shouldSuggestSelection() ? $component.showPopup : $component.generate,
+        disable: $component.disabled()
+    ">
+        <i data-bind="css: classes({ element: 'ico', extra: 'fa ' + ($component.wasGenerated ? 'fa-repeat' : 'fa-play') })"></i>
+        <!-- ko if: $component.label -->
+            <span data-bind="css: classes('label'), text: $component.label"></span>
+        <!-- /ko -->
+    </button>
+</span>
+
+<!-- ko if: $component.shouldSuggestSelection() -->
+    <select-sources-popup params="{
+		showModal: $component.isPopupShown,
+		sources: $component.sources,
+		selectedSources: $component.selectedSources,
+		submit: $component.generate
+	}"></select-sources-popup>
+<!-- /ko -->

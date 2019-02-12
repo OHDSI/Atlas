@@ -54,6 +54,8 @@ define([
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
+			this.stopping = ko.observable({});
+			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 			this.isExitMessageShown = ko.observable(false);
 			this.exitMessage = ko.observable();
 
@@ -78,7 +80,15 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
-					render: (s, p, d) => s === 'FAILED' ? `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>` : s,
+					render: (s, p, d) => {
+						if (s === 'FAILED') {
+							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
+						} else if (s === 'STOPPED') {
+							return 'CANCELED';
+						} else {
+							return s;
+						}
+					},
 				},
 				{
 					title: 'Duration',
@@ -153,7 +163,7 @@ define([
 				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 
 				sourceList.forEach(s => {
-					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
+					let group = this.executionGroups().find(g => g.sourceKey === s.sourceKey);
 					if (!group) {
 						group = {
 							sourceKey: s.sourceKey,
@@ -170,7 +180,7 @@ define([
 						this.ccGenerationStatusOptions.STARTED :
 						this.ccGenerationStatusOptions.COMPLETED);
 
-				})
+				});
 				this.loading(false);
 			});
 		}
@@ -178,6 +188,7 @@ define([
 		generate(source) {
 			let confirmPromise;
 
+			this.stopping({...this.stopping(), [source]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
 			if (!executionGroup) {
 				confirmPromise = new Promise((resolve, reject) => reject());
@@ -202,6 +213,13 @@ define([
 					this.loadData()
 				})
 				.catch(() => {});
+		}
+
+		cancelGenerate(source) {
+			this.stopping({...this.stopping(), [source.sourceKey]: true});
+			if (confirm('Do you want to stop generation?')) {
+				CharacterizationService.cancelGeneration(this.characterizationId(), source.sourceKey);
+			}
 		}
 
 		showExecutionDesign(executionId) {

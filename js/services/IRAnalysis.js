@@ -94,6 +94,16 @@ define(function (require, exports) {
 				return response;
 			});
 	}
+
+	function cancelExecution(id, sourceKey) {
+		const promise = httpService.doDelete(`${config.webAPIRoot}ir/${id || ""}/execute/${sourceKey}`);
+
+		return promise
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+	}
 	
 	function getInfo(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/info`);
@@ -138,6 +148,7 @@ define(function (require, exports) {
 		copyAnalysis: copyAnalysis,
 		deleteAnalysis: deleteAnalysis,
 		execute: execute,
+		cancelExecution: cancelExecution,
 		getInfo: getInfo,
 		deleteInfo: deleteInfo,
 		getReport: getReport

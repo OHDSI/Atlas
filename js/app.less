@@ -11,6 +11,8 @@
     bottom: 0;
     background-color: #003142;
     border-right: solid 1px #888;
+    display: flex;
+    flex-direction: column;
   }
 
   &__main-window {
@@ -22,6 +24,9 @@
   &__menu {
     padding: 0px;
     margin-bottom: 0px;
+    flex-shrink: 1;
+    flex-grow: 1;
+    overflow-y: auto;
 
     & .panel {
       border: 0px;

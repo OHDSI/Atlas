@@ -471,9 +471,9 @@ define([
         convertPrevalenceAnalysis(analysis) {
             let columns = [ this.covNameColumn ];
 
-            let data = {};
+            const data = new Map();
 
-            let strataNames = {};
+            const strataNames = new Map();
 
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
@@ -487,11 +487,14 @@ define([
             }
 
             const mapCovariate = (data, report) => (rd) => {
-                if (data[rd.covariateName] === undefined) {
-                    data[rd.covariateName] = new PrevalenceStat(rd);
+                let cov;
+                if (!data.has(rd.covariateId)) {
+                    cov = new PrevalenceStat(rd);
+                    data.set(rd.covariateId, cov);
+                } else {
+                    cov = data.get(rd.covariateId);
                 }
 
-                const cov = data[rd.covariateName];
                 if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
                   cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
                 }
@@ -503,28 +506,23 @@ define([
                     cov.pct[rd.strataId] = [];
                 }
                 cov.pct[rd.strataId].push(rd.pct);
-                if (rd.strataId > 0 && strataNames[rd.strataId] === undefined) {
-                    strataNames[rd.strataId] = {
-                        strataId: rd.strataId,
-                        strataName: rd.strataName,
-                    }
+                if (rd.strataId > 0 && !strataNames.has(rd.strataId)) {
+                    strataNames.set(rd.strataId, rd.strataName);
                 }
             };
 
             analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data, r)));
-            strataNames = Object.values(strataNames);
             analysis.reports.forEach((r, i) => {
               if (!analysis.strataOnly) {
                 columns.push(this.getCountColumn(0, i));
                 columns.push(this.getPctColumn(0, i));
               }
-              strataNames.forEach(st => {
-                columns.push(this.getCountColumn(st.strataId, i));
-                columns.push(this.getPctColumn(st.strataId, i));
-              });
+              for(let strataId of strataNames.keys()) {
+                columns.push(this.getCountColumn(strataId, i));
+                columns.push(this.getPctColumn(strataId, i));
+              }
             });
 
-            data = Object.values(data);
             analysis.strataOnly = analysis.strataOnly && data.length > 0;
 
             if (!analysis.strataOnly && analysis.reports.length === 2) {
@@ -538,8 +536,8 @@ define([
             return {
                 ...analysis,
                 columns: columns,
-                data: data,
-                strataNames,
+                data: Array.from(data.values()),
+                strataNames: Array.from(strataNames.values()),
             };
         }
 

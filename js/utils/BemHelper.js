@@ -68,7 +68,7 @@ define(
             model.modifiers = this.parseModifiers(arguments[1]);
           }
           if (typeof arguments[2] !== 'undefined') {
-            model.modifiers = this.parseExtra(arguments[2]);
+            model.extra = this.parseExtra(arguments[2]);
           }
         }
 

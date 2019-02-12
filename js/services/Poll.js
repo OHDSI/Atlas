@@ -21,7 +21,7 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
       }, interval);
       callbacks.set(intervalId, { callback, args });
       
-      return interval;
+      return intervalId;
     }
 
     stop(intervalId) {
