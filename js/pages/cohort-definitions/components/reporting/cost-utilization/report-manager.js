@@ -189,13 +189,13 @@ define([
 				data: 'covariance'
 			}, {
 				title: 'Gender (%)',
-				data: 'genderP'
+				data: row => row.genderP < 0 ? '-' : row.genderP
 			}, {
 				title: 'Race (%)',
-				data: 'raceP'
+				data: row => row.raceP < 0 ? '-' : row.raceP
 			}, {
 				title: 'Ethnicity (%)',
-				data: 'ethP'
+				data: row => row.ethP < 0 ? '-' : row.ethP
 			}];
 
 			this.careSiteDatatable;
@@ -2160,17 +2160,16 @@ define([
 
 				this.currentAgeGroup('Age group of: ' + oneBarData.covariance);
 				svg = d3.select("#dataCompletenessSvgDiv").append("svg");
-				svg.attr("width", 960)
-				svg.attr("height", 500)
-
-				let margin = {
+				const margin = {
 					top: 20,
 					right: 20,
 					bottom: 30,
 					left: 80
-				},
-				width = svg.attr("width") - margin.left - margin.right,
-				height = svg.attr("height") - margin.top - margin.bottom;
+				}
+				svg.attr("width", 960)
+				svg.attr("height", 500)
+				const width = svg.attr("width") - margin.left - margin.right;
+				const height = svg.attr("height") - margin.top - margin.bottom;
 
 				let tooltip = d3.select("body").append("div").style('position', 'absolute')
 					.style('display', 'none')
@@ -2187,9 +2186,9 @@ define([
 				let g = svg.append("g")
 					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-					let barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP +
-					"}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP +
-					"}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
+				const barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + Math.max(0, oneBarData.genderP) +
+				"}, {\"attr\":\"Race\", \"value\":" + Math.max(0, oneBarData.raceP) +
+				"}, {\"attr\":\"Ethnicity\", \"value\":" + Math.max(0, oneBarData.ethP) + "}]";
 
 
 				let barData = JSON.parse(barDataTxt);
