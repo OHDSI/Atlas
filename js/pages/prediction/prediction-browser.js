@@ -9,7 +9,6 @@ define([
 	'utils/CommonUtils',
     'utils/DatatableUtils',
 	'services/Prediction',
-	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'faceted-datatable',
 	'components/ac-access-denied',
 	'components/heading',
