@@ -464,19 +464,17 @@ define(
 				});
 			}
 
-			loadCohortDefinition(cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
+			async loadCohortDefinition(cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
 				// don't load if it is already loaded or a new concept set
 				if (this.currentCohortDefinition() && this.currentCohortDefinition().id() == cohortDefinitionId) {
 					if (this.currentConceptSet() && this.currentConceptSet().id == conceptSetId && this.currentConceptSetSource() == 'cohort') {
 						this.reportSourceKey(sourceKey);
-						this.currentView(viewToShow);
 						return;
 					} else if (conceptSetId != null) {
 						this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						return;
 					} else {
 						this.reportSourceKey(sourceKey);
-						this.currentView(viewToShow);
 						return;
 					}
 				}
@@ -496,34 +494,24 @@ define(
 					this.clearConceptSet();
 				}
 				this.currentView('loading');
-				let definitionPromise, infoPromise;
 
 				if (cohortDefinitionId == '0') {
-					definitionPromise = Promise.resolve();
-					infoPromise = Promise.resolve();
-
 					this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
 					this.currentCohortDefinitionInfo([]);
 				} else {
-					definitionPromise = httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
-					infoPromise = httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');
-					
-					definitionPromise.then(({ data: cohortDefinition }) => {
-						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-						this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-					});
-					infoPromise.then(({ data: generationInfo }) => {
-						this.currentCohortDefinitionInfo(generationInfo);
-					});
+					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
+					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+
+					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');					
+					this.currentCohortDefinitionInfo(generationInfo);
 				}
 
-				Promise.all([infoPromise, definitionPromise])
-					.then(() => {
+				try {
 						// Now that we have loaded up the cohort definition, we'll need to
 						// resolve all of the concepts embedded in the concept set collection
 						// to ensure they have all of the proper properties for editing in the cohort
 						// editior
-						let conceptPromise;
 						if (this.currentCohortDefinition().expression().ConceptSets()) {
 							const identifiers = [];
 							this.currentCohortDefinition().expression().ConceptSets()
@@ -533,96 +521,90 @@ define(
 											identifiers.push(item.concept.CONCEPT_ID);
 										});
 								});
-							conceptPromise = httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
-							conceptPromise.then(({ data }) => {
-								let conceptsNotFound = 0;
-								const identifiersByConceptId = new Map();
-								data.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
-								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
-									// Update each of the concept set items
-									currentConceptSet.expression.items().forEach((item) => {
-										var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
-										if (selectedConcept)
-											item.concept = selectedConcept;
-										else
-											conceptsNotFound++;
-									});
-									currentConceptSet.expression.items.valueHasMutated();
+							const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
+							let conceptsNotFound = 0;
+							const identifiersByConceptId = new Map();
+							identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
+							this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
+								// Update each of the concept set items
+								currentConceptSet.expression.items().forEach((item) => {
+									var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
+									if (selectedConcept)
+										item.concept = selectedConcept;
+									else
+										conceptsNotFound++;
 								});
-								if (conceptsNotFound > 0) {
-									console.error("Concepts not found: " + conceptsNotFound);
-								}
-								this.currentCohortDefinitionDirtyFlag().reset();
-							}
-						);
-						} else {
-							conceptPromise = Promise.resolve();
-						}
-						conceptPromise
-							.then(() => {
-								// now that we have required information lets compile them into data objects for our view
-								var cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
-								var results = [];
-								for (var s = 0; s < cdmSources.length; s++) {
-									var source = cdmSources[s];
-									this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-										ready: false,
-										checking: false
-									});
-									var sourceInfo = this.getSourceInfo(source);
-									var cdsi = {};
-									cdsi.name = cdmSources[s].sourceName;
-									cdsi.sourceKey = cdmSources[s].sourceKey;
-									if (sourceInfo != null) {
-										cdsi.isValid = ko.observable(sourceInfo.isValid);
-										cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
-										cdsi.sourceId = sourceInfo.id.sourceId;
-										cdsi.status = ko.observable(sourceInfo.status);
-										var date = new Date(sourceInfo.startTime);
-										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
-										cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
-										var commaFormatted = d3.format(",");
-										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
-										if (sourceInfo.personCount == null) {
-											cdsi.personCount = ko.observable('...');
-											this.getCohortCount(source).then(count => cdsi.personCount(count));
-										} else {
-											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
-										}
-										if (sourceInfo.recordCount) {
-											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
-										} else {
-											cdsi.recordCount = ko.observable('...');
-										}
-										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
-										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
-									} else {
-										cdsi.isValid = ko.observable(false);
-										cdsi.isCanceled = ko.observable(false);
-										cdsi.status = ko.observable('n/a');
-										cdsi.startTime = ko.observable('n/a');
-										cdsi.executionDuration = ko.observable('n/a');
-										cdsi.personCount = ko.observable('n/a');
-										cdsi.recordCount = ko.observable('n/a');
-										cdsi.includeFeatures = ko.observable(false);
-										cdsi.failMessage = ko.observable(null);
-									}
-									results.push(cdsi);
-								}
-								this.cohortDefinitionSourceInfo(results);
-								if (conceptSetId != null) {
-									this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
-								} else {
-									this.reportSourceKey(sourceKey);
-									this.currentView(viewToShow);
-								}
+								currentConceptSet.expression.items.valueHasMutated();
 							});
-					})
-					.catch((xhr) => {
-						if (xhr.status == 403 || xhr.status == 401) {
-							this.currentView(viewToShow);
+							if (conceptsNotFound > 0) {
+								console.error("Concepts not found: " + conceptsNotFound);
+							}
+							this.currentCohortDefinitionDirtyFlag().reset();
 						}
-					});
+							// now that we have required information lets compile them into data objects for our view
+							var cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
+							var results = [];
+							for (var s = 0; s < cdmSources.length; s++) {
+								var source = cdmSources[s];
+								this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+									ready: false,
+									checking: false
+								});
+								var sourceInfo = this.getSourceInfo(source);
+								var cdsi = {};
+								cdsi.name = cdmSources[s].sourceName;
+								cdsi.sourceKey = cdmSources[s].sourceKey;
+								if (sourceInfo != null) {
+									cdsi.isValid = ko.observable(sourceInfo.isValid);
+									cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
+									cdsi.sourceId = sourceInfo.id.sourceId;
+									cdsi.status = ko.observable(sourceInfo.status);
+									var date = new Date(sourceInfo.startTime);
+									cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
+									cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
+									var commaFormatted = d3.format(",");
+									// For backwards compatability, query personCount from cdm if not populated in sourceInfo
+									if (sourceInfo.personCount == null) {
+										cdsi.personCount = ko.observable('...');
+										this.getCohortCount(source).then(count => cdsi.personCount(count));
+									} else {
+										cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
+									}
+									if (sourceInfo.recordCount) {
+										cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+									} else {
+										cdsi.recordCount = ko.observable('...');
+									}
+									cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
+									cdsi.failMessage = ko.observable(sourceInfo.failMessage);
+								} else {
+									cdsi.isValid = ko.observable(false);
+									cdsi.isCanceled = ko.observable(false);
+									cdsi.status = ko.observable('n/a');
+									cdsi.startTime = ko.observable('n/a');
+									cdsi.executionDuration = ko.observable('n/a');
+									cdsi.personCount = ko.observable('n/a');
+									cdsi.recordCount = ko.observable('n/a');
+									cdsi.includeFeatures = ko.observable(false);
+									cdsi.failMessage = ko.observable(null);
+								}
+								results.push(cdsi);
+							}
+							this.cohortDefinitionSourceInfo(results);
+							if (conceptSetId != null) {
+								this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
+								return;
+							} else {
+								this.reportSourceKey(sourceKey);
+							}
+						} catch(er) {
+							alert('Loading cohort definition failed. Check vocabulary data source');
+							console.error(er);
+							// this.resolvingConceptSetExpression(false);
+							document.location = '#/configure';
+					}
+					this.currentView(viewToShow);
+
 			}
 
 			loadConceptSet(conceptSetId, viewToShow, loadingSource, mode) {
