@@ -64,6 +64,12 @@ define([
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 			this.packageName = ko.observable();
 			this.selectedTabKey = ko.observable(params.routerParams().section);
+            this.isSaving = ko.observable(false);
+            this.isCopying = ko.observable(false);
+            this.isDeleting = ko.observable(false);
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isCopying() || this.isDeleting();
+            });
             this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
@@ -90,6 +96,8 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
+			this.isNewEntity = this.isNewEntityResolver();			
+
 			this.populationCaption = ko.computed(() => {
 				if (this.estimationAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
@@ -108,7 +116,11 @@ define([
         selectTab(index, { key }) {
 			this.selectedTabKey(key);
             return commonUtils.routeTo('/estimation/cca/' + this.componentParams().estimationId() + '/' + key);
-        }
+		}
+		
+		isNewEntityResolver() {
+			return ko.computed(() => this.estimationAnalysis() && this.estimationAnalysis().id() < 1);
+		}		
 
 		async delete() {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))

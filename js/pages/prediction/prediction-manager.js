@@ -66,6 +66,12 @@ define([
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
 			this.packageName = ko.observable();
+            this.isSaving = ko.observable(false);
+            this.isCopying = ko.observable(false);
+            this.isDeleting = ko.observable(false);
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isCopying() || this.isDeleting();
+            });
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -86,6 +92,8 @@ define([
 			this.canCopy = ko.pureComputed(() => {
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
+
+			this.isNewEntity = this.isNewEntityResolver();			
 
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
@@ -147,6 +155,10 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
 			document.location = constants.multiAnalysisPaths.browser();
 		}
+		
+		isNewEntityResolver() {
+			return ko.computed(() => this.patientLevelPredictionAnalysis() && this.selectedAnalysisId() === '0');
+		}		
 
 		async delete() {
 			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
