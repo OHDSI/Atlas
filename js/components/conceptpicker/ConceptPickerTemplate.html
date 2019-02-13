@@ -3,19 +3,19 @@
 <button class="btn btn-primary btn-sm" data-bind="click: function() { isImportEnabled(true); }">Import</button>
 <!-- /ko -->
 <!-- ko if: isImportEnabled -->
-<div title="Import Concepts...." data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500 }">
+<div title="Import Concepts...." data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: '' }">
 <textarea rows="1" style="width: 650px; height:400px; resize: none; overflow: auto; word-wrap: break-word"  data-bind=" textInput: importValues"></textarea>
 <button class="btn btn-primary btn-sm" data-bind="click: doImport">Done</button>
 </div>
 <!-- /ko -->
 <!-- ko if: isOpen -->
-<div class="conceptsearch" title="Select Concept..." data-bind="dialog: { isOpen: isOpen, modal: true, width:'80%', height:600 }">
+<div class="conceptsearch" title="Select Concept..." data-bind="dialog: { isOpen: isOpen, modal: true, width:'80%', height:600, closeText: '' }">
 	<div data-bind="if: ProviderReady()">
 		<div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
 			<input placeholder="Search…" data-bind="value: searchText, valueUpdate: 'input', event: { keyup: searchKeyUp }" />
 			<select data-bind="options: $component.DomainOptions, value: SelectedDomain" />
 		</div>
-		<table class="stripe compact hover" cellspacing="0" width="100%" 
+		<table class="stripe compact hover" cellspacing="0" width="100%"
 					 data-bind="dataTable:{
 											data: results,
 											api: dtApi,
@@ -30,7 +30,7 @@
 													{ data: 'CONCEPT_NAME', title: 'Concept Name' },
 													{ data: 'STANDARD_CONCEPT', title: 'Standard Type' },
 													{ data: 'VOCABULARY_ID', title: 'Vocabulary' },
-													{ data: 'DOMAIN_ID', title: 'Domain' }											
+													{ data: 'DOMAIN_ID', title: 'Domain' }
 												],
 												language: {
 													search: 'Filter records:'
