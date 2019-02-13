@@ -43,7 +43,7 @@ define([
 	class ComparativeCohortAnalysisManager extends Page {
 		constructor(params) {
 			super(params);
-			sharedState.estimationAnalysis.analysisPath = constants.multiAnalysisPaths.ccaAnalysis;			
+			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysis;			
 			
 			this.selectTab = this.selectTab.bind(this);
 			this.defaultLoadingMessage = "Loading...";
@@ -134,7 +134,7 @@ define([
 			this.selectedAnalysisId(null);
 			this.comparisons.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.estimationAnalysis()));
-			document.location = constants.multiAnalysisPaths.browser()
+			document.location = constants.paths.browser()
 		}
 
 		save() {
@@ -144,7 +144,7 @@ define([
 			var payload = this.prepForSave();
 			EstimationService.saveEstimation(payload).then((analysis) => {
 				this.setAnalysis(analysis);
-				document.location =  constants.multiAnalysisPaths.ccaAnalysis(this.estimationAnalysis().id());
+				document.location =  constants.paths.ccaAnalysis(this.estimationAnalysis().id());
 				this.isSaving(false);
 				this.loading(false);
 			});
@@ -246,7 +246,7 @@ define([
 			this.selectedAnalysisId(null);
 			this.comparisons.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.estimationAnalysis()));
-			document.location = constants.multiAnalysisPaths.browser();
+			document.location = constants.paths.browser();
 		}
 
 		copy() {
@@ -256,7 +256,7 @@ define([
 				this.setAnalysis(analysis);
 				this.isCopying(false);
 				this.loading(false);
-				document.location = constants.multiAnalysisPaths.ccaAnalysis(this.estimationAnalysis().id());
+				document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
 			});	
 		}
 

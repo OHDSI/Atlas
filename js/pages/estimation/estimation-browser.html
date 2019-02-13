@@ -9,12 +9,5 @@
 
 	<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 3, reference: reference, columns: columns, options:options"></faceted-datatable>
 
-	<div data-bind="if: config.estimationSettings.toggle,css: classes({element: 'toggle-estimation-browser'})">
-		<span data-bind="click: goToSingleAnalysisEstimation, css: classes({
-			element: 'new-btn',
-			extra: 'pull-right btn btn-sm btn-primary'})">Go To Single Analysis Estimation Specification
-		</span>
-	</div>
-
 	<loading data-bind="visible:loading()" params="status: 'retrieving estimations'"></loading>
 </div>

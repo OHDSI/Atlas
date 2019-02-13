@@ -8,12 +8,5 @@
 
 	<faceted-datatable data-bind="visible: loading()==false" params="order: [[3, 'desc']], reference: reference, columns: columns, options: options"></faceted-datatable>
 
-	<div data-bind="if: config.predictionSettings.toggle,css: classes({element: 'toggle-prediction-browser'})">
-		<span data-bind="click: goToSingleAnalysisPrediction, css: classes({
-			element: 'new-btn',
-			extra: 'pull-right btn btn-sm btn-primary'})">Go to single analysis prediction specification
-		</span>
-	</div>
-		
 	<loading data-bind="visible:loading()" params="status: 'retrieving predictions'"></loading>
 </div>

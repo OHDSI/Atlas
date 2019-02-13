@@ -9,17 +9,11 @@ define(
       downloadPackage: (id, name) => `prediction/${id}/download?packageName=${name}`,
     };
 
-    const multiAnalysisPaths = {
+    const paths = {
       analysis: id => `#/prediction/${id}`,
       createAnalysis: () => '#/prediction/0',
       browser: () => '#/prediction',
     };
-
-    const singleAnalysisPaths = {
-        analysis: id => `#/plp/${id}`,
-        createAnalysis: () => '#/plp/0',
-        browser: () => '#/plp',  
-    }
 
     const conceptSetCrossReference = {
       covariateSettings: {
@@ -393,9 +387,7 @@ define(
     return {
       apiPaths,
       pageTitle,
-      paths: config.predictionSettings.multiAnalysisEnabled ? multiAnalysisPaths : singleAnalysisPaths,
-      multiAnalysisPaths: multiAnalysisPaths,
-      singleAnalysisPaths: singleAnalysisPaths,
+      paths: paths,
       conceptSetCrossReference,
       defaultNontemporalCovariates,
       options,

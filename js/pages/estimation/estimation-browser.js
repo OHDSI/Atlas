@@ -9,7 +9,6 @@ define([
 	'utils/CommonUtils',
     'utils/DatatableUtils',
 	'services/Estimation',
-	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'faceted-datatable',
 	'components/ac-access-denied',
 	'components/heading',
@@ -68,7 +67,7 @@ define([
 				{
 					title: 'Name',
 					render: datatableUtils.getLinkFormatter(d => ({
-						link: constants.multiAnalysisPaths.ccaAnalysis(d.estimationId),
+						link: constants.paths.ccaAnalysis(d.estimationId),
 						label: d['name']
 					})),
 				},
@@ -105,11 +104,7 @@ define([
 		}
 
 		newEstimation() {
-			document.location = constants.multiAnalysisPaths.createCcaAnalysis();
-		}
-
-		goToSingleAnalysisEstimation() {
-			document.location = constants.singleAnalysisPaths.browser();
+			document.location = constants.paths.createCcaAnalysis();
 		}
 	}
 

@@ -9,16 +9,10 @@ define(
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
     };
 
-    const multiAnalysisPaths = {
+    const paths = {
         ccaAnalysis: id => `#/estimation/cca/${id}`,
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',
-    };
-  
-    const singleAnalysisPaths = {
-        ccaAnalysis: id => `#/cca/${id}`,
-        createCcaAnalysis: () => '#/cca/0',
-        browser: () => '#/cca',
     };
 
     const conceptSetCrossReference = {
@@ -401,9 +395,7 @@ define(
     return {
       pageTitle,
       apiPaths,
-      paths: config.estimationSettings.multiAnalysisEnabled ? multiAnalysisPaths : singleAnalysisPaths,
-      singleAnalysisPaths,
-      multiAnalysisPaths,
+      paths: paths,
       conceptSetCrossReference,
       options,
     };

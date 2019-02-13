@@ -68,7 +68,7 @@ define([
 				{
 					title: 'Name',
 					render: datatableUtils.getLinkFormatter(d => ({
-						link: constants.multiAnalysisPaths.analysis(d.analysisId),
+						link: constants.paths.analysis(d.analysisId),
 						label: d['name']
 					})),
 
@@ -106,11 +106,7 @@ define([
 		}
 
 		newPrediction() {
-			document.location = constants.multiAnalysisPaths.createAnalysis();
-		}
-
-		goToSingleAnalysisPrediction() {
-			document.location = constants.singleAnalysisPaths.browser();
+			document.location = constants.paths.createAnalysis();
 		}
 	}
 

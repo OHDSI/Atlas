@@ -46,7 +46,7 @@ define([
 	class PatientLevelPredictionManager extends Page {
 		constructor(params) {
 			super(params);
-			sharedState.predictionAnalysis.analysisPath = constants.multiAnalysisPaths.analysis;
+			sharedState.predictionAnalysis.analysisPath = constants.paths.analysis;
 			
 			this.selectTab = this.selectTab.bind(this);
 			this.selectedTabKey = ko.observable(params.routerParams().section);
@@ -153,7 +153,7 @@ define([
 			this.targetCohorts.removeAll();
 			this.outcomeCohorts.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
-			document.location = constants.multiAnalysisPaths.browser();
+			document.location = constants.paths.browser();
 		}
 		
 		isNewEntityResolver() {
@@ -173,7 +173,7 @@ define([
 			this.targetCohorts.removeAll();
 			this.outcomeCohorts.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
-			document.location = constants.multiAnalysisPaths.browser()
+			document.location = constants.paths.browser()
 		}
 
 		copy() {
@@ -183,7 +183,7 @@ define([
 				this.loadAnalysisFromServer(analysis);
 				this.isCopying(false);
 				this.loading(false);
-				document.location = constants.multiAnalysisPaths.analysis(this.patientLevelPredictionAnalysis().id());
+				document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
 			});
 		}
 
@@ -194,7 +194,7 @@ define([
 			var payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
-				document.location =  constants.multiAnalysisPaths.analysis(this.patientLevelPredictionAnalysis().id());
+				document.location =  constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
 				this.isSaving(false);
 				this.loading(false);
 			});
