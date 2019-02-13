@@ -19,4 +19,5 @@ define(function (require) {
 	var chart = require('./chart');
 	var bootstrapCollapsable = require('./bootstrapCollapsable');
 	var numericExtender = require('./numericExtender');
+	var childChangesExtender = require('./childChangesExtender')
 });
