@@ -18,6 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
+		'services/EventBus',
 		'less!app.less',
 	],
 	(
@@ -39,6 +40,7 @@ define(
 		d3,
 		authApi,
 		momentApi,
+		EventBus,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			constructor() {
@@ -69,6 +71,7 @@ define(
 				this.reportCohortDefinitionId = ko.observable();
 				this.reportReportName = ko.observable();
 				this.reportSourceKey = ko.observable();
+				this.EventBus = EventBus;
 				this.reportValid = ko.computed(() => {
 					return (
 						this.reportReportName() != undefined
@@ -291,10 +294,22 @@ define(
 						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
 					));
 				});
+
+				this.currentView.subscribe(() => {
+					EventBus.errorMsg(undefined);
+				});
+
 				this.noSourcesAvailable = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
+				this.appInitializationErrorMessage =  ko.computed(() => {
+					if (this.noSourcesAvailable()) {
+						return 'the current webapi has no sources defined.<br/>please add one or more on <a href="#/configure">configuration</a> page.'
+					} else if (this.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable) {
+						return 'unable to connect to an instance of the webapi.<br/>please contact your administrator to resolve this issue.'
+					}
+				});
 				this.pageTitle = ko.pureComputed(() => {
 					let pageTitle = "ATLAS";
 					switch (this.currentView()) {
@@ -366,8 +381,7 @@ define(
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
-			resolveConceptSetExpression() {
-				this.resolvingConceptSetExpression(true);
+			resolveConceptSetExpression(resolveAgainstServer = true) {
         this.includedConcepts.removeAll();
         this.includedSourcecodes.removeAll();
 				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
@@ -379,7 +393,7 @@ define(
 				}
 				this.currentConceptIdentifierList(conceptIdentifierList.join(','));
 
-				return this.resolveConceptSetExpressionSimple(conceptSetExpression);
+				return resolveAgainstServer ? this.resolveConceptSetExpressionSimple(conceptSetExpression) : null;
 			}
 
 			resolveConceptSetExpressionSimple(expression, success) {
@@ -391,6 +405,7 @@ define(
 							this.conceptSetInclusionCount(info.length);
 							this.resolvingConceptSetExpression(false);
 						};
+				this.resolvingConceptSetExpression(true);
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression);
 				resolvingPromise.then(callback);
 				resolvingPromise.catch((err) => {
@@ -754,7 +769,8 @@ define(
 			loadAndApplyAncestors(data) {
 				const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 				const ids = [];
-				$.each(data, (element) => {
+				$.each(data, idx => {
+					const element = data[idx];
 					if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
 						ids.push(element.CONCEPT_ID);
 					}
@@ -763,7 +779,8 @@ define(
 					if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
 						this.loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
 							const map = this.includedConceptsMap();
-							$.each(data, (line) => {
+							$.each(data, idx => {
+								const line = data[idx];
 								const ancArray = ancestors[line.CONCEPT_ID];
 								if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
 									line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
@@ -821,7 +838,7 @@ define(
 			clearConceptSet() {
 				this.currentConceptSet(null);
 				sharedState.clearSelectedConcepts();
-				this.resolveConceptSetExpression();
+				this.resolveConceptSetExpression(false);
 				this.currentConceptSetDirtyFlag().reset();
 			}
 

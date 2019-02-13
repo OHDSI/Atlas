@@ -132,6 +132,7 @@ const settingsObject = {
 		"colorbrewer": "../node_modules/colorbrewer/index",
 		"ohdsi-api": "../node_modules/@ohdsi/ui-toolbox/lib/umd/api/index",
 		"bootstrap-datetimepicker": "../node_modules/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
+		"visibilityjs": "../node_modules/@ohdsi/visibilityjs/lib/visibility.core"
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",

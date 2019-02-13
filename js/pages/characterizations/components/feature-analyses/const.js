@@ -22,7 +22,7 @@ define((require, exports) => {
 		},
 		{
 			'caption': 'Author',
-			'binding': datatableUtils.getFacetForCreatedBy,
+			'binding': (o) => o.createdBy || 'anonymous',
 		},
 	];
 
@@ -44,19 +44,19 @@ define((require, exports) => {
 		{
 			title: 'Created',
 			className: classes('tbl-col', 'created'),
-			type: 'date',
-			render: datatableUtils.getDateFieldFormatter(),
+			type: 'datetime-formatted',
+			render: datatableUtils.getDateFieldFormatter('createdDate'),
 		},
 		{
 			title: 'Updated',
 			className: classes('tbl-col', 'updated'),
-			type: 'date',
-			render: datatableUtils.getDateFieldFormatter(),
+			type: 'datetime-formatted',
+			render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 		},
 		{
 			title: 'Author',
 			className: classes('tbl-col', 'author'),
-			render: datatableUtils.getCreatedByFormatter(),
+			data: 'createdBy',
 		},
 
 	];

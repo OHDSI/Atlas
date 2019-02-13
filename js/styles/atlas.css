@@ -232,6 +232,8 @@ pre span.key {
   cursor: pointer;
   text-align: center;
   border-bottom: solid 1px #CCC;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 #wrapperLogo img {
@@ -247,6 +249,8 @@ pre span.key {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-width: 768px;
+  overflow-x: auto;
 }
 
 .flexed {
@@ -988,14 +992,6 @@ pre {
 
 .input-group-addon.input-lg {
   border-radius: 0
-}
-
-.ir-header {
-  display: block;
-}
-
-.ir-name {
-  width: 600px !important;
 }
 
 .fe-save-btn {
@@ -2060,7 +2056,6 @@ button i.fa.fa-question-circle {
 div#wrapper_ohdsi {
   background-color: #eee;
   width:175px;
-  position: absolute;
   text-align: center;
   font-size: 12px;
   color: #020202;
@@ -2069,6 +2064,8 @@ div#wrapper_ohdsi {
   border-right: solid 1px #868686;
   border-top: solid 1px #868686;
   padding-top:10px;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 div#wrapper_ohdsi img {

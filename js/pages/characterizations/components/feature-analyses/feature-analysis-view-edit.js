@@ -77,6 +77,7 @@ define([
                 return this.dataDirtyFlag().isDirty() && this.areRequiredFieldsFilled() && (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
             this.canDelete = this.isDeletePermittedResolver();
+            this.isNewEntity = this.isNewEntityResolver();
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
@@ -101,6 +102,11 @@ define([
             });
             this.isNameCorrect = ko.computed(() => {
                 return this.data() && this.data().name();
+            });
+            this.isSaving = ko.observable(false);
+            this.isDeleting = ko.observable(false);
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isDeleting();
             });
         }
 
@@ -134,6 +140,10 @@ define([
 
         isDeletePermittedResolver(id) {
             return ko.computed(() => PermissionService.isPermittedDeleteFa(this.featureId()));
+        }
+
+        isNewEntityResolver() {
+            return ko.computed(() => this.featureId() === 0);
         }
 
         areRequiredFieldsFilled() {
@@ -217,13 +227,13 @@ define([
                 parsedDesign = design;
             }
 
-            data.name(name);
+            data.name(name || 'New Feature Analysis');
             data.descr(descr);
             data.domain(domain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
-            data.statType.subscribe(() => this.data.design([]));
+            data.statType.subscribe(() => this.data().design([]));
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
             this.previousDesign = { [type]: parsedDesign };
@@ -260,7 +270,7 @@ define([
             return {
                 name: ko.observable(''), 
                 criteriaType: 'WindowedCriteria',
-                expression: ko.observable(new WindowedCriteria(data, this.data.conceptSets)),
+                expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
             };
         }
 
@@ -278,7 +288,7 @@ define([
 
         addWindowedCriteria(type) {
             const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
-            this.data.design([...this.data.design(), criteria]);
+            this.data().design([...this.data().design(), criteria]);
         }
 
         removeCriteria(index) {
@@ -302,20 +312,24 @@ define([
         }
 
         async save() {
+            this.isSaving(true);
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data())));
 
             if (this.featureId() < 1) {
                 const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());
                 this.dataDirtyFlag().reset();
+                this.isSaving(false);
                 commonUtils.routeTo('/cc/feature-analyses/' + res.id);
             } else {
                 const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data());
                 this.setupAnalysisData(res);
+                this.isSaving(false);
                 this.loading(false);
             }
         }
 
         deleteFeature() {
+            this.isDeleting(true);
             commonUtils.confirmAndDelete({
                 loading: this.loading,
                 remove: () => FeatureAnalysisService.deleteFeatureAnalysis(this.featureId()),

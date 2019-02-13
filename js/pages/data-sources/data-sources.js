@@ -105,7 +105,7 @@ define([
 
 			this.model = params.model;
 			this.sources = sharedState.sources().filter(function (s) {
-				return s.hasResults && s.hasCDM;
+				return s.hasResults && s.hasVocabulary;
 			});
 
 			this.loadingReport = ko.observable(false);

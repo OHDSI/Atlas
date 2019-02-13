@@ -6,7 +6,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 			// Default functionality
 			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
 					.url)
-				.done(function (result) {
+				.then((result) => {
 					var newId = self.cohortConceptSets()
 						.length > 0 ? Math.max.apply(null, self.cohortConceptSets()
 							.map(function (d) {
@@ -27,7 +27,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 						status: 'Success'
 					});
 				})
-				.fail(function (err) {
+				.catch((err) => {
 					console.log(err);
 				});
 		}

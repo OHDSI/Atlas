@@ -38,7 +38,8 @@ define([
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Results: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
-    Evidence: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
+    CEM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
+    CEMResults: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Temp: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
   };
 
@@ -281,7 +282,12 @@ define([
               this.goToConfigure();
             });
         })
-        .catch(() => { this.loading(false); });
+        .catch(({data}) => {
+          this.loading(false);
+          alert('The Source was not saved. ' +
+            (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
+             data.payload.message : 'Please contact your administrator to resolve this issue.'));
+         });
     }
 
     close() {

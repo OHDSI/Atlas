@@ -113,7 +113,8 @@ define([
 		async delete() {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			const analysis = await EstimationService.deleteEstimation(this.selectedAnalysisId());
 			
 			this.loading(true);
@@ -125,12 +126,14 @@ define([
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
 			var payload = this.prepForSave();
 			EstimationService.saveEstimation(payload).then((analysis) => {
 				this.setAnalysis(analysis);
 				document.location =  constants.multiAnalysisPaths.ccaAnalysis(this.estimationAnalysis().id());
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}
@@ -235,9 +238,11 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			EstimationService.copyEstimation(this.selectedAnalysisId()).then((analysis) => {
 				this.setAnalysis(analysis);
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.multiAnalysisPaths.ccaAnalysis(this.estimationAnalysis().id());
 			});	

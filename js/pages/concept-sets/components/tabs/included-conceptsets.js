@@ -106,10 +106,14 @@ define([
           }
         }]
       };
+
+      // Triggers parallel load of subset of Ancestors only for current page - to display data ASAP
+      // while the query for full ancestors list is being executed in background
+      // Per: https://github.com/OHDSI/Atlas/pull/614#issuecomment-383050990
       this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(this);
 
-      // on activate
-      this.model.loadIncluded();
+      // data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
+      // or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
     }
 
 	}

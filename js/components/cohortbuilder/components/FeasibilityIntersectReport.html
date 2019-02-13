@@ -8,13 +8,19 @@
 						<th></th>
 						<th>Match Rate</th>
 						<th>Matches</th>
-						<th>Total</th>
+						<!-- ko if: report().summary.lostCount != 0 -->
+						<th>Lost from censoring</th>
+						<!-- /ko -->
+						<th>Total Events</th>
 					</thead>
 					<tbody>
 						<td></td>
 						<td class="header">Summary Statistics:</td>
 						<td data-bind="text:report().summary.percentMatched"></td>
 						<td data-bind="text:report().summary.finalCount.toLocaleString()"></td>
+						<!-- ko if: report().summary.lostCount != 0 -->
+						<td data-bind="text:report().summary.lostCount.toLocaleString()"></td>
+						<!-- /ko -->
 						<td data-bind="text:report().summary.baseCount.toLocaleString()"></td>
 					</tbody>
 				</table>

@@ -46,9 +46,20 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
+            this.isNameCorrect = ko.computed(() => {
+                return this.design() && this.design().name();
+            });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
+            this.isSaving = ko.observable(false);
+            this.isCopying = ko.observable(false);
+            this.isDeleting = ko.observable(false);
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isCopying() || this.isDeleting();
+            });
+            this.canCopy = this.canCopyResolver();
+            this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
@@ -56,9 +67,6 @@ define([
                 design: this.design,
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
-            });
-            this.isNameCorrect = ko.computed(() => {
-                return this.design() && this.design().name();
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -102,6 +110,16 @@ define([
             );
         }
 
+        canCopyResolver() {
+            return ko.computed(() => !this.designDirtyFlag().isDirty() && PermissionService.isPermittedCopyCC(this.characterizationId()));
+        }
+
+        isNewEntityResolver() {
+            return ko.computed(
+              () => this.design() && this.characterizationId() === 0
+            );
+        }
+
         setupSection(section) {
             const tabKey = section === 'results' ? 'executions' : section;
             this.selectedTabKey(tabKey);
@@ -133,6 +151,7 @@ define([
         }
 
         save() {
+            this.isSaving(true);
             const ccId = this.componentParams().characterizationId();
 
             if (ccId < 1) {
@@ -140,6 +159,7 @@ define([
                     .createCharacterization(this.design())
                     .then(res => {
                         this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        this.isSaving(false);
                         commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
                     });
             } else {
@@ -147,28 +167,40 @@ define([
                     .updateCharacterization(ccId, this.design())
                     .then(res => {
                         this.setupDesign(new CharacterizationAnalysis(res));
+                        this.isSaving(false);
                         this.loading(false);
                     });
             }
         }
 
+        copyCc() {
+            this.isCopying(true);
+            CharacterizationService.copyCharacterization(this.characterizationId())
+                .then(res => {
+                    this.setupDesign(new CharacterizationAnalysis(res));
+                    this.isCopying(false);
+                    commonUtils.routeTo(`cc/characterizations/${res.id}`);
+                });
+        }
+
         deleteCc() {
             if (confirm('Are you sure?')) {
+                this.isDeleting(true);
                 this.loading(true);
                 CharacterizationService
                     .deleteCharacterization(this.componentParams().characterizationId())
                     .then(res => {
                         this.loading(false);
-											  this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
                         this.closeCharacterization();
                     });
             }
         }
 
         closeCharacterization() {
-					  if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
-						    return;
-					  }
+            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+                return;
+            }
             this.design(null);
             this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');

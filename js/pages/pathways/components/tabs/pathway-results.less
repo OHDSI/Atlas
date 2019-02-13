@@ -72,8 +72,10 @@
   &__report-group {
     margin-bottom: 3rem;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
+    margin-left: -.75rem;
+    margin-right: -.75rem;
   }
 
   &__sunburst > div {
@@ -87,13 +89,6 @@
     flex-shrink: 0;
     margin-left: .75rem;
     margin-right: .75rem;
-
-    &:first-child {
-      margin-left: 0;
-    }
-    &:last-child {
-      margin-right: 0;
-    }
   }
 
   &__legend-panel {

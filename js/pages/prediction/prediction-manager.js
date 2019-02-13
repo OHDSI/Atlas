@@ -151,7 +151,8 @@ define([
 		async delete() {
 			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			const analysis = PredictionService.deletePrediction(this.selectedAnalysisId());
 
 			this.loading(true);
@@ -164,21 +165,25 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			PredictionService.copyPrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.multiAnalysisPaths.analysis(this.patientLevelPredictionAnalysis().id());
-			});	
+			});
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
 			var payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				document.location =  constants.multiAnalysisPaths.analysis(this.patientLevelPredictionAnalysis().id());
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}

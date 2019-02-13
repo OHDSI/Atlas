@@ -14,9 +14,11 @@ define([
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
+	'services/Poll',
 	'less!./characterization-executions.less',
 	'./characterization-results',
-	'databindings/tooltipBinding'
+	'databindings/tooltipBinding',
+	'components/modal-exit-message',
 ], function(
 	ko,
 	CharacterizationService,
@@ -32,7 +34,8 @@ define([
 	datatableUtils,
 	SourceService,
 	lodash,
-	jobDetailsService
+	jobDetailsService,
+	PollService,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -51,12 +54,16 @@ define([
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
+			this.stopping = ko.observable({});
+			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
+			this.isExitMessageShown = ko.observable(false);
+			this.exitMessage = ko.observable();
 
 			this.execColumns = [{
 					title: 'Date',
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
-					type: 'date'
+					type: 'datetime-formatted'
 				},
 				{
 					title: 'Design',
@@ -73,6 +80,15 @@ define([
 					title: 'Status',
 					data: 'status',
 					className: this.classes('col-exec-status'),
+					render: (s, p, d) => {
+						if (s === 'FAILED') {
+							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
+						} else if (s === 'STOPPED') {
+							return 'CANCELED';
+						} else {
+							return s;
+						}
+					},
 				},
 				{
 					title: 'Duration',
@@ -97,14 +113,14 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = setInterval(() => this.loadData({
+				this.intervalId = PollService.add(() => this.loadData({
 					silently: true
 				}), 10000)
 			}
 		}
 
 		dispose() {
-			clearInterval(this.intervalId);
+			PollService.stop(this.intervalId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -147,7 +163,7 @@ define([
 				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 
 				sourceList.forEach(s => {
-					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
+					let group = this.executionGroups().find(g => g.sourceKey === s.sourceKey);
 					if (!group) {
 						group = {
 							sourceKey: s.sourceKey,
@@ -164,7 +180,7 @@ define([
 						this.ccGenerationStatusOptions.STARTED :
 						this.ccGenerationStatusOptions.COMPLETED);
 
-				})
+				});
 				this.loading(false);
 			});
 		}
@@ -172,16 +188,22 @@ define([
 		generate(source) {
 			let confirmPromise;
 
-			if ((this.executionGroups().find(g => g.sourceKey === source) || {}).status === this.ccGenerationStatusOptions.STARTED) {
-				confirmPromise = new Promise((resolve, reject) => {
-					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-						resolve();
-					} else {
-						reject();
-					}
-				})
+			this.stopping({...this.stopping(), [source]: false});
+			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+			if (!executionGroup) {
+				confirmPromise = new Promise((resolve, reject) => reject());
 			} else {
-				confirmPromise = new Promise(res => res());
+				if (executionGroup.status() === this.ccGenerationStatusOptions.STARTED) {
+					confirmPromise = new Promise((resolve, reject) => {
+						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
+							resolve();
+						} else {
+							reject();
+						}
+					})
+				} else {
+					confirmPromise = new Promise(res => res());
+				}
 			}
 
 			confirmPromise
@@ -191,6 +213,13 @@ define([
 					this.loadData()
 				})
 				.catch(() => {});
+		}
+
+		cancelGenerate(source) {
+			this.stopping({...this.stopping(), [source.sourceKey]: true});
+			if (confirm('Do you want to stop generation?')) {
+				CharacterizationService.cancelGeneration(this.characterizationId(), source.sourceKey);
+			}
 		}
 
 		showExecutionDesign(executionId) {
@@ -203,6 +232,15 @@ define([
 					this.executionDesign(res);
 					this.loading(false);
 				});
+		}
+
+		showExitMessage(sourceKey, id) {
+			const group = this.executionGroups().find(g => g.sourceKey === sourceKey) || { submissions: ko.observableArray() };
+			const submission = group.submissions().find(s => s.id === id);
+			if (submission && submission.exitMessage) {
+				this.exitMessage(submission.exitMessage);
+				this.isExitMessageShown(true);
+			}
 		}
 
 		toggleSection(idx) {

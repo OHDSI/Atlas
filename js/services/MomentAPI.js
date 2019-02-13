@@ -2,7 +2,7 @@ define(function (require, exports) {
 
   var moment = require('moment');
   const PARSE_FORMAT = 'YYYY-MM-DD, H:mm';
-  const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm:ss A';
+  const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm A';
   const DATE_FORMAT = 'MM/DD/YYYY';
   const DURATION_FORMAT = 'HH:mm:ss';
   const EMPTY_DATE = '';
@@ -46,6 +46,10 @@ define(function (require, exports) {
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
     diffInDays,
+    PARSE_FORMAT,
+    DATE_TIME_FORMAT,
+    DATE_FORMAT,
+    DURATION_FORMAT,
   };
 
   return api;
