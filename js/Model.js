@@ -563,16 +563,16 @@ define(
 						conceptPromise
 							.then(() => {
 								// now that we have required information lets compile them into data objects for our view
-								var cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
-								var results = [];
-								for (var s = 0; s < cdmSources.length; s++) {
-									var source = cdmSources[s];
+								const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
+								let results = [];
+								for (let s = 0; s < cdmSources.length; s++) {
+									const source = cdmSources[s];
 									this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
 										ready: false,
 										checking: false
 									});
-									var sourceInfo = this.getSourceInfo(source);
-									var cdsi = {};
+									const sourceInfo = this.getSourceInfo(source);
+									let cdsi = {};
 									cdsi.name = cdmSources[s].sourceName;
 									cdsi.sourceKey = cdmSources[s].sourceKey;
 									if (sourceInfo != null) {
@@ -580,14 +580,12 @@ define(
 										cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
 										cdsi.sourceId = sourceInfo.id.sourceId;
 										cdsi.status = ko.observable(sourceInfo.status);
-										var date = new Date(sourceInfo.startTime);
+										const date = new Date(sourceInfo.startTime);
 										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
 										cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
-										var commaFormatted = d3.format(",");
-										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
+										const commaFormatted = d3.format(",");
 										if (sourceInfo.personCount == null) {
 											cdsi.personCount = ko.observable('...');
-											this.getCohortCount(source).then(count => cdsi.personCount(count));
 										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
