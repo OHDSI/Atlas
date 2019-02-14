@@ -114,7 +114,6 @@ define([
       // while the query for full ancestors list is being executed in background
       // Per: https://github.com/OHDSI/Atlas/pull/614#issuecomment-383050990
       this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(this);
-      this.hasErrors = ko.observable(false);
 
       // data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
       // or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
