@@ -565,8 +565,7 @@ define(
 										const commaFormatted = d3.format(",");
 										if (sourceInfo.personCount == null) {
 											cdsi.personCount = ko.observable('...');
-										}
-									} else {
+										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
 										if (sourceInfo.recordCount) {
