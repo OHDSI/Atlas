@@ -4,8 +4,10 @@ define([
 	'components/Component',
   'utils/CommonUtils',
   'atlas-state',
-	'services/ConceptSet',
-  './included-conceptsets-badge'
+  'services/ConceptSet',
+  'lodash',
+  './included-conceptsets-badge',
+  'components/empty-state',
 ], function (
 	ko,
 	view,
@@ -13,6 +15,7 @@ define([
   commonUtils,
   sharedState,
   conceptSetService,
+  lodash,
 ) {
 	class IncludedConceptsets extends Component {
 		constructor(params) {

@@ -16,7 +16,7 @@
 <!-- ko if: $root.loadingIncluded -->
   <loading></loading>
 <!-- /ko -->
-<!-- ko ifnot: $root.loadingIncluded -->
+<!-- ko if: !$root.loadingIncluded() -->
 <faceted-datatable params="{
   columns: $component.searchConceptsColumns,
   options: $component.searchConceptsOptions,

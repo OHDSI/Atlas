@@ -399,22 +399,26 @@ define(
 			resolveConceptSetExpressionSimple(expression, success) {
 				const callback = typeof success === 'function'
 					? success
-					: ({ data: info }) => {
-							this.conceptSetInclusionIdentifiers(info);
-							this.currentIncludedConceptIdentifierList(info.join(','));
-							this.conceptSetInclusionCount(info.length);
-							this.resolvingConceptSetExpression(false);
-						};
+					: ({ data }) => {
+						let info = data;
+						if (!Array.isArray(info)) {
+							throw new Error();
+						}
+						this.conceptSetInclusionIdentifiers(info);
+						this.currentIncludedConceptIdentifierList(info.join(','));
+						this.conceptSetInclusionCount(info.length);
+					};
 				this.resolvingConceptSetExpression(true);
-				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression);
-				resolvingPromise.then(callback);
-				resolvingPromise.catch((err) => {
-					console.error('Resolving concept set expression failed', err);
-					this.resolvingConceptSetExpression(false);
-					document.location = '#/configure';
-				});
+				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
+					.then(callback)
+					.catch(() => this.handleVocabularyDataSourceFailure());
 
 				return resolvingPromise;
+			}
+
+			handleVocabularyDataSourceFailure(message = 'An error occured') {
+				alert(`${message}. Check vocabulary data source`);
+				document.location = '#/configure';
 			}
 
 			renderCheckbox(field) {
@@ -466,19 +470,17 @@ define(
 				});
 			}
 
-			loadCohortDefinition(cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
+			async loadCohortDefinition(cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
 				// don't load if it is already loaded or a new concept set
 				if (this.currentCohortDefinition() && this.currentCohortDefinition().id() == cohortDefinitionId) {
 					if (this.currentConceptSet() && this.currentConceptSet().id == conceptSetId && this.currentConceptSetSource() == 'cohort') {
 						this.reportSourceKey(sourceKey);
-						this.currentView(viewToShow);
 						return;
 					} else if (conceptSetId != null) {
 						this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						return;
 					} else {
 						this.reportSourceKey(sourceKey);
-						this.currentView(viewToShow);
 						return;
 					}
 				}
@@ -498,34 +500,24 @@ define(
 					this.clearConceptSet();
 				}
 				this.currentView('loading');
-				let definitionPromise, infoPromise;
 
 				if (cohortDefinitionId == '0') {
-					definitionPromise = Promise.resolve();
-					infoPromise = Promise.resolve();
-
 					this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
 					this.currentCohortDefinitionInfo([]);
 				} else {
-					definitionPromise = httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
-					infoPromise = httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');
-					
-					definitionPromise.then(({ data: cohortDefinition }) => {
-						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-						this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-					});
-					infoPromise.then(({ data: generationInfo }) => {
-						this.currentCohortDefinitionInfo(generationInfo);
-					});
+					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
+					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+
+					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');					
+					this.currentCohortDefinitionInfo(generationInfo);
 				}
 
-				Promise.all([infoPromise, definitionPromise])
-					.then(() => {
+				try {
 						// Now that we have loaded up the cohort definition, we'll need to
 						// resolve all of the concepts embedded in the concept set collection
 						// to ensure they have all of the proper properties for editing in the cohort
 						// editior
-						let conceptPromise;
 						if (this.currentCohortDefinition().expression().ConceptSets()) {
 							const identifiers = [];
 							this.currentCohortDefinition().expression().ConceptSets()
@@ -535,34 +527,27 @@ define(
 											identifiers.push(item.concept.CONCEPT_ID);
 										});
 								});
-							conceptPromise = httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
-							conceptPromise.then(({ data }) => {
-								let conceptsNotFound = 0;
-								const identifiersByConceptId = new Map();
-								data.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
-								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
-									// Update each of the concept set items
-									currentConceptSet.expression.items().forEach((item) => {
-										var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
-										if (selectedConcept)
-											item.concept = selectedConcept;
-										else
-											conceptsNotFound++;
-									});
-									currentConceptSet.expression.items.valueHasMutated();
+							const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
+							let conceptsNotFound = 0;
+							const identifiersByConceptId = new Map();
+							identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
+							this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
+								// Update each of the concept set items
+								currentConceptSet.expression.items().forEach((item) => {
+									var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
+									if (selectedConcept)
+										item.concept = selectedConcept;
+									else
+										conceptsNotFound++;
 								});
-								if (conceptsNotFound > 0) {
-									console.error("Concepts not found: " + conceptsNotFound);
-								}
-								this.currentCohortDefinitionDirtyFlag().reset();
+								currentConceptSet.expression.items.valueHasMutated();
+							});
+							if (conceptsNotFound > 0) {
+								console.error("Concepts not found: " + conceptsNotFound);
 							}
-						);
-						} else {
-							conceptPromise = Promise.resolve();
+							this.currentCohortDefinitionDirtyFlag().reset();
 						}
-						conceptPromise
-							.then(() => {
-								// now that we have required information lets compile them into data objects for our view
+							// now that we have required information lets compile them into data objects for our view
 								const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
 								let results = [];
 								for (let s = 0; s < cdmSources.length; s++) {
@@ -596,33 +581,31 @@ define(
 										}
 										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
-									} else {
-										cdsi.isValid = ko.observable(false);
-										cdsi.isCanceled = ko.observable(false);
-										cdsi.status = ko.observable('n/a');
-										cdsi.startTime = ko.observable('n/a');
-										cdsi.executionDuration = ko.observable('n/a');
-										cdsi.personCount = ko.observable('n/a');
-										cdsi.recordCount = ko.observable('n/a');
-										cdsi.includeFeatures = ko.observable(false);
-										cdsi.failMessage = ko.observable(null);
-									}
-									results.push(cdsi);
-								}
-								this.cohortDefinitionSourceInfo(results);
-								if (conceptSetId != null) {
-									this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 								} else {
-									this.reportSourceKey(sourceKey);
-									this.currentView(viewToShow);
+									cdsi.isValid = ko.observable(false);
+									cdsi.isCanceled = ko.observable(false);
+									cdsi.status = ko.observable('n/a');
+									cdsi.startTime = ko.observable('n/a');
+									cdsi.executionDuration = ko.observable('n/a');
+									cdsi.personCount = ko.observable('n/a');
+									cdsi.recordCount = ko.observable('n/a');
+									cdsi.includeFeatures = ko.observable(false);
+									cdsi.failMessage = ko.observable(null);
 								}
-							});
-					})
-					.catch((xhr) => {
-						if (xhr.status == 403 || xhr.status == 401) {
-							this.currentView(viewToShow);
-						}
-					});
+								results.push(cdsi);
+							}
+							this.cohortDefinitionSourceInfo(results);
+							if (conceptSetId != null) {
+								this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
+								return;
+							} else {
+								this.reportSourceKey(sourceKey);
+							}
+						} catch(er) {
+							this.handleVocabularyDataSourceFailure('Loading cohort definition failed');
+					}
+					this.currentView(viewToShow);
+
 			}
 
 			loadConceptSet(conceptSetId, viewToShow, loadingSource, mode) {
@@ -677,7 +660,7 @@ define(
 				}
 			}
 			
-			loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
+			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
@@ -697,20 +680,19 @@ define(
 					return;
 				}
 				this.currentView('loading');
-				conceptSetService.loadConceptSet(conceptSetId)
-					.then((conceptset) => {
-						return conceptSetService.loadConceptSetExpression(conceptSetId)
-							.then((expression) => {
-								this.setConceptSet(conceptset, expression.items);
-								this.handleViewChange(viewToShow, { conceptSetId, mode });
-								return this.resolveConceptSetExpression()
-									.then(() => {
-										this.currentConceptSetMode(mode);
-										$('#conceptSetLoadDialog').modal('hide');
-									});
-							});
-					})
-				.catch(er => authApi.handleAccessDenied(er));
+				try {
+					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
+					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
+					const expression = _.isEmpty(data) ? { items: [] } : data;
+					this.setConceptSet(conceptset, expression.items);	
+					await this.resolveConceptSetExpression();
+					this.currentConceptSetMode(mode);
+					$('#conceptSetLoadDialog').modal('hide');
+				} catch(er) {
+					this.resolvingConceptSetExpression(false);
+					this.handleVocabularyDataSourceFailure('Resolving concept set failed');
+				}
+				this.handleViewChange(viewToShow, { conceptSetId, mode });
 			}
 			
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
