@@ -542,41 +542,40 @@ define(
 							this.currentCohortDefinitionDirtyFlag().reset();
 						}
 							// now that we have required information lets compile them into data objects for our view
-							var cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
-							var results = [];
-							for (var s = 0; s < cdmSources.length; s++) {
-								var source = cdmSources[s];
-								this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-									ready: false,
-									checking: false
-								});
-								var sourceInfo = this.getSourceInfo(source);
-								var cdsi = {};
-								cdsi.name = cdmSources[s].sourceName;
-								cdsi.sourceKey = cdmSources[s].sourceKey;
-								if (sourceInfo != null) {
-									cdsi.isValid = ko.observable(sourceInfo.isValid);
-									cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
-									cdsi.sourceId = sourceInfo.id.sourceId;
-									cdsi.status = ko.observable(sourceInfo.status);
-									var date = new Date(sourceInfo.startTime);
-									cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
-									cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
-									var commaFormatted = d3.format(",");
-									// For backwards compatability, query personCount from cdm if not populated in sourceInfo
-									if (sourceInfo.personCount == null) {
-										cdsi.personCount = ko.observable('...');
-										this.getCohortCount(source).then(count => cdsi.personCount(count));
+								const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
+								let results = [];
+								for (let s = 0; s < cdmSources.length; s++) {
+									const source = cdmSources[s];
+									this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+										ready: false,
+										checking: false
+									});
+									const sourceInfo = this.getSourceInfo(source);
+									let cdsi = {};
+									cdsi.name = cdmSources[s].sourceName;
+									cdsi.sourceKey = cdmSources[s].sourceKey;
+									if (sourceInfo != null) {
+										cdsi.isValid = ko.observable(sourceInfo.isValid);
+										cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
+										cdsi.sourceId = sourceInfo.id.sourceId;
+										cdsi.status = ko.observable(sourceInfo.status);
+										const date = new Date(sourceInfo.startTime);
+										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
+										cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
+										const commaFormatted = d3.format(",");
+										if (sourceInfo.personCount == null) {
+											cdsi.personCount = ko.observable('...');
+										}
 									} else {
-										cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
-									}
-									if (sourceInfo.recordCount) {
-										cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
-									} else {
-										cdsi.recordCount = ko.observable('...');
-									}
-									cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
-									cdsi.failMessage = ko.observable(sourceInfo.failMessage);
+											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
+										}
+										if (sourceInfo.recordCount) {
+											cdsi.recordCount = ko.observable(commaFormatted(sourceInfo.recordCount));
+										} else {
+											cdsi.recordCount = ko.observable('...');
+										}
+										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
+										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 								} else {
 									cdsi.isValid = ko.observable(false);
 									cdsi.isCanceled = ko.observable(false);
