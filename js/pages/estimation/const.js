@@ -205,16 +205,16 @@ define(
                 title: 'Outcomes',
                 render: (s, p, d, a, b, c) => {
                     if (d.outcomes().length > 1) {
-                        var tooltipText = ""; 
+                        let tooltipText = "";
                         d.outcomes().forEach((element, index) => {
                         	element = ko.toJS(element); 
                             if (index > 0) {
                                 tooltipText += ("<span class=\"tooltipitem\">" + element.name + "</span>");
                             }
                         });
-                        const outcomeDisplay = d.outcomes().length == 2 ? "outcome" : "outcomes";
+                        const outcomeDisplay = d.outcomes().length === 2 ? "outcome" : "outcomes";
                         return ko.toJS(d.outcomes()[0]).name + "<br/><div class=\"tool-tip\">(" + (d.outcomes().length - 1) + "+ more " + outcomeDisplay + "<span class=\"tooltiptext\">" + tooltipText + "</span>)</div>";
-                    } else if (d.outcomes().length == 1) {
+                    } else if (d.outcomes().length === 1) {
                         return ko.toJS(d.outcomes()[0]).name;
                     } else {
                         return 0;
@@ -390,7 +390,7 @@ define(
             ]
         }        
       }
-    }
+    };
 
     return {
       pageTitle,

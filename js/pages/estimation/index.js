@@ -7,8 +7,7 @@ define(
 
     const statusCss = ko.pureComputed(function () {
       if (appState.estimationAnalysis.current())
-        return appState.estimationAnalysis.dirtyFlag()
-          .isDirty() ? "unsaved" : "open";
+        return appState.estimationAnalysis.dirtyFlag().isDirty() ? "unsaved" : "open";
       return "";
     });
 

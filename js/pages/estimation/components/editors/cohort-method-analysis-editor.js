@@ -75,8 +75,8 @@ define([
 			}));
 			
 			this.subscriptions.push(this.trimSelection.subscribe(newValue => {
-				this.analysis.trimByPs(this.trimSelection() == "byPercent");
-				this.analysis.trimByPsToEquipoise(this.trimSelection() == "toEquipoise");
+				this.analysis.trimByPs(this.trimSelection() === "byPercent");
+				this.analysis.trimByPsToEquipoise(this.trimSelection() === "toEquipoise");
 				this.setCreatePs();
 			}));
 
@@ -104,10 +104,10 @@ define([
 
 			// Set the subscription
 			this.subscriptions.push(this.matchStratifySelection.subscribe(newValue => {
-				this.analysis.matchOnPs(this.matchStratifySelection() == "matchOnPs");
-				this.analysis.matchOnPsAndCovariates(this.matchStratifySelection() == "matchOnPsAndCovariates");
-				this.analysis.stratifyByPs(this.matchStratifySelection() == "stratifyByPs");
-				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() == "stratifyOnPsAndCovariates");
+				this.analysis.matchOnPs(this.matchStratifySelection() === "matchOnPs");
+				this.analysis.matchOnPsAndCovariates(this.matchStratifySelection() === "matchOnPsAndCovariates");
+				this.analysis.stratifyByPs(this.matchStratifySelection() === "stratifyByPs");
+				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() === "stratifyOnPsAndCovariates");
 				this.setCreatePs();
 			}));
 		}
@@ -150,7 +150,7 @@ define([
 		setCreatePs() {
 			if (this.matchStratifySelection() && this.trimSelection()) {				
 				this.analysis.createPs(
-					!(this.matchStratifySelection() == "none" && this.trimSelection() == "none")
+					!(this.matchStratifySelection() === "none" && this.trimSelection() === "none")
 				);
 			}
 		}

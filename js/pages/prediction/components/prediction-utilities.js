@@ -61,16 +61,16 @@ define([
 			});
 
 			this.specificationHasUniqueSettings = ko.pureComputed(() => {
-				var result = this.specificationMeetsMinimumRequirements();
+				let result = this.specificationMeetsMinimumRequirements();
 				if (result) {
 					// Check to make sure the other settings are unique
-					var uniqueModelSettings = new Set(this.modelSettings().map((ms) => { return ko.toJSON(ms)}));
-					var uniqueCovariateSettings = new Set(this.covariateSettings().map((cs) => { return ko.toJSON(cs)}));
-					var uniquePopulationSettings = new Set(this.populationSettings().map((ps) => { return ko.toJSON(ps)}));
+					const uniqueModelSettings = new Set(this.modelSettings().map((ms) => { return ko.toJSON(ms)}));
+					const uniqueCovariateSettings = new Set(this.covariateSettings().map((cs) => { return ko.toJSON(cs)}));
+					const uniquePopulationSettings = new Set(this.populationSettings().map((ps) => { return ko.toJSON(ps)}));
 					result = (
-							this.modelSettings().length == uniqueModelSettings.size &&
-							this.covariateSettings().length == uniqueCovariateSettings.size &&
-							this.populationSettings().length == uniquePopulationSettings.size
+							this.modelSettings().length === uniqueModelSettings.size &&
+							this.covariateSettings().length === uniqueCovariateSettings.size &&
+							this.populationSettings().length === uniquePopulationSettings.size
 					)
 				}
 				return result;
@@ -88,7 +88,7 @@ define([
 			});
 
 			this.subscriptions.push(this.utilityPillMode.subscribe(() => {
-				if (this.utilityPillMode()  == 'download') {
+				if (this.utilityPillMode()  === 'download') {
 					this.computeCartesian();
 				}
 			}));
@@ -120,9 +120,9 @@ define([
 			this.fullAnalysisList.removeAll();
 
 			// T*O Pairs
-			var targetOutcomeCartesian = commonUtils.cartesian(this.targetCohorts(), this.outcomeCohorts());
+			const targetOutcomeCartesian = commonUtils.cartesian(this.targetCohorts(), this.outcomeCohorts());
 			targetOutcomeCartesian.forEach(element => {
-				if (element.length != 2) {
+				if (element.length !== 2) {
 					console.error("Expecting array with index 0: treatments, 1: outcomes");
 				} else {
 					this.targetOutcomePairs().push(
@@ -138,13 +138,13 @@ define([
 			this.targetOutcomePairs.valueHasMutated();
 
 			// Analysis Settings
-			var modelCovarPopCartesian = commonUtils.cartesian(
+			const modelCovarPopCartesian = commonUtils.cartesian(
 				this.patientLevelPredictionAnalysis().modelSettings(),
 				this.patientLevelPredictionAnalysis().covariateSettings(),
 				this.patientLevelPredictionAnalysis().populationSettings(),
 			);
 			modelCovarPopCartesian.forEach(element => {
-				if (element.length != 3) {
+				if (element.length !== 3) {
 					console.error("Expecting array with index 0: model, 1: covariate settings, 2: population settings");
 				} else {
 					this.modelCovarPopTuple().push(
@@ -161,13 +161,13 @@ define([
 			this.modelCovarPopTuple.valueHasMutated();
 
 			// Full Analysis
-			var fullAnalysisCartesian = commonUtils.cartesian(
+			const fullAnalysisCartesian = commonUtils.cartesian(
 				this.targetOutcomePairs(),
 				this.modelCovarPopTuple(),
 			);
 			this.fullAnalysisList.removeAll();
 			fullAnalysisCartesian.forEach(element => {
-				if (element.length != 2) {
+				if (element.length !== 2) {
 					console.error("Expecting array with index 0: TargetOutcome, 1: ModelCovarPopTuple");
 				} else {
 					this.fullAnalysisList().push(
@@ -191,7 +191,7 @@ define([
 		}
 
 		copyFullSpecificationToClipboard() {
-			var currentClipboard = new clipboard('#btnCopyFullSpecificationClipboard');
+			const currentClipboard = new clipboard('#btnCopyFullSpecificationClipboard');
 
 			currentClipboard.on('success', function (e) {
 				console.log('Copied to clipboard');

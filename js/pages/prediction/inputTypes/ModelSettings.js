@@ -81,8 +81,8 @@ define(function (require, exports) {
 
     function GetOptionsFromObject (data) 
     {
-        var settingName = this.GetSettingNameFromObject(data);
-        return exports.options.filter((f) => { return f.key === settingName})[0];
+        const settingName = this.GetSettingNameFromObject(data);
+        return exports.options.find(f => f.key === settingName);
     }
     
 	
@@ -95,7 +95,7 @@ define(function (require, exports) {
 	exports.AdaBoostSettings = AdaBoostSettings;	
 	exports.LassoLogisticRegressionSettings = LassoLogisticRegressionSettings;
     
-    exports.GetSettingNameFromObject = GetSettingNameFromObject
+    exports.GetSettingNameFromObject = GetSettingNameFromObject;
     exports.GetSettingsFromObject = GetSettingsFromObject;
     exports.GetOptionsFromObject = GetOptionsFromObject;
 
@@ -105,7 +105,7 @@ define(function (require, exports) {
             name: 'Lasso Logistic Regression',
             editor: 'lasso-logistic-regression-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('LassoLogisticRegressionSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('LassoLogisticRegressionSettings');
                 return {
                     LassoLogisticRegressionSettings: new LassoLogisticRegressionSettings(defaultValues)
                 };
@@ -116,7 +116,7 @@ define(function (require, exports) {
             name: 'Random Forest',
             editor: 'random-forest-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('RandomForestSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('RandomForestSettings');
                 return {
                     RandomForestSettings: new RandomForestSettings(defaultValues)
                 };
@@ -127,7 +127,7 @@ define(function (require, exports) {
             name: 'Gradient Boosting Machine',
             editor: 'gradient-boosting-machine-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('GradientBoostingMachineSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('GradientBoostingMachineSettings');
                 return {
                     GradientBoostingMachineSettings: new GradientBoostingMachineSettings(defaultValues)
                 };
@@ -138,7 +138,7 @@ define(function (require, exports) {
             name: 'Ada Boost',
             editor: 'ada-boost-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('AdaBoostSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('AdaBoostSettings');
                 return {
                     AdaBoostSettings: new AdaBoostSettings(defaultValues)
                 };
@@ -149,7 +149,7 @@ define(function (require, exports) {
             name: 'Decision Tree',
             editor: 'decision-tree-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('DecisionTreeSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('DecisionTreeSettings');
                 return {
                     DecisionTreeSettings: new DecisionTreeSettings(defaultValues)
                 };
@@ -171,7 +171,7 @@ define(function (require, exports) {
             name: 'Multilayer Perception Model',
             editor: 'mlp-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('MLPSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('MLPSettings');
                 return {
                     MLPSettings: new MLPSettings(defaultValues)
                 };
@@ -182,7 +182,7 @@ define(function (require, exports) {
             name: 'K Nearest Neighbors',
             editor: 'knn-settings',
             action: () => {
-                var defaultValues = utils.getDefaultModelSettingsValueList('KNNSettings');
+                const defaultValues = utils.getDefaultModelSettingsValueList('KNNSettings');
                 return {
                     KNNSettings: new KNNSettings(defaultValues)
                 };

@@ -12,7 +12,7 @@ define([
             this.binary = ko.observable(data.binary === undefined ? true : data.binary);
             this.includeAllOutcomes = ko.observable(data.includeAllOutcomes === undefined ? true : data.includeAllOutcomes);
             this.firstExposureOnly = ko.observable(data.firstExposureOnly === undefined ? false : data.firstExposureOnly);
-            this.washoutPeriod = ko.observable(data.washoutPeriod === 0 ? 0 : data.washoutPeriod || 365).extend({ numeric: 0});;
+            this.washoutPeriod = ko.observable(data.washoutPeriod === 0 ? 0 : data.washoutPeriod || 365).extend({ numeric: 0});
             this.removeSubjectsWithPriorOutcome = ko.observable(data.removeSubjectsWithPriorOutcome === undefined ? false : data.removeSubjectsWithPriorOutcome);
             this.priorOutcomeLookback = ko.observable(data.priorOutcomeLookback === 0 ? 0 : data.priorOutcomeLookback  || 99999);
             this.requireTimeAtRisk = ko.observable(data.requireTimeAtRisk === undefined ? true : data.requireTimeAtRisk);

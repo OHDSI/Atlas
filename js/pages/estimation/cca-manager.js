@@ -141,7 +141,7 @@ define([
 			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
-			var payload = this.prepForSave();
+			const payload = this.prepForSave();
 			EstimationService.saveEstimation(payload).then((analysis) => {
 				this.setAnalysis(analysis);
 				document.location =  constants.paths.ccaAnalysis(this.estimationAnalysis().id());
@@ -151,7 +151,7 @@ define([
 		}
 
 		prepForSave() {
-			var specification = ko.toJS(this.estimationAnalysis());
+			const specification = ko.toJS(this.estimationAnalysis());
 			specification.cohortDefinitions = [];
 			specification.conceptSets = [];
 			specification.conceptSetCrossReference = [];
@@ -159,7 +159,7 @@ define([
 			specification.packageName = this.packageName();
 
 			this.comparisons().forEach((comp, index) => {
-				var tco = new TargetComparatorOutcomes({
+				const tco = new TargetComparatorOutcomes({
 					targetId: comp.target().id,
 					comparatorId: comp.comparator().id,
 					outcomeIds: comp.outcomes().map(d => {return d.id}),
@@ -192,7 +192,7 @@ define([
 				// Set the analysisId on each analysis
 				a.analysisId = index + 1;
 
-				var covarSettings = a.getDbCohortMethodDataArgs.covariateSettings;
+				const covarSettings = a.getDbCohortMethodDataArgs.covariateSettings;
 				if (covarSettings.includedCovariateConceptSet !== null && covarSettings.includedCovariateConceptSet.id > 0) {
 					this.addConceptSetToEstimation(specification, covarSettings.includedCovariateConceptSet, 
 						constants.conceptSetCrossReference.analysisCovariateSettings.targetName, 
@@ -209,7 +209,7 @@ define([
 				// Remove the concept set references by setting it to the base class
 				specification.estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList[index].getDbCohortMethodDataArgs.covariateSettings = ko.toJS(new CovariateSettings(covarSettings));
 			});
-			var pcsaCovarSettings = specification.positiveControlSynthesisArgs.covariateSettings;
+			let pcsaCovarSettings = specification.positiveControlSynthesisArgs.covariateSettings;
 			if (pcsaCovarSettings != null) {				
 				if (pcsaCovarSettings.includedCovariateConceptSet !== null && pcsaCovarSettings.includedCovariateConceptSet.id > 0) {
 					this.addConceptSetToEstimation(specification, pcsaCovarSettings.includedCovariateConceptSet, 
@@ -223,9 +223,6 @@ define([
 						index, 
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
-
-				// Remove the concept set references by setting it to the base class
-				pcsaCovarSettings = ko.toJS(new CovariateSettings(pcsaCovarSettings));
 			}
 
 			return {
@@ -269,8 +266,8 @@ define([
 		};
 
 		setAnalysis(analysis) {
-			var header = analysis.json;
-			var specification = JSON.parse(analysis.data.specification);
+			const header = analysis.json;
+			const specification = JSON.parse(analysis.data.specification);
 			this.estimationAnalysis(new EstimationAnalysis(specification, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
@@ -284,16 +281,16 @@ define([
 
 		setUserInterfaceDependencies() {
 			this.comparisons.removeAll();
-			var cohortDefinitions = this.estimationAnalysis().cohortDefinitions();
-			var conceptSets = this.estimationAnalysis().conceptSets();
-			var csXref =this.estimationAnalysis().conceptSetCrossReference();
+			const cohortDefinitions = this.estimationAnalysis().cohortDefinitions();
+			const conceptSets = this.estimationAnalysis().conceptSets();
+			const csXref =this.estimationAnalysis().conceptSetCrossReference();
 			this.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.targetComparatorOutcomes().forEach((tco, index) => {
-				var target = null;
-				var comparator = null;
-				var outcomes = [];
+				let target = null;
+				let comparator = null;
+				const outcomes = [];
 		
 				if (tco.targetId() !== null) {
-					var tCohortDefinitionList = cohortDefinitions.filter((d) => { return d.id() === tco.targetId()});
+					const tCohortDefinitionList = cohortDefinitions.filter(d => d.id() === tco.targetId());
 					if (tCohortDefinitionList.length > 0) {
 						target = {id: tco.targetId(), name: tCohortDefinitionList[0].name()};
 					} else {
@@ -301,7 +298,7 @@ define([
 					}
 				}
 				if (tco.comparatorId() !== null) {
-					var cCohortDefinitionList = cohortDefinitions.filter((d) => { return d.id() === tco.comparatorId()});
+					const cCohortDefinitionList = cohortDefinitions.filter(d => d.id() === tco.comparatorId());
 					if (cCohortDefinitionList.length > 0) {
 						comparator = {id: tco.comparatorId(), name: cCohortDefinitionList[0].name()};
 					} else {
@@ -309,7 +306,7 @@ define([
 					}
 				}
 				tco.outcomeIds().forEach(outcomeId => {
-					var oCohortDefinitionList = cohortDefinitions.filter((d) => { return d.id() === outcomeId});
+					const oCohortDefinitionList = cohortDefinitions.filter(d => d.id() === outcomeId);
 					if (oCohortDefinitionList.length > 0) {
 						outcomes.push({id: outcomeId, name: oCohortDefinitionList[0].name()});
 					} else {
@@ -317,7 +314,7 @@ define([
 					}
 				});
 
-				var comp = new Comparison({
+				const comp = new Comparison({
 					target: target, 
 					comparator: comparator,
 					outcomes: outcomes,
@@ -326,11 +323,11 @@ define([
 			});
 			csXref.forEach((xref) => {
 				// Find the concept set each item
-				var selectedConceptSetList = conceptSets.filter((cs) => { return cs.id === xref.conceptSetId});
-				if (selectedConceptSetList.length == 0) {
+				const selectedConceptSetList = conceptSets.filter((cs) => { return cs.id === xref.conceptSetId});
+				if (selectedConceptSetList.length === 0) {
 					console.error("Concept Set: " + xref.conceptSetId + " not found in specification.");
 				}
-				var selectedConceptSet = new ConceptSet({id: selectedConceptSetList[0].id, name: selectedConceptSetList[0].name()});
+				const selectedConceptSet = new ConceptSet({id: selectedConceptSetList[0].id, name: selectedConceptSetList[0].name()});
 				if (xref.targetName === constants.conceptSetCrossReference.targetComparatorOutcome.targetName) {
 					if (xref.propertyName === constants.conceptSetCrossReference.targetComparatorOutcome.propertyName.includedCovariateConcepts) {
 						this.comparisons()[xref.targetIndex].includedCovariateConceptSet(selectedConceptSet);
@@ -340,16 +337,16 @@ define([
 					}
 				} else if (xref.targetName === constants.conceptSetCrossReference.negativeControlOutcomes.targetName) {
 					this.comparisons()[xref.targetIndex].negativeControlOutcomesConceptSet(selectedConceptSet);
-				} else if (xref.targetName == constants.conceptSetCrossReference.analysisCovariateSettings.targetName) {
-					var targetAnalysis = this.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList()[xref.targetIndex];
+				} else if (xref.targetName === constants.conceptSetCrossReference.analysisCovariateSettings.targetName) {
+					const targetAnalysis = this.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList()[xref.targetIndex];
 					if (xref.propertyName === constants.conceptSetCrossReference.analysisCovariateSettings.propertyName.includedCovariateConcepts) {
 						targetAnalysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet(selectedConceptSet);
 					}
 					if (xref.propertyName === constants.conceptSetCrossReference.analysisCovariateSettings.propertyName.excludedCovariateConcepts) {
 						targetAnalysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet(selectedConceptSet);
 					}
-				} else if (xref.targetName == constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName) {
-					var targetPcsCovariateSettings = this.estimationAnalysis().positiveControlSynthesisArgs().covariateSettings;
+				} else if (xref.targetName === constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName) {
+					const targetPcsCovariateSettings = this.estimationAnalysis().positiveControlSynthesisArgs().covariateSettings;
 					if (xref.propertyName === constants.conceptSetCrossReference.positiveControlCovariateSettings.propertyName.includedCovariateConcepts) {
 						targetPcsCovariateSettings.includedCovariateConceptSet(selectedConceptSet);
 					}
@@ -382,10 +379,11 @@ define([
 
 		onPageCreated() {
 			FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
+				const selectedAnalysisId = parseInt(this.selectedAnalysisId());
 				this.defaultCovariateSettings(data);
-				if (this.selectedAnalysisId() == 0 && !this.dirtyFlag().isDirty()) {
+				if (selectedAnalysisId === 0 && !this.dirtyFlag().isDirty()) {
 					this.newAnalysis();
-				} else if (this.selectedAnalysisId() > 0 && this.selectedAnalysisId() != (this.estimationAnalysis() && this.estimationAnalysis().id())) {
+				} else if (selectedAnalysisId > 0 && selectedAnalysisId !== (this.estimationAnalysis() && this.estimationAnalysis().id())) {
 					this.loadAnalysisFromServer();
 				} else {
 					this.setCohortMethodAnalysisList();
@@ -396,13 +394,13 @@ define([
 
 		addCohortToEstimation(specification, cohort) {
 			cohort = ko.isObservable(cohort) ? ko.utils.unwrapObservable(cohort) : cohort;
-			if (specification.cohortDefinitions.filter(element => element.id === cohort.id).length == 0) {
+			if (specification.cohortDefinitions.filter(element => element.id === cohort.id).length === 0) {
 				specification.cohortDefinitions.push(cohort);
 			}
 		}
 
 		addConceptSetToEstimation(specification, conceptSet, targetName, targetIndex, propertyName) {
-			if (specification.conceptSets.filter(element => element.id === conceptSet.id).length == 0) {
+			if (specification.conceptSets.filter(element => element.id === conceptSet.id).length === 0) {
 				specification.conceptSets.push(conceptSet);
 			}
 			specification.conceptSetCrossReference.push(

@@ -275,7 +275,7 @@ define(
         {
             title: 'Options',
             data: d => {
-                var key = Object.keys(d)[0];
+                const key = Object.keys(d)[0];
                 return ko.toJSON(d[key]);
             },
         },
@@ -293,7 +293,7 @@ define(
         {
             title: 'Temporal',
             render: (s, p, d) => {
-              return Object.keys(d)[0] == 'temporal' ? 'Yes': 'No'  
+              return Object.keys(d)[0] === 'temporal' ? 'Yes': 'No'
             },
             visible: false,
         },
@@ -304,15 +304,14 @@ define(
                 const vals = Object.values(d);
                 var settings = [];
                 const defaultDisplayLength = 5;
-                for (var i = 0; i < keys.length; i++) {
+                for (let i = 0; i < keys.length; i++) {
                     const currentVal = ko.isObservable(vals[i]) ? vals[i]() : vals[i];
                     if (currentVal === true) {
                         settings.push(keys[i]);
                     }
                 }
                 if (settings.length > 1) {
-                    var displayVal = "";
-                    var tooltipText = ""; 
+                    let displayVal = "";
                     settings.forEach((element, index) => {
                         if (index < defaultDisplayLength) {
                             if (index < settings.length - 1) {
@@ -320,7 +319,7 @@ define(
                             } else {
                                 displayVal += element;
                             }
-                        } else if (index == defaultDisplayLength) {
+                        } else if (index === defaultDisplayLength) {
                             displayVal = displayVal + element + "&nbsp;&nbsp;<div class=\"tool-tip\">(+" + (settings.length - defaultDisplayLength - 1) + " more covariate settings<span class=\"tooltiptext\">";
                         } else if (index > defaultDisplayLength) {
                             displayVal += ("<span class=\"tooltipitem\">" + element + "</span>");
@@ -330,7 +329,7 @@ define(
                         displayVal += "</span>)</div>";
                     }
                     return displayVal;
-                } else if (settings.length == 1) {
+                } else if (settings.length === 1) {
                     return settings[0];
                 } else {
                     return 'No covariate settings selected';
@@ -382,7 +381,7 @@ define(
         name: 'person',
         desc: 'Person',
       }],
-    }
+    };
 
     return {
       apiPaths,

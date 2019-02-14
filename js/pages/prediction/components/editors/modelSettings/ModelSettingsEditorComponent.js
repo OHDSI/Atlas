@@ -26,11 +26,11 @@ define([
             return Object.values(this.modelSettings)[Object.keys(this.modelSettings).indexOf(settingName)];
         }
         isDefault(settingName) {
-            var setting = this.getModelSettingByName(settingName);
+            const setting = this.getModelSettingByName(settingName);
             return JSON.stringify(setting()) === JSON.stringify(utils.getDefaultModelSettingValue(this.defaultModelSettings, settingName));
         }
         setToDefault(settingName) {
-            var setting = this.getModelSettingByName(settingName);
+            const setting = this.getModelSettingByName(settingName);
             setting(utils.getDefaultModelSettingValue(this.defaultModelSettings, settingName));
         }
     }

@@ -141,7 +141,7 @@ define([
 			this.patientLevelPredictionAnalysis().covariateSettings.push(
 				covariateSettings
 			);
-			var index = this.patientLevelPredictionAnalysis().covariateSettings().length - 1;
+			const index = this.patientLevelPredictionAnalysis().covariateSettings().length - 1;
 			this.editCovariateSettings(this.patientLevelPredictionAnalysis().covariateSettings()[index]);
 		}
 
@@ -158,12 +158,12 @@ define([
 
 		addModelSettings(d) {
 			this.modelSettings.push(d.action());
-			var index = this.modelSettings().length - 1;
+			const index = this.modelSettings().length - 1;
 			this.editModelSettings(this.modelSettings()[index], d.editor);
 		}
 
 		editModelSettings(modelSettings, editor) {
-			var option = ModelSettings.GetOptionsFromObject(modelSettings);
+			const option = ModelSettings.GetOptionsFromObject(modelSettings);
 			if (editor === undefined) {
 				editor = option.editor;
 			}
@@ -182,7 +182,7 @@ define([
 			this.patientLevelPredictionAnalysis().populationSettings.push(
 				new CreateStudyPopulationArgs()
 			);
-			var index = this.patientLevelPredictionAnalysis().populationSettings().length - 1;
+			const index = this.patientLevelPredictionAnalysis().populationSettings().length - 1;
 			this.editPopulationSettings(this.patientLevelPredictionAnalysis().populationSettings()[index]);
 		}
 

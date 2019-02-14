@@ -12,7 +12,7 @@ define([
         }
 
         getAnalysisObject(estimationType, analysisSpecification, defaultCovariateSettings) {
-            if (estimationType == "ComparativeCohortAnalysis") {
+            if (estimationType === "ComparativeCohortAnalysis") {
                 return new ComparativeCohortAnalysis(analysisSpecification, defaultCovariateSettings);
             } else {
                 console.error("estimationType property not set on Estimation Analysis and cannot initialize properly.")

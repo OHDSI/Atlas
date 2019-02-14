@@ -76,7 +76,7 @@ define([
 				new CohortMethodAnalysis({description: "New analysis " + (this.cohortMethodAnalysisList().length + 1)}, this.defaultCovariateSettings())
 			);
 			// Get the index
-			var index = this.cohortMethodAnalysisList().length - 1;
+			const index = this.cohortMethodAnalysisList().length - 1;
 			this.editAnalysis(this.cohortMethodAnalysisList()[index]);
 		}
 
@@ -92,7 +92,7 @@ define([
 		}
 
 		copyAnalysisSettings(obj, index) {
-			var newAnalysis = ko.toJS(this.cohortMethodAnalysisList()[index]);
+			const newAnalysis = ko.toJS(this.cohortMethodAnalysisList()[index]);
 			newAnalysis.analysisId = this.cohortMethodAnalysisList().length + 1;
 			newAnalysis.description = "COPY OF: " + newAnalysis.description;
 			this.cohortMethodAnalysisList.push(new CohortMethodAnalysis(newAnalysis));
@@ -119,7 +119,7 @@ define([
 		}
 
 		copyComparison(obj, index) {
-			var newComparison = ko.toJS(this.comparisons()[index]);
+			const newComparison = ko.toJS(this.comparisons()[index]);
 			newComparison.target = null;
 			newComparison.comparator = null;
 			this.comparisons.push(new Comparison(newComparison));

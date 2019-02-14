@@ -40,9 +40,10 @@ define([
 	CovariateSettings,
 	TemporalCovariateSettings,
 	ConceptSet,
-	ConceptSetCrossReference,
-	FeatureExtractionService,
+	ConceptSetCrossReference
 ) {
+	const NOT_FOUND = 'NOT FOUND';
+
 	class PatientLevelPredictionManager extends Page {
 		constructor(params) {
 			super(params);
@@ -115,21 +116,15 @@ define([
 		}
 
 		onPageCreated() {
-			//FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
-			//	this.defaultCovariateSettings = data;
-				// This will be needed for temporal covariates
-				//FeatureExtractionService.getDefaultCovariateSettings(true).then(({ data }) => {
-				//	this.defaultTemporalCovariateSettings = data;
-				//});
-				if (this.selectedAnalysisId() == 0 && !this.dirtyFlag().isDirty()) {
-					this.newAnalysis();
-				} else if (this.selectedAnalysisId() > 0 && this.selectedAnalysisId() != (this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().id())) {
-					this.onAnalysisSelected();
-				} else {
-					this.setAnalysisSettingsLists();		
-					this.loading(false);
-				}
-			//});
+			const selectedAnalysisId = parseInt(this.selectedAnalysisId());
+			if (selectedAnalysisId === 0 && !this.dirtyFlag().isDirty()) {
+				this.newAnalysis();
+			} else if (selectedAnalysisId > 0 && selectedAnalysisId !== (this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().id())) {
+				this.onAnalysisSelected();
+			} else {
+				this.setAnalysisSettingsLists();
+				this.loading(false);
+			}
 		}
 
         selectTab(index, { key }) {
@@ -138,7 +133,7 @@ define([
         }
 
 		patientLevelPredictionAnalysisForWebAPI() {
-			var definition = ko.toJS(this.patientLevelPredictionAnalysis);
+			let definition = ko.toJS(this.patientLevelPredictionAnalysis);
 			definition = ko.toJSON(definition);
 			return JSON.stringify(definition);
 		}
@@ -191,7 +186,7 @@ define([
 			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
-			var payload = this.prepForSave();
+			const payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				document.location =  constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
@@ -201,7 +196,7 @@ define([
 		}
 
 		prepForSave() {
-			var specification = ko.toJS(this.patientLevelPredictionAnalysis());
+			const specification = ko.toJS(this.patientLevelPredictionAnalysis());
 			specification.targetIds = [];
 			specification.outcomeIds = [];
 			specification.cohortDefinitions = [];
@@ -297,7 +292,7 @@ define([
 		setUserInterfaceDependencies() {
 			this.targetCohorts.removeAll();
 			this.patientLevelPredictionAnalysis().targetIds().forEach(c => {
-				var name = "NOT FOUND";
+				let name = NOT_FOUND;
 				if (this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c)).length > 0) {
 					name = this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c))[0].name();
 					this.targetCohorts.push(new Cohort({id: c, name: name}));
@@ -306,21 +301,21 @@ define([
 
 			this.outcomeCohorts.removeAll();
 			this.patientLevelPredictionAnalysis().outcomeIds().forEach(c => {
-				var name = "NOT FOUND";
+				let name = NOT_FOUND;
 				if (this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c)).length > 0) {
 					name = this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c))[0].name();
 					this.outcomeCohorts.push(new Cohort({id: c, name: name}));
 				}
 			});
 
-			var conceptSets = this.patientLevelPredictionAnalysis().conceptSets();
-			var csXref =this.patientLevelPredictionAnalysis().conceptSetCrossReference();
+			const conceptSets = this.patientLevelPredictionAnalysis().conceptSets();
+			const csXref =this.patientLevelPredictionAnalysis().conceptSetCrossReference();
 			csXref.forEach((xref) => {
-				var selectedConceptSetList = conceptSets.filter((cs) => { return cs.id === xref.conceptSetId});
-				if (selectedConceptSetList.length == 0) {
+				const selectedConceptSetList = conceptSets.filter((cs) => { return cs.id === xref.conceptSetId});
+				if (selectedConceptSetList.length === 0) {
 					console.error("Concept Set: " + xref.conceptSetId + " not found in specification.");
 				}
-				var selectedConceptSet = new ConceptSet({id: selectedConceptSetList[0].id, name: selectedConceptSetList[0].name()});
+				const selectedConceptSet = new ConceptSet({id: selectedConceptSetList[0].id, name: selectedConceptSetList[0].name()});
 				if (xref.targetName === constants.conceptSetCrossReference.covariateSettings.targetName) {
 					if (xref.propertyName === constants.conceptSetCrossReference.covariateSettings.propertyName.includedCovariateConcepts) {
 						this.patientLevelPredictionAnalysis().covariateSettings()[xref.targetIndex].includedCovariateConceptSet(selectedConceptSet);
