@@ -138,7 +138,7 @@ define(function(require, exports) {
             break;
         }
     }
-    
+
     var checkPermission = function(permission, etalon) {
         // etalon may be like '*:read,write:etc'
         if (!etalon || !permission) {
@@ -261,7 +261,7 @@ define(function(require, exports) {
     var isPermittedDeleteIR = function(id) {
         return isPermitted('ir:' + id + ':delete');
     };
-    
+
     var isPermittedCopyIR = function(id) {
         return isPermitted('ir:' + id + ':copy:get');
     };
@@ -429,7 +429,7 @@ define(function(require, exports) {
 
 	var setAuthParams = function (tokenHeader) {
         token(tokenHeader);
-        loadUserInfo();
+        return loadUserInfo();
     };
 
     var resetAuthParams = function () {
