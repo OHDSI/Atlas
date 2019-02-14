@@ -156,7 +156,7 @@ define([
       this.isKrbAuth = ko.computed(() => {
           return this.impalaConnectionStringIncludes("AuthMech=1");
       });
-        
+
       this.krbHostFQDN = ko.computed(() => {
 
         if (this.isImpalaDS() && this.isNonEmptyConnectionString()) {
@@ -278,7 +278,6 @@ define([
           roleService.getList()
             .then((roles) => {
               this.model.roles(roles);
-              this.loading(false);
               this.goToConfigure();
             });
         })
@@ -356,7 +355,7 @@ define([
         }
       }
     }
-    
+
   }
 
   return commonUtils.build('source-manager', SourceManager, view);
