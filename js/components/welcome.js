@@ -60,21 +60,19 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
-			self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER)).then(() => {
-				self.errorMsg(null);
-				self.isBadCredentials(null);
-				self.isInProgress(false);
-			})
-			self.errorMsg(null);
-			self.isBadCredentials(false);
-		};
+            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER)).then(() => {
+                self.errorMsg(null);
+                self.isBadCredentials(null);
+                self.isInProgress(false);
+            });
+        };
 
         self.onLoginFailed = function(jqXHR, defaultMessage) {
-			self.isInProgress(false);
-			self.resetAuthParams();
-			self.isBadCredentials(true);
-			const msg = jqXHR.getResponseHeader('x-auth-error');
-			self.errorMsg(msg || defaultMessage);
+            self.isInProgress(false);
+            self.resetAuthParams();
+            self.isBadCredentials(true);
+            const msg = jqXHR.getResponseHeader('x-auth-error');
+            self.errorMsg(msg || defaultMessage);
         };
 
         self.signinWithLoginPass = function(data) {
