@@ -429,13 +429,7 @@ define(function(require, exports) {
 
 	var setAuthParams = function (tokenHeader) {
         token(tokenHeader);
-        return new Promise((resolve, reject) => {
-            loadUserInfo().then(() => {
-                resolve();
-            }).catch(e => {
-                reject(e);
-            });
-        })
+        return loadUserInfo();
     };
 
     var resetAuthParams = function () {
