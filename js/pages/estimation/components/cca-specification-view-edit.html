@@ -1,0 +1,139 @@
+<div data-bind="css: classes()">
+    <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
+        <div class="paddedWrapper">
+            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis().description" maxlength="1000"></textarea>
+            <hr/>
+            <div id="filters">
+                <div class="row">
+                    <div class="pull-left" data-bind="css: classes('filter-view')">View:</div>
+                    <div class="pull-left">
+                        <ul class="nav nav-pills">
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'all' }, click: function() {$component.specificationPillMode('all') };"><a>Full Specification</a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'comparisons' }, click: function() {$component.specificationPillMode('comparisons') };"><a>Comparisons</a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a>Analysis Settings</a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'evaluation' }, click: function() {$component.specificationPillMode('evaluation') };"><a>Evaluation Settings</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+                <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'comparisons'" class="tab-pane">
+                <div class="paddedWrapper">
+                    <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <i class="fa fa-balance-scale"></i> Comparative Cohort Settings
+                    </div>
+                    <div class="panel-body">
+                        <div class="paddedWrapper">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                            <i class="fa fa-users"></i> Comparisons
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addComparison"><i class="fa fa-plus"></i> Add Comparison</button>
+                            </div>
+                            <div class="panel-body">
+                                <faceted-datatable params="{ 
+                                columns: options.cca.comparisonTableColumns, 
+                                options: options.cca.comparisonTableOptions, 
+                                pageLength: options.cca.comparisonTableOptions.pageLength,
+                                lengthMenu: options.cca.comparisonTableOptions.lengthMenu,
+                                dom: options.cca.comparisonTableOptions.dom,
+                                reference: $component.comparisons,
+                                rowClick: $component.comparisonTableRowClickHandler,
+                                }"></faceted-datatable>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+                <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'analysisSettings'" class="tab-pane">
+                    <div class="paddedWrapper">
+                        <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <i class="fa fa-cogs"></i> Effect Estimation Analysis Settings
+                    </div>
+                    <div class="panel-body">
+                        <div class="paddedWrapper">
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Analysis Settings
+                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addAnalysis"><i class="fa fa-plus"></i> Add Analysis Settings</button>
+                            </div>
+                            <div class="panel-body">
+                                <faceted-datatable params="{ 
+                                    columns: options.cca.analysisSettingsTableColumns, 
+                                    options: options.cca.analysisSettingsTableOptions, 
+                                    pageLength: options.cca.analysisSettingsTableOptions.pageLength,
+                                    lengthMenu: options.cca.analysisSettingsTableOptions.lengthMenu,
+                                    dom: options.cca.analysisSettingsTableOptions.dom,
+                                    reference: $component.cohortMethodAnalysisList,
+                                    rowClick: $component.analysisSettingsTableRowClickHandler,
+                                }"></faceted-datatable>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'evaluation'" class="tab-pane">
+                <div class="paddedWrapper">
+                    <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <i class="fa fa-cogs"></i> Evaluation Settings
+                    </div>
+                    <div class="panel-body">
+                        <div class="paddedWrapper">
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="fa fa-users"></i> Negative Control Outcome Cohort Definition
+                            </div>
+                            <div class="panel-body">
+                                This expression will define the criteria for inclusion and duration of time for cohorts intended for use as negative control outcomes. 
+                                <nc-outcome-cohort-settings-editor params="negativeControlCohortSettings: $component.estimationAnalysis().negativeControlOutcomeCohortDefinition"></nc-outcome-cohort-settings-editor>
+                            </div>
+                            </div>
+                            <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="fa fa-cog"></i> Positive Control Synthesis
+                            </div>
+                            <div class="panel-body">
+                                <div>
+                                    <label>Should we perform positive control synthesis to calibrate confidence intervals?</label>
+                                    <div class="input-group">
+                                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.estimationAnalysis().doPositiveControlSynthesis"></select>
+                                    </div>
+                                </div>
+                                <div data-bind="visible: $component.estimationAnalysis().doPositiveControlSynthesis">
+                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis().positiveControlSynthesisArgs, subscriptions: $component.subscriptions"></positive-control-synthesis-settings-editor>
+                                </div>
+                            </div>
+                            </div>
+                        </div>    
+                    </div>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>
+    <div id="editors" data-bind="visible: $component.managerMode() == 'editor'">
+        <div id="editor-heading" class="editor-container">
+            <div class="paddedWrapper">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                    <div data-bind="click: closeEditor" class="editor-back-icon"><i class="fa fa-chevron-left fa-lg"></i></div>
+                    <div>
+                        <div class="editor-heading" data-bind="text: $component.editorHeading"></div>
+                        <div data-bind="text: $component.editorDescription"></div>
+                    </div>
+                    </div>
+                </div>
+                <div class="panel-body" data-bind="if: $component.editorComponentName() != null">
+                    <div id="editorComponent" data-bind='component: {name: $component.editorComponentName(), params: $component.editorComponentParams()}'></div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>

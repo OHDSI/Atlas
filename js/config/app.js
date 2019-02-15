@@ -96,7 +96,6 @@ define(function () {
     },
   };
   appConfig.enableTermsAndConditions = true;
-	
 	appConfig.webAPIRoot = appConfig.api.url;
 	
 	return appConfig;

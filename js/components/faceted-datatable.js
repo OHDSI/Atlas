@@ -135,8 +135,13 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			}
 		});
 
-		// valueHasMutated doesn't work for computed
-		self.reference.notifySubscribers(); // init component
+		// init component
+		if (ko.isComputed(self.reference)) {
+			// valueHasMutated doesn't work for computed
+			self.reference.notifySubscribers();
+		} else {
+			self.reference.valueHasMutated(); 
+		}
 	};
 
 	var component = {

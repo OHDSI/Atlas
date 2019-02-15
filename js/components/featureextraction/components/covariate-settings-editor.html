@@ -1,0 +1,292 @@
+<div data-bind="css: classes()">
+    <div class="table-responsive">
+        <table data-bind="css: classes('covariate-selection')" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Gender</th>
+                    <th>Age</th>
+                    <th>Age Groups</th>
+                    <th>Race</th>
+                    <th>Ethnicity</th>
+                    <th>Index Year</th>
+                    <th>Index Month</th>
+                    <th>Prior<br/>Observation Time</th>
+                    <th>Post<br/>Observation Time</th>
+                    <th>Time<br/>In Cohort</th>
+                    <th>Index<br/>Year & Month</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Demographics</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsGender" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsAge" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsAgeGroup" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsRace" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsEthnicity" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsIndexYear" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsIndexMonth" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsPriorObservationTime" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsPostObservationTime" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsTimeInCohort" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsIndexYearMonth" /></td>
+                </tr>            
+            </tbody>
+        </table>
+    </div>
+    <h4>Time bound covariates</h4>
+    <h5>Set the time windows for the time bound covariates in days relative to the cohort index</h5>
+    <div data-bind="css: classes('covariate-selection')" class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Any Time Prior</th>
+                    <th>Long Term</th>
+                    <th>Medium Term</th>
+                    <th>Short Term</th>
+                    <th>End Days</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Time Windows</b></td>
+                    <td>All Time</td>
+                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.longTermStartDays" /></td>
+                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.mediumTermStartDays" /></td>
+                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.shortTermStartDays" /></td>
+                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.endDays" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h5>Set the time bound era covariates</h5>
+    <div data-bind="css: classes('covariate-selection')" class="table-responsive">
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th rowspan="2"><b>Domain</b></th>
+                    <th rowspan="2">Any Time Prior</th>
+                    <th rowspan="2">Long Term<br/><span data-bind="text: $component.longTermLabel"></span></th>
+                    <th rowspan="2">Medium Term<br/><span data-bind="text: $component.mediumTermLabel"></span></th>
+                    <th rowspan="2">Short Term<br/><span data-bind="text: $component.shortTermLabel"></span></th>
+                    <th rowspan="2">Overlapping</th>
+                    <th colspan="3">Era Start</th>
+                </tr>
+                <tr>
+                    <th>Long Term<br/><span data-bind="text: $component.longTermLabel"></span></th>
+                    <th>Medium Term<br/><span data-bind="text: $component.mediumTermLabel"></span></th>
+                    <th>Short Term<br/><span data-bind="text: $component.shortTermLabel"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Condition</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraOverlapping" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraStartLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraStartMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionEraStartShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Condition Group</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraOverlapping" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraStartLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraStartMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionGroupEraStartShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Drug</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraOverlapping" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraStartLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraStartMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugEraStartShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Drug Group</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraOverlapping" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraStartLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraStartMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugGroupEraStartShortTerm" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h5>Set the time bound covariates</h5>
+    <div data-bind="css: classes('covariate-selection')" class="table-responsive">
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th rowspan="2"><b>Domain</b></th>
+                    <th rowspan="2">Any Time Prior</th>
+                    <th rowspan="2">Long Term<br/><span data-bind="text: $component.longTermLabel"></span></th>
+                    <th rowspan="2">Medium Term<br/><span data-bind="text: $component.mediumTermLabel"></span></th>
+                    <th rowspan="2">Short Term<br/><span data-bind="text: $component.shortTermLabel"></span></th>
+                    <th colspan="3">Distinct Count</th>
+                </tr>
+                <tr>
+                    <th>Long Term<br/><span data-bind="text: $component.longTermLabel"></span></th>
+                    <th>Medium Term<br/><span data-bind="text: $component.mediumTermLabel"></span></th>
+                    <th>Short Term<br/><span data-bind="text: $component.shortTermLabel"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Condition</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrenceAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrenceLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrenceMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrenceShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctConditionCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctConditionCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctConditionCountShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Condition - Primary Inpatient</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrencePrimaryInpatientAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrencePrimaryInpatientLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrencePrimaryInpatientMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ConditionOccurrencePrimaryInpatientShortTerm" /></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                </tr>
+                <tr>
+                    <td><b>Drug</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugExposureAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugExposureLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugExposureMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DrugExposureShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctIngredientCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctIngredientCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctIngredientCountShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Procedure</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ProcedureOccurrenceAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ProcedureOccurrenceLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ProcedureOccurrenceMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ProcedureOccurrenceShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctProcedureCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctProcedureCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctProcedureCountShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Measurement</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountShortTerm" /></td>                    
+                </tr>
+                <tr>
+                    <td><b>Measurement - Value</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementValueAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementValueLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementValueMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementValueShortTerm" /></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                </tr>
+                <tr>
+                    <td><b>Measurement - Range Group</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementRangeGroupAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementRangeGroupLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementRangeGroupMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementRangeGroupShortTerm" /></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                </tr>
+                <tr>
+                    <td><b>Observation</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ObservationAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ObservationLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ObservationMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.ObservationShortTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctObservationCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctObservationCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctObservationCountShortTerm" /></td>
+                </tr>
+                <tr>
+                    <td><b>Device</b></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DeviceExposureAnyTimePrior" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DeviceExposureLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DeviceExposureMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DeviceExposureShortTerm" /></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                </tr>
+                <tr>
+                    <td><b>Visit - Count</b></td>
+                    <td class="active"></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.VisitCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.VisitCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.VisitCountShortTerm" /></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                </tr>
+                <tr>
+                    <td><b>Visit - Concept Count</b></td>
+                    <td class="active"></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.VisitConceptCountLongTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.VisitConceptCountMediumTerm" /></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.VisitConceptCountShortTerm" /></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                    <td class="active"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <h5>Set the index score covariates</h5>
+    <div data-bind="css: classes('covariate-selection')" class="table-responsive">
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>Index Score Type</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CHADS<sub>2</sub></td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.Chads2" /></td>
+                </tr>
+                <tr>
+                    <td>CHA<sub>2</sub>DS<sub>2</sub>VASc</td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.Chads2Vasc" /></td>
+                </tr>
+                <tr>
+                    <td>DCSI</td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.Dcsi" /></td>
+                </tr>
+                <tr>
+                    <td>Charlson</td>
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.CharlsonIndex" /></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

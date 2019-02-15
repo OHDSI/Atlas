@@ -1,18 +1,19 @@
 define(
     (require, exports) => {
   
+    const _ = require('lodash');
     var options = {};
 
-    options.foldOptions = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.initialBound = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.maxBoundCount = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.foldOptions = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    options.cvRepetitions = ['1','2','3','4','5'];
-    options.minCVData = ['100', '200', '300'];
+    options.foldOptions = _.range(10,0).map(v => '' + v);
+    options.initialBound = _.range(10,0).map(v => '' + v);
+    options.maxBoundCount = _.range(10,0).map(v => '' + v);
+    options.foldOptions = _.range(10,0).map(v => '' + v);
+    options.cvRepetitions = _.range(1,11).map(v => '' + v);
+    options.minCVData = _.range(100,400,100).map(v => '' + v);
     options.maxIterationOptions = ['1000', '500', '100'];
     options.toleranceOptions = ['0.000001', '0.00001', '0.0001', '0.001', '0.01', '0.1'];
-    options.startingVariance = ['-1', '0', '1', '2', '3'];
-    options.tuneSwindle = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
+    options.startingVariance = ['-1', '-0.01', '0', '0.01', '1'];
+    options.tuneSwindle = _.range(10,0).map(v => '' + v);
 
     options.yesNoOptions = [{
 		name: "Yes",
