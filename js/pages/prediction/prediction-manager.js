@@ -24,6 +24,7 @@ define([
 	'./components/prediction-specification-view-edit',
 	'./components/prediction-utilities',
 	'less!./prediction-manager.less',
+	'databindings',
 ], function (
 	ko, 
 	view, 
@@ -66,7 +67,7 @@ define([
 			this.fullAnalysisList = ko.observableArray();
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
-			this.packageName = ko.observable();
+			this.packageName = ko.observable().extend({alphaNumeric: null});
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
             this.isDeleting = ko.observable(false);
