@@ -25,7 +25,7 @@ define([
 	class Death extends Report {
 		constructor(params) {
 			super(params);
-			
+
 			this.prevalenceByGenderAgeYearData = ko.observable();
 			this.byMonthSeriesLineData = ko.observable();
 			this.prevalenceByTypeDonutData = ko.observable();
@@ -49,7 +49,17 @@ define([
 					xFormat: d3.timeFormat("%m/%Y"),
 					tickFormat: d3.timeFormat("%Y"),
 					xLabel: "Date",
-					yLabel: "Prevalence per 1000 People"
+					yLabel: "Prevalence per 1000 People",
+					yFormat: d3.format("0.2f"),
+					getTooltipBuilder: options => {
+						return d => {
+							const format = d3.format("0.5f");
+							return `
+								${options.xLabel}: ${options.xFormat(d.xValue)}<br/>
+								${options.yLabel}: ${format(d.yValue)}
+							`;
+						}
+					}
 				},
 				prevalenceByTypeDonut: {
 					margin: {
@@ -68,7 +78,7 @@ define([
 			this.loadData();
 
 		}
-		
+
 		parseData({ data }) {
 			this.prevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
 			this.prevalenceByMonth(data.prevalenceByMonth);
@@ -80,7 +90,7 @@ define([
 			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = constants.defaultDeciles;
 			this.prevalenceByGenderAgeYearData(data);
 		}
-		
+
 		prevalenceByMonth(data) {
 			const prevData = ChartUtils.normalizeArray(data);
 			if (!prevData.empty) {
