@@ -41,7 +41,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 		version: '1.0.0'
 	};
 
-	// private functions 	
+	// private functions
 	function _pruneJSON(key, value) {
 		if (value === 0 || value) {
 			return value;
@@ -65,7 +65,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 					if (obj.hasOwnProperty(key)) {
 						let path = `${currentPath}.${key}`.replace(/^\./, '');
 						if (typeof obj[key] !== 'undefined' && obj[key] !== null && typeof obj[key].subscribe === 'function') {
-							res[path] = obj[key];
+							res[path] = obj[key].extend({ childChanges: true });
 						}
 						let variable = ko.utils.unwrapObservable(obj[key]);
 						if (typeof variable === 'object') {
@@ -100,14 +100,14 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 		const setNewState = function (newState) {
 			// clean up prev data
 			origState.forEach(entry => entry.subscription.dispose());
-			
+
 			// setup new data
 			let observables = getObjectObservables(newState, {});
 			origState = new Map();
 			addObservablesToState(origState, observables);
 			changedObservablesCount(0);
 		};
-		
+
 		const result = function () {},
 			_isInitiallyDirty = ko.observable(isInitiallyDirty);
 
@@ -169,10 +169,10 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 		throw new Error(`invalid type: ${type}`);
 	}
 	/* d3AddIfNeeded
-	 *	call with parent element (can be selector, dom, jquery or d3 item), 
+	 *	call with parent element (can be selector, dom, jquery or d3 item),
 	 *						data (scalar uses selection.datum(), array uses selection.data())
 	 *						tag of element(s) to be appended to parent
-	 *						array of class names 
+	 *						array of class names
 	 *						callback to use on enter selection
 	 *						callback to use for update
 	 *						(could also add remove callback but don't have it yet)
@@ -181,12 +181,12 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 * warning: if your addCb appends further elements (or if you add more
 	 *					using the returned selection, i think),
 	 *					they will also have data appropriately attached, but that
-	 *					data may end up stale for the updateCb if you call this again 
+	 *					data may end up stale for the updateCb if you call this again
 	 *					with new data unless you explicitly d3.select it
 	 *					for example:
 	 *					(is this really true? check before finishing example)
 	 *
-	 *					d3AddIfNeeded({parentElement: pdiv, 
+	 *					d3AddIfNeeded({parentElement: pdiv,
 	 *												 data: [1,2,3], // three items appended (if they
 	 *												                // don't already exist) as children of pdiv
 	 *												 tag: 'div',		// they are divs
@@ -261,15 +261,15 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 * then calling d3El.data(newData); d3El.run(); will not only update d3El,
 	 * it will also rejoin and update its children with newData.
 	 *
-	 * var d3El = new D3Element({parentElement:p, 
+	 * var d3El = new D3Element({parentElement:p,
 	 *													data:arrOrObj, // data to be joined to selection
 	 *																				 // if it's scalar, will be turned
 	 *																				 // into single-item array
-	 *													tag: 'div',		 // tag of element to be appended 
+	 *													tag: 'div',		 // tag of element to be appended
 	 *																				 // if necessary to parent
-	 *													classes: ['big','bright'], 
+	 *													classes: ['big','bright'],
 	 *																				 // to add to element
-	 *																				 // should also insure that 
+	 *																				 // should also insure that
 	 *																				 // parent.selectAll('tag.classes')
 	 *																				 // only returns elements elements
 	 *																				 // created here
@@ -344,7 +344,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			//this.dataPropogationSelectors = props.dataPropogationSelectors; // not implemented yet
 			if (typeof props.data === "function")
 				/*
-				console.warn(`d3 is supposed to handle selectAll().data(fn) nicely, 
+				console.warn(`d3 is supposed to handle selectAll().data(fn) nicely,
 										 but it doesn't. so you can pass a func that accepts its
 										 d3El and returns a data array`);
 				*/
@@ -545,7 +545,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	// (i believe) the way line chart and scatterplot were already working
 	// (without the offscreen stuff, which I believe was not necessary).
 	class ResizableSvgContainer extends D3Element {
-		// call from chart obj like: 
+		// call from chart obj like:
 		//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 		// target gets a new div, new div gets a new svg. div/svg will resize
 		//	with consistent aspect ratio.
@@ -604,7 +604,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	// (i believe) the way line chart and scatterplot were already working
 	// (without the offscreen stuff, which I believe was not necessary).
 	function svgSetup(target, data, w, h, divClasses=[], svgClasses=[]) {
-			// call from chart obj like: 
+			// call from chart obj like:
 			//	var divEl = svgSetup.call(this, data, target, w, h, ['zoom-scatter']);
 			// target gets a new div, new div gets a new svg. div/svg will resize
 			//	with consistent aspect ratio.
@@ -619,7 +619,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			}
 			this.svgDivEl = new D3Element( {
 							parentElement:this.container,
-							data, tag:'div', classes: divClasses, 
+							data, tag:'div', classes: divClasses,
 			});
 			var self = this;
 			this.svgDivEl.addChild('svg',
@@ -675,7 +675,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 						right: { margin: { size: 5}, },
 					})
 	 * add components to zones like one of these:
-			
+
 			// size is constant:
 			layout.add('left','axisLabel', { size: 20 })
 
@@ -699,20 +699,20 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			layout.zone(['left.margin','left.axisLabel'])
 	 * y position of bottom zone:
 			layout.h() - layout.zone('bottom')
-	 * 
+	 *
 	 * when adding zones, you can also include a position func that will
 	 * do something based on the latest layout parameters
 	 *
 			var position = function(layout) {
 				// positions element to x:left margin, y: middle of svg area
-				axisLabel.attr("transform", 
+				axisLabel.attr("transform",
 					`translate(${layout.zone(["left.margin"])},
 										 ${layout.zone(["top"]) + (h - layout.zone(["top","bottom"])) / 2})`);
 			}
 			layout.add('left','axisLabel', { size: 20 }, position: position)
 	 *
-	 * whenever you call layout.positionZones(), all registered position functions 
-	 * will be called. the position funcs should position their subcomponent, but 
+	 * whenever you call layout.positionZones(), all registered position functions
+	 * will be called. the position funcs should position their subcomponent, but
 	 * shouldn't resize them (except they will, won't they? because, e.g.,
 	 * the y axis needs to fit after the x axis grabs some of the vertical space.
 	 * but as long as left and right regions don't change size horizontally and top
@@ -797,8 +797,8 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 *	- updateContent: updateCb to be passed to D3Element
 	 *	- updatePosition: updateCb to be passed to the g container
 	 *	- sizedim: width or height. for determining this element's size
-	 *	- size: optional func. by default size is sizedim of element's 
-	 *			g's getBBox() 
+	 *	- size: optional func. by default size is sizedim of element's
+	 *			g's getBBox()
 	 *
 	 * SvgElements are one per chart instance. Use them to make titles,
 	 * axes, legends, etc. Not to make dots. The data they get is
@@ -942,7 +942,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 		}
 		size() {
 			return this.gEl.as('dom').getBBox().width * 1.5;
-			// width is calculated as 1.5 * box height due to rotation anomolies 
+			// width is calculated as 1.5 * box height due to rotation anomolies
 			// that cause the y axis label to appear shifted.
 		}
 		updateContent(selection, params, opts) {
@@ -1117,7 +1117,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 * If prop.needsScale is true, prop.scale will be used (it will default
 	 * to d3.scale.linear if not provided.) prop.domainFunc and prop.rangeFunc
 	 * will be used to generate domain and range. If they are not provided
-	 * they will be generated as functions returning prop.domain or prop.range 
+	 * they will be generated as functions returning prop.domain or prop.range
 	 * if those are provided. If neither prop.domainFunc nor prop.domain is
 	 * provided, a domainFunc will be generated that returns the d3.extent
 	 * of the prop.value function applied to all data items.
@@ -1160,9 +1160,9 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 * If prop.tooltipFunc is provided, it will be setup to receive the same
 	 * arguments as prop.value. If not, a tooltipFunc will be generated that
 	 * returns results from prop.label and prop.value. tooltipFunc is expected
-	 * to return an object with a label property and a value property. 
+	 * to return an object with a label property and a value property.
 	 * (What about formatting?)
-	 * Tooltip content will only be generated for props where prop.tooltipOrder 
+	 * Tooltip content will only be generated for props where prop.tooltipOrder
 	 * is provided (it should be a non-zero number.)
 	 */
 
@@ -1175,7 +1175,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 *			{gender: 'M', age: 12, weight: 84, height: 58} ]
 	 *
 	 * or a field could be derived, like, say:
-	 *	bmi = d => convert(d.weight, 'lb', 'kg') / 
+	 *	bmi = d => convert(d.weight, 'lb', 'kg') /
 	 *							Math.pow(convert(d.height, 'in', 'm'), 2);
 	 *
 	 * but in addition to having a property name ('age') or accessor function
@@ -1192,7 +1192,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 * width of the chart).
 	 *
 	 * in a crossfilter context a field will be associated with a crossfilter
-	 * dimension:   dim = cf.dimension(d=>d.age) 
+	 * dimension:   dim = cf.dimension(d=>d.age)
 	 * and possible filters: dim.filter([65, 90])
 	 *
 	 * in a faceted datatable context a field will need a grouping function, e.g.,
@@ -1235,7 +1235,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 	 *		4) a function called 'defaultValue'
 	 *
 	 *	all _accessors (except 'value', which will be made into field.accessor)
-	 *	will be copied (with same name as _accessor prop) to methods of the main 
+	 *	will be copied (with same name as _accessor prop) to methods of the main
 	 *	field object when field.bindParams() is called
 	 *	(unless accessor.runOnGenerate=true)
 	 */
@@ -1425,7 +1425,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			var allArgs = _.isEmpty(named) ? [this.plainAccessor, this.thisArg].concat(pos) : [this.plainAccessor, this.thisArg].concat(pos, named);
 			var boundFunc = _.bind.apply(_, allArgs);
 			// first arg of apply, _, is context for _.bind (https://lodash.com/docs#bind)
-			// then bind gets passed: accessor func, thisArg, posParams, 
+			// then bind gets passed: accessor func, thisArg, posParams,
 			// and (as final arg) namedParams if any are specified.
 			// any additional args you want to pass when calling the accessor
 			// must come after all posParams and the named args object if there is one
@@ -1725,7 +1725,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			this.dimFields = {};
 			this.groupAll = this.cf.groupAll();
 			this.groupAll.reduce(...reduceToRecs);
-			/* 
+			/*
 					this.dimFields :
 						{
 							fieldName1: {

@@ -1,5 +1,6 @@
 <heading-title params="name: $component.sourceCaption(), icon: 'database', theme: 'dark'"></heading-title>
 <div data-bind="if:$component.hasAccess, css: classes()">
+	<loading data-bind="visible:loading()"></loading>
 	<div data-bind="visible: !loading()">
 			<!-- ko if: selectedSource() != null -->
 			<div data-bind="if:$component.canReadSource">

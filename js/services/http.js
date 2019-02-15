@@ -1,13 +1,43 @@
 define(function(require, exports) {
   const ko = require('knockout');
   const config = require('appConfig');
-  const OHDSIApi = require('ohdsi-api').Api;
+  const { Api:OHDSIApi, STATUS } = require('ohdsi-api');
   const JSON_RESPONSE_TYPE = 'application/json';
   const TEXT_RESPONSE_TYPE = 'text/plain';
+  const EventBus = require('services/EventBus');
 
-  class Api extends OHDSIApi {    
+    class Api extends OHDSIApi {
+
     handleUnexpectedError() {
       console.error('Oooops!.. Something went wrong :(');
+    }
+
+    handleNotFoundError(responseJson) {
+      if (responseJson !== undefined && responseJson.payload !== undefined) {
+        EventBus.errorMsg(responseJson.payload.message);
+      }
+    }
+
+    checkStatusError(response) {
+      const status = response.status;
+
+      if (status >= 200 && status < 300) {
+        return true;
+      }
+
+      switch (status) {
+         case STATUS.NOT_FOUND:
+           this.handleNotFoundError(response.json);
+           break;
+        case STATUS.UNAUTHORIZED:
+          this.handleUnauthorized(response.json);
+          break;
+        default:
+          this.handleUnexpectedError();
+          break;
+      }
+
+      return false;
     }
 
     isSecureUrl(url) {

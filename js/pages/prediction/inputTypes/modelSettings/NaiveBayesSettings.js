@@ -1,10 +1,11 @@
-define(function (require, exports) {
-
-    var ko = require('knockout');
-
-	function NaiveBayesSettings(data) {
-		var self = this;
-        data = data || {};
+define([
+	'knockout',
+], function (
+	ko
+) {
+	class NaiveBayesSettings {
+        constructor(data = {}) {
+        }
     }
 	
 	return NaiveBayesSettings;

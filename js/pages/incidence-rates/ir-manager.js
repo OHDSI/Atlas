@@ -92,11 +92,7 @@ define([
 			this.activeTab = ko.observable(params.activeTab || 'definition');
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
-			this.filteredSources = ko.pureComputed(() => {
-				return this.sources().filter(function (source) {
-					return source.info();
-				});
-			});
+			this.stoppingSources = ko.observable({});
 
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
@@ -161,6 +157,12 @@ define([
 				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
 			});
 			this.error = ko.observable();
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
 
 			// startup actions
 			this.init();
@@ -170,13 +172,11 @@ define([
 			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
 				var hasPending = false;
 				data.forEach((info) => {
-					var source = this.sources().find((s) => {
-						return s.source.sourceId == info.executionInfo.id.sourceId
-					});
+					const source = this.sources().find(s => s.source.sourceId == info.executionInfo.id.sourceId);
 					if (source) {
-						if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+						// if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
 							source.info(info);
-						if (info.executionInfo.status != "COMPLETE")
+						if (constants.isInProgress(info.executionInfo.status))
 							hasPending = true;
 					}
 				});
@@ -188,6 +188,9 @@ define([
 				} else {
 					this.isRunning(false);
 				}
+			})
+			.catch(() => {
+				this.close();
 			});
 		}
 
@@ -237,35 +240,44 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.selectedAnalysisId(analysis.id)
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.apiPaths.analysis(analysis.id);
 			});
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
-				return;
-			}
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.sources().forEach(function (source) {
 				source.info(null);
 			});
+		}
+
+		closeAndShowList() {
+
+			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
+				return;
+			}
+			this.close()
 			document.location = constants.apiPaths.analysis();
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id)
+				document.location = constants.apiPaths.analysis(analysis.id);
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}
@@ -273,7 +285,8 @@ define([
 		delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
 				this.selectedAnalysis(null);
@@ -284,9 +297,7 @@ define([
 
 		removeResult(analysisResult) {
 			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				var source = this.sources().filter(function (s) {
-					return s.source.sourceId == analysisResult.source.sourceId
-				})[0];
+				const source = this.sources().find(s => s.source.sourceId == analysisResult.source.sourceId);
 				source.info(null);
 			});
 		}
@@ -296,12 +307,40 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 		};
 
-		onExecuteClick(sourceItem) {
+		execute(sourceKey) {
+			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+			this.stoppingSources({ ...this.stoppingSources(), [sourceKey]: false });
+
+			if (sourceItem && sourceItem.info()) {
+				sourceItem.info().executionInfo.status = constants.status.PENDING;
+				sourceItem.info.notifySubscribers();
+			}
+			else {
+				// creating 'fake' temporary source info makes the UI respond to the generate action.
+				const tempInfo = {
+					source: sourceItem,
+					executionInfo: {
+						id: {sourceId: sourceItem.source.sourceId}
+					},
+					summaryList: []
+				};
+				sourceItem.info(tempInfo);
+			}
+			this.sources.notifySubscribers();
+			this.isRunning(true);
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
 					this.pollForInfo();
 				});
+		}
+
+		cancelExecution(sourceKey) {
+			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+			this.stoppingSources({ ...this.stoppingSources(), [sourceKey]: true });
+
+			IRAnalysisService
+				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
 		import() {
@@ -332,36 +371,6 @@ define([
 							source: source,
 							info: ko.observable()
 						});
-					}
-				});
-				this.generateActionsSettings.actionOptions = sourceList.map((sourceItem) => {
-					return {
-						text: sourceItem.source.sourceName,
-						selected: false,
-						description: "Perform Study on source: " + sourceItem.source.sourceName,
-						action: () => {
-							if (sourceItem.info()) {
-								sourceItem.info().executionInfo.status = "PENDING";
-								sourceItem.info.notifySubscribers();
-							}
-							else {
-								// creating 'fake' temporary source info makes the UI respond to the generate action.
-								const tempInfo = {
-									source: sourceItem,
-									executionInfo: {
-										id: {sourceId: sourceItem.source.sourceId}
-									},
-									summaryList: []
-								};
-								sourceItem.info(tempInfo);
-							}
-							this.isRunning(true);
-							IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
-								.then(({data}) => {
-									jobDetailsService.createJob(data);
-									this.pollForInfo();
-								});
-						}
 					}
 				});
 

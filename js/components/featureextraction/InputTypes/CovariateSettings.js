@@ -1,12 +1,14 @@
 define([
     'knockout', 
+    'services/analysis/RLangClass',
     'databindings'
 ], function (
-    ko
+    ko,
+    RLangClass
 ) {
-    class CovariateSettings {
-        constructor(data) {
-            data = data || {};    
+    class CovariateSettings extends RLangClass {
+        constructor(data = {}) {
+            super({"attr_class": "covariateSettings"});
             this.temporal = ko.observable(data.temporal === 0 ? false : data.temporal || false);
             this.DemographicsGender = ko.observable(data.DemographicsGender === 0 ? false : data.DemographicsGender || false);
             this.DemographicsAge = ko.observable(data.DemographicsAge === 0 ? false : data.DemographicsAge || false);
@@ -122,7 +124,6 @@ define([
             this.addDescendantsToExclude = ko.observable(data.addDescendantsToExclude === 0 ? false : data.addDescendantsToExclude || false);
             this.includedCovariateIds = ko.observableArray((data.includedCovariateIds && Array.isArray(data.includedCovariateIds)) ? data.includedCovariateIds : []);
             this.attr_fun = data.attr_fun || "getDbDefaultCovariateData";
-            this.attr_class = data.attr_class || "covariateSettings";
         }
     }
 	

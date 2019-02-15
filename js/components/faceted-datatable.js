@@ -57,6 +57,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.orderClasses = params.orderClasses || false;
 		self.ordering = params.ordering || true;
 		self.scrollOptions = params.scrollOptions || null;
+		self.createdRow = params.createdRow || null;
 
 		self.updateFilters = function (data, event) {
 			var facet = data.facet;
@@ -134,7 +135,14 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			}
 		});
 
-		self.reference.valueHasMutated(); // init component
+		// init component
+		if (ko.isComputed(self.reference)) {
+			// valueHasMutated doesn't work for computed
+			self.reference.notifySubscribers();
+		} else {
+			self.reference.valueHasMutated(); 
+		}
+		
 		self.stateSaveCallback = params.stateSaveCallback;
 		self.stateLoadCallback = params.stateLoadCallback;
 		
@@ -153,6 +161,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			deferRender: self.deferRender,
 			pageLength: self.pageLength,
 			drawCallback: self.drawCallback,
+            createdRow: self.createdRow,
 		};
 		if (self.stateSaveCallback !== undefined) {
 			self.options = {...self.options, stateSaveCallback: self.stateSaveCallback, stateSave: true}

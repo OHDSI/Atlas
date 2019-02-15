@@ -60,21 +60,20 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
-			self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER));
-			self.errorMsg(null);
-			self.isBadCredentials(false);
-		};
-
-        self.onLoginFailed = function(jqXHR, defaultMessage) {
-			self.resetAuthParams();
-			self.isBadCredentials(true);
-			const msg = jqXHR.getResponseHeader('x-auth-error');
-			self.errorMsg(msg || defaultMessage);
+            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER)).then(() => {
+                self.errorMsg(null);
+                self.isBadCredentials(null);
+                self.isInProgress(false);
+            });
         };
 
-        self.onLoginComplete = function (data) {
-			self.isInProgress(false);
-		};
+        self.onLoginFailed = function(jqXHR, defaultMessage) {
+            self.isInProgress(false);
+            self.resetAuthParams();
+            self.isBadCredentials(true);
+            const msg = jqXHR.getResponseHeader('x-auth-error');
+            self.errorMsg(msg || defaultMessage);
+        };
 
         self.signinWithLoginPass = function(data) {
             self.isInProgress(true);
@@ -87,7 +86,6 @@ define([
                 },
                 success: self.onLoginSuccessful,
                 error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Bad credentials'),
-                complete: self.onLoginComplete,
             });
         };
 
@@ -109,7 +107,6 @@ define([
                     },
                     success: self.onLoginSuccessful,
                     error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
-					complete: self.onLoginComplete,
                 });
             } else {
                 document.location = loginUrl;

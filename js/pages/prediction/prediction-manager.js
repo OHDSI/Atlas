@@ -1,100 +1,90 @@
 define([
 	'knockout', 
 	'text!./prediction-manager.html',	
-	'components/Component',
+	'pages/Page',
 	'utils/CommonUtils',
-	'services/file',
 	'assets/ohdsi.util',
     'appConfig',
 	'./const',
 	'atlas-state',
-	'clipboard',
 	'./PermissionService',
 	'services/Prediction',
-	'./options',
-	'./inputTypes/Cohort',
+	'services/analysis/Cohort',
 	'./inputTypes/PatientLevelPredictionAnalysis',
-	'./inputTypes/ModelSettings',
-	'./inputTypes/CreateStudyPopulationArgs',
-	'./inputTypes/PredictionCovariateSettings',
 	'featureextraction/InputTypes/CovariateSettings',
 	'featureextraction/InputTypes/TemporalCovariateSettings',
-	'./inputTypes/ConceptSet',
-	'./inputTypes/TargetOutcome',
-	'./inputTypes/ModelCovarPopTuple',
-	'./inputTypes/FullAnalysis',
-	'./inputTypes/ConceptSetCrossReference',
+	'services/analysis/ConceptSet',
+	'services/analysis/ConceptSetCrossReference',
 	'services/FeatureExtraction',
-	'featureextraction/components/CovariateSettingsEditor',
-	'featureextraction/components/TemporalCovariateSettingsEditor',
+	'featureextraction/components/covariate-settings-editor',
+	'featureextraction/components/temporal-covariate-settings-editor',
 	'components/cohort-definition-browser',
 	'faceted-datatable',
+    'components/tabs',
+	'./components/prediction-specification-view-edit',
+	'./components/prediction-utilities',
 	'less!./prediction-manager.less',
 ], function (
 	ko, 
 	view, 
-	Component,
+	Page,
 	commonUtils,
-	fileService,
 	ohdsiUtil,
 	config,
 	constants,
 	sharedState,
-	clipboard,
 	PermissionService,
 	PredictionService,
-	options,
 	Cohort,
 	PatientLevelPredictionAnalysis,
-	ModelSettings,
-	CreateStudyPopulationArgs,
-	PredictionCovariateSettings,
 	CovariateSettings,
 	TemporalCovariateSettings,
 	ConceptSet,
-	TargetOutcome,
-	ModelCovarPopTuple,
-	FullAnalysis,
-	ConceptSetCrossReference,
-	FeatureExtractionService,
+	ConceptSetCrossReference
 ) {
-	class PatientLevelPredictionManager extends Component {
-		constructor(params) {
-            super(params);
+	const NOT_FOUND = 'NOT FOUND';
 
-			this.options = options;
+	class PatientLevelPredictionManager extends Page {
+		constructor(params) {
+			super(params);
+			sharedState.predictionAnalysis.analysisPath = constants.paths.analysis;
+			
+			this.selectTab = this.selectTab.bind(this);
+			this.selectedTabKey = ko.observable(params.routerParams().section);
+
+			this.options = constants.options;
 			this.config = config;
-			this.covariateSettings = null;
-			this.modelSettings = null;
-			this.populationSettings = null;
-			this.editorComponentName = ko.observable(null);
-			this.editorComponentParams = ko.observable({});
-			this.editorDescription = ko.observable();
-			this.editorHeading = ko.observable();
 			this.loading = ko.observable(true);
-			this.loadingDownload = ko.observable(false);
 			this.patientLevelPredictionAnalysis = sharedState.predictionAnalysis.current;
 			this.selectedAnalysisId = sharedState.predictionAnalysis.selectedId;
 			this.dirtyFlag = sharedState.predictionAnalysis.dirtyFlag;
 			this.managerMode = ko.observable('summary');
-			this.modelSettingsOptions = ModelSettings.options;
-			this.specificationPillMode = ko.observable('all');
 			this.tabMode = ko.observable('specification');
-			this.downloadTabMode = ko.observable('full');
 			this.utilityPillMode = ko.observable('download');
 			this.targetCohorts = sharedState.predictionAnalysis.targetCohorts;
 			this.outcomeCohorts = sharedState.predictionAnalysis.outcomeCohorts;
-			this.currentCohortList = null;
-			this.targetOutcomePairs = ko.observableArray();
-			this.modelCovarPopTuple = ko.observableArray();
 			this.fullAnalysisList = ko.observableArray();
-			this.showCohortSelector = ko.observable(false);
-			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
-			this.isExporting = ko.observable(false);
-			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 			this.packageName = ko.observable();
+            this.isSaving = ko.observable(false);
+            this.isCopying = ko.observable(false);
+            this.isDeleting = ko.observable(false);
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isCopying() || this.isDeleting();
+            });
+			this.componentParams = ko.observable({
+				analysisId: sharedState.predictionAnalysis.selectedId,
+				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
+				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
+				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
+				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
+				fullAnalysisList: this.fullAnalysisList,
+				packageName: this.packageName,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				subscriptions: this.subscriptions,
+			});
 
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
@@ -104,32 +94,8 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
-			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
-				return (
-					this.targetCohorts().length > 0 &&
-					this.outcomeCohorts().length > 0 &&
-					(this.modelSettings != null && this.modelSettings().length > 0) &&
-					(this.covariateSettings != null && this.covariateSettings().length > 0) &&
-					(this.populationSettings != null && this.populationSettings().length > 0)
-				);
-			});
+			this.isNewEntity = this.isNewEntityResolver();			
 
-			this.specificationHasUniqueSettings = ko.pureComputed(() => {
-				var result = this.specificationMeetsMinimumRequirements();
-				if (result) {
-					// Check to make sure the other settings are unique
-					var uniqueModelSettings = new Set(this.modelSettings().map((ms) => { return ko.toJSON(ms)}));
-					var uniqueCovariateSettings = new Set(this.covariateSettings().map((cs) => { return ko.toJSON(cs)}));
-					var uniquePopulationSettings = new Set(this.populationSettings().map((ps) => { return ko.toJSON(ps)}));
-					result = (
-							this.modelSettings().length == uniqueModelSettings.size &&
-							this.covariateSettings().length == uniqueCovariateSettings.size &&
-							this.populationSettings().length == uniquePopulationSettings.size
-					)
-				}
-				return result;
-			});
-			
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
@@ -138,48 +104,7 @@ define([
 						return 'Patient Level Prediction #' + this.selectedAnalysisId();
 					}
 				}
-			});
-
-			this.specificationValid = ko.pureComputed(() => {
-				return (
-					this.specificationMeetsMinimumRequirements() && 
-					this.specificationHasUniqueSettings()
-				)
-			});
-
-			this.validPackageName = ko.pureComputed(() => {
-				return (this.packageName() && this.packageName().length > 0)
-			});
-
-			this.removeTargetCohort = (data, obj, tableRow, rowIndex) => {
-				this.deleteFromTable(this.targetCohorts, obj, rowIndex);
-			}
-	
-			this.removeOutcomeCohort = (data, obj, tableRow, rowIndex) => {
-				this.deleteFromTable(this.outcomeCohorts, obj, rowIndex);
-			}
-	
-			this.modelSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.modelSettings, obj, rowIndex);
-				} else {
-					this.editModelSettings(data);
-				}		
-			}
-	
-			this.covariateSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.patientLevelPredictionAnalysis().covariateSettings, obj, rowIndex);
-				} else {
-					this.editCovariateSettings(data);
-				}
-			}
+			});			
 
 			this.isNameCorrect = ko.computed(() => {
 				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
@@ -187,55 +112,28 @@ define([
 
 			this.canSave = ko.computed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect();
-			});
-	
-			this.populationSettingRowClickHandler = (data, obj, tableRow, rowIndex) => {
-				if (
-					obj.target.className.indexOf("btn-remove") >= 0 ||
-					obj.target.className.indexOf("fa-times") >= 0
-				) {
-					this.deleteFromTable(this.patientLevelPredictionAnalysis().populationSettings, obj, rowIndex);
-				} else {
-					this.editPopulationSettings(data);
-				}
-			}
-	
-            this.init();
+			});			
 		}
 
-		deleteFromTable(list, obj, index) {
-			// Check if the button or inner element were clicked
-			if (
-				obj.target.className.indexOf("btn-remove") >= 0 ||
-				obj.target.className.indexOf("fa-times") >= 0
-			) {
-				list.splice(index, 1);
+		onPageCreated() {
+			const selectedAnalysisId = parseInt(this.selectedAnalysisId());
+			if (selectedAnalysisId === 0 && !this.dirtyFlag().isDirty()) {
+				this.newAnalysis();
+			} else if (selectedAnalysisId > 0 && selectedAnalysisId !== (this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().id())) {
+				this.onAnalysisSelected();
+			} else {
+				this.setAnalysisSettingsLists();
+				this.loading(false);
 			}
 		}
 
-		addTarget() {
-			this.currentCohortList = this.targetCohorts;
-			this.showCohortSelector(true);
-		}
+        selectTab(index, { key }) {
+			this.selectedTabKey(key);
+            return commonUtils.routeTo('/prediction/' + this.componentParams().analysisId() + '/' + key);
+        }
 
-		addOutcome() {
-			this.currentCohortList = this.outcomeCohorts;
-			this.showCohortSelector(true);
-		}
-
-		cohortSelected(id, name) {
-			if (this.currentCohortList().filter(a => a.id === parseInt(id)).length == 0) {
-				this.currentCohortList.push(new Cohort({id: id, name: name}));
-			}
-			this.showCohortSelector(false);
-		}
-		
-		patientLevelPredictionAnalysisJson() {
-			return commonUtils.syntaxHighlight(ko.toJSON(this.patientLevelPredictionAnalysis));
-		}
-		
 		patientLevelPredictionAnalysisForWebAPI() {
-			var definition = ko.toJS(this.patientLevelPredictionAnalysis);
+			let definition = ko.toJS(this.patientLevelPredictionAnalysis);
 			definition = ko.toJSON(definition);
 			return JSON.stringify(definition);
 		}
@@ -250,63 +148,55 @@ define([
 			this.targetCohorts.removeAll();
 			this.outcomeCohorts.removeAll();
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
-			document.location = constants.apiPaths.browser();
+			document.location = constants.paths.browser();
 		}
+		
+		isNewEntityResolver() {
+			return ko.computed(() => this.patientLevelPredictionAnalysis() && this.selectedAnalysisId() === '0');
+		}		
 
-		delete() {
+		async delete() {
 			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
 				return;
+			
+			this.isDeleting(true);
+			const analysis = PredictionService.deletePrediction(this.selectedAnalysisId());
 
-			PredictionService.deletePrediction(this.selectedAnalysisId()).then((analysis) => {
-				this.loading(true);
-				this.patientLevelPredictionAnalysis(null);
-				this.selectedAnalysisId(null);
-				this.targetCohorts.removeAll();
-				this.outcomeCohorts.removeAll();
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
-				document.location = constants.apiPaths.browser()
-			});
+			this.loading(true);
+			this.patientLevelPredictionAnalysis(null);
+			this.selectedAnalysisId(null);
+			this.targetCohorts.removeAll();
+			this.outcomeCohorts.removeAll();
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
+			document.location = constants.paths.browser()
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			PredictionService.copyPrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
+				this.isCopying(false);
 				this.loading(false);
-				document.location = constants.apiPaths.analysis(this.patientLevelPredictionAnalysis().id());
-			});	
+				document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+			});
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			this.fullAnalysisList.removeAll();
-			var payload = this.prepForSave();
+			const payload = this.prepForSave();
 			PredictionService.savePrediction(payload).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
-				document.location =  constants.apiPaths.analysis(this.patientLevelPredictionAnalysis().id());
+				document.location =  constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}
 
-		downloadPackage() {
-			this.loadingMessage("Starting download...");
-			this.loading(true);
-			var payload = this.prepForSave();
-			PredictionService.savePrediction(payload)
-				.then((analysis) => {
-					this.resetDirtyFlag();
-					this.loadingMessage(this.defaultLoadingMessage);
-					return fileService.loadZip(
-						config.api.url + constants.apiPaths.downloadPackage(this.selectedAnalysisId()),
-						`prediction_study_${this.selectedAnalysisId()}_export.zip`
-					);
-				})
-				.catch((e) => console.error("error when exporting: " + e))
-				.finally(() => this.loading(false));
-		}
-
 		prepForSave() {
-			var specification = ko.toJS(this.patientLevelPredictionAnalysis());
+			const specification = ko.toJS(this.patientLevelPredictionAnalysis());
 			specification.targetIds = [];
 			specification.outcomeIds = [];
 			specification.cohortDefinitions = [];
@@ -350,7 +240,7 @@ define([
 					);
 				}
 
-				cs = ko.toJS(new CovariateSettings(cs));
+				specification.covariateSettings[index] = ko.toJS(new CovariateSettings(cs));
 			});
 
 			return {
@@ -361,95 +251,16 @@ define([
 			};
 		}
 
-		addModelSettings(d) {
-			this.modelSettings.push(d.action());
-			var index = this.modelSettings().length - 1;
-			this.editModelSettings(this.modelSettings()[index]);
-		}
-
-		editModelSettings(modelSettings) {
-			var option = ModelSettings.GetOptionsFromObject(modelSettings);
-			this.editorHeading(option.name + ' Model Settings');
-			this.editorDescription('Use the options below to edit the model settings');
-			this.editorComponentName('model-settings-editor');
-			this.editorComponentParams({ 
-				modelSettings: modelSettings,
-			});
-			this.managerMode('editor');
-		}
-
-		addPopulationSettings() {
-			this.patientLevelPredictionAnalysis().populationSettings.push(
-				new CreateStudyPopulationArgs()
-			);
-			var index = this.patientLevelPredictionAnalysis().populationSettings().length - 1;
-			this.editPopulationSettings(this.patientLevelPredictionAnalysis().populationSettings()[index]);
-		}
-
-		editPopulationSettings(settings) {
-			this.editorHeading('Population Settings');
-			this.editorDescription('Add or update the population settings');
-			this.editorComponentName('population-settings-editor');
-			this.editorComponentParams({ 
-				populationSettings: settings, 
-			});
-			this.managerMode('editor');
-		}		
-
-		// For later when we support temporal and non-temporal covariate settings
-		/*
-		addCovariateSettings(setting) {
-			const covariateSettings = (setting == 'Temporal') ? new TemporalCovariateSettings(this.defaultTemporalCovariateSettings) : new PredictionCovariateSettings(this.defaultCovariateSettings);
-			const headingPrefix = (setting == 'Temporal') ? 'Temporal ' : '';
-			const editorNamePrefix = (setting == 'Temporal') ? 'temporal-' : '';
-			this.patientLevelPredictionAnalysis().covariateSettings.push(
-				covariateSettings
-			);
-			var index = this.patientLevelPredictionAnalysis().covariateSettings().length - 1;
-			this.editorHeading(headingPrefix + 'Covariate Settings');
-			this.editorDescription('Add or update the covariate settings');
-			this.editorComponentName(editorNamePrefix + 'prediction-covar-settings-editor');
-			this.editorComponentParams({ 
-				covariateSettings: this.patientLevelPredictionAnalysis().covariateSettings()[index], 
-			});
-			this.managerMode('editor');
-		}
-		*/
-
-		addCovariateSettings() {
-			const covariateSettings = new PredictionCovariateSettings(this.defaultCovariateSettings);
-			this.patientLevelPredictionAnalysis().covariateSettings.push(
-				covariateSettings
-			);
-			var index = this.patientLevelPredictionAnalysis().covariateSettings().length - 1;
-			this.editCovariateSettings(this.patientLevelPredictionAnalysis().covariateSettings()[index]);
-		}
-
-		editCovariateSettings(settings) {
-			this.editorHeading('Covariate Settings');
-			this.editorDescription('Add or update the covariate settings');
-			this.editorComponentName('prediction-covar-settings-editor');
-			this.editorComponentParams({
-				covariateSettings: settings, 
-			});
-			this.managerMode('editor');
-		}
-
-		closeEditor() {
-			this.managerMode('summary');
-		}
-
 		newAnalysis() {
 			this.loading(true);
 			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({id: 0, name: 'New Patient Level Prediction Analysis'}));
-			// PatientLevelPredictionAnalysis takes time to load - use the setTimeout({}, 0) 
-			// to allow the event loop to catch up.
-			// http://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
-			setTimeout(() => {
+			return new Promise(async (resolve, reject) => {
 				this.setAnalysisSettingsLists();
 				this.resetDirtyFlag();
 				this.loading(false);
-			}, 0);
+
+				resolve();
+			});
 		}
 
 		onAnalysisSelected() {
@@ -481,7 +292,7 @@ define([
 		setUserInterfaceDependencies() {
 			this.targetCohorts.removeAll();
 			this.patientLevelPredictionAnalysis().targetIds().forEach(c => {
-				var name = "NOT FOUND";
+				let name = NOT_FOUND;
 				if (this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c)).length > 0) {
 					name = this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c))[0].name();
 					this.targetCohorts.push(new Cohort({id: c, name: name}));
@@ -490,21 +301,21 @@ define([
 
 			this.outcomeCohorts.removeAll();
 			this.patientLevelPredictionAnalysis().outcomeIds().forEach(c => {
-				var name = "NOT FOUND";
+				let name = NOT_FOUND;
 				if (this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c)).length > 0) {
 					name = this.patientLevelPredictionAnalysis().cohortDefinitions().filter(a => a.id() === parseInt(c))[0].name();
 					this.outcomeCohorts.push(new Cohort({id: c, name: name}));
 				}
 			});
 
-			var conceptSets = this.patientLevelPredictionAnalysis().conceptSets();
-			var csXref =this.patientLevelPredictionAnalysis().conceptSetCrossReference();
+			const conceptSets = this.patientLevelPredictionAnalysis().conceptSets();
+			const csXref =this.patientLevelPredictionAnalysis().conceptSetCrossReference();
 			csXref.forEach((xref) => {
-				var selectedConceptSetList = conceptSets.filter((cs) => { return cs.id === xref.conceptSetId});
-				if (selectedConceptSetList.length == 0) {
+				const selectedConceptSetList = conceptSets.filter((cs) => { return cs.id === xref.conceptSetId});
+				if (selectedConceptSetList.length === 0) {
 					console.error("Concept Set: " + xref.conceptSetId + " not found in specification.");
 				}
-				var selectedConceptSet = new ConceptSet({id: selectedConceptSetList[0].id, name: selectedConceptSetList[0].name()});
+				const selectedConceptSet = new ConceptSet({id: selectedConceptSetList[0].id, name: selectedConceptSetList[0].name()});
 				if (xref.targetName === constants.conceptSetCrossReference.covariateSettings.targetName) {
 					if (xref.propertyName === constants.conceptSetCrossReference.covariateSettings.propertyName.includedCovariateConcepts) {
 						this.patientLevelPredictionAnalysis().covariateSettings()[xref.targetIndex].includedCovariateConceptSet(selectedConceptSet);
@@ -521,121 +332,6 @@ define([
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 		}
-		
-		init() {
-			//FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
-			//	this.defaultCovariateSettings = data;
-				// This will be needed for temporal covariates
-				//FeatureExtractionService.getDefaultCovariateSettings(true).then(({ data }) => {
-				//	this.defaultTemporalCovariateSettings = data;
-				//});
-				if (this.selectedAnalysisId() == 0 && !this.dirtyFlag().isDirty()) {
-					this.newAnalysis();
-				} else if (this.selectedAnalysisId() > 0 && this.selectedAnalysisId() != (this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().id())) {
-					this.onAnalysisSelected();
-				} else {
-					this.setAnalysisSettingsLists();		
-					this.loading(false);
-				}
-			//});
-		}
-
-		computeCartesian() {
-			// Init
-			this.loadingDownload(true);
-			this.targetOutcomePairs.removeAll();
-			this.modelCovarPopTuple.removeAll();
-			this.fullAnalysisList.removeAll();
-
-			// T*O Pairs
-			var targetOutcomeCartesian = commonUtils.cartesian(this.targetCohorts(), this.outcomeCohorts());
-			targetOutcomeCartesian.forEach(element => {
-				if (element.length != 2) {
-					console.error("Expecting array with index 0: treatments, 1: outcomes");
-				} else {
-					this.targetOutcomePairs().push(
-						new TargetOutcome({
-							targetId: element[0].id,
-							targetName: element[0].name,
-							outcomeId: element[1].id,
-							outcomeName: element[1].name,
-						})
-					);
-				}
-			});
-			this.targetOutcomePairs.valueHasMutated();
-
-			// Analysis Settings
-			var modelCovarPopCartesian = commonUtils.cartesian(
-				this.patientLevelPredictionAnalysis().modelSettings(),
-				this.patientLevelPredictionAnalysis().covariateSettings(),
-				this.patientLevelPredictionAnalysis().populationSettings(),
-			);
-			modelCovarPopCartesian.forEach(element => {
-				if (element.length != 3) {
-					console.error("Expecting array with index 0: model, 1: covariate settings, 2: population settings");
-				} else {
-					this.modelCovarPopTuple().push(
-						new ModelCovarPopTuple({
-							modelName: Object.keys(element[0])[0],
-							modelSettings: ko.toJSON(element[0][Object.keys(element[0])[0]]),
-							covariateSettings: ko.toJSON(element[1]),
-							popRiskWindowStart: element[2].riskWindowStart(),
-							popRiskWindowEnd: element[2].riskWindowEnd(),
-						})
-					);
-				}
-			});
-			this.modelCovarPopTuple.valueHasMutated();
-
-			// Full Analysis
-			var fullAnalysisCartesian = commonUtils.cartesian(
-				this.targetOutcomePairs(),
-				this.modelCovarPopTuple(),
-			);
-			this.fullAnalysisList.removeAll();
-			fullAnalysisCartesian.forEach(element => {
-				if (element.length != 2) {
-					console.error("Expecting array with index 0: TargetOutcome, 1: ModelCovarPopTuple");
-				} else {
-					this.fullAnalysisList().push(
-						new FullAnalysis(element[0],element[1])
-					);
-				}
-			});
-			this.fullAnalysisList.valueHasMutated();
-			this.loadingDownload(false);
-		}
-
-		exportFullSpecification() {
-			this.isExporting(true);
-			PredictionService.exportFullSpecification(this.selectedAnalysisId()).then((analysis) => {
-				this.fullSpecification(commonUtils.syntaxHighlight(ko.toJSON(analysis.data)));
-				this.isExporting(false);
-			}).catch((e) => {
-				console.error("error when exporting: " + e)
-				this.isExporting(false);
-			});
-		}
-
-		copyFullSpecificationToClipboard() {
-			var currentClipboard = new clipboard('#btnCopyFullSpecificationClipboard');
-
-			currentClipboard.on('success', function (e) {
-				console.log('Copied to clipboard');
-				e.clearSelection();
-				$('#copyFullSpecificationToClipboardMessage').fadeIn();
-				setTimeout(function () {
-					$('#copyFullSpecificationToClipboardMessage').fadeOut();
-				}, 1500);
-			});
-
-			currentClipboard.on('error', function (e) {
-				console.log('Error copying to clipboard');
-				console.log(e);
-			});			
-		}
-
 	}
 
 	return commonUtils.build('prediction-manager', PatientLevelPredictionManager, view);

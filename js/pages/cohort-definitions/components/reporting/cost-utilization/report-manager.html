@@ -244,7 +244,7 @@
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
-					<div role="tabpanel" class="tab-pane active" id="condition-table-panel">
+					<div role="tabpanel" class="tab-pane active" id="condition-table-panel" data-bind="eventListener: { event: 'click', selector: 'tr', callback: (d,c,e) => handleGenericRowClick(e, 'condition', 'condition_table')}">
 						<table id="condition_table" class="stripe compact hover dataTable no-footer" type="condition">
 							<thead>
 								<tr>
@@ -268,7 +268,7 @@
 		<loading params="status:'Loading Drilldown Report'">
 		</loading>
 		<!-- /ko -->
-		<!-- ko: if data-bind="if: $root.activeReportDrilldown -->
+		<!-- ko if: $root.activeReportDrilldown -->
 		<div class="panel panel-primary">
 			<div class="panel-heading">Drilldown Report</div>
 			<div class="panel-body">
@@ -303,7 +303,7 @@
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
-					<div role="tabpanel" class="tab-pane active" id="drugs-by-index-table-panel">
+					<div role="tabpanel" class="tab-pane active" id="drugs-by-index-table-panel" data-bind="eventListener: { event: 'click', selector: 'tr', callback: (d,c,e) => handleGenericRowClick(e, 'drug', 'drugs-by-index-table')}">
 						<table id="drugs-by-index-table" class="stripe compact hover dataTable no-footer" type="drug">
 							<thead>
 								<tr>
@@ -538,7 +538,7 @@
 						</div>
 						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
 					</div>
-					<div role="tabpanel" class="tab-pane active" id="procedure-table-panel">
+					<div role="tabpanel" class="tab-pane active" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: 'tr', callback: (d,c,e) => handleGenericRowClick(e, 'procedure', 'procedure_table')}">
 						<table id="procedure_table" class="stripe compact hover dataTable no-footer" type="procedure">
 							<thead>
 								<tr>
