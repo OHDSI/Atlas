@@ -240,7 +240,7 @@ define([
 					);
 				}
 
-				cs = ko.toJS(new CovariateSettings(cs));
+				specification.covariateSettings[index] = ko.toJS(new CovariateSettings(cs));
 			});
 
 			return {

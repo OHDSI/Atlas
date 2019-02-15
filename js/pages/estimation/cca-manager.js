@@ -223,9 +223,9 @@ define([
 						index, 
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
-				
+
 				// Remove the concept set references by setting it to the base class
-				pcsaCovarSettings = ko.toJS(new CovariateSettings(pcsaCovarSettings));
+				specification.positiveControlSynthesisArgs.covariateSettings = ko.toJS(new CovariateSettings(pcsaCovarSettings));
 			}
 
 			return {
