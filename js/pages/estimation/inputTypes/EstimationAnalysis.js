@@ -24,7 +24,7 @@ define([
             this.id = ko.observable(data.id || null);
             this.name = ko.observable(data.name || null);
             this.description = ko.observable(data.description || null);
-            this.version = ko.observable(data.name || "v0.9.0");
+            this.version = ko.observable(data.version || "v2.7.0");
             this.packageName = ko.observable(data.packageName || null);
             this.skeletonType = data.skeletonType || "ComparativeEffectStudy"; 
             this.skeletonVersion = data.skeletonVersion || "v0.0.1";
