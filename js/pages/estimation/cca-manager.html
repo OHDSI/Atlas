@@ -24,6 +24,8 @@
       <ul class="nav nav-tabs">
         <li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification') };"><a>Specification</a>
         </li>
+        <li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation') }"><a>Generation</a>
+        </li>
         <li role="presentation" data-bind="css: { active: $component.tabMode() == 'utilities' }, click: function() { $component.tabMode('utilities') };"><a>Utilities</a>
         </li>
       </ul>
@@ -144,6 +146,11 @@
                 </div>
               </div>
           </div>
+        </div>
+        <div role="tabpanel" data-bind="css: { active: tabMode() === 'generation' }" class="tab-pane">
+            <div data-bind="css: classes({extra: 'paddedWrapper'})">
+                <estimation-generation params="analysisId: selectedAnalysisId"></estimation-generation>
+            </div>
         </div>
         <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'utilities' }" class="tab-pane">
           <div class="paddedWrapper">

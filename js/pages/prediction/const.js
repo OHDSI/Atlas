@@ -7,6 +7,7 @@ define(
       downloadPackage: id => `prediction/${id}/download`,
       createAnalysis: () => '#/prediction/0',
       browser: () => '#/prediction',
+      downloadResults: id => `prediction/generation/${id}/result`,
     };
 
     const conceptSetCrossReference = {
@@ -18,6 +19,12 @@ define(
         },
       },
     };
+
+		const predictionGenerationStatus = {
+			STARTED: 'STARTED',
+			COMPLETED: 'COMPLETED',
+      FAILED: 'FAILED',
+		};
 
     const defaultNontemporalCovariates = {
       "temporal": false,
@@ -60,6 +67,7 @@ define(
       apiPaths,
       conceptSetCrossReference,
       defaultNontemporalCovariates,
+      predictionGenerationStatus,
     };
   }
 );

@@ -28,6 +28,7 @@ define([
 	'./components/CohortMethodAnalysisEditor',
 	'./components/NegativeControlOutcomeCohortSettingsEditor',
 	'./components/PositiveControlSythesisSettingsEditor',
+	'./components/estimation-generation',
 	'less!./cca-manager.less',
 ], function (
 	ko, 

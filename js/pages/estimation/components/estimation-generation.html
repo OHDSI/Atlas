@@ -8,7 +8,7 @@
             <!-- ko foreach: executionGroups -->
             <div data-bind="
                 template: {
-                    name: 'plp-execution-group',
+                    name: 'estimation-execution-group',
                     data: Object.assign({}, $data, {
                         classes: $parent.classes,
                         execColumns: $parent.execColumns,
@@ -22,14 +22,21 @@
     </div>
 </div>
 
-<script type="text/html" id="plp-execution-group">
+<modal-exit-message params="{
+        showModal: $component.isExitMessageShown,
+        title: 'Execution Exit Message',
+        exitMessage: $component.exitMessage,
+    }">
+</modal-exit-message>
+
+<script type="text/html" id="estimation-execution-group">
     <div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
         <div data-bind="css: classes('heading')">
             <label data-bind="css: classes('ds-title'), text: sourceName"></label>
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isGeneratePermitted(sourceKey) ? 'Not enough permissions to generate or changes not saved' : null,
+                    tooltip: !$component.isGeneratePermitted(sourceKey) ? 'Not enough permissions to generate or changes was not saved or Execution Engine is not available' : null,
                 ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
@@ -52,11 +59,11 @@
                 ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
-						attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
-						click: () => $component.goToLatestResults(sourceKey)
+						attr: { 'disabled': !$component.findLatestSubmission(sourceKey) },
+						click: () => $component.downloadLatestResults(sourceKey)
                     ">
-                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
-                        View latest result
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-download']})"></i>
+                        Download latest result
                     </button>
 
                 </li>

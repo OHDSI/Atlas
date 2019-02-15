@@ -7,6 +7,13 @@ define(
       downloadCcaAnalysisPackage: id => `estimation/${id}/download`,
       createCcaAnalysis: () => '#/estimation/cca/0',
       browser: () => '#/estimation',
+      downloadResults: id => `estimation/generation/${id}/result`,
+    };
+
+    const estimationGenerationStatus = {
+      STARTED: 'STARTED',
+      COMPLETED: 'COMPLETED',
+      FAILED: 'FAILED',
     };
 
     const conceptSetCrossReference = {
@@ -40,6 +47,7 @@ define(
     return {
       pageTitle,
       apiPaths,
+      estimationGenerationStatus,
       conceptSetCrossReference,
     };
   }
