@@ -72,8 +72,8 @@ define([
 					title: 'Results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return (d.status === this.predictionStatusGenerationOptions.COMPLETED || d.status === this.predictionStatusGenerationOptions.FAILED) && this.isResultsViewPermitted(d.id) ?
-							`<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.downloadResults.bind(null, id)"><i class="prediction-generation__action-ico fa fa-download"></i> Download results</a>` : '-';
+						return (d.status === this.predictionStatusGenerationOptions.COMPLETED || d.status === this.predictionStatusGenerationOptions.FAILED) && this.isResultsViewPermitted(d.id) && d.numResultFiles > 0 ?
+							`<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.downloadResults.bind(null, id)"><i class="prediction-generation__action-ico fa fa-download"></i> Download ${d.numResultFiles} files</a>` : '-';
 					}
 				},
 			];

@@ -71,8 +71,8 @@ define([
 					title: 'Results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return (d.status === this.estimationStatusGenerationOptions.COMPLETED || d.status === this.estimationStatusGenerationOptions.FAILED) && this.isResultsViewPermitted(d.id) ?
-							`<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.downloadResults.bind(null, id)"><i class="estimation-generation__action-ico fa fa-download"></i>Download results</a>` : '-';
+						return (d.status === this.estimationStatusGenerationOptions.COMPLETED || d.status === this.estimationStatusGenerationOptions.FAILED) && this.isResultsViewPermitted(d.id) && d.numResultFiles > 0 ?
+							`<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.downloadResults.bind(null, id)"><i class="estimation-generation__action-ico fa fa-download"></i>Download ${d.numResultFiles} files</a>` : '-';
 					}
 				},
 			];
