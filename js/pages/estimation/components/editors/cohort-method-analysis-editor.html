@@ -148,25 +148,13 @@
                 <div>
                     <label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
                     <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.createStudyPopArgs.riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.analysis.createStudyPopArgs.riskWindowStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-                    </div>
-                </div>
-                <div>
-                    <label>Add the length of exposure the start of the risk window?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createStudyPopArgs.addExposureDaysToStart"></select>
+                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.createStudyPopArgs.riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.analysis.createStudyPopArgs.riskWindowStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> &nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.analysis.createStudyPopArgs.addExposureDaysToStart"></select>
                     </div>
                 </div>
                 <div>
                     <label>Define the time-at-risk window end:</label>
                     <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.createStudyPopArgs.riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.analysis.createStudyPopArgs.riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-                    </div>
-                </div>
-                <div>
-                    <label>Add the length of exposure of the risk window?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createStudyPopArgs.addExposureDaysToEnd"></select>
+                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.createStudyPopArgs.riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.analysis.createStudyPopArgs.riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />  &nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.analysis.createStudyPopArgs.addExposureDaysToEnd"></select>
                     </div>
                 </div>
                 <div>

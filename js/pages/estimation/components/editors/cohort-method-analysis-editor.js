@@ -3,6 +3,7 @@ define([
 	'text!./cohort-method-analysis-editor.html',	
 	'components/Component',
 	'utils/CommonUtils',
+	'const',
 	'../../const',
 	'utils/DataTypeConverterUtils',
 	'services/analysis/ConceptSet',
@@ -19,6 +20,7 @@ define([
 	Component,
 	commonUtils,
 	constants,
+	estimationConstants,
 	dataTypeConverterUtils,
 	ConceptSet,
 ) {
@@ -27,7 +29,8 @@ define([
             super(params);
 
 			this.analysis = params.analysis;
-			this.options = constants.options;
+			this.constants = constants;
+			this.options = estimationConstants.options;
 			this.subscriptions = params.subscriptions;
 			this.editorMode = ko.observable('all');
 			this.showCovariateSelector = ko.observable(false);
