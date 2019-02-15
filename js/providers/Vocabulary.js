@@ -12,33 +12,43 @@ define(function (require, exports) {
 	loadedPromise.resolve();
 
 	var defaultSource;
-	var domainPromise = null;
+	var domainsPromise = null;
 	var domains = [];
+
+	authAPI.isAuthenticated.subscribe(authed => authed && loadDefaultSource());
+
+	function loadDefaultSource() {
+		if (typeof defaultSource !== "undefined") {
+			return new Promise(res => res());
+		}
+
+		return sourceAPI.getSources().then(function (sources) {
+			if (sources.length === 0) {
+				resolve(domains);
+				return;
+			}
+			// find the source which has a Vocabulary Daimon with priority = 1
+			var prioritySources = sources.filter(function (source) {
+				return source.daimons.filter(function (daimon) {
+					return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
+				}).length > 0
+			});
+			if (prioritySources.length > 0)
+				defaultSource = prioritySources[0];
+			else // find the first vocabulary or CDM daimon
+				defaultSource = sources.find(function (source) {
+					return source.daimons.filter(function (daimon) {
+						return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
+					}).length > 0
+				});
+		});
+	}
 
 	function getDomains() {
 		// if domains haven't yet been requested, create the promise
 		if (!domainsPromise) {
 			let loadPromise = new Promise((resolve, reject) => {
-				sourceAPI.getSources().then(function (sources) {
-					if (sources.length === 0) {
-						resolve(domains);
-						return;
-					}
-					// find the source which has a Vocabulary Daimon with priority = 1
-					var prioritySources = sources.filter(function (source) {
-						return source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
-						}).length > 0
-					});
-					if (prioritySources.length > 0)
-						defaultSource = prioritySources[0];
-					else // find the first vocabulary or CDM daimon
-						defaultSource = sources.filter(function (source) {
-							return source.daimons.filter(function (daimon) {
-								return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
-							}).length > 0
-						})[0];
-
+				loadDefaultSource().then(function () {
 					// preload domain list once for all future calls to getDomains()
 					if (defaultSource !== undefined) {
 						$.ajax({
@@ -268,6 +278,7 @@ define(function (require, exports) {
 	}
 
 	var api = {
+		getDeafultSource: () => defaultSource,
 		loaded: loadedPromise,
 		search: search,
 		getDomains: getDomains,

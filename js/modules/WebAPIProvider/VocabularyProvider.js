@@ -6,44 +6,10 @@ define(function (require, exports) {
 	var sharedState = require('atlas-state');
 	var numeral = require('numeral');
 	var authAPI = require('webapi/AuthAPI');
+	var VocabularyAPI = require('providers/Vocabulary');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();
-
-	var defaultSource;
-	var domainPromise = $.Deferred();
-	var domains = [];
-
-	sourceAPI.getSources().then(function (sources) {
-		if (sources.length == 0) {
-			sharedState.appInitializationStatus('no-sources-available');
-			return;
-		}
-		// find the source which has a Vocabulary Daimon with priority = 1
-		var prioritySources = sources.filter(function (source) {
-			return source.daimons.filter(function (daimon) {
-				return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
-			}).length > 0
-		});
-		if (prioritySources.length > 0)
-			defaultSource = prioritySources[0];
-		else // find the first vocabulary or CDM daimon
-			defaultSource = sources.filter(function (source) {
-				return source.daimons.filter(function (daimon) {
-					return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
-				}).length > 0
-			})[0];
-
-		// preload domain list once for all future calls to getDomains()
-		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
-		}).then(function (results) {
-			$.each(results, function (i, v) {
-				domains.push(v.DOMAIN_ID);
-			});
-			domainPromise.resolve(domains);
-		});
-	})
 
 	function loadDensity(results) {
 		var densityPromise = $.Deferred();
@@ -68,7 +34,7 @@ define(function (require, exports) {
 			url: sharedState.resultsUrl() + 'conceptRecordCount',
 			method: 'POST',
 			contentType: 'application/json',
-			timeout: 10000,
+			timeout: 60000,
 			data: JSON.stringify(searchResultIdentifiers),
 			success: function (entries) {
 				var formatComma = "0,0";
@@ -106,7 +72,7 @@ define(function (require, exports) {
 		}
 
 		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/search',
+			url: config.webAPIRoot + 'vocabulary/' + VocabularyAPI.getDeafultSource().sourceKey + '/search',
 			method: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(search),
@@ -119,13 +85,12 @@ define(function (require, exports) {
 	}
 
 	function getDomains() {
-		// this is initliazed once for all calls
-		return domainPromise;
+		return VocabularyAPI.getDomains();
 	}
 
 	function getConcept(id) {
 		var getConceptPromise = $.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/concept/' + id,
+			url: config.webAPIRoot + 'vocabulary/' + VocabularyAPI.getDeafultSource().sourceKey + '/concept/' + id,
 			error: authAPI.handleAccessDenied,
 		});
 
@@ -168,7 +133,7 @@ define(function (require, exports) {
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {
 
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/resolveConceptSetExpression';
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || VocabularyAPI.getDeafultSource().sourceKey) + '/resolveConceptSetExpression';
 
 		var resolveConceptSetExpressionPromise = $.ajax({
 			url: repositoryUrl,
@@ -198,7 +163,7 @@ define(function (require, exports) {
 	function getConceptsById(identifiers, url, sourceKey) {
 		var repositoryUrl;
 		if (url || sourceKey) {
-      repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/identifiers';
+      repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || VocabularyAPI.getDeafultSource().sourceKey) + '/lookup/identifiers';
     } else {
 			repositoryUrl = sharedState.vocabularyUrl() + 'lookup/identifiers';
 		}
@@ -231,7 +196,7 @@ define(function (require, exports) {
 	}
 
 	function getMappedConceptsById(identifiers, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/mapped';
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || VocabularyAPI.getDeafultSource().sourceKey) + '/lookup/mapped';
 
 		var getMappedConceptsByIdPromise = $.ajax({
 			url: repositoryUrl,
@@ -245,7 +210,7 @@ define(function (require, exports) {
 	}
 
 	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || VocabularyAPI.getDeafultSource().sourceKey) + '/optimize';
 
 		var getOptimizedConceptSetPromise = $.ajax({
 			url: repositoryUrl,
@@ -259,7 +224,7 @@ define(function (require, exports) {
 	}
 
 	function compareConceptSet(compareTargets, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/compare';
+		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || VocabularyAPI.getDeafultSource().sourceKey) + '/compare';
 
 		var getComparedConceptSetPromise = $.ajax({
 			url: repositoryUrl,
