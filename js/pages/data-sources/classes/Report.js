@@ -66,7 +66,9 @@ define([
     }
 
     loadData() {
-      this.getData().then(rawData => this.parseData(rawData));
+      this.getData().then(rawData => this.parseData(rawData)).catch(() => {
+        // protection from uncaught exception
+      });
     }
   }
 
