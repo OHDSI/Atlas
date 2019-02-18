@@ -15,7 +15,9 @@ define(function (require, exports) {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'source/sources/',
 			error: function (error) {
-				sharedState.appInitializationStatus('failed');
+        if (error.status !== 403) {
+          sharedState.appInitializationStatus('failed');
+        }
 			},
 			success: function (o) {
 				// this is the initial communication to WebAPI and if it succeeds
@@ -80,12 +82,14 @@ define(function (require, exports) {
         servicePromise.resolve();
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        config.api.available = false;
-        config.api.xhr = xhr;
-        config.api.thrownError = thrownError;
+        if (xhr.status !== 403) {
+          config.api.available = false;
+          config.api.xhr = xhr;
+          config.api.thrownError = thrownError;
 
-        sharedState.appInitializationStatus('failed');
-        document.location = '#/configure';
+          sharedState.appInitializationStatus('failed');
+          document.location = '#/configure';
+        }
 
         servicePromise.resolve();
       }

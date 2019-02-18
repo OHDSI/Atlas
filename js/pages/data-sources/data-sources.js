@@ -112,6 +112,7 @@ define([
 			});
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
+			this.errorMessage = ko.observable();
 
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.canViewCdmResults = ko.pureComputed(() => {
