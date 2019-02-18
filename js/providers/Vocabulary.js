@@ -23,10 +23,7 @@ define(function (require, exports) {
 		}
 
 		return sourceAPI.getSources().then(function (sources) {
-			if (sources.length === 0) {
-				resolve(domains);
-				return;
-			}
+			if (sources.length !== 0) {
 			// find the source which has a Vocabulary Daimon with priority = 1
 			var prioritySources = sources.filter(function (source) {
 				return source.daimons.filter(function (daimon) {
@@ -41,6 +38,7 @@ define(function (require, exports) {
 						return daimon.daimonType == "Vocabulary" || daimon.daimonType == "CDM"
 					}).length > 0
 				});
+			}
 		});
 	}
 
