@@ -123,6 +123,9 @@ define([
 			this.currentSource = ko.observable(this.sources[0]);
 			this.currentReport = ko.observable();
 			this.currentConcept = ko.observable();
+
+			this.currentSource.subscribe((source) => source && this.hasError(false));
+			this.currentReport.subscribe((report) => report && this.hasError(false));
 		}
 	}
 
