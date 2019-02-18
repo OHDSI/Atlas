@@ -76,10 +76,12 @@ define(function (require, exports) {
         servicePromise.resolve(constants.applicationStatuses.running);
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        config.api.available = false;
-        config.api.xhr = xhr;
-        config.api.thrownError = thrownError;
-        document.location = '#/configure';
+        if (xhr.status !== 403) {
+          config.api.available = false;
+          config.api.xhr = xhr;
+          config.api.thrownError = thrownError;
+          document.location = '#/configure';
+        }
 
         servicePromise.resolve(constants.applicationStatuses.failed);
       }
