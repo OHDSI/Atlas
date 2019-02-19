@@ -2,13 +2,15 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 
 	function facetedDatatable(params) {
 		var self = this;
-
+		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
 		self.data = params.xfObservable || ko.observable();
 		self.tableData = ko.pureComputed(function () {
 			if (self.data() && self.data().size() && self.data().size() > 0) {
-				return self.data().allFiltered();
+				const data = self.data().allFiltered();
+				self.selectedData && self.selectedData(data);
+				return data;
 			} else {
 				return [];
 			}
