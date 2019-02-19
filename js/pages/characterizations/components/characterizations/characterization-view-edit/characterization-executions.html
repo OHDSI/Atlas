@@ -55,7 +55,7 @@
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 						attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
-                        click: () => $component.generate(sourceKey)"
+                        click: () => $component.generate(sourceKey, submissions()[0] ? submissions()[0].hashCode : null)"
                     >
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
                             <span data-bind="css: classes('action-text')">Generate</span>
