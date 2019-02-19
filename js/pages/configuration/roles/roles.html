@@ -32,8 +32,5 @@
         </div>
     </div>
 </div>
-<div data-bind="ifnot:$component.canRead">
-    <div class="padded">
-        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-    </div>
-</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canRead"></access-denied>

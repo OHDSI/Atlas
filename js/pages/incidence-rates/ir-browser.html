@@ -12,6 +12,5 @@
 	<div data-bind="visible:loading()" class="loading">loading</div>
 </div>
 <!-- /ko -->
-<!-- ko ifnot:$component.canReadIRs -->
-	<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
-<!-- /ko -->
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canReadIRs"></access-denied>

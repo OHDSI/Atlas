@@ -1,10 +1,6 @@
 <heading-title params="name: 'Import Users from LDAP/Active Directory', icon: 'users', theme: 'dark'"></heading-title>
 
-<div data-bind="ifnot: config.userAuthenticationEnabled && canImport">
-    <div data-bind="css: classes({extra: ['padded']})">
-        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-    </div>
-</div>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canImport"></access-denied>
 
 <div data-bind="css: classes({extra: ['paddedWrapper']}), if: config.userAuthenticationEnabled && canImport">
     <div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
@@ -28,7 +24,7 @@
                         </div>
                     </div>
                 </div>
-                <div data-bind="css: classes({extra: ['btn-group', 'users-import__group']})">
+                <div data-bind="css: classes({extra: ['btn-gr`oup', 'users-import__group']})">
                     <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" /> Active Directory</label>
                     <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" /> LDAP server</label>
                 </div>
