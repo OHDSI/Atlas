@@ -383,6 +383,7 @@ define([
 
         if (self.hasAccess()) {
             self.updateRole();
+            getUsers();
         }
     }
 
