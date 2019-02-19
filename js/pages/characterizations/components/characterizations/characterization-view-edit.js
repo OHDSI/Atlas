@@ -62,11 +62,13 @@ define([
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
+            this.areStratasNamesEmpty = ko.observable();
             this.componentParams = ko.observable({
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
+                areStratasNamesEmpty: this.areStratasNamesEmpty,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -101,7 +103,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect());
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect() && !this.areStratasNamesEmpty());
         }
 
         isDeletePermittedResolver() {
