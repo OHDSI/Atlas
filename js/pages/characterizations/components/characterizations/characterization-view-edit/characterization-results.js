@@ -501,7 +501,7 @@ define([
                   cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
                 }
 
-                const colIdx = cohortIds.indexOf(r.cohortId);
+                const colIdx = cohortIds.indexOf(report.cohortId);
                 if (cov.sumValue[rd.strataId] === undefined) {
                     cov.sumValue[rd.strataId] = [];
                 }
@@ -528,7 +528,7 @@ define([
               }
             });
 
-            analysis.strataOnly = analysis.strataOnly && data.length > 0;
+            analysis.strataOnly = analysis.strataOnly && data.size > 0;
 
             if (!analysis.strataOnly && analysis.reports.length === 2) {
                 columns.push(this.stdDiffColumn);
