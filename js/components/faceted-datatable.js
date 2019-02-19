@@ -149,6 +149,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.stateLoadCallback = params.stateLoadCallback;
 		
 		self.options = {
+			...self.options,
 			dom: self.dom,
 			colVis: self.colVis,
 			language: self.language,
