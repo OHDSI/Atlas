@@ -45,7 +45,7 @@ define([
 
 			this.characterizationId = params.characterizationId;
 			this.designDirtyFlag = params.designDirtyFlag;
-			this.currentHash = ko.computed(() => params.design() ? params.design().hash : 0);
+			this.currentHash = ko.computed(() => params.design() ? params.design().hashCode : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
