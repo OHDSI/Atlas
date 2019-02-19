@@ -1,10 +1,6 @@
 <heading-title params="name: 'Import Users from LDAP/Active Directory', icon: 'users', theme: 'dark'"></heading-title>
 
-<div data-bind="ifnot: config.userAuthenticationEnabled && canImport">
-    <div data-bind="css: classes({extra: ['padded']})">
-        <access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-    </div>
-</div>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canImport"></access-denied>
 
 <div data-bind="css: classes({extra: ['paddedWrapper']}), if: config.userAuthenticationEnabled && canImport">
     <div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
