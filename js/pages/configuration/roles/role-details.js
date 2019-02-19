@@ -202,7 +202,7 @@ define([
             }
 
             var userItemsPromise = $.Deferred();
-            $.when(getUsers(), roleUsersPromise).done(function() {
+            Promise.all([getUsers(), roleUsersPromise]).then(function() {
                 updateUserItems();
                 userItemsPromise.resolve();
             });
