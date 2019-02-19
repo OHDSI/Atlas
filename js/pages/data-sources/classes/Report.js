@@ -46,16 +46,16 @@ define([
 				conceptId: this.conceptId,
 			});
 			this.context.loadingReport(true);
-      this.isLoading(true);
-      this.context.hasError(false);
-      this.context.errorMessage(null);
+			this.isLoading(true);
+			this.context.hasError(false);
+			this.context.errorMessage(null);
 			const response = httpService.doGet(url);
 			response.catch((error) => {
-          this.context.hasError(true);
-          if (error.status === 403) {
-            this.context.errorMessage('You have no permissions to see this report');
-          }
-          console.error(error);
+					this.context.hasError(true);
+					if (error.status === 403) {
+						this.context.errorMessage('You have no permissions to see this report');
+					}
+					console.error(error);
 				})
 				.finally(() => {
 					this.context.loadingReport(false);
@@ -67,8 +67,8 @@ define([
 
 		loadData() {
 			this.getData().then(rawData => this.parseData(rawData)).catch(() => {
-        // protection from uncaught exception
-      });
+				// protection from uncaught exception
+			});
 		}
 	}
 
