@@ -1,0 +1,46 @@
+{
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"plugins": [
+		"requirejs"
+	],
+	"extends": [
+		"eslint:recommended",
+		"plugin:requirejs/recommended"
+	],
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"ecmaVersion": 6
+	},
+	"rules": {
+		"indent": [
+			"error",
+			"tab"
+		],
+		"linebreak-style": [
+			"error",
+			"windows"
+		],
+		"quotes": [
+			"error",
+			"double"
+		],
+		"semi": [
+			"error",
+			"always"
+		]
+	},
+	"overrides": [
+		{
+			"files": [
+				"settings.js"
+			],
+			"rules": {
+				"no-unused-vars": "off",
+				"no-undef": "off"
+			}
+		}
+	]
+}
