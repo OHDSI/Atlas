@@ -26,7 +26,7 @@
 		<div>
 			<i class="fa fa-exclamation-circle"></i>
 		</div>
-		<div>error loading report</div>
+		<div data-bind="text: errorMessage() || 'Error loading report'"></div>
 	</div>
 
 	<div id="report" class="flexed" data-bind="if: currentReport() && !hasError()">
