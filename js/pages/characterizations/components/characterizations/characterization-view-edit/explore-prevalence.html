@@ -12,7 +12,13 @@
         css: classes(),
         dataTable: {
             data: relations().stats,
-            options: { autoWidth: false, order: [1, 'desc'], columns: relations().columns }
+            options: {
+                autoWidth: false,
+                order: [1, 'desc'],
+                columns: relations().columns,
+                buttons: ['csvHtml5'],
+                dom: 'B',
+            }
         }
     ">
         <thead>

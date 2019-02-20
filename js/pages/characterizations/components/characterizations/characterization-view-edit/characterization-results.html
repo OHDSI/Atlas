@@ -36,7 +36,11 @@
                                 css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                                 dataTable:{
                                     data: $data.data,
-                                    options: {columns: $data.columns}
+                                    options: {
+                                        columns: $data.columns,
+                                        buttons: ['csvHtml5'],
+                                        dom: 'B',
+                                    }
                                 }
                             ">
                                 <thead>
@@ -106,7 +110,11 @@
                                     css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                                     dataTable:{
                                         data: $data.data,
-                                        options: {columns: $data.columns}
+                                        options: {
+                                            columns: $data.columns,
+                                            buttons: ['csvHtml5'],
+                                            dom: 'B',
+                                        }
                                     }
                                 ">
                                     <thead>
@@ -150,7 +158,11 @@
                                         css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                                         dataTable:{
                                             data: $data.data,
-                                            options: {columns: $data.columns}
+                                            options: {
+                                                columns: $data.columns,
+                                                buttons: ['csvHtml5'],
+                                                dom: 'B',
+                                            }
                                         }
                                     "/>
                                 </div>

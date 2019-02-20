@@ -105,7 +105,12 @@
                     css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                     dataTable:{
                         data: submissions,
-                        options: {columns: execColumns, order: [[ 0, 'desc' ]]}
+                        options: {
+                            columns: execColumns,
+                            order: [[ 0, 'desc' ]],
+                            buttons: ['csvHtml5'],
+                            dom: 'B',
+                        }
                     }
                 "/>
             </li>
