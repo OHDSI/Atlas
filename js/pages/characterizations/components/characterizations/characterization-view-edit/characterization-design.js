@@ -122,7 +122,7 @@ define([
             this.criteriaContext = ko.observable();
         }
 
-        checkStrataName(data, event) {
+        checkStrataNames(data, event) {
             let emptyNamesAmount = 0;
             this.stratas().forEach(strata => {
                 if (strata.name() === '') {
