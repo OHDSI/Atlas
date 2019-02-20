@@ -189,13 +189,13 @@ define([
 				data: 'covariance'
 			}, {
 				title: 'Gender (%)',
-				data: 'genderP'
+				data: row => row.genderP < 0 ? '-' : row.genderP
 			}, {
 				title: 'Race (%)',
-				data: 'raceP'
+				data: row => row.raceP < 0 ? '-' : row.raceP
 			}, {
 				title: 'Ethnicity (%)',
-				data: 'ethP'
+				data: row => row.ethP < 0 ? '-' : row.ethP
 			}];
 
 			this.careSiteDatatable;
@@ -646,7 +646,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,											
+											destroy: true,
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -761,7 +761,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,											
+											destroy: true,
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -871,7 +871,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,											
+											destroy: true,
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -985,7 +985,7 @@ define([
 											],
 											lengthChange: false,
 											deferRender: true,
-											destroy: true,											
+											destroy: true,
 										});
 
 									let tree = this.buildHierarchyFromJSON(normalizedData, threshold);
@@ -1372,7 +1372,7 @@ define([
 												}
 											],
 											deferRender: true,
-											destroy: true,											
+											destroy: true,
 										});
 
 									let tree = this.eraBuildHierarchyFromJSON(normalizedData, threshold);
@@ -1445,7 +1445,7 @@ define([
 												risk_difference: this.formatFixed(drugEraPrevalence.riskDiffAfterBefore[i])
 											};
 										});
-										
+
 										let datatable = $('#drugs-by-index-table')
 											.DataTable({
 												order: [5, 'desc'],
@@ -1484,7 +1484,7 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true,												
+												destroy: true,
 											});
 										this.datatables['drugs-by-index-table'] = datatable;
 
@@ -1612,7 +1612,7 @@ define([
 												],
 												lengthChange: false,
 												deferRender: true,
-												destroy: true,												
+												destroy: true,
 											});
 										this.datatables['condition_table'] = datatable;
 
@@ -1732,7 +1732,7 @@ define([
 													}
 												],
 												deferRender: true,
-												destroy: true,												
+												destroy: true,
 											});
 										this.datatables['procedure_table'] = datatable;
 
@@ -2103,7 +2103,7 @@ define([
 								$(document).on('click', '#care_site_table tbody tr', function () {
 									$('#care_site_table tbody tr.selected').removeClass('selected');
 									$(this).addClass('selected');
-									
+
 									let institution_id = context.careSiteDatatable.data()[context.careSiteDatatable.row(this)[0]].institution;
 
 									let entropyData = ChartUtils.normalizeArray(data.filter(function (d) {
@@ -2168,7 +2168,7 @@ define([
 				}
 				svg.attr("width", 960)
 				svg.attr("height", 500)
-				const width = svg.attr("width") - margin.left - margin.right
+				const width = svg.attr("width") - margin.left - margin.right;
 				const height = svg.attr("height") - margin.top - margin.bottom;
 
 				let tooltip = d3.select("body").append("div").style('position', 'absolute')
@@ -2186,9 +2186,9 @@ define([
 				let g = svg.append("g")
 					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-				let barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + oneBarData.genderP +
-					"}, {\"attr\":\"Race\", \"value\":" + oneBarData.raceP +
-					"}, {\"attr\":\"Ethnicity\", \"value\":" + oneBarData.ethP + "}]";
+				const barDataTxt = "[{\"attr\":\"Gender\", \"value\":" + Math.max(0, oneBarData.genderP) +
+				"}, {\"attr\":\"Race\", \"value\":" + Math.max(0, oneBarData.raceP) +
+				"}, {\"attr\":\"Ethnicity\", \"value\":" + Math.max(0, oneBarData.ethP) + "}]";
 
 
 				let barData = JSON.parse(barDataTxt);
@@ -2241,7 +2241,7 @@ define([
 					});
 			}
 
-			this.dataCompleteRowClick = function (d) {
+			this.dataCompleteRowClick = d => {
 				this.showHorizontalBar(d);
 			}
 
@@ -2934,7 +2934,7 @@ define([
 				let dataTable = $(`#${tableId}`).DataTable();
 				let rowIndex = event.target._DT_CellIndex.row;
 				let rowData = dataTable.row(rowIndex).data();
-				
+
 				this.drilldown(rowData.concept_id, rowData.name, drilldownType);
 			}
 
@@ -3012,7 +3012,7 @@ define([
 										}
 									}
 								]
-							});							
+							});
 						}
 					});
 			}

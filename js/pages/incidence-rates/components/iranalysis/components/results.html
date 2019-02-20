@@ -1,66 +1,124 @@
-<table style="width: 100%" class="sourceTable">
-	<thead>
-		<th style="width: 26px"></th>
-		<th>Source</th>
-		<th>Name</th>
-		<th style="width:75px"></th>
-		<th style="width: 80px" class="smallHeading dataCol">Persons</th>
-		<th style="width: 75px" class="smallHeading dataCol">Cases</th>
-		<th style="width: 100px" class="smallHeading dataCol">Proportion [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small></th>
-		<th style="width: 90px" class="smallHeading dataCol">Time At Risk<br/><small>(years)</small></th>
-		<th style="width: 100px" class="smallHeading dataCol noselect">Rate [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small></th>
-		<th style="width: 135px" class="smallHeading dataCol">Started</th>
-		<th style="width: 90px" class="smallHeading dataCol">Duration</th>
-		<th></th>
-	</thead>
-	<tbody data-bind="foreach: sources().filter(function(source) { return source.info() != null; })">
-		<tr>
-			<td align="center" data-bind="click:$parent.selectSource">
-				<span data-bind="visible: info().executionInfo.isValid, css:{selected: $data == $parent.selectedSource()}"><i style="font-size: inherit" class="fa fa-eye clickable"></i></span>
-			</td>
-			<td data-bind="text: source.sourceKey"></td>
-			<td data-bind="text: source.sourceName"></td>
-			<!-- ko if: info().executionInfo.status == "COMPLETE" -->
-				<td nowrap><button class="btn btn-sm btn-success execute">Execute</button></td>
-				<!-- ko if: info().executionInfo.isValid -->
-					<!-- ko with: $component.getSummaryData(info().summaryList) -->
-					<td class="dataCol"><div data-bind="text: totalPersons.toLocaleString()"></div></td>
-					<td class="dataCol" data-bind="text: cases.toLocaleString()"></td>
-					<td class="dataCol" data-bind="text: $component.calculateProportion(cases, totalPersons)"></td>
-					<td class="dataCol" data-bind="text: timeAtRisk.toLocaleString()"></td>
-					<td class="dataCol" data-bind="text: $component.calculateRate(cases, timeAtRisk)"></td>
-					<!-- /ko -->
-				<!-- /ko -->
-				<!-- ko ifnot: info().executionInfo.isValid -->
-				<td colspan="4"><div class="overflow-ellipsis" style="width:345px" data-bind="text: 'Error: ' + info().executionInfo.message, attr:{title: info().executionInfo.message}"></div></td>
-				<!-- /ko -->
-				<td style="font-size: .9em" class="dataCol" data-bind="text: $component.formatDateTime(info().executionInfo.startTime)"></td>
-				<td class="dataCol" data-bind="text: $component.msToTime(info().executionInfo.executionDuration)"></td>			
-				<td><button class="btn btn-sm btn-danger removeResult">Remove</button></td>
-			<!-- /ko -->
-			<!-- ko ifnot: info().executionInfo.status == "COMPLETE" -->
-			<td colspan="9" style="text-align: center; padding-top: 5px; padding-bottom: 5px"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
-			<!-- /ko -->
-		</tr>
-	</tbody>
-</table>
-<div>
-	
-Showing target cohort: <select data-bind="options: analysisCohorts().targetCohorts, 
-	optionsText: function(item) { return item.name }, 
-	optionsValue: 'id',
-	value: selectedTarget" class="mediumInputField">
-</select>
-	and outcome cohort:
-<select data-bind="options: analysisCohorts().outcomeCohorts, 
-	optionsText: function(item) { return item.name }, 
-	optionsValue: 'id',
-	value: selectedOutcome" class="mediumInputField">
-</select>
-<!-- ko if: selectedReport -->
-<div style="padding-top: 10px" data-bind="visible: !isLoading()">
-	<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, calculateProportion: calculateProportion, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption, ipCaption: ipCaption"></ir-analysis-report>
+<div data-bind="css: classes('header')">
+	<div>
+		Showing target cohort: <select data-bind="options: analysisCohorts().targetCohorts,
+			optionsText: function(item) { return item.name },
+			optionsValue: 'id',
+			value: selectedTarget" class="mediumInputField">
+		</select>
+			and outcome cohort:
+		<select data-bind="options: analysisCohorts().outcomeCohorts,
+			optionsText: function(item) { return item.name },
+			optionsValue: 'id',
+			value: selectedOutcome" class="mediumInputField">
+		</select>
+	</div>
+	<div>
+		<select-sources-btn
+			data-bind="css: classes('generate-btn')"
+			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: $component.isExecutionDisabled, disabledReason: $component.executionDisabledReason"
+		></select-sources-btn>
+		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
+	</div>
 </div>
+
+<div data-bind="css: classes({ element: 'tbl-container', modifiers: [ selectedReport() ? 'short' : '' ]})">
+	<table data-bind="css: classes({ element: 'tbl', extra: 'sourceTable' })">
+		<thead>
+			<th data-bind="css: classes('tbl-th', 'execute')"></th>
+			<th data-bind="css: classes('tbl-th', 'source')">Source Name</th>
+			<th data-bind="css: classes('tbl-th', 'persons', 'smallHeading dataCol')">
+				Persons
+			</th>
+			<th data-bind="css: classes('tbl-th', 'cases', 'smallHeading dataCol')">
+				Cases
+			</th>
+			<th data-bind="css: classes('tbl-th', 'proportion', 'smallHeading dataCol')">
+				Proportion [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small>
+			</th>
+			<th data-bind="css: classes('tbl-th', 'time-at-risk', 'smallHeading dataCol')">
+				Time At Risk<br/><small>(years)</small>
+			</th>
+			<th data-bind="css: classes('tbl-th', 'rate', 'smallHeading dataCol')">
+				Rate [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small>
+			</th>
+			<th data-bind="css: classes('tbl-th', 'started', 'smallHeading dataCol')">
+				Started
+			</th>
+			<th data-bind="css: classes('tbl-th', 'duration', 'smallHeading dataCol')">
+				Duration
+			</th>
+			<th data-bind="css: classes('tbl-th', 'view-results')"></th>
+		</thead>
+		<tbody data-bind="foreach: sources().filter(function(source) { return source.info() != null; })">
+			<tr>
+				<td data-bind="css: $component.classes('tbl-col')" nowrap>
+					<!-- ko ifnot: $component.isInProgress($data) -->
+						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: $component.isExecutionDisabled, disabledReason: $component.executionDisabledReason"></select-sources-btn>
+					<!-- /ko -->
+					<!-- ko if: $component.isInProgress($data) -->
+						<a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelExecution(source.sourceKey), attr: {disabled: $component.stoppingSources()[source.sourceKey] }">
+							<i class="fa fa-spinner fa-spin"></i> Cancel
+						</a>
+					<!-- /ko -->
+				</td>
+				<td data-bind="css: $component.classes('tbl-col'), text: source.sourceName"></td>
+				<!-- ko ifnot: $component.isInProgress($data) -->
+					<!-- ko if: info().executionInfo.isValid -->
+						<!-- ko with: $component.getSummaryData(info().summaryList) -->
+						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' })">
+							<div data-bind="text: totalPersons"></div>
+						</td>
+						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: cases"></td>
+						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: proportion"></td>
+						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: timeAtRisk"></td>
+						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: rate"></td>
+						<!-- /ko -->
+					<!-- /ko -->
+					<!-- ko ifnot: info().executionInfo.isValid -->
+						<td data-bind="css: $component.classes('tbl-col')" colspan="5">
+							<!-- ko if: info().executionInfo.isCanceled -->
+								CANCELED
+							<!-- /ko -->
+							<!-- ko if: !info().executionInfo.isCanceled -->
+								<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage(source.sourceKey)">FAILED</a>
+							<!-- /ko -->
+						</td>
+					<!-- /ko -->
+					<td data-bind="css: $component.classes('tbl-col', 'exec-start', 'dataCol'), text: $component.formatDateTime(info().executionInfo.startTime)"></td>
+					<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: $component.msToTime(info().executionInfo.executionDuration)"></td>
+					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports'), click:$parent.selectSource">
+						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid">
+							<i class="fa fa-eye"></i> Reports
+						</button>
+						<button class="btn btn-sm btn-danger removeResult">
+                            <i class="fa fa-trash"></i>
+                        </button>
+					</td>
+				<!-- /ko -->
+				<!-- ko if: $component.isInProgress($data) -->
+					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
+				<!-- /ko -->
+			</tr>
+		</tbody>
+	</table>
+</div>
+
+<!-- ko if: selectedReport -->
+	<div data-bind="css: classes('report-block'), visible: !isLoading()">
+		<div data-bind="css: classes('report-header')">
+			<h3 data-bind="css: classes('report-title'), text: selectedSource() ? selectedSource().source.sourceName : ''"></h3>
+			<a data-bind="css: classes('report-close'), click: closeReport">Close</a>
+		</div>
+		<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, calculateProportion: calculateProportion, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption, ipCaption: ipCaption"></ir-analysis-report>
+	</div>
 <!-- /ko -->
+
 <div data-bind="visible: isLoading()" class="loading">loading</div>
-	
+
+
+<modal-exit-message params="{
+        showModal: $component.isExitMessageShown,
+        title: 'Execution Exit Message',
+        exitMessage: $component.exitMessage,
+    }">
+</modal-exit-message>

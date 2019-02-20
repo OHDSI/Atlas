@@ -1,10 +1,13 @@
-define(function (require, exports) {
-
-	function FullAnalysis(targetComparatorOutcome, cohortMethodAnalysis) {
-        var self = this;
-                
-        self.targetComparatorOutcome = targetComparatorOutcome || null;
-        self.cohortMethodAnalysis = cohortMethodAnalysis || null;
+define([
+	'knockout',
+], function (
+	ko
+) {
+	class FullAnalysis {
+        constructor(targetComparatorOutcome, cohortMethodAnalysis) {
+            this.targetComparatorOutcome = targetComparatorOutcome || null;
+            this.cohortMethodAnalysis = cohortMethodAnalysis || null;
+        }
 	}
 	
 	return FullAnalysis;

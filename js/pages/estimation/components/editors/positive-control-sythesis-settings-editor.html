@@ -1,0 +1,123 @@
+<div>
+    <div>
+        <label>Model Type:</label>
+        <div class="input-group">
+            <select class="form-control" data-bind="options: $component.options.modelType, optionsText:'name', optionsValue:'id', value: $component.settings().modelType"></select>
+        </div>
+    </div>
+    <div>
+        <label>Using OHDSI covariates for model. (<span class="linkish" data-bind="click: () => { showCovariateSelector(true) }">Click to view details</span>)</label>
+    </div>
+    <div>
+        <label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
+        <div class="input-group">
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.settings().riskWindowStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        </div>
+    </div>
+   <div>
+        <label>Define the time-at-risk window end:</label>
+        <div class="input-group">
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.settings().riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        </div>
+    </div>
+    <div>
+        <label>Add the length of exposure to the risk window?</label>
+        <div class="input-group">
+            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.settings().addExposureDaysToEnd"></select>
+        </div>
+    </div>
+    <div>
+        <label>Should only the first outcome per person be considered when modeling the outcome?</label>
+        <div class="input-group">
+            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.settings().firstOutcomeOnly"></select>
+        </div>
+    </div>
+    <div>
+        <label>Remove people with prior outcomes?</label>
+        <div class="input-group">
+            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.settings().removePeopleWithPriorOutcomes"></select>
+        </div>
+    </div>
+    <div>
+        <label>Maximum number of people used to fit an outcome model:</label>
+        <div class="input-group">
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().maxSubjectsForModel, eventType:'blur', ko_autocomplete: { value: $component.settings().maxSubjectsForModel, source: $component.options.maxSubjectsForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        </div>
+    </div>
+    <div>
+        <label>What effect sizes should be inserted:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" data-bind="value: $component.effectSizes" />
+        </div>
+    </div>
+    <div>
+        <label>The allowed ratio between target and injected signal size:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" data-bind="textInput: $component.settings().precision" />
+        </div>
+    </div>
+    <div>
+        <label>What should be the first new outcome ID that is to be created?</label>
+        <div class="input-group">
+            <input class="form-control" type="text" data-bind="textInput: $component.settings().outputIdOffset" />
+        </div>
+    </div>
+     <div>
+        <label>Minimum number of outcome events required to build a model</label>
+        <div class="input-group">
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().minOutcomeCountForModel, eventType:'blur', ko_autocomplete: { value: $component.settings().minOutcomeCountForModel, source: $component.options.minOutcomeCountForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        </div>
+    </div>
+    <div>
+        <label>Minimum number of outcome events required to inject a signal.</label>
+        <div class="input-group">
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().minOutcomeCountForInjection, eventType:'blur', ko_autocomplete: { value: $component.settings().minOutcomeCountForInjection, source: $component.options.minOutcomeCountForInjectionOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        </div>
+    </div>
+    <div>
+        <label>Should only the first exposure per subject be included?</label>
+        <div class="input-group">
+            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.settings().firstExposureOnly"></select>
+        </div>
+    </div>
+    <div>
+        <label>Number of days at the start of observation for which no signals will be injected, but will be used to determine whether exposure or outcome is the first one, and for extracting covariates to build the outcome model.</label>
+        <div class="input-group">
+            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.settings().washoutPeriod, source: $component.options.washoutPeriodOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        </div>
+    </div>
+    <div class="row" data-bind="css: classes('subsection')">
+        <div class="col-md-6">
+            <div class="panel panel-default" data-bind="collapsable: showControlDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+                <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">
+                    <span><i class="fa fa-cogs"></i> Control Settings</span>
+                </div>
+                <div class="panel-body collapse">
+                    <cyclops-control-editor params="control: $component.settings().control"></cyclops-control-editor>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default" data-bind="collapsable: showPriorDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+                <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePriorDisplay">
+                    <span><i class="fa fa-cogs"></i> Prior</span>
+                </div>
+                <div class="panel-body collapse">
+                    <cyclops-prior-editor params="prior: $component.settings().prior"></cyclops-prior-editor>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<atlas-modal params="{
+    showModal: showCovariateSelector,
+    modifiers: ['lg'],
+    iconClass: 'fa fa-cogs',
+    title: 'Select Covariates...',
+    data: {
+        covariateSettings: $component.settings().covariateSettings,
+        showCovariateSelector: $component.showCovariateSelector,
+    }
+}">
+    <covar-settings-editor params="covariateSettings: covariateSettings"></covar-settings-editor>
+</atlas-modal>

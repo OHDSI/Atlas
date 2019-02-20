@@ -30,7 +30,7 @@ define([
 		getInclusionCount() {
 			this.countLoading(true);
 			conceptSetApi.getInclusionCount(this.conceptSetExpression())
-				.then(({data}) => this.inclusionCount(data))
+				.then(({data}) => this.inclusionCount(Number.isInteger(data) ? data : 0))
 				.finally(() => this.countLoading(false));
 		}
 

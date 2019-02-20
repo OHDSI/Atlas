@@ -1,16 +1,16 @@
 define([
 	'knockout', 
+    'services/analysis/RLangClass',
 	'databindings',
-], function (ko) {
-
-    var ko = require('knockout');
-
-	function TrimByPsArgs(data) {
-		var self = this;
-        data = data || {};
-        
-		self.trimFraction = ko.observable(data.trimFraction === 0 ? 0 : data.trimFraction || 0.05).extend({ numeric: 2});
-        self.attr_class = data.attr_class || "args";
+], function (
+	ko,
+	RLangClass
+) {
+	class TrimByPsArgs extends RLangClass {
+		constructor(data = {}) {
+			super();
+			this.trimFraction = ko.observable(data.trimFraction === 0 ? 0 : data.trimFraction || 0.05).extend({ numeric: 2});
+		}
 	}
 	
 	return TrimByPsArgs;

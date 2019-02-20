@@ -1,12 +1,16 @@
-define(function (require, exports) {
-	var ko = require('knockout');
-
-	function Analysis(data) {
-		var self = this;
-        data = data || {};
-        
-        self.id = ko.observable(data.id === 0 ? 0 : data.id || null);
-        self.description = ko.observable(data.description || null);
+define([
+	'knockout',
+	'services/analysis/RLangClass',
+], function (
+	ko,
+	RLangClass
+) {
+	class Analysis extends RLangClass {
+		constructor(data = {}) {
+			super(data);
+			this.analysisId = ko.observable(data.analysisId === 0 ? 0 : data.analysisId || null);
+			this.description = ko.observable(data.description || null);
+		}
 	}
 	
 	return Analysis;

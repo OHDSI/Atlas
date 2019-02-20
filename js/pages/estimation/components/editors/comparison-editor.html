@@ -1,0 +1,95 @@
+<div class="paddedWrapper">
+    <div>
+        <label>Choose your target cohort:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: comparison.target().name" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseTarget"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:comparison.target().id == 0, click:clearTarget" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+    </div>
+    <div>
+        <label>Choose your comparator cohort:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: comparison.comparator().name" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:comparison.comparator().id == 0,click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+    </div>
+    <div>
+        <label>Choose your outcome cohorts:</label>
+    </div>
+    <div>
+        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes}"></linked-cohort-list>
+    </div>
+    <div>
+        <label>Choose your negative control outcomes:</label>
+        <div class="input-group">
+            <input class="form-control" type="text" disabled data-bind="value: comparison.negativeControlOutcomesConceptSet().name" />
+            <span class="input-group-btn">
+                <button class="btn btn-primary" data-bind="click:chooseNegativeControlOutcomesConceptSet"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:comparison.negativeControlOutcomesConceptSet().id == 0,click:clearNegativeControlOutcomesConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+            </span>
+        </div>
+    </div>    
+    <div class="panel panel-default" data-bind="css: classes('panel-buffer')">
+        <div class="panel-heading panel-subheading">
+          <i class="fa fa-cog"></i> Covariate selection
+        </div>
+        <div class="panel-body">
+            <div data-bind="css:classes('info-message')">
+                <b>Please note:</b> If you would like to include/exclude covariates based on descendant concepts, it is most efficient to specify this as part of the analysis settings. If you plan to include/exclude descendants, define your concept sets utilizing <b>the ancestor concepts only</b>.
+            </div>
+            <hr/>
+            <div>
+                <label>What concepts do you want to include in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" disabled data-bind="value: comparison.includedCovariateConceptSet().name" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" data-bind="click:chooseIncludedCovariateConceptSet"><i class="fa fa-folder-open"></i></button>
+                        <button class="btn btn-danger" data-bind="disable: comparison.includedCovariateConceptSet().id == 0, click:clearIncludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div>
+                <label>What concepts do you want to exclude from baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" disabled data-bind="value: comparison.excludedCovariateConceptSet().name" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" data-bind="click:chooseExcludedCovariateConceptSet"><i class="fa fa-folder-open"></i></button>
+                        <button class="btn btn-danger" data-bind="disable: comparison.excludedCovariateConceptSet().id == 0, click:clearExcludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<atlas-modal params="{
+    showModal: showCohortSelector,
+    modifiers: ['lg'],
+    iconClass: 'fa fa-users',
+    title: 'Select Cohort...',
+    data: {
+        currentCohort: $component.currentCohort,
+        cohortSelected: $component.cohortSelected,
+        showCohortSelector: $component.showCohortSelector,
+    }
+}">
+    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+</atlas-modal>
+<atlas-modal params="{
+    showModal: showConceptSetSelector,
+    modifiers: ['lg'],
+    iconClass: 'fa fa-shopping-cart',
+    title: 'Select Concept Set...',
+    data: {
+        currentConceptSet: $component.currentConceptSet,
+        conceptsetSelected: $component.conceptsetSelected,
+        showConceptSetSelector: $component.showConceptSetSelector,
+    }
+}">
+    <cohort-concept-set-browser params="{onRespositoryConceptSetSelected: data => conceptsetSelected(data)}"></cohort-concept-set-browser>
+</atlas-modal>

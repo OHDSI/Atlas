@@ -1,5 +1,6 @@
 <heading-title params="name: $component.sourceCaption(), icon: 'database', theme: 'dark'"></heading-title>
 <div data-bind="if:$component.hasAccess, css: classes()">
+	<loading data-bind="visible:loading()"></loading>
 	<div data-bind="visible: !loading()">
 			<!-- ko if: selectedSource() != null -->
 			<div data-bind="if:$component.canReadSource">
@@ -131,16 +132,10 @@
 							</div>
 					</div>
 			</div>
-			<div data-bind="ifnot:$component.canReadSource">
-					<div class="padded">
-							<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-					</div>
-			</div>
+
+			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canReadSource"></access-denied>
 			<!-- /ko -->
 	</div>
 </div>
-<div data-bind="ifnot:$component.hasAccess">
-	<div class="padded">
-		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-	</div>
-</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.hasAccess"></access-denied>

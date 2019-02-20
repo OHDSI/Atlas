@@ -1,21 +1,21 @@
 <div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-	<!-- ko ifnot: hasAccess -->
-		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
-	<!-- /ko -->
+
+	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
 	<!-- ko if: hasAccess -->
 	<div data-bind="$root.currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
 				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: !isNameCorrect() }"/>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
 					<!-- ko if: $root.currentCohortDefinition().id() != null && $root.currentCohortDefinition().id() != 0 -->
-					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: !dirtyFlag().isDirty() && canCopy()"><i class="fa fa-copy"></i></button>
-					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
+					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
 					<!-- ko if: !isRunning() -->
-					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
 				</div>
@@ -314,6 +314,9 @@
 									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'netezza' }, click: function() { $component.exportSqlMode('netezza') };">
 										<a>Netezza</a>
 									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'bigquery' }, click: function() { $component.exportSqlMode('bigquery') };">
+										<a>BigQuery</a>
+									</li>
 								</ul>
 							</div>
 							<div class="col-md-3" style="text-align: right">
@@ -349,6 +352,9 @@
 								</div>
 								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'netezza' && !$component.isLoadingSql()">
 									<pre data-bind="text: $component.generatedSql.netezza"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'bigquery' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.bigquery"></pre>
 								</div>
 							</div>
 						</div>

@@ -1,6 +1,4 @@
-<div data-bind="ifnot: $component.isViewGenerationsPermitted(), css: `${$component.isViewGenerationsPermitted() ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
-</div>
+<access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewGenerationsPermitted"></access-denied>
 
 <div data-bind="if: $component.isViewGenerationsPermitted(), css: classes()">
     <loading data-bind="visible: loading()" params="status: 'Loading executions...'"></loading>
@@ -53,20 +51,22 @@
                     css: classes({ element: 'action' }),
                     tooltip: !$component.isExecutionPermitted(sourceKey) ? 'Not enough permissions to generate or changes not saved' : null,
                 ">
+                    <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 						attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
-                        click: () => $component.generate(sourceKey)"
+                        click: () => $component.generate(sourceKey, submissions()[0] ? submissions()[0].hashCode : null)"
                     >
-                        <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status() -->
-                            <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
-                            <span data-bind="css: classes('action-text')">Generating...</span>
-                        <!-- /ko -->
-                        <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status() -->
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
                             <span data-bind="css: classes('action-text')">Generate</span>
-                        <!-- /ko -->
                     </button>
+                    <!-- /ko -->
+                    <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status() -->
+                    <a role="button" class="btn btn-sm btn-danger"
+                       data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
+                        <i class="fa fa-spinner fa-spin"></i> Cancel
+                    </a>
+                    <!-- /ko -->
                 </li>
                 <li data-bind="
                     css: classes({ element: 'action' }),
