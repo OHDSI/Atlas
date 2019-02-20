@@ -123,13 +123,10 @@ define([
         }
 
         checkStrataNames(data, event) {
-            let emptyNamesAmount = 0;
-            this.stratas().forEach(strata => {
-                if (strata.name() === '') {
-                    emptyNamesAmount++;
-                }
+            let emptyNames = this.stratas().filter(strata => {
+                return strata.name() === '';
             });
-            this.areStratasNamesEmpty(emptyNamesAmount > 0);
+            this.areStratasNamesEmpty(emptyNames.length > 0);
         }
 
         isPermittedViewResolver() {
