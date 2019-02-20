@@ -122,6 +122,16 @@ define([
             this.criteriaContext = ko.observable();
         }
 
+        checkStrataName(data, event) {
+            let emptyNamesAmount = 0;
+            this.stratas().forEach(strata => {
+                if (strata.name() === '') {
+                    emptyNamesAmount++;
+                }
+            });
+            this.areStratasNamesEmpty(emptyNamesAmount > 0);
+        }
+
         isPermittedViewResolver() {
             return ko.computed(
                 () => (this.characterizationId() ? PermissionService.isPermittedGetCC(this.characterizationId()) : true)
@@ -132,15 +142,6 @@ define([
             return (s, p, d) => {
                 return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
             }
-        }
-        
-        getClassName(isNameEmpty){
-            this.disableSave(isNameEmpty);
-            return `${this.classes({element: 'strata-name', extra: 'form-control'})} ${isNameEmpty ? 'emptyInput' : ''}`
-        }
-
-        disableSave(isNameEmpty){
-            this.areStratasNamesEmpty(isNameEmpty);
         }
 
         showFeatureBrowser() {
