@@ -23,6 +23,7 @@ define([
     'components/tabs',
 	'./components/prediction-specification-view-edit',
 	'./components/prediction-utilities',
+	'./components/prediction-executions',
 	'less!./prediction-manager.less',
 	'databindings',
 ], function (

@@ -20,6 +20,7 @@ define([
     'components/tabs',
 	'./components/cca-specification-view-edit',
 	'./components/cca-utilities',
+	'./components/cca-executions',
 	'less!./cca-manager.less',
 	'databindings',
 ], function (

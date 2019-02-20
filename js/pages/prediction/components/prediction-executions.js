@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'appConfig',
-	'text!./prediction-generation.html',
+	'text!./prediction-executions.html',
 	'utils/CommonUtils',
 	'utils/AutoBind',
 	'utils/DatatableUtils',
@@ -13,7 +13,7 @@ define([
 	'services/file',
 	'../const',
 	'lodash',
-	'less!./prediction-generation.less',
+	'less!./prediction-executions.less',
 	'components/modal-exit-message',
 ], function(
 	ko,
@@ -41,6 +41,7 @@ define([
 			this.expandedSection = ko.observable();
 
 			this.analysisId = params.analysisId;
+			this.dirtyFlag = params.dirtyFlag;
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 
 			this.predictionStatusGenerationOptions = consts.predictionGenerationStatus;
@@ -91,7 +92,7 @@ define([
 		}
 
 		isGeneratePermitted(sourceKey) {
-			return PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) && config.api.isExecutionEngineAvailable();
+			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) && config.api.isExecutionEngineAvailable();
 		}
 
 		isResultsViewPermitted(id) {
@@ -205,6 +206,6 @@ define([
 
 	}
 
-	commonUtils.build('prediction-generation', PredictionGeneration, view);
+	commonUtils.build('prediction-executions', PredictionGeneration, view);
 
 });

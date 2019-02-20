@@ -1,7 +1,7 @@
 define([
 	'knockout',
 	'appConfig',
-	'text!./estimation-generation.html',
+	'text!./cca-executions.html',
 	'utils/CommonUtils',
 	'utils/AutoBind',
 	'utils/DatatableUtils',
@@ -13,7 +13,7 @@ define([
 	'services/file',
 	'../const',
 	'lodash',
-	'less!./estimation-generation.less',
+	'less!./cca-executions.less',
 	'components/modal-exit-message',
 ], function(
 	ko,
@@ -39,7 +39,8 @@ define([
 			this.loading = ko.observable();
 			this.expandedSection = ko.observable();
 
-			this.analysisId = params.analysisId;
+			this.analysisId = params.estimationId;
+			this.dirtyFlag = params.dirtyFlag;
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 
 			this.estimationStatusGenerationOptions = consts.estimationGenerationStatus;
@@ -90,7 +91,7 @@ define([
 		}
 
 		isGeneratePermitted(sourceKey) {
-			return PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) && config.api.isExecutionEngineAvailable();
+			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) && config.api.isExecutionEngineAvailable();
 		}
 
 		isResultsViewPermitted(id) {
@@ -203,5 +204,5 @@ define([
 		}
 	}
 	
-	commonUtils.build('estimation-generation', EstimationGeneration, view);	
+	commonUtils.build('comparative-cohort-analysis-executions', EstimationGeneration, view);
 });
