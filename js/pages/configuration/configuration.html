@@ -1,7 +1,7 @@
 <div class="wrapperTitle">
 	<i class="fa fa-cogs"></i>Configuration
 </div>
-<div id="configuration" data-bind="if:$component.hasAccess()">
+<div id="configuration" data-bind="if:$component.hasPageAccess()">
 	<div id="wrapperConfigure">
 		<div data-bind="if: $component.initializationCompleted()">
 			<div data-bind="with:config.api">
@@ -68,19 +68,24 @@
 								</div>
 							</td>
 							<td data-bind="text:sourceDialect"></td>
-							<td class="configureRadio">
-								<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl, click: $component.updateVocabPriority">
-								<span data-bind="text:version"></span>
-							</td>
-							<td class="configureRadio">
-								<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl, click: $component.updateEvidencePriority">
-							</td>
-							<td class="configureRadio">
-								<input type="radio" name="radioDensity" data-bind="disable:!hasResults, checkedValue:resultsUrl, checked:$component.sharedState.resultsUrl, click: $component.updateResultsPriority">
-							</td>
-							<td class="configureCheckbox">
-								<input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
-							</td>
+							<!-- ko if: $component.hasSourceAccess(sourceKey) -->
+								<td class="configureRadio">
+									<input type="radio" name="radioSource" data-bind="disable:!hasVocabulary, checkedValue:vocabularyUrl, checked:$component.sharedState.vocabularyUrl, click: $component.updateVocabPriority">
+									<span data-bind="text:version"></span>
+								</td>
+								<td class="configureRadio">
+									<input type="radio" name="radioEvidence" data-bind="disable:!hasEvidence, checkedValue:evidenceUrl, checked:$component.sharedState.evidenceUrl, click: $component.updateEvidencePriority">
+								</td>
+								<td class="configureRadio">
+									<input type="radio" name="radioDensity" data-bind="disable:!hasResults, checkedValue:resultsUrl, checked:$component.sharedState.resultsUrl, click: $component.updateResultsPriority">
+								</td>
+								<td class="configureCheckbox">
+									<input type="checkbox" name="checkResults" data-bind="disable:!hasResults, checked:hasResults">
+								</td>
+							<!-- /ko -->
+							<!-- ko if: !$component.hasSourceAccess(sourceKey) -->
+								<td colspan="4" class="text-center">Access denied</td>
+							<!-- /ko -->
 							<td data-bind="if: $component.canCheckConnection($data)">
 								<button data-bind="css: $component.getCheckButtonStyles($data).buttonClass, click: function(){$component.checkSourceConnection($data);}" class="connection-check-button btn btn-sm">
 									<i data-bind="css : $component.getCheckButtonStyles($data).iconClass" class="fa"></i>
@@ -99,7 +104,7 @@
 					<div class="configuration__padded">
 						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache">Clear Configuration Cache</a>
 					</div>
-					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasAccess">
+					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasPageAccess">
 						<a href="#/roles" class="btn btn-sm btn-primary configuration__manage-btn" data-bind="css: { disabled: !canReadRoles() }">Manage Permissions</a>
 					</div>
 					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
@@ -110,9 +115,8 @@
 		</div>
 	</div>
 </div>
-<div data-bind="ifnot:$component.hasAccess">
-	<div class="padded">
-		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-	</div>
-</div>
+
+<!-- ko ifnot: $component.hasPageAccess -->
+<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+<!-- /ko -->
 
