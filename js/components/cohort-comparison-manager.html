@@ -41,7 +41,7 @@
             <div class="col-sm-8" data-bind="text:sourceName"></div>
             <div class="col-sm-4 text-right">
               <span class="btn-group">
-								<button data-bind="css:{disabled: $component.config.api.isExecutionEngineAvailable()==false}, click:function() {$component.executeCohortComparison(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
+								<button data-bind="enable: $component.canGenerate(sourceKey), click:function() {$component.executeCohortComparison(sourceKey)}" class="btn btn-sm btn-primary"><i class="fa fa-play"></i> Generate</button>
 								<button class="btn btn-sm btn-warning" data-bind="visible:$component.sourceProcessingStatus[sourceKey]"><i class="fa fa-circle-o-notch fa-spin"></i></button>
 								<button class="btn btn-sm btn-primary" data-bind="click: $component.viewLastExecution, attr: { disabled: $component.isResultAvailable(sourceKey, true) }"><i class="fa fa-eye"></i> View</button>
 								<button data-bind="click:function() {$component.toggleHistoryDisplay(sourceKey);}, attr: { disabled: $component.isResultAvailable(sourceKey) }" class="btn btn-sm btn-primary">

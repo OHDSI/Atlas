@@ -156,6 +156,11 @@ define(['knockout',
 			return (self.patientLevelPredictionId() && self.patientLevelPredictionId() > 0);
 		});
 
+		self.canGenerate = function (sourceKey) {
+			return ko.computed(() => self.config.api.isExecutionEngineAvailable() && authAPI.isAuthenticated()
+				&& authAPI.isPermittedGenerateCohort('*', sourceKey));
+		};
+
 		self.delete = function () {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
