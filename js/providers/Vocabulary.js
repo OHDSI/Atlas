@@ -28,9 +28,12 @@ define(function (require, exports) {
 			// find the source which has a Vocabulary Daimon with priority = 1
 			var prioritySources = sources.filter(function (source) {
 				return source.daimons.filter(function (daimon) {
-					return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
+					return daimon.daimonType == "Vocabulary" && daimon.priority > 0 && authAPI.hasSourceAccess(source.sourceKey)
 				}).length > 0
 			});
+
+			lodash.sortBy(prioritySources, s => -1 * s.daimons.find(d => d.daimonType === "Vocabulary").priority);
+
 			if (prioritySources.length > 0)
 				defaultSource = prioritySources[0];
 			else // find the first vocabulary or CDM daimon
@@ -52,7 +55,7 @@ define(function (require, exports) {
 		if (!domainsPromise) {
 			domainsPromise = new Promise((resolve, reject) => {
 					$.ajax({
-						url: sharedState.vocabularyUrl() + '/domains',
+						url: sharedState.vocabularyUrl() + 'domains',
 					}).then(function (results) {
 						$.each(results, function (i, v) {
 							domains.push(v.DOMAIN_ID);
