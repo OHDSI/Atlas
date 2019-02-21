@@ -550,6 +550,11 @@ define([
 				return (self.cohortComparisonId() && self.cohortComparisonId() > 0);
 			});
 
+			self.canGenerate = function (sourceKey) {
+				return ko.computed(() => self.config.api.isExecutionEngineAvailable() && authApi.isAuthenticated()
+					&& authApi.isPermittedGenerateCohort('*', sourceKey));
+			};
+
 			self.delete = function () {
 				if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 					return;

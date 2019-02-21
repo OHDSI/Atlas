@@ -5,6 +5,7 @@ define(function(require, exports){
   var ohdsiUtil = require('assets/ohdsi.util');
   var authApi = require('webapi/AuthAPI');
   var momentApi = require('webapi/MomentAPI');
+  const FileService = require('services/file');
 
   const executionPath  = 'executionservice';
   
@@ -66,8 +67,8 @@ define(function(require, exports){
   }
 
   function viewResults(executionId){
-    window.open(`${config.api.url}${executionPath}/execution/results/${executionId}`);
-  }
+		FileService.loadZip(`${config.api.url}${executionPath}/execution/results/${executionId}`, `analysis-results-${executionId}.zip`);
+	}
 
   function checkExecutionEngineStatus(isAuthenticated) {
     if (isAuthenticated && config.useExecutionEngine) {
