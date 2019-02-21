@@ -859,7 +859,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			saveConceptSet () {
 				this.saveConceptSetShow(false);
 				var conceptSet = {
-				    id: 0,
+					id: 0,
 					name: this.newConceptSetName()
 				};
 				var conceptSetItems = conceptSetUitls.toConceptSetItems(this.selectedConcepts());
