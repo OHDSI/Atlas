@@ -39,7 +39,8 @@ define([
       this.isAuthenticated = authApi.isAuthenticated;
       this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running || 
           sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable);
-      this.hasAccess = ko.pureComputed(() => {
+      this.hasSourceAccess = authApi.hasSourceAccess;
+      this.hasPageAccess = ko.pureComputed(() => {
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
       });
       this.canReadRoles = ko.pureComputed(() => {
