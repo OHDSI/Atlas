@@ -9,8 +9,8 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'components/cohortbuilder/CriteriaGroup',
-	  'conceptsetbuilder/InputTypes/ConceptSet',
-	  'services/Vocabulary',
+    'conceptsetbuilder/InputTypes/ConceptSet',
+    'services/Vocabulary',
     'lodash',
     '../../../utils',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
@@ -18,7 +18,7 @@ define([
     'components/cohort/linked-cohort-list',
     'components/linked-entity-list',
     'less!./characterization-design.less',
-	  'components/cohortbuilder/components',
+    'components/cohortbuilder/components',
     'circe',
     'components/ac-access-denied',
 ], function (
@@ -42,6 +42,7 @@ define([
             super();
 
             this.design = params.design;
+            this.areStratasNamesEmpty = params.areStratasNamesEmpty;
             this.characterizationId = params.characterizationId;
 
             this.loading = ko.observable(false);
@@ -59,9 +60,9 @@ define([
             });
 
             this.stratas = ko.computed({
-				read: () => params.design() && params.design().stratas() || [],
-				write: (value) => params.design().stratas(value),
-			});
+                read: () => params.design() && params.design().stratas() || [], 
+                write: (value) => params.design().stratas(value),
+            });
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
@@ -117,8 +118,15 @@ define([
             this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
-					  this.showConceptSetBrowser = ko.observable(false);
-					  this.criteriaContext = ko.observable();
+            this.showConceptSetBrowser = ko.observable(false);
+            this.criteriaContext = ko.observable();
+        }
+
+        checkStrataNames(data, event) {
+            let emptyNames = this.stratas().filter(strata => {
+                return strata.name() === '';
+            });
+            this.areStratasNamesEmpty(emptyNames.length > 0);
         }
 
         isPermittedViewResolver() {
@@ -149,7 +157,7 @@ define([
         attachFeature({ id, name, description }) {
             const ccDesign = this.design();
             this.showFeatureAnalysesBrowser(false);
-			ccDesign.featureAnalyses(lodash.uniqBy(
+            ccDesign.featureAnalyses(lodash.uniqBy(
                     [
                         ...(ccDesign.featureAnalyses() || []),
                         { id, name, description }
@@ -160,7 +168,7 @@ define([
         }
 
         removeFeature(id) {
-			this.design().featureAnalyses.remove(a => a.id === parseInt(id));
+            this.design().featureAnalyses.remove(a => a.id === parseInt(id));
         }
 
         addParam({ name, value }) {
@@ -177,24 +185,24 @@ define([
         }
 
         removeParam(name) {
-			this.design().parameters.remove(a => a.name === name);
+            this.design().parameters.remove(a => a.name === name);
         }
 
         addStrata() {
             const strata = {
-              name: ko.observable(),
+              name: ko.observable('New Strata'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
-				    };
+            };
             const ccDesign = this.design();
-			ccDesign.stratas([
+            ccDesign.stratas([
                 ...(ccDesign.stratas() || []),
                 strata
-			]);
+            ]);
         }
 
         removeStrata(index) {
-			const strataToRemove = this.design().stratas()[index];
-			this.design().stratas.remove(strataToRemove);
+            const strataToRemove = this.design().stratas()[index];
+            this.design().stratas.remove(strataToRemove);
         }
 
         showParameterCreateModal() {
@@ -207,10 +215,9 @@ define([
           this.showConceptSetBrowser(true);
         }
 
-			  onRespositoryConceptSetSelected(conceptSet, source) {
-
-				    utils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
-					      .done(() => this.showConceptSetBrowser(false));
+        onRespositoryConceptSetSelected(conceptSet, source) {
+            utils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
+                .done(() => this.showConceptSetBrowser(false));
         }
     }
 

@@ -16,8 +16,8 @@ template) {
 	var component =  {
 		viewModel: InclusionRuleEditor,
 		template: template
-	};		
+	};
 	
-	// return compoonent definition
+	// return component definition
 	return component;
 });
