@@ -13,7 +13,8 @@ define(['knockout', 'text!./configuration.html', 'appConfig', 'webapi/AuthAPI', 
 
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === 'running' || sharedState.appInitializationStatus() === 'no-sources-available');
-		self.hasAccess = ko.pureComputed(function () {
+		self.hasSourceAccess = authApi.hasSourceAccess;
+    self.hasPageAccess = ko.pureComputed(() => {
 			return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
 		});
 		self.canReadRoles = ko.pureComputed(function () {

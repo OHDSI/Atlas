@@ -7,6 +7,7 @@ define(function (require, exports) {
 	var numeral = require('numeral');
 	var authAPI = require('webapi/AuthAPI');
 	const httpService = require('services/http');
+	const lodash = require('lodash');
 
 	var loadedPromise = $.Deferred();
 	loadedPromise.resolve();
@@ -27,9 +28,12 @@ define(function (require, exports) {
 			// find the source which has a Vocabulary Daimon with priority = 1
 			var prioritySources = sources.filter(function (source) {
 				return source.daimons.filter(function (daimon) {
-					return daimon.daimonType == "Vocabulary" && daimon.priority == "1"
+					return daimon.daimonType == "Vocabulary" && daimon.priority > 0 && authAPI.hasSourceAccess(source.sourceKey)
 				}).length > 0
 			});
+
+			lodash.sortBy(prioritySources, s => -1 * s.daimons.find(d => d.daimonType === "Vocabulary").priority);
+
 			if (prioritySources.length > 0)
 				defaultSource = prioritySources[0];
 			else // find the first vocabulary or CDM daimon
@@ -42,28 +46,23 @@ define(function (require, exports) {
 		});
 	}
 
+	function getVocabUrl(url, sourceKey) {
+		return sourceKey === undefined ? sharedState.vocabularyUrl() : (url || config.webAPIRoot) + 'vocabulary/' + sourceKey;
+	}
+
 	function getDomains() {
 		// if domains haven't yet been requested, create the promise
 		if (!domainsPromise) {
-			let loadPromise = new Promise((resolve, reject) => {
-				loadDefaultSource().then(function () {
-					// preload domain list once for all future calls to getDomains()
-					if (defaultSource !== undefined) {
-						$.ajax({
-							url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/domains',
-						}).then(function (results) {
-							$.each(results, function (i, v) {
-								domains.push(v.DOMAIN_ID);
-							});
-							resolve(domains);
-							domainsPromise = loadPromise; // store promise for future invocations
+			domainsPromise = new Promise((resolve, reject) => {
+					$.ajax({
+						url: sharedState.vocabularyUrl() + 'domains',
+					}).then(function (results) {
+						$.each(results, function (i, v) {
+							domains.push(v.DOMAIN_ID);
 						});
-					} else {
 						resolve(domains);
-					}
+					});
 				});
-			});
-			return loadPromise;
 		}
 		return domainsPromise;
 	}
@@ -120,6 +119,8 @@ define(function (require, exports) {
 	}
 
 	function search(searchString, options) {
+		const vocabUrl = getVocabUrl();
+		
 		var deferred = $.Deferred();
 
 		var search = {
@@ -129,7 +130,7 @@ define(function (require, exports) {
 		}
 
 		$.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/search',
+			url: vocabUrl + 'search',
 			method: 'POST',
 			contentType: 'application/json',
 			data: JSON.stringify(search),
@@ -142,8 +143,10 @@ define(function (require, exports) {
 	}
 
 	function getConcept(id) {
+		const vocabUrl = getVocabUrl();
+
 		var getConceptPromise = $.ajax({
-			url: config.webAPIRoot + 'vocabulary/' + defaultSource.sourceKey + '/concept/' + id,
+			url: vocabUrl + 'concept/' + id,
 			error: authAPI.handleAccessDenied,
 		});
 
@@ -185,8 +188,9 @@ define(function (require, exports) {
 	}
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {
+		const vocabUrl = getVocabUrl();
 
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/resolveConceptSetExpression';
+		const repositoryUrl = vocabUrl + 'resolveConceptSetExpression';
 
 		var resolveConceptSetExpressionPromise = $.ajax({
 			url: repositoryUrl,
@@ -214,12 +218,8 @@ define(function (require, exports) {
 	}
 
 	function getConceptsById(identifiers, url, sourceKey) {
-		var repositoryUrl;
-		if (url || sourceKey) {
-      repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/identifiers';
-    } else {
-			repositoryUrl = sharedState.vocabularyUrl() + 'lookup/identifiers';
-		}
+		const vocabUrl = getVocabUrl(url, sourceKey);
+		const repositoryUrl = vocabUrl + 'lookup/identifiers';
 
 		var getConceptsByIdPromise = httpService.doPost(repositoryUrl, identifiers);
 
@@ -234,10 +234,10 @@ define(function (require, exports) {
 	}
 
 	function getMappedConceptsById(identifiers, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/lookup/mapped';
+		const vocabUrl = getVocabUrl(url, sourceKey);
 
 		var getMappedConceptsByIdPromise = $.ajax({
-			url: repositoryUrl,
+			url: vocabUrl + 'lookup/mapped',
 			data: JSON.stringify(identifiers),
 			method: 'POST',
 			contentType: 'application/json',
@@ -248,10 +248,10 @@ define(function (require, exports) {
 	}
 
 	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/optimize';
-
+		const vocabUrl = getVocabUrl(url, sourceKey);
+		
 		var getOptimizedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
+			url: vocabUrl + 'optimize',
 			data: JSON.stringify(conceptSetItems),
 			method: 'POST',
 			contentType: 'application/json',
@@ -262,10 +262,10 @@ define(function (require, exports) {
 	}
 
 	function compareConceptSet(compareTargets, url, sourceKey) {
-		var repositoryUrl = (url || config.webAPIRoot) + 'vocabulary/' + (sourceKey || defaultSource.sourceKey) + '/compare';
+		const vocabUrl = getVocabUrl(url, sourceKey);
 
 		var getComparedConceptSetPromise = $.ajax({
-			url: repositoryUrl,
+			url: vocabUrl + 'compare',
 			data: JSON.stringify(compareTargets),
 			method: 'POST',
 			contentType: 'application/json',
@@ -277,7 +277,6 @@ define(function (require, exports) {
 
 	var api = {
 		getDeafultSource: () => defaultSource,
-		loaded: loadedPromise,
 		search: search,
 		getDomains: getDomains,
 		getConcept: getConcept,

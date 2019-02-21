@@ -126,7 +126,7 @@ define(function (require, exports) {
         if (daimon.daimonType == 'Vocabulary') {
           source.hasVocabulary = true;
           source.vocabularyUrl = config.api.url + 'vocabulary/' + source.sourceKey + '/';
-          if (daimon.priority >= vocabularyPriority) {
+          if (daimon.priority >= vocabularyPriority && authApi.hasSourceAccess(source.sourceKey)) {
             vocabularyPriority = daimon.priority;
             sharedState.vocabularyUrl(source.vocabularyUrl);
           }
@@ -136,7 +136,7 @@ define(function (require, exports) {
         if (daimon.daimonType == 'CEM') {
           source.hasEvidence = true;
           source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
-          if (daimon.priority >= evidencePriority) {
+          if (daimon.priority >= evidencePriority && authApi.hasSourceAccess(source.sourceKey)) {
             evidencePriority = daimon.priority;
             sharedState.evidenceUrl(source.evidenceUrl);
           }
@@ -152,7 +152,7 @@ define(function (require, exports) {
         if (daimon.daimonType == 'Results') {
           source.hasResults = true;
           source.resultsUrl = config.api.url + 'cdmresults/' + source.sourceKey + '/';
-          if (daimon.priority >= densityPriority) {
+          if (daimon.priority >= densityPriority && authApi.hasSourceAccess(source.sourceKey)) {
             densityPriority = daimon.priority;
             sharedState.resultsUrl(source.resultsUrl);
           }
@@ -166,7 +166,7 @@ define(function (require, exports) {
 
       sourceList.push(source);
 
-      if (source.hasVocabulary) {
+      if (source.hasVocabulary && authApi.hasSourceAccess(source.sourceKey)) {
         $.ajax({
           url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
           timeout: 20000,

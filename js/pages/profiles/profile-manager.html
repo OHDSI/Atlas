@@ -56,7 +56,7 @@
 					<button type="button" title="choose a data source" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach:sharedState.sources().filter(d=>d.hasCDM)">
+					<ul class="dropdown-menu" data-bind="enable: !person() && !loadingPerson(),foreach: permittedSources().filter(d=>d.hasCDM)">
 						<li>
 							<a href="#" data-bind="text:sourceName,click:$component.setSourceKey"></a>
 						</li>
@@ -125,3 +125,6 @@
 		</div>
 	</div>
 </div>
+<!-- ko ifnot: canViewProfiles -->
+<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
+<!-- /ko -->
