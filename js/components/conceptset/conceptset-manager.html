@@ -50,6 +50,7 @@
   </div>
 
   <div class="loading" data-bind="if:$root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
+  <loading data-bind="visible: exporting" params="status: 'Exporting CSV...'"></loading>
 
   <div data-bind="visible: $root.currentConceptSetMode() == 'included' && !$root.loadingIncluded()">
     <faceted-datatable params="{columns: $component.searchConceptsColumns, options: $component.searchConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
@@ -151,7 +152,7 @@
     <negative-controls params="{model: model, negativeControls: $root.currentConceptSetNegativeControls, selectedConcepts: selectedConcepts, conceptSet: $root.currentConceptSet, dirtyFlag: $root.currentConceptSetDirtyFlag, conceptIds: $root.conceptSetInclusionIdentifiers, defaultResultsUrl: $root.resultsUrl, saveConceptSet: $component.saveConceptSet}"></negative-controls>
   </div>
 
-<div id="wrapperConceptSetExport" data-bind="visible: $root.currentConceptSetMode() == 'export'">
+<div id="wrapperConceptSetExport" data-bind="visible: $root.currentConceptSetMode() == 'export' && !$component.exporting()">
   <div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>
   <pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span></div>

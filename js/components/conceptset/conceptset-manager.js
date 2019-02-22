@@ -10,6 +10,7 @@ define(['knockout',
 	'atlas-state',
 	'clipboard',
 	'services/ConceptSet',
+	'services/file',
 	'webapi/AuthAPI',
 	'databindings',
 	'bootstrap',
@@ -19,6 +20,7 @@ define(['knockout',
 	'circe',
 	'conceptset-modal',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
+	'loading',
 	'css!components/conceptset/style.css',
 ], function (
 	ko,
@@ -33,6 +35,7 @@ define(['knockout',
 	sharedState,
 	clipboard,
 	conceptSetService,
+	FileService,
 	authApi
 ) {
 	function conceptsetManager(params) {
@@ -53,6 +56,7 @@ define(['knockout',
 		});
 		self.activeUtility = ko.observable("");
 		self.loading = ko.observable(false);
+		self.exporting = ko.observable();
 		self.fade = ko.observable(true);
 		self.optimalConceptSet = ko.observable(null);
 		self.optimizerRemovedConceptSet = ko.observable(null);
@@ -610,9 +614,14 @@ define(['knockout',
 				.focus();
 		}
 
-		self.exportCSV = function () {
-			window.open(config.api.url + 'conceptset/' + self.model.currentConceptSet()
-				.id + '/export');
+		self.exportCSV = async function () {
+			self.exporting(true);
+			try {
+				await FileService.loadZip(`${config.api.url}conceptset/${self.model.currentConceptSet().id}/export`,
+					`conceptset-${self.model.currentConceptSet().id}.zip`);
+			}finally {
+				self.exporting(false);
+			}
 		}
 
 		self.copy = function () {
