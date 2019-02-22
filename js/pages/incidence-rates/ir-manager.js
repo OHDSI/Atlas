@@ -315,7 +315,8 @@ define([
 				var sourceList = [];
 				sources.forEach(function(source) {
 					if (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
-							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
+							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0
+							&& authAPI.hasSourceAccess(source.sourceKey))
 					{
 						sourceList.push({
 							source: source,
