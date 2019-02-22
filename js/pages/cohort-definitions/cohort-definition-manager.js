@@ -632,10 +632,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				clearTimeout(this.pollTimeout);
 
 				// reset view after save
-					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
+					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).
+                    then( (result) => {
 						this.model.currentCohortDefinition(null);
-					document.location = "#/cohortdefinitions"
-				});
+						document.location = "#/cohortdefinitions"
+					}, (error) => {
+						console.log("Error: " + error);
+						if(error.status == 409) {
+						    alert("Cohort definition cannot be deleted because it is referenced in a Pathway analysis");
+                            this.isDeleting(false);
+						} else {
+						    authApi.handleAccessDenied(error);
+						}
+					});
 			}
 
 			save () {
