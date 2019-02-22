@@ -622,8 +622,6 @@ define(['knockout',
 			}finally {
 				self.exporting(false);
 			}
-			// window.open(config.api.url + 'conceptset/' + self.model.currentConceptSet()
-			// 	.id + '/export');
 		}
 
 		self.copy = function () {
