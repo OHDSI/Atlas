@@ -21,7 +21,7 @@
 
 <access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewPermitted"></access-denied>
 
-<div data-bind="if: $component.isViewPermitted, css: classes('grid')">
+<div data-bind="if: $component.isViewPermitted(), css: classes('grid')">
     <faceted-datatable params="{
         order: [[0, 'asc']],
         columns: $component.gridColumns,
