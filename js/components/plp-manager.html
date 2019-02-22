@@ -112,6 +112,13 @@
 					  </span>
 					</div>
 				</div>
+				<div class="row executionrow executionheader" data-bind="visible:$component.sourceHistoryDisplay[sourceKey]">
+					<div class="col-sm-1 title">#</div>
+					<div class="col-sm-2 title">Date</div>
+					<div class="col-sm-3 text-right title">Duration</div>
+					<div class="col-sm-2 text-right title">Status</div>
+					<div class="col-sm-4 text-center title">Results</div>
+				</div>
 				<div data-bind="foreach:$component.sourceExecutions[sourceKey], visible:$component.sourceHistoryDisplay[sourceKey]">
 					<div class="row executionrow">
 						<div class="col-sm-1" data-bind="text:id"></div>
