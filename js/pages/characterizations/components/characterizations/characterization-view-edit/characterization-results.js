@@ -179,11 +179,10 @@ define([
             this.loadData();
         }
 
-        getButtonsConfig({ type, data }) {
-            return [{
+        getButtonsConfig(type, data) {
+            const buttons = [{
                 text: 'Export to csv',
                 action: ()  => {
-                    console.log(this.data(), data)
                     const exprt = data.reports.reduce((aggr, report) => {
                         const lines = report.stats.reduce((rAggr, stat) => {
                             const csvLine = {
@@ -216,6 +215,30 @@ define([
                     CsvUtils.saveAsCsv(exprt);
                 },
             }];
+
+            if (data.reports.length === 2 && type === 'prevalence') {
+                buttons.push({
+                    text: 'Export comparison',
+                    action: () => {
+                        const exprt = data.data.map(stat => {
+                            return {
+                                'Analysis ID + Name': `${stat.analysisId} ${stat.analysisName}`,  
+                                'Target cohort ID + Name': `${stat.cohorts[0].cohortId} ${stat.cohorts[0].cohortName}`,
+                                'Comparator cohort ID + Name': `${stat.cohorts[1].cohortId} ${stat.cohorts[1].cohortName}`,
+                                'Covariate ID + Name': `${stat.covariateId} ${stat.covariateName}`,
+                                'Target count': stat.sumValue[0],
+                                'Target prevalence or %': stat.pct[0],
+                                'Comparator count': stat.sumValue[1],
+                                'Comparator prevalence or %': stat.pct[1],
+                                'Std. Diff Of Mean': stat.stdDiff,
+                            };
+                        });
+                        CsvUtils.saveAsCsv(exprt);
+                    },
+                });
+            }
+
+            return buttons;
         }
 
         formatDate(date) {

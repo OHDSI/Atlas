@@ -38,7 +38,7 @@
                                     data: $data.data,
                                     options: {
                                         columns: $data.columns,
-                                        buttons: $component.getButtonsConfig({ type: 'prevalence', data: $data }),
+                                        buttons: $component.getButtonsConfig('prevalence', $data),
                                         dom: 'B',
                                     }
                                 }
@@ -112,7 +112,7 @@
                                         data: $data.data,
                                         options: {
                                             columns: $data.columns,
-                                            buttons: $component.getButtonsConfig({ type: 'distribution', data: $data }),
+                                            buttons: $component.getButtonsConfig('distribution', $data),
                                             dom: 'B',
                                         }
                                     }
@@ -160,7 +160,7 @@
                                             data: $data.data,
                                             options: {
                                                 columns: $data.columns,
-                                                buttons: $component.getButtonsConfig({ type: 'comparison', data: $data.data }),
+                                                buttons: $component.getButtonsConfig('distribution', $dataata }),
                                                 dom: 'B',
                                             }
                                         }
