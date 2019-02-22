@@ -1,0 +1,12 @@
+<div class="loading" data-bind="visible: loading()">loading</div>
+
+<div data-bind="css: classes(), visible: !loading()">
+    <div data-bind="css: classes('content')">
+        <!-- ko if: isExportPermitted() -->
+            <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
+        <!-- /ko -->
+        <!-- ko if: !isExportPermitted() -->
+            Export is not permitted
+        <!-- /ko -->
+    </div>
+</div>

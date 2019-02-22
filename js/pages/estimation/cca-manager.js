@@ -396,6 +396,15 @@ define([
 			});
 		}
 
+        onRouterParamsChanged({ id, section }) {
+			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
+				if (section !== undefined) {
+					this.selectedTabKey(section);
+				}
+				this.onPageCreated();
+			}
+        }
+
 		addCohortToEstimation(specification, cohort) {
 			cohort = ko.isObservable(cohort) ? ko.utils.unwrapObservable(cohort) : cohort;
 			if (specification.cohortDefinitions.filter(element => element.id === cohort.id).length === 0) {

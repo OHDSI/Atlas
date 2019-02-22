@@ -10,6 +10,7 @@ define(
     };
 
     const paths = {
+        root: '/estimation/cca/',
         ccaAnalysis: id => `#/estimation/cca/${id}`,
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',

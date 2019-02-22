@@ -50,6 +50,10 @@ const settingsObject = {
 			main: "URI"
 		},
 		{
+			name: "utilities",
+			location: "components/utilities",
+		},
+		{
 			name: "facets",
 			location: "../node_modules/facets",
 			main: "facets"

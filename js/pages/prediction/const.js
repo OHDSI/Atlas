@@ -10,6 +10,7 @@ define(
     };
 
     const paths = {
+      root: '/prediction/',
       analysis: id => `#/prediction/${id}`,
       createAnalysis: () => '#/prediction/0',
       browser: () => '#/prediction',

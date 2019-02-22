@@ -127,6 +127,15 @@ define([
 				this.loading(false);
 			}
 		}
+		
+        onRouterParamsChanged({ id, section }) {
+			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
+				if (section !== undefined) {
+					this.selectedTabKey(section);
+				}
+				this.onPageCreated();
+			}
+        }
 
         selectTab(index, { key }) {
 			this.selectedTabKey(key);
