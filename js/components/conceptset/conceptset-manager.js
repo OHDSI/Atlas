@@ -618,7 +618,7 @@ define(['knockout',
 			self.exporting(true);
 			try {
 				await FileService.loadZip(`${config.api.url}conceptset/${self.model.currentConceptSet().id}/export`,
-					`conceptset-${self.currentConceptSet().id}.zip`);
+					`conceptset-${self.model.currentConceptSet().id}.zip`);
 			}finally {
 				self.exporting(false);
 			}
