@@ -100,7 +100,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.exitMessage = ko.observable();
 			this.service = cohortDefinitionService;
 			this.cdmSources = ko.computed(() => {
-				return sharedState.sources().filter(commonUtils.hasCDM);
+				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
 			this.warningClass = ko.computed(() => {
 				if (this.warningsTotals() > 0){
