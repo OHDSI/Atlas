@@ -1763,6 +1763,14 @@ cohort-expression-editor .fa.fa-ban {
   margin-top: 0px;
 }
 
+.results-tab-pane .row.executionheader {
+  background-color: #f5f5f5;
+}
+
+.executionheader > .title {
+  font-weight: bold;
+}
+
 cohort-comparison-manager .row .btn {
   margin-bottom: 2px;
 }
