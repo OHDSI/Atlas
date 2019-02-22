@@ -11,6 +11,7 @@ define([
 	'services/Source',
 	'services/Poll',
 	'services/file',
+	'utils/ExecutionUtils',
 	'../const',
 	'lodash',
 	'less!./prediction-executions.less',
@@ -28,6 +29,7 @@ define([
 	SourceService,
 	PollService,
 	FileService,
+	ExecutionUtils,
 	consts,
 	lodash,
 ){
@@ -122,15 +124,13 @@ define([
 			return ko.computed(() => this.analysisId() ? PermissionService.isPermittedListGenerations(this.analysisId()) : true);
 		}
 
-		loadData({silently = false} = {}) {
+		async loadData({silently = false} = {}) {
 			!silently && this.loading(true);
-			Promise.all([
-				SourceService.loadSourceList(),
-				PredictionService.listGenerations(this.analysisId()),
-			]).then(([
-				allSources,
-				executionList,
-			]) => {
+
+			try{
+				const allSources = await SourceService.loadSourceList();
+				const executionList = await PredictionService.listGenerations(this.analysisId());
+
 				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function (daimon) { return daimon.daimonType === "CDM"; }).length > 0
 						&& source.daimons.filter(function (daimon) { return daimon.daimonType === "Results"; }).length > 0);
@@ -155,33 +155,17 @@ define([
 						this.predictionStatusGenerationOptions.STARTED :
 						this.predictionStatusGenerationOptions.COMPLETED);
 				});
-
-				}).finally(() => this.loading(false));
+			}finally {
+				this.loading(false);
+			}
 		}
 
 		generate(sourceKey) {
 
-			let confirmPromise;
-
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === sourceKey);
-			if (!executionGroup) {
-				confirmPromise = new Promise((resolve, reject) => reject());
-			} else {
-				if (executionGroup.status() === this.predictionStatusGenerationOptions.STARTED) {
-					confirmPromise = new Promise((resolve, reject) => {
-						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-							resolve();
-						} else {
-							reject();
-						}
-					})
-				} else {
-					confirmPromise = new Promise(res => res());
-				}
-			}
 
 			this.loading(true);
-			confirmPromise
+			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
 				.then(() => this.loadData())
 				.catch(() => {});

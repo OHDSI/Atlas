@@ -4,6 +4,7 @@ define(
     const ko = require('knockout');
     const config = require('appConfig');
     const _ = require('lodash');
+    const consts = require('const');
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
@@ -16,11 +17,7 @@ define(
         browser: () => '#/estimation',
     };
 
-		const estimationGenerationStatus = {
-			STARTED: 'STARTED',
-			COMPLETED: 'COMPLETED',
-			FAILED: 'FAILED',
-		};
+		const estimationGenerationStatus = consts.generationStatuses;
 
     const conceptSetCrossReference = {
       targetComparatorOutcome: {

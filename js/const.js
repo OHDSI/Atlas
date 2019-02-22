@@ -393,9 +393,14 @@ define([
 		  noSourcesAvailable: 'no-sources-available',
 		  failed: 'failed',
 	  };
-      
 
-    return {
+		const generationStatuses = {
+			STARTED: 'STARTED',
+			COMPLETED: 'COMPLETED',
+			FAILED: 'FAILED',
+		};
+
+		return {
 			minChartHeight,
 			treemapGradient,
 			defaultDeciles,
@@ -406,6 +411,7 @@ define([
 			getRelatedSourcecodesColumns,
 			apiPaths,
 			applicationStatuses,
+			generationStatuses,
     };
   }
 );

@@ -4,6 +4,7 @@ define(
     const ko = require('knockout');
     const config = require('appConfig');
     const _ = require('lodash');
+    const consts = require('const');
 
     const apiPaths = {
       downloadPackage: (id, name) => `prediction/${id}/download?packageName=${name}`,
@@ -26,11 +27,7 @@ define(
       },
     };
 
-		const predictionGenerationStatus = {
-			STARTED: 'STARTED',
-			COMPLETED: 'COMPLETED',
-      FAILED: 'FAILED',
-		};
+		const predictionGenerationStatus = consts.generationStatuses;
 
     const defaultNontemporalCovariates = {
       "temporal": false,

@@ -1,5 +1,7 @@
 define(
     (require, exports) => {
+
+        const consts = require('const');
         const pageTitle = 'Characterizations';
 
         const characterizationsTab = 0;
@@ -20,10 +22,7 @@ define(
             },
         ];
 
-        const ccGenerationStatus = {
-            STARTED: 'STARTED',
-            COMPLETED: 'COMPLETED',
-        };
+        const ccGenerationStatus = consts.generationStatuses;
 
         const feAnalysisTypes = {
             PRESET: 'Preset',
