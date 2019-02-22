@@ -43,7 +43,7 @@ require(["./settings"], (settings) => {
 				const app = new Application(new Model(), new Router());
 
 				app.bootstrap()
-          .then(() => app.checkOAuthError())
+					.then(() => app.checkOAuthError())
 					.then(() => app.synchronize())
 					.catch(er => {
 						sharedState.appInitializationStatus(constants.applicationStatuses.failed);

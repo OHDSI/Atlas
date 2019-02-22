@@ -242,13 +242,11 @@ define(
 					}
 				});
 			}
-      checkOAuthError() {
-        let hash = window.location.hash;
-        if (hash) {
-          if (hash.includes("oauth_error_email")) {
-            alert("Empty email received from oauth server. Check whether it has public access");
-          }
-        }
+			checkOAuthError() {
+				let hash = window.location.hash;
+				if (hash && hash.includes("oauth_error_email")) {
+					alert("Empty email received from oauth server. Check whether it has public access");
+				}
 			}
 		}
 	}
