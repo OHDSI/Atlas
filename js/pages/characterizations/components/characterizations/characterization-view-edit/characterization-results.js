@@ -16,6 +16,7 @@ define([
     'components/visualizations/filter-panel/utils',
     'services/MomentAPI',
     'services/Source',
+    'utils/CsvUtils',
     './explore-prevalence',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
@@ -40,7 +41,8 @@ define([
     d3,
     filterUtils,
     momentAPI,
-    SourceService
+    SourceService,
+    CsvUtils,
 ) {
 
     class CharacterizationViewEditResults extends AutoBind(Component) {
@@ -175,6 +177,45 @@ define([
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
+        }
+
+        getButtonsConfig({ type, data }) {
+            return [{
+                text: 'Export to csv',
+                action: ()  => {
+                    console.log(this.data(), data)
+                    const exprt = data.reports.reduce((aggr, report) => {
+                        const lines = report.stats.reduce((rAggr, stat) => {
+                            const csvLine = {
+                                'Analysis ID + Name': `${data.analysisId} ${data.analysisName}`,  
+                                'Strata ID + Name': `${stat.strataId} ${stat.strataName}`,
+                                'Cohort ID + Name': `${report.cohortId} ${report.cohortName}`,
+                                'Covariate ID + Name': `${stat.covariateId} ${stat.covariateName}`,
+                            };
+                            if (type === 'prevalence') {
+                                csvLine['Count'] = stat.count;
+                                csvLine['Prevalence or %'] = stat.pct;
+                            } else if (type === 'distribution') {
+                                csvLine['Max'] = stat.max;
+                                csvLine['Min'] = stat.min;
+                                csvLine['Median'] = stat.median;
+                                csvLine['P10'] = stat.p10;
+                                csvLine['P25'] = stat.p25;
+                                csvLine['P75'] = stat.p75;
+                                csvLine['P90'] = stat.p90;
+                                csvLine['StdDev'] = stat.stdDev;
+                                csvLine['Count'] = stat.count;
+                            }
+
+                            rAggr.push(csvLine);
+                            return rAggr;
+                        }, []);
+
+                        return [ ...aggr, ...lines ];
+                    }, []);
+                    CsvUtils.saveAsCsv(exprt);
+                },
+            }];
         }
 
         formatDate(date) {
