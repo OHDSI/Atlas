@@ -639,7 +639,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}, (error) => {
 						console.log("Error: " + error);
 						if(error.status == 409) {
-						    alert("Cohort definition cannot be deleted because it is referenced in a Pathway analysis");
+						    alert("Cohort definition cannot be deleted because it is referenced in some analysis");
                             this.isDeleting(false);
 						} else {
 						    authApi.handleAccessDenied(error);
