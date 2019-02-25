@@ -963,8 +963,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.clearImportConceptSetJson();
 			};
 
-			appendConcepts(data) {
-				data.forEach((item) => {
+			appendConcepts(response) {
+				response.data.forEach((item) => {
 					sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
 						sharedState.selectedConcepts.push(this.model.createConceptSetItem(item));
 				});
