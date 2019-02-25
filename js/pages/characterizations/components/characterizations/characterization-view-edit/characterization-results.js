@@ -186,10 +186,14 @@ define([
                     const exprt = data.reports.reduce((aggr, report) => {
                         const lines = report.stats.reduce((rAggr, stat) => {
                             const csvLine = {
-                                'Analysis ID + Name': `${data.analysisId} ${data.analysisName}`,  
-                                'Strata ID + Name': `${stat.strataId} ${stat.strataName}`,
-                                'Cohort ID + Name': `${report.cohortId} ${report.cohortName}`,
-                                'Covariate ID + Name': `${stat.covariateId} ${stat.covariateName}`,
+                                'Analysis ID ': data.analysisId,
+                                'Analysis name': data.analysisName,  
+                                'Strata ID': stat.strataId,
+                                'Strata name': stat.strataName,
+                                'Cohort ID': report.cohortId,
+                                'Cohort name': report.cohortName,
+                                'Covariate ID': stat.covariateId,
+                                'Covariate name': stat.covariateName,
                             };
                             if (type === 'prevalence') {
                                 csvLine['Count'] = stat.count;
@@ -222,10 +226,14 @@ define([
                     action: () => {
                         const exprt = data.data.map(stat => {
                             return {
-                                'Analysis ID + Name': `${stat.analysisId} ${stat.analysisName}`,  
-                                'Target cohort ID + Name': `${stat.cohorts[0].cohortId} ${stat.cohorts[0].cohortName}`,
-                                'Comparator cohort ID + Name': `${stat.cohorts[1].cohortId} ${stat.cohorts[1].cohortName}`,
-                                'Covariate ID + Name': `${stat.covariateId} ${stat.covariateName}`,
+                                'Analysis ID': stat.analysisId,
+                                'Analysis name': stat.analysisName,  
+                                'Target cohort ID': stat.cohorts[0].cohortId,
+                                'Target cohort name': stat.cohorts[0].cohortName,
+                                'Comparator cohort ID': stat.cohorts[1].cohortId,
+                                'Comparator cohort name': stat.cohorts[1].cohortName,
+                                'Covariate ID': stat.covariateId,
+                                'Covariate name': stat.covariateName,
                                 'Target count': stat.sumValue[0],
                                 'Target prevalence or %': stat.pct[0],
                                 'Comparator count': stat.sumValue[1],
