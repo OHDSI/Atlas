@@ -924,9 +924,13 @@ define([
 
 			self.import = function () {
 				if (self.importJSON().length > 0) {
-					var updatedExpression = JSON.parse(self.importJSON());
+					const analysisId = self.cohortComparison().analysisId, analysisName = self.cohortComparison().name();
+					const updatedExpression = JSON.parse(self.importJSON());
+					updatedExpression.analysisId = analysisId;
+					updatedExpression.name = analysisName;
 					self.cohortComparison(new ComparativeCohortAnalysis(updatedExpression));
 					self.importJSON("");
+					self.cohortComparisonDirtyFlag(new ohdsiUtil.dirtyFlag(self.cohortComparison(), true));
 					self.tabMode('specification');
 				}
 			};
@@ -979,7 +983,7 @@ define([
 			if (self.cohortComparisonId() == 0 && self.cohortComparison() == null) {
 				self.newCohortComparison();
 				self.loading(false);
-			} else if (self.cohortComparisonId() > 0 && self.cohortComparisonId() != (self.cohortComparison() && self.cohortComparison().analysisId)) {
+			} else if (self.cohortComparisonId() > 0 && self.cohortComparisonId() !== (self.cohortComparison() && self.cohortComparison().analysisId)) {
 				self.loadCohortComparison();
 				self.loading(false);
 			} else {
