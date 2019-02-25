@@ -109,7 +109,7 @@ define([
 		}
 
 		updateJobStatus() {
-			if (!authApi.isPermittedGetAllNotifications()) {
+			if (authApi.isPermittedGetAllNotifications()) {
 				jobDetailsService.list()
 					.then(notifications => {
 						notifications.data.forEach(n => {
