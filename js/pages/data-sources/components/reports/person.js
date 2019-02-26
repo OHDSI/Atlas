@@ -38,7 +38,7 @@ define([
 					xValue: 'x',
 					yValue: 'y',
 					getTooltipBuilder: options => d => {
-						const format = d3.format('')
+						const format = d3.format('');
 						return `
 							${options.xLabel}: ${options.xFormat(d[options.xValue])}<br/>
 							${options.yLabel}: ${d3.format(',')(d[options.yValue])}
