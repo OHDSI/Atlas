@@ -396,6 +396,7 @@ define([
 
 		const generationStatuses = {
 			STARTED: 'STARTED',
+			RUNNING: 'RUNNING',
 			COMPLETED: 'COMPLETED',
 			FAILED: 'FAILED',
 		};

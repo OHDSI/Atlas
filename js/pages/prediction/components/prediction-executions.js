@@ -151,7 +151,8 @@ define([
 					}
 
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
-					group.status(group.submissions().find(s => s.status === this.predictionStatusGenerationOptions.STARTED) ?
+					group.status(group.submissions().find(s => s.status === this.predictionStatusGenerationOptions.STARTED
+						|| s.status === this.predictionStatusGenerationOptions.RUNNING) ?
 						this.predictionStatusGenerationOptions.STARTED :
 						this.predictionStatusGenerationOptions.COMPLETED);
 				});

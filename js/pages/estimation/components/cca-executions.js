@@ -129,7 +129,8 @@ define([
 					}
 
 					group.submissions((executionList && executionList.filter(e => e.sourceKey === s.sourceKey)) || []);
-					group.status(group.submissions() && group.submissions().find(s => s.status === this.estimationStatusGenerationOptions.STARTED) ?
+					group.status(group.submissions() && group.submissions().find(s => s.status === this.estimationStatusGenerationOptions.STARTED
+						|| s.status === this.predictionStatusGenerationOptions.RUNNING) ?
 						this.estimationStatusGenerationOptions.STARTED :
 						this.estimationStatusGenerationOptions.COMPLETED);
 				});
