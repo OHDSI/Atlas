@@ -57,6 +57,18 @@ define(function (require, exports) {
 			});
 	}
 
+	function generate(id, source) {
+    	return httpService.doPost(config.webAPIRoot + predictionEndpoint + id + '/generation/' + source)
+				.then(res => res.data)
+				.catch(error => authApi.handleAccessDenied(error));
+	}
+
+	function listGenerations(id) {
+    	return httpService.doGet(config.webAPIRoot + predictionEndpoint + id + '/generation')
+				.then(res => res.data)
+				.catch(error => authApi.handleAccessDenied(error));
+	}
+
     var api = {
 		getPredictionList: getPredictionList,
 		savePrediction: savePrediction,
@@ -64,6 +76,8 @@ define(function (require, exports) {
 		deletePrediction: deletePrediction,
 		getPrediction: getPrediction,
 		exportFullSpecification: exportFullSpecification,
+		generate,
+		listGenerations,
 	};
 
 	return api;

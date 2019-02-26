@@ -57,13 +57,27 @@ define(function (require, exports) {
 			});
 	}
 
-    var api = {
+	function generate(id, source) {
+		return httpService.doPost(config.webAPIRoot + estimationEndpoint + id + '/generation/' + source)
+			.then(res => res.data)
+			.catch(error => authApi.handleAccessDenied(error));
+	}
+
+	function listGenerations(id) {
+		return httpService.doGet(config.webAPIRoot + estimationEndpoint + id + '/generation')
+			.then(res => res.data)
+			.catch(error => authApi.handleAccessDenied(error));
+	}
+
+	var api = {
 		getEstimationList: getEstimationList,
 		saveEstimation: saveEstimation,
 		copyEstimation: copyEstimation,
 		deleteEstimation: deleteEstimation,
 		getEstimation: getEstimation,
 		exportFullSpecification: exportFullSpecification,
+		generate,
+		listGenerations,
 	};
 
 	return api;
