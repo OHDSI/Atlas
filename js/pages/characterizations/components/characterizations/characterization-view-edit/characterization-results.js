@@ -197,7 +197,7 @@ define([
                                     'Covariate ID': stat.covariateId,
                                     'Covariate name': stat.covariateName,
                                     'Count': stat.sumValue,
-                                    'Prevalence or %': stat.pct,
+                                    '%': stat.pct,
                                 };
     
                                 rAggr.push(csvLine);
