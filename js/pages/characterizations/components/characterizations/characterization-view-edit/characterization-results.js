@@ -197,7 +197,7 @@ define([
                                     'Covariate ID': stat.covariateId,
                                     'Covariate name': stat.covariateName,
                                     'Count': stat.sumValue,
-                                    '%': stat.pct,
+                                    'Percent': stat.pct,
                                 };
     
                                 rAggr.push(csvLine);
@@ -227,9 +227,9 @@ define([
                                     'Covariate ID': stat.covariateId,
                                     'Covariate name': stat.covariateName,
                                     'Target count': stat.count[0],
-                                    'Target prevalence or %': stat.avg[0],
+                                    'Target %': stat.avg[0],
                                     'Comparator count': stat.count[1],
-                                    'Comparator prevalence or %': stat.avg[1],
+                                    'Comparator %': stat.avg[1],
                                     'Std. Diff Of Mean': stat.stdDiff,
                                 };
                             });
