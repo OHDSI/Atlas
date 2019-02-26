@@ -32,7 +32,7 @@ define([
 					${options.xLabel}: ${options.xFormat(d[options.xValue])}<br/>
 					${options.yLabel}: ${options.yFormat(d[options.yValue])}
 				`;
-			}
+			};
 
 			this.chartFormats = {
 				totalLine: {
