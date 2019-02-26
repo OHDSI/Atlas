@@ -8,6 +8,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/cohortbuilder/CohortExpression',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'services/CohortReporting',
+	'services/file',
 	'vocabularyprovider',
 	'atlas-state',
 	'clipboard',
@@ -34,6 +35,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-pick-options',
 	'components/heading',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
+	'loading',
 ], function (
 	$,
 	ko,
@@ -47,6 +49,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	CohortExpression,
 	ConceptSet,
 	cohortReportingService,
+	FileService,
 	vocabularyApi,
 	sharedState,
 	clipboard,
@@ -103,6 +106,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.warningCount = ko.observable(0);
 			this.infoCount = ko.observable(0);
 			this.criticalCount = ko.observable(0);
+			this.exporting = ko.observable();
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
@@ -1016,8 +1020,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			exportConceptSetsCSV () {
-				window.open(config.api.url + 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/export/conceptset');
+			async exportConceptSetsCSV () {
+				this.exporting(true);
+				try {
+					await FileService.loadZip(`${config.api.url}cohortdefinition/${this.model.currentCohortDefinition().id()}/export/conceptset`,
+						`cohortdefinition-conceptsets-${this.model.currentCohortDefinition().id()}.zip`);
+				}finally {
+					this.exporting(false);
+				}
 			}
 
 			selectViewReport (item) {
