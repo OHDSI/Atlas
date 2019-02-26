@@ -20,6 +20,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
       self.canDiagnose = params.canDiagnose || ko.observable(false);
       self.warnings = ko.observableArray();
       self.loading = ko.observable(false);
+      self.isFixConceptSetCalled = false;
       self.warningsColumns = [
         { data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
         { data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
@@ -47,11 +48,23 @@ define(['knockout', 'text!./conceptset-warnings.html',
           });
         }
       };
+      
+      self.stateSaveCallback = function(settings, data){
+        if (!self.isFixConceptSetCalled){
+          self.state = data;
+        }
+      };
+      
+      self.stateLoadCallback = function(settings, callback) {
+        return self.state;          
+      };
 
       self.fixRedundantConceptSet = function(value, parent, event){
+        self.isFixConceptSetCalled = true;
         event.preventDefault();
         self.onFixCallback(value);
         self.onDiagnose();
+        self.isFixConceptSetCalled = false;
       };
 
       function showWarnings(result){

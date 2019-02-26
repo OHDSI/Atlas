@@ -1,8 +1,8 @@
 <div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-	<!-- ko ifnot: hasAccess -->
-		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
-	<!-- /ko -->
+
+	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
 	<!-- ko if: hasAccess -->
 	<div data-bind="$root.currentCohortDefinition() != null">
 		<div class="asset-heading">

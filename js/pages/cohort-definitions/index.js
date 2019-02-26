@@ -7,7 +7,7 @@ define(
       buildRoutes,
       navUrl: () => '#/cohortdefinitions',
       icon: 'users',
-			statusCss: () => ''
+      statusCss: () => ''
     };
   }
 );

@@ -49,8 +49,8 @@ define(function(require, exports) {
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info) {
-                subject(info.login);
                 permissions(info.permissions.map(p => p.permission));
+                subject(info.login);
                 resolve();
             },
             error: function (err) {
@@ -314,8 +314,8 @@ define(function(require, exports) {
         return isPermitted('cdmresults:*:get');
     };
 
-    var isPermittedViewProfiles = function () {
-      return isPermitted('*:person:*:get');
+    var isPermittedViewProfiles = function (sourceKey) {
+      return isPermitted(`${sourceKey}:person:*:get`);
     };
 
     var isPermittedViewProfileDates = function() {
@@ -427,6 +427,10 @@ define(function(require, exports) {
 			return isPermitted('user:import:post') && isPermitted('user:import:*:post');
 		}
 
+    const hasSourceAccess = function (sourceKey) {
+        return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
+	}
+
 	var setAuthParams = function (tokenHeader) {
         token(tokenHeader);
         return loadUserInfo();
@@ -513,6 +517,7 @@ define(function(require, exports) {
         isPermittedCheckSourceConnection: isPermittedCheckSourceConnection,
 
         isPermittedImportUsers,
+        hasSourceAccess,
 
         loadUserInfo,
         TOKEN_HEADER,

@@ -203,9 +203,9 @@ define([
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
-			conceptSetService.exists(conceptSet.name, conceptSet.id)
+			conceptSetService.exists(conceptSet.name(), conceptSet.id)
 				.then((results) => {
-					if (results.length > 0) {
+					if (results.data.length > 0) {
 						this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
 						abortSave = true;
 					}

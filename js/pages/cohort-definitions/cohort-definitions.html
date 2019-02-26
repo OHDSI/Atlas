@@ -10,7 +10,5 @@
 			<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortDefinitionId(data.id)}"></cohort-definition-browser>
 		</div>
 	</div>
-	<div data-bind="ifnot:$component.canReadCohorts, css: `${canReadCohorts() ? '' : 'flexed'}`">
-		<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
-	</div>
+	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canReadCohorts"></access-denied>
 </div>
