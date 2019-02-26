@@ -4,7 +4,7 @@ define(
     const ModelSettings = require('./inputTypes/ModelSettings');
 
     function getDefaultModelSettings(modelName) {
-        return ModelSettings.defaultModelSettings.find(item => item.name === modelName).modelSettings
+        return ModelSettings.defaultModelSettings.find(item => item.name === modelName).modelSettings;
     }
 
     function getDefaultModelSettingDescription(defaultModelSettings, settingName) {
@@ -25,6 +25,15 @@ define(
         }
     }
 
+    function getDefaultModelSettingName(defaultModelSettings, settingName) {
+        const settingList = defaultModelSettings.filter(item => item.setting === settingName);
+        if (settingList.length > 0) {
+            return settingList[0].name;
+        } else {
+            return "SETTING NAME NOT FOUND!!";
+        }
+    }
+
     function getDefaultModelSettingsValueList(modelName) {
         const defaultModelSettings = getDefaultModelSettings(modelName);
         const defaultValuesList = {};
@@ -38,6 +47,7 @@ define(
     const utils = {
         getDefaultModelSettings: getDefaultModelSettings,
         getDefaultModelSettingDescription: getDefaultModelSettingDescription,
+        getDefaultModelSettingName: getDefaultModelSettingName,
         getDefaultModelSettingValue: getDefaultModelSettingValue,
         getDefaultModelSettingsValueList: getDefaultModelSettingsValueList,
     };

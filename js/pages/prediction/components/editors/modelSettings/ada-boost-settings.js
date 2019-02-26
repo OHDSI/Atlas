@@ -4,6 +4,7 @@ define([
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
+	'components/multi-input',
 ], function (
 	ko, 
 	view, 
@@ -11,26 +12,27 @@ define([
 	commonUtils,
 	dataTypeConverterUtils,
 ) {
+	const settings = {
+		learningRate: 'learningRate',
+		nEstimators: 'nEstimators'
+	};
+
 	class AdaBoostSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 
 			this.learningRate = {
-				name: 'learningRate',
-				value: ko.observable(this.modelSettings.learningRate() && this.modelSettings.learningRate().length > 0 ? this.modelSettings.learningRate().join() : ''),
+				name: settings.learningRate,
+				value: this.modelSettings.learningRate,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.learningRate),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.learningRate),
 			};
 			this.nEstimators = {
-				name: 'nEstimators',
-				value: ko.observable(this.modelSettings.nEstimators() && this.modelSettings.nEstimators().length > 0 ? this.modelSettings.nEstimators().join() : ''),
+				name: settings.nEstimators,
+				value: this.modelSettings.nEstimators,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.nEstimators),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.nEstimators),
 			};
-
-			this.subscriptions.push(this.learningRate.value.subscribe(newValue => {
-				this.modelSettings.learningRate(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.nEstimators.value.subscribe(newValue => {
-				this.modelSettings.nEstimators(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
 		}
 	}
 

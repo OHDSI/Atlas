@@ -4,6 +4,7 @@ define([
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
+	'components/multi-input',
 ], function (
 	ko, 
 	view, 
@@ -11,46 +12,48 @@ define([
 	commonUtils,
 	dataTypeConverterUtils,
 ) {
+	const settings = {
+		ntrees: 'ntrees',
+		nthread: 'nthread',
+		maxDepth: 'maxDepth',
+		minRows: 'minRows',
+		learnRate: 'learnRate'
+	};
+  
 	class GradientBoostingMachineSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 			
 			this.ntrees = {
-				name: 'ntrees',
-				value: ko.observable(this.modelSettings.ntrees() && this.modelSettings.ntrees().length > 0 ? this.modelSettings.ntrees().join() : ''),
+				name: settings.ntrees,
+				value: this.modelSettings.ntrees,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.ntrees),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.ntrees),
 			};
 			this.nthread = {
-				name: 'nthread',
+				name: settings.nthread,
 				value: this.modelSettings.nthread,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.nthread),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.nthread),
 			};
 			this.maxDepth = {
-				name: 'maxDepth',
-				value: ko.observable(this.modelSettings.maxDepth() && this.modelSettings.maxDepth().length > 0 ? this.modelSettings.maxDepth().join() : ''),
+				name: settings.maxDepth,
+				value: this.modelSettings.maxDepth,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.maxDepth),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.maxDepth),
 			};
 			this.minRows = {
-				name: 'minRows',
-				value: ko.observable(this.modelSettings.minRows() && this.modelSettings.minRows().length > 0 ? this.modelSettings.minRows().join() : ''),
+				name: settings.minRows,
+				value: this.modelSettings.minRows,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.minRows),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.minRows),
 			};
 			this.learnRate = {
-				name: 'learnRate',
-				value: ko.observable(this.modelSettings.learnRate() && this.modelSettings.learnRate().length > 0 ? this.modelSettings.learnRate().join() : ''),
+				name: settings.learnRate,
+				value: this.modelSettings.learnRate,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.learnRate),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.learnRate),
 			};
-
-			this.subscriptions.push(this.ntrees.value.subscribe(newValue => {
-				this.modelSettings.ntrees(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.maxDepth.value.subscribe(newValue => {
-				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.minRows.value.subscribe(newValue => {
-				this.modelSettings.minRows(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.learnRate.value.subscribe(newValue => {
-				this.modelSettings.learnRate(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
 		}
 	}
 

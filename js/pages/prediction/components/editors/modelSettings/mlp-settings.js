@@ -11,27 +11,28 @@ define([
 	commonUtils,
 	dataTypeConverterUtils,
 ) {
+	const settings = {
+		size: 'size',
+		alpha: 'alpha',
+	};
+
 	class MLPSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 
 			this.size = {
-				name: 'size',
-				value: ko.observable(this.modelSettings.size() && this.modelSettings.size().length > 0 ? this.modelSettings.size().join() : ''),
+				name: settings.size,
+				value: this.modelSettings.size,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.size),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.size),
 			};
 
 			this.alpha = {
-				name: 'alpha',
-				value: ko.observable(this.modelSettings.alpha() && this.modelSettings.alpha().length > 0 ? this.modelSettings.alpha().join() : ''),
-			};	
-
-			this.subscriptions.push(this.size.value.subscribe(newValue => {
-				this.modelSettings.size(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.alpha.value.subscribe(newValue => {
-				this.modelSettings.alpha(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
+				name: settings.alpha,
+				value: this.modelSettings.alpha,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.alpha),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.alpha),
+			};
 		}
 	}
 

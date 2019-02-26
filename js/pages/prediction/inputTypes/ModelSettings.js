@@ -216,7 +216,7 @@ define(function (require, exports) {
                     setting: 'varImp',
                     name: 'Perform an initial variable selection',
                     description: 'Perform an initial variable selection prior to fitting the model to select the useful variables',
-                    defaultValue: true,
+                    defaultValue: [true],
                 },
             ]
         },
@@ -286,12 +286,6 @@ define(function (require, exports) {
                     description: 'The number of trees to build',
                     defaultValue: [10, 100],
                 },
-                {
-                    setting: 'size',
-                    name: 'Number of hidden nodes',
-                    description: 'The number of hidden nodes',
-                    defaultValue: 'NULL',
-                },
             ]
         },
         {
@@ -301,7 +295,7 @@ define(function (require, exports) {
                     setting: 'classWeight',
                     name: 'Class weight',
                     description: 'Class Weight',
-                    defaultValue: 'None',
+                    defaultValue: ['None'],
                 },
                 {
                     setting: 'maxDepth',
@@ -323,6 +317,12 @@ define(function (require, exports) {
                 },
                 {
                     setting: 'minSamplesSplit',
+                    name: 'Minimum samples per split',
+                    description: 'The minimum samples per split',
+                    defaultValue: [2],
+                },
+                {
+                    setting: 'plot',
                     name: 'Minimum samples per split',
                     description: 'The minimum samples per split',
                     defaultValue: [2],
