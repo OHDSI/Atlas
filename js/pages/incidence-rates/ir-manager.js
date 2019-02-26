@@ -4,6 +4,7 @@ define([
 	'services/IRAnalysis',
 	'webapi/SourceAPI',
 	'services/CohortDefinition',
+	'services/file',
 	'./components/iranalysis/IRAnalysisDefinition', 
 	'./components/iranalysis/IRAnalysisExpression', 
 	'assets/ohdsi.util',
@@ -26,6 +27,7 @@ define([
 	IRAnalysisService,
 	sourceAPI,
 	cohortAPI,
+	FileService,
 	IRAnalysisDefinition,
 	IRAnalysisExpression,
 	ohdsiUtil,
@@ -48,6 +50,7 @@ define([
 			this.selectedAnalysis = this.model.currentIRAnalysis;
 			this.selectedAnalysisId = this.model.selectedIRAnalysisId;
 			this.dirtyFlag = this.model.currentIRAnalysisDirtyFlag;
+			this.exporting = ko.observable();
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -305,8 +308,14 @@ define([
 			}
 		};
 
-		exportAnalysisCSV() {
-			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
+		async exportAnalysisCSV() {
+			this.exporting(true);
+			try {
+				await FileService.loadZip(`${config.api.url}ir/${this.selectedAnalysisId()}/export`,
+					`incidence-rate-${this.selectedAnalysisId()}.zip`);
+			}finally {
+				this.exporting(false);
+			}
 		}
 		
 		init() {

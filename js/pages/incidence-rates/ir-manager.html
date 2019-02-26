@@ -64,8 +64,11 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'generation' }, 
 																			eventListener: [{ event: 'click', selector: 'button.removeResult', callback: removeResult}, {event: 'click', selector: 'button.execute', callback: onExecuteClick}]" class="tab-pane">
+				<loading data-bind="visible: exporting()" params="Exporting Analysis To CSV"></loading>
+				<div data-bind="hidden: exporting()">
 				<button type="button" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportAnalysisCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
 				<ir-analysis-results params="sources: filteredSources, analysisCohorts: analysisCohorts"></ir-analysis-results>
+				</div>
 			</div>		
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
                 <div class="paddedWrapper">
