@@ -179,71 +179,90 @@ define([
             this.loadData();
         }
 
-        getButtonsConfig(type, data) {
-            const buttons = [{
-                text: 'Export to csv',
-                action: ()  => {
-                    const exprt = data.reports.reduce((aggr, report) => {
-                        const lines = report.stats.reduce((rAggr, stat) => {
-                            const csvLine = {
-                                'Analysis ID ': data.analysisId,
-                                'Analysis name': data.analysisName,  
-                                'Strata ID': stat.strataId,
-                                'Strata name': stat.strataName,
-                                'Cohort ID': report.cohortId,
-                                'Cohort name': report.cohortName,
-                                'Covariate ID': stat.covariateId,
-                                'Covariate name': stat.covariateName,
-                            };
-                            if (type === 'prevalence') {
-                                csvLine['Count'] = stat.count;
-                                csvLine['Prevalence or %'] = stat.pct;
-                            } else if (type === 'distribution') {
-                                csvLine['Max'] = stat.max;
-                                csvLine['Min'] = stat.min;
-                                csvLine['Median'] = stat.median;
-                                csvLine['P10'] = stat.p10;
-                                csvLine['P25'] = stat.p25;
-                                csvLine['P75'] = stat.p75;
-                                csvLine['P90'] = stat.p90;
-                                csvLine['StdDev'] = stat.stdDev;
-                                csvLine['Count'] = stat.count;
-                            }
-
-                            rAggr.push(csvLine);
-                            return rAggr;
-                        }, []);
-
-                        return [ ...aggr, ...lines ];
-                    }, []);
-                    CsvUtils.saveAsCsv(exprt);
-                },
-            }];
-
-            if (data.reports.length === 2 && type === 'prevalence') {
+        getButtonsConfig(type, data, analysis) {
+            const buttons = [];
+            if (type === 'prevalence') {
                 buttons.push({
-                    text: 'Export comparison',
-                    action: () => {
-                        const exprt = data.data.map(stat => {
-                            return {
-                                'Analysis ID': stat.analysisId,
-                                'Analysis name': stat.analysisName,  
-                                'Target cohort ID': stat.cohorts[0].cohortId,
-                                'Target cohort name': stat.cohorts[0].cohortName,
-                                'Comparator cohort ID': stat.cohorts[1].cohortId,
-                                'Comparator cohort name': stat.cohorts[1].cohortName,
-                                'Covariate ID': stat.covariateId,
-                                'Covariate name': stat.covariateName,
-                                'Target count': stat.sumValue[0],
-                                'Target prevalence or %': stat.pct[0],
-                                'Comparator count': stat.sumValue[1],
-                                'Comparator prevalence or %': stat.pct[1],
-                                'Std. Diff Of Mean': stat.stdDiff,
-                            };
-                        });
+                    text: 'Export prevalence to csv',
+                    action: ()  => {
+                        const exprt = data.reports.map((report) => {
+                            const lines = report.stats.reduce((rAggr, stat) => {
+                                const csvLine = {
+                                    'Analysis ID ': data.analysisId,
+                                    'Analysis name': data.analysisName,  
+                                    'Strata ID': stat.strataId,
+                                    'Strata name': stat.strataName,
+                                    'Cohort ID': report.cohortId,
+                                    'Cohort name': report.cohortName,
+                                    'Covariate ID': stat.covariateId,
+                                    'Covariate name': stat.covariateName,
+                                    'Count': stat.sumValue,
+                                    'Prevalence or %': stat.pct,
+                                };
+    
+                                rAggr.push(csvLine);
+                                return rAggr;
+                            }, []);
+    
+                            return [ ...aggr, ...lines ];
+                        }, []);
                         CsvUtils.saveAsCsv(exprt);
                     },
-                });
+                });                
+            } else {
+                if (data.reports && data.reports.length === 2) {
+                    buttons.push({
+                        text: 'Export comparison',
+                        action: () => {
+                            const exprt = data.data.map(stat => {
+                                return {
+                                    'Analysis ID': data.analysisId,
+                                    'Analysis name': data.analysisName,
+                                    'Target cohort ID': data.reports[0].cohortId ? data.reports[0].cohortId : '',
+                                    'Target cohort name': data.reports[0].cohortName ? data.reports[0].cohortName : '',
+                                    'Comparator cohort ID': data.reports[1].cohortId ? data.reports[1].cohortId : '',
+                                    'Comparator cohort name': data.reports[1].cohortName ? data.reports[1].cohortName : '',
+                                    'Covariate ID': stat.covariateId,
+                                    'Covariate name': stat.covariateName,
+                                    'Target count': stat.count[0],
+                                    'Target prevalence or %': stat.avg[0],
+                                    'Comparator count': stat.count[1],
+                                    'Comparator prevalence or %': stat.avg[1],
+                                    'Std. Diff Of Mean': stat.stdDiff,
+                                };
+                            });
+                            CsvUtils.saveAsCsv(exprt);
+                        },
+                    });
+                } else {
+                    buttons.push({
+                        text: 'Export distribution to csv',
+                        action: ()  => {
+                            const exprt = data.data.map((stat) => {
+                                return {
+                                    'Analysis ID ': analysis.analysisId,
+                                    'Analysis name': analysis.analysisName,  
+                                    'Strata ID': stat.strataId,
+                                    'Strata name': stat.strataName,
+                                    'Cohort ID': data.cohortId,
+                                    'Cohort name': data.cohortName,
+                                    'Covariate ID': stat.covariateId,
+                                    'Covariate name': stat.covariateName,
+                                    'Max': stat.max,
+                                    'Min': stat.min,
+                                    'Median': stat.median,
+                                    'P10': stat.p10,
+                                    'P25': stat.p25,
+                                    'P75': stat.p75,
+                                    'P90': stat.p90,
+                                    'StdDev': stat.stdDev,
+                                    'Count': stat.count,                                    
+                                };        
+                            });
+                            CsvUtils.saveAsCsv(exprt);
+                        },
+                    });                
+                }
             }
 
             return buttons;
@@ -650,6 +669,7 @@ define([
                     if (data[key] === undefined) {
                         data[key] = {
                             strataName: rd.strataName,
+                            covariateId: rd.covariateId,
                             covariateName: rd.covariateName,
                             count: [],
                             avg: [],
