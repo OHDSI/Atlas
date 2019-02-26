@@ -218,6 +218,8 @@ define([
                                 return {
                                     'Analysis ID': data.analysisId,
                                     'Analysis name': data.analysisName,
+                                    'Strata ID': stat.strataId,
+                                    'Strata name': stat.strataName,
                                     'Target cohort ID': data.reports[0].cohortId ? data.reports[0].cohortId : '',
                                     'Target cohort name': data.reports[0].cohortName ? data.reports[0].cohortName : '',
                                     'Comparator cohort ID': data.reports[1].cohortId ? data.reports[1].cohortId : '',
@@ -668,6 +670,7 @@ define([
                     const key = rd.covariateName + '_' + rd.strataName;
                     if (data[key] === undefined) {
                         data[key] = {
+                            strataId: rd.strataId,
                             strataName: rd.strataName,
                             covariateId: rd.covariateId,
                             covariateName: rd.covariateName,
