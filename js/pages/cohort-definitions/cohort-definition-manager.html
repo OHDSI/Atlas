@@ -57,9 +57,9 @@
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
 				<atlas.cohort-editor params="model: model"></atlas.cohort-editor>
 			</div>
-			<loading params="status: 'Exporting All Concept Sets To CSV'" data-bind="visible: exporting()"></loading>
-			<div data-bind="hidden: exporting()">
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
+				<loading params="status: 'Exporting All Concept Sets To CSV'" data-bind="visible: exporting()"></loading>
+				<div data-bind="hidden: exporting()">
 				<div class="cohort-conceptset-button-pane pull-right">
 					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
 					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
@@ -204,7 +204,7 @@
 				</div>
                 <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->
-			</div>
+				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
 				<ul class="nav nav-pills">
