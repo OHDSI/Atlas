@@ -156,7 +156,7 @@
                         <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>
                         <textarea data-bind="
                             css: classes({ element: 'raw-sql-box', extra: 'form-control' }),
-                            attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign, id: 'analysisSQLTemplateExport' },
+                            attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign },
                             textInput: $component.data().design
                         "></textarea>
                         <span data-bind="css: classes('criteria-sql')">)</span>
