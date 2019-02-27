@@ -632,10 +632,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				clearTimeout(this.pollTimeout);
 
 				// reset view after save
-					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
+					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).
+                    then( (result) => {
 						this.model.currentCohortDefinition(null);
-					document.location = "#/cohortdefinitions"
-				});
+						document.location = "#/cohortdefinitions"
+					}, (error) => {
+						console.log("Error: " + error);
+						if(error.status == 409) {
+						    alert("Cohort definition cannot be deleted because it is referenced in some analysis");
+                            this.isDeleting(false);
+						} else {
+						    authApi.handleAccessDenied(error);
+						}
+					});
 			}
 
 			save () {
@@ -954,8 +963,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.clearImportConceptSetJson();
 			};
 
-			appendConcepts(data) {
-				data.forEach((item) => {
+			appendConcepts(response) {
+				response.data.forEach((item) => {
 					sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
 						sharedState.selectedConcepts.push(this.model.createConceptSetItem(item));
 				});

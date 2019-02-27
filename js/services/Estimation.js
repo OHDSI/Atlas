@@ -55,6 +55,19 @@ define(function (require, exports) {
             .then(res => res.data);
 	}
 
+	function generate(id, source) {
+		return httpService.doPost(config.webAPIRoot + estimationEndpoint + id + '/generation/' + source)
+			.then(res => res.data)
+			.catch(error => authApi.handleAccessDenied(error));
+	}
+
+	function listGenerations(id) {
+		return httpService.doGet(config.webAPIRoot + estimationEndpoint + id + '/generation')
+			.then(res => res.data)
+			.catch(error => authApi.handleAccessDenied(error));
+	}
+
+	var api = {
     function importEstimation(specification) {
         return httpService
             .doPost(config.webAPIRoot + estimationEndpoint + "import", specification)
@@ -69,6 +82,8 @@ define(function (require, exports) {
 		getEstimation: getEstimation,
 		exportEstimation: exportEstimation,
 		importEstimation: importEstimation,
+		generate,
+		listGenerations,
 	};
 
 	return api;

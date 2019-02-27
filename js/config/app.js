@@ -48,6 +48,12 @@ define(function () {
       "icon": "fa fa-facebook"
     },
     {
+      "name": "Github",
+      "url": "user/oauth/github",
+      "ajax": false,
+      "icon": "fa fa-github"
+    },
+    {
       "name": "DB",
       "url": "user/login/db",
       "ajax": true,

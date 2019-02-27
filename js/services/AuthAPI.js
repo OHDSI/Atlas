@@ -49,8 +49,8 @@ define(function(require, exports) {
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info) {
-                subject(info.login);
                 permissions(info.permissions.map(p => p.permission));
+                subject(info.login);
                 resolve();
             },
             error: function (err) {

@@ -11,6 +11,7 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
+	'utils/ExecutionUtils',
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
@@ -32,6 +33,7 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
+	ExecutionUtils,
 	SourceService,
 	lodash,
 	jobDetailsService,
@@ -137,20 +139,16 @@ define([
 			return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
 		}
 
-		loadData({
+		async loadData({
 			silently = false
 		} = {}) {
 			!silently && this.loading(true);
 
-			const ccId = this.characterizationId();
+			try {
+				const ccId = this.characterizationId();
+				const allSources = await SourceService.loadSourceList();
+				const executionList = await CharacterizationService.loadCharacterizationExecutionList(ccId);
 
-			Promise.all([
-				SourceService.loadSourceList(),
-				CharacterizationService.loadCharacterizationExecutionList(ccId)
-			]).then(([
-				allSources,
-				executionList
-			]) => {
 				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function(daimon) {
 							return daimon.daimonType == "CDM";
@@ -181,12 +179,12 @@ define([
 						this.ccGenerationStatusOptions.COMPLETED);
 
 				});
+			}finally {
 				this.loading(false);
-			});
+			}
 		}
 
 		generate(source, lastestDesign) {
-			let confirmPromise;
 			if(lastestDesign === this.currentHash()) {
 				if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
 					return false;
@@ -195,27 +193,12 @@ define([
 
 			this.stopping({...this.stopping(), [source]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
-			if (!executionGroup) {
-				confirmPromise = new Promise((resolve, reject) => reject());
-			} else {
-				if (executionGroup.status() === this.ccGenerationStatusOptions.STARTED) {
-					confirmPromise = new Promise((resolve, reject) => {
-						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-							resolve();
-						} else {
-							reject();
-						}
-					})
-				} else {
-					confirmPromise = new Promise(res => res());
-				}
-			}
 
-			confirmPromise
+			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
 				.then((data) => {
 					jobDetailsService.createJob(data);
-					this.loadData()
+					this.loadData();
 				})
 				.catch(() => {});
 		}
