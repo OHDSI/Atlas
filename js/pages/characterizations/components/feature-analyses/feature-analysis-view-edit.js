@@ -1,5 +1,6 @@
 define([
     'knockout',
+    'clipboard',
     'pages/characterizations/services/FeatureAnalysisService',
     'pages/characterizations/services/PermissionService',
     'components/cohortbuilder/CriteriaGroup',
@@ -18,6 +19,7 @@ define([
     'pages/characterizations/const',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'utils/Clipboard',
     'assets/ohdsi.util',
     '../../utils',
     'less!./feature-analysis-view-edit.less',
@@ -27,6 +29,7 @@ define([
     'components/DropDownMenu',
 ], function (
     ko,
+    clipboard,
     FeatureAnalysisService,
     PermissionService,
     CriteriaGroup,
@@ -45,6 +48,7 @@ define([
     constants,
     AutoBind,
     commonUtils,
+    Clipboard,
     ohdsiUtil,
     utils,
 ) {
@@ -60,7 +64,7 @@ define([
       { label: 'Distribution', value: 'DISTRIBUTION' },
     ];
 
-    class FeatureAnalysisViewEdit extends AutoBind(Page) {
+    class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
 
@@ -202,7 +206,7 @@ define([
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
                     const commonDesign = {
-                        id: c.id, 
+                        id: c.id,
                         name: ko.observable(c.name),
                         criteriaType: c.criteriaType,
                     };
@@ -268,7 +272,7 @@ define([
             const data = { Criteria: {} };
             data.Criteria[type] = { IgnoreObservationPeriod: true, };
             return {
-                name: ko.observable(''), 
+                name: ko.observable(''),
                 criteriaType: 'WindowedCriteria',
                 expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
             };
@@ -345,6 +349,10 @@ define([
             this.featureId(null);
             this.dataDirtyFlag().reset();
             commonUtils.routeTo('/cc/feature-analyses');
+        }
+
+        copyAnalysisSQLTemplateToClipboard() {
+            this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
         }
     }
 

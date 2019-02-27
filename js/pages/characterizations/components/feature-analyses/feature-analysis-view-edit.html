@@ -145,10 +145,18 @@
                 <div data-bind="if: $component.data().type() === $component.featureTypes.CUSTOM_FE, css: classes('design')">
                     <div data-bind="css: classes('design-section')">
                         <span data-bind="css: classes('design-section-title')">Analysis SQL:</span>
+                        <button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyAnalysisSQLTemplateClipboard" data-bind="click: copyAnalysisSQLTemplateToClipboard, attr: { 'data-clipboard-text': demoCustomSqlAnalysisDesign }">
+                            <i class="fa fa-clipboard" aria-hidden="true"></i>&nbsp;
+                            Copy Analysis SQL Template To Clipboard
+                        </button>&nbsp;&nbsp;
+                        <span id="copyAnalysisSQLTemplateMessage" style="display:none" class="alert alert-success" role="alert">
+                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                            <strong>Copied To Clipboard!</strong>
+                        </span>
                         <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>
                         <textarea data-bind="
                             css: classes({ element: 'raw-sql-box', extra: 'form-control' }),
-                            attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign },
+                            attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign, id: 'analysisSQLTemplateExport' },
                             textInput: $component.data().design
                         "></textarea>
                         <span data-bind="css: classes('criteria-sql')">)</span>
