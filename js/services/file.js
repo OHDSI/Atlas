@@ -20,6 +20,7 @@ define(
               const blob = new Blob([xhr.response], { type: "octet/stream" });
               saveAs(blob, filename);
             }
+            reject({ status: xhr.status, statusText: xhr.statusText }); //
           }
           xhr.onerror = reject;
           xhr.responseType = "arraybuffer";

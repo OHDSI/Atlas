@@ -24,6 +24,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
 	'services/Poll',
+	'services/file',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -67,7 +68,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	commonUtils,
 	costUtilConst,
 	authApi,
-	PollService
+	PollService,
+	FileService,
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -98,6 +100,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.criticalCount = ko.observable(0);
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
+			this.exporting = ko.observable();
 			this.service = cohortDefinitionService;
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
@@ -1023,8 +1026,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			exportConceptSetsCSV () {
-				window.open(config.api.url + 'cohortdefinition/' + this.model.currentCohortDefinition().id() + '/export/conceptset');
+			async exportConceptSetsCSV () {
+				this.exporting(true);
+				try {
+					await FileService.loadZip(`${config.api.url}cohortdefinition/${this.model.currentCohortDefinition().id()}/export/conceptset`,
+						`cohortdefinition-conceptsets-${this.model.currentCohortDefinition().id()}.zip`);
+				}finally {
+					this.exporting(false);
+				}
 			}
 
 			selectViewReport (item) {

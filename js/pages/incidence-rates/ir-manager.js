@@ -12,6 +12,7 @@ define([
 	'services/JobDetailsService',
 	'services/job/jobDetail',
 	'services/AuthAPI',
+	'services/file',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -35,6 +36,7 @@ define([
 	jobDetailsService,
 	jobDetail,
 	authAPI,
+	FileService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -50,6 +52,7 @@ define([
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
+			this.exporting = ko.observable();
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -352,8 +355,14 @@ define([
 			}
 		};
 
-		exportAnalysisCSV() {
-			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
+		async exportAnalysisCSV() {
+			this.exporting(true);
+			try {
+				await FileService.loadZip(`${config.api.url}ir/${this.selectedAnalysisId()}/export`,
+					`incidence-rate-${this.selectedAnalysisId()}.zip`);
+			}finally {
+				this.exporting(false);
+			}
 		}
 
 		init() {
