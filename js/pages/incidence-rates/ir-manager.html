@@ -59,10 +59,13 @@
 																				{ event: 'click', selector: 'button.removeResult', callback: removeResult},
 																				{ event: 'click', selector: 'button.exportAnalysisCSV', callback: exportAnalysisCSV},
 																			]" class="tab-pane">
-				<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources"></ir-analysis-results>
+				<loading data-bind="visible: exporting()" params="Exporting Analysis To CSV"></loading>
+				<div data-bind="hidden: exporting()">
+					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources"></ir-analysis-results>
+				</div>
 			</div>		
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
-                <div class="paddedWrapper">
+				<div class="paddedWrapper">
                     <ul class="nav nav-pills">
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>

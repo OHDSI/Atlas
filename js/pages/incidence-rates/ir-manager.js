@@ -12,9 +12,11 @@ define([
 	'services/JobDetailsService',
 	'services/job/jobDetail',
 	'services/AuthAPI',
+	'services/file',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/ExceptionUtils',
 	'./const',
 	'./components/iranalysis/main', 
 	'databindings', 
@@ -35,9 +37,11 @@ define([
 	jobDetailsService,
 	jobDetail,
 	authAPI,
+	FileService,
 	Page,
 	AutoBind,
 	commonUtils,
+	exceptionUtils,
 	constants
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
@@ -50,6 +54,7 @@ define([
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
+			this.exporting = ko.observable();
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -352,8 +357,16 @@ define([
 			}
 		};
 
-		exportAnalysisCSV() {
-			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
+		async exportAnalysisCSV() {
+			this.exporting(true);
+			try {
+				await FileService.loadZip(`${config.api.url}ir/${this.selectedAnalysisId()}/export`,
+					`incidence-rate-${this.selectedAnalysisId()}.zip`);
+			}catch (e) {
+				alert(exceptionUtils.translateException(e));
+			}finally {
+				this.exporting(false);
+			}
 		}
 
 		init() {
