@@ -41,7 +41,7 @@ define([
 						jobs.content[j].startDate = momentApi.formatDateTime(startDate);
 
 						var endDate = new Date(jobs.content[j].endDate);
-						jobs.content[j].endDate = momentApi.formatDateTime(endDate);
+						jobs.content[j].endDate = jobs.content[j].status === 'STARTED' ? '' : momentApi.formatDateTime(endDate);
 
 						if (jobs.content[j].jobParameters.jobName == undefined) {
 							jobs.content[j].jobParameters.jobName = 'n/a';
