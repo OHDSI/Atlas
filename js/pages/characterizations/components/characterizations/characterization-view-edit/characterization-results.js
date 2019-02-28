@@ -185,7 +185,7 @@ define([
                 buttons.push({
                     text: 'Export prevalence to csv',
                     action: ()  => {
-                        const exprt = data.reports.map((report) => {
+                        const exprt = data.reports.reduce((aggr, report) => {
                             const lines = report.stats.reduce((rAggr, stat) => {
                                 const csvLine = {
                                     'Analysis ID ': data.analysisId,
@@ -227,12 +227,12 @@ define([
                                     'Covariate ID': stat.covariateId,
                                     'Covariate name': stat.covariateName,
                                     'Target count': stat.count[0],
-                                    'Target %': stat.avg[0],
+                                    'Target Percent': stat.avg[0],
                                     'Comparator count': stat.count[1],
-                                    'Comparator %': stat.avg[1],
+                                    'Comparator Percent': stat.avg[1],
                                     'Std. Diff Of Mean': stat.stdDiff,
                                 };
-                            });
+                            }, []);
                             CsvUtils.saveAsCsv(exprt);
                         },
                     });
