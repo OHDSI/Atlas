@@ -275,7 +275,7 @@ define(
                 title: 'Time At Risk Start',
                 render: (s, p, d) => {
                     if (d.createStudyPopArgs != null) {
-                        return d.createStudyPopArgs.riskWindowStart() + "d from<br/>" + constants.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToStart()).name;
+                        return d.createStudyPopArgs.riskWindowStart() + "d from<br/>" + consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToStart()).name;
                     } else {
                         return '';
                     }
@@ -285,7 +285,7 @@ define(
               title: 'Time At Risk End',
               render: (s, p, d) => {
                     if (d.createStudyPopArgs != null) {
-                        return d.createStudyPopArgs.riskWindowEnd() + "d from<br/>" + constants.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToEnd()).name;
+                        return d.createStudyPopArgs.riskWindowEnd() + "d from<br/>" + consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToEnd()).name;
                     } else {
                         return '';
                     }

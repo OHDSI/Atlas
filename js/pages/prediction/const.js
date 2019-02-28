@@ -220,13 +220,13 @@ define(
         {
             title: 'Risk Window Start',
             render: (s, p, d) => {
-                return d.riskWindowStart().toString() + 'd from<br/>' + constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
+                return d.riskWindowStart().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
             },
         },
         {
             title: 'Risk Window End',
             render: (s, p, d) => {
-                return d.riskWindowEnd().toString() + 'd from<br/>' + constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
+                return d.riskWindowEnd().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
             },
         },
         {
