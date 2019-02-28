@@ -6,7 +6,7 @@ define([
 	'assets/ohdsi.util',
 	'appConfig',
 	'./const',
-	'atlas-state',	
+	'atlas-state',
 	'./PermissionService',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
@@ -20,7 +20,9 @@ define([
     'components/tabs',
 	'./components/cca-specification-view-edit',
 	'./components/cca-utilities',
+	'./components/cca-executions',
 	'less!./cca-manager.less',
+	'databindings',
 ], function (
 	ko, 
 	view, 
@@ -43,8 +45,8 @@ define([
 	class ComparativeCohortAnalysisManager extends Page {
 		constructor(params) {
 			super(params);
-			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysis;			
-			
+			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysis;
+
 			this.selectTab = this.selectTab.bind(this);
 			this.defaultLoadingMessage = "Loading...";
 			this.estimationType = 'ComparativeCohortAnalysis';
@@ -62,7 +64,7 @@ define([
 			this.fullSpecification = ko.observable(null);
 			this.isExporting = ko.observable(false);
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
-			this.packageName = ko.observable();
+			this.packageName = ko.observable().extend({alphaNumeric: null});
 			this.selectedTabKey = ko.observable(params.routerParams().section);
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
@@ -96,7 +98,7 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
-			this.isNewEntity = this.isNewEntityResolver();			
+			this.isNewEntity = this.isNewEntityResolver();
 
 			this.populationCaption = ko.computed(() => {
 				if (this.estimationAnalysis()) {
@@ -107,28 +109,28 @@ define([
 					}
 				}
 			});
-			
+
 			this.isNameCorrect = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();
-			});			
+			});
 		}
 
         selectTab(index, { key }) {
 			this.selectedTabKey(key);
             return commonUtils.routeTo('/estimation/cca/' + this.componentParams().estimationId() + '/' + key);
 		}
-		
+
 		isNewEntityResolver() {
 			return ko.computed(() => this.estimationAnalysis() && this.estimationAnalysis().id() < 1);
-		}		
+		}
 
 		async delete() {
 			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			const analysis = await EstimationService.deleteEstimation(this.selectedAnalysisId());
-			
+
 			this.loading(true);
 			this.estimationAnalysis(null);
 			this.selectedAnalysisId(null);
@@ -257,7 +259,7 @@ define([
 				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
-			});	
+			});
 		}
 
 		loadAnalysisFromServer() {
@@ -362,12 +364,12 @@ define([
 
 		setCohortMethodAnalysisList() {
 			this.cohortMethodAnalysisList = this.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList;
-		}		
+		}
 
 		resetDirtyFlag() {
-			this.dirtyFlag(new ohdsiUtil.dirtyFlag({analysis: this.estimationAnalysis(), comparisons: this.comparisons}));				
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag({analysis: this.estimationAnalysis(), comparisons: this.comparisons}));
 		}
-		
+
 		newAnalysis() {
 			this.loading(true);
 			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: 'New Population Level Estimation Analysis'}, this.estimationType, this.defaultCovariateSettings()));

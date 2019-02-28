@@ -36,5 +36,17 @@ define([
 		static isPermittedExport(id) {
 			return AuthAPI.isPermitted(`prediction:${id}:export:get`);
 		}
+
+		static isPermittedGenerate(sourceKey, id) {
+			return AuthAPI.isPermitted(`prediction:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
+		}
+
+		static isPermittedListGenerations(id) {
+			return AuthAPI.isPermitted(`prediction:${id}:generation:get`);
+		}
+
+		static isPermittedViewResults(id) {
+			return AuthAPI.isPermitted(`prediction:generation:${id}:result:get`);
+		}
 	}
 });

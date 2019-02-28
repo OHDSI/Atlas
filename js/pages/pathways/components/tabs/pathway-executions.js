@@ -13,6 +13,7 @@ define([
 	'utils/DatatableUtils',
 	'services/Source',
 	'lodash',
+  'services/JobDetailsService',
 	'services/Poll',
 	'less!./pathway-executions.less',
 	'components/modal-exit-message',
@@ -31,6 +32,7 @@ define([
 	datatableUtils,
 	SourceService,
 	lodash,
+  jobDetailsService,
 	PollService
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
@@ -197,7 +199,10 @@ define([
 
 			confirmPromise
 				.then(() => PathwayService.generate(this.analysisId(), source))
-				.then(() => this.loadData())
+        .then((data) => {
+          jobDetailsService.createJob(data);
+          this.loadData()
+        })
 				.catch(() => {});
 		}
 

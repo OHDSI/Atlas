@@ -11,6 +11,7 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
+	'utils/ExecutionUtils',
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
@@ -32,6 +33,7 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
+	ExecutionUtils,
 	SourceService,
 	lodash,
 	jobDetailsService,
@@ -45,7 +47,7 @@ define([
 
 			this.characterizationId = params.characterizationId;
 			this.designDirtyFlag = params.designDirtyFlag;
-			const currentHash = ko.computed(() => params.design() ? params.design().hash : 0);
+			this.currentHash = ko.computed(() => params.design() ? params.design().hashCode : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
@@ -71,7 +73,7 @@ define([
 					render: (s, p, d) => {
 						return (
 							PermissionService.isPermittedExportGenerationDesign(d.id) ?
-							`<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}` :
+							`<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${this.currentHash() === d.hashCode ? ' (same as now)' : ''}` :
 							(d.hashCode || '-')
 						);
 					}
@@ -137,20 +139,16 @@ define([
 			return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
 		}
 
-		loadData({
+		async loadData({
 			silently = false
 		} = {}) {
 			!silently && this.loading(true);
 
-			const ccId = this.characterizationId();
+			try {
+				const ccId = this.characterizationId();
+				const allSources = await SourceService.loadSourceList();
+				const executionList = await CharacterizationService.loadCharacterizationExecutionList(ccId);
 
-			Promise.all([
-				SourceService.loadSourceList(),
-				CharacterizationService.loadCharacterizationExecutionList(ccId)
-			]).then(([
-				allSources,
-				executionList
-			]) => {
 				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function(daimon) {
 							return daimon.daimonType == "CDM";
@@ -181,36 +179,26 @@ define([
 						this.ccGenerationStatusOptions.COMPLETED);
 
 				});
+			}finally {
 				this.loading(false);
-			});
+			}
 		}
 
-		generate(source) {
-			let confirmPromise;
-
-			this.stopping({...this.stopping(), [source]: false});
-			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
-			if (!executionGroup) {
-				confirmPromise = new Promise((resolve, reject) => reject());
-			} else {
-				if (executionGroup.status() === this.ccGenerationStatusOptions.STARTED) {
-					confirmPromise = new Promise((resolve, reject) => {
-						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-							resolve();
-						} else {
-							reject();
-						}
-					})
-				} else {
-					confirmPromise = new Promise(res => res());
+		generate(source, lastestDesign) {
+			if(lastestDesign === this.currentHash()) {
+				if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
+					return false;
 				}
 			}
 
-			confirmPromise
+			this.stopping({...this.stopping(), [source]: false});
+			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+
+			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
 				.then((data) => {
 					jobDetailsService.createJob(data);
-					this.loadData()
+					this.loadData();
 				})
 				.catch(() => {});
 		}

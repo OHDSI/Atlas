@@ -1,13 +1,14 @@
 define(
   (require, exports) => {
     const pageTitle = 'Estimation';
-    const ko = require('knockout');  
+    const ko = require('knockout');
     const config = require('appConfig');
     const _ = require('lodash');
-    const constants = require('const');
+    const consts = require('const');
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
+			downloadResults: id => `estimation/generation/${id}/result`,
     };
 
     const paths = {
@@ -15,6 +16,8 @@ define(
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',
     };
+
+		const estimationGenerationStatus = consts.generationStatuses;
 
     const conceptSetCrossReference = {
       targetComparatorOutcome: {
@@ -72,7 +75,7 @@ define(
       }, {
         name: "Remove All",
         id: 'remove all'
-      }],  
+      }],
       trimOptions: [{
         name: "None",
         id: 'none',
@@ -172,7 +175,7 @@ define(
               name: "No",
               id: false
           }],
-      }, 
+      },
       cca: {
         comparisonTableColumns: [
             {
@@ -208,7 +211,7 @@ define(
                     if (d.outcomes().length > 1) {
                         let tooltipText = "";
                         d.outcomes().forEach((element, index) => {
-                        	element = ko.toJS(element); 
+                        	element = ko.toJS(element);
                             if (index > 0) {
                                 tooltipText += ("<span class=\"tooltipitem\">" + element.name + "</span>");
                             }
@@ -379,12 +382,12 @@ define(
             },
             {
                 title: 'Outcome Model',
-                data: d => { 
+                data: d => {
                     return d.cohortMethodAnalysis.fitOutcomeModelArgs.modelType();
                 },
             }
         ],
-        fullAnalysisTableOptions: {        
+        fullAnalysisTableOptions: {
             pageLength: 10,
             lengthMenu: [
                 [10, 25, 50, 100, -1],
@@ -409,13 +412,14 @@ define(
                 'binding': d => d.cohortMethodAnalysis.description(),
             },
             ]
-        }        
+        }
       }
     };
 
     return {
       pageTitle,
       apiPaths,
+      estimationGenerationStatus,
       paths: paths,
       conceptSetCrossReference,
       options,

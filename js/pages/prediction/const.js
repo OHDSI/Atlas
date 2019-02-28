@@ -1,13 +1,14 @@
 define(
   (require, exports) => {
     const pageTitle = 'Prediction';
-    const ko = require('knockout');  
+    const ko = require('knockout');
     const config = require('appConfig');
     const _ = require('lodash');
-    const constants = require('const');
+    const consts = require('const');
 
     const apiPaths = {
       downloadPackage: (id, name) => `prediction/${id}/download?packageName=${name}`,
+			downloadResults: id => `prediction/generation/${id}/result`,
     };
 
     const paths = {
@@ -25,6 +26,8 @@ define(
         },
       },
     };
+
+		const predictionGenerationStatus = consts.generationStatuses;
 
     const defaultNontemporalCovariates = {
       "temporal": false,
@@ -166,7 +169,7 @@ define(
             data: d => d.modelCovarPopTuple.popRiskWindowEnd,
         },
       ],
-      fullAnalysisTableOptions: {        
+      fullAnalysisTableOptions: {
         pageLength: 10,
         lengthMenu: [
             [10, 25, 50, 100, -1],
@@ -385,6 +388,7 @@ define(
       conceptSetCrossReference,
       defaultNontemporalCovariates,
       options,
+      predictionGenerationStatus,
     };
   }
 );

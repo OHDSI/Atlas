@@ -23,7 +23,9 @@ define([
     'components/tabs',
 	'./components/prediction-specification-view-edit',
 	'./components/prediction-utilities',
+	'./components/prediction-executions',
 	'less!./prediction-manager.less',
+	'databindings',
 ], function (
 	ko, 
 	view, 
@@ -48,7 +50,7 @@ define([
 		constructor(params) {
 			super(params);
 			sharedState.predictionAnalysis.analysisPath = constants.paths.analysis;
-			
+
 			this.selectTab = this.selectTab.bind(this);
 			this.selectedTabKey = ko.observable(params.routerParams().section);
 
@@ -66,7 +68,7 @@ define([
 			this.fullAnalysisList = ko.observableArray();
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
-			this.packageName = ko.observable();
+			this.packageName = ko.observable().extend({alphaNumeric: null});
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
             this.isDeleting = ko.observable(false);
@@ -94,7 +96,7 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
-			this.isNewEntity = this.isNewEntityResolver();			
+			this.isNewEntity = this.isNewEntityResolver();
 
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
@@ -104,7 +106,7 @@ define([
 						return 'Patient Level Prediction #' + this.selectedAnalysisId();
 					}
 				}
-			});			
+			});
 
 			this.isNameCorrect = ko.computed(() => {
 				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
@@ -112,7 +114,7 @@ define([
 
 			this.canSave = ko.computed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect();
-			});			
+			});
 		}
 
 		onPageCreated() {
@@ -150,15 +152,15 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.patientLevelPredictionAnalysis()));
 			document.location = constants.paths.browser();
 		}
-		
+
 		isNewEntityResolver() {
 			return ko.computed(() => this.patientLevelPredictionAnalysis() && this.selectedAnalysisId() === '0');
-		}		
+		}
 
 		async delete() {
 			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			const analysis = PredictionService.deletePrediction(this.selectedAnalysisId());
 
