@@ -2,7 +2,7 @@
     <loading data-bind="visible: loading()" params="status: 'Loading generations...'"></loading>
     <div data-bind="visible: !loading()">
         <h2 data-bind="css: classes('title')">
-            Generations
+            Generations <i data-bind="visible: isResultsDownloading, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
         </h2>
         <div data-bind="css: classes('content')">
             <!-- ko foreach: executionGroups -->
