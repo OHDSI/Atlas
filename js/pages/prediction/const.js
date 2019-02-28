@@ -4,6 +4,7 @@ define(
     const ko = require('knockout');  
     const config = require('appConfig');
     const _ = require('lodash');
+    const constants = require('const');
 
     const apiPaths = {
       downloadPackage: (id, name) => `prediction/${id}/download?packageName=${name}`,
@@ -218,8 +219,22 @@ define(
             data: d => d.riskWindowStart().toString(),
         },
         {
+            title: 'Risk Window Start Anchor',
+            render: (s, p, d) => {
+                return constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
+            },
+            visible: false,
+        },
+        {
             title: 'Risk Window End',
             data: d => d.riskWindowEnd().toString(),
+        },
+        {
+            title: 'Risk Window End Anchor',
+            render: (s, p, d) => {
+                return constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
+            },
+            visible: false,
         },
         {
             title: 'Washout Period',
@@ -246,16 +261,6 @@ define(
         {
             title: 'Minimum Time At Risk',
             data: d => d.minTimeAtRisk().toString(),
-        },
-        {
-            title: 'Add Exposure Days To Start',
-            data: d => d.addExposureDaysToStart().toString(),
-            visible: false,
-        },
-        {
-            title: 'Add Exposure Days To End',
-            data: d => d.addExposureDaysToEnd().toString(),
-            visible: false,
         },
       ],
       modelSettingsTableColumns: [
