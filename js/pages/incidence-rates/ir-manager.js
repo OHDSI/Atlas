@@ -364,7 +364,6 @@ define([
 					`incidence-rate-${this.selectedAnalysisId()}.zip`);
 			}catch (e) {
 				alert(exceptionUtils.translateException(e));
-			}
 			}finally {
 				this.exporting(false);
 			}
