@@ -45,20 +45,33 @@ define([
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
+                    const name = this.extractMeaningfulCovName(d);
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
-                          html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
+                          html = name + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
                             return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
                           }).join('&nbsp;&bull;&nbsp;') + '</div>';
                         } else {
-                            html = d + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
+                            html = name + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
                         }
                     } else {
-                        html = d;
+                        html = name;
                     }
                     return html;
                  },
             };
+        }
+
+        extractMeaningfulCovName(fullName) {
+            let nameParts = fullName.split(":");
+            if (nameParts.length < 2) {
+                nameParts = fullName.split("=");
+            }
+            if (nameParts.length !== 2) {
+                return fullName;
+            } else {
+                return nameParts[1];
+            }
         }
 
         calcStdDiff(cohorts, stat) {
