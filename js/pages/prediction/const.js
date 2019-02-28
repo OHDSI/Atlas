@@ -216,29 +216,19 @@ define(
         },
         {
             title: 'Risk Window Start',
-            data: d => d.riskWindowStart().toString(),
-        },
-        {
-            title: 'Risk Window Start Anchor',
             render: (s, p, d) => {
-                return constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
+                return d.riskWindowStart().toString() + 'd from<br/>' + constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
             },
-            visible: false,
         },
         {
             title: 'Risk Window End',
-            data: d => d.riskWindowEnd().toString(),
-        },
-        {
-            title: 'Risk Window End Anchor',
             render: (s, p, d) => {
-                return constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
+                return d.riskWindowEnd().toString() + 'd from<br/>' + constants.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
             },
-            visible: false,
         },
         {
             title: 'Washout Period',
-            data: d => d.washoutPeriod().toString(),
+            data: d => d.washoutPeriod().toString() + 'd',
         },
         {
             title: 'Include All Outcomes',
@@ -250,7 +240,7 @@ define(
         },
         {
             title: 'Prior Outcome Lookback',
-            data: d => d.priorOutcomeLookback().toString(),
+            data: d => d.priorOutcomeLookback().toString() + 'd',
             visible: false,
         },
         {
@@ -260,7 +250,7 @@ define(
         },
         {
             title: 'Minimum Time At Risk',
-            data: d => d.minTimeAtRisk().toString(),
+            data: d => d.minTimeAtRisk().toString() + 'd',
         },
       ],
       modelSettingsTableColumns: [
