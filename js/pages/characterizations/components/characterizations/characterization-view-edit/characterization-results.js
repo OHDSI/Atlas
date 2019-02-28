@@ -5,6 +5,7 @@ define([
     'pages/characterizations/services/conversion/PrevalenceStatConverter',
     'pages/characterizations/services/conversion/DistributionStatConverter',
     'pages/characterizations/services/conversion/ComparativeDistributionStatConverter',
+	'pages/characterizations/utils',
     'text!./characterization-results.html',
     'appConfig',
     'services/AuthAPI',
@@ -34,6 +35,7 @@ define([
     PrevalenceStatConverter,
     DistributionStatConverter,
     ComparativeDistributionStatConverter,
+    pageUtils,
     view,
     config,
     authApi,
@@ -142,6 +144,7 @@ define([
                                 'Cohort name': cohort.cohortName,
                                 'Covariate ID': stat.covariateId,
                                 'Covariate name': stat.covariateName,
+                                'Covariate short name': pageUtils.extractMeaningfulCovName(stat.covariateName),
                                 'Count': stat.count[strataId][cohort.cohortId],
                                 ...(
                                     type === 'prevalence'
@@ -181,6 +184,7 @@ define([
                         'Comparator cohort name': analysis.cohorts[1].cohortName,
                         'Covariate ID': stat.covariateId,
                         'Covariate name': stat.covariateName,
+                        'Covariate short name': pageUtils.extractMeaningfulCovName(stat.covariateName),
                         'Target count': stat.count[strataId] ? stat.count[strataId][analysis.cohorts[0].cohortId] : '',
                         'Target percent': stat.pct[strataId] ? stat.pct[strataId][analysis.cohorts[0].cohortId] : '',
                         'Comparator count': stat.count[strataId] ? stat.count[strataId][analysis.cohorts[1].cohortId] : '',
