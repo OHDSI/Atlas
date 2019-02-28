@@ -9,7 +9,7 @@ define([
         }
 
         checkValue(val) {
-            return isNaN(val);
+            return !isNaN(val);
         }
 
         parseType(item) {

@@ -19,19 +19,16 @@ define([
     FloatTypeValidator,
     _,
 ) {
-    const typeIdentifier = [{
-      valueType: "integer",
-      typeValidator: new IntegerTypeValidator()
-    }, {
-      valueType: "float",
-      typeValidator: new FloatTypeValidator()
-    }];
+    const typeValidators = {
+      integer: new IntegerTypeValidator(),
+      float: new FloatTypeValidator()
+    };
 
     class MultiInput extends AutoBind(Component) {
       constructor(params) {
         super(params);
-        this.selectedValueType = typeIdentifier.find(f => f.valueType === params.selectedValueType);
-        this.typeValidator = this.selectedValueType.typeValidator;
+
+        this.typeValidator = typeValidators[params.selectedValueType];
         this.selectedValues = params.selectedValues;
         this.itemToAdd = ko.observable("").extend(this.typeValidator.extender);
         this.defaultValues = params.defaultValues;
@@ -44,7 +41,7 @@ define([
           return (this.defaultValues && this.defaultValues.length > 0);
         });
         this.enableAdd = ko.pureComputed(() => {
-         return (this.itemToAdd() !== null && this.itemToAdd().toString().length > 0 && !this.typeValidator.checkValue(this.typeValidator.parseType(this.itemToAdd())));
+         return (this.itemToAdd() !== null && this.itemToAdd().toString().length > 0 && this.typeValidator.checkValue(this.typeValidator.parseType(this.itemToAdd())));
         });
         this.enableDefaults = ko.pureComputed(() => {
           return (this.selectedValues && this.hasDefaults() && !(_.isEqual(_.sortBy(this.selectedValues()), _.sortBy(this.defaultValues))));

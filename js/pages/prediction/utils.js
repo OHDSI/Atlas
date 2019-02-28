@@ -8,18 +8,16 @@ define(
     }
 
     function getDefaultModelSettingDescription(defaultModelSettings, settingName) {
-        const settingList = defaultModelSettings.filter(item => item.setting === settingName);
-        return settingList[0].description + " (default = " + settingList[0].defaultValue + "):";
+        const setting = defaultModelSettings.find(item => item.setting === settingName);
+        return setting.description + " (default = " + setting.defaultValue + "):";
     }
 
     function getDefaultModelSettingValue(defaultModelSettings, settingName) {
-        const settingList = defaultModelSettings.filter(item => item.setting === settingName);
-        return settingList[0].defaultValue;
+        return defaultModelSettings.find(item => item.setting === settingName).defaultValue;
     }
 
     function getDefaultModelSettingName(defaultModelSettings, settingName) {
-        const settingList = defaultModelSettings.filter(item => item.setting === settingName);
-        return settingList[0].name;
+        return defaultModelSettings.find(item => item.setting === settingName).name;
     }
 
     function getDefaultModelSettingsValueList(modelName) {
