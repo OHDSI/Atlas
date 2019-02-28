@@ -76,10 +76,13 @@ define([
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
 						return (d.status === this.predictionStatusGenerationOptions.COMPLETED || d.status === this.predictionStatusGenerationOptions.FAILED) && this.isResultsViewPermitted(d.id) && d.numResultFiles > 0 ?
-							`<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.downloadResults.bind(null, id)"><i class="prediction-generation__action-ico fa fa-download"></i> Download ${d.numResultFiles} files</a>` : '-';
+							`<a href='#' data-bind="ifnot: $component.isDownloadInProgress(id), css: $component.classes('reports-link'), click: $component.downloadResults.bind($component, id)"><i class="prediction-generation__action-ico fa fa-download"></i> Download ${d.numResultFiles} files</a><span data-bind="if: $component.isDownloadInProgress(id)"><i class="prediction-generation__action-ico fa fa-spinner fa-spin"></i> Downloading ${d.numResultFiles} files...</span>`
+							: '-';
 					}
 				},
 			];
+			this.downloading = ko.observableArray([]);
+			this.isResultsDownloading = ko.computed(() => this.downloading().length > 0);
 			this.executionGroups = ko.observableArray([]);
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
@@ -91,6 +94,10 @@ define([
 
 		dispose() {
 			PollService.stop(this.intervalId);
+		}
+
+		isDownloadInProgress(id) {
+			return ko.computed(() => this.downloading.indexOf(id) > -1);
 		}
 
 		isGeneratePermitted(sourceKey) {
@@ -176,8 +183,13 @@ define([
 			this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
 		}
 
-		downloadResults(generationId) {
-			FileService.loadZip(config.webAPIRoot + consts.apiPaths.downloadResults(generationId), `prediction-analysis-results-${generationId}.zip`);
+		async downloadResults(generationId) {
+			this.downloading.push(generationId);
+			try {
+				await FileService.loadZip(config.webAPIRoot + consts.apiPaths.downloadResults(generationId), `prediction-analysis-results-${generationId}.zip`);
+			} finally {
+				this.downloading.remove(generationId);
+			}
 		}
 
 		showExitMessage(sourceKey, id) {
