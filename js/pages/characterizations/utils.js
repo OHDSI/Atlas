@@ -23,7 +23,20 @@ define([
 
 	}
 
+	function extractMeaningfulCovName(fullName) {
+		let nameParts = fullName.split(":");
+		if (nameParts.length < 2) {
+			nameParts = fullName.split("=");
+		}
+		if (nameParts.length !== 2) {
+			return fullName;
+		} else {
+			return nameParts[1];
+		}
+	}
+
 	return {
 		conceptSetSelectionHandler,
+		extractMeaningfulCovName,
 	};
 });

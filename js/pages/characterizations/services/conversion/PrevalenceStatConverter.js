@@ -1,9 +1,11 @@
 define([
     './BaseStatConverter',
 	'./PrevalenceStat',
+	'../../utils'
 ], function (
     BaseStatConverter,
-	PrevalenceStat
+	PrevalenceStat,
+	utils
 ) {
 
     class PrevalenceStatConverter extends BaseStatConverter {
@@ -45,7 +47,7 @@ define([
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
-                    const name = this.extractMeaningfulCovName(d);
+                    const name = utils.extractMeaningfulCovName(d);
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
                           html = name + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
@@ -60,18 +62,6 @@ define([
                     return html;
                  },
             };
-        }
-
-        extractMeaningfulCovName(fullName) {
-            let nameParts = fullName.split(":");
-            if (nameParts.length < 2) {
-                nameParts = fullName.split("=");
-            }
-            if (nameParts.length !== 2) {
-                return fullName;
-            } else {
-                return nameParts[1];
-            }
         }
 
         calcStdDiff(cohorts, stat) {
