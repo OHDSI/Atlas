@@ -2,6 +2,9 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/FeatureAnalysisService',
+    'pages/characterizations/services/conversion/PrevalenceStatConverter',
+    'pages/characterizations/services/conversion/DistributionStatConverter',
+    'pages/characterizations/services/conversion/ComparativeDistributionStatConverter',
     'text!./characterization-results.html',
     'appConfig',
     'services/AuthAPI',
@@ -28,6 +31,9 @@ define([
     ko,
     CharacterizationService,
     FeatureAnalysisService,
+    PrevalenceStatConverter,
+    DistributionStatConverter,
+    ComparativeDistributionStatConverter,
     view,
     config,
     authApi,
@@ -47,110 +53,12 @@ define([
 
     class CharacterizationViewEditResults extends AutoBind(Component) {
 
-        get distributionColumns() {
-            return [
-                {
-                    title: 'Covariate',
-                    data: 'covariateName',
-                    className: this.classes('col-distr-title'),
-                },
-                {
-                    title: 'Count',
-                    data: 'count',
-                    className: this.classes('col-distr-count'),
-                },
-                {
-                    title: 'Avg',
-                    data: 'avg',
-                    className: this.classes('col-dist-avg'),
-                },
-                {
-                    title: 'Std Dev',
-                    data: 'stdDev',
-                    className: this.classes('col-dist-std-dev'),
-                },
-                {
-                    title: 'Min',
-                    data: 'min',
-                    className: this.classes('col-dist-min'),
-                },
-                {
-                    title: 'P10',
-                    data: 'p10',
-                    className: this.classes('col-dist-p10'),
-                },
-                {
-                    title: 'P25',
-                    data: 'p25',
-                    className: this.classes('col-dist-p25'),
-                },
-                {
-                    title: 'Median',
-                    data: 'median',
-                    className: this.classes('col-dist-median'),
-                },
-                {
-                    title: 'P75',
-                    data: 'p75',
-                    className: this.classes('col-dist-p75'),
-                },
-                {
-                    title: 'P90',
-                    data: 'p90',
-                    className: this.classes('col-dist-p90'),
-                },
-                {
-                    title: 'Max',
-                    data: 'max',
-                    className: this.classes('col-dist-max'),
-                },
-            ];
-        }
-
-        get covNameColumn() {
-            return {
-                title: 'Covariate',
-                data: 'covariateName',
-                className: this.classes('col-prev-title'),
-                render: (d, t, r) => {
-                    const analysis = this.analysisList().find(a => a.analysisId === r.analysisId);
-                    let html;
-                    if (analysis && analysis.analysisId && analysis.type === 'prevalence' && analysis.domainId !== 'DEMOGRAPHICS') {
-                        if (r.cohorts.length > 1) {
-                          html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + r.cohorts.map((c, idx) => {
-                            const data = {...r, cohortId: c.cohortId, cohortName: c.cohortName};
-                            return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
-                          }).join('&nbsp;&bull;&nbsp;') + '</div>';
-                        } else {
-                            html = d + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
-                        }
-                    } else {
-                        html = d;
-                    }
-                    return html;
-                 },
-            };
-        }
-
-        get strataNameColumn() {
-            return {
-              title: 'Strata',
-              data: 'strataName',
-              className: this.classes('col-distr-title'),
-            };
-        }
-
-        get stdDiffColumn() {
-            return {
-              title: 'Std diff',
-              render: (s, p, d) => d.stdDiff,
-              className: this.classes('col-dist-std-diff'),
-              type: 'numberAbs'
-            };
-        }
-
         constructor(params) {
             super();
+
+            this.prevalenceStatConverter = new PrevalenceStatConverter(this.classes);
+            this.distributionStatConverter = new DistributionStatConverter(this.classes);
+            this.comparativeDistributionStatConverter = new ComparativeDistributionStatConverter(this.classes);
 
             this.loading = ko.observable(false);
             this.characterizationId = params.characterizationId;
@@ -179,92 +87,19 @@ define([
             this.loadData();
         }
 
-        getButtonsConfig(type, data, analysis) {
+        getButtonsConfig(type, analysis) {
             const buttons = [];
-            if (type === 'prevalence') {
+
+            buttons.push({
+                text: 'Export',
+                action: ()  => this.exportTable(analysis, type)
+            });
+
+            if (analysis.cohorts.length === 2) {
                 buttons.push({
-                    text: 'Export prevalence to csv',
-                    action: ()  => {
-                        const exprt = data.reports.map((report) => {
-                            const lines = report.stats.reduce((rAggr, stat) => {
-                                const csvLine = {
-                                    'Analysis ID ': data.analysisId,
-                                    'Analysis name': data.analysisName,  
-                                    'Strata ID': stat.strataId,
-                                    'Strata name': stat.strataName,
-                                    'Cohort ID': report.cohortId,
-                                    'Cohort name': report.cohortName,
-                                    'Covariate ID': stat.covariateId,
-                                    'Covariate name': stat.covariateName,
-                                    'Count': stat.sumValue,
-                                    'Percent': stat.pct,
-                                };
-    
-                                rAggr.push(csvLine);
-                                return rAggr;
-                            }, []);
-    
-                            return [ ...aggr, ...lines ];
-                        }, []);
-                        CsvUtils.saveAsCsv(exprt);
-                    },
-                });                
-            } else {
-                if (data.reports && data.reports.length === 2) {
-                    buttons.push({
-                        text: 'Export comparison',
-                        action: () => {
-                            const exprt = data.data.map(stat => {
-                                return {
-                                    'Analysis ID': data.analysisId,
-                                    'Analysis name': data.analysisName,
-                                    'Strata ID': stat.strataId,
-                                    'Strata name': stat.strataName,
-                                    'Target cohort ID': data.reports[0].cohortId ? data.reports[0].cohortId : '',
-                                    'Target cohort name': data.reports[0].cohortName ? data.reports[0].cohortName : '',
-                                    'Comparator cohort ID': data.reports[1].cohortId ? data.reports[1].cohortId : '',
-                                    'Comparator cohort name': data.reports[1].cohortName ? data.reports[1].cohortName : '',
-                                    'Covariate ID': stat.covariateId,
-                                    'Covariate name': stat.covariateName,
-                                    'Target count': stat.count[0],
-                                    'Target %': stat.avg[0],
-                                    'Comparator count': stat.count[1],
-                                    'Comparator %': stat.avg[1],
-                                    'Std. Diff Of Mean': stat.stdDiff,
-                                };
-                            });
-                            CsvUtils.saveAsCsv(exprt);
-                        },
-                    });
-                } else {
-                    buttons.push({
-                        text: 'Export distribution to csv',
-                        action: ()  => {
-                            const exprt = data.data.map((stat) => {
-                                return {
-                                    'Analysis ID ': analysis.analysisId,
-                                    'Analysis name': analysis.analysisName,  
-                                    'Strata ID': stat.strataId,
-                                    'Strata name': stat.strataName,
-                                    'Cohort ID': data.cohortId,
-                                    'Cohort name': data.cohortName,
-                                    'Covariate ID': stat.covariateId,
-                                    'Covariate name': stat.covariateName,
-                                    'Max': stat.max,
-                                    'Min': stat.min,
-                                    'Median': stat.median,
-                                    'P10': stat.p10,
-                                    'P25': stat.p25,
-                                    'P75': stat.p75,
-                                    'P90': stat.p90,
-                                    'StdDev': stat.stdDev,
-                                    'Count': stat.count,                                    
-                                };        
-                            });
-                            CsvUtils.saveAsCsv(exprt);
-                        },
-                    });                
-                }
+                    text: 'Export comparison',
+                    action: () => this.exportComparison(analysis),
+                });
             }
 
             return buttons;
@@ -292,18 +127,70 @@ define([
           this.isExplorePrevalenceShown(true);
         }
 
-        getCountColumn(strata, idx) {
-            return {
-                title: 'Count',
-                render: (s, p, d) => numeral(d.sumValue[strata] && d.sumValue[strata][idx] || 0).format(),
-            };
+        exportTable(analysis, type) {
+            const exprt = [];
+            analysis.data.forEach(stat => {
+                for (let strataId of analysis.strataNames.keys()) {
+                    for (let cohort of analysis.cohorts) {
+                        if (stat.count[strataId] && stat.count[strataId][cohort.cohortId]) {
+                            exprt.push({
+                                'Analysis ID ': stat.analysisId || analysis.analysisId,
+                                'Analysis name': stat.analysisName || analysis.analysisName,
+                                'Strata ID': stat.strataId || strataId,
+                                'Strata name': stat.strataName || analysis.strataNames.get(strataId),
+                                'Cohort ID': cohort.cohortId,
+                                'Cohort name': cohort.cohortName,
+                                'Covariate ID': stat.covariateId,
+                                'Covariate name': stat.covariateName,
+                                'Count': stat.count[strataId][cohort.cohortId],
+                                ...(
+                                    type === 'prevalence'
+                                    ? { 'Percent': stat.pct[strataId][cohort.cohortId] }
+                                    : {
+                                        'Min': stat.min[strataId][cohort.cohortId],
+                                        'P10': stat.p10[strataId][cohort.cohortId],
+                                        'P25': stat.p25[strataId][cohort.cohortId],
+                                        'Avg': stat.avg[strataId][cohort.cohortId],
+                                        'Median': stat.median[strataId][cohort.cohortId],
+                                        'P75': stat.p75[strataId][cohort.cohortId],
+                                        'P90': stat.p90[strataId][cohort.cohortId],
+                                        'Max': stat.max[strataId][cohort.cohortId],
+                                        'StdDev': stat.stdDev[strataId][cohort.cohortId],
+                                        'Count': stat.count[strataId][cohort.cohortId],
+                                    }
+                                )
+                            });
+                        }
+                    }
+                }
+            });
+            CsvUtils.saveAsCsv(exprt);
         }
 
-        getPctColumn(strata, idx) {
-            return {
-                title: 'Pct',
-                render: (s, p, d) => utils.formatPct(d.pct[strata] && d.pct[strata][idx] || 0),
-            };
+        exportComparison(analysis) {
+            const exprt = [];
+            analysis.data.forEach(stat => {
+                for (let strataId of analysis.strataNames.keys()) {
+                    exprt.push({
+                        'Analysis ID': stat.analysisId || analysis.analysisId,
+                        'Analysis name': stat.analysisName || analysis.analysisName,
+                        'Strata ID': stat.strataId || strataId,
+                        'Strata name': stat.strataName || analysis.strataNames.get(strataId),
+                        'Target cohort ID': analysis.cohorts[0].cohortId,
+                        'Target cohort name': analysis.cohorts[0].cohortName,
+                        'Comparator cohort ID': analysis.cohorts[1].cohortId,
+                        'Comparator cohort name': analysis.cohorts[1].cohortName,
+                        'Covariate ID': stat.covariateId,
+                        'Covariate name': stat.covariateName,
+                        'Target count': stat.count[strataId] ? stat.count[strataId][analysis.cohorts[0].cohortId] : '',
+                        'Target percent': stat.pct[strataId] ? stat.pct[strataId][analysis.cohorts[0].cohortId] : '',
+                        'Comparator count': stat.count[strataId] ? stat.count[strataId][analysis.cohorts[1].cohortId] : '',
+                        'Comparator percent': stat.pct[strataId] ? stat.pct[strataId][analysis.cohorts[1].cohortId] : '',
+                        'Std. Diff Of Mean': stat.stdDiff,
+                    });
+                }
+            });
+            CsvUtils.saveAsCsv(exprt);
         }
 
         loadData() {
@@ -367,7 +254,7 @@ define([
                         covariateName: r.covariateName,
                         conceptId: r.conceptId,
                         avg: r.avg,
-                        ...(r.resultType.toLowerCase() === 'prevalence' ? {sumValue: r.count} : {count: r.count }),
+                        count: r.count,
                         pct: r.avg * 100,
                         min: r.min,
                         p10: r.p10,
@@ -486,18 +373,13 @@ define([
             const convertedData = filteredData.map(analysis => {
                 let convertedAnalysis;
 
-                const stats = analysis.reports.flatMap(r => r.stats);
-                const stratifiedCnt = stats.filter(stat => stat.strataId > 0).length;
-                analysis.stratified = stratifiedCnt > 0;
-                analysis.strataOnly = stratifiedCnt === stats.length;
-
                 if (analysis.type === 'prevalence') {
-                    convertedAnalysis = this.convertPrevalenceAnalysis(analysis);
+                    convertedAnalysis = this.prevalenceStatConverter.convertAnalysisToTabularData(analysis);
                 } else {
                     if (this.isComparatativeMode(filters)) {
-                        convertedAnalysis = this.convertDistributionComparativeAnalysis(analysis);
+                        convertedAnalysis = this.comparativeDistributionStatConverter.convertAnalysisToTabularData(analysis);
                     } else {
-                        convertedAnalysis = this.convertDistributionAnalysis(analysis);
+                        convertedAnalysis = this.distributionStatConverter.convertAnalysisToTabularData(analysis);
                     }
                 }
                 return convertedAnalysis;
@@ -532,238 +414,35 @@ define([
 
         convertScatterplotData(analysis) {
             const seriesData = lodash.groupBy(analysis.data, 'analysisName');
+            const firstCohortId = analysis.cohorts[0].cohortId;
+            const secondCohortId = analysis.cohorts[1].cohortId;
             return Object.keys(seriesData).map(key => ({
                 name: key,
-                values: seriesData[key].filter(rd => rd.pct[0][0] && rd.pct[0][1]).map(rd => ({
+                values: seriesData[key].filter(rd => rd.pct[0][firstCohortId] && rd.pct[0][secondCohortId]).map(rd => ({
                     covariateName: rd.covariateName,
-                    xValue: rd.pct[0][0] || 0,
-                    yValue: rd.pct[0][1] || 0
+                    xValue: rd.pct[0][firstCohortId] || 0,
+                    yValue: rd.pct[0][secondCohortId] || 0
                 })),
             }));
         }
 
         convertBoxplotData(analysis) {
 
-            const getBoxplotStruct = r => ({
-                Category: r.cohortName,
-                min: r.stats[0].min,
-                max: r.stats[0].max,
-                median: r.stats[0].median,
-                LIF: r.stats[0].p10,
-                q1: r.stats[0].p25,
-                q3: r.stats[0].p75,
-                UIF: r.stats[0].p90
+            const getBoxplotStruct = (cohort, stat) => ({
+                Category: cohort.cohortName,
+                min: stat.min[0][cohort.cohortId],
+                max: stat.max[0][cohort.cohortId],
+                median: stat.median[0][cohort.cohortId],
+                LIF: stat.p10[0][cohort.cohortId],
+                q1: stat.p25[0][cohort.cohortId],
+                q3: stat.p75[0][cohort.cohortId],
+                UIF: stat.p90[0][cohort.cohortId]
             });
 
             return [{
-                target: getBoxplotStruct(analysis.reports[0]),
-                compare: getBoxplotStruct(analysis.reports[1]),
+                target: getBoxplotStruct(analysis.cohorts[0], analysis.data[0]),
+                compare: getBoxplotStruct(analysis.cohorts[1],  analysis.data[0]),
             }]
-        }
-
-        convertPrevalenceAnalysis(analysis) {
-            let columns = [ this.covNameColumn ];
-
-            const data = new Map();
-
-            const strataNames = new Map();
-
-            const cohortIds = analysis.reports.map(r => r.cohortId).sort();
-
-            function PrevalenceStat(rd = {}) {
-                this.analysisName = rd.analysisName || analysis.analysisName;
-                this.analysisId = analysis.analysisId;
-                this.covariateId = rd.covariateId;
-                this.covariateName = rd.covariateName;
-                this.domainId = rd.domainId;
-                this.cohorts = [];
-                this.sumValue = {};
-                this.pct = {};
-            }
-
-            const mapCovariate = (data, report) => (rd) => {
-                let cov;
-                if (!data.has(rd.covariateId)) {
-                    cov = new PrevalenceStat(rd);
-                    data.set(rd.covariateId, cov);
-                } else {
-                    cov = data.get(rd.covariateId);
-                }
-
-                if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
-                  cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
-                }
-
-                const colIdx = cohortIds.indexOf(report.cohortId);
-                if (cov.sumValue[rd.strataId] === undefined) {
-                    cov.sumValue[rd.strataId] = [];
-                }
-                cov.sumValue[rd.strataId][colIdx] = rd.sumValue;
-                if (cov.pct[rd.strataId] === undefined) {
-                    cov.pct[rd.strataId] = [];
-                }
-                cov.pct[rd.strataId][colIdx] = rd.pct;
-                if (rd.strataId > 0 && !strataNames.has(rd.strataId)) {
-                    strataNames.set(rd.strataId, rd.strataName);
-                }
-            };
-
-            analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data, r)));
-            analysis.reports.forEach((r, i) => {
-              const colIdx = cohortIds.indexOf(r.cohortId);
-              if (!analysis.strataOnly) {
-                columns.push(this.getCountColumn(0, colIdx));
-                columns.push(this.getPctColumn(0, colIdx));
-              }
-              for(let strataId of strataNames.keys()) {
-                columns.push(this.getCountColumn(strataId, colIdx));
-                columns.push(this.getPctColumn(strataId, colIdx));
-              }
-            });
-
-            analysis.strataOnly = analysis.strataOnly && data.size > 0;
-
-            if (!analysis.strataOnly && analysis.reports.length === 2) {
-                columns.push(this.stdDiffColumn);
-                data.forEach(d => d.stdDiff = utils.formatStdDiff(this.calcStdDiffForPrevelanceCovs(
-                    {sumValue: d.sumValue[0][0], pct: d.pct[0][0]},
-                    {sumValue: d.sumValue[0][1], pct: d.pct[0][1]}
-                )));
-            }
-
-            return {
-                ...analysis,
-                columns: columns,
-                data: Array.from(data.values()),
-                strataNames: Array.from(strataNames.values()),
-            };
-        }
-
-        convertDistributionComparativeAnalysis(analysis) {
-            let columns = [];
-            if (analysis.stratified) {
-                columns.push(this.strataNameColumn)
-            }
-            columns.push({
-                    title: 'Covariate',
-                    data: 'covariateName',
-                    className: this.classes('col-dist-title'),
-                });
-
-            let data = {};
-
-            analysis.reports.forEach((r, i) => {
-
-                columns.push({
-                    title: 'Count',
-                    render: (s, p, d) => d.count[i],
-                });
-                columns.push({
-                    title: 'Avg',
-                    render: (s, p, d) => this.formatDecimal2(d.avg[i]),
-                });
-                columns.push({
-                    title: 'Std Dev',
-                    render: (s, p, d) => this.formatDecimal2(d.stdDev[i]),
-                });
-                columns.push({
-                    title: 'Median',
-                    render: (s, p, d) => d.median[i],
-                });
-
-                r.stats.forEach(rd => {
-                    const key = rd.covariateName + '_' + rd.strataName;
-                    if (data[key] === undefined) {
-                        data[key] = {
-                            strataId: rd.strataId,
-                            strataName: rd.strataName,
-                            covariateId: rd.covariateId,
-                            covariateName: rd.covariateName,
-                            count: [],
-                            avg: [],
-                            stdDev: [],
-                            median: [],
-                        };
-                    }
-
-                    const cov = data[key];
-
-                    cov.count.push(rd.count);
-                    cov.avg.push(rd.avg);
-                    cov.stdDev.push(rd.stdDev);
-                    cov.median.push(rd.median);
-                });
-            });
-
-            data = Object.values(data);
-
-            if (analysis.reports.length === 2) {
-                columns.push(this.stdDiffColumn);
-                data.forEach(d => d.stdDiff = utils.formatStdDiff(this.calcStdDiffForDistCovs(
-                    analysis.reports[0].stats[0],
-                    analysis.reports[1].stats[0]
-                )));
-            }
-
-            return {
-                ...analysis,
-                columns: columns,
-                data: data,
-            };
-        }
-
-        convertDistributionAnalysis(analysis) {
-
-            const columns = (r) => {
-                if (analysis.stratified) {
-                    return [this.strataNameColumn, ...this.distributionColumns];
-                } else {
-                    return this.distributionColumns;
-                }
-            };
-
-            return {
-                ...analysis,
-                reports: analysis.reports.map(r => ({
-                    ...r,
-                    data: r.stats,
-                    columns: columns(r),
-                })),
-            };
-        }
-
-        calcStdDiffForPrevelanceCovs(cov1, cov2) {
-            const n1 = cov1.sumValue / (cov1.pct / 100);
-            const n2 = cov2.sumValue / (cov2.pct / 100);
-
-            const mean1 = cov1.sumValue / n1;
-            const mean2 = cov2.sumValue / n2;
-
-            const sd1 = Math.sqrt((n1 * cov1.sumValue + cov1.sumValue) / (n1 * n1));
-            const sd2 = Math.sqrt((n2 * cov2.sumValue + cov2.sumValue) / (n2 * n2));
-
-            const sd = Math.sqrt(sd1 * sd1 + sd2 * sd2);
-
-            return (mean2 - mean1) / sd;
-        }
-
-        calcStdDiffForDistCovs(cov1, cov2) {
-            const n1 = cov1.sumValue / (cov1.pct / 100);
-            const n2 = cov2.sumValue / (cov2.pct / 100);
-
-            const mean1 = cov1.avg;
-            const mean2 = cov2.avg;
-
-            const sd1 = cov1.stdDev;
-            const sd2 = cov2.stdDev;
-
-            const sd = Math.sqrt(sd1 * sd1 + sd2 * sd2);
-
-            return (mean2 - mean1) / sd;
-        }
-
-        formatDecimal2(val) {
-          return numeral(val).format('0.00');
         }
 
         analysisTitle(data) {
