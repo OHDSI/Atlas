@@ -1,0 +1,29 @@
+<div data-bind="css: classes()">
+    <div data-bind="if: hasSelectedValues">
+        <table data-bind="css: classes({element: 'table'})" class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr role="row" class="active">
+                    <th data-bind="css: classes({element: 'col-value'}), text: valueLabel"></th>
+                    <th data-bind="css: classes({element: 'col-action'})">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: selectedValues -->
+                <tr>
+                    <td data-bind="text: $data"></td>
+                    <td>
+                        <a href='#' data-bind="click: $parent.deleteItem">Remove</a>
+                    </td>
+                </tr>
+                <!-- /ko -->
+            </tbody>
+        </table>
+    </div>
+    <div class="input-group">
+        <input class="form-control" type="text" data-bind="textInput: itemToAdd, eventListener: [{event: 'keypress', callback: enterPressed}]" />
+        <div class="input-group-btn">
+            <button class="btn btn-primary" data-bind="enable: enableAdd, click: addItem">Add</button>
+            <button class="btn" data-bind="visible: hasDefaults, click: setToDefaults, enable: enableDefaults, css: classes({element: 'btn-set-default', extra: enableDefaults() == true ? 'btn-danger' : ''}), text: defaultText"></button>
+        </div>
+    </div>
+</div>

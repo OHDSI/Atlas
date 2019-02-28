@@ -1,11 +1,15 @@
 define([
 	'knockout', 
 	'components/Component',
-	'../../../utils'
+    '../../../utils',
+    '../../../const',
+	'components/multi-select',
+	'components/multi-input/multi-input',
 ], function (
 	ko, 
 	Component,
-	utils,
+    utils,
+    constants
 ) {
 	class ModelSettingsEditorComponent extends Component {
 		constructor(params) {
@@ -13,6 +17,11 @@ define([
             this.modelSettings = params.modelSettings[this.constructor.name];
             this.defaultModelSettings = utils.getDefaultModelSettings(this.constructor.name);
             this.utils = utils;
+            this.constants = constants;
+            this.options = constants.options;
+            this.trueFalseOptions = ko.observable(this.options.trueFalseOptions);
+            this.classWeightOptions = ko.observable(this.options.classWeightOptions);
+            this.extenders = constants.extenders;
             this.subscriptions = params.subscriptions;
         }
 

@@ -379,6 +379,8 @@ define(
         name: 'person',
         desc: 'Person',
       }],
+      trueFalseOptions: [{label: "true", value: true}, {label: "false", value: false}],
+      classWeightOptions: [{label: "None", value: 'None'},{label: "Balanced", value: 'Balanced'}],
     };
 
     return {

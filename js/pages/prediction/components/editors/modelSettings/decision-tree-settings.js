@@ -3,7 +3,8 @@ define([
 	'text!./decision-tree-settings.html',
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
-	'utils/DataTypeConverterUtils'
+	'utils/DataTypeConverterUtils',
+	'less!./decision-tree-settings.less',
 ], function (
 	ko, 
 	view, 
@@ -11,50 +12,48 @@ define([
 	commonUtils,
 	dataTypeConverterUtils
 ) {
+	const settings = {
+		maxDepth: 'maxDepth',
+		minSamplesSplit: 'minSamplesSplit',
+		minSamplesLeaf: 'minSamplesLeaf',
+		minImpurityDecrease: 'minImpurityDecrease',
+		classWeight: 'classWeight',
+	};
+
 	class DecisionTreeSettings extends ModelSettingsEditorComponent {
 		constructor(params) {
 			super(params);
 
 			this.maxDepth = {
-				name: 'maxDepth',
-				value: ko.observable(this.modelSettings.maxDepth() && this.modelSettings.maxDepth().length > 0 ? this.modelSettings.maxDepth().join() : ''),
+				name: settings.maxDepth,
+				value: this.modelSettings.maxDepth,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.maxDepth),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.maxDepth),
 			};
 			this.minSamplesSplit = {
-				name: 'minSamplesSplit',
-				value: ko.observable(this.modelSettings.minSamplesSplit() && this.modelSettings.minSamplesSplit().length > 0 ? this.modelSettings.minSamplesSplit().join() : ''),
+				name: settings.minSamplesSplit,
+				value: this.modelSettings.minSamplesSplit,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.minSamplesSplit),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.minSamplesSplit),
 			};
 			this.minSamplesLeaf = {
-				name: 'minSamplesLeaf',
-				value: ko.observable(this.modelSettings.minSamplesLeaf() && this.modelSettings.minSamplesLeaf().length > 0 ? this.modelSettings.minSamplesLeaf().join() : ''),
+				name: settings.minSamplesLeaf,
+				value: this.modelSettings.minSamplesLeaf,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.minSamplesLeaf),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.minSamplesLeaf),
 			};
 			this.minImpurityDecrease = {
-				name: 'minImpurityDecrease',
-				value: ko.observable(this.modelSettings.minImpurityDecrease() && this.modelSettings.minImpurityDecrease().length > 0 ? this.modelSettings.minImpurityDecrease().join() : ''),
+				name: settings.minImpurityDecrease,
+				value: this.modelSettings.minImpurityDecrease,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.minImpurityDecrease),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.minImpurityDecrease),
 			};
 			this.classWeight = {
-				name: 'classWeight',
+				name: settings.classWeight,
 				value: this.modelSettings.classWeight,
+				valueLabel: this.utils.getDefaultModelSettingName(this.defaultModelSettings, settings.classWeight),
+				default: this.utils.getDefaultModelSettingValue(this.defaultModelSettings, settings.classWeight),
 			};
-			this.plot = {
-				name: 'plot',
-				value: this.modelSettings.plot,
-			};
-
-			this.subscriptions.push(this.maxDepth.value.subscribe(newValue => {
-				this.modelSettings.maxDepth(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.minSamplesSplit.value.subscribe(newValue => {
-				this.modelSettings.minSamplesSplit(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.minSamplesLeaf.value.subscribe(newValue => {
-				this.modelSettings.minSamplesLeaf(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
-
-			this.subscriptions.push(this.minImpurityDecrease.value.subscribe(newValue => {
-				this.modelSettings.minImpurityDecrease(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
-			}));
 		}
 	}
 
