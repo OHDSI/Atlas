@@ -13,7 +13,7 @@
 <div>
    <label data-bind="text: $component.modelSettingDescription(varImp.name)"></label>
     <div class="input-group" >
-        <multi-select params="{ options: trueFalseOptions, selectedValues: varImp.value, multiple: true }"/>
+        <multi-select params="{ options: trueFalseOptions, selectedValues: varImp.value, multiple: true }"></multi-select>
         <span class="input-group-btn">
             <button class="btn" data-bind="disable: isDefault(varImp.name), click: function(data, event) { setToDefault(varImp.name) }, css: {'btn-danger': !(isDefault(varImp.name))}, text: isDefault(varImp.name) ? 'Using default' : 'Reset to default'"></button>
         </span>
