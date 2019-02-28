@@ -89,11 +89,21 @@ define([
 				},
 				frequencyDistribution: {
 					xFormat: d3.format('d'),
+					yFormat: d3.format('d'),
 					xScale: d3.scaleLinear().domain([1, 10]),
 					yScale: d3.scaleLinear().domain([0, 100]),
 					yMax: 0,
 					xLabel: 'xLabel',
-					yLabel: '% of total number of persons'
+					yLabel: '% of total number of persons',
+					xValue: 'x',
+					yValue: 'y',
+					getTooltipBuilder: options => d => {
+						const yFormat = d3.format('.2f');
+						return `
+							Count: ${options.xFormat(d[options.xValue])}<br/>
+							${options.yLabel}: ${yFormat(d[options.yValue])}
+						`;
+					},
 				},
 				prevalenceByGenderAgeYear: {
 					trellisSet: [],
