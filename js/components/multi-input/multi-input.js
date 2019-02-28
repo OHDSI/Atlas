@@ -4,6 +4,8 @@ define([
 	'utils/CommonUtils',
   'components/Component',
   'utils/AutoBind',
+  './types/IntegerTypeValidator',
+  './types/FloatTypeValidator',
   'lodash',  
   'databindings',
   'less!./multi-input.less',
@@ -13,18 +15,25 @@ define([
     commonUtils,
     Component,
     AutoBind,
+    IntegerTypeValidator,
+    FloatTypeValidator,
     _,
 ) {
-    const typeIdentifier = {
-      integer: "integer",
-      float: "float"
-    }
+    const typeIdentifier = [{
+      valueType: "integer",
+      typeValidator: new IntegerTypeValidator()
+    }, {
+      valueType: "float",
+      typeValidator: new FloatTypeValidator()
+    }];
+
     class MultiInput extends AutoBind(Component) {
       constructor(params) {
         super(params);
-        this.selectedValueType = params.selectedValueType || "integer";
+        this.selectedValueType = typeIdentifier.find(f => f.valueType === params.selectedValueType);
+        this.typeValidator = this.selectedValueType.typeValidator;
         this.selectedValues = params.selectedValues;
-        this.itemToAdd = ko.observable("").extend(this.getExtender());
+        this.itemToAdd = ko.observable("").extend(this.typeValidator.extender);
         this.defaultValues = params.defaultValues;
         this.valueLabel = params.valueLabel || "Value";
 
@@ -35,7 +44,7 @@ define([
           return (this.defaultValues && this.defaultValues.length > 0);
         });
         this.enableAdd = ko.pureComputed(() => {
-         return (this.itemToAdd() !== null && this.itemToAdd().toString().length > 0 && !isNaN(this.getParser()(this.itemToAdd())));
+         return (this.itemToAdd() !== null && this.itemToAdd().toString().length > 0 && !this.typeValidator.checkValue(this.typeValidator.parseType(this.itemToAdd())));
         });
         this.enableDefaults = ko.pureComputed(() => {
           return (this.selectedValues && this.hasDefaults() && !(_.isEqual(_.sortBy(this.selectedValues()), _.sortBy(this.defaultValues))));
@@ -45,35 +54,9 @@ define([
         })
       }
 
-      getParser() {
-        let returnVal = (item) => { return item };
-        switch(this.selectedValueType) {
-          case typeIdentifier.integer:
-            returnVal = parseInt;
-            break;
-          case typeIdentifier.float:
-            returnVal = parseFloat;
-            break;
-        }
-        return returnVal;
-      }
-
-      getExtender() {
-        let returnVal = {};
-        switch(this.selectedValueType) {
-          case typeIdentifier.integer:
-            returnVal = {numeric: 0};
-            break;
-          case typeIdentifier.float:
-            returnVal = {numeric: 9};
-            break;
-        }
-        return returnVal;
-      }
-
       addItem() {
         if (this.itemToAdd() != null) {
-          this.selectedValues.push(this.getParser()(this.itemToAdd()));
+          this.selectedValues.push(this.typeValidator.parseType(this.itemToAdd()));
           this.itemToAdd(null);
         }
       }
@@ -90,7 +73,7 @@ define([
 
       enterPressed(data, context, event) {
         const keyCode = (event.which ? event.which : event.keyCode);
-        if (keyCode === 13) {
+        if (keyCode === 13 && this.enableAdd()) {
           this.addItem();
         }
       }

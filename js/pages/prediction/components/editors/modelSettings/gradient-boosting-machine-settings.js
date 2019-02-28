@@ -4,7 +4,6 @@ define([
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
-	'components/multi-input',
 ], function (
 	ko, 
 	view, 

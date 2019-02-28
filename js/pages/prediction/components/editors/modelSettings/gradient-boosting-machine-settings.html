@@ -4,15 +4,15 @@
 </div>
 <div>
     <label data-bind="text: $component.modelSettingDescription(maxDepth.name)"></label>
-    <multi-input params="selectedValues: maxDepth.value, defaultValues: maxDepth.default, valueLabel: maxDepth.valueLabel"></multi-input>
+    <multi-input params="selectedValues: maxDepth.value, defaultValues: maxDepth.default, valueLabel: maxDepth.valueLabel, selectedValueType: 'integer'"></multi-input>
 </div>
 <div>
     <label data-bind="text: $component.modelSettingDescription(minRows.name)"></label>
-    <multi-input params="selectedValues: minRows.value, defaultValues: minRows.default, valueLabel: minRows.valueLabel"></multi-input>
+    <multi-input params="selectedValues: minRows.value, defaultValues: minRows.default, valueLabel: minRows.valueLabel, selectedValueType: 'integer'"></multi-input>
 </div>
 <div>
     <label data-bind="text: $component.modelSettingDescription(ntrees.name)"></label>
-    <multi-input params="selectedValues: ntrees.value, defaultValues: ntrees.default, valueLabel: ntrees.valueLabel"></multi-input>
+    <multi-input params="selectedValues: ntrees.value, defaultValues: ntrees.default, valueLabel: ntrees.valueLabel, selectedValueType: 'integer'"></multi-input>
 </div>
 <div>
     <label data-bind="text: $component.modelSettingDescription(nthread.name)"></label>

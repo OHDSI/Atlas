@@ -2,7 +2,9 @@ define([
 	'knockout', 
 	'components/Component',
     '../../../utils',
-	'../../../const',    
+    '../../../const',
+	'components/multi-select',
+	'components/multi-input/multi-input',
 ], function (
 	ko, 
 	Component,

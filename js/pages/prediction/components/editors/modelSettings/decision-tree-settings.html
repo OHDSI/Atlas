@@ -10,7 +10,7 @@
     </div>
     <div>
         <label data-bind="text: $component.modelSettingDescription(maxDepth.name)"></label>
-        <multi-input params="selectedValues: maxDepth.value, defaultValues: maxDepth.default, valueLabel: maxDepth.valueLabel"></multi-input>    
+        <multi-input params="selectedValues: maxDepth.value, defaultValues: maxDepth.default, valueLabel: maxDepth.valueLabel, selectedValueType: 'integer'"></multi-input>    
     </div>
     <div>
         <label data-bind="text: $component.modelSettingDescription(minImpurityDecrease.name)"></label>
@@ -18,10 +18,10 @@
     </div>
     <div>
         <label data-bind="text: $component.modelSettingDescription(minSamplesLeaf.name)"></label>
-        <multi-input params="selectedValues: minSamplesLeaf.value, defaultValues: minSamplesLeaf.default, valueLabel: minSamplesLeaf.valueLabel"></multi-input>
+        <multi-input params="selectedValues: minSamplesLeaf.value, defaultValues: minSamplesLeaf.default, valueLabel: minSamplesLeaf.valueLabel, selectedValueType: 'integer'"></multi-input>
     </div>
     <div>
         <label data-bind="text: $component.modelSettingDescription(minSamplesSplit.name)"></label>
-        <multi-input params="selectedValues: minSamplesSplit.value, defaultValues: minSamplesSplit.default, valueLabel: minSamplesSplit.valueLabel"></multi-input>
+        <multi-input params="selectedValues: minSamplesSplit.value, defaultValues: minSamplesSplit.default, valueLabel: minSamplesSplit.valueLabel, selectedValueType: 'integer'"></multi-input>
     </div>
 </div>

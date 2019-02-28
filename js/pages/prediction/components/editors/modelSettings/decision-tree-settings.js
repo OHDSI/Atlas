@@ -4,8 +4,6 @@ define([
 	'./ModelSettingsEditorComponent',
 	'utils/CommonUtils',
 	'utils/DataTypeConverterUtils',
-	'components/multi-select',
-	'components/multi-input',
 	'less!./decision-tree-settings.less',
 ], function (
 	ko, 
