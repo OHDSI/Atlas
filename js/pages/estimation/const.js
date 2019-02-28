@@ -272,17 +272,37 @@ define(
                 data: d => d.description(),
             },
             {
-                title: 'Time At Risk',
+                title: 'Time At Risk Start',
                 render: (s, p, d) => {
                     if (d.createStudyPopArgs != null) {
-                        return d.createStudyPopArgs.riskWindowStart() + "-" + d.createStudyPopArgs.riskWindowEnd() + "d (min: " + d.createStudyPopArgs.minDaysAtRisk() + "d)";
+                        return d.createStudyPopArgs.riskWindowStart() + "d from<br/>" + consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToStart()).name;
                     } else {
                         return '';
                     }
                 }
             },
             {
-                title: 'Adjustment Strategy',
+              title: 'Time At Risk End',
+              render: (s, p, d) => {
+                    if (d.createStudyPopArgs != null) {
+                        return d.createStudyPopArgs.riskWindowEnd() + "d from<br/>" + consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToEnd()).name;
+                    } else {
+                        return '';
+                    }
+                }
+            },
+            {
+              title: 'Minimum<br/>Time At Risk',
+              render: (s, p, d) => {
+                    if (d.createStudyPopArgs != null) {
+                        return d.createStudyPopArgs.minDaysAtRisk() + "d";
+                    } else {
+                        return '';
+                    }
+                }
+            },
+          {
+                title: 'Adjustment<br/>Strategy',
                 render: (s, p, d) => {
                     if (d.matchOnPs) {
                         return d.matchOnPsArgs.maxRatio() + ":1 matching";
@@ -294,7 +314,7 @@ define(
                 }
             },
             {
-                title: 'Outcome Model',
+                title: 'Outcome<br/>Model',
                 render: (s, p, d) => {
                     if (d.fitOutcomeModelArgs != null) {
                         return d.fitOutcomeModelArgs.modelType();

@@ -4,12 +4,15 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'../../const',
-	'databindings'
+	'const',
+	'databindings',
+	'less!./population-settings-editor.less',
 ], function (
 	ko, 
 	view, 
 	Component,
 	commonUtils,
+	predictionConstants,
 	constants,
 ) {
 	class PopulationSettingsEditor extends Component {
@@ -17,7 +20,8 @@ define([
             super(params);
 
 			this.populationSettings = params.populationSettings;
-			this.options = constants.options;
+			this.options = predictionConstants.options;
+			this.constants = constants;
 		}
 	}
 
