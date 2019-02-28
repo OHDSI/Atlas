@@ -10,6 +10,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'services/CohortReporting',
 	'services/VocabularyProvider',
+	'utils/ExceptionUtils',
 	'atlas-state',
 	'clipboard',
 	'd3',
@@ -55,6 +56,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	ConceptSet,
 	cohortReportingService,
 	vocabularyApi,
+	exceptionUtils,
 	sharedState,
 	clipboard,
 	d3,
@@ -1031,6 +1033,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				try {
 					await FileService.loadZip(`${config.api.url}cohortdefinition/${this.model.currentCohortDefinition().id()}/export/conceptset`,
 						`cohortdefinition-conceptsets-${this.model.currentCohortDefinition().id()}.zip`);
+				} catch(e) {
+					alert(exceptionUtils.translateException(e));
 				}finally {
 					this.exporting(false);
 				}

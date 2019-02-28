@@ -16,6 +16,7 @@ define([
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/ExceptionUtils',
 	'./const',
 	'./components/iranalysis/main', 
 	'databindings', 
@@ -40,6 +41,7 @@ define([
 	Page,
 	AutoBind,
 	commonUtils,
+	exceptionUtils,
 	constants
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
@@ -360,6 +362,9 @@ define([
 			try {
 				await FileService.loadZip(`${config.api.url}ir/${this.selectedAnalysisId()}/export`,
 					`incidence-rate-${this.selectedAnalysisId()}.zip`);
+			}catch (e) {
+				alert(exceptionUtils.translateException(e));
+			}
 			}finally {
 				this.exporting(false);
 			}
