@@ -67,7 +67,6 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
-	var api = {
     function importEstimation(specification) {
         return httpService
             .doPost(config.webAPIRoot + estimationEndpoint + "import", specification)
