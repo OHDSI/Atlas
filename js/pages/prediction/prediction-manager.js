@@ -71,7 +71,8 @@ define([
 			this.packageName = ko.observable().extend({alphaNumeric: null});
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
-            this.isDeleting = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
             this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isCopying() || this.isDeleting();
             });

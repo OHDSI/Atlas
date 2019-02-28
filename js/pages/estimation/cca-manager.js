@@ -69,7 +69,8 @@ define([
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
             this.isDeleting = ko.observable(false);
-            this.isProcessing = ko.computed(() => {
+			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
+			this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isCopying() || this.isDeleting();
             });
             this.componentParams = ko.observable({
