@@ -9,29 +9,17 @@ define(
 
     function getDefaultModelSettingDescription(defaultModelSettings, settingName) {
         const settingList = defaultModelSettings.filter(item => item.setting === settingName);
-        if (settingList.length > 0) {
-            return settingList[0].description + " (default = " + settingList[0].defaultValue + "):";
-        } else {
-            return "SETTING NOT FOUND!!";
-        }
+        return settingList[0].description + " (default = " + settingList[0].defaultValue + "):";
     }
 
     function getDefaultModelSettingValue(defaultModelSettings, settingName) {
         const settingList = defaultModelSettings.filter(item => item.setting === settingName);
-        if (settingList.length > 0) {
-            return settingList[0].defaultValue;
-        } else {
-            return "SETTING NOT FOUND!!";
-        }
+        return settingList[0].defaultValue;
     }
 
     function getDefaultModelSettingName(defaultModelSettings, settingName) {
         const settingList = defaultModelSettings.filter(item => item.setting === settingName);
-        if (settingList.length > 0) {
-            return settingList[0].name;
-        } else {
-            return "SETTING NAME NOT FOUND!!";
-        }
+        return settingList[0].name;
     }
 
     function getDefaultModelSettingsValueList(modelName) {

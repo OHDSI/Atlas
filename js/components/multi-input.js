@@ -23,9 +23,8 @@ define([
       constructor(params) {
         super(params);
         this.selectedValueType = params.selectedValueType || "integer";
-        this.selectedValueExtender = params.selectedValueExtender || {};
         this.selectedValues = params.selectedValues;
-        this.itemToAdd = ko.observable("").extend(this.selectedValueExtender);
+        this.itemToAdd = ko.observable("").extend(this.getExtender());
         this.defaultValues = params.defaultValues;
         this.valueLabel = params.valueLabel || "Value";
 
@@ -46,7 +45,7 @@ define([
         })
       }
 
-      getParser(type) {
+      getParser() {
         let returnVal = (item) => { return item };
         switch(this.selectedValueType) {
           case typeIdentifier.integer:
@@ -54,6 +53,19 @@ define([
             break;
           case typeIdentifier.float:
             returnVal = parseFloat;
+            break;
+        }
+        return returnVal;
+      }
+
+      getExtender() {
+        let returnVal = {};
+        switch(this.selectedValueType) {
+          case typeIdentifier.integer:
+            returnVal = {numeric: 0};
+            break;
+          case typeIdentifier.float:
+            returnVal = {numeric: 9};
             break;
         }
         return returnVal;

@@ -389,15 +389,6 @@ define(
       classWeightOptions: [{label: "None", value: 'None'},{label: "Balanced", value: 'Balanced'}],
     };
 
-    const extenders = {
-        integer: {
-            numeric: 0
-        },
-        float: {
-            numeric: 9
-        }
-    };
-
     return {
       apiPaths,
       pageTitle,
@@ -405,7 +396,6 @@ define(
       conceptSetCrossReference,
       defaultNontemporalCovariates,
       options,
-      extenders,
       predictionGenerationStatus,
     };
   }
