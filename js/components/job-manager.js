@@ -4,6 +4,7 @@ define([
 	'appConfig',
 	'webapi/MomentAPI',
 	'webapi/AuthAPI',
+	'utils/CsvUtils',
 	'databindings',
 	'components/ac-access-denied',
 ],
@@ -12,7 +13,8 @@ define([
 		view,
 		config,
 		momentApi,
-		authApi
+		authApi,
+		CsvUtils
 	) {
 	function jobManager(params) {
 		var self = this;
@@ -57,6 +59,23 @@ define([
 		self.canReadJobs = ko.pureComputed(function() {
 			return (self.isAuthenticated() && authApi.isPermittedReadJobs()) || !config.userAuthenticationEnabled;
 		});
+
+		self.buttons = [
+			'colvis',
+			'copyHtml5',
+			{
+				text: 'CSV',
+				action() {
+					CsvUtils.saveAsCsv(self.model.jobs().map(job => ({
+						'executionId': job.executionId,
+						'jobName': job.jobParameters.jobName,
+						'status': job.status,
+						'startDate': job.startDate,
+						'endDate': job.endDate,
+					})));
+				},
+			}
+		];
 
 		if (self.canReadJobs()) {
 			self.updateJobs();
