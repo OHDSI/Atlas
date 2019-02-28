@@ -22,6 +22,4 @@
 	</div>
 </div>
 
-<!-- ko ifnot:$component.canList() -->
-	<access-denied params="isAuthenticated: isAuthenticated" class="flexed"></access-denied>
-<!-- /ko -->
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canList"></access-denied>

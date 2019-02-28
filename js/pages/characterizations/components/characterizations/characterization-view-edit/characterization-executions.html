@@ -1,6 +1,4 @@
-<div data-bind="ifnot: $component.isViewGenerationsPermitted(), css: `${$component.isViewGenerationsPermitted() ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
-</div>
+<access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewGenerationsPermitted"></access-denied>
 
 <div data-bind="if: $component.isViewGenerationsPermitted(), css: classes()">
     <loading data-bind="visible: loading()" params="status: 'Loading executions...'"></loading>
@@ -57,7 +55,7 @@
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 						attr: { 'disabled': !$component.isExecutionPermitted(sourceKey) },
-                        click: () => $component.generate(sourceKey)"
+                        click: () => $component.generate(sourceKey, submissions()[0] ? submissions()[0].hashCode : null)"
                     >
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
                             <span data-bind="css: classes('action-text')">Generate</span>

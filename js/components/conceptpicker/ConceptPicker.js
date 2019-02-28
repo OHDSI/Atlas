@@ -28,12 +28,11 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 
 		VocabularyProvider.getDomains().then(function (domains) {
 			self.DomainOptions(domains);
-			if (params.DefaultQuery != null)
-				self.search();
-		});
-
-		VocabularyProvider.loaded.then(function () {
-			self.ProviderReady(true);
+			if (params.DefaultQuery != null) {
+				self.search().then(() => self.ProviderReady(true));
+			} else {
+				self.ProviderReady(true);
+			}
 		});
 	};
 
@@ -60,7 +59,7 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 
 	ConceptPickerViewModel.prototype.search = function () {
 		var self = this;
-		VocabularyProvider.search(this.searchText, {
+		return VocabularyProvider.search(this.searchText, {
 			domains: [this.SelectedDomain],
 			maxResults: this.MaxResults
 		})

@@ -31,6 +31,7 @@ define([
 			constructor(params) {
 				super();
 				this.config = config;
+				this.isAuthenticated = authApi.isAuthenticated;
 				this.canImport = ko.pureComputed(() => authApi.isPermittedImportUsers());
 				this.canCreate = ko.pureComputed(() => permissionService.isPermittedCreate());
 				this.loading = ko.observable();

@@ -21,6 +21,7 @@ define([
 	'./components/cca-specification-view-edit',
 	'./components/cca-utilities',
 	'less!./cca-manager.less',
+	'databindings',
 ], function (
 	ko, 
 	view, 
@@ -62,7 +63,7 @@ define([
 			this.fullSpecification = ko.observable(null);
 			this.isExporting = ko.observable(false);
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
-			this.packageName = ko.observable();
+			this.packageName = ko.observable().extend({alphaNumeric: null});
 			this.selectedTabKey = ko.observable(params.routerParams().section);
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);

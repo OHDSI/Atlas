@@ -23,6 +23,8 @@
     </div>
 </div>
 
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canImport"></access-denied>
+
 <div data-bind="if: canImport, css: classes('grid')">
     <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job list...'"></loading>
 

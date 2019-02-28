@@ -4,14 +4,17 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+  'services/file',
   'clipboard',
   '../../const',
+	'loading',
 ], function (
 	ko,
 	view,
 	Component,
   AutoBind,
   commonUtils,
+  FileService,
   clipboard,
   constants,
 ) {
@@ -19,7 +22,8 @@ define([
 		constructor(params) {
 			super(params);
       this.model = params.model;
-      
+			this.currentConceptSet = this.model.currentConceptSet;
+      this.exporting = ko.observable(false);
     }
 
     copyToClipboard(clipboardButtonId, clipboardButtonMessageId) {
@@ -52,8 +56,14 @@ define([
       this.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
     }
 
-    exportCSV() {
-			window.open(constants.paths.export(this.model.currentConceptSet().id));
+    async exportCSV() {
+			this.exporting(true);
+			try {
+				await FileService.loadZip(constants.paths.export(this.currentConceptSet().id),
+					`conceptset-${this.currentConceptSet().id}.zip`);
+			}finally {
+				this.exporting(false);
+			}
 		}
 	}
 

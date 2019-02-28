@@ -21,7 +21,8 @@ define([
 		'faceted-datatable',
 		'extensions/bindings/profileChart',
 		'less!./profile-manager.less',
-		'components/heading'
+		'components/heading',
+	'components/ac-access-denied'
 	],
 	function (
 		ko,
@@ -53,6 +54,7 @@ define([
 			constructor(params) {
 				super(params);
 				this.model = params.model;
+				this.sharedState = sharedState;
 				this.aspectRatio = ko.observable();
 				this.config = config;
 				this.filterHighlightsText = ko.observable();
@@ -83,10 +85,10 @@ define([
 						});
 				}
 				this.isAuthenticated = authApi.isAuthenticated;
-				this.canViewProfiles = ko.pureComputed(() => {
-					return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewProfiles()) || !config.userAuthenticationEnabled;
+				this.permittedSources = ko.computed(() => sharedState.sources().filter(s => authApi.isPermittedViewProfiles(s.sourceKey)));
+				this.canViewProfiles = ko.computed(() => {
+					return (config.userAuthenticationEnabled && this.isAuthenticated() && this.permittedSources().length > 0) || !config.userAuthenticationEnabled;
 				});
-				this.sharedState = sharedState;
 
 				this.cohortSource = ko.observable();
 				this.person = ko.observable();

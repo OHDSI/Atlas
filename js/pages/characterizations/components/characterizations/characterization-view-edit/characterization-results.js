@@ -568,6 +568,8 @@ define([
 
             const strataNames = new Map();
 
+            const cohortIds = analysis.reports.map(r => r.cohortId).sort();
+
             function PrevalenceStat(rd = {}) {
                 this.analysisName = rd.analysisName || analysis.analysisName;
                 this.analysisId = analysis.analysisId;
@@ -591,14 +593,16 @@ define([
                 if (cov.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
                   cov.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
                 }
+
+                const colIdx = cohortIds.indexOf(report.cohortId);
                 if (cov.sumValue[rd.strataId] === undefined) {
                     cov.sumValue[rd.strataId] = [];
                 }
-                cov.sumValue[rd.strataId].push(rd.sumValue);
+                cov.sumValue[rd.strataId][colIdx] = rd.sumValue;
                 if (cov.pct[rd.strataId] === undefined) {
                     cov.pct[rd.strataId] = [];
                 }
-                cov.pct[rd.strataId].push(rd.pct);
+                cov.pct[rd.strataId][colIdx] = rd.pct;
                 if (rd.strataId > 0 && !strataNames.has(rd.strataId)) {
                     strataNames.set(rd.strataId, rd.strataName);
                 }
@@ -606,17 +610,18 @@ define([
 
             analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(data, r)));
             analysis.reports.forEach((r, i) => {
+              const colIdx = cohortIds.indexOf(r.cohortId);
               if (!analysis.strataOnly) {
-                columns.push(this.getCountColumn(0, i));
-                columns.push(this.getPctColumn(0, i));
+                columns.push(this.getCountColumn(0, colIdx));
+                columns.push(this.getPctColumn(0, colIdx));
               }
               for(let strataId of strataNames.keys()) {
-                columns.push(this.getCountColumn(strataId, i));
-                columns.push(this.getPctColumn(strataId, i));
+                columns.push(this.getCountColumn(strataId, colIdx));
+                columns.push(this.getPctColumn(strataId, colIdx));
               }
             });
 
-            analysis.strataOnly = analysis.strataOnly && data.length > 0;
+            analysis.strataOnly = analysis.strataOnly && data.size > 0;
 
             if (!analysis.strataOnly && analysis.reports.length === 2) {
                 columns.push(this.stdDiffColumn);
