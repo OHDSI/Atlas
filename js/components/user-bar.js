@@ -23,7 +23,7 @@ define([
 			jobDetailsService,
 			momentApi,
 			lodash,
-			PollService,	
+			PollService,
 		) {
 	class UserBar extends Component {
 		constructor(params) {
@@ -33,7 +33,7 @@ define([
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;
 			this.authLogin = authApi.subject;
-			this.pollInterval = null;
+			this.pollId = null;
 			this.loading = params.model.loading;
 			this.signInOpened = params.model.signInOpened;
 			this.jobListing = state.jobListing;
@@ -97,11 +97,11 @@ define([
 		}
 
 		startPolling() {
-			this.pollInterval = PollService.add(() => this.updateJobStatus(), appConfig.pollInterval);
+			this.pollId = PollService.add(() => this.updateJobStatus(), appConfig.pollInterval);
 		};
 
 		stopPolling() {
-			PollService.stop(this.pollInterval);
+			PollService.stop(this.pollId);
 		};
 
 		getExisting(n) {
@@ -114,11 +114,11 @@ define([
 					.then(notifications => {
 						notifications.data.forEach(n => {
 							let job = this.getExisting(n);
-	
+
 							const endDate = (n.endDate ? n.endDate : Date.now());
 							const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
 							const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
-	
+
 							if (job) {
 								if (job.status() !== n.status) {
 									job.status(n.status);
@@ -143,12 +143,15 @@ define([
 								};
 								this.jobListing.push(job);
 								this.jobListing.valueHasMutated();
-	
+
 							}
 						});
 					})
 					.catch(() => {
-						console.warn('The server error occurred while getting all notifications');                        
+						console.warn('The server error occurred while getting all notifications');
+					})
+					.finally(() => {
+						PollService.start(this.pollId);
 					});
 			} else if (!this.permissionCheckWarningShown) {
 				console.warn('There isn\'t permission to get all notifications');

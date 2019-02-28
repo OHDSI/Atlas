@@ -38,7 +38,7 @@ define([
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
-			
+
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
@@ -54,6 +54,7 @@ define([
 
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
+			this.pollId = null;
 
 			this.execColumns = [{
 					title: 'Date',
@@ -109,14 +110,12 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = PollService.add(() => {
-					this.loadData({ silently: true });
-				}, 10000)
+				this.pollId = PollService.add(() => this.loadData({ silently: true }), 10000);
 			}
 		}
 
 		dispose() {
-			PollService.stop(this.intervalId);
+			PollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -149,9 +148,9 @@ define([
 					return (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
 							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
 				});
-				
+
 				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
-				
+
 				sourceList.forEach(s => {
 					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
 					if (!group) {
@@ -163,17 +162,19 @@ define([
 						}
 						this.executionGroups.push(group);
 					}
-					
-					
+
+
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
 					group.status(group.submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
 						this.pathwayGenerationStatusOptions.STARTED :
 						this.pathwayGenerationStatusOptions.COMPLETED);
-					
+
 				});
-				
+
 				this.loading(false);
-			});
+			})
+			.catch(e => console.error(e))
+			.finally(() => PollService.start(this.pollId));
 		}
 
 		generate(source) {
