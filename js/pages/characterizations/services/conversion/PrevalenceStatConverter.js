@@ -45,7 +45,7 @@ define([
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
-                    if (stat && stat.analysisId && stat.domainId !== 'DEMOGRAPHICS') {
+                    if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
                           html = d + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
                             return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;

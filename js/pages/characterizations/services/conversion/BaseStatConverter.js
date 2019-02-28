@@ -22,7 +22,12 @@ define([
                 const rowId = this.getRowId(stat);
 
                 if (!data.has(rowId)) {
-                    row = this.getResultObject({ analysisId: analysis.analysisId, analysisName: analysis.analysisName, ...stat });
+                    row = this.getResultObject({
+                        analysisId: analysis.analysisId,
+                        analysisName: analysis.analysisName,
+                        domainId: analysis.domainId,
+                        ...stat
+                    });
                     data.set(rowId, row);
                 } else {
                     row = data.get(rowId);

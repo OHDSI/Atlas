@@ -147,16 +147,15 @@ define([
                                     type === 'prevalence'
                                     ? { 'Percent': stat.pct[strataId][cohort.cohortId] }
                                     : {
+                                        'Avg': stat.avg[strataId][cohort.cohortId],
+                                        'StdDev': stat.stdDev[strataId][cohort.cohortId],
                                         'Min': stat.min[strataId][cohort.cohortId],
                                         'P10': stat.p10[strataId][cohort.cohortId],
                                         'P25': stat.p25[strataId][cohort.cohortId],
-                                        'Avg': stat.avg[strataId][cohort.cohortId],
                                         'Median': stat.median[strataId][cohort.cohortId],
                                         'P75': stat.p75[strataId][cohort.cohortId],
                                         'P90': stat.p90[strataId][cohort.cohortId],
                                         'Max': stat.max[strataId][cohort.cohortId],
-                                        'StdDev': stat.stdDev[strataId][cohort.cohortId],
-                                        'Count': stat.count[strataId][cohort.cohortId],
                                     }
                                 )
                             });
@@ -342,8 +341,9 @@ define([
                     return lodash.flatten(prevalenceAnalyses.map(a => {
                       const analysisName = a.analysisName;
                       const analysisId = a.analysisId;
+                      const domainId = a.domainId;
                       const stats = lodash.flatten(a.reports.filter(r => r.cohortId === cohortId).map(r => r.stats));
-                      return stats.map(s => ({...s, analysisName, analysisId}));
+                      return stats.map(s => ({...s, analysisName, analysisId, domainId}));
                     }));
                   };
 
