@@ -339,6 +339,10 @@ define([
 						selected: false,
 						description: "Perform Study on source: " + sourceItem.source.sourceName,
 						action: () => {
+							if (!this.analysisCohorts().targetCohorts().length || !this.analysisCohorts().outcomeCohorts().length) {
+								alert('You should select at least one target and outcome cohort to generate');
+								return false;
+							}
 							if (sourceItem.info()) {
 								sourceItem.info().executionInfo.status = "PENDING";
 								sourceItem.info.notifySubscribers();
