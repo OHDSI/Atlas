@@ -34,14 +34,11 @@ define([
             return this.isPermittedImport;
         }
 
-        doImport() {
+        async doImport() {
             this.loading(true);
-
-            this.importService(JSON.parse(this.importJSON()))
-                .then(res => {
-                    this.loading(false);
-                    commonUtils.routeTo(this.routeToUrl + res.id);
-                });
+            const res = await this.importService(JSON.parse(this.importJSON()));
+            this.loading(false);
+            commonUtils.routeTo(this.routeToUrl + res.id);
         }
     }
 
