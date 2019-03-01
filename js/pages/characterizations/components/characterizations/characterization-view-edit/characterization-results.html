@@ -64,7 +64,7 @@
                                                 <th data-bind="css: $component.classes('th-cov-count'), attr: { rowspan: $parents[1].stratified ? 2 : 1 }, text: $data"></th>
                                             <!-- /ko -->
                                         <!-- /ko -->
-                                        <!-- ko foreach: Array.from($parent.strataNames).filter(a => a[0] !== 0).sort((a,b) => a[0] - b[0]) -->
+                                        <!-- ko foreach: $component.sortedStrataNames($parent.strataNames) -->
                                                 <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: $data[1]"></th>
                                         <!-- /ko -->
                                     <!-- /ko -->
@@ -72,7 +72,7 @@
                                 <!-- ko if: stratified -->
                                 <tr>
                                     <!-- ko foreach: cohorts -->
-                                        <!-- ko foreach: Array.from($parent.strataNames).filter(a => a[0] !== 0).sort((a,b) => a[0] - b[0]) -->
+                                        <!-- ko foreach: $component.sortedStrataNames($parent.strataNames) -->
                                                 <!-- ko foreach: $parents[1].perStrataValues -->
                                                     <th data-bind="css: $component.classes('th-cov-count'), text: $data"></th>
                                                 <!-- /ko -->

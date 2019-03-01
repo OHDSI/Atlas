@@ -324,6 +324,10 @@ define([
             ];
         }
 
+        sortedStrataNames(strataNames) {
+            return Array.from(strataNames).filter(a => a[0] !== 0).sort((a,b) => a[0] - b[0]);
+        }
+
         isComparatativeMode(filterList) {
             const filter = filterList.find(f => f.name === 'cohorts');
             if (!filter) {
