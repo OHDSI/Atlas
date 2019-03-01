@@ -42,9 +42,12 @@ define([
 		}
 
 		generate() {
-			const selectedSources = ko.utils.unwrapObservable(this.selectedSources);
+			let selectedSources = ko.utils.unwrapObservable(this.selectedSources);
+			if (this.sources().length == 1) {
+				selectedSources = this.sources();
+			}
 			
-			if (selectedSources.length === 0 && this.sources().length !== 1) {
+			if (selectedSources.length === 0) {
 				alert('Pick at least one source to generate')
 			}
 			this.callback(selectedSources);
