@@ -1,11 +1,11 @@
 define(
 	(require, factory) => {
         const ko = require('knockout');
-        const { Route } = require('providers/Route');
+        const { AuthorizedRoute } = require('providers/Route');
 
 		function routes(appModel) {
 
-            const search = new Route((query) => {
+            const search = new AuthorizedRoute((query) => {
                 appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
