@@ -1,6 +1,6 @@
 define(
   ['file-saver'],
-  function(saveAs) {
+  function() {
     class CsvUtils {
       /**
        * Converts a value to a string appropriate for entry into a CSV table.  E.g., a string value will be surrounded by quotes.

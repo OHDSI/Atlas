@@ -8,6 +8,7 @@ define([
 	'appConfig',
 	'services/MomentAPI',
 	'services/AuthAPI',
+	'utils/CsvUtils',
 	'databindings',
 	'components/ac-access-denied',
 	'components/heading',
@@ -21,7 +22,8 @@ define([
 		jobsService,
 		config,
 		momentApi,
-		authApi
+		authApi,
+		CsvUtils
 	) {
 	class JobManager extends AutoBind(Page) {
 		constructor(params) {
@@ -41,6 +43,23 @@ define([
 			this.canReadJobs = ko.pureComputed(() => {
 				return authApi.isPermittedReadJobs();
 			});
+
+			this.buttons = [
+				'colvis',
+				'copyHtml5',
+				{
+					text: 'CSV',
+					action: () => {
+						CsvUtils.saveAsCsv(this.model.jobs().map(job => ({
+							'executionId': job.executionId,
+							'jobName': job.jobParameters.jobName,
+							'status': job.status,
+							'startDate': job.startDate,
+							'endDate': job.endDate,
+						})));
+					},
+				}
+			];
 
 			if (this.canReadJobs()) {
 				this.updateJobs();
