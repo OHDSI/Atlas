@@ -617,8 +617,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
 					return;
 
-				clearTimeout(this.pollTimeout);
-
 				// reset view after save
 					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
 						this.model.currentCohortDefinition(null);
@@ -1176,7 +1174,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.tabPath.dispose();
 				this.sortedConceptSets.dispose();
 				this.reportingState.dispose();
-				this.showReportNameDropdown.dispose();			
+				this.showReportNameDropdown.dispose();
+				clearTimeout(this.pollTimeout);
 			}
 
 			getCriteriaIndexComponent (data) {
