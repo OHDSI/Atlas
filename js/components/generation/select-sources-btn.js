@@ -44,7 +44,7 @@ define([
 		generate() {
 			const selectedSources = ko.utils.unwrapObservable(this.selectedSources);
 			
-			if (selectedSources.length === 0) {
+			if (selectedSources.length === 0 && this.sources().length !== 1) {
 				alert('Pick at least one source to generate')
 			}
 			this.callback(selectedSources);

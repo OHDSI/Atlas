@@ -157,6 +157,10 @@ define([
 		};
 
 		runGenerations(selectedSources) {
+			if (!this.analysisCohorts().targetCohorts().length || !this.analysisCohorts().outcomeCohorts().length) {
+				alert('You should select at least one target and outcome cohort to generate');
+				return false;
+			}
 			selectedSources.forEach(source => this.execute(source.sourceKey));
 		}
 
