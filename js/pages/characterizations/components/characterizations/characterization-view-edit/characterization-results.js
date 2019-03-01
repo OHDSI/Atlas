@@ -14,6 +14,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     './utils',
+    '../../../utils',
     'numeral',
     'lodash',
     'd3',
@@ -44,6 +45,7 @@ define([
     AutoBind,
     commonUtils,
     utils,
+    characterizationUtils,
     numeral,
     lodash,
     d3,
@@ -322,6 +324,10 @@ define([
                     selectedValues: ko.observable(data.map(a => a.domainId)),
                 }
             ];
+        }
+
+        sortedStrataNames(strataNames) {
+            return characterizationUtils.sortedStrataNames(strataNames, true);
         }
 
         isComparatativeMode(filterList) {
