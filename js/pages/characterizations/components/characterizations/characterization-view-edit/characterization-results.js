@@ -14,6 +14,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     './utils',
+    '../../../utils',
     'numeral',
     'lodash',
     'd3',
@@ -44,6 +45,7 @@ define([
     AutoBind,
     commonUtils,
     utils,
+    characterizationUtils,
     numeral,
     lodash,
     d3,
@@ -325,7 +327,7 @@ define([
         }
 
         sortedStrataNames(strataNames) {
-            return Array.from(strataNames).filter(a => a[0] !== 0).sort((a,b) => a[0] - b[0]);
+            return characterizationUtils.sortedStrataNames(strataNames, true);
         }
 
         isComparatativeMode(filterList) {
