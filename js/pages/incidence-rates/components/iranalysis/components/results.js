@@ -6,6 +6,7 @@ define([
 	'services/IRAnalysis',
 	'pages/incidence-rates/const',
 	'services/MomentAPI',
+	'services/AuthAPI',
 	'components/Component',
 	'utils/CommonUtils',
 	'atlas-state',
@@ -21,6 +22,7 @@ define([
 	IRAnalysisService,
 	constants,
 	momentApi,
+	authApi,
 	Component,
 	commonUtils,
 	sharedState
@@ -30,10 +32,11 @@ define([
 		constructor(params) {
 			super(params);
 			this.sources = params.sources;
+			this.hasSourceAccess = authApi.hasSourceAccess;
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
-				disabled: this.isInProgress(s),
-				disabledReason: this.isInProgress(s) ? 'Generation is in progress' : null,
+				disabled: this.isInProgress(s) || !this.hasSourceAccess(s.source.sourceKey),
+				disabledReason: this.isInProgress(s) ? 'Generation is in progress' : !this.hasSourceAccess(s.source.sourceKey) ? 'Access denied' : null,
 			})));
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
@@ -54,28 +57,28 @@ define([
 
 			this.isExitMessageShown = ko.observable(false);
 			this.exitMessage = ko.observable();
-			
+
 			this.irCaption = ko.pureComputed(() => {
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
 				return "per " + multiplier  + " years";
 			});
-			
+
 			this.ipCaption = ko.pureComputed(() => {
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
 				return "per " + multiplier  + " persons";
 			});
-			
+
 			// observable subscriptions
-			
+
 			this.targetSub = this.selectedTarget.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
 			});
-			
+
 			this.outcomeSub = this.selectedOutcome.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
@@ -95,10 +98,10 @@ define([
 			this.exitMessage(this.sources().find(si => si.source.sourceKey === sourceKey).info().executionInfo.message);
 			this.isExitMessageShown(true);
 		}
-		
+
 		getSummaryData(summaryList) {
 			var targetId = this.selectedTarget();
-			var outcomeId = this.selectedOutcome();			
+			var outcomeId = this.selectedOutcome();
 			const summary = summaryList.find(item => item.targetId == targetId && item.outcomeId == outcomeId) || {};
 			const na = (values, converter = v => v) => values.filter(v => v === undefined).length > 0 ? 'n/a' : converter.apply(null, values);
 			return {
@@ -109,40 +112,40 @@ define([
 				rate: na([summary.cases, summary.timeAtRisk], (c, tar) => this.calculateRate(c, tar)),
 			};
 		}
-		
+
 		// viewmodel behaviors
 
 		calculateRate(cases, timeAtRisk) {
 			if (timeAtRisk > 0)
 				return ((1.0 * cases) / (1.0 * timeAtRisk) * this.rateMultiplier()).toFixed(2);
-			else 
+			else
 				return (0).toFixed(2);
 		}
-		
+
 		calculateProportion(cases, persons) {
 			if (persons > 0)
 				return (((1.0 * cases) / (1.0 * persons)) * this.rateMultiplier()).toFixed(2);
-			else 
+			else
 				return (0).toFixed(2);
-		}		
+		}
 
 		stepUp() {
-			this.rateMultiplier(Math.min(this.rateMultiplier() * 10, 100000));	
+			this.rateMultiplier(Math.min(this.rateMultiplier() * 10, 100000));
 		}
 
 		stepDown() {
-			this.rateMultiplier(Math.max(this.rateMultiplier() / 10, 100));	
+			this.rateMultiplier(Math.max(this.rateMultiplier() / 10, 100));
 		}
-		
+
 		selectSource(source) {
-			
-			// fail-fast if source/targets are not set, 
+
+			// fail-fast if source/targets are not set,
 			if (!(this.selectedTarget() && this.selectedOutcome())) {
 				this.selectedSource(null);
 				this.selectedReport(null);
 				return;
 			}
-			
+
 			this.selectedSource(source);
 			this.isLoading(true);
 
@@ -167,8 +170,8 @@ define([
 
 		msToTime(s) {
 			return momentApi.formatDuration(s);
-		};	
-		
+		};
+
 		dispose() {
 			this.targetSub.dispose();
 			this.outcomeSub.dispose();
