@@ -50,7 +50,7 @@ define([
             analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(r)));
 
             cohorts.forEach((c, i) => {
-              for (let strataId of strataNames.keys()) {
+              for (let strataId of Array.from(strataNames.keys()).sort()) {
                 columns = columns.concat(this.getReportColumns(strataId, c.cohortId));
               }
             });
