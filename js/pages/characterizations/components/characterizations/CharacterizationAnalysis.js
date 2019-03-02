@@ -16,6 +16,7 @@ define(function(require, exports){
 			this.strataConceptSets = ko.observableArray((data.strataConceptSets && data.strataConceptSets.map(cs => new ConceptSet(cs))) || []);
 			this.strataOnly = ko.observable(data.strataOnly);
 			this.stratas = ko.observableArray((data.stratas && data.stratas.map(s => ({
+				id: ko.observable(s.id),
 				name: ko.observable(s.name),
 				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets)),
 			}))) || []);
