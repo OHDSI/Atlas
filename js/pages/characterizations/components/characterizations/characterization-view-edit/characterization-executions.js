@@ -184,7 +184,6 @@ define([
 				console.error(e);
 			} finally {
 				this.loading(false);
-				PollService.start(this.pollId);
 			}
 		}
 

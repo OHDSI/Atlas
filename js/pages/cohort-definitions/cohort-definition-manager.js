@@ -618,12 +618,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			// METHODS
 
-		queryHeraclesJob(cd, source) {
+		async queryHeraclesJob(cd, source) {
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
-			jobService.getByName(testName, "cohortAnalysisJob")
-				.then(({data}) => data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null))
-				.catch(e => console.error(e))
-				.finally(() => PollService.start(this.pollId));
+			try {
+				const { data } = await jobService.getByName(testName, "cohortAnalysisJob");
+				data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null)
+			} catch (e) {
+				console.error(e)
+			}
 		}
 
 			delete () {

@@ -132,18 +132,14 @@ define([
 			return PermissionService.isPermittedResults(sourceKey);
 		}
 
-		loadData({silently = false} = {}) {
+		async loadData({silently = false} = {}) {
 			!silently && this.loading(true);
 
 			const analysisId = this.analysisId();
 
-			Promise.all([
-				SourceService.loadSourceList(),
-				PathwayService.listExecutions(analysisId)
-			]).then(([
-				allSources,
-				executionList
-			]) => {
+			try {
+				const allSources = await SourceService.loadSourceList();
+				const executionList = await PathwayService.listExecutions(analysisId);
 				let sourceList = allSources.filter(source => {
 					return (source.daimons.filter(function (daimon) { return daimon.daimonType == "CDM"; }).length > 0
 							&& source.daimons.filter(function (daimon) { return daimon.daimonType == "Results"; }).length > 0)
@@ -170,11 +166,11 @@ define([
 						this.pathwayGenerationStatusOptions.COMPLETED);
 
 				});
-
+			} catch (e) {
+				console.error(e);
+			} finally {
 				this.loading(false);
-			})
-			.catch(e => console.error(e))
-			.finally(() => PollService.start(this.pollId));
+			}
 		}
 
 		generate(source) {

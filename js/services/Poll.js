@@ -1,6 +1,5 @@
 define(['knockout', 'visibilityjs'], (ko, Visibility) => {
   const callbacks = new Map();
-
   const isPageForeground = ko.observable(Visibility.state() === "visible");
   Visibility.change((e, state) => {
     const isForeground = state === "visible";
@@ -14,23 +13,24 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
 
   class PollService {
     add(callback, interval = 1000, ...args) {
-        if (isPageForeground()) {
-          return this.start(null, { callback, interval, args });
-        }
+      const id = new Date().valueOf();
+      callbacks.set(id, { callback, interval, args });
+      this.start(id);
+      return id;
     }
 
-    start(id, opts) {
-      if (!!id && callbacks.has(id)) {
+    async start(id) {
+      if (callbacks.has(id)) {
         const { callback, interval, args } = callbacks.get(id);
-        return setTimeout(() => callback(args), interval);
-      } else  {
-        const { callback, interval, args } = opts;
-        const id = setTimeout(() => callback(args), interval);
-        callbacks.set(id, { callback, interval, args });
-        return id;
+        try {
+          isPageForeground() && await callback();
+        } catch(e) {
+          console.log(e);
+        } finally {
+          setTimeout(() => this.start(id), interval);
+        }
       }
     }
-
 
     stop(id) {
       callbacks.delete(id);
