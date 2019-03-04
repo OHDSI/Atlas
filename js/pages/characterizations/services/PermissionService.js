@@ -33,7 +33,7 @@ define([
     }
 
     function isPermittedGenerateCC(id, sourceKey) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
+        return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:${sourceKey}:post`);
     }
 
     function isPermittedGetCCGenerationResults(sourceKey) {
