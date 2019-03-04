@@ -33,7 +33,7 @@ define([
 	}
 
 	function isPermittedGenerate(id, sourceKey) {
-		return AuthAPI.isPermitted(`pathway-analysis:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
+		return AuthAPI.isPermitted(`pathway-analysis:${id}:generation:${sourceKey}:post`);
 	}
 
 	function isPermittedResults(sourceKey) {
