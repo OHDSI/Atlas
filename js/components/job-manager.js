@@ -4,7 +4,6 @@ define([
 	'appConfig',
 	'webapi/MomentAPI',
 	'webapi/AuthAPI',
-	'utils/CsvUtils',
 	'databindings',
 	'components/ac-access-denied',
 ],
@@ -14,7 +13,6 @@ define([
 		config,
 		momentApi,
 		authApi,
-		CsvUtils
 	) {
 	function jobManager(params) {
 		var self = this;
@@ -63,18 +61,7 @@ define([
 		self.buttons = [
 			'colvis',
 			'copyHtml5',
-			{
-				text: 'CSV',
-				action() {
-					CsvUtils.saveAsCsv(self.model.jobs().map(job => ({
-						'executionId': job.executionId,
-						'jobName': job.jobParameters.jobName,
-						'status': job.status,
-						'startDate': job.startDate,
-						'endDate': job.endDate,
-					})));
-				},
-			}
+			'csv'
 		];
 
 		if (self.canReadJobs()) {
