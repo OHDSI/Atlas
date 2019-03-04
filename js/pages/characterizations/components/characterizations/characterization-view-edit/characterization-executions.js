@@ -60,6 +60,7 @@ define([
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 			this.isExitMessageShown = ko.observable(false);
 			this.exitMessage = ko.observable();
+			this.pollId = null;
 
 			this.execColumns = [{
 					title: 'Date',
@@ -115,14 +116,14 @@ define([
 
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = PollService.add(() => this.loadData({
+				this.pollId = PollService.add(() => this.loadData({
 					silently: true
-				}), 10000)
+				}), 10000);
 			}
 		}
 
 		dispose() {
-			PollService.stop(this.intervalId);
+			PollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -179,7 +180,9 @@ define([
 						this.ccGenerationStatusOptions.COMPLETED);
 
 				});
-			}finally {
+			} catch (e) {
+				console.error(e);
+			} finally {
 				this.loading(false);
 			}
 		}

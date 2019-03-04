@@ -33,7 +33,7 @@ define([
 	ExecutionUtils,
 	lodash,
 ) {
-	
+
 	class EstimationGeneration extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
@@ -48,6 +48,7 @@ define([
 			this.estimationStatusGenerationOptions = consts.estimationGenerationStatus;
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
+			this.pollId = null;
 
 			this.execColumns = [
 				{
@@ -85,14 +86,12 @@ define([
 			this.executionGroups = ko.observableArray([]);
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = PollService.add(() => {
-					this.loadData({ silently: true });
-				}, 10000);
+				this.pollId = PollService.add(() => this.loadData({ silently: true }), 10000);
 			}
 		}
 
 		dispose() {
-			PollService.stop(this.intervalId);
+			PollService.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {
@@ -113,7 +112,7 @@ define([
 
 		async loadData({silently = false} = {}) {
 			!silently && this.loading(true);
-			try{
+			try {
 				const allSources = await SourceService.loadSourceList();
 				const executionList = await EstimationService.listGenerations(this.analysisId());
 				let sourceList = allSources.filter(source => {
@@ -141,7 +140,9 @@ define([
 						this.estimationStatusGenerationOptions.STARTED :
 						this.estimationStatusGenerationOptions.COMPLETED);
 				});
-			}finally {
+			} catch (e) {
+				console.error(e);
+			} finally {
 				this.loading(false);
 			}
 		}
@@ -198,6 +199,6 @@ define([
 			}
 		}
 	}
-	
+
 	commonUtils.build('comparative-cohort-analysis-executions', EstimationGeneration, view);
 });

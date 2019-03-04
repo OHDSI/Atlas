@@ -146,7 +146,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			    return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.canCopy = ko.pureComputed(() => {
-				return !this.dirtyFlag().isDirty() && !isNew() && 
+				return !this.dirtyFlag().isDirty() && !isNew() &&
 					(this.isAuthenticated() && this.authApi.isPermittedCopyCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
 			});
 			this.canDelete = ko.pureComputed(() => {
@@ -477,16 +477,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 			this.reportingSourceStatus = ko.observable();
 			this.reportingAvailableReports = ko.observableArray();
-			
-			this.pollHeraclesStatus = null;
+
+			this.pollId = null;
 			this.reportSourceKeySub = this.model.reportSourceKey.subscribe(source => {
-				PollService.stop(this.pollHeraclesStatus);
+				PollService.stop(this.pollId);
 				this.model.reportReportName(null);
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
 				const cd = this.model.currentCohortDefinition();
 				if (source) {
-					this.pollHeraclesStatus = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
+					this.pollId = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
 					this.queryHeraclesJob(cd, source);
 				}
 			});
@@ -623,16 +623,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			// METHODS
 
-		queryHeraclesJob(cd, source) {
+		async queryHeraclesJob(cd, source) {
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
-			jobService.getByName(testName, "cohortAnalysisJob")
-				.then(({data}) => data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null));
+			try {
+				const { data } = await jobService.getByName(testName, "cohortAnalysisJob");
+				data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null)
+			} catch (e) {
+				console.error(e)
+			}
 		}
 
 			delete () {
 				if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
 					return;
-				
+
 				this.isDeleting(true);
 				clearTimeout(this.pollTimeout);
 
@@ -1168,7 +1172,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingState.dispose();
 				this.showReportNameDropdown.dispose();
 				this.reportSourceKeySub.dispose();
-				PollService.stop(this.pollHeraclesStatus);
+				PollService.stop(this.pollId);
 			}
 
 			getCriteriaIndexComponent (data) {

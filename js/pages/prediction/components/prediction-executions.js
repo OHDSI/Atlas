@@ -49,6 +49,7 @@ define([
 			this.predictionStatusGenerationOptions = consts.predictionGenerationStatus;
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
+			this.pollId = null;
 
 			this.execColumns = [
 				{
@@ -86,14 +87,12 @@ define([
 			this.executionGroups = ko.observableArray([]);
 			if (this.isViewGenerationsPermitted()) {
 				this.loadData();
-				this.intervalId = PollService.add(() => {
-					this.loadData({ silently: true });
-				}, 10000);
+				this.pollId = PollService.add(() => this.loadData({ silently: true }), 10000);
 			}
 		}
 
 		dispose() {
-			PollService.stop(this.intervalId);
+			PollService.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {
@@ -134,7 +133,7 @@ define([
 		async loadData({silently = false} = {}) {
 			!silently && this.loading(true);
 
-			try{
+			try {
 				const allSources = await SourceService.loadSourceList();
 				const executionList = await PredictionService.listGenerations(this.analysisId());
 
@@ -163,7 +162,9 @@ define([
 						this.predictionStatusGenerationOptions.STARTED :
 						this.predictionStatusGenerationOptions.COMPLETED);
 				});
-			}finally {
+			} catch (e) {
+				console.error(e);
+			} finally {
 				this.loading(false);
 			}
 		}
