@@ -12,7 +12,7 @@ define([
 		view,
 		config,
 		momentApi,
-		authApi
+		authApi,
 	) {
 	function jobManager(params) {
 		var self = this;
@@ -57,6 +57,12 @@ define([
 		self.canReadJobs = ko.pureComputed(function() {
 			return (self.isAuthenticated() && authApi.isPermittedReadJobs()) || !config.userAuthenticationEnabled;
 		});
+
+		self.buttons = [
+			'colvis',
+			'copyHtml5',
+			'csv'
+		];
 
 		if (self.canReadJobs()) {
 			self.updateJobs();
