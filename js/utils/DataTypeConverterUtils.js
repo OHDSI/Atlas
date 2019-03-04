@@ -48,6 +48,7 @@ define(
       }
 
       const convertFromRDateToDate = function(dateTime) {
+          dateTime = dateTime.toString();
           if (dateTime.length !== 8) {
               console.error("Expected format: YYYYMMDD");
           } else {

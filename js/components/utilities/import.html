@@ -1,0 +1,13 @@
+<div class="loading" data-bind="visible: loading()">loading</div>
+
+<div data-bind="css: classes(), visible: !loading()">
+    <div data-bind="css: classes('content')">
+        <!-- ko if: isImportPermitted() -->
+            <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-default btn-sm' }), click: doImport">Import</button>
+            <textarea data-bind="css: classes('json-box'), textInput: $component.importJSON"></textarea>
+        <!-- /ko -->
+        <!-- ko if: !isImportPermitted() -->
+            Import is not permitted
+        <!-- /ko -->
+    </div>
+</div>

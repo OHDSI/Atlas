@@ -49,12 +49,10 @@ define(function (require, exports) {
 			});
 	}
 
-	function exportFullSpecification(id) {
-		return httpService.doGet(config.webAPIRoot + estimationEndpoint + id + "/export")
-			.catch((error) => {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			});
+	function exportEstimation(id) {
+        return httpService
+            .doGet(config.webAPIRoot + estimationEndpoint + id + "/export")
+            .then(res => res.data);
 	}
 
 	function generate(id, source) {
@@ -69,13 +67,20 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
-	var api = {
+    function importEstimation(specification) {
+        return httpService
+            .doPost(config.webAPIRoot + estimationEndpoint + "import", specification)
+            .then(res => res.data);
+    }
+
+    var api = {
 		getEstimationList: getEstimationList,
 		saveEstimation: saveEstimation,
 		copyEstimation: copyEstimation,
 		deleteEstimation: deleteEstimation,
 		getEstimation: getEstimation,
-		exportFullSpecification: exportFullSpecification,
+		exportEstimation: exportEstimation,
+		importEstimation: importEstimation,
 		generate,
 		listGenerations,
 	};

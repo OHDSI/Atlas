@@ -136,7 +136,7 @@ define([
 
         async loadDesignData(id) {
 
-        if (this.design() && (this.design().id || 0 === id)) return;
+        if (this.design() && (this.design().id || 0) === id) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }

@@ -6,12 +6,15 @@ define([
 	'services/file',
 	'appConfig',
 	'services/Estimation',
+	'../PermissionService',
 	'../const',
 	'clipboard',
 	'../inputTypes/ComparativeCohortAnalysis/FullAnalysis',
 	'services/analysis/Cohort',
 	'../inputTypes/TargetComparatorOutcome',
 	'faceted-datatable',
+	'utilities/import',
+	'utilities/export',
 ], function (
 	ko, 
 	view, 
@@ -20,6 +23,7 @@ define([
 	fileService,
 	config,
 	EstimationService,
+	PermissionService,
 	constants,
 	clipboard,
 	FullAnalysis,
@@ -32,6 +36,7 @@ define([
 
 			this.utilityPillMode = ko.observable('download');
 			this.defaultLoadingMessage = "Loading...";
+			this.constants = constants;
 			this.options = constants.options;
 			this.cohortMethodAnalysisList = params.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList;
 			this.comparisons = params.comparisons;
@@ -45,6 +50,10 @@ define([
 			this.loadingMessage = params.loadingMessage;
 			this.packageName = params.packageName;
 			this.selectedAnalysisId = params.estimationId;
+			this.exportService = EstimationService.exportEstimation;
+			this.importService = EstimationService.importEstimation;
+			this.isPermittedExport = PermissionService.isPermittedExport;
+			this.isPermittedImport = PermissionService.isPermittedImport;
 
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
 				return (
@@ -147,17 +156,6 @@ define([
 			)
 			.catch((e) => console.error("error when downloading: " + e))
 			.finally(() => this.loading(false));
-		}
-
-		exportFullSpecification() {
-			this.isExporting(true);
-			EstimationService.exportFullSpecification(this.selectedAnalysisId()).then((analysis) => {
-				this.fullSpecification(commonUtils.syntaxHighlight(ko.toJSON(analysis.data)));
-				this.isExporting(false);
-			}).catch((e) => {
-				console.error("error when exporting: " + e)
-				this.isExporting(false);
-			});
 		}
 
 		copyFullSpecificationToClipboard() {

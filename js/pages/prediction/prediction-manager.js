@@ -71,7 +71,8 @@ define([
 			this.packageName = ko.observable().extend({alphaNumeric: null});
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
-            this.isDeleting = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
             this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isCopying() || this.isDeleting();
             });
@@ -128,6 +129,15 @@ define([
 				this.loading(false);
 			}
 		}
+		
+        onRouterParamsChanged({ id, section }) {
+			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
+				if (section !== undefined) {
+					this.selectedTabKey(section);
+				}
+				this.onPageCreated();
+			}
+        }
 
         selectTab(index, { key }) {
 			this.selectedTabKey(key);
