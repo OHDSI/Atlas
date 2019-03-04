@@ -201,6 +201,7 @@ define([
                 ...(ccDesign.stratas() || []),
                 strata
             ]);
+            this.checkStrataNames();
         }
 
         removeStrata(index) {
