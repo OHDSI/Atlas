@@ -87,7 +87,7 @@ define([
             });
 
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect();
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && PermissionService.isPermittedUpdate(this.selectedAnalysisId());
 			});
 
 			this.canDelete = ko.pureComputed(() => {

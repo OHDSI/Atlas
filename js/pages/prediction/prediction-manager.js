@@ -113,7 +113,7 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect();
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && PermissionService.isPermittedUpdate(this.selectedAnalysisId());
 			});
 		}
 
