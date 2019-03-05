@@ -187,10 +187,14 @@ define([
 					const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
 					if (source) {
 						const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
-						source.info(info);
 						const executionInfo = info.executionInfo;
 						if (executionInfo.status === 'COMPLETE') {
-							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently);
+							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+								info.summaryList = summaryList;
+								source.info(info);
+							});
+						} else {
+							source.info(info);
 						}
 					}
 				});
@@ -205,10 +209,8 @@ define([
 			!silently && this.loadingSummary.push(source.source.sourceKey);
 			try {
 				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
-				const info = source.info();
-				info.summaryList = (sourceInfo && sourceInfo.summaryList) || [];
-				source.info(info);
-			}finally {
+				return (sourceInfo && sourceInfo.summaryList) || [];
+			} finally {
 				this.loadingSummary.remove(source.source.sourceKey);
 			}
 		}
