@@ -99,10 +99,6 @@ define([
 			return sourceItem.source && this.loadingSummary && this.loadingSummary().find(sourceKey => sourceKey === sourceItem.source.sourceKey);
 		}
 
-		loaderText(sourceItem) {
-			return this.isSummaryLoading(sourceItem) ? "Loading summary" : "Running";
-		}
-
 		showExitMessage(sourceKey) {
 			this.exitMessage(this.sources().find(si => si.source.sourceKey === sourceKey).info().executionInfo.message);
 			this.isExitMessageShown(true);
