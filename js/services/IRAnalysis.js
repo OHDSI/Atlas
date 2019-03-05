@@ -121,7 +121,7 @@ define(function (require, exports) {
 			.catch(errroHandler);
 	}
 
-	function getSummaryList(id, sourceKey) {
+	function loadResultsSummary(id, sourceKey) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id}/info/${sourceKey}`);
 
 		return promise
@@ -161,7 +161,7 @@ define(function (require, exports) {
 		getInfo: getInfo,
 		deleteInfo: deleteInfo,
 		getReport: getReport,
-		getSummaryList,
+		loadResultsSummary,
 	}
 
 	return api;

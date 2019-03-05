@@ -204,7 +204,7 @@ define([
 		async loadResultsSummary(id, source, silently = true) {
 			!silently && this.loadingSummary.push(source.source.sourceKey);
 			try {
-				const sourceInfo = await IRAnalysisService.getSummaryList(id, source.source.sourceKey);
+				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
 				const info = source.info();
 				info.summaryList = (sourceInfo && sourceInfo.summaryList) || [];
 				source.info(info);
