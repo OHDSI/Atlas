@@ -1,6 +1,6 @@
 {
   "name": "atlas",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
