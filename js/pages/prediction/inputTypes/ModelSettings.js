@@ -325,7 +325,7 @@ define(function (require, exports) {
                     setting: 'plot',
                     name: 'Minimum samples per split',
                     description: 'The minimum samples per split',
-                    defaultValue: [2],
+                    defaultValue: false,
                 },
             ]
         },
