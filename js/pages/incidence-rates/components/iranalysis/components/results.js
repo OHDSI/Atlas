@@ -44,6 +44,7 @@ define([
 
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
+			this.loadingSummary = params.loadingSummary;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.selectedSource = ko.observable();
 			this.selectedReport = ko.observable();
@@ -91,7 +92,11 @@ define([
 		}
 
 		isInProgress(sourceItem) {
-			return sourceItem.info() && constants.isInProgress(sourceItem.info().executionInfo.status);
+			return (sourceItem.info() && constants.isInProgress(sourceItem.info().executionInfo.status));
+		}
+
+		isSummaryLoading(sourceItem) {
+			return sourceItem.source && this.loadingSummary && this.loadingSummary().find(sourceKey => sourceKey === sourceItem.source.sourceKey);
 		}
 
 		showExitMessage(sourceKey) {

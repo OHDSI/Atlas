@@ -13,6 +13,7 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
+	'services/Poll',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -38,6 +39,7 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
+	PollService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -51,6 +53,8 @@ define([
 			this.pollTimeout = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
+			this.loadingInfo = ko.observable();
+			this.loadingSummary = ko.observableArray();
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -173,35 +177,50 @@ define([
 			this.init();
 		}
 
-		pollForInfo() {
-			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
-				var hasPending = false;
+		async pollForInfo({silently = false} = {}) {
+
+			!silently && this.loadingInfo(true);
+			try {
+				const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
+
 				data.forEach((info) => {
-					const source = this.sources().find(s => s.source.sourceId == info.executionInfo.id.sourceId);
+					const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
 					if (source) {
-						// if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+						const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
+						const executionInfo = info.executionInfo;
+						if (!silently) {
 							source.info(info);
-						if (constants.isInProgress(info.executionInfo.status))
-							hasPending = true;
+						}
+						if (executionInfo.status === 'COMPLETE') {
+							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+								info.summaryList = summaryList;
+								source.info(info);
+							});
+						} else {
+							source.info(info);
+						}
 					}
 				});
-
-				if (hasPending) {
-					this.pollTimeout = setTimeout(() => {
-						this.pollForInfo();
-					}, 10000);
-				} else {
-					this.isRunning(false);
-				}
-			})
-			.catch(() => {
+			} catch(e) {
 				this.close();
-			});
+			} finally {
+				this.loadingInfo(false);
+			}
+		}
+
+		async loadResultsSummary(id, source, silently = true) {
+			!silently && this.loadingSummary.push(source.source.sourceKey);
+			try {
+				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
+				return (sourceInfo && sourceInfo.summaryList) || [];
+			} finally {
+				this.loadingSummary.remove(source.source.sourceKey);
+			}
 		}
 
 		resolveCohortId(cohortId) {
 			var cohortDef = this.cohortDefs().filter(function (def) {
-				return def.id == cohortId;
+				return def.id === cohortId;
 			})[0];
 			return (cohortDef && cohortDef.name) || "Unknown Cohort";
 		}
@@ -225,6 +244,7 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				this.pollForInfo();
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			});
 		};
 
@@ -236,7 +256,7 @@ define([
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
-			if (result.action == 'add') {
+			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
 				this.activeTab('conceptsets');
@@ -302,7 +322,7 @@ define([
 
 		removeResult(analysisResult) {
 			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				const source = this.sources().find(s => s.source.sourceId == analysisResult.source.sourceId);
+				const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 				source.info(null);
 			});
 		}
@@ -325,7 +345,8 @@ define([
 				const tempInfo = {
 					source: sourceItem,
 					executionInfo: {
-						id: {sourceId: sourceItem.source.sourceId}
+						id: {sourceId: sourceItem.source.sourceId},
+						status: constants.status.PENDING,
 					},
 					summaryList: []
 				};
@@ -336,7 +357,6 @@ define([
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
-					this.pollForInfo();
 				});
 		}
 
@@ -375,10 +395,10 @@ define([
 				var sourceList = [];
 				sources.forEach(function (source) {
 					if (source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "CDM";
+							return daimon.daimonType === "CDM";
 						}).length > 0
 						&& source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "Results";
+							return daimon.daimonType === "Results";
 						}).length > 0) {
 						sourceList.push({
 							source: source,
@@ -394,10 +414,11 @@ define([
 
 			if (this.selectedAnalysisId() == null) {
 				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+			} else if (this.selectedAnalysisId() !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			} else {
 				this.pollForInfo();
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			}
 		}
 
@@ -405,7 +426,7 @@ define([
 		dispose() {
 			this.incidenceRateCaption.dispose();
 			this.selectedAnalysisIdSub.dispose();
-			clearTimeout(this.pollTimeout);
+			PollService.stop(this.pollTimeout);
 		}
 	}
 
