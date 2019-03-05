@@ -188,6 +188,9 @@ define([
 					if (source) {
 						const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
 						const executionInfo = info.executionInfo;
+						if (!silently) {
+							source.info(info);
+						}
 						if (executionInfo.status === 'COMPLETE') {
 							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
 								info.summaryList = summaryList;
