@@ -190,7 +190,7 @@ define([
 						source.info(info);
 						const executionInfo = info.executionInfo;
 						if (executionInfo.status === 'COMPLETE') {
-							this.getSummaryList(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently);
+							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently);
 						}
 					}
 				});
@@ -201,7 +201,7 @@ define([
 			}
 		}
 
-		async getSummaryList(id, source, silently = true) {
+		async loadResultsSummary(id, source, silently = true) {
 			!silently && this.loadingSummary.push(source.source.sourceKey);
 			try {
 				const sourceInfo = await IRAnalysisService.getSummaryList(id, source.source.sourceKey);
