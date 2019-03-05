@@ -206,7 +206,7 @@ define([
 			try {
 				const sourceInfo = await IRAnalysisService.getSummaryList(id, source.source.sourceKey);
 				const info = source.info();
-				info.summaryList = sourceInfo.summaryList;
+				info.summaryList = (sourceInfo && sourceInfo.summaryList) || [];
 				source.info(info);
 			}finally {
 				this.loadingSummary.remove(source.source.sourceKey);
