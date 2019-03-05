@@ -47,6 +47,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	
 	state.estimationAnalysis = {
 		current: ko.observable(null),
+		analysisPath: null,
 		selectedId: ko.observable(null),
 		comparisons: ko.observableArray(),
 	}
@@ -54,6 +55,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 
 	state.predictionAnalysis = {
 		current: ko.observable(null),
+		analysisPath: null,
 		selectedId: ko.observable(null),
 		targetCohorts: ko.observableArray(),
 		outcomeCohorts: ko.observableArray(), 

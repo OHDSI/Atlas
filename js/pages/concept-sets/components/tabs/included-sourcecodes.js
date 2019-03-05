@@ -17,13 +17,8 @@ define([
 				return this.model.loadingSourcecodes() || this.model.loadingIncluded();
 			});
 
-			// on activate
-			this.model.loadIncluded()
-				.then(() => {
-					if (this.model.includedSourcecodes().length === 0) {
-						this.model.loadSourcecodes();
-					}
-				});
+      		// data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
+      		// or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
 		}		
 
 	}

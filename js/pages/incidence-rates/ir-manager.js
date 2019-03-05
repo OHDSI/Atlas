@@ -12,9 +12,12 @@ define([
 	'services/JobDetailsService',
 	'services/job/jobDetail',
 	'services/AuthAPI',
+	'services/file',
+	'services/Poll',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/ExceptionUtils',
 	'./const',
 	'./components/iranalysis/main', 
 	'databindings', 
@@ -35,21 +38,27 @@ define([
 	jobDetailsService,
 	jobDetail,
 	authAPI,
+	FileService,
+	PollService,
 	Page,
 	AutoBind,
 	commonUtils,
+	exceptionUtils,
 	constants
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);				
+			super(params);
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
+			this.loadingInfo = ko.observable();
+			this.loadingSummary = ko.observableArray();
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
+			this.exporting = ko.observable();
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -90,13 +99,9 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || 'definition');
-			this.conceptSetEditor = ko.observable(); // stores a refrence to the concept set editor
+			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
-			this.filteredSources = ko.pureComputed(() => {
-				return this.sources().filter(function (source) {
-					return source.info();
-				});
-			});
+			this.stoppingSources = ko.observable({});
 
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
@@ -123,6 +128,12 @@ define([
 					data.selectedData.action();
 				}
 			};
+			this.incidenceRateCaption = ko.computed(() => {
+				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
+					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
+				}
+				return 'New Incidence Rate Analysis';
+			});
 
 			this.modifiedJSON = "";
 			this.importJSON = ko.observable();
@@ -148,40 +159,68 @@ define([
 					this.onAnalysisSelected();
 				}
 			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.selectedAnalysis() && this.selectedAnalysis().name();
+			});
+			this.canSave = ko.computed(() => {
+				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
+			});
 			this.error = ko.observable();
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
 
 			// startup actions
 			this.init();
 		}
 
-		pollForInfo() {
-			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
-				var hasPending = false;
+		async pollForInfo({silently = false} = {}) {
+
+			!silently && this.loadingInfo(true);
+			try {
+				const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
+
 				data.forEach((info) => {
-					var source = this.sources().find((s) => {
-						return s.source.sourceId == info.executionInfo.id.sourceId
-					});
+					const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
 					if (source) {
-						if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
+						const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
+						const executionInfo = info.executionInfo;
+						if (!silently) {
 							source.info(info);
-						if (info.executionInfo.status != "COMPLETE")
-							hasPending = true;
+						}
+						if (executionInfo.status === 'COMPLETE') {
+							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+								info.summaryList = summaryList;
+								source.info(info);
+							});
+						} else {
+							source.info(info);
+						}
 					}
 				});
+			} catch(e) {
+				this.close();
+			} finally {
+				this.loadingInfo(false);
+			}
+		}
 
-				if (hasPending) {
-					this.pollTimeout = setTimeout(() => {
-						this.pollForInfo();
-					}, 10000);
-				} else {
-					this.isRunning(false);
-				}
-			});
+		async loadResultsSummary(id, source, silently = true) {
+			!silently && this.loadingSummary.push(source.source.sourceKey);
+			try {
+				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
+				return (sourceInfo && sourceInfo.summaryList) || [];
+			} finally {
+				this.loadingSummary.remove(source.source.sourceKey);
+			}
 		}
 
 		resolveCohortId(cohortId) {
 			var cohortDef = this.cohortDefs().filter(function (def) {
-				return def.id == cohortId;
+				return def.id === cohortId;
 			})[0];
 			return (cohortDef && cohortDef.name) || "Unknown Cohort";
 		}
@@ -205,6 +244,7 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				this.pollForInfo();
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			});
 		};
 
@@ -216,7 +256,7 @@ define([
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
-			if (result.action == 'add') {
+			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
 				this.activeTab('conceptsets');
@@ -225,35 +265,44 @@ define([
 		}
 
 		copy() {
+			this.isCopying(true);
 			this.loading(true);
 			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.selectedAnalysisId(analysis.id)
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+				this.isCopying(false);
 				this.loading(false);
 				document.location = constants.apiPaths.analysis(analysis.id);
 			});
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
-				return;
-			}
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.sources().forEach(function (source) {
 				source.info(null);
 			});
+		}
+
+		closeAndShowList() {
+
+			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
+				return;
+			}
+			this.close()
 			document.location = constants.apiPaths.analysis();
 		}
 
 		save() {
+			this.isSaving(true);
 			this.loading(true);
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id)
+				document.location = constants.apiPaths.analysis(analysis.id);
+				this.isSaving(false);
 				this.loading(false);
 			});
 		}
@@ -261,7 +310,8 @@ define([
 		delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
-
+			
+			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
 				this.selectedAnalysis(null);
@@ -272,9 +322,7 @@ define([
 
 		removeResult(analysisResult) {
 			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				var source = this.sources().filter(function (s) {
-					return s.source.sourceId == analysisResult.source.sourceId
-				})[0];
+				const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 				source.info(null);
 			});
 		}
@@ -284,12 +332,40 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 		};
 
-		onExecuteClick(sourceItem) {
+		execute(sourceKey) {
+			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+			this.stoppingSources({ ...this.stoppingSources(), [sourceKey]: false });
+
+			if (sourceItem && sourceItem.info()) {
+				sourceItem.info().executionInfo.status = constants.status.PENDING;
+				sourceItem.info.notifySubscribers();
+			}
+			else {
+				// creating 'fake' temporary source info makes the UI respond to the generate action.
+				const tempInfo = {
+					source: sourceItem,
+					executionInfo: {
+						id: {sourceId: sourceItem.source.sourceId},
+						status: constants.status.PENDING,
+					},
+					summaryList: []
+				};
+				sourceItem.info(tempInfo);
+			}
+			this.sources.notifySubscribers();
+			this.isRunning(true);
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
-					JobDetailsService.createJob(data);
-					this.pollForInfo();
+					jobDetailsService.createJob(data);
 				});
+		}
+
+		cancelExecution(sourceKey) {
+			const sourceItem = this.sources().find(s => s.source.sourceKey === sourceKey);
+			this.stoppingSources({ ...this.stoppingSources(), [sourceKey]: true });
+
+			IRAnalysisService
+				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
 		import() {
@@ -301,8 +377,16 @@ define([
 			}
 		};
 
-		exportAnalysisCSV() {
-			window.open(config.api.url + 'ir/' + this.selectedAnalysisId() + '/export');
+		async exportAnalysisCSV() {
+			this.exporting(true);
+			try {
+				await FileService.loadZip(`${config.api.url}ir/${this.selectedAnalysisId()}/export`,
+					`incidence-rate-${this.selectedAnalysisId()}.zip`);
+			}catch (e) {
+				alert(exceptionUtils.translateException(e));
+			}finally {
+				this.exporting(false);
+			}
 		}
 
 		init() {
@@ -311,45 +395,15 @@ define([
 				var sourceList = [];
 				sources.forEach(function (source) {
 					if (source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "CDM";
+							return daimon.daimonType === "CDM";
 						}).length > 0
 						&& source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "Results";
+							return daimon.daimonType === "Results";
 						}).length > 0) {
 						sourceList.push({
 							source: source,
 							info: ko.observable()
 						});
-					}
-				});
-				this.generateActionsSettings.actionOptions = sourceList.map((sourceItem) => {
-					return {
-						text: sourceItem.source.sourceName,
-						selected: false,
-						description: "Perform Study on source: " + sourceItem.source.sourceName,
-						action: () => {
-							if (sourceItem.info()) {
-								sourceItem.info().executionInfo.status = "PENDING";
-								sourceItem.info.notifySubscribers();
-							}
-							else {
-								// creating 'fake' temporary source info makes the UI respond to the generate action.
-								const tempInfo = {
-									source: sourceItem,
-									executionInfo: {
-										id: {sourceId: sourceItem.source.sourceId}
-									},
-									summaryList: []
-								};
-								sourceItem.info(tempInfo);
-							}
-							this.isRunning(true);
-							IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
-								.then(({data}) => {
-									JobDetailsService.createJob(data);
-									this.pollForInfo();
-								});
-						}
 					}
 				});
 
@@ -360,17 +414,19 @@ define([
 
 			if (this.selectedAnalysisId() == null) {
 				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+			} else if (this.selectedAnalysisId() !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			} else {
 				this.pollForInfo();
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			}
 		}
 
 		// cleanup
 		dispose() {
+			this.incidenceRateCaption.dispose();
 			this.selectedAnalysisIdSub.dispose();
-			clearTimeout(this.pollTimeout);
+			PollService.stop(this.pollTimeout);
 		}
 	}
 

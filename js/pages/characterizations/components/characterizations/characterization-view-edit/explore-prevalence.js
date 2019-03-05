@@ -5,6 +5,7 @@ define([
 	'utils/CommonUtils',
 	'utils/AutoBind',
 	'pages/characterizations/services/CharacterizationService',
+	'pages/characterizations/utils',
 	'./utils',
 	'numeral',
 	'less!./explore-prevalence.less',
@@ -15,6 +16,7 @@ define([
 	commonUtils,
 	AutoBind,
 	CharacterizationService,
+	pageUtils,
 	utils,
 	numeral,
 ){
@@ -26,7 +28,7 @@ define([
 			this.tableColumns = [
 				{ title: 'Relationship type', render: this.renderRelationship, class: this.classes('col-type'), },
 				{ title: 'Distance', data: 'distance', class: this.classes('col-distance'), },
-				{ title: 'Concept name', data: 'covariateName', class: this.classes('col-concept'), },
+				{ title: 'Concept name', data: 'covariateName', class: this.classes('col-concept'), render: (d, t, r) => pageUtils.extractMeaningfulCovName(d) },
 			];
 			this.data = ko.observableArray();
 			this.loading = ko.observable();

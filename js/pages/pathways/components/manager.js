@@ -40,11 +40,17 @@ define([
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
-
 			this.loading = ko.observable(false);
+
+			this.isNameCorrect = ko.computed(() => {
+				return this.design() && this.design().name();
+			});
+			
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
+			this.isNewEntity = this.isNewEntityResolver();
+			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
 			this.componentParams = {
@@ -52,7 +58,18 @@ define([
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 			};
-
+			this.pathwayCaption = ko.computed(() => {
+				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
+					return 'Cohort Pathway #' + this.design().id;
+				}
+				return 'New Cohort Pathway';
+			});
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
 		}
 
 		onRouterParamsChanged({analysisId, section, subId}) {
@@ -73,7 +90,7 @@ define([
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
 		}
 		
-	 setupSection(section) {
+		setupSection(section) {
 				const tabKey = section === 'results' ? 'executions' : section;
 				this.selectedTabKey(tabKey || 'design');
 		}
@@ -85,7 +102,7 @@ define([
 		}
 
 		isSavePermittedResolver() {
-				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty())
+				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect())
 		}
 
 		isDeletePermittedResolver() {
@@ -93,7 +110,14 @@ define([
 						() => (this.analysisId() ? PermissionService.isPermittedDelete(this.analysisId()) : false)
 				);
 		}
-		
+
+		isNewEntityResolver() {
+			return ko.computed(() => this.design() && this.analysisId() === 0);
+		}
+
+		canCopyResolver() {
+			return ko.computed(() => !this.dirtyFlag().isDirty() && PermissionService.isPermittedCopy(this.analysisId()));
+		}
 
 		async load(id) {
 			if (this.design() && (this.design().id || 0 == id)) return; // this design is already loaded.
@@ -111,22 +135,34 @@ define([
 		}
 		
 		async save() {
+			this.isSaving(true);
 			if (!this.design().id) {
 				const newAnalysis = await PathwayService.create(this.design());
 				this.dirtyFlag().reset();
+				this.isSaving(false);
 				commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
 			} else {
 				const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
 				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
+				this.isSaving(false);
 				this.loading(false);
 			}
 		}
 
+		async copyPathway() {
+			this.isCopying(true);
+			const copiedAnalysis = await PathwayService.copy(this.design().id);
+			this.setupDesign(new PathwayAnalysis(copiedAnalysis));
+			this.isCopying(false);
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(copiedAnalysis.id, 'design'));
+		}
+
 		async del() {
 			if (confirm('Are you sure?')) {
+				this.isDeleting(true);
 				this.loading(true);
 				await PathwayService.del(this.design().id);
-				this.dirtyFlag().reset();					
+				this.dirtyFlag().reset();
 				this.loading(false);
 				this.close();
 			}

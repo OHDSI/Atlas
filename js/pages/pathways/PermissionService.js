@@ -33,7 +33,7 @@ define([
 	}
 
 	function isPermittedGenerate(id, sourceKey) {
-		return AuthAPI.isPermitted(`pathway-analysis:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
+		return AuthAPI.isPermitted(`pathway-analysis:${id}:generation:${sourceKey}:post`);
 	}
 
 	function isPermittedResults(sourceKey) {
@@ -48,9 +48,14 @@ define([
 		return AuthAPI.isPermitted(`pathway-analysis:${id}:export:get`);
 	}
 
+	function isPermittedCopy(id) {
+		return AuthAPI.isPermitted(`pathway-analysis:${id}:post`);
+	}
+
 
 	return {
 		isPermittedCreate,
+		isPermittedCopy,
 		isPermittedImport,
 		isPermittedList,
 		isPermittedLoad,

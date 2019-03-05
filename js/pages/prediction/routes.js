@@ -3,55 +3,35 @@ define(
     const { AuthorizedRoute } = require('pages/Route');
     const atlasState = require('atlas-state');
     function routes(appModel, router) {
-      return {        
-        '/plp': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
-          require(['./plp-browser'], function () {
-            router.setCurrentView('plp-browser');
-          });
-        }),
-        '/plp/:modelId:': new AuthorizedRoute((modelId) => {
-          appModel.activePage(this.title);
-          require([
-            './plp-manager',
-            './components/plp-inspector',
-            './components/plp-roc',
-            './components/plp-calibration',
-            './components/plp-spec-editor',
-            './components/plp-r-code',
-            './components/plp-print-friendly',
-            'components/cohort-definition-browser',
-            'components/atlas.cohort-editor'
-          ], function () {
-            appModel.currentPatientLevelPredictionId(+modelId);
-            const params = {};
-            params.currentPatientLevelPredictionId = appModel.currentPatientLevelPredictionId();
-            params.currentPatientLevelPrediction = appModel.currentPatientLevelPrediction();
-            params.dirtyFlag = appModel.currentPatientLevelPredictionDirtyFlag();
 
-            router.setCurrentView('plp-manager', params);
+      const predictionViewEdit = new AuthorizedRoute((analysisId, section) => {
+        appModel.activePage(this.title);
+        require([
+          './prediction-manager', 
+          './components/editors/evaluation-settings-editor',
+          './components/editors/execution-settings-editor', 
+          './components/editors/model-settings-editor', 
+          './components/editors/population-settings-editor',
+          './components/editors/prediction-covariate-settings-editor',
+        ], function() {
+          atlasState.predictionAnalysis.selectedId(analysisId);
+          appModel.currentView('prediction-manager');
+          router.setCurrentView('prediction-manager', {
+            id: analysisId, 
+            section: section || 'specification',
           });
-        }),
-        '/prediction/:analysisId:': new AuthorizedRoute((analysisId) => {
-          appModel.activePage(this.title);
-          require([
-            './prediction-manager', 
-            './components/EvaluationSettingsEditor',
-            './components/ExecutionSettingsEditor', 
-            './components/ModelSettingsEditor', 
-            './components/PopulationSettingsEditor',
-            './components/PredictionCovariateSettingsEditor',
-          ], function () {
-            atlasState.predictionAnalysis.selectedId(analysisId);
-            appModel.currentView('prediction-manager');
-          });
-        }),
+        });
+      });
+
+      return {        
         '/prediction': new AuthorizedRoute(() => {
           appModel.activePage(this.title);
           require(['./prediction-browser'], function() {
             appModel.currentView('prediction-browser');
           })
         }),
+        '/prediction/:analysisId:': predictionViewEdit,
+        '/prediction/:analysisId:/:section:': predictionViewEdit,
       };
     }
 

@@ -1,0 +1,8 @@
+<div>
+    <label data-bind="text: $component.modelSettingDescription(size.name)"></label>
+    <multi-input params="selectedValues: size.value, defaultValues: size.default, valueLabel: size.valueLabel, selectedValueType: 'integer'"></multi-input>    
+</div>
+<div>
+    <label data-bind="text: $component.modelSettingDescription(alpha.name)"></label>
+    <multi-input params="selectedValues: alpha.value, defaultValues: alpha.default, valueLabel: alpha.valueLabel, selectedValueType: 'float'"></multi-input>    
+</div>

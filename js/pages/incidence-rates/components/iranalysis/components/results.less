@@ -1,0 +1,101 @@
+.ir-analysis-results {
+
+  &__header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0.5rem 0.5rem 2rem 0.75rem;
+  }
+
+  &__generate-btn {
+    margin-right: 1.5rem;
+  }
+
+  &__tbl-container {
+    &--short {
+      max-height: 21rem;
+      overflow: auto;
+    }
+  }
+
+  &__tbl {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  &__tbl-th {
+
+    &--execute {
+      width: 100px;
+    }
+    &--source {
+      width: 22.5%;
+    }
+    &--persons {
+      width: 8%;
+    }
+    &--cases {
+      width: 8%;
+    }
+    &--proportion {
+      width: 8%;
+    }
+    &--time-at-risk {
+      width: 8%;
+    }
+    &--rate {
+      width: 8%;
+    }
+    &--started {
+      width: 10%;
+    }
+    &--duration {
+      width: 7.5%;
+    }
+    &--view-results {
+	  width:130px;
+    }
+  }
+
+  &__tbl-col {
+    padding: .3rem .5rem !important;
+    line-height: 2.8rem !important;
+
+    &--exec-start {
+      font-size: .9em;
+      white-space: nowrap;
+    }
+
+    &--view-reports {
+      text-align: right;
+    }
+
+    &--progress {
+      text-align: center;
+      padding-top: .5rem;
+      padding-bottom: .5rem;
+    }
+  }
+
+  &__report-block {
+    border-top: 1px solid #ccc;
+    padding-top: 1.5rem;
+  }
+
+  &__report-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-left: .5rem;
+    margin-right: .5rem;
+  }
+
+  &__report-title {
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  &__report-close {
+    cursor: pointer;
+  }
+}

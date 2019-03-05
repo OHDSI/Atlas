@@ -1,18 +1,25 @@
-<heading-title params="name: $component.sourceCaption, icon: 'database', theme: 'dark'"></heading-title>
+<heading-title params="name: $component.sourceCaption(), icon: 'database', theme: 'dark'"></heading-title>
 <div data-bind="if:$component.hasAccess, css: classes()">
+	<loading data-bind="visible:loading()"></loading>
 	<div data-bind="visible: !loading()">
 			<!-- ko if: selectedSource() != null -->
 			<div data-bind="if:$component.canReadSource">
 					<div class="asset-heading">
-							<input type="text" data-bind="textInput: selectedSource().name, enable: canEdit()"/>
-							<div class="btn-group" role="group">
-									<button class="btn btn-sm btn-success" title="Save"
+						<div class="input-group">
+							<input type="text" class="form-control" data-bind="textInput: selectedSource().name, enable: canEdit(), css: { emptyInput: !isNameCorrect() }"/>
+							<div class="input-group-btn" role="group">
+									<button class="btn btn-success" title="Save"
 													data-bind="click: save, enable: dirtyFlag().isDirty() && canSave(), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">
 											<i class="fa fa-save"></i></button>
-									<button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i
+									<button class="btn btn-primary" title="Close" data-bind="click: close"><i
 													class="fa fa-times"></i></button>
-									<button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
+									<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete()"><i class="fa fa-trash-o"></i></button>
 							</div>
+						</div>
+						<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+							<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+							<label>Source name is empty.</label>
+						</div>
 					</div>
 					<div class="pad-10">
 							<div class="panel panel-primary">
@@ -125,16 +132,10 @@
 							</div>
 					</div>
 			</div>
-			<div data-bind="ifnot:$component.canReadSource">
-					<div class="padded">
-							<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-					</div>
-			</div>
+
+			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canReadSource"></access-denied>
 			<!-- /ko -->
 	</div>
 </div>
-<div data-bind="ifnot:$component.hasAccess">
-	<div class="padded">
-		<access-denied params="isAuthenticated: isAuthenticated"></access-denied>
-	</div>
-</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.hasAccess"></access-denied>

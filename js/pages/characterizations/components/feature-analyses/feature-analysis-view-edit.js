@@ -1,5 +1,6 @@
 define([
     'knockout',
+    'clipboard',
     'pages/characterizations/services/FeatureAnalysisService',
     'pages/characterizations/services/PermissionService',
     'components/cohortbuilder/CriteriaGroup',
@@ -18,15 +19,17 @@ define([
     'pages/characterizations/const',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'utils/Clipboard',
     'assets/ohdsi.util',
     '../../utils',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
     'components/multi-select',
-		'components/DropDownMenu',
+    'components/DropDownMenu',
 ], function (
     ko,
+    clipboard,
     FeatureAnalysisService,
     PermissionService,
     CriteriaGroup,
@@ -42,9 +45,10 @@ define([
     VocabularyAPI,
     ConceptSet,
     Page,
-	  constants,
+    constants,
     AutoBind,
     commonUtils,
+    Clipboard,
     ohdsiUtil,
     utils,
 ) {
@@ -60,7 +64,7 @@ define([
       { label: 'Distribution', value: 'DISTRIBUTION' },
     ];
 
-    class FeatureAnalysisViewEdit extends AutoBind(Page) {
+    class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
 
@@ -77,6 +81,7 @@ define([
                 return this.dataDirtyFlag().isDirty() && this.areRequiredFieldsFilled() && (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
             this.canDelete = this.isDeletePermittedResolver();
+            this.isNewEntity = this.isNewEntityResolver();
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
@@ -90,6 +95,23 @@ define([
 
             this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
             this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
+            this.featureCaption = ko.computed(() => {
+                if (this.data()){
+                    if (this.featureId() !== 0) {
+                        return 'Feature Analysis #' + this.featureId();
+                    } else {
+                        return 'New Feature Analysis';
+                    }
+                }
+            });
+            this.isNameCorrect = ko.computed(() => {
+                return this.data() && this.data().name();
+            });
+            this.isSaving = ko.observable(false);
+            this.isDeleting = ko.observable(false);
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isDeleting();
+            });
         }
 
         onPageCreated() {
@@ -109,8 +131,8 @@ define([
         }
 
         buildAddCriteriaAction(type) {
-					return () => this.addWindowedCriteria(type);
-				}
+            return () => this.addWindowedCriteria(type);
+        }
 
         isCreatePermitted() {
             return PermissionService.isPermittedCreateFa();
@@ -124,6 +146,10 @@ define([
             return ko.computed(() => PermissionService.isPermittedDeleteFa(this.featureId()));
         }
 
+        isNewEntityResolver() {
+            return ko.computed(() => this.featureId() === 0);
+        }
+
         areRequiredFieldsFilled() {
             const isDesignFilled = this.data() && ((typeof this.data().design() === 'string' || Array.isArray(this.data().design())) && this.data().design().length > 0);
             return this.data() && (typeof this.data().name() === 'string' && this.data().name().length > 0 && typeof this.data().type() === 'string' && this.data().type().length > 0 && isDesignFilled);
@@ -134,9 +160,13 @@ define([
                if (!(this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit())) {
                    return 'Not enough permissions';
                } else if (this.areRequiredFieldsFilled()) {
-                   return 'No changes to persist';
+                   if (!this.dataDirtyFlag().isDirty()){
+                       return 'No changes to persist';
+                   } else {
+                       return "";
+                   }
                } else {
-                   return 'Name and design should not be empty';
+                   return 'Design or Name are empty';
                }
             });
         }
@@ -168,46 +198,46 @@ define([
               descr: ko.observable(),
               type: ko.observable(),
               design: ko.observable(),
-							statType: ko.observable(),
+              statType: ko.observable(),
               conceptSets: ko.observableArray(),
             };
             data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
-										const commonDesign = {
-											id: c.id,
-											name: ko.observable(c.name),
-											criteriaType: c.criteriaType,
-										};
-                		if (c.criteriaType === 'CriteriaGroup') {
-											return {
-												...commonDesign,
-												expression: ko.observable(new CriteriaGroup(c.expression, data.conceptSets)),
-											};
-										} else if (c.criteriaType === 'DemographicCriteria') {
-											return {
-												...commonDesign,
-												expression: ko.observable(new DemographicGriteria(c.expression, data.conceptSets)),
-											};
-										} else if (c.criteriaType === 'WindowedCriteria' && c.expression.Criteria) {
-                			return {
-												...commonDesign,
-												expression: ko.observable(new WindowedCriteria(c.expression, data.conceptSets)),
-											};
-										}
+                    const commonDesign = {
+                        id: c.id,
+                        name: ko.observable(c.name),
+                        criteriaType: c.criteriaType,
+                    };
+                    if (c.criteriaType === 'CriteriaGroup') {
+                        return {
+                            ...commonDesign,
+                            expression: ko.observable(new CriteriaGroup(c.expression, data.conceptSets)),
+                        };
+                    } else if (c.criteriaType === 'DemographicCriteria') {
+                        return {
+                            ...commonDesign,
+                            expression: ko.observable(new DemographicGriteria(c.expression, data.conceptSets)),
+                        };
+                    } else if (c.criteriaType === 'WindowedCriteria' && c.expression.Criteria) {
+                        return {
+                            ...commonDesign,
+                            expression: ko.observable(new WindowedCriteria(c.expression, data.conceptSets)),
+                        };
+                    }
                 }).filter(c => c);
             } else {
                 parsedDesign = design;
             }
 
-            data.name(name);
+            data.name(name || 'New Feature Analysis');
             data.descr(descr);
             data.domain(domain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
-						data.statType.subscribe(() => this.data.design([]));
+            data.statType.subscribe(() => this.data().design([]));
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
             this.previousDesign = { [type]: parsedDesign };
@@ -232,23 +262,23 @@ define([
         getEmptyCriteriaFeatureDesign() {
             return {
                 name: ko.observable(''),
-								criteriaType: 'CriteriaGroup',
+                criteriaType: 'CriteriaGroup',
                 conceptSets: this.data().conceptSets,
                 expression: ko.observable(new CriteriaGroup(null, this.data().conceptSets)),
             };
         }
 
         getEmptyWindowedCriteria(type) {
-        	const data = { Criteria: {} };
-        	data.Criteria[type] = { IgnoreObservationPeriod: true, };
-        	return {
-        		name: ko.observable(''),
-						criteriaType: 'WindowedCriteria',
-						expression: ko.observable(new WindowedCriteria(data, this.data.conceptSets)),
-					};
-				}
+            const data = { Criteria: {} };
+            data.Criteria[type] = { IgnoreObservationPeriod: true, };
+            return {
+                name: ko.observable(''),
+                criteriaType: 'WindowedCriteria',
+                expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
+            };
+        }
 
-				getEmptyDemographicCriteria() {
+        getEmptyDemographicCriteria() {
             return {
               name: ko.observable(''),
               criteriaType: 'DemographicCriteria',
@@ -261,9 +291,9 @@ define([
         }
 
         addWindowedCriteria(type) {
-        	const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
-        	this.data.design([...this.data.design(), criteria]);
-				}
+            const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
+            this.data().design([...this.data().design(), criteria]);
+        }
 
         removeCriteria(index) {
             const criteriaList = this.data().design();
@@ -286,20 +316,24 @@ define([
         }
 
         async save() {
+            this.isSaving(true);
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data())));
 
             if (this.featureId() < 1) {
                 const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());
                 this.dataDirtyFlag().reset();
+                this.isSaving(false);
                 commonUtils.routeTo('/cc/feature-analyses/' + res.id);
             } else {
                 const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data());
                 this.setupAnalysisData(res);
+                this.isSaving(false);
                 this.loading(false);
             }
         }
 
         deleteFeature() {
+            this.isDeleting(true);
             commonUtils.confirmAndDelete({
                 loading: this.loading,
                 remove: () => FeatureAnalysisService.deleteFeatureAnalysis(this.featureId()),
@@ -315,6 +349,10 @@ define([
             this.featureId(null);
             this.dataDirtyFlag().reset();
             commonUtils.routeTo('/cc/feature-analyses');
+        }
+
+        copyAnalysisSQLTemplateToClipboard() {
+            this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
         }
     }
 

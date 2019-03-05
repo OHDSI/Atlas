@@ -3,30 +3,21 @@ define(['knockout', 'text!./EndStrategyEditorTemplate.html', '../EndStrategies',
 	ko.components.register('date-offset-strategy', dateOffsetStrategyComponent);
 	ko.components.register('custom-era-strategy', customEraStrategyComponent);
 	
-	function getTypeFromStrategy(strategy) {
-		if (strategy == null)
-			return "default";
-		else if (strategy.hasOwnProperty("DateOffset"))
-			return "dateOffset";
-		else if (strategy.hasOwnProperty("CustomEra"))
-			return "customEra";
-		throw new Error("Strategy instance does not resolve to a StrategyType.");
-	}
 	
 	function EndStrategyEditorViewModel(params) {
 		var self = this;
 
-		self.strategyOptions = [
-			{ name: "default", text: "end of continuous observation"},
-			{ name: "dateOffset", text: "fixed duration relative to initial event"},
-			{ name: "customEra", text: "end of a continuous drug exposure"}
-		]
+		function getTypeFromStrategy(strategy) {
+			if (strategy == null)
+				return "default";
+			else if (strategy.hasOwnProperty("DateOffset"))
+				return "dateOffset";
+			else if (strategy.hasOwnProperty("CustomEra"))
+				return "customEra";
+			throw new Error("Strategy instance does not resolve to a StrategyType.");
+		}
 		
-		self.strategy = params.strategy;
-		self.conceptSets = params.conceptSets;
-		self.strategyType = ko.observable(getTypeFromStrategy(self.strategy()));
-
-		self.setStrategy = function(strategyType) {
+		function setStrategy (strategyType) {
 			switch(strategyType) {
 				case 'dateOffset': 
 					self.strategy({
@@ -46,6 +37,19 @@ define(['knockout', 'text!./EndStrategyEditorTemplate.html', '../EndStrategies',
 			}		
 		}
 		
+		self.strategyOptions = [
+			{ name: "default", text: "end of continuous observation"},
+			{ name: "dateOffset", text: "fixed duration relative to initial event"},
+			{ name: "customEra", text: "end of a continuous drug exposure"}
+		]
+		
+		self.strategy = params.strategy;
+		self.conceptSets = params.conceptSets;
+		self.strategyType = ko.pureComputed({
+			read: () => getTypeFromStrategy(self.strategy()),
+			write: setStrategy
+		});
+		
 		self.clearStrategy = function()
 		{
 			self.strategy(null);	
@@ -64,11 +68,7 @@ define(['knockout', 'text!./EndStrategyEditorTemplate.html', '../EndStrategies',
 		self.subscriptions = [];
 		
 		// subscriptions
-		
-		self.subscriptions.push(self.strategyType.subscribe(newVal => {
-			self.clearStrategy();
-			self.setStrategy(newVal);
-		}));
+			
 		
 		// cleanup
 		self.dispose = function () {

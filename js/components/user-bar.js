@@ -10,18 +10,21 @@ define([
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'lodash',
+	'services/Poll',
 	'less!./user-bar.less'
 ], function (ko,
-             view,
-             AutoBind,
-             appConfig,
-             state,
-             Component,
-             commonUtils,
-             authApi,
-             jobDetailsService,
-             momentApi,
-			 lodash) {
+			view,
+			AutoBind,
+			appConfig,
+			state,
+			Component,
+			commonUtils,
+			authApi,
+			jobDetailsService,
+			momentApi,
+			lodash,
+			PollService,
+		) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);
@@ -30,12 +33,13 @@ define([
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;
 			this.authLogin = authApi.subject;
-			this.pollInterval = null;
+			this.pollId = null;
 			this.loading = params.model.loading;
 			this.signInOpened = params.model.signInOpened;
 			this.jobListing = state.jobListing;
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
+			this.permissionCheckWarningShown = false;
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {
@@ -93,61 +97,61 @@ define([
 		}
 
 		startPolling() {
-			this.pollInterval = setInterval(() => this.updateJobStatus(), appConfig.pollInterval);
+			this.pollId = PollService.add(() => this.updateJobStatus(), appConfig.pollInterval);
 		};
 
 		stopPolling() {
-			clearInterval(this.pollInterval);
+			PollService.stop(this.pollId);
 		};
 
 		getExisting(n) {
 			return this.jobListing().find(j => j.executionId === n.executionId);
 		}
 
-		updateJobStatus() {
-			if (!authApi.isPermittedGetAllNotifications()) {
-				jobDetailsService.list()
-					.then(notifications => {
-						notifications.data.forEach(n => {
-							let job = this.getExisting(n);
-	
-							const endDate = (n.endDate ? n.endDate : Date.now());
-							const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
-							const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
-	
-							if (job) {
-								if (job.status() !== n.status) {
-									job.status(n.status);
-									job.viewed(false);
-									job.duration = duration;
-									job.endDate = displayedEndDate;
-									this.jobListing.valueHasMutated();
-								}
-							} else {
-								job = {
-									type: n.jobInstance.name,
-									name: n.jobParameters.jobName,
-									status: ko.observable(n.status),
-									executionId: n.executionId,
-									viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
-									url: jobDetailsService.getJobURL(n),
-									executionUniqueId: ko.pureComputed(function () {
-										return job.type + "-" + job.executionId;
-									}),
-									duration,
-									endDate: displayedEndDate,
-								};
-								this.jobListing.push(job);
+		async updateJobStatus() {
+			if (authApi.isPermittedGetAllNotifications()) {
+				try {
+					const notifications = await jobDetailsService.list();
+					notifications.data.forEach(n => {
+						let job = this.getExisting(n);
+
+						const endDate = (n.endDate ? n.endDate : Date.now());
+						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
+						const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
+
+						if (job) {
+							if (job.status() !== n.status) {
+								job.status(n.status);
+								job.viewed(false);
+								job.duration = duration;
+								job.endDate = displayedEndDate;
 								this.jobListing.valueHasMutated();
-	
 							}
-						});
-					})
-					.catch(() => {
-						console.warn('The server error occurred while getting all notifications');                        
+						} else {
+							job = {
+								type: n.jobInstance.name,
+								name: n.jobParameters.jobName,
+								status: ko.observable(n.status),
+								executionId: n.executionId,
+								viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
+								url: jobDetailsService.getJobURL(n),
+								executionUniqueId: ko.pureComputed(function () {
+									return job.type + "-" + job.executionId;
+								}),
+								duration,
+								endDate: displayedEndDate,
+							};
+							this.jobListing.push(job);
+							this.jobListing.valueHasMutated();
+
+						}
 					});
-			} else {
+				} catch (e) {
+					console.warn('The server error occurred while getting all notifications');
+				}
+			} else if (!this.permissionCheckWarningShown) {
 				console.warn('There isn\'t permission to get all notifications');
+				this.permissionCheckWarningShown = true;
 			}
 		};
 

@@ -19,22 +19,7 @@
 			<div class="facetedDataTable">
 				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="dataTable:{
 							data: $component.tableData,
-							options: {
-								dom: $component.dom,
-								colVis: $component.colVis,
-								language: $component.language,
-								buttons: $component.buttons,
-								rowCallback: $component.rowCallback,
-								lengthMenu: $component.lengthMenu,
-								orderClasses: $component.orderClasses,
-								ordering: $component.ordering,
-								order: $component.order,
-								columns: $component.columns,
-								autoWidth: $component.autoWidth,
-								deferRender: $component.deferRender,
-								pageLength: $component.pageLength,
-								drawCallback: $component.drawCallback
-							},
+							options: $component.options,
 							scrollOptions: $component.scrollOptions,
 							onRowClick: $component.rowClick
 					} "><!-- ko if: $component.headersTemplateId -->

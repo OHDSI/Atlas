@@ -2,13 +2,15 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 
 	function facetedDatatable(params) {
 		var self = this;
-
+		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
 		self.data = params.xfObservable || ko.observable();
 		self.tableData = ko.pureComputed(function () {
 			if (self.data() && self.data().size() && self.data().size() > 0) {
-				return self.data().allFiltered();
+				const data = self.data().allFiltered();
+				self.selectedData && self.selectedData(data);
+				return data;
 			} else {
 				return [];
 			}
@@ -57,6 +59,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.orderClasses = params.orderClasses || false;
 		self.ordering = params.ordering || true;
 		self.scrollOptions = params.scrollOptions || null;
+		self.createdRow = params.createdRow || null;
 
 		self.updateFilters = function (data, event) {
 			var facet = data.facet;
@@ -134,7 +137,41 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			}
 		});
 
-		self.reference.valueHasMutated(); // init component
+		// init component
+		if (ko.isComputed(self.reference)) {
+			// valueHasMutated doesn't work for computed
+			self.reference.notifySubscribers();
+		} else {
+			self.reference.valueHasMutated(); 
+		}
+		
+		self.stateSaveCallback = params.stateSaveCallback;
+		self.stateLoadCallback = params.stateLoadCallback;
+		
+		self.options = {
+			...self.options,
+			dom: self.dom,
+			colVis: self.colVis,
+			language: self.language,
+			buttons: self.buttons,
+			rowCallback: self.rowCallback,
+			lengthMenu: self.lengthMenu,
+			orderClasses: self.orderClasses,
+			ordering: self.ordering,
+			order: self.order,
+			columns: self.columns,
+			autoWidth: self.autoWidth,
+			deferRender: self.deferRender,
+			pageLength: self.pageLength,
+			drawCallback: self.drawCallback,
+            createdRow: self.createdRow,
+		};
+		if (self.stateSaveCallback !== undefined) {
+			self.options = {...self.options, stateSaveCallback: self.stateSaveCallback, stateSave: true}
+		}
+		if (self.stateLoadCallback !== undefined) {
+			self.options = {...self.options, stateLoadCallback: self.stateLoadCallback}
+		}
 	};
 
 	var component = {

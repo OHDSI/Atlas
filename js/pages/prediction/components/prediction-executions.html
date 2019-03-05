@@ -1,0 +1,97 @@
+<div>
+    <loading data-bind="visible: loading()" params="status: 'Loading generations...'"></loading>
+    <div data-bind="visible: !loading()">
+        <h2 data-bind="css: classes('title')">
+            Generations <i data-bind="visible: isResultsDownloading, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+        </h2>
+        <div data-bind="css: classes('content')">
+            <!-- ko foreach: executionGroups -->
+            <div data-bind="
+                template: {
+                    name: 'plp-execution-group',
+                    data: Object.assign({}, $data, {
+                        classes: $parent.classes,
+                        execColumns: $parent.execColumns,
+                        isExpanded: $parent.expandedSection() === $index(),
+                        toggleSection: $parent.toggleSection.bind(null, $index())
+                    })
+                }
+            "></div>
+            <!-- /ko -->
+        </div>
+    </div>
+</div>
+
+<modal-exit-message params="{
+        showModal: $component.isExitMessageShown,
+        title: 'Execution Exit Message',
+        exitMessage: $component.exitMessage,
+    }">
+</modal-exit-message>
+
+<script type="text/html" id="plp-execution-group">
+    <div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
+        <div data-bind="css: classes('heading')">
+            <label data-bind="css: classes('ds-title'), text: sourceName"></label>
+            <ul data-bind="css: classes({ element: 'action-list' })">
+                <li data-bind="
+                    css: classes({ element: 'action' }),
+                    tooltip: !$component.isGeneratePermitted(sourceKey) ? 'Not enough permissions to generate or changes were not saved or Execution Engine is not available' : null,
+                ">
+                    <button data-bind="
+                        css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+						attr: { 'disabled': !$component.isGeneratePermitted(sourceKey) },
+                        click: () => $component.generate(sourceKey)"
+                    >
+                        <!-- ko if: 'STARTED' === status() -->
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
+                        <span data-bind="css: classes('action-text')">Generating...</span>
+                        <!-- /ko -->
+                        <!-- ko if: 'COMPLETED' === status() -->
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
+                        <span data-bind="css: classes('action-text')">Generate</span>
+                        <!-- /ko -->
+                    </button>
+                </li>
+                <li data-bind="
+                    css: classes({ element: 'action' }),
+                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null,
+                ">
+                    <button data-bind="
+                        css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+						attr: { 'disabled': !$component.findLatestSubmission(sourceKey)  },
+						click: () => $component.downloadLatestResults(sourceKey)
+                    ">
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-download']})"></i>
+                        Download latest result
+                    </button>
+
+                </li>
+                <li data-bind="
+                    css: classes({ element: 'action' }),
+                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null,
+                 ">
+                    <button data-bind="
+                        css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+						attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+                        click: toggleSection
+                    ">
+                        <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
+                        <span data-bind="text: 'All executions (' + submissions().length + ')'"></span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <ul data-bind="css: classes('result-list')">
+            <li data-bind="css: classes('result-line')">
+                <table data-bind="
+                    css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                    dataTable:{
+                        data: submissions,
+                        options: {columns: execColumns, order: [[ 0, 'desc' ]]}
+                    }
+                "/>
+            </li>
+        </ul>
+    </div>
+</script>

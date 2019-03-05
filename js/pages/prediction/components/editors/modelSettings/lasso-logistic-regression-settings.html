@@ -1,0 +1,7 @@
+<label data-bind="text: $component.modelSettingDescription(variance.name)"></label>
+<div class="input-group" >
+    <input class="form-control" type="text" data-bind="textInput: variance.value" />
+    <span class="input-group-btn">
+            <button class="btn" data-bind="disable: isDefault(variance.name), click: function(data, event) { setToDefault(variance.name) }, css: {'btn-danger': !(isDefault(variance.name))}, text: isDefault(variance.name) ? 'Using default' : 'Reset to default'"></button>
+    </span>
+</div>

@@ -19,11 +19,9 @@
     </div>
 </div>
 
-<div data-bind="ifnot: $component.isViewPermitted, css: `${$component.isViewPermitted ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
-</div>
+<access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewPermitted"></access-denied>
 
-<div data-bind="if: $component.isViewPermitted, css: classes('grid')">
+<div data-bind="if: $component.isViewPermitted(), css: classes('grid')">
     <faceted-datatable params="{
         order: [[0, 'asc']],
         columns: $component.gridColumns,

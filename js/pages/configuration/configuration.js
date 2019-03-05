@@ -39,7 +39,8 @@ define([
       this.isAuthenticated = authApi.isAuthenticated;
       this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running || 
           sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable);
-      this.hasAccess = ko.pureComputed(() => {
+      this.hasSourceAccess = authApi.hasSourceAccess;
+      this.hasPageAccess = ko.pureComputed(() => {
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditConfiguration()) || !config.userAuthenticationEnabled;
       });
       this.canReadRoles = ko.pureComputed(() => {
@@ -116,7 +117,7 @@ define([
     updateEvidencePriority() {
       var newEvidenceUrl = sharedState.evidenceUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
-      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Evidence');
+      this.updateSourceDaimonPriority(selectedSource.sourceKey, 'CEM');
       return true;
     };
 
@@ -128,11 +129,12 @@ define([
     };
     
     checkSourceConnection(source) {
-      sourceApi.checkSourceConnection(source.sourceKey).then(
-        () => source.connectionCheck(sourceApi.connectionCheckState.success), 
-        () => source.connectionCheck(sourceApi.connectionCheckState.failed)
-      );
-      source.connectionCheck(sourceApi.connectionCheckState.checking);
+      sourceApi.checkSourceConnection(source.sourceKey)
+        .then( ({ data }) =>
+           source.connectionCheck(data.sourceId === undefined ?
+               sourceApi.connectionCheckState.failed : sourceApi.connectionCheckState.success))
+        .catch(() => {source.connectionCheck(sourceApi.connectionCheckState.failed);});
+        source.connectionCheck(sourceApi.connectionCheckState.checking);
     };
     
     getCheckButtonStyles(source) {

@@ -1,0 +1,8 @@
+<div>
+    <label data-bind="text: $component.modelSettingDescription(learningRate.name)"></label>
+    <multi-input params="selectedValues: learningRate.value, defaultValues: learningRate.default, valueLabel: learningRate.valueLabel, selectedValueType: 'float'"></multi-input>
+</div>
+<div>
+    <label data-bind="text: $component.modelSettingDescription(nEstimators.name)"></label>
+    <multi-input params="selectedValues: nEstimators.value, defaultValues: nEstimators.default, valueLabel: nEstimators.valueLabel, selectedValueType: 'integer'"></multi-input>
+</div>

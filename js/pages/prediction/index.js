@@ -6,19 +6,19 @@ define(
     const constants = require('./const');
 
     const statusCss = ko.pureComputed(function () {
-      if (appState.predictionAnalysis.current())
-        return appState.predictionAnalysis.dirtyFlag()
-          .isDirty() ? "unsaved" : "open";
+      if (appState.predictionAnalysis.current()) {
+        return appState.predictionAnalysis.dirtyFlag().isDirty() ? "unsaved" : "open";
+      } 
       return "";
     });
 
     const navUrl = ko.pureComputed(function () {
-      let url = constants.apiPaths.browser();
+      let url = constants.paths.browser();
       if (appState.predictionAnalysis.current()) {
         if (appState.predictionAnalysis.current().id() != null && appState.predictionAnalysis.current().id() > 0) {
-          url = constants.apiPaths.analysis(appState.predictionAnalysis.current().id());
+          url = appState.predictionAnalysis.analysisPath(appState.predictionAnalysis.current().id());
         } else {
-          url = constants.apiPaths.createAnalysis();
+          url = constants.paths.createAnalysis();
         }
       }
       return url;

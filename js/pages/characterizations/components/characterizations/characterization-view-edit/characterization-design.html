@@ -1,6 +1,5 @@
-<div data-bind="ifnot: $component.isViewPermitted(), css: `${$component.isViewPermitted() ? '' : 'flexed'}`">
-    <access-denied params="isAuthenticated: $component.isAuthenticated" class="flexed"></access-denied>
-</div>
+<access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewPermitted"></access-denied>
+
 <div data-bind="if: $component.isViewPermitted(), css: classes()">
     <loading data-bind="visible: loading()" params="status: 'Loading Cohort Characterization design...'">loading</loading>
     <p data-bind="css: classes('descr')">
@@ -37,11 +36,18 @@
         <div data-bind="foreach: stratas">
             <div data-bind="css: $component.classes('strata')">
                 <div data-bind="css: $component.classes('strata-heading')">
-                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control'}), value: $data.name" placeholder="Strata name">
-                    <button
-                            type="button"
-                            data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
+                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + (($data.name() == '' || $component.isStrataDuplicated($data.name())) ? ' emptyInput' : '')}),
+                                 textInput: $data.name, event: {'keyup': $component.checkStrataNames}" placeholder="Strata name">
+                    <button type="button" data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
                     ><i class="fa fa-trash-o"></i></button>
+                </div>
+                <div data-bind="visible: $data.name() === '', css: { 'empty-name-error': !$data.name() }">
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <label>Strata name is empty.</label>
+                </div>
+                <div data-bind="visible: $component.isStrataDuplicated($data.name())" class="empty-name-error">
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <label>Strata name is duplicated.</label>
                 </div>
                 <div>
                     <criteria-group params="{ expression: { ConceptSets: $component.strataConceptSets() }, group: $data.criteria }"></criteria-group>

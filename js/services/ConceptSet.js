@@ -10,16 +10,21 @@ define(function (require, exports) {
 				const api = this.api();
 				const rows = this.api().rows({page: 'current'});
 				const data = rows.data();
-				await model.loadAndApplyAncestors(data);
-				const columnIndex = searchConceptsColumns.findIndex(v => v.data === 'ANCESTORS');
-				api.cells(null, columnIndex).invalidate();
-				rows.nodes().each((element, index) => {
-					const rowData = data[index];
-					model.contextSensitiveLinkColor(element, rowData);
-					const context = ko.contextFor(element);
-					ko.cleanNode(element);
-					ko.applyBindings(context, element);
-				})
+				// The callback is called even when the table is not really populated with data.
+				// In such case we would call API with set of NULLs which both doesn't make sense and breaks some DBs.
+				// Therefore, we first check if there is real data to send to API.
+				if (data[0] && data[0].CONCEPT_ID) {
+					await model.loadAndApplyAncestors(data);
+					const columnIndex = searchConceptsColumns.findIndex(v => v.data === 'ANCESTORS');
+					api.cells(null, columnIndex).invalidate();
+					rows.nodes().each((element, index) => {
+						const rowData = data[index];
+						model.contextSensitiveLinkColor(element, rowData);
+						const context = ko.contextFor(element);
+						ko.cleanNode(element);
+						ko.applyBindings(context, element);
+					})
+				}
 			}
 		}
 	}

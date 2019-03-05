@@ -35,7 +35,7 @@ define([
 			this.data = ko.observableArray();
 			this.loading = ko.observable(false);
 			this.config = config;
-
+			this.selectedData = ko.observableArray([]);
 			this.options = {
 				Facets: feConst.FeatureAnalysisFacets,
 			};
@@ -91,7 +91,8 @@ define([
 
 		toggleSelected(selected) {
 			if (this.data()){
-				this.data().forEach(i => i.selected(selected));
+				const selectedData = (ko.utils.unwrapObservable(this.selectedData) || []).map(i => i.id);
+				this.data().forEach(i => selectedData.length === 0 ? i.selected(selected) : (selectedData.includes(i.id) && i.selected(selected)));
 			}
 		}
 

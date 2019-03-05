@@ -1,0 +1,71 @@
+<div>
+    <label>Specify the statistical model used to estimate the risk of outcome between target and comparator cohorts:</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.outcomeModelTypeOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.modelType"></select>
+    </div>
+</div>
+<div data-bind="visible: $component.stratified">
+    <label>Should the regression be conditioned on the strata defined in the population object (e.g. by matching or stratifying on propensity scores)?</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.stratified"></select>
+    </div>
+</div>
+<div>
+    <label>Whether to use the covariate matrix in the cohortMethodDataObject in the outcome model.</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.useCovariates"></select>
+    </div>
+</div>
+<div>
+    <label>Use inverse probability of treatment weighting?</label>
+    <div class="input-group">
+        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.inversePtWeighting"></select>
+    </div>
+</div>
+<div>
+    <label>An optional vector of covariate IDs to use to estimate interactions with the main treatment effect.</label>
+    <div class="input-group">
+        <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.interactionCovariateIds"></textarea>
+    </div>
+</div>
+<div class="panel panel-primary" data-bind="css: classes('panel-buffer', 'panel-buffer-left'), collapsable: showCovariateDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+    <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleCovariateDisplay">
+        <span><i class="fa fa-cogs"></i> Additional Covariate Settings</span>
+    </div>
+    <div class="panel-body collapse">
+        <div>
+            <label>Include only these covariates in the outcome model.</label>
+            <div class="input-group">
+                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.includeCovariateIds"></textarea>
+            </div>
+        </div>
+        <div>
+            <label>Exclude these covariates from the outcome model.</label>
+            <div class="input-group">
+                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.excludeCovariateIds"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" data-bind="css: classes('subsection')">
+    <div class="col-md-6">
+        <div class="panel panel-primary" data-bind="collapsable: showControlDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+            <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">
+                <span><i class="fa fa-cogs"></i> Control Settings</span>
+            </div>
+            <div class="panel-body collapse">
+                <cyclops-control-editor params="control: $component.outcomeModelArgs.control"></cyclops-control-editor>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-primary" data-bind="collapsable: showPriorDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+            <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePriorDisplay">
+                <span><i class="fa fa-cogs"></i> Prior</span>
+            </div>
+            <div class="panel-body collapse">
+                <cyclops-prior-editor params="prior: $component.outcomeModelArgs.prior"></cyclops-prior-editor>    
+            </div>
+        </div>
+    </div>
+</div>

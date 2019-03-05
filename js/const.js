@@ -1,17 +1,22 @@
 define([
 	'knockout',
-	'atlas-state',
 	'appConfig',
 	],
 	(
 		ko,
-		sharedState,
-    config,
+    	config,
 	) => {
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
 		const defaultDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
+		const timeAtRiskCohortDate = [{
+			name: "cohort start date",
+			id: false,
+		  }, {
+			name: "cohort end date",
+			id: true
+		}];
 		const relatedConceptsOptions = {
 			Facets: [{
 				'caption': 'Vocabulary',
@@ -333,7 +338,7 @@ define([
 			}
 		};
 
-		const getRelatedSourcecodesColumns = (context) => [{
+		const getRelatedSourcecodesColumns = (sharedState, context) => [{
 			title: '',
 			render: (s, p, d) => {
 				var css = '';
@@ -395,9 +400,15 @@ define([
 		  noSourcesAvailable: 'no-sources-available',
 		  failed: 'failed',
 	  };
-      
 
-    return {
+		const generationStatuses = {
+			STARTED: 'STARTED',
+			RUNNING: 'RUNNING',
+			COMPLETED: 'COMPLETED',
+			FAILED: 'FAILED',
+		};
+
+		return {
 			minChartHeight,
 			treemapGradient,
 			defaultDeciles,
@@ -408,6 +419,8 @@ define([
 			getRelatedSourcecodesColumns,
 			apiPaths,
 			applicationStatuses,
+			generationStatuses,
+			timeAtRiskCohortDate,
     };
   }
 );

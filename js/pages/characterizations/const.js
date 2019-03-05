@@ -1,5 +1,7 @@
 define(
     (require, exports) => {
+
+        const consts = require('const');
         const pageTitle = 'Characterizations';
 
         const characterizationsTab = 0;
@@ -20,15 +22,12 @@ define(
             },
         ];
 
-        const ccGenerationStatus = {
-            STARTED: 'STARTED',
-            COMPLETED: 'COMPLETED',
-        };
+        const ccGenerationStatus = consts.generationStatuses;
 
         const feAnalysisTypes = {
             PRESET: 'Preset',
             CRITERIA_SET: 'Criteria set',
-			CUSTOM_FE: 'Custom'
+            CUSTOM_FE: 'Custom'
         };
 
         const demoCustomSqlAnalysisDesign = `-- Custom analysis producing same results as Feature Extraction's "One covariate per drug in the drug_era table overlapping with any time prior to index." 

@@ -23,7 +23,7 @@ define([
 	class Person extends Report {
 		constructor(params) {
 			super(params);
-			
+
 			this.yearHistogramData = ko.observable();
 			this.genderData = ko.observable();
 			this.raceData = ko.observable();
@@ -34,10 +34,19 @@ define([
 					xFormat: d3.format('d'),
 					yFormat: d3.format(',.1s'),
 					xLabel: 'Year',
-					yLabel: 'People',
-				},        
+					yLabel: '# of Persons',
+					xValue: 'x',
+					yValue: 'y',
+					getTooltipBuilder: options => d => {
+						const format = d3.format('');
+						return `
+							${options.xLabel}: ${options.xFormat(d[options.xValue])}<br/>
+							${options.yLabel}: ${d3.format(',')(d[options.yValue])}
+						`;
+					},
+				},
 			};
-			
+
 			this.loadData();
 		}
 

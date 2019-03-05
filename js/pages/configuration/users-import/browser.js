@@ -31,6 +31,7 @@ define([
 			constructor(params) {
 				super();
 				this.config = config;
+				this.isAuthenticated = authApi.isAuthenticated;
 				this.canImport = ko.pureComputed(() => authApi.isPermittedImportUsers());
 				this.canCreate = ko.pureComputed(() => permissionService.isPermittedCreate());
 				this.loading = ko.observable();
@@ -55,7 +56,7 @@ define([
 					{
 						title: 'Start date',
 						className: this.classes('tbl-col', 'start-date'),
-						type: 'date',
+						type: 'datetime-formatted',
 						render: datatableUtils.getDateFieldFormatter('startDate'),
 					},
 					{
@@ -72,13 +73,13 @@ define([
 					{
 						title: 'Last executed',
 						className: this.classes('tbl-col', 'last-executed'),
-						type: 'date',
+						type: 'datetime-formatted',
 						render: datatableUtils.getDateFieldFormatter('lastExecuted', '-'),
 					},
 					{
 						title: 'Next execution',
 						className: this.classes('tbl0col', 'next-execution'),
-						type: 'date',
+						type: 'datetime-formatted',
 						render: datatableUtils.getDateFieldFormatter('nextExecution', '-'),
 					},
 				];

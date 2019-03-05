@@ -21,10 +21,18 @@ define([
 	class DataDensity extends Report {
 		constructor(params) {
 			super(params);
-			
+
 			this.totalLineData = ko.observable();
 			this.recordsperpersonLineData = ko.observable();
 			this.conceptsPerPersonData = ko.observable();
+
+			const getTooltipBuilder = options => d => {
+				return `
+					${d.seriesName}<br/>
+					${options.xLabel}: ${options.xFormat(d[options.xValue])}<br/>
+					${options.yLabel}: ${options.yFormat(d[options.yValue])}
+				`;
+			};
 
 			this.chartFormats = {
 				totalLine: {
@@ -35,7 +43,8 @@ define([
 					yValue: "yRecordCount",
 					xLabel: "Year",
 					yLabel: "# of Records",
-					showLegend: true
+					showLegend: true,
+					getTooltipBuilder,
 				},
 				recordsperpersonLine: {
 					xScale: null,
@@ -45,7 +54,8 @@ define([
 					yValue: "yRecordCount",
 					xLabel: "Year",
 					yLabel: "Records Per Person",
-					showLegend: true
+					showLegend: true,
+					getTooltipBuilder,
 				},
 				conceptsPerPerson: {
 					yMax: 0,
@@ -54,7 +64,7 @@ define([
 					yLabel: 'Concepts per Person'
 				},
 			};
-			
+
 			this.loadData();
 		}
 

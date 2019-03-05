@@ -18,6 +18,7 @@ define(
 		'd3',
 		'services/AuthAPI',
 		'services/MomentAPI',
+		'services/EventBus',
 		'less!app.less',
 	],
 	(
@@ -39,6 +40,7 @@ define(
 		d3,
 		authApi,
 		momentApi,
+		EventBus,
 	) => {
 		return class GlobalModel extends AutoBind() {
 			constructor() {
@@ -55,7 +57,7 @@ define(
 				this.relatedConceptsOptions = constants.relatedConceptsOptions;
 				this.relatedSourcecodesOptions = constants.relatedSourcecodesOptions;
 				this.metatrix = constants.metatrix;
-				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(this);
+				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(sharedState, this);
 				this.enableRecordCounts = ko.observable(true);
 				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);
@@ -69,6 +71,7 @@ define(
 				this.reportCohortDefinitionId = ko.observable();
 				this.reportReportName = ko.observable();
 				this.reportSourceKey = ko.observable();
+				this.EventBus = EventBus;
 				this.reportValid = ko.computed(() => {
 					return (
 						this.reportReportName() != undefined
@@ -277,6 +280,7 @@ define(
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
 						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
+						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
 					);
 				});
 	
@@ -290,10 +294,22 @@ define(
 						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
 					));
 				});
+
+				this.currentView.subscribe(() => {
+					EventBus.errorMsg(undefined);
+				});
+
 				this.noSourcesAvailable = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
+				this.appInitializationErrorMessage =  ko.computed(() => {
+					if (this.noSourcesAvailable()) {
+						return 'the current webapi has no sources defined.<br/>please add one or more on <a href="#/configure">configuration</a> page.'
+					} else if (this.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable) {
+						return 'unable to connect to an instance of the webapi.<br/>please contact your administrator to resolve this issue.'
+					}
+				});
 				this.pageTitle = ko.pureComputed(() => {
 					let pageTitle = "ATLAS";
 					switch (this.currentView()) {
@@ -365,8 +381,7 @@ define(
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
-			resolveConceptSetExpression() {
-				this.resolvingConceptSetExpression(true);
+			resolveConceptSetExpression(resolveAgainstServer = true) {
         this.includedConcepts.removeAll();
         this.includedSourcecodes.removeAll();
 				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
@@ -378,27 +393,32 @@ define(
 				}
 				this.currentConceptIdentifierList(conceptIdentifierList.join(','));
 
-				return this.resolveConceptSetExpressionSimple(conceptSetExpression);
+				return resolveAgainstServer ? this.resolveConceptSetExpressionSimple(conceptSetExpression) : null;
 			}
 
 			resolveConceptSetExpressionSimple(expression, success) {
 				const callback = typeof success === 'function'
 					? success
-					: ({ data: info }) => {
-							this.conceptSetInclusionIdentifiers(info);
-							this.currentIncludedConceptIdentifierList(info.join(','));
-							this.conceptSetInclusionCount(info.length);
-							this.resolvingConceptSetExpression(false);
-						};
-				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression);
-				resolvingPromise.then(callback);
-				resolvingPromise.catch((err) => {
-					console.error('Resolving concept set expression failed', err);
-					this.resolvingConceptSetExpression(false);
-					document.location = '#/configure';
-				});
+					: ({ data }) => {
+						let info = data;
+						if (!Array.isArray(info)) {
+							throw new Error();
+						}
+						this.conceptSetInclusionIdentifiers(info);
+						this.currentIncludedConceptIdentifierList(info.join(','));
+						this.conceptSetInclusionCount(info.length);
+					};
+				this.resolvingConceptSetExpression(true);
+				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
+					.then(callback)
+					.catch(() => this.handleVocabularyDataSourceFailure());
 
 				return resolvingPromise;
+			}
+
+			handleVocabularyDataSourceFailure(message = 'An error occured') {
+				alert(`${message}. Check vocabulary data source`);
+				document.location = '#/configure';
 			}
 
 			renderCheckbox(field) {
@@ -450,19 +470,17 @@ define(
 				});
 			}
 
-			loadCohortDefinition(cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
+			async loadCohortDefinition(cohortDefinitionId, conceptSetId, viewToShow, mode, sourceKey) {
 				// don't load if it is already loaded or a new concept set
 				if (this.currentCohortDefinition() && this.currentCohortDefinition().id() == cohortDefinitionId) {
 					if (this.currentConceptSet() && this.currentConceptSet().id == conceptSetId && this.currentConceptSetSource() == 'cohort') {
 						this.reportSourceKey(sourceKey);
-						this.currentView(viewToShow);
 						return;
 					} else if (conceptSetId != null) {
 						this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 						return;
 					} else {
 						this.reportSourceKey(sourceKey);
-						this.currentView(viewToShow);
 						return;
 					}
 				}
@@ -470,7 +488,7 @@ define(
 					window.location.href = "#/cohortdefinitions";
 					return;
 				}; // if we are loading a cohort definition, unload any active concept set that was loaded from
-				// a respository. If it is dirty, prompt the user to save and exit.
+				// a repository. If it is dirty, prompt the user to save and exit.
 				if (this.currentConceptSet()) {
 					if (this.currentConceptSetSource() == 'repository') {
 						if (this.currentConceptSetDirtyFlag() && this.currentConceptSetDirtyFlag().isDirty() && !confirm("Concept set changes are not saved. Would you like to continue?")) {
@@ -482,34 +500,24 @@ define(
 					this.clearConceptSet();
 				}
 				this.currentView('loading');
-				let definitionPromise, infoPromise;
 
 				if (cohortDefinitionId == '0') {
-					definitionPromise = Promise.resolve();
-					infoPromise = Promise.resolve();
-
 					this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
 					this.currentCohortDefinitionInfo([]);
 				} else {
-					definitionPromise = httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
-					infoPromise = httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');
-					
-					definitionPromise.then(({ data: cohortDefinition }) => {
-						cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
-						this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
-					});
-					infoPromise.then(({ data: generationInfo }) => {
-						this.currentCohortDefinitionInfo(generationInfo);
-					});
+					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
+					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
+					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+
+					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');					
+					this.currentCohortDefinitionInfo(generationInfo);
 				}
 
-				Promise.all([infoPromise, definitionPromise])
-					.then(() => {
+				try {
 						// Now that we have loaded up the cohort definition, we'll need to
 						// resolve all of the concepts embedded in the concept set collection
 						// to ensure they have all of the proper properties for editing in the cohort
 						// editior
-						let conceptPromise;
 						if (this.currentCohortDefinition().expression().ConceptSets()) {
 							const identifiers = [];
 							this.currentCohortDefinition().expression().ConceptSets()
@@ -519,44 +527,37 @@ define(
 											identifiers.push(item.concept.CONCEPT_ID);
 										});
 								});
-							conceptPromise = httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
-							conceptPromise.then(({ data }) => {
-								let conceptsNotFound = 0;
-								const identifiersByConceptId = new Map();
-								data.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
-								this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
-									// Update each of the concept set items
-									currentConceptSet.expression.items().forEach((item) => {
-										var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
-										if (selectedConcept)
-											item.concept = selectedConcept;
-										else
-											conceptsNotFound++;
-									});
-									currentConceptSet.expression.items.valueHasMutated();
+							const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
+							let conceptsNotFound = 0;
+							const identifiersByConceptId = new Map();
+							identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
+							this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
+								// Update each of the concept set items
+								currentConceptSet.expression.items().forEach((item) => {
+									var selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
+									if (selectedConcept)
+										item.concept = selectedConcept;
+									else
+										conceptsNotFound++;
 								});
-								if (conceptsNotFound > 0) {
-									console.error("Concepts not found: " + conceptsNotFound);
-								}
-								this.currentCohortDefinitionDirtyFlag().reset();
+								currentConceptSet.expression.items.valueHasMutated();
+							});
+							if (conceptsNotFound > 0) {
+								console.error("Concepts not found: " + conceptsNotFound);
 							}
-						);
-						} else {
-							conceptPromise = Promise.resolve();
+							this.currentCohortDefinitionDirtyFlag().reset();
 						}
-						conceptPromise
-							.then(() => {
-								// now that we have required information lets compile them into data objects for our view
-								var cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
-								var results = [];
-								for (var s = 0; s < cdmSources.length; s++) {
-									var source = cdmSources[s];
+							// now that we have required information lets compile them into data objects for our view
+								const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
+								let results = [];
+								for (let s = 0; s < cdmSources.length; s++) {
+									const source = cdmSources[s];
 									this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
 										ready: false,
 										checking: false
 									});
-									var sourceInfo = this.getSourceInfo(source);
-									var cdsi = {};
+									const sourceInfo = this.getSourceInfo(source);
+									let cdsi = {};
 									cdsi.name = cdmSources[s].sourceName;
 									cdsi.sourceKey = cdmSources[s].sourceKey;
 									if (sourceInfo != null) {
@@ -564,14 +565,12 @@ define(
 										cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
 										cdsi.sourceId = sourceInfo.id.sourceId;
 										cdsi.status = ko.observable(sourceInfo.status);
-										var date = new Date(sourceInfo.startTime);
+										const date = new Date(sourceInfo.startTime);
 										cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
 										cdsi.executionDuration = ko.observable(momentApi.formatDuration(sourceInfo.executionDuration));
-										var commaFormatted = d3.format(",");
-										// For backwards compatability, query personCount from cdm if not populated in sourceInfo
+										const commaFormatted = d3.format(",");
 										if (sourceInfo.personCount == null) {
 											cdsi.personCount = ko.observable('...');
-											this.getCohortCount(source).then(count => cdsi.personCount(count));
 										} else {
 											cdsi.personCount = ko.observable(commaFormatted(sourceInfo.personCount));
 										}
@@ -582,33 +581,31 @@ define(
 										}
 										cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 										cdsi.failMessage = ko.observable(sourceInfo.failMessage);
-									} else {
-										cdsi.isValid = ko.observable(false);
-										cdsi.isCanceled = ko.observable(false);
-										cdsi.status = ko.observable('n/a');
-										cdsi.startTime = ko.observable('n/a');
-										cdsi.executionDuration = ko.observable('n/a');
-										cdsi.personCount = ko.observable('n/a');
-										cdsi.recordCount = ko.observable('n/a');
-										cdsi.includeFeatures = ko.observable(false);
-										cdsi.failMessage = ko.observable(null);
-									}
-									results.push(cdsi);
-								}
-								this.cohortDefinitionSourceInfo(results);
-								if (conceptSetId != null) {
-									this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
 								} else {
-									this.reportSourceKey(sourceKey);
-									this.currentView(viewToShow);
+									cdsi.isValid = ko.observable(false);
+									cdsi.isCanceled = ko.observable(false);
+									cdsi.status = ko.observable('n/a');
+									cdsi.startTime = ko.observable('n/a');
+									cdsi.executionDuration = ko.observable('n/a');
+									cdsi.personCount = ko.observable('n/a');
+									cdsi.recordCount = ko.observable('n/a');
+									cdsi.includeFeatures = ko.observable(false);
+									cdsi.failMessage = ko.observable(null);
 								}
-							});
-					})
-					.catch((xhr) => {
-						if (xhr.status == 403 || xhr.status == 401) {
-							this.currentView(viewToShow);
-						}
-					});
+								results.push(cdsi);
+							}
+							this.cohortDefinitionSourceInfo(results);
+							if (conceptSetId != null) {
+								this.loadConceptSet(conceptSetId, viewToShow, 'cohort', mode);
+								return;
+							} else {
+								this.reportSourceKey(sourceKey);
+							}
+						} catch(er) {
+							this.handleVocabularyDataSourceFailure('Loading cohort definition failed');
+					}
+					this.currentView(viewToShow);
+
 			}
 
 			loadConceptSet(conceptSetId, viewToShow, loadingSource, mode) {
@@ -663,7 +660,7 @@ define(
 				}
 			}
 			
-			loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
+			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
@@ -683,20 +680,19 @@ define(
 					return;
 				}
 				this.currentView('loading');
-				conceptSetService.loadConceptSet(conceptSetId)
-					.then((conceptset) => {
-						return conceptSetService.loadConceptSetExpression(conceptSetId)
-							.then((expression) => {
-								this.setConceptSet(conceptset, expression.items);
-								this.handleViewChange(viewToShow, { conceptSetId, mode });
-								return this.resolveConceptSetExpression()
-									.then(() => {
-										this.currentConceptSetMode(mode);
-										$('#conceptSetLoadDialog').modal('hide');
-									});
-							});
-					})
-				.catch(er => authApi.handleAccessDenied(er));
+				try {
+					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
+					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
+					const expression = _.isEmpty(data) ? { items: [] } : data;
+					this.setConceptSet(conceptset, expression.items);	
+					await this.resolveConceptSetExpression();
+					this.currentConceptSetMode(mode);
+					$('#conceptSetLoadDialog').modal('hide');
+				} catch(er) {
+					this.resolvingConceptSetExpression(false);
+					this.handleVocabularyDataSourceFailure('Resolving concept set failed');
+				}
+				this.handleViewChange(viewToShow, { conceptSetId, mode });
 			}
 			
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
@@ -753,7 +749,8 @@ define(
 			loadAndApplyAncestors(data) {
 				const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 				const ids = [];
-				$.each(data, (element) => {
+				$.each(data, idx => {
+					const element = data[idx];
 					if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
 						ids.push(element.CONCEPT_ID);
 					}
@@ -762,7 +759,8 @@ define(
 					if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
 						this.loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
 							const map = this.includedConceptsMap();
-							$.each(data, (line) => {
+							$.each(data, idx => {
+								const line = data[idx];
 								const ancArray = ancestors[line.CONCEPT_ID];
 								if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
 									line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
@@ -820,7 +818,7 @@ define(
 			clearConceptSet() {
 				this.currentConceptSet(null);
 				sharedState.clearSelectedConcepts();
-				this.resolveConceptSetExpression();
+				this.resolveConceptSetExpression(false);
 				this.currentConceptSetDirtyFlag().reset();
 			}
 

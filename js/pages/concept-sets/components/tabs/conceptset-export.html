@@ -1,56 +1,59 @@
-<div class="heading">Concept Set Expression JSON
-  <button
-    class="btn btn-sm btn-primary"
-    title="Copy to clipboard"
-    id="btnCopyExpressionClipboard"
-    data-bind="click: copyExpressionToClipboard"
-    data-clipboard-target="#conceptSetExpression"
-  >
-    <i class="fa fa-clipboard" aria-hidden="true"></i>
+<loading data-bind="visible: exporting" params="status: 'Exporting CSV...'"></loading>
+<div data-bind="hidden: exporting()">
+  <div class="heading">Concept Set Expression JSON
+    <button
+      class="btn btn-sm btn-primary"
+      title="Copy to clipboard"
+      id="btnCopyExpressionClipboard"
+      data-bind="click: copyExpressionToClipboard"
+      data-clipboard-target="#conceptSetExpression"
+    >
+      <i class="fa fa-clipboard" aria-hidden="true"></i>
+    </button>
+    <span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert">
+      <i class="fa fa-check-square-o" aria-hidden="true"></i>
+      <strong>Copied To Clipboard!</strong>
+    </span>
+  </div>
+  <pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+  <div class="heading">Concept Identifer List
+    <button
+      class="btn btn-sm btn-primary"
+      title="Copy to clipboard"
+      id="btnCopyIdentifierListClipboard"
+      data-bind="click: copyIdentifierListToClipboard"
+      data-clipboard-target="#conceptIdentifierList"
+    >
+      <i class="fa fa-clipboard" aria-hidden="true"></i>
+    </button>
+    <span id="copyIdentifierListMessage" style="display: none" class="alert alert-success" role="alert">
+      <i class="fa fa-check-square-o" aria-hidden="true"></i>
+      <strong>Copied To Clipboard!</strong>
+    </span>
+  </div>
+  <pre id="conceptIdentifierList" data-bind="html: $root.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <div class="heading">Included Concept Identifer List
+    <button
+      class="btn btn-sm btn-primary"
+      title="Copy to clipboard"
+      id="btnCopyIncludedConceptIdentifierListClipboard"
+      data-bind="click: copyIncludedConceptIdentifierListToClipboard"
+      data-clipboard-target="#includedConceptIdentifierList"
+    >
+      <i class="fa fa-clipboard" aria-hidden="true"></i>
+    </button>
+    <span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert">
+      <i class="fa fa-check-square-o" aria-hidden="true"></i>
+      <strong>Copied To Clipboard!</strong>
+    </span>
+  </div>
+  <pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <br/>
+  <button type="button" class="btn btn-success" data-bind="
+    click: exportCSV,
+    css: {
+      disabled:! ($root.currentConceptSet() != null && !$root.currentConceptSetDirtyFlag().isDirty())
+    }">
+    <i class="fa fa-download" aria-hidden="true"></i>Export To CSV
   </button>
-  <span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert">
-    <i class="fa fa-check-square-o" aria-hidden="true"></i>
-    <strong>Copied To Clipboard!</strong>
-  </span>
 </div>
-<pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
-<div class="heading">Concept Identifer List
-  <button
-    class="btn btn-sm btn-primary"
-    title="Copy to clipboard"
-    id="btnCopyIdentifierListClipboard"
-    data-bind="click: copyIdentifierListToClipboard"
-    data-clipboard-target="#conceptIdentifierList"
-  >
-    <i class="fa fa-clipboard" aria-hidden="true"></i>
-  </button>
-  <span id="copyIdentifierListMessage" style="display: none" class="alert alert-success" role="alert">
-    <i class="fa fa-check-square-o" aria-hidden="true"></i>
-    <strong>Copied To Clipboard!</strong>
-  </span>
-</div>
-<pre id="conceptIdentifierList" data-bind="html: $root.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-<div class="heading">Included Concept Identifer List
-  <button
-    class="btn btn-sm btn-primary"
-    title="Copy to clipboard"
-    id="btnCopyIncludedConceptIdentifierListClipboard"
-    data-bind="click: copyIncludedConceptIdentifierListToClipboard"
-    data-clipboard-target="#includedConceptIdentifierList"
-  >
-    <i class="fa fa-clipboard" aria-hidden="true"></i>
-  </button>
-  <span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert">
-    <i class="fa fa-check-square-o" aria-hidden="true"></i>
-    <strong>Copied To Clipboard!</strong>
-  </span>
-</div>
-<pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-<br/>
-<button type="button" class="btn btn-success" data-bind="
-  click: exportCSV,
-  css: {
-    disabled:! ($root.currentConceptSet() != null && !$root.currentConceptSetDirtyFlag().isDirty())
-  }">
-  <i class="fa fa-download" aria-hidden="true"></i>Export To CSV
-</button>

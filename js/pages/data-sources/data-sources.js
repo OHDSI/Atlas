@@ -105,11 +105,12 @@ define([
 
 			this.model = params.model;
 			this.sources = sharedState.sources().filter(function (s) {
-				return s.hasResults && s.hasCDM;
+				return s.hasResults && s.hasVocabulary;
 			});
 
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
+			this.errorMessage = ko.observable();
 
 			this.isReportLoading = ko.pureComputed(function () {
 				return this.loadingReport() && !this.hasError() && !this.model.loadingReportDrilldown();
@@ -124,6 +125,9 @@ define([
 			this.currentSource = ko.observable(this.sources[0]);
 			this.currentReport = ko.observable();
 			this.selectedReport = ko.observable();
+
+			this.currentSource.subscribe((source) => source && this.hasError(false));
+			this.currentReport.subscribe((report) => report && this.hasError(false));
 
 			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
 				this.updateLocation();

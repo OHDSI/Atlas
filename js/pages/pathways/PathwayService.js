@@ -27,6 +27,10 @@ define([
 		return httpService.doPut(`${servicePath}/${id}`, design).then(res => res.data);
 	}
 
+	function copy(id) {
+		return httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
+	}
+
 	function del(id) {
 		return httpService
 			.doDelete(`${servicePath}/${id}`)
@@ -56,6 +60,12 @@ define([
 			.doPost(`${servicePath}/${id}/generation/${sourcekey}`)
 			.then(res => res.data);
 	}
+
+	function cancelGeneration(id, sourceKey) {
+		return httpService
+			.doDelete(`${servicePath}/${id}/generation/${sourceKey}`)
+			.then(res => res.data);
+	}
 	
 	function loadExportDesign(id) {
 		return httpService
@@ -78,6 +88,7 @@ define([
 	return {
 		list,
 		create,
+		copy,
 		load,
 		save,
 		del,
@@ -85,6 +96,7 @@ define([
 		getExecution,
 		getResults,
 		generate,
+		cancelGeneration,
 		loadExportDesign,
 		loadExportDesignByGeneration,
 		importPathwayDesign

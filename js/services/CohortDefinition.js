@@ -52,11 +52,7 @@ define(function (require, exports) {
 	function deleteCohortDefinition(id) {
 		var deletePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (id || ""),
-			method: 'DELETE',
-			error: function (error) {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			}
+			method: 'DELETE'
 		});
 		return deletePromise;
 	}	

@@ -49,13 +49,30 @@ define(function (require, exports) {
 			});
 	}
 
-	function exportFullSpecification(id) {
-		return httpService.doGet(config.webAPIRoot + predictionEndpoint + id + "/export")
-			.catch((error) => {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			});
+	function exportPrediction(id) {
+        return httpService
+            .doGet(config.webAPIRoot + predictionEndpoint + id + "/export")
+            .then(res => res.data);
 	}
+
+	function generate(id, source) {
+    	return httpService.doPost(config.webAPIRoot + predictionEndpoint + id + '/generation/' + source)
+				.then(res => res.data)
+				.catch(error => authApi.handleAccessDenied(error));
+	}
+
+	function listGenerations(id) {
+    	return httpService.doGet(config.webAPIRoot + predictionEndpoint + id + '/generation')
+				.then(res => res.data)
+				.catch(error => authApi.handleAccessDenied(error));
+	}
+
+    function importPrediction(specification) {
+        return httpService
+            .doPost(config.webAPIRoot + predictionEndpoint + "import", specification)
+            .then(res => res.data);
+    }
+
 
     var api = {
 		getPredictionList: getPredictionList,
@@ -63,7 +80,10 @@ define(function (require, exports) {
 		copyPrediction: copyPrediction,
 		deletePrediction: deletePrediction,
 		getPrediction: getPrediction,
-		exportFullSpecification: exportFullSpecification,
+		exportPrediction: exportPrediction,
+		importPrediction: importPrediction,
+		generate,
+		listGenerations,
 	};
 
 	return api;

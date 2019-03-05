@@ -45,23 +45,25 @@ define(function(require, exports) {
     var permissions = ko.observable();
 
     const loadUserInfo = function() {
-        return $.ajax({
+        return new Promise((resolve, reject) => $.ajax({
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info) {
-                subject(info.login);
                 permissions(info.permissions.map(p => p.permission));
+                subject(info.login);
+                resolve();
             },
             error: function (err) {
-                console.log('User is not authed');
-                subject(null);
+                if (err.status === 401) {
+                    console.log('User is not authed');
+                    subject(null);
+                    resolve();
+                } else {
+                    reject('Cannot retrieve user info');
+                }
             }
-        });
+        }));
     };
-
-    if (config.userAuthenticationEnabled) {
-        loadUserInfo();
-    }
 
     var tokenExpirationDate = ko.pureComputed(function() {
         if (!token()) {
@@ -136,7 +138,7 @@ define(function(require, exports) {
             break;
         }
     }
-    
+
     var checkPermission = function(permission, etalon) {
         // etalon may be like '*:read,write:etc'
         if (!etalon || !permission) {
@@ -259,7 +261,7 @@ define(function(require, exports) {
     var isPermittedDeleteIR = function(id) {
         return isPermitted('ir:' + id + ':delete');
     };
-    
+
     var isPermittedCopyIR = function(id) {
         return isPermitted('ir:' + id + ':copy:get');
     };
@@ -312,8 +314,8 @@ define(function(require, exports) {
         return isPermitted('cdmresults:*:get');
     };
 
-    var isPermittedViewProfiles = function () {
-      return isPermitted('*:person:*:get');
+    var isPermittedViewProfiles = function (sourceKey) {
+      return isPermitted(`${sourceKey}:person:*:get`);
     };
 
     var isPermittedViewProfileDates = function() {
@@ -425,9 +427,13 @@ define(function(require, exports) {
 			return isPermitted('user:import:post') && isPermitted('user:import:*:post');
 		}
 
+    const hasSourceAccess = function (sourceKey) {
+        return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
+	}
+
 	var setAuthParams = function (tokenHeader) {
         token(tokenHeader);
-        loadUserInfo();
+        return loadUserInfo();
     };
 
     var resetAuthParams = function () {
@@ -511,6 +517,7 @@ define(function(require, exports) {
         isPermittedCheckSourceConnection: isPermittedCheckSourceConnection,
 
         isPermittedImportUsers,
+        hasSourceAccess,
 
         loadUserInfo,
         TOKEN_HEADER,

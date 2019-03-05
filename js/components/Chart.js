@@ -29,6 +29,10 @@ define([
       this.minHeight = params.minHeight || constants.minChartHeight;
       this.format = params.format;
     }
+		
+		dispose() {
+			this.renderer && this.renderer.dispose();
+		}
 
   }
 

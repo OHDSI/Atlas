@@ -1,341 +1,46 @@
-<div class="wrapperTitle" data-bind="visible:loading">
-  <i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: loadingMessage"></span>
-</div>
+<loading data-bind="visible: loading"></loading>
 <div data-bind="if:!loading()">
-  <div class="wrapperTitle">
-    <i class="fa fa-heartbeat"></i> Patient Level Prediction
-  </div>
+  <heading-title params="name: predictionCaption(), icon: 'heartbeat', theme: 'dark'"></heading-title>
   <div class="asset-heading">
-    <input type="text" data-bind="textInput: $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !($component.patientLevelPredictionAnalysis().name() && ($component.patientLevelPredictionAnalysis().name().length > 0)) }" />
-		<div class="btn-group" role="group">
-      <button class="btn btn-sm btn-success" title="Save" data-bind="click: save, enable:$component.dirtyFlag().isDirty()"><i class="fa fa-save"></i></button>
-      <button class="btn btn-sm btn-primary" title="Close" data-bind="click: close"><i class="fa fa-times"></i></button>
-      <button class="btn btn-sm btn-primary" title="Copy" data-bind="click: copy, enable: canCopy"><i class="fa fa-copy"></i></button>
-      <button class="btn btn-sm btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete"><i class="fa fa-trash-o"></i></button>
-    </div>
-  </div>
-  <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
-    <ul class="nav nav-tabs">
-      <li role="presentation" data-bind="css: { active: $component.tabMode() == 'specification' }, click: function() { $component.tabMode('specification') };"><a>Specification</a>
-      </li>
-      <li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export') };"><a>Utilities</a>
-      </li>
-    </ul>
-    <div id="specificationSummary" class="tab-content">
-      <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'specification'}" class="tab-pane">
-        <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" class="descriptionEntry" data-bind="value: $component.patientLevelPredictionAnalysis().description" maxlength="1000"></textarea>
-            <hr/>
-            <div id="filters">
-              <div class="row">
-                  <div class="filter-icon"><i class="fa fa-filter fa-2x"></i></div>
-                  <div>
-                    <ul class="nav nav-pills">
-                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'all' }, click: function() {$component.specificationPillMode('all') };"><a>All</a></li>
-                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'predictions' }, click: function() {$component.specificationPillMode('predictions') };"><a>Prediction Problem Settings</a></li>
-                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a>Analysis Settings</a></li>
-                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'executionSettings' }, click: function() {$component.specificationPillMode('executionSettings') };"><a>Execution Settings</a></li>
-                      <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'trainingSettings' }, click: function() {$component.specificationPillMode('trainingSettings') };"><a>Training Settings</a></li>
-                    </ul>        
-                  </div>
-              </div>
-            </div>
-            <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'predictions'" class="tab-pane">
-              <div class="paddedWrapper">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                      <i class="fa fa-heartbeat"></i> Prediction Problem Settings
-                    </div>
-                    <div class="panel-body">
-                      <div class="paddedWrapper">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <i class="fa fa-users"></i> Target Cohorts
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget"><i class="fa fa-plus"></i> Add Target Cohort</button>
-                          </div>
-                          <div class="panel-body">
-                              <faceted-datatable params="{ 
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.domNoButtons,
-                                reference: $component.targetCohorts,
-                                rowClick: $component.removeTargetCohort
-                              }"></faceted-datatable>
-                          </div>
-                        </div>
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <i class="fa fa-users"></i> Outcome Cohorts
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome"><i class="fa fa-plus"></i> Add Outcome Cohort</button>
-                          </div>
-                          <div class="panel-body">
-                              <faceted-datatable params="{ 
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.domNoButtons,
-                                reference: $component.outcomeCohorts,
-                                rowClick: $component.removeOutcomeCohort
-                              }"></faceted-datatable>
-                          </div>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-            <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'analysisSettings'" class="tab-pane">
-              <div class="paddedWrapper">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                      <i class="fa fa-cogs"></i> Analysis Settings
-                    </div>
-                    <div class="panel-body">
-                      <div class="paddedWrapper">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            Model Settings
-                            <div class="btn-group pull-right">
-                              <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-plus"></i> Add Model Settings <span class="caret"></span></button>
-                              <ul class="dropdown-menu" data-bind="foreach:$component.modelSettingsOptions">
-                                <li><a data-bind="text:$data.name, click:function() {$component.addModelSettings($data)}" href="#"></a></li>
-                              </ul>
-                            </div>
-                          </div>
-                          <div class="panel-body">
-                            <faceted-datatable params="{ 
-                              columns: options.modelSettingsTableColumns, 
-                              options: options.specificationSummaryTableOptions, 
-                              pageLength: options.specificationSummaryTableOptions.pageLength,
-                              lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                              dom: options.specificationSummaryTableOptions.domNoButtons,
-                              reference: $component.modelSettings,
-                              rowClick: $component.modelSettingRowClickHandler,
-                            }"></faceted-datatable>
-                          </div>
-                        </div>
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            Covariate Settings
-                            <div class="btn-group pull-right">
-                              <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addCovariateSettings"><i class="fa fa-plus"></i> Add Covariate Settings</button>
-                            </div>
-                          </div>
-                          <div class="panel-body">
-                              <faceted-datatable params="{ 
-                                columns: options.covariateSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.dom,
-                                reference: $component.covariateSettings,
-                                rowClick: $component.covariateSettingRowClickHandler,
-                              }"></faceted-datatable>
-                              </div>
-                        </div>
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            Population Settings
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addPopulationSettings"><i class="fa fa-plus"></i> Add Population Settings</button>
-                          </div>
-                          <div class="panel-body">
-                            <faceted-datatable params="{ 
-                              columns: options.populationSettingsTableColumns, 
-                              options: options.specificationSummaryTableOptions, 
-                              pageLength: options.specificationSummaryTableOptions.pageLength,
-                              lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                              dom: options.specificationSummaryTableOptions.dom,
-                              reference: $component.populationSettings,
-                              rowClick: $component.populationSettingRowClickHandler,
-                            }"></faceted-datatable>
-                          </div>
-                        </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'executionSettings'" class="tab-pane">
-              <div class="paddedWrapper">
-                  <div class="panel panel-primary">
-                    <div class="panel-heading">
-                      <i class="fa fa-cog"></i> Execution Settings
-                    </div>
-                    <div class="panel-body">
-                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs"></execution-settings-editor>
-                    </div>
-                  </div>
-              </div>
-            </div>
-            <div role="tabpanel" data-bind="visible: $component.specificationPillMode() == 'all' || $component.specificationPillMode() == 'trainingSettings'" class="tab-pane">
-              <div class="paddedWrapper">
-                <div class="panel panel-primary">
-                  <div class="panel-heading">
-                    <i class="fa fa-cog"></i> Training Settings
-                  </div>
-                  <div class="panel-body">
-                      <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs"></evaluation-settings-editor>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div class="input-group">
+        <input type="text" class="form-control" data-bind="textInput: $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !isNameCorrect() }" />
+        <div class="input-group-btn" role="group">
+          <button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
+          <button class="btn btn-primary" title="Close" data-bind="click: close, enable: !isProcessing()"><i class="fa fa-times"></i></button>
+          <!-- ko ifnot: isNewEntity -->
+            <button class="btn btn-primary" title="Copy" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
+            <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
+          <!-- /ko -->
         </div>
       </div>
-      <div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
-        <div class="paddedWrapper">
-          <ul class="nav nav-pills">
-            <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'download' }, click: function() {$component.utilityPillMode('download') };"><a>Download</a></li>
-            <!--<li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'import' }, click: function() {$component.utilityPillMode('import') };"><a>Import</a></li>-->
-            <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'export' }, click: function() {$component.utilityPillMode('export') };"><a>Export</a></li>
-          </ul>
-          <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'download'" class="tab-pane">
-            <div class="paddedWrapper">
-              <div data-bind="if: !($component.specificationValid())">
-                  <b>Your study has the following issues that prevent you from reviewing the full specification details and downloading the study package:</b>
-                  <ul>
-                  <li data-bind="visible: !($component.specificationMeetsMinimumRequirements())">
-                    You must specify at least 1 of each: Target Cohort, Outcome Cohort, Model Settings, Covariate Settings and Population Settings.
-                  </li>
-                  <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasUniqueSettings())">
-                    Your study contains duplicate values in one of the following areas: Model Settings, Covariate Settings and Population Settings. Please review and fix these errors in order to proceed.
-                  </li>
-                </ul>
-              </div>
-              <div data-bind="if: $component.dirtyFlag().isDirty()">
-                You must save your analysis before you can perform a download.
-              </div>
-              <div data-bind="if: $component.specificationValid() && !($component.dirtyFlag().isDirty())">
-                Please click the button below to view the full study specifications. Once reviewed, scroll down to download the study package.
-                  <button type="button" class="btn btn-primary btn-sm" data-bind="click: computeCartesian, enabled: !loadingDownload">Click here to review the full study specifications</button>
-                  <br/>
-                  <br/>
-                  <br/>
-                  <loading data-bind="visible:loadingDownload()" params="status: 'computing analyses'"></loading>
-                  <div data-bind="visible:(!loadingDownload() && $component.fullAnalysisList().length > 0)">
-                    <h2>Step 1. Review Full Study Specification</h2>
-                    <ul class="nav nav-tabs">
-                      <li role="presentation" data-bind="css: { active: $component.downloadTabMode() == 'full' }, click: function() { $component.downloadTabMode('full') };"><a>Full Analysis List <span class="badge" data-bind="text: $component.fullAnalysisList().length"></span></a></li>
-                      <li role="presentation" data-bind="css: { active: $component.downloadTabMode() == 'predictions' }, click: function() { $component.downloadTabMode('predictions') };"><a>Prediction Problem Settings <span class="badge" data-bind="text: $component.targetOutcomePairs().length"></span></a></li>
-                      <li role="presentation" data-bind="css: { active: $component.downloadTabMode() == 'analysis' }, click: function() { $component.downloadTabMode('analysis') };"><a>Analysis Settings <span class="badge" data-bind="text: $component.modelCovarPopTuple().length"></span></a></li>
-                    </ul>
-                    <div id="downloadTabContent" class="tab-content">
-                        <div role="tabpanel" data-bind="css: { active: $component.downloadTabMode() == 'full' }" class="tab-pane">
-                            <faceted-datatable params="{ 
-                              columns: options.fullAnalysisTableColumns, 
-                              options: options.fullAnalysisTableOptions, 
-                              pageLength: options.fullAnalysisTableOptions.pageLength,
-                              lengthMenu: options.fullAnalysisTableOptions.lengthMenu,
-                              dom: options.fullAnalysisTableOptions.dom,
-                              reference: $component.fullAnalysisList
-                            }"></faceted-datatable>
-                        </div>
-                        <div role="tabpanel" data-bind="css: { active: $component.downloadTabMode() == 'predictions' }" class="tab-pane">
-                            <faceted-datatable params="{ 
-                              columns: options.targetOutcomeTableColumns, 
-                              options: options.specificationSummaryTableOptions, 
-                              pageLength: options.specificationSummaryTableOptions.pageLength,
-                              lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                              dom: options.specificationSummaryTableOptions.dom,
-                              reference: $component.targetOutcomePairs
-                            }"></faceted-datatable>
-                        </div>
-                        <div role="tabpanel" data-bind="css: { active: $component.downloadTabMode() == 'analysis' }" class="tab-pane">
-                            <faceted-datatable params="{ 
-                              columns: options.modelCovarPopTupleTableColumns, 
-                              options: options.specificationSummaryTableOptions, 
-                              pageLength: options.specificationSummaryTableOptions.pageLength,
-                              lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                              dom: options.specificationSummaryTableOptions.dom,
-                              reference: $component.modelCovarPopTuple
-                            }"></faceted-datatable>
-                        </div>
-                      <hr>
-                      <h2>Step 2. Download the study package</h2>
-                      <div style="padding-bottom: 50px;">
-                          <div>
-                              <label>Please provide a name for the study package:</label>
-                              <div class="input-group">
-                                  <input class="form-control" type="text" data-bind="textInput: $component.packageName" />
-                              </div>    
-                          </div>                        
-                          <div style="padding-top: 10px;">
-                            <button type="button" class="btn btn-primary" data-bind="enable: validPackageName, click: downloadPackage"><i class="fa fa-download"></i> Download Study Package</button>
-                          </div>
-                      </div>
-                    </div>
-                  </div>    
-              </div>
-            </div>
-          </div>
-          <!--<div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'import'" class="tab-pane">
-            <div class="paddedWrapper">
-              import
-            </div>-->
-          </div>
-          <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'export'" class="tab-pane">
-            <div class="paddedWrapper">
-              <div data-bind="if: !$component.specificationValid()">
-                Please see the downloads area to review problems with your analysis specification. These must be corrected before you can export your definition.
-              </div>
-              <div data-bind="if: $component.dirtyFlag().isDirty()">
-                You must save your analysis before you can export the definition.
-              </div>
-              <div data-bind="if: $component.specificationValid() && !($component.dirtyFlag().isDirty())">
-                <div data-bind="if: $component.fullSpecification() == null">
-                  <br/>
-                  <button class="btn btn-primary" data-bind="enable: !isExporting(), click: exportFullSpecification"><i data-bind="visible: isExporting()" class="fa fa-circle-o-notch fa-spin"></i> Export Definition</button>
-                </div>
-                <div data-bind="visible: $component.fullSpecification() != null">
-                  <h4>Full Study Specification</h4>
-                  <button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyFullSpecificationClipboard" data-bind="click: copyFullSpecificationToClipboard" data-clipboard-target="#predictionFullSpecificationExport"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy Specification To Clipboard</button>&nbsp;&nbsp;<span id="copyFullSpecificationToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
-                  <pre id="predictionFullSpecificationExport" data-bind="html: $component.fullSpecification(), selectOnFocus: {events: ['click']}"></pre>
-                </div>
-              </div>
-            </div>
-            <!--
-            <div class="paddedWrapper">
-              KO.toJSON
-              <pre id="patientLevelPredictionAnalysisExport" data-bind="html: $component.patientLevelPredictionAnalysisJson(), selectOnFocus: {events: ['click']}"></pre>
-              JSON.stringify <button class="btn btn-sm" data-bind="click: prepForSave">Prep for save</button> 
-              <pre id="patientLevelPredictionAnalysisExportJSON" data-bind="html: $component.patientLevelPredictionAnalysisForWebAPI(), selectOnFocus: {events: ['click']}"></pre>
-            </div>
-            -->
-        </div>
-        </div>
-      </div>
-    </div> 
-  </div>
-  <div id="editors" data-bind="visible: $component.managerMode() == 'editor'">
-      <div id="editor-heading" class="editor-container">
-        <div class="paddedWrapper">
-          <div class="panel panel-default">
-              <div class="panel-heading">
-                <div class="row">
-                  <div data-bind="click: closeEditor" class="editor-back-icon"><i class="fa fa-chevron-left fa-lg"></i></div>
-                  <div>
-                    <div class="editor-heading" data-bind="text: $component.editorHeading"></div>
-                    <div data-bind="text: $component.editorDescription"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="panel-body" data-bind="if: $component.editorComponentName() != null">
-                <div id="editorComponent" data-bind='component: {name: $component.editorComponentName(), params: $component.editorComponentParams()}'></div>
-              </div>
-          </div>
-        </div>
+      <div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+          <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+          <label>Patient Level Prediction name is empty.</label>
       </div>
   </div>
-	<div data-bind="modal: showCohortSelector" class="modal fade" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">Select Cohort...</div>
-				<div class="paddedWrapper">
-					<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
-				</div>
-			</div>
-		</div>
-	</div>
+
+  <tabs data-bind="visible: !$component.loading()" params="
+    selectedTabKey: $component.selectedTabKey,
+    selectTab: $component.selectTab,
+    tabs: [
+        {
+            title: 'Specification',
+            key: 'specification',
+            componentName: 'prediction-specification-view-edit',
+            componentParams: $component.componentParams,
+        },
+        {
+            title: $component.executionTabTitle,
+            key: 'executions',
+            componentName: 'prediction-executions',
+            componentParams: $component.componentParams,
+        },
+        {
+            title: 'Utilities',
+            key: 'utilities',
+            componentName: 'prediction-utilities',
+            componentParams: $component.componentParams,
+        }
+    ]">
+  </tabs>
 </div>

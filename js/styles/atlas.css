@@ -232,6 +232,8 @@ pre span.key {
   cursor: pointer;
   text-align: center;
   border-bottom: solid 1px #CCC;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 #wrapperLogo img {
@@ -247,6 +249,8 @@ pre span.key {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-width: 768px;
+  overflow-x: auto;
 }
 
 .flexed {
@@ -366,7 +370,6 @@ pre span.key {
   max-height: 75px;
   overflow-y: auto;
   border-bottom: solid 1px #eee;
-  margin-bottom: ;
 }
 
 #wrapperSearchResultsTable {
@@ -462,6 +465,15 @@ table.datatable thead th {
 .hidden {
   display: none;
 }
+
+.empty-name-error {
+   font-size: 1.4rem;
+   color: #F44;
+}
+
+.empty-name-error .i {
+   margin-right: 0.5rem
+ }
 
 .conceptDetail {
   background-color: #505050;
@@ -912,7 +924,8 @@ code {
 }
 
 pre {
-  border-radius: 0 font-size: 10px;
+  border-radius: 0;
+  font-size: 10px;
   background-color: #eee;
   margin: 5px 0px;
 }
@@ -979,6 +992,10 @@ pre {
 
 .input-group-addon.input-lg {
   border-radius: 0
+}
+
+.fe-save-btn {
+  display: inline-block;
 }
 
 @media(min-width:768px) {
@@ -1483,7 +1500,7 @@ div.button-overlay {
 }
 
 textarea.code {
-  font-style='Courier New';
+  font-style: 'Courier New';
   /* font-size: 8px; */
 }
 
@@ -1507,11 +1524,14 @@ textarea.code {
   padding: 4px;
 }*/
 
-.asset-heading input {
-  width: 500px;
+.asset-heading input {  
   padding: 3px;
   color: #003142;
   font-size: 12px;
+}
+
+.asset-heading-restricted {
+  width: 500px;
 }
 
 .nav-tabs>li>a:hover {
@@ -2036,7 +2056,6 @@ button i.fa.fa-question-circle {
 div#wrapper_ohdsi {
   background-color: #eee;
   width:175px;
-  position: absolute;
   text-align: center;
   font-size: 12px;
   color: #020202;
@@ -2045,6 +2064,8 @@ div#wrapper_ohdsi {
   border-right: solid 1px #868686;
   border-top: solid 1px #868686;
   padding-top:10px;
+  flex-shrink: 0;
+  flex-grow: 0;
 }
 
 div#wrapper_ohdsi img {
@@ -2126,4 +2147,27 @@ div#wrapper_ohdsi a {
 .editor-heading {
   font-weight: bold;
   height: 17px;
+}
+
+.numericInputField {
+	padding-left: 3px;
+	padding-right: 3px;
+	margin-right: 3px;
+	line-height: 17px;
+	min-width: 18px;
+	min-height:19px;
+	border: solid 1px;
+	display: inline-block;
+	background-color: white;
+	color: black;
+	border-color: gray;
+	text-indent: 0px;
+}
+
+.dropdown {
+	margin: 2px 0px;
+	padding-right: 18px;
+	background-image: url(images/arrow_down.png);
+	background-position: center right;
+	background-repeat: no-repeat;
 }

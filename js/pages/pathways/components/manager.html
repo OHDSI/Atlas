@@ -2,15 +2,22 @@
 
 <!-- ko if: design -->
 <div data-bind="css: classes(), visible: !$component.loading()">
-	<div class="wrapperTitle">
-		<i class="fa fa-sitemap"></i> Cohort Pathways
-	</div>
+	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
 	<div class="asset-heading">
-		<input type="text" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name" />
-		<div class="btn-group">
-			<button type="button" class="btn btn-sm btn-success" data-bind="click: $component.save, css: {disabled:!canSave()}"><i class="fa fa-save"></i></button>
-			<button type="button" class="btn btn-sm btn-primary" data-bind="click: $component.close"><i class="fa fa-times"></i></button>
-			<button type="button" class="btn btn-sm btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete()}"><i class="fa fa-trash-o"></i></button>
+		<div class="input-group">
+			<input type="text" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameCorrect()}" />
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}"><i class="fa fa-save"></i></button>
+				<button type="button" class="btn btn-primary" data-bind="click: $component.close, css: {disabled: isProcessing()}"><i class="fa fa-times"></i></button>
+				<!-- ko ifnot: isNewEntity -->
+				<button type="button" class="btn btn-primary" data-bind="click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}" title="Create a copy of this Pathway Analysis"><i class="fa fa-copy"></i></button>
+				<button type="button" class="btn btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete() || isProcessing()}"><i class="fa fa-trash-o"></i></button>
+				<!-- /ko -->
+			</div>
+		</div>
+		<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+			<label>Cohort Pathway name is empty.</label>
 		</div>
 	</div>
 
