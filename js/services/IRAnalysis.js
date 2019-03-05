@@ -104,21 +104,30 @@ define(function (require, exports) {
 				return response;
 			});
 	}
+
+	const errroHandler = response => {
+		if (response.status === 404) {
+			throw new Error("Not found entity");
+		}
+		authApi.handleAccessDenied(response);
+		return response;
+	};
 	
 	function getInfo(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/info`);
 		
 		return promise
 			.then(({ data }) => data)
-			.catch(response => {
-				if (response.status === 404) {
-					throw new Error("Not found entity");
-				}
-				authApi.handleAccessDenied(response);
-				return response;
-			});
+			.catch(errroHandler);
 	}
-	
+
+	function getSummaryList(id, sourceKey) {
+		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id}/info/${sourceKey}`);
+
+		return promise
+			.then(({data}) => data)
+			.catch(errroHandler);
+	}
 	
 	function deleteInfo(id, sourceKey) {
 		const promise = httpService.doDelete(`${config.webAPIRoot}ir/${id || ""}/info/${sourceKey}`);
@@ -151,7 +160,8 @@ define(function (require, exports) {
 		cancelExecution: cancelExecution,
 		getInfo: getInfo,
 		deleteInfo: deleteInfo,
-		getReport: getReport
+		getReport: getReport,
+		getSummaryList,
 	}
 
 	return api;
