@@ -42,6 +42,10 @@ define([
         newRole() {
             document.location = '#/role/0'
         }
+
+        importRoles() {
+            document.location = '#/import/roles';
+        }
     }
 
     return commonUtils.build('roles', Roles, view);

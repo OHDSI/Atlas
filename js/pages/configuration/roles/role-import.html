@@ -1,0 +1,32 @@
+<heading-title params="name: 'Import roles', icon: 'users', theme: 'dark'"></heading-title>
+
+<div data-bind="css: classes()">
+  <div data-bind="css: classes('source')">
+    <div data-bind="css: classes('json-header-wrapper')">
+      <heading-title params="name: 'Source JSON'"></heading-title>
+      <button class="btn btn-success" data-bind="click: doImport, enable: isJSONValid">Import</button>
+    </div>
+    <textarea data-bind="textInput: json"></textarea>
+  </div>
+  <div data-bind="css: classes('result')">
+    <heading-title params="name: 'Preview'"></heading-title>
+      <!-- ko ifnot: isJSONValid -->
+        <div data-bind="css: classes('validation-errors'), text: validationErrors"></div>
+      <!-- /ko -->
+      <!-- ko if: roles() && isJSONValid() -->
+        <table data-bind="dataTable: {
+          data: roles(),
+          options: {
+            columns: [
+              { data: 'name', title: 'Role name' },
+              { data: 'usersList', title: 'Included users' }
+            ],
+          },
+        }">
+        </table>
+      <!-- /ko -->
+      <!-- ko if: !roles() && isJSONValid() -->
+        <empty-state params="message: 'Insert JSON containig roles definitions in the textarea'"></empty-state>
+      <!-- /ko -->
+  </div>
+</div>
