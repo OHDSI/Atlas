@@ -176,27 +176,30 @@ define([
 			!silently && this.loadingInfo(true);
 			try {
 				const id = analysisId || this.selectedAnalysisId();
-				const data = await IRAnalysisService.getInfo(id);
 
-				if (id === this.selectedAnalysisId()) {
-					data.forEach((info) => {
-						const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
-						if (source) {
-							const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
-							const executionInfo = info.executionInfo;
-							if (!silently) {
-								source.info(info);
-							}
-							if (executionInfo.status === 'COMPLETE') {
-								this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
-									info.summaryList = summaryList;
+				if (id) {
+					const data = await IRAnalysisService.getInfo(id);
+
+					if (id === this.selectedAnalysisId()) {
+						data.forEach((info) => {
+							const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
+							if (source) {
+								const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
+								const executionInfo = info.executionInfo;
+								if (!silently) {
 									source.info(info);
-								});
-							} else {
-								source.info(info);
+								}
+								if (executionInfo.status === 'COMPLETE') {
+									this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+										info.summaryList = summaryList;
+										source.info(info);
+									});
+								} else {
+									source.info(info);
+								}
 							}
-						}
-					});
+						});
+					}
 				}
 			} catch(e) {
 				this.close();
