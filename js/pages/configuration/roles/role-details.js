@@ -319,6 +319,13 @@ define([
             this.loading(false);
         }
 
+        async copy() {
+            const { id } = await roleService.create({ role: `${this.roleName()} copy` });
+            await roleService.addRelations(id, 'users', this.roleUserIds);
+            await roleService.addRelations(id, 'permissions', this.rolePermissionIds);
+            document.location = `#/role/${id}`;
+        }
+
     }
 
     return commonUtils.build('role-details', RoleDetails, view);
