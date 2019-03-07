@@ -29,7 +29,16 @@ define([
 		}
 
 		getDefaultColumns(analysis) {
-		    return [ this.getСovNameColumn() ];
+		    return [
+		        this.getСovNameColumn(),
+                {
+                    title: 'Concept ID',
+                    data: 'conceptId',
+                    render: (d, t, r) => {
+                        return `<a href="/#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName}'">${r.conceptId}</a>`
+					}
+                }
+            ];
 		}
 
 		getReportColumns(strataId, cohortId) {
@@ -47,8 +56,7 @@ define([
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
-                    const code = stat.conceptCode;
-                    const name = utils.extractMeaningfulCovName(d) + (code ? ` (${code})` : '');
+                    const name = utils.extractMeaningfulCovName(d);
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
                           html = name + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
