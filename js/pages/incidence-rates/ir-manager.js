@@ -153,12 +153,6 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
-			// subscriptions
-			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
-				if (newVal) {
-					this.onAnalysisSelected();
-				}
-			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
@@ -177,30 +171,33 @@ define([
 			this.init();
 		}
 
-		async pollForInfo({silently = false} = {}) {
+		async pollForInfo({silently = false, analysisId = null} = {}) {
 
 			!silently && this.loadingInfo(true);
 			try {
-				const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
+				const id = analysisId || this.selectedAnalysisId();
+				const data = await IRAnalysisService.getInfo(id);
 
-				data.forEach((info) => {
-					const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
-					if (source) {
-						const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
-						const executionInfo = info.executionInfo;
-						if (!silently) {
-							source.info(info);
-						}
-						if (executionInfo.status === 'COMPLETE') {
-							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
-								info.summaryList = summaryList;
+				if (id === this.selectedAnalysisId()) {
+					data.forEach((info) => {
+						const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
+						if (source) {
+							const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
+							const executionInfo = info.executionInfo;
+							if (!silently) {
 								source.info(info);
-							});
-						} else {
-							source.info(info);
+							}
+							if (executionInfo.status === 'COMPLETE') {
+								this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+									info.summaryList = summaryList;
+									source.info(info);
+								});
+							} else {
+								source.info(info);
+							}
 						}
-					}
-				});
+					});
+				}
 			} catch(e) {
 				this.close();
 			} finally {
@@ -244,7 +241,7 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				this.pollForInfo();
-				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true, analysisId: this.selectedAnalysisId() }), 10000);
 			});
 		};
 
@@ -264,17 +261,16 @@ define([
 			this.criteriaContext(null);
 		}
 
-		copy() {
+		async copy() {
 			this.isCopying(true);
 			this.loading(true);
-			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.selectedAnalysisId(analysis.id)
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				this.isCopying(false);
-				this.loading(false);
-				document.location = constants.apiPaths.analysis(analysis.id);
-			});
+			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
+			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
+			this.selectedAnalysisId(analysis.id)
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.isCopying(false);
+			this.loading(false);
+			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 		}
 
 		close() {
@@ -314,10 +310,8 @@ define([
 			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
-				this.selectedAnalysis(null);
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				PollService.stop(this.pollTimeout);
-				document.location = constants.apiPaths.analysis();
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis());
 			});
 		}
 
@@ -425,8 +419,7 @@ define([
 
 		// cleanup
 		dispose() {
-			this.incidenceRateCaption.dispose();
-			this.selectedAnalysisIdSub.dispose();
+			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
 			PollService.stop(this.pollTimeout);
 		}
 	}
