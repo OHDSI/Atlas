@@ -61,7 +61,7 @@ define([
             });
 
             this.stratas = ko.computed({
-                read: () => params.design() && params.design().stratas() || [], 
+                read: () => params.design() && params.design().stratas() || [],
                 write: (value) => params.design().stratas(value),
             });
 
@@ -193,7 +193,7 @@ define([
 
         addStrata() {
             const strata = {
-              name: ko.observable('New Strata'),
+              name: ko.observable('New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
             };
             const ccDesign = this.design();
