@@ -288,7 +288,7 @@ define([
 				return;
 			}
 			this.close()
-			document.location = constants.apiPaths.analysis();
+			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
 		save() {
@@ -297,7 +297,7 @@ define([
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id);
+				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 				this.isSaving(false);
 				this.loading(false);
 			});
