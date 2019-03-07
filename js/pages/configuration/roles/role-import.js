@@ -6,6 +6,8 @@ define([
   'utils/CommonUtils',
   'ajv',
   'services/User',
+  'services/AuthAPI',
+  'services/role',
   'databindings',
   'components/ac-access-denied',
   'components/heading',
@@ -19,12 +21,18 @@ define([
   commonUtils,
   Ajv,
   UserService,
+  AuthService,
+  RoleService
 ) {
   const ajv = new Ajv({ allErrors: true });
 
   class RolesImport extends AutoBind(Component) {
       roles = ko.observable();
+      existingRoles = [];
       users = [];
+
+      isProcessing = ko.observable(false);
+      processed = ko.observable(0);
       
       json = ko.observable();
       isJSONValid = ko.observable(true);
@@ -33,9 +41,9 @@ define([
         "type": "array",
         "items": {
           "type": "object",
-          "required": ["name"],
+          "required": ["role"],
           "properties": {
-            "name": {
+            "role": {
               "type": "string",
             },
             "users": {
@@ -54,6 +62,9 @@ define([
         },
       };
 
+      isAuthenticated = AuthService.isAuthenticated;
+      hasAccess = AuthService.isPermittedCreateRole;
+
       constructor(params) {
         super(params);
         this.json.subscribe(this.parseJSON);
@@ -65,12 +76,21 @@ define([
 
           this.users = usersMap;
         });
+
+        this.updateExistingRoles();
+      }
+      
+      updateExistingRoles() {
+        RoleService.getList().then(roles => {
+          this.existingRoles = roles;
+        });
       }
 
       parseJSON(json) {
         let isValid = true;
         let error = '';
         let roles = [];
+        this.isProcessing(false);
         try {
           roles = JSON.parse(json);
           isValid = ajv.validate(this.rolesJSONSchema, roles);
@@ -78,6 +98,9 @@ define([
             throw new Error(ajv.errorsText(ajv.errors));
           }
           roles = roles.map(role => {
+            if (this.existingRoles.find(erole => erole.role === role.role)) {
+              throw new Error(`Role "${role.role}" already exists`);
+            }
             const users = role.users
               ? role.users.map(user => this.users[user.id]).filter(user => user)
               : [];
@@ -98,8 +121,34 @@ define([
 
       }
 
-      doImport() {
+      async createRole(role) {
+        const { id } = await RoleService.create(role);
+        if (role.users && role.users.length) {
+          await RoleService.addRelations(id, 'users', role.users.map(user => user.id));
+        }
+      }
 
+      async * createRoles() {
+        const roles = this.roles();
+        for(let i=0; i<roles.length; i++) {
+          try  {
+            yield await this.createRole(roles[i]);
+          } catch(er) {
+            alert(`Couldn't create role ${roles[i].role}`);
+            break;
+          }
+        }
+      }
+
+      async doImport() {
+        this.isProcessing(true);
+        this.processed(0);
+
+        for await (let role of this.createRoles()) {
+          this.processed(this.processed() + 1);
+        }
+
+        this.updateExistingRoles();
       }      
   }
 
