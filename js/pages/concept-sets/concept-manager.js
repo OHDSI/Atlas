@@ -8,6 +8,7 @@ define([
 	'atlas-state',
 	'services/http',
 	'./const',
+	'services/AuthAPI',
 	'faceted-datatable',
 	'components/heading',
 ], function (
@@ -19,7 +20,8 @@ define([
 	commonUtils,
 	sharedState,
 	httpService,
-	constants
+	constants,
+	authApi
 ) {
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
@@ -31,6 +33,9 @@ define([
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
+
+			this.isAuthenticated = authApi.isAuthenticated;
+			this.hasAccess = authApi.hasAccess;
 
 			this.subscriptions.push(
 				this.model.currentConceptMode.subscribe((mode) => {
