@@ -35,7 +35,7 @@ define([
 			this.loadingRelated = ko.observable(true);
 
 			this.isAuthenticated = authApi.isAuthenticated;
-			this.hasAccess = authApi.hasAccess;
+			this.hasAccess = authApi.isPermittedReadConceptsets;
 
 			this.subscriptions.push(
 				this.model.currentConceptMode.subscribe((mode) => {
