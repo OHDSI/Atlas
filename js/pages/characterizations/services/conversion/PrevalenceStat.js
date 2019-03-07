@@ -8,6 +8,8 @@ define([
 			this.analysisName = stat.analysisName;
 			this.covariateId = stat.covariateId;
 			this.covariateName = stat.covariateName;
+			this.conceptName = stat.conceptName;
+			this.conceptCode = stat.conceptCode;
 			this.domainId = stat.domainId;
 			this.cohorts = [];
 			this.count = {};

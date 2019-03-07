@@ -47,7 +47,8 @@ define([
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
-                    const name = utils.extractMeaningfulCovName(d);
+                    const code = stat.conceptCode;
+                    const name = utils.extractMeaningfulCovName(d) + (code ? ` (${code})` : '');
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
                           html = name + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
