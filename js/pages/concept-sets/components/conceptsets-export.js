@@ -25,8 +25,8 @@ define([
 			this.exportTable = null;
 			this.exportRowCount = ko.observable(0);
 			this.exportConceptSets = [];
-			this.isInProgress = ko.observable(false);	
-		}		
+			this.isInProgress = ko.observable(false);
+		}
 
 		onExportAction (result) {
 			if (result.action == 'add') {
@@ -39,15 +39,15 @@ define([
 				if (conceptSetIds.length > 0) {
 					fileService
 						.loadZip(config.api.url + 'conceptset/exportlist?conceptsets=' + conceptSetIds, 'exportedConceptSets.zip')
-						.finally(() => this.isInProgress(false));					
+						.finally(() => this.isInProgress(false));
 				}
 			}
 		}
 
-		exportOnConceptSetSelected(conceptSet, valueAccessor) {
-			$(valueAccessor.currentTarget).toggleClass('selected');
+		exportOnConceptSetSelected(conceptSet, valueAccessor, e) {
+			$(e.currentTarget).toggleClass('selected');
 			if (this.exportTable == null) {
-				this.exportTable = $(valueAccessor.currentTarget.parentElement.parentElement).DataTable();
+				this.exportTable = $(e.currentTarget.parentElement.parentElement).DataTable();
 			}
 			this.exportRowCount(this.exportTable.rows('.selected').data().length);
 		}
