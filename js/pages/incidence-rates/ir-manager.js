@@ -316,6 +316,7 @@ define([
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
 				this.selectedAnalysis(null);
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+				PollService.stop(this.pollTimeout);
 				document.location = constants.apiPaths.analysis();
 			});
 		}
