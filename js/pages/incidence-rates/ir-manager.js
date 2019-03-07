@@ -246,7 +246,16 @@ define([
 				this.pollForInfo();
 				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true, analysisId: this.selectedAnalysisId() }), 10000);
 			});
-		};
+		}
+
+		onRouterParamsChanged(params = {}) {
+			const { analysisId } = params;
+			if (!analysisId) {
+				this.newAnalysis();
+			} else if (parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+				this.onAnalysisSelected();
+			}
+		}
 
 		handleConceptSetImport(item) {
 			this.criteriaContext(item);
@@ -409,15 +418,6 @@ define([
 				this.sources(sourceList);
 
 			});
-
-			if (this.selectedAnalysisId() == null) {
-				this.newAnalysis();
-			} else if (this.selectedAnalysisId() !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
-				this.onAnalysisSelected();
-			} else {
-				this.pollForInfo();
-				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
-			}
 		}
 
 		// cleanup
