@@ -29,6 +29,7 @@ define([
   class RolesImport extends AutoBind(Component) {
       roles = ko.observable();
       existingRoles = [];
+      existingPermissions = [];
       users = [];
 
       isProcessing = ko.observable(false);
@@ -58,6 +59,18 @@ define([
                 },
               },
             },
+            "permissions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": {
+                    "type": "number",
+                  },
+                },
+              },
+            },
           },
         },
       };
@@ -66,24 +79,28 @@ define([
       hasAccess = AuthService.isPermittedCreateRole;
 
       constructor(params) {
-        super(params);
+        super(params);        
+        this.updateExisting();
         this.json.subscribe(this.parseJSON);
-        UserService.getUsers().then(users => {
-          const usersMap = {};
-          users.forEach(user => {
-            usersMap[user.id] = user;
-          });
-
-          this.users = usersMap;
-        });
-
-        this.updateExistingRoles();
       }
       
-      updateExistingRoles() {
-        RoleService.getList().then(roles => {
-          this.existingRoles = roles;
+      async updateExisting() {
+        const users = await UserService.getUsers();
+        const usersMap = {};
+        users.forEach(user => {
+          usersMap[user.id] = user;
+        });  
+        this.users = usersMap;
+
+        const roles = await RoleService.getList();
+        this.existingRoles = roles;
+
+        const permissions = await RoleService.getPermissions();
+        const permissionsMap = {};
+        permissions.forEach(p => {
+          permissionsMap[p.id] = p;
         });
+        this.existingPermissions = permissions;
       }
 
       parseJSON(json) {
@@ -104,10 +121,15 @@ define([
             const users = role.users
               ? role.users.map(user => this.users[user.id]).filter(user => user)
               : [];
+            const permissions = role.permissions
+              ? role.permissions.map(p => this.existingPermissions[p.id]).filter(p => p)
+              : [];
             return {
               ...role,
               users,
-              usersList: users.map(user => user.login).join(', ')
+              permissions,
+              usersList: users.map(user => user.login).join(', '),
+              permissionsList: permissions.map(p => p.permission).join(', '),
             };
           })
         } catch(er) {
@@ -125,6 +147,9 @@ define([
         const { id } = await RoleService.create(role);
         if (role.users && role.users.length) {
           await RoleService.addRelations(id, 'users', role.users.map(user => user.id));
+        }
+        if (role.permissions && role.permissions.length) {
+          await RoleService.addRelations(id, 'permissions', role.permissions.map(p => p.id));
         }
       }
 
@@ -148,7 +173,7 @@ define([
           this.processed(this.processed() + 1);
         }
 
-        this.updateExistingRoles();
+        this.updateExisting();
       }      
   }
 
