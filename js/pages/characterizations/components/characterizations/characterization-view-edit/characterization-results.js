@@ -258,6 +258,7 @@ define([
                         covariateId: r.covariateId,
                         covariateName: r.covariateName,
                         conceptId: r.conceptId,
+                        conceptName: r.conceptName,
                         avg: r.avg,
                         count: r.count,
                         pct: r.avg * 100,
