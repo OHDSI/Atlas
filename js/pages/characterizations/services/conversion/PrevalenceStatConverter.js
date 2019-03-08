@@ -35,7 +35,11 @@ define([
                     title: 'Concept ID',
                     data: 'conceptId',
                     render: (d, t, r) => {
-                        return `<a href="/#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName}'">${r.conceptId}</a>`
+                        if (r.conceptId === null || r.conceptId === undefined) {
+                            return 'N/A';
+                        } else {
+                            return `<a href="/#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace("'", "\\'") : null}'">${r.conceptId}</a>`
+                        }
 					}
                 }
             ];
