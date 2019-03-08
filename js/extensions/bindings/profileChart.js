@@ -1,4 +1,3 @@
-"use strict";
 define([
 	'knockout',
 	'd3',
@@ -19,6 +18,7 @@ define([
 	authApi,
 	config
 ) {
+	"use strict";
 
 	function canViewProfileDates() {
 		return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
