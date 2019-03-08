@@ -29,6 +29,12 @@ define(['knockout', 'appConfig', 'services/AuthAPI', 'services/ConceptSet', 'tex
             self.isNameUnique(false);
           });
       });
+
+      self.show.subscribe((show) => {
+        if (show) {
+          self.conceptSetName.valueHasMutated();
+        }
+      });
     }
 
     var component = {
