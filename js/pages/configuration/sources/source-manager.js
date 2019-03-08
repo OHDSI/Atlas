@@ -302,9 +302,9 @@ define([
     hasSelectedPriotirizableDaimons() {
 		const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
 		const otherPriotirizableDaimons = lodash.flatten(
-			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType)))
+			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId))
 		);
-		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType));
+		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId);
 		const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
 			// Daimon of the type with higher priority exists
 			return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
