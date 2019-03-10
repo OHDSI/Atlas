@@ -1239,7 +1239,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return ko.toJSON(null);
 				}
 				return ko.toJSON(this.model.currentCohortDefinition().expression(), (key, value) => {
-					if (value === 0 || value) {
+					// UseEventEnd is a speical case: always include this key in the result.
+					if (value === 0 || value || ['UseEventEnd'].indexOf(key) > -1) {
 						return value;
 					} else {
 						return;
