@@ -247,7 +247,7 @@ define([
 
 		onRouterParamsChanged(params = {}) {
 			const { analysisId } = params;
-			if (!analysisId) {
+			if (!(analysisId && parseInt(analysisId))) {
 				this.newAnalysis();
 			} else if (parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
