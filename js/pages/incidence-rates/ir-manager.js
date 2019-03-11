@@ -171,16 +171,14 @@ define([
 			this.init();
 		}
 
-		async pollForInfo({silently = false, analysisId = null} = {}) {
+		async pollForInfo({silently = false} = {}) {
 
 			!silently && this.loadingInfo(true);
 			try {
-				const id = analysisId || this.selectedAnalysisId();
 
-				if (id) {
+				if (this.selectedAnalysisId()) {
 					const data = await IRAnalysisService.getInfo(id);
 
-					if (id === this.selectedAnalysisId()) {
 						data.forEach((info) => {
 							const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
 							if (source) {
@@ -200,7 +198,6 @@ define([
 							}
 						});
 					}
-				}
 			} catch(e) {
 				this.close();
 			} finally {
@@ -244,7 +241,7 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				this.pollForInfo();
-				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true, analysisId: this.selectedAnalysisId() }), 10000);
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			});
 		}
 
