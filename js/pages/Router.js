@@ -20,7 +20,7 @@ define(
         this.getModel = () => { throw new Exception('Model getter is not set'); };
         this.pages = Object.values(pages);
       }
-      
+
       run() {
         const routerOptions = {
           notfound: () => this.handleNotFound(),
@@ -41,9 +41,13 @@ define(
 
       aggregateRoutes() {
         const routes = this.pages.reduce((routes, page) => {
+          const pageRoutes = page.buildRoutes(this.getModel(), this);
+          for (let key in pageRoutes) {
+            pageRoutes[key].title = page.title;
+          }
           return {
             ...routes,
-            ...page.buildRoutes(this.getModel(), this),
+            ...pageRoutes,
           };
         }, {});
         const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
@@ -52,11 +56,13 @@ define(
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
             }
-						const handler = routes[key].handler.bind(null, ...args);
+            const handler = routes[key].handler.bind(null, ...args);
+            const title = routes[key].title;
 						routes[key].checkPermission()
 							.then(() => handler())
 							.catch((ex) => {
-							    console.error(ex !== undefined ? ex : 'Permission error');
+                  console.error(ex !== undefined ? ex : 'Permission error');
+                  this.getModel().activePage(title);
 								// protected route didn't pass the token check -> show white page
 								this.setCurrentView('white-page');
 								// wait until user authenticates
@@ -77,7 +83,7 @@ define(
 						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
 					}
 				});
-        
+
         return routesWithRefreshedToken;
       }
 
@@ -92,7 +98,7 @@ define(
 
       /**
        * Callback that should change the state of the model
-       * @param {function} handler 
+       * @param {function} handler
        */
       setCurrentViewHandler(handler) {
         this.setCurrentView = handler;
