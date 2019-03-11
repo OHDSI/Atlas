@@ -768,7 +768,7 @@ ul.ColVis_collection li {
 }
 
 /*#wrapperLeftMenu i.fa {
-   line-height: 7px; 
+   line-height: 7px;
 }*/
 
 #wrapperReportMenu {
@@ -1524,7 +1524,7 @@ textarea.code {
   padding: 4px;
 }*/
 
-.asset-heading input {  
+.asset-heading input {
   padding: 3px;
   color: #003142;
   font-size: 12px;
@@ -2120,7 +2120,6 @@ div#wrapper_ohdsi a {
 }
 
 #report {
-  overflow-y: scroll;
   flex-grow: 1;
 }
 
