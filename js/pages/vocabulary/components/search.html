@@ -35,7 +35,7 @@
 	</div>
 </script>
 
-<div class="vocabulary-search-tab">
+<div class="vocabulary-search-tab" data-bind="if: isAuthenticated() && hasAccess()">
 	<form data-bind="submit: searchClick">
 		<div class="input-group">
 			<input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
@@ -96,3 +96,5 @@
 		<div class="clear"></div>
 	</div>
 </div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
