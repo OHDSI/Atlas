@@ -9,6 +9,7 @@ define([
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
+	'clipboard',
 	'services/JobDetailsService',
 	'services/job/jobDetail',
 	'services/AuthAPI',
@@ -16,6 +17,7 @@ define([
 	'services/Poll',
 	'pages/Page',
 	'utils/AutoBind',
+	'utils/Clipboard',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'./const',
@@ -35,6 +37,7 @@ define([
 	ohdsiUtil,
 	config,
 	sharedState,
+	clipboard,
 	jobDetailsService,
 	jobDetail,
 	authAPI,
@@ -42,11 +45,12 @@ define([
 	PollService,
 	Page,
 	AutoBind,
+	Clipboard,
 	commonUtils,
 	exceptionUtils,
 	constants
 ) {
-	class IRAnalysisManager extends AutoBind(Page) {
+	class IRAnalysisManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
 			// polling support
@@ -99,6 +103,8 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || 'definition');
+      this.exportTabMode = ko.observable('sql');
+      this.exportSqlMode = ko.observable('ohdsisql');
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
@@ -153,6 +159,17 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
+			this.generatedSql = {};
+			this.generatedSql.mssql = ko.observable('');
+			this.generatedSql.oracle = ko.observable('');
+			this.generatedSql.postgresql = ko.observable('');
+			this.generatedSql.redshift = ko.observable('');
+			this.generatedSql.msaps = ko.observable('');
+			this.generatedSql.impala = ko.observable('');
+			this.generatedSql.netezza = ko.observable('');
+			this.generatedSql.bigquery = ko.observable('');
+			this.templateSql = ko.observable('');
+
 			// subscriptions
 			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
 				if (newVal) {
@@ -172,6 +189,7 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+			this.isLoadingSql = ko.observable(false);
 
 			// startup actions
 			this.init();
@@ -376,6 +394,71 @@ define([
 				this.activeTab('definition');
 			}
 		};
+
+		copyIRSQLToClipboard () {
+			this.copyToClipboard('#btnCopyIRSQLClipboard', '#copyCopyIRSQLMessage');
+		}
+
+		showSql () {
+			this.isLoadingSql(true);
+
+			this.templateSql('');
+			this.generatedSql.mssql('');
+			this.generatedSql.oracle('');
+			this.generatedSql.postgresql('');
+			this.generatedSql.redshift('');
+			this.generatedSql.msaps('');
+			this.generatedSql.impala('');
+			this.generatedSql.netezza('');
+			this.generatedSql.bigquery('');
+
+			var templateSqlPromise = IRAnalysisService.getSql(ko.toJS(this.selectedAnalysis().expression, IRAnalysisService.pruneJSON), this.selectedAnalysisId());
+
+			templateSqlPromise.then((result) => {
+				this.templateSql(result.templateSql);
+				var mssqlTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'sql server');
+				mssqlTranslatePromise.then(({data}) => {
+					this.generatedSql.mssql(data.targetSQL);
+				});
+
+				var msapsTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'pdw');
+				msapsTranslatePromise.then(({data}) => {
+					this.generatedSql.msaps(data.targetSQL);
+				});
+
+				var oracleTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'oracle');
+				oracleTranslatePromise.then(({data}) => {
+					this.generatedSql.oracle(data.targetSQL);
+				});
+
+				var postgresTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'postgresql');
+				postgresTranslatePromise.then(({data}) => {
+					this.generatedSql.postgresql(data.targetSQL);
+				});
+
+				var redshiftTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'redshift');
+				redshiftTranslatePromise.then(({data}) => {
+					this.generatedSql.redshift(data.targetSQL);
+				});
+
+				var impalaTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'impala');
+				impalaTranslatePromise.then(({data}) => {
+					this.generatedSql.impala(data.targetSQL);
+				});
+
+				var netezzaTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'netezza');
+				netezzaTranslatePromise.then(({data})=> {
+					this.generatedSql.netezza(data.targetSQL);
+				});
+
+				const bigqueryTranslatePromise = IRAnalysisService.translateSql(result.templateSql, 'bigquery');
+				bigqueryTranslatePromise.then(({data}) => this.generatedSql.bigquery(data.targetSQL));
+
+				$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
+					this.isLoadingSql(false);
+				});
+			});
+		}
 
 		async exportAnalysisCSV() {
 			this.exporting(true);

@@ -148,7 +148,33 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}	
+	}
+
+  function getSql(expression, analysisId, options) {
+    var getSqlPromise = $.ajax({
+      url: config.webAPIRoot + 'ir/sql',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        expression: expression,
+				analysisId: analysisId,
+        options: options
+      }),
+      error: function (error) {
+        console.log("Error: " + error);
+        authApi.handleAccessDenied(error);
+      }
+    });
+    return getSqlPromise;
+  }
+
+  function translateSql(sql, dialect) {
+    return httpService.doPost(config.webAPIRoot + 'sqlrender/translate', ko.toJS({
+      SQL: sql,
+      targetdialect: dialect
+    }))
+      .catch(error => console.log("Error: " + error));
+  }
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -161,6 +187,8 @@ define(function (require, exports) {
 		getInfo: getInfo,
 		deleteInfo: deleteInfo,
 		getReport: getReport,
+      getSql: getSql,
+      translateSql: translateSql,
 		loadResultsSummary,
 	}
 
