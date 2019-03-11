@@ -329,7 +329,6 @@ define([
     refreshRecordCounts(obj, event) {
 			if (event.originalEvent) {
         // User changed event
-        console.log(this)
 				this.recordCountsRefreshing(true);
 				$("#dtConeptManagerRC")
 					.removeClass("fa-database")
