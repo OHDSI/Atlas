@@ -139,6 +139,12 @@ define([
 			return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
 		}
 
+		getExecutionGroupStatus(submissions) {
+			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
+				this.ccGenerationStatusOptions.STARTED :
+				this.ccGenerationStatusOptions.COMPLETED;
+		}
+
 		async loadData({
 			silently = false
 		} = {}) {
@@ -174,9 +180,7 @@ define([
 
 
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
-					group.status(group.submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
-						this.ccGenerationStatusOptions.STARTED :
-						this.ccGenerationStatusOptions.COMPLETED);
+					group.status(this.getExecutionGroupStatus(group.submissions));
 
 				});
 			} catch (e) {
@@ -203,7 +207,9 @@ define([
 					jobDetailsService.createJob(data);
 					this.loadData();
 				})
-				.catch(() => {});
+				.catch(() => {
+					executionGroup.status(this.getExecutionGroupStatus(executionGroup.submissions));
+				});
 		}
 
 		cancelGenerate(source) {
