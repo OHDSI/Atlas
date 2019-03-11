@@ -55,14 +55,14 @@ define(
             this.getModel().loading(true);
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
-            }
-            const handler = routes[key].handler.bind(null, ...args);
-            const title = routes[key].title;
+						}
+						const handler = routes[key].handler.bind(null, ...args);
+						const title = routes[key].title;
 						routes[key].checkPermission()
 							.then(() => handler())
 							.catch((ex) => {
-                  console.error(ex !== undefined ? ex : 'Permission error');
-                  this.getModel().activePage(title);
+								console.error(ex !== undefined ? ex : 'Permission error');
+								this.getModel().activePage(title);
 								// protected route didn't pass the token check -> show white page
 								this.setCurrentView('white-page');
 								// wait until user authenticates
