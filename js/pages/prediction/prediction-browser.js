@@ -9,6 +9,7 @@ define([
 	'utils/CommonUtils',
     'utils/DatatableUtils',
 	'services/Prediction',
+	'services/AuthAPI',
 	'faceted-datatable',
 	'components/ac-access-denied',
 	'components/heading',
@@ -25,6 +26,7 @@ define([
 	commonUtils,
     datatableUtils,
 	PredictionService,
+	authAPI,
 ) {
   class PredictionBrowser extends Page {
 		constructor(params) {
@@ -36,6 +38,9 @@ define([
 
 			this.canReadPredictions = PermissionService.isPermittedList;
 			this.canCreatePrediction = PermissionService.isPermittedCreate;
+
+			this.isAuthenticated = authAPI.isAuthenticated;
+			this.hasAccess = authAPI.isPermittedReadPlps;
 
 			this.options = {
 				Facets: [

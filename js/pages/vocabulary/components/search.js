@@ -4,6 +4,7 @@ define([
 	'text!./search.html',
 	'appConfig',
 	'services/AuthAPI',
+	'../PermissionService',
 	'components/Component',
 	'utils/AutoBind',
 	'services/http',
@@ -21,6 +22,7 @@ define([
 	view,
 	config,
 	authApi,
+	PermissionService,
 	Component,
 	AutoBind,
 	httpService,
@@ -167,8 +169,13 @@ define([
 				}]
 			};
 
-			this.getDomains();
-			this.getVocabularies();
+			this.isAuthenticated = authApi.isAuthenticated;
+			this.hasAccess = ko.computed(() => PermissionService.isPermittedSearch());
+
+			if (this.hasAccess()) {
+				this.getDomains();
+				this.getVocabularies();
+			}
 		}
 		
 		searchClick() {

@@ -36,7 +36,9 @@ define([
       });
       
       // startup actions
-      this.refresh();
+      if (this.isAuthenticated() && this.canReadIRs()) {
+        this.refresh();
+      }
     }
 
     refresh() {
