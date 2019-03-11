@@ -153,12 +153,6 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
-			// subscriptions
-			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
-				if (newVal) {
-					this.onAnalysisSelected();
-				}
-			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
@@ -181,26 +175,29 @@ define([
 
 			!silently && this.loadingInfo(true);
 			try {
-				const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
 
-				data.forEach((info) => {
-					const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
-					if (source) {
-						const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
-						const executionInfo = info.executionInfo;
-						if (!silently) {
-							source.info(info);
-						}
-						if (executionInfo.status === 'COMPLETE') {
-							this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
-								info.summaryList = summaryList;
-								source.info(info);
-							});
-						} else {
-							source.info(info);
-						}
+				if (this.selectedAnalysisId()) {
+					const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
+
+						data.forEach((info) => {
+							const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
+							if (source) {
+								const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
+								const executionInfo = info.executionInfo;
+								if (!silently) {
+									source.info(info);
+								}
+								if (executionInfo.status === 'COMPLETE') {
+									this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+										info.summaryList = summaryList;
+										source.info(info);
+									});
+								} else {
+									source.info(info);
+								}
+							}
+						});
 					}
-				});
 			} catch(e) {
 				this.close();
 			} finally {
@@ -246,7 +243,16 @@ define([
 				this.pollForInfo();
 				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			});
-		};
+		}
+
+		onRouterParamsChanged(params = {}) {
+			const { analysisId } = params;
+			if (!(analysisId && parseInt(analysisId))) {
+				this.newAnalysis();
+			} else if (parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+				this.onAnalysisSelected();
+			}
+		}
 
 		handleConceptSetImport(item) {
 			this.criteriaContext(item);
@@ -264,17 +270,16 @@ define([
 			this.criteriaContext(null);
 		}
 
-		copy() {
+		async copy() {
 			this.isCopying(true);
 			this.loading(true);
-			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.selectedAnalysisId(analysis.id)
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				this.isCopying(false);
-				this.loading(false);
-				document.location = constants.apiPaths.analysis(analysis.id);
-			});
+			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
+			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
+			this.selectedAnalysisId(analysis.id)
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.isCopying(false);
+			this.loading(false);
+			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 		}
 
 		close() {
@@ -292,7 +297,7 @@ define([
 				return;
 			}
 			this.close()
-			document.location = constants.apiPaths.analysis();
+			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
 		save() {
@@ -301,7 +306,7 @@ define([
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id);
+				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 				this.isSaving(false);
 				this.loading(false);
 			});
@@ -314,9 +319,8 @@ define([
 			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
-				this.selectedAnalysis(null);
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis();
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis());
 			});
 		}
 
@@ -411,21 +415,11 @@ define([
 				this.sources(sourceList);
 
 			});
-
-			if (this.selectedAnalysisId() == null) {
-				this.newAnalysis();
-			} else if (this.selectedAnalysisId() !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
-				this.onAnalysisSelected();
-			} else {
-				this.pollForInfo();
-				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
-			}
 		}
 
 		// cleanup
 		dispose() {
-			this.incidenceRateCaption.dispose();
-			this.selectedAnalysisIdSub.dispose();
+			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
 			PollService.stop(this.pollTimeout);
 		}
 	}

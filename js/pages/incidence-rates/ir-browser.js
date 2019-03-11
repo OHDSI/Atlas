@@ -52,11 +52,11 @@ define([
     };
 
     onAnalysisSelected(d) {
-      document.location = constants.apiPaths.analysis(d.id);
+      commonUtils.routeTo(constants.apiPaths.analysis(d.id));
     };
 
     newAnalysis() {
-      document.location = constants.apiPaths.createAnalysis();
+      commonUtils.routeTo(constants.apiPaths.createAnalysis());
     };
 
   }
