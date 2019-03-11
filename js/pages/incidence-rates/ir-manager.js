@@ -177,7 +177,7 @@ define([
 			try {
 
 				if (this.selectedAnalysisId()) {
-					const data = await IRAnalysisService.getInfo(id);
+					const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
 
 						data.forEach((info) => {
 							const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
