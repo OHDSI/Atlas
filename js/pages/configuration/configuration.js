@@ -173,19 +173,20 @@ define([
       source.connectionCheck(sourceApi.buttonCheckState.checking);
     };
 
-    refreshSourceCache(source) {
-      sourceApi.refreshSourceCache(source.sourceKey)
-        .then(({data}) => {
-          if(data.sourceId === undefined) {
-            source.refreshState(sourceApi.buttonCheckState.failed);
-          } else {
-            jobDetailsService.createJob(data);
-            this.sourceJobs.set(data.executionId, source);
-            source.refreshState(sourceApi.buttonCheckState.checking)}
-          })
-        .catch(() => {
-          source.refreshState(sourceApi.buttonCheckState.failed);});
-    };
+    async refreshSourceCache(source) {
+      try {
+        const { data } = await sourceApi.refreshSourceCache(source.sourceKey);
+        if(data.sourceId === undefined) {
+          source.refreshState(sourceApi.buttonCheckState.failed);
+        } else {
+          jobDetailsService.createJob(data);
+          this.sourceJobs.set(data.executionId, source);
+          source.refreshState(sourceApi.buttonCheckState.checking);
+        }
+      } catch (e) {
+        source.refreshState(sourceApi.buttonCheckState.failed);
+      }
+    }
 
     getRefreshCacheButtonStyles(source) {
       return this.getButtonStyles(source.refreshState())
