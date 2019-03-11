@@ -27,7 +27,7 @@ define([
 			this.sourceOptions = ko.computed(() => params.sources().map(s => ({ source: s, selected: ko.computed(() => this.selectedSources().includes(s)) })));
 			this.submit = params.submit;
 
-			this.tableDom = "Bfrt";
+			this.tableDom = "Bfrtp";
 
 			this.columns = [
 				{
