@@ -52,7 +52,6 @@ define([
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
 			this.isResultsViewPermitted = this.isResultsViewPermitted.bind(this);
-
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
@@ -196,6 +195,7 @@ define([
 
 			this.stopping({...this.stopping(), [source]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+			executionGroup.status(this.ccGenerationStatusOptions.PENDING);
 
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
