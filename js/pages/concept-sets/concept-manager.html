@@ -60,101 +60,103 @@
 	</div>
 
 	<div id="wrapperConceptHierarchy" data-bind="if:$root.currentConceptMode() == 'hierarchy' && !loadingRelated()">
-	<!-- ko if: hasInfoAccess() -->
-		<!-- ko ifnot: $root.currentConcept().STANDARD_CONCEPT == 'S' -->
-			<div>No hierarchy found for non-standard concepts.</div>
-		<!-- /ko -->
-		<!-- ko if: $root.currentConcept().STANDARD_CONCEPT == 'S' -->
-			<div id="wrapperParents">
-				<div class="heading">Parents</div>
-				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-									data: metarchy.parents(),
-									options: {
-										dom: 't',
-										language: {
-											search: 'Filter Broader Concepts: '
-										},
-										rowCallback: commonUtils.contextSensitiveLinkColor,
-										lengthMenu: [[-1], ['All']],
-										orderClasses: false,
-										ordering: true,
-										order: [[ 6, 'desc' ]],
-										columns: [
-												{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
-												{ title: 'Id', data: 'CONCEPT_ID'},
-												{ title: 'Code', data: 'CONCEPT_CODE'},
-												{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-												{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-												{ title: 'RC', data: 'RECORD_COUNT'},
-												{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-												{ title: 'Distance', data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-												{ title: 'Domain', data: 'DOMAIN_ID' },
-												{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
-										]
-								}
-							}">
-				</table>
-			</div>
-			<div id="wrapperHierarchyAnchor">
-				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-										data: currentConceptArray,
-										options: {
-											dom: 't',
-											language: {
-												search: 'Filter Broader Concepts: '
-											},
-											rowCallback: commonUtils.contextSensitiveLinkColor,
-											lengthMenu: [[-1], ['All']],
-											orderClasses: false,
-											ordering: true,
-											order: [[ 6, 'desc' ]],
-											columns: [
-													{ title: 'Id', data: 'CONCEPT_ID'},
-													{ title: 'Code', data: 'CONCEPT_CODE'},
-													{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-													{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-													{ title: 'RC', data: 'RECORD_COUNT'},
-													{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-													{ title: 'Distance', data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-													{ title: 'Domain', data: 'DOMAIN_ID' },
-													{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
-											]
-									}
-								}">
-				</table>
-			</div>
-			<div id="wrapperChildren">
-				<div class="heading">Children</div>
-				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-									data: metarchy.children(),
-									language: {
-										search: 'Filter Specific Concepts: '
-									},
-									options: {
-										dom: 't',
-										rowCallback: commonUtils.contextSensitiveLinkColor,
-										lengthMenu: [[-1], ['All']],
-										orderClasses: false,
-										ordering: true,
-										order: [[ 6, 'desc' ]],
-										columns: [
-												{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
-												{ title: 'Id', data: 'CONCEPT_ID'},
-												{ title: 'Code', data: 'CONCEPT_CODE'},
-												{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-												{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-												{ title: 'RC', data: 'RECORD_COUNT'},
-												{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-												{ title: 'Distance', data: function (d) { return String(Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-												{ title: 'Domain', data: 'DOMAIN_ID' },
-												{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
-										]
-								}
-							}">
-				</table>
-			</div>
-		<!-- /ko -->
-	<!-- /ko -->
+		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
+
+        <!-- ko if: hasInfoAccess() -->
+            <!-- ko ifnot: $root.currentConcept().STANDARD_CONCEPT == 'S' -->
+                <div>No hierarchy found for non-standard concepts.</div>
+            <!-- /ko -->
+            <!-- ko if: $root.currentConcept().STANDARD_CONCEPT == 'S' -->
+                <div id="wrapperParents">
+                    <div class="heading">Parents</div>
+                    <table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+                                        data: metarchy.parents(),
+                                        options: {
+                                            dom: 't',
+                                            language: {
+                                                search: 'Filter Broader Concepts: '
+                                            },
+                                            rowCallback: commonUtils.contextSensitiveLinkColor,
+                                            lengthMenu: [[-1], ['All']],
+                                            orderClasses: false,
+                                            ordering: true,
+                                            order: [[ 6, 'desc' ]],
+                                            columns: [
+                                                    { title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
+                                                    { title: 'Id', data: 'CONCEPT_ID'},
+                                                    { title: 'Code', data: 'CONCEPT_CODE'},
+                                                    { title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
+                                                    { title: 'Class', data: 'CONCEPT_CLASS_ID' },
+                                                    { title: 'RC', data: 'RECORD_COUNT'},
+                                                    { title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+                                                    { title: 'Distance', data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
+                                                    { title: 'Domain', data: 'DOMAIN_ID' },
+                                                    { title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
+                                            ]
+                                    }
+                                }">
+                    </table>
+                </div>
+                <div id="wrapperHierarchyAnchor">
+                    <table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+                                            data: currentConceptArray,
+                                            options: {
+                                                dom: 't',
+                                                language: {
+                                                    search: 'Filter Broader Concepts: '
+                                                },
+                                                rowCallback: commonUtils.contextSensitiveLinkColor,
+                                                lengthMenu: [[-1], ['All']],
+                                                orderClasses: false,
+                                                ordering: true,
+                                                order: [[ 6, 'desc' ]],
+                                                columns: [
+                                                        { title: 'Id', data: 'CONCEPT_ID'},
+                                                        { title: 'Code', data: 'CONCEPT_CODE'},
+                                                        { title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
+                                                        { title: 'Class', data: 'CONCEPT_CLASS_ID' },
+                                                        { title: 'RC', data: 'RECORD_COUNT'},
+                                                        { title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+                                                        { title: 'Distance', data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
+                                                        { title: 'Domain', data: 'DOMAIN_ID' },
+                                                        { title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
+                                                ]
+                                        }
+                                    }">
+                    </table>
+                </div>
+                <div id="wrapperChildren">
+                    <div class="heading">Children</div>
+                    <table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+                                        data: metarchy.children(),
+                                        language: {
+                                            search: 'Filter Specific Concepts: '
+                                        },
+                                        options: {
+                                            dom: 't',
+                                            rowCallback: commonUtils.contextSensitiveLinkColor,
+                                            lengthMenu: [[-1], ['All']],
+                                            orderClasses: false,
+                                            ordering: true,
+                                            order: [[ 6, 'desc' ]],
+                                            columns: [
+                                                    { title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
+                                                    { title: 'Id', data: 'CONCEPT_ID'},
+                                                    { title: 'Code', data: 'CONCEPT_CODE'},
+                                                    { title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
+                                                    { title: 'Class', data: 'CONCEPT_CLASS_ID' },
+                                                    { title: 'RC', data: 'RECORD_COUNT'},
+                                                    { title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+                                                    { title: 'Distance', data: function (d) { return String(Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
+                                                    { title: 'Domain', data: 'DOMAIN_ID' },
+                                                    { title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
+                                            ]
+                                    }
+                                }">
+                    </table>
+                </div>
+            <!-- /ko -->
+        <!-- /ko -->
 	</div>
 
 	<div id="wrapperConceptDetails" data-bind="if:$root.currentConceptMode() == 'details'">
@@ -207,6 +209,8 @@
 	</div>
 
 	<div data-bind="visible: $root.currentConceptMode() == 'related' && !loadingRelated()">
+		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
+
 		<!-- ko if: hasInfoAccess() -->
 		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, reference: $root.relatedConcepts, rowCallback: $root.contextSensitiveLinkColor }"></faceted-datatable>
 		<div class="linkLegend">
