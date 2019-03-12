@@ -9,6 +9,7 @@ define([
 	'services/http',
 	'./const',
 	'services/AuthAPI',
+	'./PermissionService',
 	'faceted-datatable',
 	'components/heading',
 ], function (
@@ -21,13 +22,15 @@ define([
 	sharedState,
 	httpService,
 	constants,
-	authApi
+	authApi,
+	PermissionService
 ) {
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.model = params.model;
 			this.subscriptions = [];
+			this.currentConceptId = ko.observable();
 
 			this.commonUtils = commonUtils;
 			this.sourceCounts = ko.observableArray();
@@ -35,7 +38,9 @@ define([
 			this.loadingRelated = ko.observable(true);
 
 			this.isAuthenticated = authApi.isAuthenticated;
-			this.hasAccess = authApi.isPermittedReadConceptsets;
+
+			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
+			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
 
 			this.subscriptions.push(
 				this.model.currentConceptMode.subscribe((mode) => {
@@ -342,19 +347,19 @@ define([
 		}
 		
 		async onPageCreated() {
-			this.currentConceptId = this.routerParams.conceptId;
+			this.currentConceptId(this.routerParams.conceptId);
 			
-			this.loadConcept(this.currentConceptId);
+			this.loadConcept(this.currentConceptId());
 			super.onPageCreated();
 		}
 
 		onRouterParamsChanged({ conceptId }) {			
-			if (conceptId !== this.currentConceptId && conceptId !== undefined) {
+			if (conceptId !== this.currentConceptId() && conceptId !== undefined) {
 				if (this.model.currentConceptMode() == 'recordcounts') {
 					this.loadRecordCounts();
 				}
-				this.loadConcept(conceptId);
-				this.currentConceptId = conceptId;
+				this.currentConceptId(conceptId);
+				this.loadConcept(this.currentConceptId());
 			}
 		}
 
@@ -364,7 +369,7 @@ define([
 			for (const source of sources) {
 				if (authApi.hasSourceAccess(source.sourceKey)) {
 					// await is harmless here since it will pull data sequentially while it can be done in parallel
-					let promise = httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId]).then(({ data }) => {
+					let promise = httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId()]).then(({ data }) => {
 						const recordCountObject = data.length > 0 ? Object.values(data[0])[0] : null;
 						if (recordCountObject) {
 							sourceData.push({
@@ -416,6 +421,11 @@ define([
 		}
 
 		async loadConcept(conceptId) {
+			if (!this.hasInfoAccess()) {
+				this.loadingRelated(false);
+				return;
+			}
+
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			var exists = false;
 			for (var i = 0; i < this.model.recentConcept().length; i++) {
@@ -443,7 +453,7 @@ define([
 			}
 			
 			await vocabularyProvider.loadDensity(related);
-			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId);
+			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
 			if (currentConceptObject !== undefined){
 			    this.currentConceptArray([currentConceptObject]);
 			} else {
