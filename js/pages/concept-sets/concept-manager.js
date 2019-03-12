@@ -355,10 +355,10 @@ define([
 
 		onRouterParamsChanged({ conceptId }) {			
 			if (conceptId !== this.currentConceptId() && conceptId !== undefined) {
+				this.currentConceptId(conceptId);
 				if (this.model.currentConceptMode() == 'recordcounts') {
 					this.loadRecordCounts();
 				}
-				this.currentConceptId(conceptId);
 				this.loadConcept(this.currentConceptId());
 			}
 		}
