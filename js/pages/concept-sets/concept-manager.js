@@ -359,19 +359,26 @@ define([
 		}
 
 		async fetchRecordCounts(sources) {
+			const promises = [];
 			const sourceData = [];
 			for (const source of sources) {
-				const { data } = await httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId]);
-				const recordCountObject = data.length > 0 ? Object.values(data[0])[0] : null;
-				if (recordCountObject) {
-					sourceData.push({
-						sourceName: source.sourceName,
-						recordCount: recordCountObject[0],
-						descendantRecordCount: recordCountObject[1]
+				if (authApi.hasSourceAccess(source.sourceKey)) {
+					// await is harmless here since it will pull data sequentially while it can be done in parallel
+					let promise = httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId]).then(({ data }) => {
+						const recordCountObject = data.length > 0 ? Object.values(data[0])[0] : null;
+						if (recordCountObject) {
+							sourceData.push({
+								sourceName: source.sourceName,
+								recordCount: recordCountObject[0],
+								descendantRecordCount: recordCountObject[1]
+							});
+						}
 					});
+					promises.push(promise);
 				}
 			}
 
+			await Promise.all(promises);
 			return sourceData;
 		}
 
