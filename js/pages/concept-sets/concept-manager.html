@@ -26,37 +26,39 @@
 	</ul>
 
 	<div class="paddedWrapper" data-bind="if:$root.currentConceptMode() == 'recordcounts' ">
+		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasRCAccess"></access-denied>
 
-		<div data-bind="visible:loadingSourceCounts()" class="loading">loading</div>
+        <!-- ko if: hasRCAccess() -->
+			<div data-bind="visible:loadingSourceCounts()" class="loading">loading</div>
 
-		<div data-bind="visible:!loadingSourceCounts()">
-			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasRCAccess"></access-denied>
+			<div data-bind="visible:!loadingSourceCounts()">
 
-			<div class="panel panel-primary" data-bind="if: hasRCAccess()">
-				<div class="panel-heading">Record Counts across Sources</div>
-				<div class="panel-body">
-					<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
-								data: sourceCounts(),
-								options: {
-									dom: 't',
-									language: {
-										search: 'Filter Sources: '
-									},
-									lengthMenu: [[-1], ['All']],
-									orderClasses: false,
-									ordering: true,
-									order: [[ 2, 'desc' ]],
-									columns: [
-											{ title: 'Source Name', data: 'sourceName', width: '50%'},
-											{ title: 'RC', data: 'recordCount'},
-											{ title: 'DRC', data: 'descendantRecordCount'}
-									]
-							}
-						}">
-					</table>
+				<div class="panel panel-primary" data-bind="if: hasRCAccess()">
+					<div class="panel-heading">Record Counts across Sources</div>
+					<div class="panel-body">
+						<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
+									data: sourceCounts(),
+									options: {
+										dom: 't',
+										language: {
+											search: 'Filter Sources: '
+										},
+										lengthMenu: [[-1], ['All']],
+										orderClasses: false,
+										ordering: true,
+										order: [[ 2, 'desc' ]],
+										columns: [
+												{ title: 'Source Name', data: 'sourceName', width: '50%'},
+												{ title: 'RC', data: 'recordCount'},
+												{ title: 'DRC', data: 'descendantRecordCount'}
+										]
+								}
+							}">
+						</table>
+					</div>
 				</div>
 			</div>
-		</div>
+		<!-- /ko -->
 	</div>
 
 	<div id="wrapperConceptHierarchy" data-bind="if:$root.currentConceptMode() == 'hierarchy' && !loadingRelated()">
