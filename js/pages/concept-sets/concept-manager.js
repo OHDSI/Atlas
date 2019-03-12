@@ -347,8 +347,8 @@ define([
 		}
 		
 		async onPageCreated() {
+			this.model.currentConceptMode('details');
 			this.currentConceptId(this.routerParams.conceptId);
-			
 			this.loadConcept(this.currentConceptId());
 			super.onPageCreated();
 		}
