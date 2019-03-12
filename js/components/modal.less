@@ -7,8 +7,7 @@
 	}
 
 	&__modal-dialog {
-		width: auto;
-		max-width: 90rem;
+		width: 80rem;
 	}
 	& .modal-title {
 		display: inline;
@@ -31,7 +30,7 @@
 	display: flex;
 }
 
-.modal-dialog {
-	width: auto;
-	max-width: 90rem;
+/* a lot of places still use data-binding for modals */
+.modal-body {
+	overflow-x: auto;
 }
