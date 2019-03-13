@@ -10,8 +10,8 @@ define([
 	'utils/CommonUtils',
 	'services/MomentAPI',
 	'atlascharts',
-	'd3',	
-	'components/visualizations/filter-panel/utils',	
+	'd3',
+	'components/visualizations/filter-panel/utils',
 	'components/visualizations/filter-panel/filter-panel',
 	'components/charts/sunburst',
 	'less!./pathway-results.less'
@@ -28,7 +28,7 @@ define([
 	momentAPI,
 	AtlasCharts,
 	d3,
-	filterUtils	 
+	filterUtils
 ) {
 
 	const percentFormat = d3.format(".1%");
@@ -36,7 +36,7 @@ define([
 
 	class PathwayResults extends AutoBind(Component) {
 
-	
+
 		constructor(params) {
 			super();
 
@@ -47,9 +47,10 @@ define([
 			this.execution = ko.observable();
 			this.results = ko.observable();
 			this.filterList = ko.observableArray([]);
-			
+			this.isExecutionDesignShown = ko.observable(false);
+			this.executionDesign = ko.observable(null);
 			this.pathwaysObserver = ko.computed(() => this.prepareResultData(this.results(), this.filterList()));
-			
+
 			this.executionId.subscribe(id => id && this.loadData());
 
 			this.loadData();
@@ -77,16 +78,16 @@ define([
 				return node;
 			})
 		}
-		
+
 		// get the sum of all size from hierarchy node
 		sumChildren(node) {
 			return node.children ? node.children.reduce((r, n) => r + this.sumChildren(n),0) : node.size;
 		}
-		
+
 		summarizeHierarchy(data) {
 			return {totalPathways: this.sumChildren(data)};
 		}
-	
+
 		getAncestors(node) {
 			var path = [];
 			var current = node;
@@ -96,7 +97,7 @@ define([
 			}
 			return path;
 		}
-		
+
 		getPathToNode(node) {
 			const eventCohorts = this.pathwaysObserver().eventCohorts;
 			const colors = this.pathwaysObserver().colors;
@@ -106,25 +107,25 @@ define([
 								.map(ec => ({name: ec.name, color: colors(ec.code)})), count: p.value});
 			return pathway;
 		}
-		
+
 		tooltipBuilder(d) {
 			const nameBuilder = (name, color) => `<span class="${this.classes('tip-name')}" style="background-color:${color}; color: ${name == 'end' ? 'black' : 'white'}">${name}</span>`;
 			const stepBuilder = (step) => `<div class="${this.classes('tip-step')}">${step.names.map(n => nameBuilder(n.name, n.color)).join("")}</div>`;
-			
+
 			const path = this.getPathToNode(d);
 			return `<div class="${this.classes('tip-container')}">${path.map(s => stepBuilder(s)).join("")}</div>`;
 		}
-				
+
 		buildPathDetails(pathwayData, pathNode) {
 			let pathway = this.getPathToNode(pathNode);
-			
+
 			// { names: [], personCount, remainPct}
 			const rowBuilder = (path, i ,allPaths) => ({
 				names: path.names,
 				personCount: path.count,
 				remainPct: path.count / pathwayData.summary.totalPathways
 			});
-			
+
 			let rows = pathway.map(rowBuilder);
 			rows.forEach((r, i) => {
 				if (i> 0) {
@@ -133,14 +134,14 @@ define([
 					r.diffPct = 1.0-r.remainPct;
 				}
 			});
-			
+
 			return {tableData: rows};
 		}
-		
-		
+
+
 		getFilterList(design) {
 			const cohorts = design.targetCohorts.map(c => ({label: c.name, value: c.id}));
-			
+
 			return [
 				{
 					type: 'multiselect',
@@ -151,34 +152,34 @@ define([
 				}
 			];
 		}
-			
+
 		formatDate(date) {
 			return momentAPI.formatDateTimeUTC(date);
 		}
-		
+
 		formatNumber(value) {
-			return 	numberFormat(value);						
+			return 	numberFormat(value);
 		}
-		
+
 		formatPct(value) {
 			return percentFormat(value);
 		}
-		
+
 		// used to 'capture' the data context in the knockout binding for use in the d3 callback
 		pathClickHandler(pathwayData) {
 			return (node) => {
 				pathwayData.pathDetails(this.buildPathDetails(pathwayData, node));
 			}
-		}		
-		
+		}
+
 		buildHierarchy(data) {
 			return AtlasCharts.util
 				.buildHierarchy(data,
 					d => d.path,
 					d => d.personCount
 				);
-		}		
-		
+		}
+
 		loadData() {
 			this.loading(true);
 
@@ -201,7 +202,7 @@ define([
 							pw.path = pw.path + "-end";
 					});
 				});
-				
+
 				const results = {
 					sourceId: source.sourceId,
 					sourceName: source.sourceName,
@@ -211,19 +212,19 @@ define([
 					data: executionResults
 				};
 				this.results(results);
-				
+
 				this.filterList(this.getFilterList(design));
-				
+
 				this.loading(false);
 			});
 		}
-		
+
 		prepareResultData(results, filters=[]) {
-		
+
 			const selectedCohortIds = filterUtils.getSelectedFilterValues(filters).cohorts;
-			
+
 			if (!results || selectedCohortIds == undefined || selectedCohortIds.length == 0) return null;
-			
+
 
 			const cohortPathways = selectedCohortIds.map(id => {
 				const pathwayGroup = results.data.pathwayGroups.find(g => id == g.targetCohortId);
@@ -245,17 +246,29 @@ define([
 			const colorScheme = d3.scaleOrdinal(eventCohorts.length > 10 ? d3.schemeCategory20 : d3.schemeCategory10);
 			const fixedColors = {"end": "rgba(185, 184, 184, 0.23)"};
 			const colors = (d) => (fixedColors[d] || colorScheme(d));
-			
+
 			return {
-				eventCodes: results.data.eventCodes,				
+				eventCodes: results.data.eventCodes,
 				cohortPathways : cohortPathways,
 				colors: colors,
 				title: results.design.name,
 				eventCohorts: eventCohorts
 			};
-			
+
 		}
-		
+
+		showExecutionDesign(executionId) {
+			this.executionDesign(null);
+			this.isExecutionDesignShown(true);
+
+			PathwayService
+				.loadExportDesignByGeneration(executionId)
+				.then(res => {
+					this.executionDesign(res);
+					this.loading(false);
+				});
+		}
+
 	}
 
 	return commonUtils.build('pathway-results', PathwayResults, view);
