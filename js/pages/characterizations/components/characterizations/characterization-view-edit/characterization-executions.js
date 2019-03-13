@@ -52,7 +52,6 @@ define([
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
 			this.isResultsViewPermitted = this.isResultsViewPermitted.bind(this);
-
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
@@ -140,6 +139,12 @@ define([
 			return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
 		}
 
+		getExecutionGroupStatus(submissions) {
+			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
+				this.ccGenerationStatusOptions.STARTED :
+				this.ccGenerationStatusOptions.COMPLETED;
+		}
+
 		async loadData({
 			silently = false
 		} = {}) {
@@ -175,9 +180,7 @@ define([
 
 
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
-					group.status(group.submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
-						this.ccGenerationStatusOptions.STARTED :
-						this.ccGenerationStatusOptions.COMPLETED);
+					group.status(this.getExecutionGroupStatus(group.submissions));
 
 				});
 			} catch (e) {
@@ -196,6 +199,7 @@ define([
 
 			this.stopping({...this.stopping(), [source]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+			executionGroup.status(this.ccGenerationStatusOptions.PENDING);
 
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
@@ -203,7 +207,9 @@ define([
 					jobDetailsService.createJob(data);
 					this.loadData();
 				})
-				.catch(() => {});
+				.catch(() => {
+					executionGroup.status(this.getExecutionGroupStatus(executionGroup.submissions));
+				});
 		}
 
 		cancelGenerate(source) {

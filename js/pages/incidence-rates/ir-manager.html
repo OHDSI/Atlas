@@ -1,6 +1,6 @@
 <heading-title params="name: incidenceRateCaption(), icon: 'bolt', theme: 'dark'"></heading-title>
 <div data-bind="visible:!loading()">
-	<!-- ko if: selectedAnalysis() != null -->
+	<!-- ko if: selectedAnalysis() -->
 	<div>
 		<div class="asset-heading">
 			<div class="input-group ir-header">
@@ -59,9 +59,10 @@
 																				{ event: 'click', selector: 'button.removeResult', callback: removeResult},
 																				{ event: 'click', selector: 'button.exportAnalysisCSV', callback: exportAnalysisCSV},
 																			]" class="tab-pane">
-				<loading data-bind="visible: exporting()" params="Exporting Analysis To CSV"></loading>
-				<div data-bind="hidden: exporting()">
-					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources"></ir-analysis-results>
+				<loading data-bind="visible: exporting()" params="status: 'Exporting Analysis To CSV'"></loading>
+				<loading data-bind="visible: loadingInfo()" params="status: 'Loading Analysis Generations'"></loading>
+				<div data-bind="hidden: exporting() || loadingInfo()">
+					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources, loadingSummary: loadingSummary"></ir-analysis-results>
 				</div>
 			</div>		
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">

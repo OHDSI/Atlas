@@ -8,6 +8,7 @@ define([
 	'pages/characterizations/utils',
 	'./utils',
 	'numeral',
+	'utils/CsvUtils',
 	'less!./explore-prevalence.less',
 ], function(
 	ko,
@@ -19,6 +20,7 @@ define([
 	pageUtils,
 	utils,
 	numeral,
+	CsvUtils,
 ){
 
 	class ExplorePrevalence extends AutoBind(Component) {
@@ -109,16 +111,51 @@ define([
 			});
 		}
 
+		getButtonsConfig() {
+			const buttons = [];
+
+			buttons.push({
+				text: 'Export',
+				action: () => this.exportTable()
+			});
+
+			return buttons;
+		}
+		
+		exportTable() {
+			const exprt = this.relations().stats.map(stat => {
+				return ({
+					'Relationship Type': this.getRelationshipTypeFromDistance(stat.distance),
+					'Distance' : stat.distance,
+					'Covariate short name': stat.conceptName,
+					'Count': stat.count[stat.strataId],
+					'Percent': stat.pct[stat.strataId],
+					'Strata ID': stat.strataId,
+					'Strata name': stat.strataName,
+					'Analysis ID': stat.analysisId,
+					'Analysis name': stat.analysisName,					
+					'Covariate ID': stat.covariateId,
+					'Covariate name': stat.covariateName
+				});
+			});
+			exprt.sort((a,b) => b["Distance"] - a["Distance"]);
+			CsvUtils.saveAsCsv(exprt);
+		}
+
 		resetExploring() {
 			this.loadData(this.explore).then(() => this.exploring(null));
 		}
 
 		renderRelationship(data, type, row) {
 			const distance = row.distance;
-			const rel = distance > 0 ? 'Ancestor' : distance < 0 ? 'Descendant' : 'Selected';
+			const rel = this.getRelationshipTypeFromDistance(distance);
 			const cls = this.classes({element: 'explore', modifiers: distance === 0 ? 'disabled' : '' });
 			const binding = distance !== 0 ? 'click: () => $component.exploreByFeature({...$data, cohortId: $component.cohortId})' : '';
 			return "<a class='"+ cls + "' data-bind='" + binding + "'>Explore</a> " + rel;
+		}
+		
+		getRelationshipTypeFromDistance(distance) {
+			return distance > 0 ? 'Ancestor' : distance < 0 ? 'Descendant' : 'Selected';
 		}
 
 	}

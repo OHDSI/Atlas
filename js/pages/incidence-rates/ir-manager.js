@@ -13,6 +13,7 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
+	'services/Poll',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -38,6 +39,7 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
+	PollService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -51,6 +53,8 @@ define([
 			this.pollTimeout = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
+			this.loadingInfo = ko.observable();
+			this.loadingSummary = ko.observableArray();
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -149,12 +153,6 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
-			// subscriptions
-			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
-				if (newVal) {
-					this.onAnalysisSelected();
-				}
-			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
@@ -173,35 +171,53 @@ define([
 			this.init();
 		}
 
-		pollForInfo() {
-			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
-				var hasPending = false;
-				data.forEach((info) => {
-					const source = this.sources().find(s => s.source.sourceId == info.executionInfo.id.sourceId);
-					if (source) {
-						// if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
-							source.info(info);
-						if (constants.isInProgress(info.executionInfo.status))
-							hasPending = true;
-					}
-				});
+		async pollForInfo({silently = false} = {}) {
 
-				if (hasPending) {
-					this.pollTimeout = setTimeout(() => {
-						this.pollForInfo();
-					}, 10000);
-				} else {
-					this.isRunning(false);
-				}
-			})
-			.catch(() => {
+			!silently && this.loadingInfo(true);
+			try {
+
+				if (this.selectedAnalysisId()) {
+					const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
+
+						data.forEach((info) => {
+							const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
+							if (source) {
+								const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
+								const executionInfo = info.executionInfo;
+								if (!silently) {
+									source.info(info);
+								}
+								if (executionInfo.status === 'COMPLETE') {
+									this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+										info.summaryList = summaryList;
+										source.info(info);
+									});
+								} else {
+									source.info(info);
+								}
+							}
+						});
+					}
+			} catch(e) {
 				this.close();
-			});
+			} finally {
+				this.loadingInfo(false);
+			}
+		}
+
+		async loadResultsSummary(id, source, silently = true) {
+			!silently && this.loadingSummary.push(source.source.sourceKey);
+			try {
+				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
+				return (sourceInfo && sourceInfo.summaryList) || [];
+			} finally {
+				this.loadingSummary.remove(source.source.sourceKey);
+			}
 		}
 
 		resolveCohortId(cohortId) {
 			var cohortDef = this.cohortDefs().filter(function (def) {
-				return def.id == cohortId;
+				return def.id === cohortId;
 			})[0];
 			return (cohortDef && cohortDef.name) || "Unknown Cohort";
 		}
@@ -225,8 +241,18 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
 				this.pollForInfo();
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			});
-		};
+		}
+
+		onRouterParamsChanged(params = {}) {
+			const { analysisId } = params;
+			if (!(analysisId && parseInt(analysisId))) {
+				this.newAnalysis();
+			} else if (parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+				this.onAnalysisSelected();
+			}
+		}
 
 		handleConceptSetImport(item) {
 			this.criteriaContext(item);
@@ -236,7 +262,7 @@ define([
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
-			if (result.action == 'add') {
+			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
 				this.activeTab('conceptsets');
@@ -244,17 +270,16 @@ define([
 			this.criteriaContext(null);
 		}
 
-		copy() {
+		async copy() {
 			this.isCopying(true);
 			this.loading(true);
-			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.selectedAnalysisId(analysis.id)
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				this.isCopying(false);
-				this.loading(false);
-				document.location = constants.apiPaths.analysis(analysis.id);
-			});
+			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
+			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
+			this.selectedAnalysisId(analysis.id)
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.isCopying(false);
+			this.loading(false);
+			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 		}
 
 		close() {
@@ -272,7 +297,7 @@ define([
 				return;
 			}
 			this.close()
-			document.location = constants.apiPaths.analysis();
+			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
 		save() {
@@ -281,7 +306,7 @@ define([
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id);
+				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 				this.isSaving(false);
 				this.loading(false);
 			});
@@ -294,15 +319,14 @@ define([
 			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
-				this.selectedAnalysis(null);
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis();
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis());
 			});
 		}
 
 		removeResult(analysisResult) {
 			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				const source = this.sources().find(s => s.source.sourceId == analysisResult.source.sourceId);
+				const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 				source.info(null);
 			});
 		}
@@ -325,7 +349,8 @@ define([
 				const tempInfo = {
 					source: sourceItem,
 					executionInfo: {
-						id: {sourceId: sourceItem.source.sourceId}
+						id: {sourceId: sourceItem.source.sourceId},
+						status: constants.status.PENDING,
 					},
 					summaryList: []
 				};
@@ -336,7 +361,6 @@ define([
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
-					this.pollForInfo();
 				});
 		}
 
@@ -375,10 +399,10 @@ define([
 				var sourceList = [];
 				sources.forEach(function (source) {
 					if (source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "CDM";
+							return daimon.daimonType === "CDM";
 						}).length > 0
 						&& source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "Results";
+							return daimon.daimonType === "Results";
 						}).length > 0) {
 						sourceList.push({
 							source: source,
@@ -391,21 +415,12 @@ define([
 				this.sources(sourceList);
 
 			});
-
-			if (this.selectedAnalysisId() == null) {
-				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
-				this.onAnalysisSelected();
-			} else {
-				this.pollForInfo();
-			}
 		}
 
 		// cleanup
 		dispose() {
-			this.incidenceRateCaption.dispose();
-			this.selectedAnalysisIdSub.dispose();
-			clearTimeout(this.pollTimeout);
+			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
+			PollService.stop(this.pollTimeout);
 		}
 	}
 

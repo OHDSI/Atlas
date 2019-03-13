@@ -8,6 +8,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.roles = ko.observableArray();
 	state.sources = ko.observableArray([]);
 
+	state.sourceKeyOfVocabUrl = ko.computed(() => {
+		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
+	});
+
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
