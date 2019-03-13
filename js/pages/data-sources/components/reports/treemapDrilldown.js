@@ -321,6 +321,9 @@ define([
 		}
 
 		loadData(selectedConcept) {
+			if (!selectedConcept) {
+				return;
+			}
 			this.conceptId = selectedConcept.concept_id;
 			this.currentConcept(selectedConcept);
 			this.isError(false);
