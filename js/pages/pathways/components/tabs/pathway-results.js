@@ -49,6 +49,7 @@ define([
 			this.filterList = ko.observableArray([]);
 			this.isExecutionDesignShown = ko.observable(false);
 			this.executionDesign = ko.observable(null);
+			this.loadExecutionDesignError = ko.observable(false);
 			this.pathwaysObserver = ko.computed(() => this.prepareResultData(this.results(), this.filterList()));
 
 			this.executionId.subscribe(id => id && this.loadData());
@@ -257,16 +258,18 @@ define([
 
 		}
 
-		showExecutionDesign(executionId) {
+		async showExecutionDesign(executionId) {
+			this.loadExecutionDesignError(false);
 			this.executionDesign(null);
 			this.isExecutionDesignShown(true);
 
-			PathwayService
-				.loadExportDesignByGeneration(executionId)
-				.then(res => {
-					this.executionDesign(res);
-					this.loading(false);
-				});
+			try {
+				const res = await PathwayService.loadExportDesignByGeneration(executionId);
+				this.executionDesign(res);
+			} catch (e) {
+				this.loadExecutionDesignError(true);
+				console.error(e);
+			}
 		}
 
 	}

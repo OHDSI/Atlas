@@ -118,8 +118,9 @@
 		<!-- /ko -->
 	<!-- /ko -->
 
-	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: 'Design', data: { executionDesign: $component.executionDesign, classes: $component.classes }">
-		<div class="loading" data-bind="visible: executionDesign() == null">loading</div>
+	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: 'Design', data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">
+		<div class="loading" data-bind="visible: executionDesign() == null && !loadExecutionDesignError()">loading</div>
+		<div class="loading" data-bind="visible: loadExecutionDesignError()">Unable to load design</div>
 		<div data-bind="if: executionDesign() != null">
 			<textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
 		</div>
