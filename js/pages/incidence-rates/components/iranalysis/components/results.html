@@ -86,8 +86,8 @@
 					<!-- /ko -->
 					<td data-bind="css: $component.classes('tbl-col', 'exec-start', 'dataCol'), text: $component.formatDateTime(info().executionInfo.startTime)"></td>
 					<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: $component.msToTime(info().executionInfo.executionDuration)"></td>
-					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports'), click:$parent.selectSource">
-						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid">
+					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports') ">
+						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid, click:$parent.selectSource">
 							<i class="fa fa-eye"></i> Reports
 						</button>
 						<button class="btn btn-sm btn-danger removeResult">
