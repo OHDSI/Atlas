@@ -171,41 +171,67 @@ define([
 			this.init();
 		}
 
+		getExecutionInfo(info) {
+			if (info && info.executionInfo) {
+				const { startTime, executionDuration } = info.executionInfo;
+				const completedTime = startTime + (executionDuration || 0);
+				return {
+					...info.executionInfo,
+					completedTime,
+				}
+			} else {
+				return {};
+			}
+		}
+
 		async pollForInfo({silently = false} = {}) {
-
 			!silently && this.loadingInfo(true);
-			try {
+			const promises = [];
 
+			try {
 				if (this.selectedAnalysisId()) {
 					const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
 
-						data.forEach((info) => {
-							const source = this.sources().find(s => s.source.sourceId === info.executionInfo.id.sourceId);
-							if (source) {
-								const prevStatus = source.info() && source.info().executionInfo && source.info().executionInfo.status;
-								const executionInfo = info.executionInfo;
-								if (!silently) {
-									source.info(info);
-								}
-								if (executionInfo.status === 'COMPLETE') {
-									this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
-										info.summaryList = summaryList;
-										source.info(info);
-									});
-								} else {
-									source.info(info);
-								}
+					for (let newInfo of data) {
+						const source = this.sources().find(s => s.source.sourceId === newInfo.executionInfo.id.sourceId);
+						if (source) {
+							const { status: prevStatus, completedTime: prevCompletedTime } = this.getExecutionInfo(source.info());
+							const executionInfo = this.getExecutionInfo(newInfo);
+
+							if (!silently) {
+								source.info(newInfo);
 							}
-						});
+							if (executionInfo.status === 'COMPLETE') {
+								if (prevCompletedTime !== executionInfo.completedTime) {
+									let resultsPromise = this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+										newInfo.summaryList = summaryList;
+										source.info(newInfo);
+									});
+									promises.push(resultsPromise);
+								} else {
+									newInfo.summaryList = source.info().summaryList;
+									source.info(newInfo);
+								}
+							} else {
+								source.info(newInfo);
+							}
+						}
 					}
+				}
 			} catch(e) {
 				this.close();
 			} finally {
 				this.loadingInfo(false);
 			}
+
+			await Promise.all(promises);
 		}
 
 		async loadResultsSummary(id, source, silently = true) {
+			if (!authAPI.hasSourceAccess(source.source.sourceKey)) {
+				return [];
+			}
+
 			!silently && this.loadingSummary.push(source.source.sourceKey);
 			try {
 				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
