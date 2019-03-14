@@ -43,6 +43,7 @@ define(function(require, exports) {
 
     var subject = ko.observable();
     var permissions = ko.observable();
+    var fullName = ko.observable();
 
     const loadUserInfo = function() {
         return new Promise((resolve, reject) => $.ajax({
@@ -51,6 +52,7 @@ define(function(require, exports) {
             success: function (info) {
                 permissions(info.permissions.map(p => p.permission));
                 subject(info.login);
+                fullName(info.fullName ? info.fullName : info.login);
                 resolve();
             },
             error: function (err) {
@@ -445,6 +447,7 @@ define(function(require, exports) {
     var api = {
         token: token,
         subject: subject,
+        fullName,
         tokenExpirationDate: tokenExpirationDate,
         tokenExpired: tokenExpired,
         setAuthParams: setAuthParams,
