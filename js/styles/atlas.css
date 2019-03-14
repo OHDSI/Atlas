@@ -251,7 +251,6 @@ pre span.key {
   display: flex;
   flex-direction: column;
   min-width: 768px;
-  overflow: auto;
 }
 
 .flexed {
