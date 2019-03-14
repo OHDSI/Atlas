@@ -41,7 +41,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@ohdsi/atlascharts": "^1.7.2",
+    "@ohdsi/atlascharts": "^1.7.1",
     "@ohdsi/ui-toolbox": "^1.0.3",
     "@ohdsi/visibilityjs": "^2.0.2",
     "bootstrap": "^3.3.7",
