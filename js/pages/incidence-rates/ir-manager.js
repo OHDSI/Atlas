@@ -1,11 +1,11 @@
 define([
-	'knockout', 
+	'knockout',
 	'text!./ir-manager.html',
 	'services/IRAnalysis',
 	'services/SourceAPI',
 	'services/CohortDefinition',
-	'./components/iranalysis/IRAnalysisDefinition', 
-	'./components/iranalysis/IRAnalysisExpression', 
+	'./components/iranalysis/IRAnalysisDefinition',
+	'./components/iranalysis/IRAnalysisExpression',
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
@@ -19,9 +19,9 @@ define([
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'./const',
-	'./components/iranalysis/main', 
-	'databindings', 
-	'conceptsetbuilder/components', 
+	'./components/iranalysis/main',
+	'databindings',
+	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
 ], function (
@@ -247,9 +247,7 @@ define([
 
 		onRouterParamsChanged(params = {}) {
 			const { analysisId } = params;
-			if (!(analysisId && parseInt(analysisId))) {
-				this.newAnalysis();
-			} else if (parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
 			}
 		}
@@ -315,7 +313,7 @@ define([
 		delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
@@ -393,28 +391,25 @@ define([
 			}
 		}
 
-		init() {
+		async init() {
 			this.refreshDefs();
-			sourceAPI.getSources().then((sources) => {
-				var sourceList = [];
-				sources.forEach(function (source) {
-					if (source.daimons.filter(function (daimon) {
-							return daimon.daimonType === "CDM";
-						}).length > 0
-						&& source.daimons.filter(function (daimon) {
-							return daimon.daimonType === "Results";
-						}).length > 0) {
-						sourceList.push({
-							source: source,
-							info: ko.observable()
-						});
-					}
-				});
-
-				// set sources observable, which will show the Generate action dropdown.
-				this.sources(sourceList);
-
+			const sources = await sourceAPI.getSources();
+			const sourceList = [];
+			sources.forEach(source => {
+				if (source.daimons.filter(function (daimon) {
+						return daimon.daimonType === "CDM";
+					}).length > 0
+					&& source.daimons.filter(function (daimon) {
+						return daimon.daimonType === "Results";
+					}).length > 0) {
+					sourceList.push({
+						source: source,
+						info: ko.observable()
+					});
+				}
 			});
+			this.sources(sourceList);
+			!this.selectedAnalysis() && this.newAnalysis();
 		}
 
 		// cleanup
