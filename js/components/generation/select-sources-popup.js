@@ -24,7 +24,7 @@ define([
 
 			this.showModal = params.showModal;
 			this.selectedSources = params.selectedSources;
-			this.sourceOptions = ko.computed(() => params.sources().map(s => ({ source: s, selected: ko.computed(() => this.selectedSources().includes(s)) })));
+			this.sourceOptions = ko.computed(() => params.sources().map(s => ({ source: s, selected: ko.computed(() => this.selectedSources().find(ss => ss.sourceKey === s.sourceKey)) })));
 			this.submit = params.submit;
 			this.tableDom = "Bfrtp";
 
@@ -61,8 +61,9 @@ define([
 
 		toggle(sourceOption) {
 			if (!sourceOption.source.disabled) {
-				const ss = this.selectedSources();
-				ss.includes(sourceOption.source) ? ss.splice( ss.indexOf(sourceOption.source), 1 ) : ss.push(sourceOption.source);
+				let ss = this.selectedSources();
+				const bySourceKey = s => s.sourceKey === sourceOption.source.sourceKey;
+				ss = ss.find(bySourceKey) ? ss.filter( s => !bySourceKey(s) ) : ss.concat([ sourceOption.source ]);
 				this.selectedSources(ss);
 			}
 		}
@@ -81,6 +82,7 @@ define([
 
 		generate() {
 			this.selectedSources().length > 0 && this.submit(this.selectedSources());
+			this.selectedSources.removeAll();
 		}
 	}
 
