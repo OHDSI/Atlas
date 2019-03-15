@@ -24,6 +24,7 @@ define([
 
 			this.showModal = params.showModal;
 			this.selectedSources = params.selectedSources;
+			//We have to find source using sourceKey beacause source object might be changed by analysis execution polling
 			this.sourceOptions = ko.computed(() => params.sources().map(s => ({ source: s, selected: ko.computed(() => this.selectedSources().find(ss => ss.sourceKey === s.sourceKey)) })));
 			this.submit = params.submit;
 			this.tableDom = "Bfrtp";
