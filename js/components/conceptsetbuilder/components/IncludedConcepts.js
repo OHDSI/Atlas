@@ -165,9 +165,9 @@ define([
 		self.refresh = function() {
 			self.isLoading(true);
 			self.selectedConcepts([]);
-			VocabularyAPI.resolveConceptSetExpression(self.conceptSet()).done(function (identifiers) {
-				VocabularyAPI.getConceptsById(identifiers).then(function (concepts) {
-					concepts.data.forEach(function (concept) {
+			VocabularyAPI.resolveConceptSetExpression(self.conceptSet()).then(function (identifiers) {
+				VocabularyAPI.getConceptsById(identifiers).then(({ data: concepts }) => {
+					concepts.forEach(function (concept) {
 						concept.RECORD_COUNT = 'timeout';
 						concept.DESCENDANT_RECORD_COUNT = 'timeout';
 					});
@@ -180,7 +180,7 @@ define([
 					self.isLoading(false);
 				});
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				console.log("resolveConceptSetExpression failed: " + err);
 				self.isLoading(false);
 			});
