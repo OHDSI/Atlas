@@ -75,8 +75,13 @@ define([
                 strataNames: strataNames,
                 perStrataValues: this.getReportColumns(0,0).map(col => col.title),
                 columns: columns,
+                defaultSort: this.getDefaultSort(columns.length, cohorts.length),
                 data: Array.from(data.values()),
             };
+        }
+
+        getDefaultSort(columnsCount, cohortsCount) {
+            return [[ columnsCount - 1, "desc" ]];
         }
 
         getRowId(stat) {

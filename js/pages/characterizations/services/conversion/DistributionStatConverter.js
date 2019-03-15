@@ -20,7 +20,11 @@ define([
                 this.getDecimal2Column('P90', 'p90', strataId, cohortId),
                 this.getDecimal2Column('Max', 'max', strataId, cohortId),
             ];
-		}
+        }
+        
+        getDefaultSort(columnsCount, cohortsCount) {
+            return [[ 2, "desc" ]]; // 1 column is name, then report columns. we use Avg column
+        }
     }
 
     return DistributionStatConverter;
