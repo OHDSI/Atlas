@@ -442,6 +442,7 @@ define([
 
 		// cleanup
 		dispose() {
+			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
 			PollService.stop(this.pollTimeout);
 		}
