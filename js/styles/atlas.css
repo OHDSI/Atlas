@@ -71,6 +71,7 @@ body {
   font-size: 12px;
   /* researched font stack used by github */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  overflow: hidden;
 }
 
 
@@ -250,7 +251,6 @@ pre span.key {
   display: flex;
   flex-direction: column;
   min-width: 768px;
-  overflow-x: auto;
 }
 
 .flexed {
