@@ -8,6 +8,10 @@ define(function(require, exports) {
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
     const httpService = require('services/http');
 
+    const AUTH_PROVIDERS = {
+        IAP: 'AtlasGoogleSecurity',
+    };
+
     const signInOpened = ko.observable(false);
 
     var authProviders = config.authProviders.reduce(function(result, current) {
@@ -43,14 +47,25 @@ define(function(require, exports) {
 
     var subject = ko.observable();
     var permissions = ko.observable();
+    const authProvider = ko.observable();
+
+    authProvider.subscribe(provider => {
+        if (provider === AUTH_PROVIDERS.IAP) {
+            const id = 'google-iap-refresher';
+            const iframe = `<iframe id="${id}" src="/_gcp_iap/session_refresher" style="position: absolute; width:0;height:0;border:0; border:none;"></iframe>`;
+            $('#' + id).remove();
+            $('body').append(iframe);
+        }
+    });
 
     const loadUserInfo = function() {
         return new Promise((resolve, reject) => $.ajax({
             url: config.api.url + 'user/me',
             method: 'GET',
-            success: function (info) {
+            success: function (info, textStatus, jqXHR) {
                 permissions(info.permissions.map(p => p.permission));
                 subject(info.login);
+                authProvider(jqXHR.getResponseHeader('x-auth-provider'));
                 resolve();
             },
             error: function (err) {
@@ -443,10 +458,13 @@ define(function(require, exports) {
     };
 
     var api = {
+        AUTH_PROVIDERS: AUTH_PROVIDERS,
+
         token: token,
         subject: subject,
         tokenExpirationDate: tokenExpirationDate,
         tokenExpired: tokenExpired,
+        authProvider: authProvider,
         setAuthParams: setAuthParams,
         resetAuthParams: resetAuthParams,
         getAuthorizationHeader: getAuthorizationHeader,
