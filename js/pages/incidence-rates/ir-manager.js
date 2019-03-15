@@ -351,10 +351,12 @@ define([
 		}
 
 		removeResult(analysisResult) {
-			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
-				source.info(null);
-			});
+			if (confirm(`Do you really want to remove result of ${analysisResult.source.sourceName} ?`)) {
+				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
+					const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
+					source.info(null);
+				});
+			}
 		}
 
 		newAnalysis() {
