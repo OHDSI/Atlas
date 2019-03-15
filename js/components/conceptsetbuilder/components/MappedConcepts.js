@@ -179,7 +179,7 @@ define([
 					self.isLoading(false);
 				});
 			})
-			.fail(function (err) {
+			.catch(function (err) {
 				console.log("resolveConceptSetExpression failed: " + err);
 				self.isLoading(false);
 			});
