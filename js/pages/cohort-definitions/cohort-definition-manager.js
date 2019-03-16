@@ -295,10 +295,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			{
 				title: 'Name',
 				data: 'CONCEPT_NAME',
-					render: (s, p, d) => {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-				}
+				render: commonUtils.renderLink,
 			},
 			{
 				title: 'Class',

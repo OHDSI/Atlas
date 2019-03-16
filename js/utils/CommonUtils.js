@@ -58,7 +58,7 @@ define([
 		return false;
 	}
 
-	function getLinkClass(data) {
+	function getConceptLinkClass(data) {
 		var switchContext;
 		if (data.STANDARD_CONCEPT === undefined) {
 			switchContext = data.concept.STANDARD_CONCEPT;
@@ -78,7 +78,7 @@ define([
 
 	function contextSensitiveLinkColor(row, data) {
 		$('a', row)
-			.addClass(getLinkClass(data));
+			.addClass(getConceptLinkClass(data));
 	}
 
 	function hasCDM(source) {
@@ -104,12 +104,12 @@ define([
 
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-		var linkClass = getLinkClass(d);
+		var linkClass = getConceptLinkClass(d);
 		return '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
 	function renderBoundLink(s, p, d) {
-		return '<a href=\"#/concept/' + d.concept.CONCEPT_ID + '\">' + d.concept.CONCEPT_NAME + '</a>';
+		return renderLink(s, p, d.concept);
 	}
 
 	const renderConceptSelector = function (s, p, d) {
