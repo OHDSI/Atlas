@@ -348,6 +348,8 @@ define(
 					}
 				});
 				this.currentConceptSetMode.subscribe(this.onCurrentConceptSetModeChanged);
+
+				sharedState.selectedConcepts.subscribe(() => this.resolveConceptSetExpression());
 				/*
 					probably unreachable code
 					
