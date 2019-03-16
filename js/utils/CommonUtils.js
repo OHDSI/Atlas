@@ -60,7 +60,7 @@ define([
 
 	function getLinkClass(data) {
 		var switchContext;
-		if (data.STANDARD_CONCEPT == undefined) {
+		if (data.STANDARD_CONCEPT === undefined) {
 			switchContext = data.concept.STANDARD_CONCEPT;
 		} else {
 			switchContext = data.STANDARD_CONCEPT;
