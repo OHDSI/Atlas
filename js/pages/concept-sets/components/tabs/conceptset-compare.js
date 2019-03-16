@@ -129,7 +129,6 @@ define([
               INVALID_REASON_CAPTION: d.invalidReason,
               STANDARD_CONCEPT: d.standardConcept,
             };
-            console.log(concept);
             return commonUtils.renderLink(s,p,concept)
           }
         },
