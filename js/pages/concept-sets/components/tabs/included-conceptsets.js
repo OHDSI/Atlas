@@ -23,6 +23,9 @@ define([
       this.model = params.model;
       this.ancestorsModalIsShown = ko.observable(false);
       this.ancestors = ko.observableArray([]);		
+			this.loading = ko.pureComputed(() => {
+				return this.model.loadingSourcecodes() || this.model.loadingIncluded();
+			});
       this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
         model: params.model,
         ancestors: this.ancestors,
@@ -117,6 +120,7 @@ define([
 
       // data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
       // or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
+      this.model.resolveConceptSetExpression().then(() => this.model.onCurrentConceptSetModeChanged(this.model.currentConceptSetMode()));
     }
 
 	}
