@@ -349,7 +349,9 @@ define(
 				});
 				this.currentConceptSetMode.subscribe(this.onCurrentConceptSetModeChanged);
 
-				sharedState.selectedConcepts.subscribe(() => this.resolveConceptSetExpression());
+				sharedState.selectedConcepts.subscribe(() => {
+					this.resolveConceptSetExpression().then(() => this.onCurrentConceptSetModeChanged(this.currentConceptSetMode()));
+				});
 				/*
 					probably unreachable code
 					
