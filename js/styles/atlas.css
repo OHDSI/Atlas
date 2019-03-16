@@ -496,6 +496,14 @@ span.classification {
   padding: 5px;
 }
 
+a.classification {
+  color: #a335ee;
+}
+
+a.non-standard {
+  color: #a71a19;
+}
+
 td.invalid {
   background-color: #a71a19;
   color: #fff;

@@ -119,10 +119,7 @@ define([
 			}, {
 				title: 'Name',
 				data: 'CONCEPT_NAME',
-				render: function (s, p, d) {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-				}
+				render: commonUtils.renderLink,
 			}, {
 				title: 'Class',
 				data: 'CONCEPT_CLASS_ID'

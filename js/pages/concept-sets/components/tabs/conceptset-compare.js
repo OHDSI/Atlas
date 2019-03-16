@@ -122,10 +122,15 @@ define([
           data: d => d.conceptCode,
         },
         {
-          data: d => {
-            var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-            return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
-          },
+          render: (s,p,d) => {
+            const concept = {
+              CONCEPT_ID: d.conceptId,
+              CONCEPT_NAME: d.conceptName,
+              INVALID_REASON_CAPTION: d.invalidReason,
+              STANDARD_CONCEPT: d.standardConcept,
+            };
+            return commonUtils.renderLink(s,p,concept)
+          }
         },
         {
           data: d => d.conceptClassId,
