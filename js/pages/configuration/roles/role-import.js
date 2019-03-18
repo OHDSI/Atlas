@@ -27,59 +27,61 @@ define([
   const ajv = new Ajv({ allErrors: true });
 
   class RolesImport extends AutoBind(Component) {
-      roles = ko.observable();
-      existingRoles = [];
-      existingPermissions = [];
-      users = [];
 
-      isProcessing = ko.observable(false);
-      processed = ko.observable(0);
-      
-      json = ko.observable();
-      isJSONValid = ko.observable(true);
-      validationErrors = ko.observable();
-      rolesJSONSchema = {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "required": ["role"],
-          "properties": {
-            "role": {
-              "type": "string",
-            },
-            "users": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": ["id"],
-                "properties": {
-                  "id": {
-                    "type": "number",
+      constructor(params) {
+        super(params);
+
+        this.roles = ko.observable();
+        this.existingRoles = [];
+        this.existingPermissions = [];
+        this.users = [];
+
+        this.isProcessing = ko.observable(false);
+        this.processed = ko.observable(0);
+
+        this.json = ko.observable();
+        this.isJSONValid = ko.observable(true);
+        this.validationErrors = ko.observable();
+        this.rolesJSONSchema = {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role"],
+            "properties": {
+              "role": {
+                "type": "string",
+              },
+              "users": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id"],
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                    },
                   },
                 },
               },
-            },
-            "permissions": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": ["id"],
-                "properties": {
-                  "id": {
-                    "type": "number",
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["id"],
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                    },
                   },
                 },
               },
             },
           },
-        },
-      };
+        };
 
-      isAuthenticated = AuthService.isAuthenticated;
-      hasAccess = AuthService.isPermittedCreateRole;
+        this.isAuthenticated = AuthService.isAuthenticated;
+        this.hasAccess = AuthService.isPermittedCreateRole;
 
-      constructor(params) {
-        super(params);        
         this.updateExisting();
         this.json.subscribe(this.parseJSON);
       }
