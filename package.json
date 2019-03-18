@@ -44,6 +44,7 @@
     "@ohdsi/atlascharts": "^1.7.0",
     "@ohdsi/ui-toolbox": "^1.0.3",
     "@ohdsi/visibilityjs": "^2.0.2",
+    "ajv": "^6.10.0",
     "bootstrap": "^3.3.7",
     "bootstrap-datetimepicker": "^0.0.7",
     "bootstrap-select": "^1.13.3",
