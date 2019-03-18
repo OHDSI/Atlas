@@ -3,7 +3,7 @@
 <div data-bind="css: classes(), if: isAuthenticated() && hasAccess()">
   <div data-bind="css: classes('source')">
     <div data-bind="css: classes('json-header-wrapper')">
-      <heading-title params="name: 'Source JSON'"></heading-title>
+      <heading-title params="name: 'Roles definition JSON'"></heading-title>
       <button class="btn btn-success" data-bind="click: doImport, enable: isJSONValid">Import</button>
     </div>
     <textarea data-bind="textInput: json"></textarea>

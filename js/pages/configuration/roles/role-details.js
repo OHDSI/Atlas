@@ -79,6 +79,7 @@ define([
             this.hasAccess = ko.pureComputed(() => { return this.canReadRole(); });
             this.canDelete = ko.pureComputed(() => { return this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()); });
             this.canSave = ko.pureComputed(() => { return (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName(); });
+            this.canCreate = authApi.isPermittedCreateRole;
 
             this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });        
                 
