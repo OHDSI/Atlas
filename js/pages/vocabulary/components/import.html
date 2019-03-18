@@ -16,16 +16,24 @@
 				</li>
 			</ul>
 			<div id="wrapperImportSourcecodes" class="paddedWrapper form-group" data-bind="if:$root.currentImportMode() == 'sourcecodes'">
-				<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
-				<textarea class="form-control" rows="5" id="textImportSourcecodes"></textarea>
-				<a data-bind="click:function() {importSourcecodes();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
-				<div class="clear"></div>
+				<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isPermittedLookupCodes"></access-denied>
+
+				<!-- ko if: isAuthenticated() && isPermittedLookupCodes() -->
+					<div class="heading">Enter Source Codes (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportSourcecodes');}">click to clear</a>)</div>
+					<textarea class="form-control" rows="5" id="textImportSourcecodes"></textarea>
+					<a data-bind="click:function() {importSourcecodes();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Source Codes</a>
+					<div class="clear"></div>
+				<!-- /ko -->
 			</div>
 			<div id="wrapperImportConceptIdentifiers" class="paddedWrapper form-group" data-bind="if:$root.currentImportMode() == 'identifiers'">
-				<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportConceptIdentifiers');}">click to clear</a>)</div>
-				<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:$root.currentImportMode() == 'conceptset'"></textarea>
-				<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
-				<div class="clear"></div>
+				<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isPermittedLookupIds"></access-denied>
+
+				<!-- ko if: isAuthenticated() && isPermittedLookupIds() -->
+					<div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { clearImportedConceptSet('#textImportConceptIdentifiers');}">click to clear</a>)</div>
+					<textarea class="form-control" rows="5" id="textImportConceptIdentifiers" data-bind="if:$root.currentImportMode() == 'conceptset'"></textarea>
+					<a data-bind="click:function() {importConceptIdentifiers();}" class="btn btn-sm btn-primary pull-right"><span class="fa fa-upload"></span> Import Concept Identifiers</a>
+					<div class="clear"></div>
+				<!-- /ko -->
 			</div>
 
 			<div id="wrapperImportConceptSet" class="paddedWrapper form-group" data-bind="if:$root.currentImportMode() == 'conceptset'">

@@ -37,6 +37,7 @@ define([
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
+		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
                 return "Please wait...";
@@ -133,6 +134,10 @@ define([
                 }
             });
         };
+
+        self.signoutIap = function () {
+            window.location = '/_gcp_iap/clear_login_cookie';
+		}
     }
 
     var component = {

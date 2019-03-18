@@ -121,17 +121,7 @@ define(function (require, exports) {
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {
 		const vocabUrl = getVocabUrl(url, sourceKey);
-		const repositoryUrl = vocabUrl + 'resolveConceptSetExpression';
-
-		var resolveConceptSetExpressionPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(expression),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-	});
-
-		return resolveConceptSetExpressionPromise;
+		return httpService.doPost(vocabUrl + 'resolveConceptSetExpression', expression).then(({ data }) => data);
 	}
 
 	function getConceptSetExpressionSQL(expression, url) {

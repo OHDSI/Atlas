@@ -254,10 +254,7 @@ define([
 				return rectangle(d);
 			})
 			.classed('point', true)
-			.on('mouseover', (d) => {
-				d3Selection.event = d3.event; // otherwise, d3Selection.event is null
-				return focusTip.show(d);
-			})
+			.on('mouseover', focusTip.show)
 			.on('mouseout', focusTip.hide)
 			.each(rectangle)
 
