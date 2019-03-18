@@ -111,6 +111,7 @@ define(
 				this.includedSourcecodes = ko.observableArray();
 				this.cohortDefinitions = ko.observableArray();
 				this.currentCohortDefinition = ko.observable();
+				this.cohortDefinitionSubscriptions = [];
 				this.currentCohortComparisonId = ko.observable();
 				this.currentCohortComparison = ko.observable();
 				this.currentCohortComparisonDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentCohortComparison()));

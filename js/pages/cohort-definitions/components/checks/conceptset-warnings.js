@@ -11,7 +11,10 @@ define(['knockout', 'text!./conceptset-warnings.html',
     function conceptSetWarnings(params){
       var self = this;
       self.model = params.model;
-      self.cohortDefinitionId = self.model.currentCohortDefinition().id || ko.observable(-1);
+      self.cohortDefinitionId = ko.observable(self.model.currentCohortDefinition().id()) || ko.observable(-1);
+      self.model.cohortDefinitionSubscriptions.push(
+          self.model.currentCohortDefinition.subscribe((definition) => self.cohortDefinitionId(definition ? definition.id() : -1))
+      );
       self.count = params.count || ko.observable();
       self.infoCount = params.infoCount || ko.observable();
       self.warningCount = params.warningCount || ko.observable();
@@ -55,7 +58,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       function showWarnings(result){
-      	const count = (severity) => result.warnings.filter(w => w.severity === severity).length;
+        const count = (severity) => result.warnings.filter(w => w.severity === severity).length;
         self.warnings(result.warnings);
         self.infoCount(count(consts.WarningSeverity.INFO));
         self.warningCount(count(consts.WarningSeverity.WARNING));
@@ -92,7 +95,9 @@ define(['knockout', 'text!./conceptset-warnings.html',
         self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
       };
 
-      self.model.currentCohortDefinition.subscribe(() => self.getWarnings());
+      self.model.cohortDefinitionSubscriptions.push(
+          self.model.currentCohortDefinition.subscribe(() => self.getWarnings())
+      );
 
       self.getWarnings();
     }
