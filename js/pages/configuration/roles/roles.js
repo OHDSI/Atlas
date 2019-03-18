@@ -36,15 +36,15 @@ define([
         }
         
         selectRole(data) {
-            commonUtils.routeTo('#/role/' + data.id);
+            commonUtils.routeTo('/role/' + data.id);
         }
 
         newRole() {
-            commonUtils.routeTo('#/role/0');
+            commonUtils.routeTo('/role/0');
         }
 
         importRoles() {
-            commonUtils.routeTo('#/import/roles');
+            commonUtils.routeTo('/import/roles');
         }
     }
 

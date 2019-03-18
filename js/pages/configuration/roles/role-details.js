@@ -301,12 +301,12 @@ define([
             await this.savePermissions();
             this.roleDirtyFlag.reset();
             this.dirtyFlag.reset();
-            document.location = '#/role/' + this.roleId();
+            commonUtils.routeTo('/role/' + this.roleId());
             this.loading(false);
         }
 
         close() {
-            document.location = "#/roles";
+            commonUtils.routeTo("/roles");
         }
 
         async delete() {
@@ -324,7 +324,7 @@ define([
             const { id } = await roleService.create({ role: `${this.roleName()} copy` });
             await roleService.addRelations(id, 'users', this.roleUserIds);
             await roleService.addRelations(id, 'permissions', this.rolePermissionIds);
-            document.location = `#/role/${id}`;
+            commonUtils.routeTo(`/role/${id}`);
         }
 
     }
