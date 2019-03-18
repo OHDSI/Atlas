@@ -25,7 +25,7 @@ define([
 	) {
 	class JobManager extends AutoBind(Page) {
 		constructor(params) {
-			super(params);			
+			super(params);
 			this.model = params.model;
 			this.model.columns = ko.observableArray([
 				{title: 'ExecutionId', data: 'executionId'},
@@ -52,17 +52,10 @@ define([
 
 			const jobs = await jobsService.getList();
 			this.model.jobs(jobs.map((job) => {
-				const startDate = new Date(job.startDate);
-				job.startDate = momentApi.formatDateTime(startDate);
-				if (job.endDate > startDate){
-					const endDate = new Date(job.endDate);
-					job.endDate = momentApi.formatDateTime(endDate);
-				} else {
-					job.endDate = '-';
-				}
-				if (job.jobParameters.jobName == undefined) {
-					job.jobParameters.jobName = 'n/a';
-				}
+				const { startDate = null, endDate = null } = job;
+				job.startDate = startDate ? momentApi.formatDateTime(new Date(startDate)) : '-';
+				job.endDate = endDate && (endDate > startDate) ? momentApi.formatDateTime(new Date(endDate)) : '-';
+				job.jobParameters.jobName === undefined && (job.jobParameters.jobName = 'n/a');
 				return job;
 			}));
 		}
