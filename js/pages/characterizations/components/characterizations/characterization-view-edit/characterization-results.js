@@ -91,6 +91,12 @@ define([
             this.loadData();
         }
 
+        isRowGreyed(element, stat) {
+            if (stat.stdDiff && stat.stdDiff < 0.1) {
+                element.classList.add(this.classes('greyed-row').trim());
+            }
+        }
+
         getButtonsConfig(type, analysis) {
             const buttons = [];
 
