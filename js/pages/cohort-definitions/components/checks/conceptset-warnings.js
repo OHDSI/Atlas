@@ -11,10 +11,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
     function conceptSetWarnings(params){
       var self = this;
       self.model = params.model;
-      self.cohortDefinitionId = ko.observable(self.model.currentCohortDefinition().id()) || ko.observable(-1);
-      self.model.cohortDefinitionSubscriptions.push(
-          self.model.currentCohortDefinition.subscribe((definition) => self.cohortDefinitionId(definition ? definition.id() : -1))
-      );
+      self.cohortDefinitionId = ko.pureComputed(() => (self.model.currentCohortDefinition() && self.model.currentCohortDefinition().id()) || -1)
       self.count = params.count || ko.observable();
       self.infoCount = params.infoCount || ko.observable();
       self.warningCount = params.warningCount || ko.observable();

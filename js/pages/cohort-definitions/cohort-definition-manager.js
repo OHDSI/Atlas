@@ -619,12 +619,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				// reset view after save
 					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
-						let subscriptions = this.model.cohortDefinitionSubscriptions;
-						for (let i = 0; i < subscriptions.length; i++){
-							subscriptions[i].dispose();
-						}
 						this.model.currentCohortDefinition(null);
-					document.location = "#/cohortdefinitions"
+						document.location = "#/cohortdefinitions"
 				});
 			}
 
@@ -659,10 +655,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.model.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {
 					return;
 				} else {
-					let subscriptions = this.model.cohortDefinitionSubscriptions;
-					for (let i = 0; i < subscriptions.length; i++){
-						subscriptions[i].dispose();
-					}
 					document.location = "#/cohortdefinitions";
 					this.model.currentConceptSet(null);
 					this.model.currentConceptSetDirtyFlag().reset();
@@ -1177,6 +1169,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 			dispose () {
+				let subscriptions = this.model.cohortDefinitionSubscriptions;
+				for (let i = 0; i < subscriptions.length; i++){
+					subscriptions[i].dispose();
+				}
 				this.cohortDefinitionLink.dispose();
 				this.cohortDefinitionCaption.dispose();
 				this.tabPath.dispose();
