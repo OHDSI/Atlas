@@ -15,6 +15,7 @@ define([
 	'featureextraction/InputTypes/TemporalCovariateSettings',
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
+	'services/AuthAPI',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
 	'featureextraction/components/temporal-covariate-settings-editor',
@@ -42,7 +43,8 @@ define([
 	CovariateSettings,
 	TemporalCovariateSettings,
 	ConceptSet,
-	ConceptSetCrossReference
+	ConceptSetCrossReference,
+	authAPI
 ) {
 	const NOT_FOUND = 'NOT FOUND';
 
@@ -53,6 +55,9 @@ define([
 
 			this.selectTab = this.selectTab.bind(this);
 			this.selectedTabKey = ko.observable(params.routerParams().section);
+
+			this.isAuthenticated = authAPI.isAuthenticated;
+			this.hasAccess = authAPI.isPermittedReadPlps;
 
 			this.options = constants.options;
 			this.config = config;
@@ -114,7 +119,7 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && PermissionService.isPermittedUpdate(this.selectedAnalysisId());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
 		}
 

@@ -70,6 +70,8 @@ define([
 			this.canCreate = ko.computed(() => {
 				return authApi.isPermittedCreateConceptset();
 			});
+			this.hasAccess = authApi.isPermittedReadConceptsets;
+			this.isAuthenticated = authApi.isAuthenticated;
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.model.currentConceptSet()) {
 					if (this.model.currentConceptSet().id === 0) {

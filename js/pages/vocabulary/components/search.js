@@ -4,6 +4,7 @@ define([
 	'text!./search.html',
 	'appConfig',
 	'services/AuthAPI',
+	'../PermissionService',
 	'components/Component',
 	'utils/AutoBind',
 	'services/http',
@@ -21,6 +22,7 @@ define([
 	view,
 	config,
 	authApi,
+	PermissionService,
 	Component,
 	AutoBind,
 	httpService,
@@ -79,6 +81,22 @@ define([
 				}
 				return `Loading ${entities.join(', ')}`;
 			});
+			// 'colvis',
+			this.buttons = [
+				{
+					extend: 'colvis',
+					columnText: (dt, idx, title) => {
+						if (idx === 0) {
+							return '<i class="fa fa-shopping-cart"></i>';
+						}
+						return title;
+					}
+				},
+				'copyHtml5',
+				'excelHtml5',
+				'csvHtml5',
+				'pdfHtml5'
+			];
 
 			this.searchColumns = [{
 				title: '<i class="fa fa-shopping-cart"></i>',
@@ -101,10 +119,7 @@ define([
 			}, {
 				title: 'Name',
 				data: 'CONCEPT_NAME',
-				render: function (s, p, d) {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-				}
+				render: commonUtils.renderLink,
 			}, {
 				title: 'Class',
 				data: 'CONCEPT_CLASS_ID'
@@ -127,7 +142,7 @@ define([
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
 			}];
-	
+
 			this.searchOptions = {
 				Facets: [{
 					'caption': 'Vocabulary',
@@ -167,10 +182,15 @@ define([
 				}]
 			};
 
-			this.getDomains();
-			this.getVocabularies();
+			this.isAuthenticated = authApi.isAuthenticated;
+			this.hasAccess = ko.computed(() => PermissionService.isPermittedSearch());
+
+			if (this.hasAccess()) {
+				this.getDomains();
+				this.getVocabularies();
+			}
 		}
-		
+
 		searchClick() {
 			const redirectUrl = '#/search/' + escape(this.currentSearch());
 			if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0 || document.location.hash === redirectUrl) {
@@ -197,7 +217,7 @@ define([
 				? this.selected.vocabularies.delete(id)
 				: this.selected.vocabularies.add(id, true);
 		}
-		
+
 		toggleDomain(id) {
 			this.selected.domains.has(id)
 				? this.selected.domains.delete(id)
@@ -224,7 +244,7 @@ define([
 				return true;
 			}
 		}
-		
+
 		executeSearch() {
 			if (!this.currentSearch()) {
                 this.data([]);
@@ -247,11 +267,11 @@ define([
 			const query = this.currentSearch() === undefined ? '' : this.currentSearch();
 			this.loading(true);
 			this.data([]);
-			
+
 			let searchUrl = `${sharedState.vocabularyUrl()}search`;
 			let searchParams = null;
 			let promise = null;
-			
+
 			if (vocabElements.size > 0 || domainElements.size > 0) {
 				// advanced search
 				searchParams = {
@@ -269,7 +289,7 @@ define([
 				searchUrl += `/${query}`;
 				promise = httpService.doGet(searchUrl, searchParams);
 			}
-			
+
 			promise.then(({ data }) => this.handleSearchResults(data))
 				.catch(er => {
 					console.error('error while searching', er);
@@ -277,7 +297,7 @@ define([
 				.finally(() => {
 					this.loading(false);
 					this.searchExecuted(true);
-				});      
+				});
 		}
 
 		handleSearchResults(results) {

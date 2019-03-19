@@ -295,10 +295,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			{
 				title: 'Name',
 				data: 'CONCEPT_NAME',
-					render: (s, p, d) => {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-				}
+				render: commonUtils.renderLink,
 			},
 			{
 				title: 'Class',
@@ -1239,7 +1236,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return ko.toJSON(null);
 				}
 				return ko.toJSON(this.model.currentCohortDefinition().expression(), (key, value) => {
-					if (value === 0 || value) {
+					// UseEventEnd is a speical case: always include this key in the result.
+					if (value === 0 || value || ['UseEventEnd'].indexOf(key) > -1) {
 						return value;
 					} else {
 						return;

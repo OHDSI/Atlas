@@ -71,6 +71,7 @@ body {
   font-size: 12px;
   /* researched font stack used by github */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  overflow: hidden;
 }
 
 
@@ -250,7 +251,6 @@ pre span.key {
   display: flex;
   flex-direction: column;
   min-width: 768px;
-  overflow-x: auto;
 }
 
 .flexed {
@@ -494,6 +494,14 @@ span.classification {
   color: #fff;
   background-color: #a335ee;
   padding: 5px;
+}
+
+a.classification {
+  color: #a335ee;
+}
+
+a.non-standard {
+  color: #a71a19;
 }
 
 td.invalid {
@@ -768,7 +776,7 @@ ul.ColVis_collection li {
 }
 
 /*#wrapperLeftMenu i.fa {
-   line-height: 7px; 
+   line-height: 7px;
 }*/
 
 #wrapperReportMenu {
@@ -1524,7 +1532,7 @@ textarea.code {
   padding: 4px;
 }*/
 
-.asset-heading input {  
+.asset-heading input {
   padding: 3px;
   color: #003142;
   font-size: 12px;
@@ -2120,7 +2128,6 @@ div#wrapper_ohdsi a {
 }
 
 #report {
-  overflow-y: scroll;
   flex-grow: 1;
 }
 

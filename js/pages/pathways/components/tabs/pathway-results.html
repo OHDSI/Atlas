@@ -14,11 +14,11 @@
 			</li>
 			<li data-bind="css: classes('detail')">
 				<label data-bind="css: classes('detail-label')">Design:</label>
-				<a data-bind="css: classes('detail-value'), text: results().designHash">x6t21cda</a>
+				<a data-bind="css: classes('detail-value', 'link'), text: results().designHash, click: () => $component.showExecutionDesign(executionId())">x6t21cda</a>
 			</li>
 		</ul>
 	</div>
-	
+
 	<div data-bind="css: classes('filter')">
 		<visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
 	</div>
@@ -118,12 +118,19 @@
 		<!-- /ko -->
 	<!-- /ko -->
 
-<!--	
+	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: 'Design', data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">
+		<div class="loading" data-bind="visible: executionDesign() == null && !loadExecutionDesignError()">loading</div>
+		<div class="loading" data-bind="visible: loadExecutionDesignError()">Unable to load design</div>
+		<div data-bind="if: executionDesign() != null">
+			<textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
+		</div>
+	</atlas-modal>
+<!--
 	<div data-bind="if: pathwaysData() != null">
-		<textarea data-bind="css: classes('debug'), 
+		<textarea data-bind="css: classes('debug'),
 												 text: JSON.stringify($component.pathwaysData(), null, 2)"> </textarea>
 	</div>
-	
+
 	<div data-bind="if: results() != null">
 		<textarea data-bind="css: classes('debug'), text: JSON.stringify(results().data, null, 2)"></textarea>
 	</div>
