@@ -79,6 +79,7 @@ define([
             this.hasAccess = ko.pureComputed(() => { return this.canReadRole(); });
             this.canDelete = ko.pureComputed(() => { return this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()); });
             this.canSave = ko.pureComputed(() => { return (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName(); });
+            this.canCreate = authApi.isPermittedCreateRole;
 
             this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });        
                 
@@ -300,12 +301,12 @@ define([
             await this.savePermissions();
             this.roleDirtyFlag.reset();
             this.dirtyFlag.reset();
-            document.location = '#/role/' + this.roleId();
+            commonUtils.routeTo('/role/' + this.roleId());
             this.loading(false);
         }
 
         close() {
-            document.location = "#/roles";
+            commonUtils.routeTo("/roles");
         }
 
         async delete() {
@@ -317,6 +318,13 @@ define([
             this.model.roles(roles);
             this.close();
             this.loading(false);
+        }
+
+        async copy() {
+            const { id } = await roleService.create({ role: `${this.roleName()} copy` });
+            await roleService.addRelations(id, 'users', this.roleUserIds);
+            await roleService.addRelations(id, 'permissions', this.rolePermissionIds);
+            commonUtils.routeTo(`/role/${id}`);
         }
 
     }

@@ -116,7 +116,7 @@
 		<div class="heading">Evidence for all <span style="text-transform: lowercase;" data-bind="text: $component.targetDomainId()"></span>s for <span data-bind="text: $component.conceptSet().name()"></span></div>
 	</div>
 	<div class="container-fluid">
-		<div class="pull-left"><button class="btn btn-sm btn-primary" data-bind="click:function() { showNegControlsSaveNewModal(); }">Save New Concept Set From Selection Below</button></div>
+		<div class="pull-left"><button class="btn btn-sm btn-primary" data-bind="click:function() { showNegControlsSaveNewModal(true); }">Save New Concept Set From Selection Below</button></div>
 		<div class="pull-right" style="padding-bottom: 10px;">
 			<i data-bind="attr: { class: $component.recordCountClass }" aria-hidden="true"></i> View database record counts (RC) and descendant record counts (DRC) for: <select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey, event: { change: $component.refreshRecordCounts }"></select>
 		</div>
@@ -132,25 +132,7 @@
 	</div>
 </div>
 <div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>
-<div id="modalNegControlsSaveNew" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<div class="modal-title">Save New Concept Set</div>
-			</div>
-			<div class="modal-body">
-				<label>Concept Set Name:</label>
-				<div class="input-group">
-					<input class="form-control" id="txtNewConceptSetName" type="text" data-bind="textInput: $component.newConceptSetName" />
-					<span class="input-group-btn">
-                     <button type="button" class="btn btn-success" data-bind="click:function() { saveNewConceptSet(); }">Save</button>                    
-                    </span>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveNewConceptSet, show: showNegControlsSaveNewModal"></conceptset-save>
 <div id="ncModalConceptSetSelect" class="modal fade" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">

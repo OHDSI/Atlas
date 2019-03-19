@@ -51,8 +51,8 @@ define([
       this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
         return (
-          this.compareCS1Id() > 0 && 
-          this.compareCS2Id() > 0 && 
+          this.compareCS1Id() > 0 &&
+          this.compareCS2Id() > 0 &&
           (this.compareCS1Id() == this.compareCS2Id())
         )
       });
@@ -122,10 +122,15 @@ define([
           data: d => d.conceptCode,
         },
         {
-          data: d => {
-            var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-            return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
-          },
+          render: (s,p,d) => {
+            const concept = {
+              CONCEPT_ID: d.conceptId,
+              CONCEPT_NAME: d.conceptName,
+              INVALID_REASON_CAPTION: d.invalidReason,
+              STANDARD_CONCEPT: d.standardConcept,
+            };
+            return commonUtils.renderLink(s,p,concept)
+          }
         },
         {
           data: d => d.conceptClassId,
@@ -143,7 +148,7 @@ define([
           data: d => d.vocabularyId,
         },
       ];
-    
+
       this.compareResultsOptions = {
         lengthMenu: [
           [10, 25, 50, 100, -1],
@@ -216,7 +221,7 @@ define([
             }
           }
         })
-  
+
         return resultSources;
       });
       this.recordCountsRefreshing = ko.observable(false);
@@ -260,7 +265,7 @@ define([
 				items: this.compareCS2ConceptSetExpression()
 			}];
     }
-    
+
 		compareConceptSets() {
 			this.compareLoading(true);
 			const compareTargets = this.getCompareTargets();
@@ -311,7 +316,7 @@ define([
 			this.saveConceptSetFn("#txtNewConceptSetName", conceptSet, selectedConcepts);
 			this.saveConceptSetShow(false);
     }
-    
+
     conceptsetSelected(d) {
 			this.isModalShown(false);
 			vocabularyProvider.getConceptSetExpression(d.id)
@@ -321,23 +326,23 @@ define([
 					this.targetExpression(csExpression.items);
 				});
     }
-    
+
     showSaveNewModal() {
 			this.saveConceptSetShow(true);
     }
 
     refreshRecordCounts(obj, event) {
 			if (event.originalEvent) {
-				// User changed event
+        // User changed event
 				this.recordCountsRefreshing(true);
 				$("#dtConeptManagerRC")
-					.toggleClass("fa-database")
-					.toggleClass("fa-circle-o-notch")
-					.toggleClass("fa-spin");
+					.removeClass("fa-database")
+					.addClass("fa-circle-o-notch")
+					.addClass("fa-spin");
 				$("#dtConeptManagerDRC")
-					.toggleClass("fa-database")
-					.toggleClass("fa-circle-o-notch")
-					.toggleClass("fa-spin");
+					.removeClass("fa-database")
+					.addClass("fa-circle-o-notch")
+					.addClass("fa-spin");
 				var compareResults = this.compareResults();
 				var conceptIds = $.map(compareResults, function (o, n) {
 					return o.conceptId;
@@ -345,15 +350,15 @@ define([
 				cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
 					.then((rowcounts) => {
 						this.compareResults(compareResults);
-						this.recordCountsRefreshing(false);
+            this.recordCountsRefreshing(false);
 						$("#dtConeptManagerRC")
-							.toggleClass("fa-database")
-							.toggleClass("fa-circle-o-notch")
-							.toggleClass("fa-spin");
+							.addClass("fa-database")
+							.removeClass("fa-circle-o-notch")
+							.removeClass("fa-spin");
 						$("#dtConeptManagerDRC")
-							.toggleClass("fa-database")
-							.toggleClass("fa-circle-o-notch")
-							.toggleClass("fa-spin");
+							.addClass("fa-database")
+							.removeClass("fa-circle-o-notch")
+							.removeClass("fa-spin");
 					});
 			}
 		}

@@ -15,20 +15,18 @@
         </li>
     </ul>
     <div data-bind="if: mode() == MODE_JSON, css: classes('content')">
-        <!-- ko if: isExportPermitted() -->
-            <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
-        <!-- /ko -->
-        <!-- ko if: !isExportPermitted() -->
-            Export is not permitted
-        <!-- /ko -->
+        <export params="{
+            entityId: analysisId,
+            isPermittedExport: isExportPermitted,
+            exportService: exportService,
+        }"></export>
     </div>
     <div data-bind="if: mode() == MODE_IMPORT, css: classes('content')">
-        <!-- ko if: isImportPermitted() -->
-            <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-default btn-sm' }), click: doImport">Import</button>
-            <textarea data-bind="css: classes('json-box'), textInput: $component.importJSON"></textarea>
-        <!-- /ko -->
-        <!-- ko if: !isImportPermitted() -->
-            Import is not permitted
-        <!-- /ko -->
+        <import params="{
+            entityId: analysisId,
+            routeToUrl: '/pathways/',
+            isPermittedImport: isImportPermitted,
+            importService: importService,
+        }"></import>
     </div>
 </div>
