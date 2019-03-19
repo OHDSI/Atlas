@@ -76,7 +76,7 @@ define([
             this.loading(true);
             this.error('');
             const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
-            if (identifers == null) {
+            if (identifers === null) {
                 this.error('Unable to parse Concept Identifiers');
                 this.loading(false);
             } else {
