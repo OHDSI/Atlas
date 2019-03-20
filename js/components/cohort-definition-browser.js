@@ -92,8 +92,8 @@ define([
 			this.rowClick = this.rowClick.bind(this);
 		}
 		
-		renderCohortDefinitionLink (s, p, d) {
-			return '<span class="linkish">' + d.name + '</span>';
+		renderCohortDefinitionLink (data,type,row) {
+			return (type == "display")	? `<span class="linkish">${row.name}</span>` : row.name;
 		}
 
 		rowClick(data) {

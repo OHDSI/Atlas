@@ -423,7 +423,7 @@ define(
 
 			renderCheckbox(field) {
 				if (this.canEditCurrentConceptSet()) {
-					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); $root.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
+					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 				} else {
 					return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
 				}
