@@ -9,6 +9,7 @@ define([
     'assets/ohdsi.util',
     'services/User',
     'services/AuthAPI',
+    'services/file',
     'databindings',
     'components/ac-access-denied',
     'less!./role-details.less',
@@ -24,6 +25,7 @@ define([
     ohdsiUtils,
     userService,
     authApi,
+    fileService,
 ) {
     const defaultRoleName = "New Role";
     class RoleDetails extends AutoBind(Component) {
@@ -207,11 +209,21 @@ define([
             }
         }
 
+        getPermissionsList() {
+            return this.permissionItems()
+                .filter(permission => permission.isRolePermission())
+                .map(u => u.id);
+        }
+        
+        getUsersList() {
+            return this.userItems()
+                .filter(user => user.isRoleUser())
+                .map(u => u.id);
+        }
+
         async saveUsers() {
             if (this.canEditRoleUsers()){
-                const currentRoleUserIds = this.userItems()
-                    .filter(user => user.isRoleUser())
-                    .map(u => u.id);
+                const currentRoleUserIds = this.getUsersList();
                 var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds);
                 var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds);
                 this.roleUserIds = currentRoleUserIds;
@@ -223,9 +235,7 @@ define([
 
         async savePermissions() {
             if (this.canEditRolePermissions()){
-                var currentRolePermissionIds = this.permissionItems()
-                    .filter(permission => permission.isRolePermission())
-                    .map(u => u.id);
+                var currentRolePermissionIds = this.getPermissionsList();
 
                 var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds);
                 var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds);
@@ -321,10 +331,32 @@ define([
         }
 
         async copy() {
-            const { id } = await roleService.create({ role: `${this.roleName()} copy` });
-            await roleService.addRelations(id, 'users', this.roleUserIds);
-            await roleService.addRelations(id, 'permissions', this.rolePermissionIds);
-            commonUtils.routeTo(`/role/${id}`);
+            let id;
+            try {
+                const response = await roleService.create({ role: `${this.roleName()} copy` });
+                id = response.id;
+                await roleService.addRelations(id, 'users', this.roleUserIds);
+                await roleService.addRelations(id, 'permissions', this.rolePermissionIds);
+            } catch(er) {
+                if (!id) {
+                    alert("Failed to copy role");
+                } else {
+                    alert("Failed to fully copy the role");
+                }
+            }
+            if (id) {
+                commonUtils.routeTo(`/role/${id}`);
+            }
+        }
+
+        export() {
+            const role = [{
+                role: this.roleName(),
+                permissions: this.getPermissionsList().map(id => ({ id })),
+                users: this.getUsersList().map(id => ({ id })),
+            }];
+
+            fileService.saveAsJson(role);
         }
 
     }
