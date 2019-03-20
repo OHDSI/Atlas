@@ -23,7 +23,7 @@ define([
         }
         
         getDefaultSort(columnsCount, cohortsCount) {
-            return [[ 2, "desc" ]]; // 1 column is name, then report columns. we use Avg column
+            return [[ this.getDefaultColumns().length, "desc" ]]; // 1 column is name, then report columns. we use Avg column
         }
     }
 
