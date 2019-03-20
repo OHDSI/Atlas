@@ -79,7 +79,7 @@
 													stripeClasses : [ 'repositoryConceptSetItem' ],
 													columns: [
 															{ data: 'id', title: 'Id', width: '25px'},
-															{ data: 'name', title: 'Title', width: '100%' },
+															$component.getDataboundColumn('name', 'Title', '100%')
 													],
 													language: {
 															search: 'Filter Cohort Concept Sets:'
