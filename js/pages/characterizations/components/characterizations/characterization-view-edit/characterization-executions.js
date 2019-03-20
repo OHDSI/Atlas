@@ -192,8 +192,17 @@ define([
 
 		generate(source, lastestDesign) {
 			if(lastestDesign === this.currentHash()) {
-				if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
-					return false;
+				const sg = this.executionGroups().find(g => g.sourceKey === source);
+				if (sg) {
+					const submissions = [...sg.submissions()];
+					if (submissions.length > 0) {
+						submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+						if (submissions[0].status !== this.ccGenerationStatusOptions.FAILED) {
+							if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
+								return false;
+							}
+						}
+					}				
 				}
 			}
 
