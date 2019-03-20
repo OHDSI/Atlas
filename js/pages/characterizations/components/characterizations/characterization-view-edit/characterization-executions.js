@@ -190,8 +190,8 @@ define([
 			}
 		}
 
-		generate(source, lastestDesign) {
-			if(lastestDesign === this.currentHash()) {
+		generate(source, latestDesign) {
+			if(latestDesign === this.currentHash()) {
 				const sg = this.executionGroups().find(g => g.sourceKey === source);
 				if (sg) {
 					const submissions = [...sg.submissions()];
