@@ -620,7 +620,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				// reset view after save
 					cohortDefinitionService.deleteCohortDefinition(this.model.currentCohortDefinition().id()).then( (result) => {
 						this.model.currentCohortDefinition(null);
-						document.location = "#/cohortdefinitions"
+					document.location = "#/cohortdefinitions"
 				});
 			}
 
@@ -655,14 +655,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.model.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {
 					return;
 				} else {
-					document.location = "#/cohortdefinitions";
-					this.model.currentConceptSet(null);
-					this.model.currentConceptSetDirtyFlag().reset();
-					this.model.currentCohortDefinition(null);
-					this.model.currentCohortDefinitionDirtyFlag().reset();
-					this.model.reportCohortDefinitionId(null);
-					this.model.reportReportName(null);
-					this.model.reportSourceKey(null);
+					document.location = "#/cohortdefinitions"
+						this.model.currentConceptSet(null);
+						this.model.currentConceptSetDirtyFlag().reset();
+						this.model.currentCohortDefinition(null);
+						this.model.currentCohortDefinitionDirtyFlag().reset();
+						this.model.reportCohortDefinitionId(null);
+						this.model.reportReportName(null);
+						this.model.reportSourceKey(null);
 				}
 			}
 
