@@ -45,6 +45,12 @@ define(
             router.setCurrentView('users-import');
           });
         }),
+        'import/roles': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./roles/role-import'], function() {
+            router.setCurrentView('role-import');
+          });
+        }),
         '/source/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
           require(['./sources/source-manager'], function () {

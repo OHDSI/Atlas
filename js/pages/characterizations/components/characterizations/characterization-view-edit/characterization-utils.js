@@ -7,9 +7,9 @@ define([
     'services/AuthAPI',
     'components/Component',
     'utils/AutoBind',
-    'utils/CommonUtils',
-	'utilities/import',
-	'utilities/export',
+    'utils/CommonUtils', 
+    'utilities/import', 
+    'utilities/export',
     'less!./characterization-utils.less',
 ], function (
     ko,
@@ -36,8 +36,8 @@ define([
 
             this.isPermittedExport = PermissionService.isPermittedExportCC;
             this.isPermittedImport = PermissionService.isPermittedImportCC;
-			this.exportService = CharacterizationService.loadCharacterizationExportDesign;
-			this.importService = CharacterizationService.importCharacterization;
+            this.exportService = CharacterizationService.loadCharacterizationExportDesign;
+            this.importService = CharacterizationService.importCharacterization;
 
             this.setMode = this.setMode.bind(this);
         }
