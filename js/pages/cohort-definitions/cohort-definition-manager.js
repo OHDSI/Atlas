@@ -1169,10 +1169,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 			dispose () {
-				let subscriptions = this.model.cohortDefinitionSubscriptions;
-				for (let i = 0; i < subscriptions.length; i++){
-					subscriptions[i].dispose();
-				}
 				this.cohortDefinitionLink.dispose();
 				this.cohortDefinitionCaption.dispose();
 				this.tabPath.dispose();

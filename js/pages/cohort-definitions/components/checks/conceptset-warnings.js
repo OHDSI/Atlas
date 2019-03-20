@@ -91,12 +91,14 @@ define(['knockout', 'text!./conceptset-warnings.html',
         }, 2);
         self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
       };
-
-      self.model.cohortDefinitionSubscriptions.push(
-          self.model.currentCohortDefinition.subscribe(() => self.getWarnings())
-      );
+      
+      self.warningSubscription = self.model.currentCohortDefinition.subscribe(() => self.getWarnings());
 
       self.getWarnings();
+
+      self.dispose = function() {
+        self.warningSubscription.dispose();
+      };
     }
 
     var component = {
