@@ -61,6 +61,8 @@ define([
 			this.exitMessage = ko.observable();
 			this.pollId = null;
 
+			this.design = params.design;
+
 			this.execColumns = [{
 					title: 'Date',
 					className: this.classes('col-exec-date'),
@@ -132,7 +134,8 @@ define([
 		}
 
 		isExecutionPermitted(sourceKey) {
-			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty();
+			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty() &&
+				this.design().cohorts().length;
 		}
 
 		isResultsViewPermitted(sourceKey) {
