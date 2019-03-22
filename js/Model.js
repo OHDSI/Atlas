@@ -50,19 +50,13 @@ define(
 				this.activePage = ko.observable();
 				this.componentParams = ko.observable({});
 				this.routerParams = ko.observable();
-				this.pendingSearch = ko.observable(false);
-				this.supportURL = config.supportUrl;
-				this.targetSupportURL = config.supportUrl.startsWith("#") ? "_this" : "_blank";
-				this.relatedConceptsColumns = constants.getRelatedConceptsColumns(sharedState);
-				this.relatedConceptsOptions = constants.relatedConceptsOptions;
+				this.relatedConceptsColumns = constants.getRelatedConceptsColumns(sharedState); // TODO: Remove concept-manager.js
+				this.relatedConceptsOptions = constants.relatedConceptsOptions; // TODO: Remove concept-manager.js
 				this.relatedSourcecodesOptions = constants.relatedSourcecodesOptions;
-				this.metatrix = constants.metatrix;
 				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(sharedState, this);
-				this.enableRecordCounts = ko.observable(true);
 				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);
 				this.loadingSourcecodes = ko.observable(false);
-				this.loadingEvidence = ko.observable(false);
 				this.loadingReport = ko.observable(false);
 				this.loadingReportDrilldown = ko.observable(false);
 				this.activeReportDrilldown = ko.observable(false);
@@ -82,9 +76,7 @@ define(
 					);
 				});
 				this.reportTriggerRun = ko.observable(false);
-				this.jobs = ko.observableArray();
 				this.sourceAnalysesStatus = {};
-				this.analysisLookup = {};
 				this.cohortDefinitionSourceInfo = ko.observableArray();
 				this.recentSearch = ko.observableArray(null);
 				this.recentConcept = ko.observableArray(null);
@@ -92,69 +84,37 @@ define(
 				this.conceptSetInclusionIdentifiers = ko.observableArray();
 				this.currentConceptSetExpressionJson = ko.observable();
 				this.currentConceptIdentifierList = ko.observable();
-				this.currentPatientLevelPredictionId = ko.observable();
-				this.currentPatientLevelPrediction = ko.observable();
-				this.currentPatientLevelPredictionDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentPatientLevelPrediction()));
 				this.currentConceptSetSource = ko.observable('repository');
 				this.currentConceptSetNegativeControls = ko.observable();
 				this.currentIncludedConceptIdentifierList = ko.observable();
-				this.searchResultsConcepts = ko.observableArray();
 				this.relatedConcepts = ko.observableArray();
 				this.relatedSourcecodes = ko.observableArray();
 				this.includedConcepts = ko.observableArray();
 				this.includedConceptsMap = ko.observable();
-				this.denseSiblings = ko.observableArray();
 				this.includedSourcecodes = ko.observableArray();
 				this.cohortDefinitions = ko.observableArray();
 				this.currentCohortDefinition = ko.observable();
 				this.currentCohortComparisonId = ko.observable();
 				this.currentCohortComparison = ko.observable();
 				this.currentCohortComparisonDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentCohortComparison()));
-				this.currentEstimationId = ko.observable();
-				this.currentEstimation = ko.observable();
-				this.currentEstimationDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentEstimation()));
-				this.selectedSourceId = ko.observable();
 				this.currentSource = ko.observable();
 				this.currentSourceDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentSource()))
 				this.currentCohortDefinitionInfo = ko.observable();
 				this.currentCohortDefinitionDirtyFlag = ko.observable(this.currentCohortDefinition() && new ohdsiUtil.dirtyFlag(this.currentCohortDefinition()));
-				this.feasibilityId = ko.observable();
-				this.selectedIRAnalysisId = ko.observable();
 				this.currentIRAnalysis = ko.observable();
 				this.currentIRAnalysisDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(this.currentIRAnalysis()));
 				this.resolvingConceptSetExpression = ko.observable();
-				this.resolvingSourcecodes = ko.observable();
-				this.evidence = ko.observableArray();
 				this.currentConcept = ko.observable();
 				this.currentConceptId = ko.observable();
 				this.currentConceptMode = ko.observable('details');
-				this.currentIRAnalysisId = ko.observable();
 				this.currentConceptSetMode = ko.observable('details');
 				this.currentCohortDefinitionMode = ko.observable('definition');
 				this.currentImportMode = ko.observable('identifiers');
-				this.importedConcepts = ko.observable([]);
-				this.feRelated = ko.observable();
-				this.metarchy = {};
-				this.conceptSetInclusionCount = ko.observable(0);
-				this.sourcecodeInclusionCount = ko.observable(0);
+				this.importedConcepts = ko.observable([]); // TODO: Refactor this;
 				this.users = ko.observableArray();
-				this.permissions = ko.observableArray();
 				this.currentConceptSet = ko.observable();
-				this.currentRoleId = ko.observable();
-				this.roles = sharedState.roles;
 				this.signInOpened = authApi.signInOpened;
 
-				this.plpCss = ko.pureComputed(() => {
-					if (this.currentPatientLevelPrediction())
-						return this.currentPatientLevelPredictionDirtyFlag().isDirty() ? "unsaved" : "open";
-				});
-				this.plpURL = ko.pureComputed(() => {
-					var url = "#/plp";
-					if (this.currentPatientLevelPrediction())
-						url = url + "/" + (this.currentPatientLevelPrediction().analysisId || 0);
-					return url;
-				});
-	
 				this.currentConceptSetDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
 					header: this.currentConceptSet,
 					details: sharedState.selectedConcepts
@@ -172,7 +132,7 @@ define(
 						url = url + "conceptsets";
 					return url;
 				});
-	
+
 				this.canEditCurrentConceptSet = ko.pureComputed(() => {
 					if (this.currentConceptSetSource() == 'cohort') {
 						return this.canEditCurrentCohortDefinition();
@@ -180,7 +140,7 @@ define(
 						if (!authApi.isAuthenticated()) {
 							return false;
 						}
-	
+
 						if (this.currentConceptSet() && (this.currentConceptSet()
 								.id != 0)) {
 							return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
@@ -195,7 +155,7 @@ define(
 				this.canDeleteCurrentConceptSet = ko.pureComputed(() => {
 					if (!config.userAuthenticationEnabled)
 						return true;
-	
+
 					/*
 					TODO:
 						if (this.currentConceptSetSource() == 'cohort') {
@@ -208,7 +168,7 @@ define(
 						return false;
 					}
 				});
-	
+
 				this.cohortDefCss = ko.pureComputed(() => {
 					if (this.currentCohortDefinition())
 						return this.currentCohortDefinitionDirtyFlag()
@@ -223,12 +183,12 @@ define(
 						url = url + "cohortdefinitions"
 					return url;
 				});
-	
+
 				this.canEditCurrentCohortDefinition = ko.pureComputed(() => {
 					if (!authApi.isAuthenticated()) {
 						return false;
 					}
-	
+
 					if (this.currentCohortDefinition() && (this.currentCohortDefinition()
 							.id() != 0)) {
 						return authApi.isPermittedUpdateCohort(this.currentCohortDefinition()
@@ -250,25 +210,6 @@ define(
 					return url;
 				});
 
-				this.irStatusCss = ko.pureComputed(() => {
-					if (this.currentIRAnalysis())
-						return this.currentIRAnalysisDirtyFlag()
-							.isDirty() ? "unsaved" : "open";
-				});
-				this.irAnalysisURL = ko.pureComputed(() => {
-					var url = "#/iranalysis";
-					if (this.currentIRAnalysis())
-						url = url + "/" + (this.currentIRAnalysis()
-							.id() || 'new');
-					return url;
-				});
-	
-				this.irStatusCss = ko.pureComputed(() => {
-					if (this.currentIRAnalysis())
-						return this.currentIRAnalysisDirtyFlag()
-							.isDirty() ? "unsaved" : "open";
-				});
-				
 				this.hasUnsavedChanges = ko.pureComputed(() => {
 					return ((
 						this.currentCohortDefinitionDirtyFlag()
@@ -283,10 +224,7 @@ define(
 						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
 					);
 				});
-	
-				this.initializationComplete = ko.pureComputed(() => {
-					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
-				});
+
 				this.currentViewAccessible = ko.pureComputed(() => {
 					return this.currentView && (
 						sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
@@ -328,12 +266,12 @@ define(
 					return pageTitle;
 				});
 
-				this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);				
+				this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
 				this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
 				this.renderHierarchyLink = commonUtils.renderHierarchyLink.bind(this);
 				this.createConceptSetItem = commonUtils.createConceptSetItem.bind(this);
 				this.syntaxHighlight = commonUtils.syntaxHighlight.bind(this);
-				
+
 				this.currentConceptSetSubscription = this.currentConceptSet.subscribe((newValue) => {
 					if (newValue != null) {
 						this.currentConceptSetDirtyFlag(new ohdsiUtil.dirtyFlag({
@@ -350,7 +288,7 @@ define(
 				this.currentConceptSetMode.subscribe(this.onCurrentConceptSetModeChanged);
 				/*
 					probably unreachable code
-					
+
 					this.currentView.subscribe(function (newView) {
 						switch (newView) {
 							case 'reports':
@@ -406,7 +344,6 @@ define(
 						}
 						this.conceptSetInclusionIdentifiers(info);
 						this.currentIncludedConceptIdentifierList(info.join(','));
-						this.conceptSetInclusionCount(info.length);
 					};
 				this.resolvingConceptSetExpression(true);
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
@@ -459,7 +396,7 @@ define(
 			setConceptSet(conceptset, expressionItems) {
 				expressionItems.forEach((conceptSet) => {
 					const conceptSetItem = conceptSetService.enchanceConceptSet(conceptSet);
-					
+
 					sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
 					sharedState.selectedConcepts.push(conceptSetItem);
 				});
@@ -509,7 +446,7 @@ define(
 					cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
 					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 
-					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');					
+					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');
 					this.currentCohortDefinitionInfo(generationInfo);
 				}
 
@@ -659,7 +596,7 @@ define(
 					this.loadCohortConceptSet(conceptSetId, viewToShow, mode);
 				}
 			}
-			
+
 			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
@@ -684,7 +621,7 @@ define(
 					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
 					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
 					const expression = _.isEmpty(data) ? { items: [] } : data;
-					this.setConceptSet(conceptset, expression.items);	
+					this.setConceptSet(conceptset, expression.items);
 					await this.resolveConceptSetExpression();
 					this.currentConceptSetMode(mode);
 					$('#conceptSetLoadDialog').modal('hide');
@@ -694,7 +631,7 @@ define(
 				}
 				this.handleViewChange(viewToShow, { conceptSetId, mode });
 			}
-			
+
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
 				// Load up the selected concept set from the cohort definition
 				const conceptSet = this.currentCohortDefinition()
@@ -745,7 +682,7 @@ define(
 				const data = { ancestors, descendants };
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors', data);
 			};
-			
+
 			loadAndApplyAncestors(data) {
 				const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 				const ids = [];
@@ -773,7 +710,7 @@ define(
 					}
 				});
 			};
-			
+
 			loadIncluded(identifiers) {
 				this.loadingIncluded(true);
 				const data = identifiers || this.conceptSetInclusionIdentifiers();
@@ -792,17 +729,17 @@ define(
 							});
 					});
 			}
-			
+
 			loadSourcecodes() {
 				this.loadingSourcecodes(true);
-	
+
 				// load mapped
 				var identifiers = [];
 				var concepts = this.includedConcepts();
 				for (var i = 0; i < concepts.length; i++) {
 					identifiers.push(concepts[i].CONCEPT_ID);
 				}
-				
+
 				const data = identifiers;
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/mapped', data)
 					.then(({ data: sourcecodes }) => {
@@ -837,30 +774,30 @@ define(
 						break;
 				}
 			}
-	
+
 			updateRoles() {
 				if (authApi.isPermittedReadRoles()){
 					if (!config.userAuthenticationEnabled)
 							return true;
-	
+
 					console.info('Updating roles');
 					if (!authApi.isAuthenticated()) {
 						console.warn('Roles are not updated');
 						return Promise.resolve();
 					}
-					if (this.roles() && this.roles().length > 0) {
+					if (sharedState.roles() && sharedState.roles().length > 0) {
 						console.info('Roles updated');
 						return Promise.resolve();
 					} else {
 						return roleService.getList()
 							.then((roles) => {
 								console.info('Roles updated');
-								this.roles(roles);
+								sharedState.roles(roles);
 							});
 					}
 				}
 			}
-	
+
 		}
 	}
 );

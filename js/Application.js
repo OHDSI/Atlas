@@ -34,8 +34,9 @@ define(
 				this.densityPriority = 0;
 				this.pageModel = model;
 				this.router = router;
+				this.initializationComplete = ko.pureComputed(() => sharedState.appInitializationStatus() != constants.applicationStatuses.initializing);
 			}
-			
+
 			/**
 			 * Performs initial setup
 			 * @returns Promise

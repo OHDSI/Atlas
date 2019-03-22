@@ -24,18 +24,19 @@ define([
             this.roles = sharedState.roles;
             this.updateRoles = params.model.updateRoles;
             this.loading = ko.observable();
-    
+
             this.isAuthenticated = authApi.isAuthenticated;
             this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
             this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedCreateRole(); });
-    
+
             if (this.canRead()) {
                 this.loading(true);
                 this.updateRoles().then(() => { this.loading(false); });
-            }            
+            }
         }
-        
+
         selectRole(data) {
+            sharedState.ConfigurationRole.selectedId(data.id);
             commonUtils.routeTo('/role/' + data.id);
         }
 

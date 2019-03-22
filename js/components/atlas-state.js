@@ -6,6 +6,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
+	state.permissions = ko.observableArray();
 	state.sources = ko.observableArray([]);
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
@@ -21,7 +22,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		this.selectedConceptsIndex = {};
 		this.selectedConcepts([]);
 	}
-	
+
 	state.IRAnalysis = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null)
@@ -45,10 +46,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortPathways = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null)
-	};	
+	};
 	state.CohortPathways.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortPathways.current()));
-	
-	
+
+
 	state.estimationAnalysis = {
 		current: ko.observable(null),
 		analysisPath: null,
@@ -62,9 +63,22 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		analysisPath: null,
 		selectedId: ko.observable(null),
 		targetCohorts: ko.observableArray(),
-		outcomeCohorts: ko.observableArray(), 
+		outcomeCohorts: ko.observableArray(),
 	}
 	state.predictionAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current()));
+
+	state.ConfigurationSource = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+	}
+	state.ConfigurationSource.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.ConfigurationSource.current()));
+
+	state.ConfigurationRole = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+	};
+	state.ConfigurationRole.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.ConfigurationRole.current()));
+
 
 	return state;
 });

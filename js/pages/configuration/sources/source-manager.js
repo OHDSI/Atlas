@@ -16,25 +16,23 @@ define([
   'components/ac-access-denied',
   'less!./source-manager.less',
   'components/heading',
-],
-  function (
-    ko,
-    view,
-    Component,
-    AutoBind,
-    commonUtils,
-    config,
-    vocabularyProvider,
-    ohdsiUtil,
-    sourceApi,
-    roleService,
-    lodash,
-    authApi,
-    sharedState,
-    constants
-  ) {
-
-  var defaultDaimons = {
+], (
+  ko,
+  view,
+  Component,
+  AutoBind,
+  commonUtils,
+  config,
+  vocabularyProvider,
+  ohdsiUtil,
+  sourceApi,
+  roleService,
+  lodash,
+  authApi,
+  sharedState,
+  constants,
+) => {
+  const defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Results: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -43,43 +41,51 @@ define([
     Temp: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
   };
 
-  function Source(data) {
+  class Source {
+    constructor(data = {}) {
+      const {
+        sourceName = 'New Source',
+        sourceKey = null,
+        sourceDialect = null,
+        connectionString = null,
+        username = null,
+        password = null,
+        daimons = [],
+        keytabName = null,
+        krbAuthMethod = null,
+        krbAdminServer = null,
+        sourceId = null,
+      } = data;
 
-    function mapDaimons(daimons) {
-      daimons = daimons || [];
-      var defaultKeys = Object.keys(defaultDaimons);
-      var keys = daimons.map(function (value) { return value.daimonType; });
-      var result = daimons.map(function (value) {
-        return {
-          ...lodash.omit(value, ['tableQualifier']),
-          tableQualifier: ko.observable(value.tableQualifier),
-          enabled: ko.observable(true),
-      };
-      });
-      var diff = lodash.difference(defaultKeys, keys).map(function(key){
-        return {
-          ...defaultDaimons[key],
-          daimonType: key,
-          enabled: ko.observable(false),
-      };
-      });
-      return lodash.concat(result, diff);
+      this.name = ko.observable(sourceName);
+      this.key = ko.observable(sourceKey);
+      this.dialect = ko.observable(sourceDialect);
+      this.connectionString = ko.observable(connectionString);
+      this.username = ko.observable(username);
+      this.password = ko.observable(password);
+      this.daimons = ko.observableArray(this.mapDaimons(daimons));
+      this.keytabName = ko.observable(keytabName);
+      this.krbAuthMethod = ko.observable(krbAuthMethod);
+      this.krbAdminServer = ko.observable(krbAdminServer);
+      this.sourceId = ko.observable(sourceId);
     }
 
-    var data = data || {};
+    mapDaimons(daimons = []) {
+      const defaultKeys = Object.keys(defaultDaimons);
+      const keys = daimons.map(({ diamonType }) => diamonType);
+      const result = daimons.map(({ tableQuailifier, ...rest }) => ({
+        tableQuailifier: ko.observable(tableQuailifier),
+        enabled: ko.observable(true),
+        ...rest,
+      }));
+      const diff = lodash.difference(defaultKeys, keys).map(key => ({
+        ...defaultDaimons[key],
+        daimonType: key,
+        enabled: ko.observable(false),
+      }));
 
-    this.name = ko.observable(data.sourceName || "New Source");
-    this.key = ko.observable(data.sourceKey || null);
-    this.dialect = ko.observable(data.sourceDialect || null);
-    this.connectionString = ko.observable(data.connectionString || null);
-    this.username = ko.observable(data.username || null);
-    this.password = ko.observable(data.password || null);
-    this.daimons = ko.observableArray(mapDaimons(data.daimons));
-    this.keytabName = ko.observable(data.keytabName);
-    this.krbAuthMethod = ko.observable(data.krbAuthMethod);
-    this.krbAdminServer = ko.observable(data.krbAdminServer);
-
-    return this;
+      return lodash.concat(result, diff);
+    }
   }
 
   class SourceManager extends AutoBind(Component) {
@@ -88,56 +94,33 @@ define([
       this.config = config;
       this.model = params.model;
       this.loading = ko.observable(false);
-      this.dirtyFlag = this.model.currentSourceDirtyFlag;
-      this.selectedSource = params.model.currentSource;
-      this.selectedSourceId = params.model.selectedSourceId;
+      this.dirtyFlag = sharedState.ConfigurationSource.dirtyFlag;
+      this.selectedSource = sharedState.ConfigurationSource.current;
+      this.selectedSourceId = sharedState.ConfigurationSource.selectedId;
       this.options = {};
       this.isAuthenticated = authApi.isAuthenticated;
 
       this.hasAccess = ko.pureComputed(() => {
         if (!config.userAuthenticationEnabled) {
           return false;
-        } else {
-          return this.isAuthenticated() && authApi.isPermittedEditConfiguration();
         }
+        return this.isAuthenticated() && authApi.isPermittedEditConfiguration();
       });
 
-      this.canReadSource = ko.pureComputed(() => {
-        return authApi.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId();
-      });
-
-      this.isDeletePermitted = ko.pureComputed(() => {
-        return authApi.isPermittedDeleteSource(this.selectedSource().key());
-      });
-
-      this.canEdit = ko.pureComputed(() => {
-        return authApi.isPermittedEditSource(this.selectedSourceId());
-      });
-
-      this.isNameCorrect = ko.computed(() => {
-          return this.selectedSource() && this.selectedSource().name();
-      });
-
+      this.canReadSource = ko.pureComputed(() => authApi.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId());
+      this.isDeletePermitted = ko.pureComputed(() => authApi.isPermittedDeleteSource(this.selectedSource().key()));
+      this.canEdit = ko.pureComputed(() =>  authApi.isPermittedEditSource(this.selectedSourceId()));
+      this.isNameCorrect = ko.computed(() => this.selectedSource() && this.selectedSource().name());
       this.canSave = ko.pureComputed(() => {
         return (
-          this.isNameCorrect()
-          && this.selectedSource().key()
-          && this.selectedSource().connectionString()
-          && this.canEdit()
+          this.isNameCorrect() &&
+          this.selectedSource().key() &&
+          this.selectedSource().connectionString() &&
+          this.canEdit()
         );
       });
-
-      this.canDelete = () => {
-        return (
-          this.selectedSource()
-          && this.selectedSource().key()
-          && this.isDeletePermitted()
-        );
-      };
-
-      this.canEditKey = ko.pureComputed(() => {
-        return !this.selectedSourceId();
-      });
+      this.canDelete = ko.pureComputed(() => this.selectedSource() && this.selectedSource().key() && this.isDeletePermitted());
+      this.canEditKey = ko.pureComputed(() => !this.selectedSourceId());
 
       this.options.dialectOptions = [
         { name: 'PostgreSQL', id: 'postgresql' },
@@ -151,76 +134,58 @@ define([
       ];
 
       this.sourceCaption = ko.computed(() => {
-        return (this.model.currentSource() == null || this.model.currentSource().key() == null) ? 'New source' : 'Source ' + this.model.currentSource().name();
+        return !this.model.currentSource() || !this.model.currentSource().key()
+          ? 'New source'
+          : `Source ${this.model.currentSource().name()}`;
       });
-      this.isKrbAuth = ko.computed(() => {
-          return this.impalaConnectionStringIncludes("AuthMech=1");
-      });
+      this.isKrbAuth = ko.computed(() =>  this.impalaConnectionStringIncludes('AuthMech=1'));
+      this.krbRealm = ko.computed(() => this.getKrbString(/KrbRealm=(.*?);/));
+      this.krbHostFQDN = ko.computed(() => this.getKrbString(/KrbHostFQDN=(.*?);/));
 
-      this.krbHostFQDN = ko.computed(() => {
-
-        if (this.isImpalaDS() && this.isNonEmptyConnectionString()) {
-            var str = this.selectedSource().connectionString();
-            var strArray = str.match(/KrbHostFQDN=(.*?);/);
-            if (strArray != null){
-                var matchedStr = strArray[0];
-                return matchedStr.substring(matchedStr.search("=") + 1, matchedStr.length - 1);
-            } else {
-                return "";
-            }
-        }
-        return "";
-      });
-
-      this.krbRealm = ko.computed(() => {
-
-          if (this.isImpalaDS() && this.isNonEmptyConnectionString()) {
-            var str = this.selectedSource().connectionString();
-            var strArray = str.match(/KrbRealm=(.*?);/);
-            if (strArray != null){
-              var matchedStr = strArray[0];
-              return matchedStr.substring(matchedStr.search("=") + 1, matchedStr.length - 1);
-            } else {
-              return "";
-            }
-        }
-        return "";
-      });
       this.init();
 
       this.fieldsVisibility = {
         username: ko.computed(() => !this.isImpalaDS() || this.isKrbAuth()),
         password: ko.computed(() => !this.isImpalaDS()),
         krbAuthSettings: this.isKrbAuth,
-        showKeytab: ko.computed(() => {
-          return this.isKrbAuth() && this.selectedSource().krbAuthMethod() === 'keytab';
-        }),
+        showKeytab: ko.computed(() => this.isKrbAuth() && this.selectedSource().krbAuthMethod() === 'keytab'),
         krbFileInput: ko.computed(() => {
-          return this.isKrbAuth() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
+          return (
+            this.isKrbAuth() &&
+            (typeof this.selectedSource().keytabName() !== 'string' ||
+            this.selectedSource().keytabName().length === 0)
+          );
         }),
         // warnings
         hostWarning: ko.computed(() => {
-          var showWarning = this.isKrbAuth() && this.krbHostFQDN() === "";
-          if (showWarning){
-              this.dirtyFlag().reset();
-          }
+          const showWarning = this.isKrbAuth() && this.krbHostFQDN() === '';
+          showWarning && this.dirtyFlag().reset();
           return showWarning;
         }),
         realmWarning: ko.computed(() => {
-          var showWarning = this.isKrbAuth() && this.krbRealm() === "";
-          if (showWarning) {
-              this.dirtyFlag().reset();
-          }
+          const showWarning = this.isKrbAuth() && this.krbRealm() === '';
+          showWarning && this.dirtyFlag().reset();
           return showWarning;
         }),
         userWarning: ko.computed(() => {
-          var showWarning = this.selectedSource() != null && this.selectedSource().username() === "";
-          if (showWarning) {
-              this.dirtyFlag().reset();
-          }
+          const showWarning = this.selectedSource() != null && this.selectedSource().username() === '';
+          showWarning && this.dirtyFlag().reset();
           return showWarning;
         }),
       };
+    }
+
+    getKrbString(regex) {
+      if (this.isImpalaDS() && this.isNonEmptyConnectionString()) {
+        const str = this.selectedSource().connectionString();
+        const strArray = str.match(regex);
+        if (!!strArray  && Array.isArray(strArray)) {
+          const matchedStr = strArray[0];
+          return matchedStr.substring( matchedStr.search('=') + 1, matchedStr.length - 1);
+        }
+        return '';
+      }
+      return '';
     }
 
     newSource() {
@@ -233,11 +198,21 @@ define([
     }
 
     isNonEmptyConnectionString() {
-      return this.selectedSource() != null && typeof this.selectedSource().connectionString() === 'string' && this.selectedSource().connectionString().length > 0;
+      return (
+        this.selectedSource() != null &&
+        typeof this.selectedSource().connectionString() === 'string' &&
+        this.selectedSource().connectionString().length > 0
+      );
     }
 
     impalaConnectionStringIncludes(substr) {
-      return this.isImpalaDS() && this.isNonEmptyConnectionString() && this.selectedSource().connectionString().includes(substr);
+      return (
+        this.isImpalaDS() &&
+        this.isNonEmptyConnectionString() &&
+        this.selectedSource()
+          .connectionString()
+          .includes(substr)
+      );
     }
 
     removeKeytab() {
@@ -248,50 +223,49 @@ define([
 
     uploadFile(file) {
       this.keytab = file;
-      this.selectedSource().keytabName(file.name)
+      this.selectedSource().keytabName(file.name);
     }
 
-    save() {
-      var source = {
+    getSource() {
+      return {
         name: this.selectedSource().name() || null,
         key: this.selectedSource().key() || null,
         dialect: this.selectedSource().dialect() || null,
         connectionString: this.selectedSource().connectionString() || null,
-        krbAuthMethod: this.selectedSource().krbAuthMethod() || "password",
+        krbAuthMethod: this.selectedSource().krbAuthMethod() || 'password',
         krbAdminServer: this.selectedSource().krbAdminServer() || null,
         username: this.selectedSource().username() || null,
         password: this.selectedSource().password() || null,
-        daimons: ko.toJS(this.selectedSource().daimons()).filter(function(d) { return d.enabled; }).map(function(d) {
-          return lodash.omit(d, ['enabled']);
-        }),
+        daimons: ko
+          .toJS(this.selectedSource().daimons())
+          .filter(({ enabled }) => enabled)
+          .map(({ enabled, ...rest }) => rest),
         keytabName: this.selectedSource().keytabName(),
         keytab: this.keytab,
       };
+    }
+
+    async save() {
+      const source = this.getSource();
       this.loading(true);
-      sourceApi.saveSource(this.selectedSourceId(), source)
-        .then(() => sourceApi.initSourcesConfig())
-        .then(function (appStatus) {
-            sharedState.appInitializationStatus(appStatus);
-            return vocabularyProvider.getDomains();
-        })
-        .then(() => {
-          roleService.getList()
-            .then((roles) => {
-              this.model.roles(roles);
-              this.goToConfigure();
-            });
-        })
-        .catch(({data}) => {
-          this.loading(false);
-          alert('The Source was not saved. ' +
-            (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
-             data.payload.message : 'Please contact your administrator to resolve this issue.'));
-         });
+      try {
+        await sourceApi.saveSource(this.selectedSourceId(), source);
+        const appStatus = await sourceApi.initSourcesConfig();
+        sharedState.appInitializationStatus(appStatus);
+        await vocabularyProvider.getDomains();
+        const roles = await roleService.getList();
+        sharedState.roles(roles);
+        this.goToConfigure();
+      } catch ({ data }) {
+        this.loading(false);
+        const message = !!data && !!data.payload && !!data.payload.message ? data.payload.message : 'Please contact your administrator to resolve this issue.';
+        alert(message);
+      }
     }
 
     close() {
       if (this.dirtyFlag().isDirty() && !confirm('Source changes are not saved. Would you like to continue?')) {
-        return;
+        return true;
       }
       this.selectedSource(null);
       this.selectedSourceId(null);
@@ -300,62 +274,78 @@ define([
     }
 
     hasSelectedPriotirizableDaimons() {
-		const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
-		const otherPriotirizableDaimons = lodash.flatten(
-			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId))
-		);
-		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId);
-		const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
-			// Daimon of the type with higher priority exists
-			return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
-		});
-		return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
+      const otherSources = sharedState
+        .sources()
+        .filter(s => s.sourceId !== this.selectedSource().sourceId);
+      const otherPriotirizableDaimons = lodash.flatten(
+        otherSources.map(s =>
+          s.daimons.filter(d =>
+            constants.priotirizableDaimonTypes.includes(d.daimonType) &&
+            d.sourceDaimonId,
+          ),
+        ),
+      );
+      const currenPriotirizableDaimons = this.selectedSource()
+        .daimons()
+        .filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId);
+      const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
+        // Daimon of the type with higher priority exists
+        return otherPriotirizableDaimons.find(
+          otherDaimon =>
+            currentDaimon.daimonType === otherDaimon.daimonType &&
+            currentDaimon.priority < otherDaimon.priority,
+        );
+      });
+      return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
     }
 
-    delete() {
+    async delete() {
       if (this.hasSelectedPriotirizableDaimons()) {
-        alert('Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source');
-        return;
+        alert('Some daimons of this source were given highest priority and are in use by application. Select new top-priority daimons to delete the source');
+        return true;
+      }
+      if (!confirm('Delete source? Warning: deletion can not be undone!')) {
+        return true;
       }
 
-      if (!confirm('Delete source? Warning: deletion can not be undone!')) {
-        return;
-      }
       this.loading(true);
-      sourceApi.deleteSource(this.selectedSourceId())
-        .then(sourceApi.initSourcesConfig)
-        .then(function (appStatus) {
-            sharedState.appInitializationStatus(appStatus);
-            return roleService.getList();
-        })
-        .then((roles) => {
-          this.model.roles(roles);
-          this.loading(false);
-          this.goToConfigure();
-        })
-        .catch(() => this.loading(false));
+
+      try {
+        await sourceApi.deleteSource(this.selectedSourceId());
+        const appStatus = await sourceApi.initSourcesConfig();
+        sharedState.appInitializationStatus(appStatus);
+        const roles = await roleService.getList();
+        sharedState.roles(roles);
+        this.goToConfigure();
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading(false);
+      }
     }
 
     goToConfigure() {
-      document.location = '#/configure';
+      commonUtils.routeTo('/configure');
     }
 
-    init() {
+    async init() {
       if (this.hasAccess()) {
-        if (this.selectedSourceId() == null) {
-          this.newSource();
-        } else {
+        if (!!this.selectedSourceId()) {
           this.loading(true);
-          sourceApi.getSource(this.selectedSourceId())
-            .then((source) => {
-              this.selectedSource(new Source(source));
-              this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
-              this.loading(false);
-            });
+          try {
+            const source = await sourceApi.getSource(this.selectedSourceId());
+            this.selectedSource(new Source(source));
+            this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
+          } catch (e) {
+            console.error(e);
+          } finally {
+            this.loading(false);
+          }
+        } else {
+          this.newSource();
         }
       }
     }
-
   }
 
   return commonUtils.build('source-manager', SourceManager, view);
