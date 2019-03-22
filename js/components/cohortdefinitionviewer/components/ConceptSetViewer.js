@@ -13,6 +13,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.data = params.conceptSet.expression.items;
+			this.paging = params.doPaging === undefined ? true : params.doPaging;
 			this.columns = [
 				{
 					title: 'Concept Id',

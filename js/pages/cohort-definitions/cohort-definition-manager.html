@@ -240,7 +240,7 @@
 								<!-- ko foreach: sortedConceptSets -->
 								<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
 								<div style="padding-left:20px">
-									<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+									<conceptset-viewer params="{conceptSet: $data, doPaging: false}"></conceptset-viewer>
 									<br/>
 								</div>
 								<!-- /ko -->
