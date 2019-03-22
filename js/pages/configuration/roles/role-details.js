@@ -114,7 +114,7 @@ define([
     renderCheckbox(field, editable) {
       return editable
         ? `<span data-bind="click: (d) => { d.${field}(!d.${field}()); }, css: { selected: ${field} }" class="fa fa-check"></span>`
-        : `<span data-bind="css: { selected: ${field} }" class="fa fa-check readonly"`;
+        : `<span data-bind="css: { selected: ${field} }" class="fa fa-check readonly"></span>`;
     }
 
     async getRole() {
