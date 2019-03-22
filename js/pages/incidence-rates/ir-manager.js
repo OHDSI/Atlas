@@ -49,7 +49,6 @@ define([
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-			console.log('constru')
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
