@@ -49,6 +49,7 @@ define([
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
+			console.log('constru')
 			// polling support
 			this.pollTimeout = null;
 			this.model = params.model;
@@ -272,9 +273,13 @@ define([
 		}
 
 		onRouterParamsChanged(params = {}) {
+			console.log('0')
 			const { analysisId } = params;
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
+				this.pollForInfo();
+				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
 			}
 		}
 
