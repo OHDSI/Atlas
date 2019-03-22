@@ -31,7 +31,7 @@ define([
     }
 		
 		dispose() {
-			this.renderer && this.renderer.dispose();
+			this.renderer && this.renderer.destroyTipIfExists() && this.renderer.dispose();
 		}
 
   }
