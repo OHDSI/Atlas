@@ -92,7 +92,7 @@ define([
         }
 
         isRowGreyed(element, stat) {
-            if (stat.stdDiff && stat.stdDiff < 0.1) {
+            if (stat.stdDiff && Math.abs(stat.stdDiff) < 0.1) {
                 element.classList.add(this.classes('greyed-row').trim());
             }
         }
