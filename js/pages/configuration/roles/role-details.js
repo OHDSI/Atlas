@@ -1,7 +1,7 @@
 define([
     'knockout',
     'text!./role-details.html',
-    'components/Component',
+    'pages/Page',
     'utils/AutoBind',
     'utils/CommonUtils',
     'services/role',
@@ -17,7 +17,7 @@ define([
 ], function (
     ko,
     view,
-    Component,
+    Page,
     AutoBind,
     commonUtils,
     roleService,
@@ -28,7 +28,7 @@ define([
     fileService,
 ) {
     const defaultRoleName = "New Role";
-    class RoleDetails extends AutoBind(Component) {
+    class RoleDetails extends AutoBind(Page) {
         constructor(params) {
             super(params);        
 
@@ -83,12 +83,16 @@ define([
             this.canSave = ko.pureComputed(() => { return (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName(); });
             this.canCreate = authApi.isPermittedCreateRole;
 
-            this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });        
-                
+            this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });    
+            
+        }
+
+        onRouterParamsChanged() {
             if (this.hasAccess()) {
                 this.updateRole();
             }
         }
+
         selectAllUsers() {
             this.userItems().forEach(user => user.isRoleUser(true));
         }
