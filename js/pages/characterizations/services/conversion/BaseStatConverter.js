@@ -82,7 +82,7 @@ define([
         }
 
         getDefaultSort(columnsCount, cohortsCount) {
-            return [[ columnsCount - 1, "desc" ]];
+            return [[ columnsCount - 1, "desc" ]]; // this is either for Std Diff (in comparison mode) or Pct (in single cohort mode)
         }
 
         getRowId(stat) {
