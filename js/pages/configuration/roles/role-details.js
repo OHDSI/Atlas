@@ -120,7 +120,7 @@ define([
         }
 
         async getPermissions() {
-            if (!this.permissions() || this.permissions().length == 0) {
+            if (!this.permissions() || this.permissions().length === 0 || this.roleDirtyFlag.isDirty()) {
                 const permissions = await roleService.getPermissions();
                 this.permissions(permissions);                
             }
