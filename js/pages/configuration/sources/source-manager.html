@@ -119,7 +119,7 @@
 											<div data-bind="visible: fieldsVisibility.bigQueryAuthSettings">
 												<div class="source-row">
 													<div data-bind="css: classes({element: 'auth-title', extra: 'control-group'})">
-														<label>Service account key file</label>
+														<label>Service account key file (OAuthPvtKeyPath)</label>
 													</div>
 													<div data-bind="css: classes('keytab')">
 														<input type="file" name="keytabFile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
