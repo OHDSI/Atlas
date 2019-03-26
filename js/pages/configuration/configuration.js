@@ -62,6 +62,7 @@ define([
       });
       
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      sourceApi.initSourcesConfig();
     }
 
     canReadSource(source) {
