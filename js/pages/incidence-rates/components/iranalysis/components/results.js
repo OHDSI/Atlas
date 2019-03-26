@@ -170,6 +170,7 @@ define([
 			.catch(er => {
 				console.error(er);
 				alert('There was an error while loading generation result reports');
+				this.isLoading(false);
 			});
 		};
 
