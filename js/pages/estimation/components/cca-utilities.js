@@ -15,6 +15,7 @@ define([
 	'faceted-datatable',
 	'utilities/import',
 	'utilities/export',
+	'utilities/download'
 ], function (
 	ko, 
 	view, 
@@ -101,6 +102,7 @@ define([
 			this.validPackageName = ko.pureComputed(() => {
 				return (this.packageName() && this.packageName().length > 0)
 			});
+			this.downloadUrl = ko.computed(() => constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId(), this.packageName()));
 
 			this.subscriptions.push(this.utilityPillMode.subscribe(() => {
 				if (this.utilityPillMode()  == 'download') {

@@ -47,8 +47,15 @@
                                             reference: $component.fullAnalysisList
                                         }"></faceted-datatable>
                                     </div>
-                                </div>  
-                                <div class="panel panel-default">                
+                                </div>
+                                <download params="{
+                                    title: 'Download Study Package',
+                                    downloadUrl: downloadUrl,
+                                    loading: loading,
+                                    loadingMessage: loadingMessage,
+                                }"></download>
+<!--
+                                <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <i class="fa fa-download"></i> Download Study Package
                                     </div>
@@ -65,6 +72,7 @@
                                         </div>
                                     </div>
                                 </div>
+-->
                             </div>
                         </div>
                     </div>
