@@ -348,6 +348,7 @@ define([
                     alert("Failed to fully copy the role");
                 }
             }
+            await this.model.updateRoles();
             if (id) {
                 commonUtils.routeTo(`/role/${id}`);
             }
