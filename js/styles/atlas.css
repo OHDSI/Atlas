@@ -449,6 +449,10 @@ table.datatable thead th {
   padding: 4px 5px !important;
 }
 
+div.dt-button-collection {
+  width: max-content !important;
+}
+
 .asset-heading .fa-shopping-cart, td .fa-shopping-cart {
   color: #ccc;
   cursor: pointer;
