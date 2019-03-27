@@ -234,6 +234,7 @@ define([
 							this.model.currentConceptSetDirtyFlag().reset();
 							this.loading(false);
 							this.isSaving(false);
+							this.model.updateRoles();
 							document.location = '#/conceptset/' + conceptSetId + '/details';
 						})
 						.catch(() => {
