@@ -13,6 +13,7 @@ define([
 	'../inputTypes/FullAnalysis',
 	'utilities/import',
 	'utilities/export',
+	'utilities/download',
 ], function (
 	ko, 
 	view, 
@@ -90,10 +91,6 @@ define([
 				)
 			});
 
-			this.validPackageName = ko.pureComputed(() => {
-				return (this.packageName() && this.packageName().length > 0)
-			});
-
 			this.subscriptions.push(this.utilityPillMode.subscribe(() => {
 				if (this.utilityPillMode()  === 'download') {
 					this.computeCartesian();
@@ -108,15 +105,12 @@ define([
 			return commonUtils.syntaxHighlight(ko.toJSON(this.patientLevelPredictionAnalysis));
 		}
 
-		downloadPackage() {
-			this.loadingMessage("Starting download...");
-			this.loading(true);
-			fileService.loadZip(
-					config.api.url + constants.apiPaths.downloadPackage(this.selectedAnalysisId(), this.packageName()),
-					`prediction_study_${this.selectedAnalysisId()}_export.zip`
-			)
-			.catch((e) => console.error("error when downloading: " + e))
-			.finally(() => this.loading(false));
+		downloadUrl() {
+			return (packageName) => constants.apiPaths.downloadPackage(this.selectedAnalysisId(), packageName);
+		}
+
+		packageFilename() {
+			return () => `prediction_study_${this.selectedAnalysisId()}_export.zip`;
 		}
 
 		computeCartesian() {

@@ -25,7 +25,7 @@ define([
 
 			this.title = params.title;
 			this.downloadUrl = params.downloadUrl;
-			this.filename = params.filename || "download.zip";
+			this.filename = params.filename || (() => "download.zip");
 			this.loading = params.loading || ko.observable();
 			this.loadingMessage = params.loadingMessage || ko.observable();
 			this.packageName = ko.observable();
@@ -37,8 +37,8 @@ define([
 			this.loadingMessage("Starting download...");
 			this.loading(true);
 			fileService.loadZip(
-				config.api.url + this.downloadUrl,
-				this.filename
+				config.api.url + this.downloadUrl(this.packageName()),
+				this.filename()
 			)
 				.catch((e) => console.error("error when downloading: " + e))
 				.finally(() => this.loading(false));

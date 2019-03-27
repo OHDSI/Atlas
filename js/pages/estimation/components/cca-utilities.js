@@ -99,11 +99,6 @@ define([
 				)
 			});
 
-			this.validPackageName = ko.pureComputed(() => {
-				return (this.packageName() && this.packageName().length > 0)
-			});
-			this.downloadUrl = ko.computed(() => constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId(), this.packageName()));
-
 			this.subscriptions.push(this.utilityPillMode.subscribe(() => {
 				if (this.utilityPillMode()  == 'download') {
 					this.computeCartesian();
@@ -112,6 +107,14 @@ define([
 
 			// Fire the subscription upon load.
 			this.utilityPillMode.valueHasMutated();
+		}
+
+		downloadUrl() {
+			return (packageName) => constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId(), packageName);
+		}
+
+		packageFilename() {
+			return () => `estimation_study_${this.selectedAnalysisId()}_export.zip`;
 		}
 
 		computeCartesian() {
@@ -147,17 +150,6 @@ define([
 			});
 			this.fullAnalysisList.valueHasMutated();
 			this.loadingDownload(false);
-		}
-
-		downloadPackage() {
-			this.loadingMessage("Starting download...");
-			this.loading(true);
-			fileService.loadZip(
-				config.api.url + constants.apiPaths.downloadCcaAnalysisPackage(this.selectedAnalysisId(), this.packageName()),
-				`estimation_study_${this.selectedAnalysisId()}_export.zip`
-			)
-			.catch((e) => console.error("error when downloading: " + e))
-			.finally(() => this.loading(false));
 		}
 
 		copyFullSpecificationToClipboard() {

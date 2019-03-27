@@ -52,7 +52,11 @@ define([
         return AuthAPI.isPermitted(`cohort-characterization:${id}:post`);
     }
 
-    //
+    function isPermittedDownloadCC(id) {
+        return AuthAPI.isPermitted(`cohort-characterization:${id}:download:get`);
+    }
+
+	//
 
     function isPermittedGetFaList() {
         return AuthAPI.isPermitted(`feature-analysis:get`);
@@ -87,11 +91,12 @@ define([
         isPermittedExportGenerationDesign,
         isPermittedExportCC,
         isPermittedCopyCC,
+        isPermittedDownloadCC,
         //
         isPermittedGetFaList,
         isPermittedCreateFa,
         isPermittedGetFa,
         isPermittedUpdateFa,
-        isPermittedDeleteFa
+        isPermittedDeleteFa,
     };
 });

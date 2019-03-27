@@ -22,6 +22,11 @@ define(
             },
         ];
 
+        const apiPaths = {
+          ccRoot: 'cohort-characterization',
+          downloadPackage: (ccId, packageName) => `${apiPaths.ccRoot}/${ccId}/download?packageName=${packageName}`,
+        };
+
         const ccGenerationStatus = consts.generationStatuses;
 
         const feAnalysisTypes = {
@@ -63,6 +68,7 @@ GROUP BY drug_concept_id, c.concept_name, stat.total_cnt
             featureAnalysesTab,
             gridTabs,
 			demoCustomSqlAnalysisDesign,
+            apiPaths,
         };
     }
 );

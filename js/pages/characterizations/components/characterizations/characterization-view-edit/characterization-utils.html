@@ -13,20 +13,34 @@
             data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_IMPORT ? 'active' : null }), click: setMode.bind(null, MODE_IMPORT)">
             <a>Import</a>
         </li>
+        <!-- ko:if isPermitted -->
+        <li role="presentation"
+            data-bind="css: classes({ element: 'nav-pill', extra: mode() === MODE_DOWNLOAD ? 'active' : null }), click: setMode.bind(null, MODE_DOWNLOAD)">
+            <a>Download</a>
+        </li>
+        <!-- /ko -->
     </ul>
-    <div data-bind="if: mode() == MODE_JSON, css: classes('content')">
+    <div data-bind="if: mode() === MODE_JSON, css: classes('content')">
         <export params="{
             entityId: characterizationId,
             isPermittedExport: isPermittedExport,
             exportService: exportService,
         }"></export>
     </div>
-    <div data-bind="if: mode() == MODE_IMPORT, css: classes('content')">
+    <div data-bind="if: mode() === MODE_IMPORT, css: classes('content')">
         <import params="{
             entityId: characterizationId,
             routeToUrl: '/cc/characterizations/',
             isPermittedImport: isPermittedImport,
             importService: importService,
         }"></import>
+    </div>
+    <div data-bind="if: mode() === MODE_DOWNLOAD, css: classes({element: 'content', modifiers: 'download'})">
+        <download params="{
+            title: 'Download Study Package',
+            downloadUrl: downloadUrl(),
+            filename: packageFilename(),
+            loading: loading,
+        }"></download>
     </div>
 </div>
