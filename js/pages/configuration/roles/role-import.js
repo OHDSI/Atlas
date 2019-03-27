@@ -114,7 +114,6 @@ define([
           roles = JSON.parse(json);
           isValid = ajv.validate(this.rolesJSONSchema, roles);
           if (!isValid) {
-            roles = [];
             throw new Error(ajv.errorsText(ajv.errors));
           }
           roles = roles.map(role => {
@@ -136,6 +135,7 @@ define([
             };
           })
         } catch(er) {
+          roles = [];
           isValid = false;
           error = er;
         } finally {
