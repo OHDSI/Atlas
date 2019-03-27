@@ -482,7 +482,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
 				const cd = this.model.currentCohortDefinition();
-				source && this.startPolling();
+				source && this.startPolling(cd, source);
 			});
 
 			this.reportingState = ko.computed(() => {
@@ -617,7 +617,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			// METHODS
 
-		startPolling() {
+		startPolling(cd, source) {
 			this.pollId = PollService.add({
 				callback: () => this.queryHeraclesJob(cd, source),
 				interval: 10000,
