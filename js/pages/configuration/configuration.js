@@ -69,9 +69,10 @@ define([
       
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
 
-      this.intervalId = PollService.add(() => {
-        this.checkJobs();
-      }, 5000);
+      this.intervalId = PollService.add({
+        callback: () => this.checkJobs(),
+        interval: 5000,
+      });
     }
 
     dispose() {
@@ -176,7 +177,7 @@ define([
     async refreshSourceCache(source) {
       try {
         const { data } = await sourceApi.refreshSourceCache(source.sourceKey);
-        if(data.sourceId === undefined) {
+        if(data.executionId === undefined) {
           source.refreshState(sourceApi.buttonCheckState.failed);
         } else {
           jobDetailsService.createJob(data);
