@@ -22,28 +22,32 @@
                                 { event: 'click', selector: '.conceptset_import', callback: (item) => $component.handleConceptSetImport($index(), item) },
                                 { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
                             ]">
-        <h2 data-bind="css: classes('strata-title')">Stratas</h2>
-        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata">New strata</button>
+        <h2 data-bind="css: classes('strata-title')">Subgroup analyses</h2>
+        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata">New subgroup</button>
         <div data-bind="css: classes('strata'), visible: stratas().length === 0">
-            <span>No stratas defined</span>
+            <span>No subgroups defined</span>
         </div>
         <!-- ko if: stratas().length > 0 -->
         <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy" />
         <label data-bind="css: classes('strata-checkbox')">
-            <input type="checkbox" data-bind="checked: design().strataOnly" /> Calculate stratified analyses only
+            <input type="checkbox" data-bind="checked: design().strataOnly" /> Calculate subgroup analyses only
         </label>
         <!-- /ko -->
         <div data-bind="foreach: stratas">
             <div data-bind="css: $component.classes('strata')">
                 <div data-bind="css: $component.classes('strata-heading')">
-                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + ($data.name() == '' ? ' emptyInput' : '')}), 
+                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + (($data.name() == '' || $component.isStrataDuplicated($data.name())) ? ' emptyInput' : '')}),
                                  textInput: $data.name, event: {'keyup': $component.checkStrataNames}" placeholder="Strata name">
                     <button type="button" data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
                     ><i class="fa fa-trash-o"></i></button>
                 </div>
                 <div data-bind="visible: $data.name() === '', css: { 'empty-name-error': !$data.name() }">
                     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <label>Strata name is empty.</label>
+                    <label>Subgroup name is empty.</label>
+                </div>
+                <div data-bind="visible: $component.isStrataDuplicated($data.name())" class="empty-name-error">
+                    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <label>Subgroup name is duplicated.</label>
                 </div>
                 <div>
                     <criteria-group params="{ expression: { ConceptSets: $component.strataConceptSets() }, group: $data.criteria }"></criteria-group>

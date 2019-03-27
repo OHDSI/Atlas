@@ -1,6 +1,6 @@
 <heading-title params="name: 'Concept Sets', icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
-<div data-bind="css: classes({ extra: 'flexed' })">
+<div data-bind="css: classes({ extra: 'flexed' }), if: isAuthenticated() && hasAccess()">
     <tabs params="
         componentParams: $component.componentParams,
         tabs: [
@@ -16,3 +16,5 @@
             }
     ]"></tabs>
 </div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

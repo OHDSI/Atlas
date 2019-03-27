@@ -1,6 +1,5 @@
 define(['knockout', 'visibilityjs'], (ko, Visibility) => {
   const callbacks = new Map();
-  
   const isPageForeground = ko.observable(Visibility.state() === "visible");
   Visibility.change((e, state) => {
     const isForeground = state === "visible";
@@ -13,24 +12,44 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
   });
 
   class PollService {
-    add(callback, interval = 1000, ...args) {
-      const intervalId = setInterval(() => {
-        if (isPageForeground()) {
-          callback(args);
-        }
-      }, interval);
-      callbacks.set(intervalId, { callback, args });
-      
-      return intervalId;
+    add(opts = {}, ...args) {
+      const { callback = () => {}, interval = 1000, isSilentAfterFirstCall = false } = opts;
+      const id = new Date().valueOf();
+      callbacks.set(id, {
+        callback,
+        interval,
+        isSilentAfterFirstCall,
+        totalFnCalls: 0,
+        args
+      });
+      this.start(id);
+      return id;
     }
 
-    stop(intervalId) {
-      clearInterval(intervalId);
-      callbacks.delete(intervalId);
+    async start(id) {
+      if (callbacks.has(id)) {
+        const cb = callbacks.get(id);
+        const { callback, interval, isSilentAfterFirstCall, totalFnCalls, args } = cb;
+        try {
+          if (isPageForeground()) {
+            const silently = isSilentAfterFirstCall && totalFnCalls > 0;
+            await callback(silently);
+            callbacks.set(id, { ...cb, totalFnCalls: totalFnCalls + 1 });
+          }
+        } catch(e) {
+          console.log(e);
+        } finally {
+          setTimeout(() => this.start(id), interval);
+        }
+      }
+    }
+
+    stop(id) {
+      callbacks.delete(id);
     }
 
     static pollImmediately() {
-      for (let [intervalId, c] of callbacks) {
+      for (let [id, c] of callbacks) {
         c.callback(c.args);
       }
     }

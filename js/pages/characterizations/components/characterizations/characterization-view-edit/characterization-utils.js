@@ -7,7 +7,9 @@ define([
     'services/AuthAPI',
     'components/Component',
     'utils/AutoBind',
-    'utils/CommonUtils',
+    'utils/CommonUtils', 
+    'utilities/import', 
+    'utilities/export',
     'less!./characterization-utils.less',
 ], function (
     ko,
@@ -32,49 +34,16 @@ define([
             this.characterizationId = params.characterizationId;
             this.mode = ko.observable(this.MODE_JSON);
 
-            this.isExportPermitted = this.isExportPermittedResolver();
-            this.isImportPermitted = this.isImportPermittedResolver();
+            this.isPermittedExport = PermissionService.isPermittedExportCC;
+            this.isPermittedImport = PermissionService.isPermittedImportCC;
+            this.exportService = CharacterizationService.loadCharacterizationExportDesign;
+            this.importService = CharacterizationService.importCharacterization;
 
             this.setMode = this.setMode.bind(this);
-
-            this.exportEntity = ko.observable();
-            this.exportJSON = ko.computed(() => JSON.stringify(this.exportEntity(), null, 2));
-
-            this.importJSON = ko.observable();
-
-            this.isExportPermitted() && this.loadExportJSON();
-        }
-
-        isExportPermittedResolver() {
-            return ko.computed(() => PermissionService.isPermittedExportCC(this.characterizationId()));
-        }
-
-        isImportPermittedResolver() {
-            return PermissionService.isPermittedImportCC;
         }
 
         setMode(mode) {
             this.mode(mode);
-        }
-
-        async loadExportJSON() {
-            if (this.characterizationId() !== 0) {
-                this.loading(true);
-                const res = await CharacterizationService.loadCharacterizationExportDesign(this.characterizationId());
-                this.exportEntity(res);
-                this.loading(false);
-            }
-        }
-
-        doImport() {
-            this.loading(true);
-
-            CharacterizationService
-                .importCharacterization(JSON.parse(this.importJSON()))
-                .then(res => {
-                    this.loading(false);
-                    commonUtils.routeTo('/cc/characterizations/' + res.id);
-                });
         }
     }
 

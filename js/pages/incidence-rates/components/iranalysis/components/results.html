@@ -62,7 +62,7 @@
 					<!-- /ko -->
 				</td>
 				<td data-bind="css: $component.classes('tbl-col'), text: source.sourceName"></td>
-				<!-- ko ifnot: $component.isInProgress($data) -->
+				<!-- ko ifnot: $component.isInProgress($data) || $component.isSummaryLoading($data) -->
 					<!-- ko if: info().executionInfo.isValid -->
 						<!-- ko with: $component.getSummaryData(info().summaryList) -->
 						<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' })">
@@ -86,8 +86,8 @@
 					<!-- /ko -->
 					<td data-bind="css: $component.classes('tbl-col', 'exec-start', 'dataCol'), text: $component.formatDateTime(info().executionInfo.startTime)"></td>
 					<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: $component.msToTime(info().executionInfo.executionDuration)"></td>
-					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports'), click:$parent.selectSource">
-						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid">
+					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports') ">
+						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid, click:$parent.selectSource">
 							<i class="fa fa-eye"></i> Reports
 						</button>
 						<button class="btn btn-sm btn-danger removeResult">
@@ -97,6 +97,9 @@
 				<!-- /ko -->
 				<!-- ko if: $component.isInProgress($data) -->
 					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
+				<!-- /ko -->
+				<!-- ko if: $component.isSummaryLoading($data) -->
+					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Loading summary...</td>
 				<!-- /ko -->
 			</tr>
 		</tbody>

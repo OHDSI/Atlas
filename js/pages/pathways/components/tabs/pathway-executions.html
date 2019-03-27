@@ -8,7 +8,7 @@
 			<!-- ko foreach: executionGroups -->
 			<div data-bind="template: {
 												name: 'pathway-view-edit-execution-group',
-												data: Object.assign({}, $data, 
+												data: Object.assign({}, $data,
 												{
 													classes: $parent.classes,
 													execColumns: $parent.execColumns,
@@ -62,6 +62,11 @@
                     <a role="button" class="btn btn-sm btn-danger"
                        data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
                         <i class="fa fa-spinner fa-spin"></i> Cancel
+                    </a>
+                    <!-- /ko -->
+                    <!-- ko if:  $component.pathwayGenerationStatusOptions.PENDING === status() -->
+                    <a role="button" class="btn btn-sm btn-warning" data-bind="attr: {disabled: true}">
+                        <i class="fa fa-spinner fa-spin"></i> Pending
                     </a>
                     <!-- /ko -->
                 </li>

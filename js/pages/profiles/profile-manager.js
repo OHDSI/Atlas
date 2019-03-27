@@ -215,8 +215,8 @@ define([
 								}
 							}
 							return d.value.length && stopWords.indexOf(d.key) === -1 && filtered;
-						})
-						.map(d => {
+						});
+						words = words.map(d => {
 							return {
 								caption: d.key,
 								domain: d.value[0].domain,
@@ -226,8 +226,11 @@ define([
 								highlight: ko.observable(this.defaultColor)
 							}
 						});
-					words = _.sortBy(words, d => -d.recs.length)
-					this.highlightData(words);
+						words = _.sortBy(words, d => -d.recs.length)
+					// profile chart will render all data in case when no data is captured by filter
+					if (words.length !== 0) {
+						this.highlightData(words);
+					}
 				});
 				this.searchHighlight.subscribe(func => {
 					if (func)

@@ -14,6 +14,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     './utils',
+    '../../../utils',
     'numeral',
     'lodash',
     'd3',
@@ -44,6 +45,7 @@ define([
     AutoBind,
     commonUtils,
     utils,
+    characterizationUtils,
     numeral,
     lodash,
     d3,
@@ -87,6 +89,12 @@ define([
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
+        }
+
+        isRowGreyed(element, stat) {
+            if (stat.stdDiff && Math.abs(stat.stdDiff) < 0.1) {
+                element.classList.add(this.classes('greyed-row').trim());
+            }
         }
 
         getButtonsConfig(type, analysis) {
@@ -256,6 +264,7 @@ define([
                         covariateId: r.covariateId,
                         covariateName: r.covariateName,
                         conceptId: r.conceptId,
+                        conceptName: r.conceptName,
                         avg: r.avg,
                         count: r.count,
                         pct: r.avg * 100,
@@ -322,6 +331,10 @@ define([
                     selectedValues: ko.observable(data.map(a => a.domainId)),
                 }
             ];
+        }
+
+        sortedStrataNames(strataNames) {
+            return characterizationUtils.sortedStrataNames(strataNames, true);
         }
 
         isComparatativeMode(filterList) {

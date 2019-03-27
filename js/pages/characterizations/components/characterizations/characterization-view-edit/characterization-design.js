@@ -42,8 +42,9 @@ define([
             super();
 
             this.design = params.design;
-            this.areStratasNamesEmpty = params.areStratasNamesEmpty;
             this.characterizationId = params.characterizationId;
+            this.areStratasNamesEmpty = params.areStratasNamesEmpty;
+            this.duplicatedStrataNames = params.duplicatedStrataNames;
 
             this.loading = ko.observable(false);
 
@@ -60,7 +61,7 @@ define([
             });
 
             this.stratas = ko.computed({
-                read: () => params.design() && params.design().stratas() || [], 
+                read: () => params.design() && params.design().stratas() || [],
                 write: (value) => params.design().stratas(value),
             });
 
@@ -123,10 +124,12 @@ define([
         }
 
         checkStrataNames(data, event) {
-            let emptyNames = this.stratas().filter(strata => {
-                return strata.name() === '';
-            });
-            this.areStratasNamesEmpty(emptyNames.length > 0);
+            this.areStratasNamesEmpty(this.stratas().find(s => s.name() === ''));
+            this.duplicatedStrataNames(Object.entries(lodash.groupBy(this.stratas().map(s => s.name()))).filter(entry => entry[1].length > 1).map(entry => entry[0]));
+        }
+
+        isStrataDuplicated(strataName) {
+            return !!this.duplicatedStrataNames().find(s => s === strataName);
         }
 
         isPermittedViewResolver() {
@@ -190,7 +193,7 @@ define([
 
         addStrata() {
             const strata = {
-              name: ko.observable('New Strata'),
+              name: ko.observable('New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
             };
             const ccDesign = this.design();
@@ -198,6 +201,7 @@ define([
                 ...(ccDesign.stratas() || []),
                 strata
             ]);
+            this.checkStrataNames();
         }
 
         removeStrata(index) {

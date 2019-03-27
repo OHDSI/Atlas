@@ -1,11 +1,11 @@
 define([
-	'knockout', 
+	'knockout',
 	'text!./ir-manager.html',
 	'services/IRAnalysis',
 	'services/SourceAPI',
 	'services/CohortDefinition',
-	'./components/iranalysis/IRAnalysisDefinition', 
-	'./components/iranalysis/IRAnalysisExpression', 
+	'./components/iranalysis/IRAnalysisDefinition',
+	'./components/iranalysis/IRAnalysisExpression',
 	'assets/ohdsi.util',
 	'appConfig',
 	'atlas-state',
@@ -13,14 +13,15 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
+	'services/Poll',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'./const',
-	'./components/iranalysis/main', 
-	'databindings', 
-	'conceptsetbuilder/components', 
+	'./components/iranalysis/main',
+	'databindings',
+	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
 ], function (
@@ -38,6 +39,7 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
+	PollService,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -48,9 +50,11 @@ define([
 		constructor(params) {
 			super(params);
 			// polling support
-			this.pollTimeout = null;
+			this.pollId = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
+			this.loadingInfo = ko.observable();
+			this.loadingSummary = ko.observableArray();
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -149,12 +153,6 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
-			// subscriptions
-			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
-				if (newVal) {
-					this.onAnalysisSelected();
-				}
-			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
@@ -173,35 +171,79 @@ define([
 			this.init();
 		}
 
-		pollForInfo() {
-			IRAnalysisService.getInfo(this.selectedAnalysisId()).then((data) => {
-				var hasPending = false;
-				data.forEach((info) => {
-					const source = this.sources().find(s => s.source.sourceId == info.executionInfo.id.sourceId);
-					if (source) {
-						// if (source.info() == null || source.info().executionInfo.status != info.executionInfo.status)
-							source.info(info);
-						if (constants.isInProgress(info.executionInfo.status))
-							hasPending = true;
-					}
-				});
-
-				if (hasPending) {
-					this.pollTimeout = setTimeout(() => {
-						this.pollForInfo();
-					}, 10000);
-				} else {
-					this.isRunning(false);
+		getExecutionInfo(info) {
+			if (info && info.executionInfo) {
+				const { startTime, executionDuration } = info.executionInfo;
+				const completedTime = startTime + (executionDuration || 0);
+				return {
+					...info.executionInfo,
+					completedTime,
 				}
-			})
-			.catch(() => {
+			} else {
+				return {};
+			}
+		}
+
+		async pollForInfo({silently = false} = {}) {
+			!silently && this.loadingInfo(true);
+			const promises = [];
+
+			try {
+				if (this.selectedAnalysisId()) {
+					const data = await IRAnalysisService.getInfo(this.selectedAnalysisId());
+
+					for (let newInfo of data) {
+						const source = this.sources().find(s => s.source.sourceId === newInfo.executionInfo.id.sourceId);
+						if (source) {
+							const { status: prevStatus, completedTime: prevCompletedTime } = this.getExecutionInfo(source.info());
+							const executionInfo = this.getExecutionInfo(newInfo);
+
+							if (!silently) {
+								source.info(newInfo);
+							}
+							if (executionInfo.status === 'COMPLETE') {
+								if (prevCompletedTime !== executionInfo.completedTime) {
+									let resultsPromise = this.loadResultsSummary(executionInfo.id.analysisId, source, prevStatus !== 'RUNNING' && silently).then(summaryList => {
+										newInfo.summaryList = summaryList;
+										source.info(newInfo);
+									});
+									promises.push(resultsPromise);
+								} else {
+									newInfo.summaryList = source.info().summaryList;
+									source.info(newInfo);
+								}
+							} else {
+								source.info(newInfo);
+							}
+						}
+					}
+				}
+			} catch(e) {
 				this.close();
-			});
+			} finally {
+				this.loadingInfo(false);
+			}
+
+			await Promise.all(promises);
+		}
+
+		async loadResultsSummary(id, source, silently = true) {
+			if (!authAPI.hasSourceAccess(source.source.sourceKey)) {
+				return [];
+			}
+
+			!silently && this.loadingSummary.push(source.source.sourceKey);
+			try {
+				const sourceInfo = await IRAnalysisService.loadResultsSummary(id, source.source.sourceKey);
+				return (sourceInfo && sourceInfo.summaryList) || [];
+			} finally {
+				this.loadingSummary.remove(source.source.sourceKey);
+			}
 		}
 
 		resolveCohortId(cohortId) {
 			var cohortDef = this.cohortDefs().filter(function (def) {
-				return def.id == cohortId;
+				return def.id === cohortId;
 			})[0];
 			return (cohortDef && cohortDef.name) || "Unknown Cohort";
 		}
@@ -224,9 +266,26 @@ define([
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
-				this.pollForInfo();
+				this.startPolling();
 			});
-		};
+		}
+
+		onRouterParamsChanged(params = {}) {
+			const { analysisId } = params;
+			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+				this.onAnalysisSelected();
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
+				this.startPolling();
+			}
+		}
+
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.pollForInfo({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
+		}
 
 		handleConceptSetImport(item) {
 			this.criteriaContext(item);
@@ -236,7 +295,7 @@ define([
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
-			if (result.action == 'add') {
+			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
 				this.activeTab('conceptsets');
@@ -244,17 +303,16 @@ define([
 			this.criteriaContext(null);
 		}
 
-		copy() {
+		async copy() {
 			this.isCopying(true);
 			this.loading(true);
-			IRAnalysisService.copyAnalysis(this.selectedAnalysisId()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.selectedAnalysisId(analysis.id)
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				this.isCopying(false);
-				this.loading(false);
-				document.location = constants.apiPaths.analysis(analysis.id);
-			});
+			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
+			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
+			this.selectedAnalysisId(analysis.id)
+			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.isCopying(false);
+			this.loading(false);
+			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 		}
 
 		close() {
@@ -272,7 +330,7 @@ define([
 				return;
 			}
 			this.close()
-			document.location = constants.apiPaths.analysis();
+			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
 		save() {
@@ -281,7 +339,7 @@ define([
 			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis(analysis.id);
+				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
 				this.isSaving(false);
 				this.loading(false);
 			});
@@ -290,21 +348,22 @@ define([
 		delete() {
 			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			// reset view after save
 			IRAnalysisService.deleteAnalysis(this.selectedAnalysisId()).then(() => {
-				this.selectedAnalysis(null);
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				document.location = constants.apiPaths.analysis();
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis());
 			});
 		}
 
 		removeResult(analysisResult) {
-			IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
-				const source = this.sources().find(s => s.source.sourceId == analysisResult.source.sourceId);
-				source.info(null);
-			});
+			if (confirm(`Do you really want to remove result of ${analysisResult.source.sourceName} ?`)) {
+				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
+					const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
+					source.info(null);
+				});
+			}
 		}
 
 		newAnalysis() {
@@ -325,7 +384,8 @@ define([
 				const tempInfo = {
 					source: sourceItem,
 					executionInfo: {
-						id: {sourceId: sourceItem.source.sourceId}
+						id: {sourceId: sourceItem.source.sourceId},
+						status: constants.status.PENDING,
 					},
 					summaryList: []
 				};
@@ -336,7 +396,6 @@ define([
 			IRAnalysisService.execute(this.selectedAnalysisId(), sourceItem.source.sourceKey)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
-					this.pollForInfo();
 				});
 		}
 
@@ -369,43 +428,32 @@ define([
 			}
 		}
 
-		init() {
+		async init() {
 			this.refreshDefs();
-			sourceAPI.getSources().then((sources) => {
-				var sourceList = [];
-				sources.forEach(function (source) {
-					if (source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "CDM";
-						}).length > 0
-						&& source.daimons.filter(function (daimon) {
-							return daimon.daimonType == "Results";
-						}).length > 0) {
-						sourceList.push({
-							source: source,
-							info: ko.observable()
-						});
-					}
-				});
-
-				// set sources observable, which will show the Generate action dropdown.
-				this.sources(sourceList);
-
+			const sources = await sourceAPI.getSources();
+			const sourceList = [];
+			sources.forEach(source => {
+				if (source.daimons.filter(function (daimon) {
+						return daimon.daimonType === "CDM";
+					}).length > 0
+					&& source.daimons.filter(function (daimon) {
+						return daimon.daimonType === "Results";
+					}).length > 0) {
+					sourceList.push({
+						source: source,
+						info: ko.observable()
+					});
+				}
 			});
-
-			if (this.selectedAnalysisId() == null) {
-				this.newAnalysis();
-			} else if (this.selectedAnalysisId() != (this.selectedAnalysis() && this.selectedAnalysis().id())) {
-				this.onAnalysisSelected();
-			} else {
-				this.pollForInfo();
-			}
+			this.sources(sourceList);
+			!this.selectedAnalysis() && this.newAnalysis();
 		}
 
 		// cleanup
 		dispose() {
-			this.incidenceRateCaption.dispose();
-			this.selectedAnalysisIdSub.dispose();
-			clearTimeout(this.pollTimeout);
+			super.dispose();
+			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
+			PollService.stop(this.pollId);
 		}
 	}
 

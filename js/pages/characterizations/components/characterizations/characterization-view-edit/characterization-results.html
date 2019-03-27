@@ -39,15 +39,19 @@
                                     columns: $data.columns,
                                     buttons: $component.getButtonsConfig(type, $data),
                                     dom: 'Blftipr',
+                                    rowCallback: $component.isRowGreyed,
+                                    order: $data.defaultSort,
                                 }
                             }
                         ">
                             <thead>
                                 <!-- ko if: cohorts.length > 1 -->
                                 <tr>
-                                    <th data-bind="attr: { rowspan: stratified ? 3 : 2 }">Covariate</th>
+                                    <!-- ko foreach: defaultColNames -->
+                                        <th data-bind="attr: { rowspan: $parent.stratified ? 3 : 2 }, text: $data"></th>
+                                    <!-- /ko -->
                                     <!-- ko foreach: cohorts -->
-                                        <th data-bind="css: $component.classes('th-cohort-name'), text: cohortName, attr: {colspan: Array.from($parent.strataNames).length * $parent.perStrataValues.length}"></th>
+                                        <th data-bind="css: $component.classes('th-cohort-name'), text: cohortName, attr: {colspan: Array.from($parent.strataNames).length * $parent.perStrataColNames.length}"></th>
                                     <!-- /ko -->
                                     <!-- ko if: !strataOnly && cohorts.length == 2 -->
                                         <th data-bind="css: $component.classes('th-diff'), attr: { rowspan: stratified ? 3 : 2 }">Std Diff</th>
@@ -56,30 +60,28 @@
                                 <!-- /ko -->
                                 <tr>
                                     <!-- ko if: cohorts.length <= 1 -->
-                                        <th data-bind="attr: {rowspan: stratified ? 2 : 1 }">Covariate</th>
+                                        <!-- ko foreach: defaultColNames -->
+                                            <th data-bind="attr: { rowspan: $parent.stratified ? 2 : 1 }, text: $data"></th>
+                                        <!-- /ko -->
                                     <!-- /ko -->
                                     <!-- ko foreach: cohorts -->
                                         <!-- ko ifnot: $parent.strataOnly -->
-                                            <!-- ko foreach: $parent.perStrataValues -->
+                                            <!-- ko foreach: $parent.perStrataColNames -->
                                                 <th data-bind="css: $component.classes('th-cov-count'), attr: { rowspan: $parents[1].stratified ? 2 : 1 }, text: $data"></th>
                                             <!-- /ko -->
                                         <!-- /ko -->
-                                        <!-- ko foreach: Array.from($parent.strataNames) -->
-                                            <!-- ko ifnot: $data[0] === 0 -->
-                                                <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: $data[1]"></th>
-                                            <!-- /ko -->
+                                        <!-- ko foreach: $component.sortedStrataNames($parent.strataNames) -->
+                                                <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: $data.name"></th>
                                         <!-- /ko -->
                                     <!-- /ko -->
                                 </tr>
                                 <!-- ko if: stratified -->
                                 <tr>
                                     <!-- ko foreach: cohorts -->
-                                        <!-- ko foreach: Array.from($parent.strataNames) -->
-                                            <!-- ko ifnot: $data[0] === 0 -->
-                                                <!-- ko foreach: $parents[1].perStrataValues -->
+                                        <!-- ko foreach: $component.sortedStrataNames($parent.strataNames) -->
+                                                <!-- ko foreach: $parents[1].perStrataColNames -->
                                                     <th data-bind="css: $component.classes('th-cov-count'), text: $data"></th>
                                                 <!-- /ko -->
-                                            <!-- /ko -->
                                         <!-- /ko -->
                                     <!-- /ko -->
                                 </tr>

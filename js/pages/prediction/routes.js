@@ -17,6 +17,7 @@ define(
           atlasState.predictionAnalysis.selectedId(analysisId);
           appModel.currentView('prediction-manager');
           router.setCurrentView('prediction-manager', {
+            id: analysisId, 
             section: section || 'specification',
           });
         });

@@ -52,7 +52,6 @@ define([
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 			this.isExecutionPermitted = this.isExecutionPermitted.bind(this);
 			this.isResultsViewPermitted = this.isResultsViewPermitted.bind(this);
-
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
 			this.isExecutionDesignShown = ko.observable(false);
@@ -60,6 +59,9 @@ define([
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 			this.isExitMessageShown = ko.observable(false);
 			this.exitMessage = ko.observable();
+			this.pollId = null;
+
+			this.design = params.design;
 
 			this.execColumns = [{
 					title: 'Date',
@@ -112,17 +114,19 @@ define([
 
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
+			this.isViewGenerationsPermitted() && this.startPolling();
+		}
 
-			if (this.isViewGenerationsPermitted()) {
-				this.loadData();
-				this.intervalId = PollService.add(() => this.loadData({
-					silently: true
-				}), 10000)
-			}
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.loadData({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		dispose() {
-			PollService.stop(this.intervalId);
+			PollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -132,11 +136,18 @@ define([
 		}
 
 		isExecutionPermitted(sourceKey) {
-			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty();
+			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty() &&
+				this.design().cohorts().length;
 		}
 
 		isResultsViewPermitted(sourceKey) {
 			return PermissionService.isPermittedGetCCGenerationResults(sourceKey);
+		}
+
+		getExecutionGroupStatus(submissions) {
+			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
+				this.ccGenerationStatusOptions.STARTED :
+				this.ccGenerationStatusOptions.COMPLETED;
 		}
 
 		async loadData({
@@ -174,25 +185,35 @@ define([
 
 
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
-					group.status(group.submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
-						this.ccGenerationStatusOptions.STARTED :
-						this.ccGenerationStatusOptions.COMPLETED);
+					group.status(this.getExecutionGroupStatus(group.submissions));
 
 				});
-			}finally {
+			} catch (e) {
+				console.error(e);
+			} finally {
 				this.loading(false);
 			}
 		}
 
-		generate(source, lastestDesign) {
-			if(lastestDesign === this.currentHash()) {
-				if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
-					return false;
+		generate(source, latestDesign) {
+			if(latestDesign === this.currentHash()) {
+				const sg = this.executionGroups().find(g => g.sourceKey === source);
+				if (sg) {
+					const submissions = [...sg.submissions()];
+					if (submissions.length > 0) {
+						submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+						if (submissions[0].status !== this.ccGenerationStatusOptions.FAILED) {
+							if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
+								return false;
+							}
+						}
+					}
 				}
 			}
 
 			this.stopping({...this.stopping(), [source]: false});
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
+			executionGroup.status(this.ccGenerationStatusOptions.PENDING);
 
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => CharacterizationService.runGeneration(this.characterizationId(), source))
@@ -200,7 +221,9 @@ define([
 					jobDetailsService.createJob(data);
 					this.loadData();
 				})
-				.catch(() => {});
+				.catch(() => {
+					executionGroup.status(this.getExecutionGroupStatus(executionGroup.submissions));
+				});
 		}
 
 		cancelGenerate(source) {

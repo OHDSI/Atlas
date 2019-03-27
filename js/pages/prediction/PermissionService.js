@@ -48,5 +48,9 @@ define([
 		static isPermittedViewResults(id) {
 			return AuthAPI.isPermitted(`prediction:generation:${id}:result:get`);
 		}
+
+		static isPermittedImport() {
+			return AuthAPI.isPermitted(`prediction:import:post`);
+		}
 	}
 });

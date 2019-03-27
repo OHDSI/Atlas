@@ -11,9 +11,10 @@
 <!-- ko if: isOpen -->
 <div class="conceptsearch" title="Select Concept..." data-bind="dialog: { isOpen: isOpen, modal: true, width:'80%', height:600, closeText: '' }">
 	<div data-bind="if: ProviderReady()">
-		<div style="text-align: left; padding-top: 5px; padding-bottom: 5px">
+		<div class="search-block">
 			<input placeholder="Search…" data-bind="value: searchText, valueUpdate: 'input', event: { keyup: searchKeyUp }" />
-			<select data-bind="options: $component.DomainOptions, value: SelectedDomain" />
+			<select class="form-input" data-bind="options: $component.DomainOptions, value: SelectedDomain" />
+			<button data-bind="click: search" type="button" class="btn btn-primary btn-sm">Search</button>
 		</div>
 		<table class="stripe compact hover" cellspacing="0" width="100%"
 					 data-bind="dataTable:{

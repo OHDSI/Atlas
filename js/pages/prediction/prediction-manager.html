@@ -9,7 +9,7 @@
           <button class="btn btn-primary" title="Close" data-bind="click: close, enable: !isProcessing()"><i class="fa fa-times"></i></button>
           <!-- ko ifnot: isNewEntity -->
             <button class="btn btn-primary" title="Copy" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
-            <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete && !isProcessing()"><i class="fa fa-trash-o"></i></button>
+            <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
           <!-- /ko -->
         </div>
       </div>
@@ -30,7 +30,7 @@
             componentParams: $component.componentParams,
         },
         {
-            title: 'Executions',
+            title: $component.executionTabTitle,
             key: 'executions',
             componentName: 'prediction-executions',
             componentParams: $component.componentParams,
@@ -44,3 +44,4 @@
     ]">
   </tabs>
 </div>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

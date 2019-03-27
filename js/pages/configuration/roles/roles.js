@@ -36,11 +36,15 @@ define([
         }
         
         selectRole(data) {
-            document.location = '#/role/' + data.id;
+            commonUtils.routeTo('/role/' + data.id);
         }
 
         newRole() {
-            document.location = '#/role/0'
+            commonUtils.routeTo('/role/0');
+        }
+
+        importRoles() {
+            commonUtils.routeTo('/import/roles');
         }
     }
 

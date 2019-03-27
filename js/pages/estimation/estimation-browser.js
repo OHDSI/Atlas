@@ -9,6 +9,7 @@ define([
 	'utils/CommonUtils',
     'utils/DatatableUtils',
 	'services/Estimation',
+	'services/AuthAPI',
 	'faceted-datatable',
 	'components/ac-access-denied',
 	'components/heading',
@@ -23,8 +24,9 @@ define([
 	PermissionService,
 	Page,
 	commonUtils,
-    datatableUtils,
+	datatableUtils,
 	EstimationService,
+	authAPI
 ) {
   class EstimationBrowser extends Page {
 		constructor(params) {
@@ -36,6 +38,9 @@ define([
 
 			this.canReadEstimations = PermissionService.isPermittedList;
 			this.canCreateEstimation = PermissionService.isPermittedCreate;
+
+			this.isAuthenticated = authAPI.isAuthenticated;
+			this.hasAccess = authAPI.isPermittedReadEstimations;
 
 			this.options = {
 				Facets: [

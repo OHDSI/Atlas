@@ -8,6 +8,7 @@ define((require, factory) => {
         require(['./cca-manager'], function () {
           atlasState.estimationAnalysis.selectedId(estimationId);
           router.setCurrentView('cca-manager', {
+            id: estimationId, 
             section: section || 'specification',
           });
         });

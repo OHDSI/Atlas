@@ -6,6 +6,8 @@ define([
 	'services/Vocabulary',
 	'utils/CommonUtils',
 	'atlas-state',
+	'services/AuthAPI',
+	'../PermissionService',
 	'less!./import.less',
 ], function (
 	ko,
@@ -15,6 +17,8 @@ define([
 	vocabularyProvider,
 	commonUtils,
 	sharedState,
+	AuthAPI,
+	PermissionService,
 ) {
 	class Import extends AutoBind(Component) {
 		constructor(params) {
@@ -22,6 +26,10 @@ define([
 			this.model = params.model;
 			this.loading = ko.observable(false);
 			this.error = ko.observable('');
+
+			this.isAuthenticated = AuthAPI.isAuthenticated;
+			this.isPermittedLookupIds = ko.computed(() => PermissionService.isPermittedLookupIds());
+			this.isPermittedLookupCodes = ko.computed(() => PermissionService.isPermittedLookupCodes());
 		}
 
 		showConceptSet() {
@@ -63,21 +71,28 @@ define([
 			this.loading(false);
 			this.showConceptSet();
 		}
-		
-		importConceptIdentifiers() {
-			this.loading(true);
-			this.error('');
-			const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
-			vocabularyProvider.getConceptsById(identifers)
-				.then(({ data: items }) => { this.initConceptSet(items) })
-				.then(() => this.showConceptSet())
-				.catch((er) => {
-					this.error(er);
-				})
-				.finally(() => {					
-					this.loading(false);
-				});
-		}
+
+        importConceptIdentifiers() {
+            this.loading(true);
+            this.error('');
+            const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
+            if (identifers === null) {
+                this.error('Unable to parse Concept Identifiers');
+                this.loading(false);
+            } else {
+                vocabularyProvider.getConceptsById(identifers)
+                    .then(({data: items}) => {
+                        this.initConceptSet(items)
+                    })
+                    .then(() => this.showConceptSet())
+                    .catch((er) => {
+                        this.error(er);
+                    })
+                    .finally(() => {
+                        this.loading(false);
+                    });
+            }
+        }
 
 		importSourcecodes() {
 			this.loading(true);

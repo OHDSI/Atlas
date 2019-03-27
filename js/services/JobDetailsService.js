@@ -17,7 +17,7 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 	}
 
 	function queue(newItem) {
-		var oldItem = sharedState.jobListing().find(j => j.url === newItem.url);
+		var oldItem = sharedState.jobListing().find(j => j.name === newItem.name);
 		if (oldItem != null) {
 			sharedState.jobListing.replace(oldItem, newItem);
 		} else {

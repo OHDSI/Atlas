@@ -7,10 +7,12 @@ define([
 	'appConfig',
 	'../const',
 	'services/Prediction',
-	'clipboard',
+	'../PermissionService',
 	'../inputTypes/TargetOutcome',
 	'../inputTypes/ModelCovarPopTuple',
 	'../inputTypes/FullAnalysis',
+	'utilities/import',
+	'utilities/export',
 ], function (
 	ko, 
 	view, 
@@ -20,7 +22,7 @@ define([
 	config,
 	constants,
 	PredictionService,
-	clipboard,
+	PermissionService,
 	TargetOutcome,
 	ModelCovarPopTuple,
 	FullAnalysis,
@@ -29,6 +31,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.utilityPillMode = ko.observable('download');
+			this.constants = constants;
 			this.options = constants.options;
 			this.loading = params.loading;
 			this.subscriptions = params.subscriptions;
@@ -49,6 +52,10 @@ define([
 			this.modelCovarPopTuple = ko.observableArray();
 			this.loadingMessage = ko.observable();
 			this.isExporting = ko.observable(false);
+			this.exportService = PredictionService.exportPrediction;
+			this.importService = PredictionService.importPrediction;
+			this.isPermittedExport = PermissionService.isPermittedExport;
+			this.isPermittedImport = PermissionService.isPermittedImport;
 
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
 				return (
@@ -178,36 +185,6 @@ define([
 			this.fullAnalysisList.valueHasMutated();
 			this.loadingDownload(false);
 		}
-
-		exportFullSpecification() {
-			this.isExporting(true);
-			PredictionService.exportFullSpecification(this.selectedAnalysisId()).then((analysis) => {
-				this.fullSpecification(commonUtils.syntaxHighlight(ko.toJSON(analysis.data)));
-				this.isExporting(false);
-			}).catch((e) => {
-				console.error("error when exporting: " + e)
-				this.isExporting(false);
-			});
-		}
-
-		copyFullSpecificationToClipboard() {
-			const currentClipboard = new clipboard('#btnCopyFullSpecificationClipboard');
-
-			currentClipboard.on('success', function (e) {
-				console.log('Copied to clipboard');
-				e.clearSelection();
-				$('#copyFullSpecificationToClipboardMessage').fadeIn();
-				setTimeout(function () {
-					$('#copyFullSpecificationToClipboardMessage').fadeOut();
-				}, 1500);
-			});
-
-			currentClipboard.on('error', function (e) {
-				console.log('Error copying to clipboard');
-				console.log(e);
-			});			
-		}
-
 	}
 
 	return commonUtils.build('prediction-utilities', PredictionUtilities, view);

@@ -12,6 +12,7 @@ define(
     };
 
     const paths = {
+        root: '/estimation/cca/',
         ccaAnalysis: id => `#/estimation/cca/${id}`,
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',
@@ -304,9 +305,9 @@ define(
           {
                 title: 'Adjustment<br/>Strategy',
                 render: (s, p, d) => {
-                    if (d.matchOnPs) {
+                    if (d.matchOnPs()) {
                         return d.matchOnPsArgs.maxRatio() + ":1 matching";
-                    } else if (d.stratifyByPs) {
+                    } else if (d.stratifyByPs()) {
                         return "Stratification (stratum: " + d.stratifyByPsArgs.numberOfStrata() + ")";
                     } else {
                         return 'None';

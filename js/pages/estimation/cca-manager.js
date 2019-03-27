@@ -69,7 +69,8 @@ define([
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
             this.isDeleting = ko.observable(false);
-            this.isProcessing = ko.computed(() => {
+			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
+			this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isCopying() || this.isDeleting();
             });
             this.componentParams = ko.observable({
@@ -87,7 +88,7 @@ define([
             });
 
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect();
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -396,6 +397,15 @@ define([
 				}
 			});
 		}
+
+        onRouterParamsChanged({ id, section }) {
+			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
+				if (section !== undefined) {
+					this.selectedTabKey(section);
+				}
+				this.onPageCreated();
+			}
+        }
 
 		addCohortToEstimation(specification, cohort) {
 			cohort = ko.isObservable(cohort) ? ko.utils.unwrapObservable(cohort) : cohort;

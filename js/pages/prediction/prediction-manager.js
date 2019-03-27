@@ -15,6 +15,7 @@ define([
 	'featureextraction/InputTypes/TemporalCovariateSettings',
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
+	'services/AuthAPI',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
 	'featureextraction/components/temporal-covariate-settings-editor',
@@ -42,7 +43,8 @@ define([
 	CovariateSettings,
 	TemporalCovariateSettings,
 	ConceptSet,
-	ConceptSetCrossReference
+	ConceptSetCrossReference,
+	authAPI
 ) {
 	const NOT_FOUND = 'NOT FOUND';
 
@@ -53,6 +55,9 @@ define([
 
 			this.selectTab = this.selectTab.bind(this);
 			this.selectedTabKey = ko.observable(params.routerParams().section);
+
+			this.isAuthenticated = authAPI.isAuthenticated;
+			this.hasAccess = authAPI.isPermittedReadPlps;
 
 			this.options = constants.options;
 			this.config = config;
@@ -71,7 +76,8 @@ define([
 			this.packageName = ko.observable().extend({alphaNumeric: null});
             this.isSaving = ko.observable(false);
             this.isCopying = ko.observable(false);
-            this.isDeleting = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
             this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isCopying() || this.isDeleting();
             });
@@ -113,7 +119,7 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect();
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
 		}
 
@@ -128,6 +134,15 @@ define([
 				this.loading(false);
 			}
 		}
+		
+        onRouterParamsChanged({ id, section }) {
+			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
+				if (section !== undefined) {
+					this.selectedTabKey(section);
+				}
+				this.onPageCreated();
+			}
+        }
 
         selectTab(index, { key }) {
 			this.selectedTabKey(key);

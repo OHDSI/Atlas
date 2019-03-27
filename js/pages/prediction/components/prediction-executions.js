@@ -49,6 +49,7 @@ define([
 			this.predictionStatusGenerationOptions = consts.predictionGenerationStatus;
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
+			this.pollId = null;
 
 			this.execColumns = [
 				{
@@ -84,16 +85,19 @@ define([
 			this.downloading = ko.observableArray([]);
 			this.isResultsDownloading = ko.computed(() => this.downloading().length > 0);
 			this.executionGroups = ko.observableArray([]);
-			if (this.isViewGenerationsPermitted()) {
-				this.loadData();
-				this.intervalId = PollService.add(() => {
-					this.loadData({ silently: true });
-				}, 10000);
-			}
+			this.isViewGenerationsPermitted() && this.startPolling();
+		}
+
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.loadData({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		dispose() {
-			PollService.stop(this.intervalId);
+			PollService.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {
@@ -134,7 +138,7 @@ define([
 		async loadData({silently = false} = {}) {
 			!silently && this.loading(true);
 
-			try{
+			try {
 				const allSources = await SourceService.loadSourceList();
 				const executionList = await PredictionService.listGenerations(this.analysisId());
 
@@ -163,7 +167,9 @@ define([
 						this.predictionStatusGenerationOptions.STARTED :
 						this.predictionStatusGenerationOptions.COMPLETED);
 				});
-			}finally {
+			} catch (e) {
+				console.error(e);
+			} finally {
 				this.loading(false);
 			}
 		}

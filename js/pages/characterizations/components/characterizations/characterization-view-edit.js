@@ -63,12 +63,14 @@ define([
 
             this.selectedTabKey = ko.observable();
             this.areStratasNamesEmpty = ko.observable();
+            this.duplicatedStrataNames = ko.observable([]);
             this.componentParams = ko.observable({
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
+                duplicatedStrataNames: this.duplicatedStrataNames,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -103,7 +105,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect() && !this.areStratasNamesEmpty());
+            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect() && !this.areStratasNamesEmpty() && this.duplicatedStrataNames().length === 0);
         }
 
         isDeletePermittedResolver() {
@@ -134,7 +136,7 @@ define([
 
         async loadDesignData(id) {
 
-        if (this.design() && (this.design().id || 0 === id)) return;
+        if (this.design() && (this.design().id || 0) === id) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }
