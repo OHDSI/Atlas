@@ -121,9 +121,9 @@
 			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
 
 			<div style="display: flex">
-				<div  data-bind="css: { 'inclusion-criteria__block': true, 'inclusion-selected': $component.selectedInclusionRule() }">
+				<div style="position:relative; min-width:220px; overflow-y:auto" data-bind="style: {'min-height': inclusionRuleNavMinHeight()}">
 
-					<div>
+					<div class="inclusion-criteria__block">
 						<div>
 							<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New inclusion criteria</button>
 						</div>
@@ -136,7 +136,7 @@
 										<td style="vertical-align: top;" class="inclusionRules">
 											<div data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria'"></div>
 											<!-- ko if: (description() || '').length > 0 -->
-											<div class="description" data-bind="text: description()"></div>
+											<div class="description" data-bind="text: description(), attr: { title: description() }"></div>
 											<!-- /ko -->
 										</td>
 									</tr>
@@ -147,11 +147,11 @@
 
 				</div>
 
-				<!-- ko if: $component.selectedInclusionRule() -->
 				<div class="inclusion-criteria__rules-block">
+					<!-- ko if: $component.selectedInclusionRule() -->
 					<inclusion-rule-editor params="{IndexRule: expression, InclusionRule: selectedInclusionRule}"></inclusion-rule-editor>
+					<!-- /ko -->
 				</div>
-				<!-- /ko -->
 			</div>
 		</div>
 		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">Limit qualifying events to:
