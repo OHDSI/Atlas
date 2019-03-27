@@ -272,7 +272,9 @@ define([
         .then(() => sourceApi.initSourcesConfig())
         .then(function (appStatus) {
             sharedState.appInitializationStatus(appStatus);
-            return vocabularyProvider.getDomains();
+            if (sharedState.vocabularyUrl()) {
+                vocabularyProvider.getDomains();
+            }
         })
         .then(() => {
           roleService.getList()
