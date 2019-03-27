@@ -1648,6 +1648,11 @@ table.inclusionRules td div.description {
   font-size: 75%;
   font-style: italic;
   white-space: pre-wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 table.inclusionRules td {
