@@ -14,6 +14,10 @@ define(function(require, exports) {
 
     const signInOpened = ko.observable(false);
 
+    function getBearerToken() {
+        return localStorage.bearerToken && localStorage.bearerToken != 'null' && localStorage.bearerToken !== 'undefined' ? localStorage.bearerToken : null;
+	}
+
     var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;
         return result;
@@ -23,12 +27,7 @@ define(function(require, exports) {
         return config.webAPIRoot;
     };
 
-    var token = ko.observable();
-    if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
-        token(localStorage.bearerToken);
-    } else {
-        token(null);
-    }
+    var token = ko.observable(getBearerToken());
 
     var getAuthorizationHeader = function () {
         if (!token()) {
@@ -125,9 +124,12 @@ define(function(require, exports) {
     tokenExpirationDate.subscribe(askLoginOnTokenExpire);
 
     window.addEventListener('storage', function(event) {
-        if (event.storageArea === localStorage && localStorage.bearerToken !== token()) {
-            token(localStorage.bearerToken);
-        };
+        if (event.storageArea === localStorage) {
+            let bearerToken = getBearerToken();
+            if (bearerToken !== token()) {
+                token(bearerToken);
+            }
+        }
     }, false);
 
     token.subscribe(function(newValue) {
