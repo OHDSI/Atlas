@@ -15,7 +15,7 @@ define(function(require, exports) {
     const signInOpened = ko.observable(false);
 
     function getBearerToken() {
-        return localStorage.bearerToken && localStorage.bearerToken != 'null' && localStorage.bearerToken !== 'undefined' ? localStorage.bearerToken : null;
+        return localStorage.bearerToken && localStorage.bearerToken !== 'null' && localStorage.bearerToken !== 'undefined' ? localStorage.bearerToken : null;
 	}
 
     var authProviders = config.authProviders.reduce(function(result, current) {
