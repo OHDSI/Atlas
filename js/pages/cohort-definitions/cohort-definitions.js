@@ -50,7 +50,7 @@ define([
 		newDefinition(data, event) {
 			this.cohortDefinitionId('0');
 		}
-		
+
 	}
 
 	commonUtils.build('cohort-definitions', CohortDefinitions, view);
