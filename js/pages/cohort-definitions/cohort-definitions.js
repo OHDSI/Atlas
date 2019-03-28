@@ -31,7 +31,7 @@ define([
 				document.location = constants.paths.details(id);
 			});
 
-		
+
 			this.newCohortButtonCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition) {
 					if (this.model.currentCohortDefinition() !== undefined) {
