@@ -176,6 +176,7 @@ define([
 
     async refreshSourceCache(source) {
       try {
+        source.refreshState(sourceApi.buttonCheckState.checking);
         const { data } = await sourceApi.refreshSourceCache(source.sourceKey);
         if(data.executionId === undefined) {
           source.refreshState(sourceApi.buttonCheckState.failed);
