@@ -61,8 +61,13 @@ define([
         }
       });
       
-      this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+    }
+
+    async onPageCreated() {
+      await authApi.loadUserInfo();
       sourceApi.initSourcesConfig();
+      super.onPageCreated();
     }
 
     canReadSource(source) {
