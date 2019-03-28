@@ -1,0 +1,57 @@
+<div data-bind="css: classes()">
+  <div data-bind="css: classes('export-btn')">
+    <span id="copyCopyIRSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong>
+    </span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary" itle="Copy to clipboard" id="btnCopyIRSQLClipboard" data-bind="click: parent.copyIRSQLToClipboard" data-clipboard-target="#irSQL">
+      <i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
+  </div>
+  <div id='irSQL'>
+    <tabs params="
+        tabs: [
+          {
+            title: 'Template OHDSI.SQL',
+            componentName: 'ir-export-templateSql',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'MSSQL Server',
+            componentName: 'ir-export-mssql',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'MS APS',
+            componentName: 'ir-export-msaps',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'Oracle',
+            componentName: 'ir-export-oracle',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'PostgreSQL',
+            componentName: 'ir-export-postgresql',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'Amazon Red Shift',
+            componentName: 'ir-export-redshift',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'Impala',
+            componentName: 'ir-export-impala',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'Netezza',
+            componentName: 'ir-export-netezza',
+            componentParams: { parent: parent },
+          },
+          {
+            title: 'BigQuery',
+            componentName: 'ir-export-bigquery',
+            componentParams: { parent: parent },
+          },
+    ]"></tabs>
+  </div>
+</div>

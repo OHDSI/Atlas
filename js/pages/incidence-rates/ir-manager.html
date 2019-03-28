@@ -21,157 +21,35 @@
 				<label>Incidence Rate Analysis name is empty.</label>
 			</div>
 		</div>
-	
-		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'definition' }, click: function() { $component.activeTab('definition') };">
-				<a>Definition</a>
-			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'conceptsets' }, click: function() { $component.activeTab('conceptsets') };">
-				<a>Concept Sets</a>
-			</li>
-
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'generation' }, click: function() { $component.activeTab('generation') };">
-				<a>Generation</a>                
-			</li>
-            
-            <li role="presentation" data-bind="css: { active: $component.activeTab() == 'utilities' }, click: function() { $component.activeTab('utilities') };"><a>Utilities</a>
-            </li>
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'export' }, click: function() { $component.activeTab('export'); $component.showSql(); }">
-				<a>Export</a>
-			</li>
-		</ul>
-		<div class="tab-content">
-			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'definition' }" class="tab-pane">
-				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
-					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
-				</div>
-			</div>
-			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'conceptsets' }" class="tab-pane">
-				<div style="padding-bottom: 10px;" class="pull-right">
-					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
-					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
-				</div>
-				<!-- ko with: selectedAnalysis().expression -->										
-					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
-				<!-- /ko -->			
-			</div>
-			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'export' }" class="tab-pane">
-				<ul class="nav nav-pills">
-					<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.activeTab('sql');}">
-						<a>SQL</a>
-					</li>
-				</ul>
-
-				<div class="tab-content">
-					<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'sql'}" class="tab-pane">
-						<div class="row">
-							<div class="col-md-9" style="text-align: left">
-								<ul class="nav nav-pills">
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'ohdsisql' }, click: function() { $component.exportSqlMode('ohdsisql') };">
-										<a>Template OHDSI.SQL </a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'mssql' }, click: function() { $component.exportSqlMode('mssql') };">
-										<a>MSSQL Server</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'msaps' }, click: function() { $component.exportSqlMode('msaps') };">
-										<a>MS APS</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'oracle' }, click: function() { $component.exportSqlMode('oracle') };">
-										<a>Oracle</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'postgresql' }, click: function() { $component.exportSqlMode('postgresql') };">
-										<a>PostgreSQL</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'redshift' }, click: function() { $component.exportSqlMode('redshift') };">
-										<a>Amazon Red Shift</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'impala' }, click: function() { $component.exportSqlMode('impala') };">
-										<a>Impala</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'netezza' }, click: function() { $component.exportSqlMode('netezza') };">
-										<a>Netezza</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'bigquery' }, click: function() { $component.exportSqlMode('bigquery') };">
-										<a>BigQuery</a>
-									</li>
-								</ul>
-							</div>
-							<div class="col-md-3" style="text-align: right">
-								<span id="copyCopyIRSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary"
-																																																														 title="Copy to clipboard" id="btnCopyIRSQLClipboard" data-bind="click: copyIRSQLToClipboard" data-clipboard-target="#irSQL"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
-							</div>
-						</div>
-						<div class="tab-content">
-							<div role="tabpanel" data-bind="visible: $component.isLoadingSql()">
-								<div class="loading">Loading</div>
-							</div>
-							<div id="irSQL">
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'ohdsisql' && !$component.isLoadingSql()">
-									<pre data-bind="html: $component.templateSql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
-									<pre data-bind="html: $component.generatedSql.mssql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.msaps"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'oracle' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.oracle"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'postgresql' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.postgresql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'redshift' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.redshift"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'impala' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.impala"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'netezza' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.netezza"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'bigquery' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.bigquery"></pre>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'generation' }, 
-																			eventListener: [
-																				{ event: 'click', selector: 'button.removeResult', callback: removeResult},
-																				{ event: 'click', selector: 'button.exportAnalysisCSV', callback: exportAnalysisCSV},
-																			]" class="tab-pane">
-				<loading data-bind="visible: exporting()" params="status: 'Exporting Analysis To CSV'"></loading>
-				<loading data-bind="visible: loadingInfo()" params="status: 'Loading Analysis Generations'"></loading>
-				<div data-bind="hidden: exporting() || loadingInfo()">
-					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources, loadingSummary: loadingSummary"></ir-analysis-results>
-				</div>
-			</div>		
-            <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
-				<div class="paddedWrapper">
-                    <ul class="nav nav-pills">
-                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
-                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
-                    </ul>
-                    <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
-                        <div class="paddedWrapper">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
-                            <div style="text-align: right">
-                                <button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
-                            </div>
-                        </div>
-                    </div>                
-                    <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
-                        <div class="paddedWrapper">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>	
+		<tabs params="
+        tabs: [
+            {
+                title: 'Definition',
+                componentName: 'ir-definition',
+                componentParams: { parent: $component },
+            },
+            {
+                title: 'Concept Sets',
+                componentName: 'ir-conceptsets',
+                componentParams: { parent: $component },
+            },
+            {
+                title: 'Generation',
+                componentName: 'ir-generation',
+                componentParams: { parent: $component },
+            },
+            {
+                title: 'Utilities',
+                componentName: 'ir-utilities',
+                componentParams: { parent: $component },
+            },
+            {
+                title: 'Export',
+                componentName: 'ir-export',
+                componentParams: { parent: $component },
+            },
+    ]"></tabs>
 	</div>
 
 	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">

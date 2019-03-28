@@ -1,0 +1,10 @@
+<div style="padding-bottom: 10px;" class="pull-right">
+  <!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
+  <button type="button" style="display: none" class="btn btn-sm btn-success pull-right"
+    data-bind="click: function() { parent.exportConceptSetsCSV(); }, css: {'disabled': parent.dirtyFlag().isDirty, 'btn-success': !parent.dirtyFlag().isDirty()}">
+    <i class="fa fa-download" aria-hidden="true"> 
+    </i> Export All Concept Sets To CSV</button>
+</div>
+<!-- ko with: parent.selectedAnalysis().expression -->										
+  <concept-set-builder params="conceptSets: ConceptSets, ref: $component.parent.conceptSetEditor"></concept-set-builder>
+<!-- /ko -->	

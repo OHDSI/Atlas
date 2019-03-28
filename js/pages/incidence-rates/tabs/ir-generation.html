@@ -1,0 +1,11 @@
+<div data-bind="css: { active: parent.activeTab() == 'generation' }, 
+                                eventListener: [
+                                  { event: 'click', selector: 'button.removeResult', callback: parent.removeResult},
+                                  { event: 'click', selector: 'button.exportAnalysisCSV', callback: parent.exportAnalysisCSV},
+                                ]" class="tab-pane">
+  <loading data-bind="visible: parent.exporting()" params="status: 'Exporting Analysis To CSV'"></loading>
+  <loading data-bind="visible: parent.loadingInfo()" params="status: 'Loading Analysis Generations'"></loading>
+  <div data-bind="hidden: parent.exporting() || parent.loadingInfo()">
+    <ir-analysis-results params="sources: parent.sources, analysisCohorts: parent.analysisCohorts, execute: parent.execute, cancelExecution: parent.cancelExecution, stoppingSources: parent.stoppingSources, loadingSummary: parent.loadingSummary"></ir-analysis-results>
+  </div>
+</div>	

@@ -1,0 +1,19 @@
+<div class="paddedWrapper">
+    <ul class="nav nav-pills">
+        <li role="presentation" data-bind="css: {active: parent.expressionMode() == 'import' }, click: function() {parent.expressionMode('import') };"><a>Import</a></li>
+        <li role="presentation" data-bind="css: {active: parent.expressionMode() == 'export' }, click: function() {parent.expressionMode('export') };"><a>Export</a></li>
+    </ul>
+    <div role="tabpanel" data-bind="visible: parent.expressionMode() == 'import'" class="tab-pane">
+        <div class="paddedWrapper">
+            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: parent.importJSON"></textarea>
+            <div style="text-align: right">
+                <button class="btn btn-sm btn-primary" data-bind="click: parent.import">Import</button>
+            </div>
+        </div>
+    </div>                
+    <div role="tabpanel" data-bind="visible: parent.expressionMode() == 'export'" class="tab-pane">
+        <div class="paddedWrapper">
+            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: parent.expressionJSON"></textarea>
+        </div>
+    </div>
+</div>
