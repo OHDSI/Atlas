@@ -848,16 +848,12 @@ define(
 						console.warn('Roles are not updated');
 						return Promise.resolve();
 					}
-					if (this.roles() && this.roles().length > 0) {
-						console.info('Roles updated');
-						return Promise.resolve();
-					} else {
-						return roleService.getList()
-							.then((roles) => {
-								console.info('Roles updated');
-								this.roles(roles);
-							});
-					}
+					
+					return roleService.getList()
+						.then((roles) => {
+							console.info('Roles updated');
+							this.roles(roles);
+						});
 				}
 			}
 	
