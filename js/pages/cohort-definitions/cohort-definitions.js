@@ -6,7 +6,6 @@ define([
 	'pages/Page',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
-	'atlas-state',
 	'databindings',
 	'faceted-datatable',
 	'components/heading',
@@ -18,7 +17,6 @@ define([
 	Page,
 	commonUtils,
 	constants,
-	sharedState,
 ) {
 	class CohortDefinitions extends Page {
 		constructor(params) {
@@ -28,12 +26,12 @@ define([
 			this.cohortDefinitionId.extend({
 				notify: 'always'
 			});
-		
+
 			this.cohortDefinitionId.subscribe((id) => {
 				document.location = constants.paths.details(id);
 			});
-		
-		
+
+
 			this.newCohortButtonCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition) {
 					if (this.model.currentCohortDefinition() !== undefined) {
@@ -43,10 +41,10 @@ define([
 					}
 				}
 			});
-		
+
 			this.isAuthenticated 	= authApi.isAuthenticated;
 			this.canReadCohorts 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled);
-			this.canCreateCohort 	= ko.pureComputed(() => (sharedState.vocabularyUrl() && (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled));
+			this.canCreateCohort 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled);
 		}
 
 		newDefinition(data, event) {
