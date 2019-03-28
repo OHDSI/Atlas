@@ -11,9 +11,12 @@ define([
 		checkPermission() {
 			if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
 				return authApi.refreshToken();
-			} else {
+			} else if (authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP) {
+				return authApi.loadUserInfo();
+			}
+			else {
 				return new Promise(resolve => resolve());
-			}      
+			}
 		}
 
 		constructor(handler) {
