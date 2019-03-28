@@ -49,6 +49,7 @@
 						<th>Record Counts (RC / DRC)</th>
 						<th>Incidence</th>
 						<th data-bind="if: $component.canCheckConnection($data)">Check connection</th>
+                        <th>Refresh cache</th>
 					</thead>
 					<tbody data-bind="foreach:$component.sources()">
 						<tr>
@@ -89,6 +90,12 @@
 									check
 								</button>
 							</td>
+                            <td data-bind="if: $component.canRefreshSourceCache($data)">
+                                <button data-bind="css: $component.getRefreshCacheButtonStyles($data).buttonClass, click: function(){$component.refreshSourceCache($data);}" class="connection-check-button btn btn-sm">
+                                    <i data-bind="css : $component.getRefreshCacheButtonStyles($data).iconClass" class="fa"></i>
+                                    refresh
+                                </button>
+                            </td>
 						</tr>
 					</tbody>
 				</table>
