@@ -6,10 +6,11 @@
 
     <div data-bind="visible:$component.selectedSource().url != null,
 								eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: selectRepositoryConceptSet}]">
-        <!-- ko if: loading -->
-        Loading...
-        <!-- /ko -->
-        <div data-bind="visible: !loading()">
+        <!-- ko if:  loading() || isProcessing() -->
+		<loading></loading>
+		<!-- /ko -->
+
+        <div data-bind="visible: !loading() && !isProcessing()">
             <table class="stripe compact hover" cellspacing="0" width="100%" data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
 				data: repositoryConceptSets(),
 				options: {

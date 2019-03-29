@@ -4,6 +4,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 
 		function defaultRepositoryConceptSetSelected(conceptSet) {
 			// Default functionality
+			self.isProcessing(true);
 			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
 					.url)
 				.then((result) => {
@@ -26,6 +27,9 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 						action: 'load',
 						status: 'Success'
 					});
+					setTimeout(() => {
+						self.isProcessing(false);
+					}, 1000);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -56,6 +60,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 
 		self.loading = ko.observable(false);
 		self.repositoryConceptSets = ko.observableArray();
+		self.isProcessing = ko.observable(false);
 
 		self.sources = [];
 		self.sources.push(appConfig.api);
@@ -85,7 +90,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 		// datatable callbacks:
 
 		self.selectRepositoryConceptSet = function (data, context, event) {
-			self.onRespositoryConceptSetSelected(data, self.selectedSource(), event);
+			!self.isProcessing() && self.onRespositoryConceptSetSelected(data, self.selectedSource(), event);
 		}
 
 		self.addConceptSet = function () {
