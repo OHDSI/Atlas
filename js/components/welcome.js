@@ -44,7 +44,7 @@ define([
             if (self.errorMsg())
                 return self.errorMsg();
             if (self.isLoggedIn()) {
-            	if (self.expiration) {
+				if (self.expiration) {
 					return "Logged in as '" + self.login() + "' (exp: " + self.expiration() + ")";
 				} else {
 					return "Logged in as '" + self.login() + "'";
