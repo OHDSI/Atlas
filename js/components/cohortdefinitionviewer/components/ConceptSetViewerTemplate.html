@@ -2,7 +2,13 @@
 	<table class="conceptsetviewer table table-striped" data-bind="
 		dataTable:{
 			data: $component.data,
-			options: {columns: $component.columns}
+			options: {
+			    columns: $component.columns,
+			    paging: !$component.showAllItems,
+			    ordering: !$component.showAllItems,
+			    info: !$component.showAllItems,
+			    searching: !$component.showAllItems
+			}
 		}
 	"/>
 </div>

@@ -50,6 +50,7 @@ define([
 					className: this.classes('col-mapped')
 				}
 			];
+            this.showAllItems = params.showAllItems ? params.showAllItems : false;
 		}
 	}
 	
