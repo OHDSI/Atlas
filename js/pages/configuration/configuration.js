@@ -65,7 +65,6 @@ define([
     }
 
     async onPageCreated() {
-      await authApi.loadUserInfo();
       sourceApi.initSourcesConfig();
       super.onPageCreated();
     }
