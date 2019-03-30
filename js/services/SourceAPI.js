@@ -94,9 +94,9 @@ define(function (require, exports) {
     sharedState.sources([]);
     var serviceCacheKey = getCacheKey();
     var sourceList = [];
-    var evidencePriority = 0;
-    var vocabularyPriority = 0;
-    var densityPriority = 0;
+    var evidencePriority = 1;
+    var vocabularyPriority = 1;
+    var densityPriority = 1;
 
     $.each(sources, function (sourceIndex, source) {
       source.hasVocabulary = false;
