@@ -53,7 +53,7 @@ define([
         return {
           ...lodash.omit(value, ['tableQualifier']),
           tableQualifier: ko.observable(value.tableQualifier),
-          enabled: ko.observable(true),
+          enabled: ko.observable(value.priority > 0),
       };
       });
       var diff = lodash.difference(defaultKeys, keys).map(function(key){
@@ -262,6 +262,9 @@ define([
         username: this.selectedSource().username() || null,
         password: this.selectedSource().password() || null,
         daimons: ko.toJS(this.selectedSource().daimons()).filter(function(d) { return d.enabled; }).map(function(d) {
+          if(d.priority == 0) {
+            d.priority = 1;
+          }
           return lodash.omit(d, ['enabled']);
         }),
         keytabName: this.selectedSource().keytabName(),
