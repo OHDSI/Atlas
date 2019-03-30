@@ -64,6 +64,11 @@ define([
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
     }
 
+    async onPageCreated() {
+      sourceApi.initSourcesConfig();
+      super.onPageCreated();
+    }
+
     canReadSource(source) {
 			if (!config.userAuthenticationEnabled) {
 				return false;

@@ -108,7 +108,7 @@ define(function (require, exports) {
       source.evidenceUrl = '';
       source.resultsUrl = '';
       source.error = '';
-      source.version = ko.observable('unknown');
+      source.version = ko.observable();
       source.dialect = ko.observable();
       source.connectionCheck = ko.observable(connectionCheckState.unknown);
       source.initialized = true;
