@@ -27,6 +27,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 						action: 'load',
 						status: 'Success'
 					});
+					// Waiting for modal's amination to end
 					setTimeout(() => {
 						self.isProcessing(false);
 					}, 1000);
