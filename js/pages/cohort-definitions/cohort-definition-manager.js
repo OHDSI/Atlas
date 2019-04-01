@@ -1220,7 +1220,41 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			copyTextViewToClipboard () {
-				this.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage');
+                let columns = [
+                    {
+                        title: 'Concept Id',
+                        data: 'CONCEPT_ID'
+                    },
+                    {
+                        title: 'Concept Name',
+                        data: 'CONCEPT_NAME'
+                    },
+                    {
+                        title: 'Domain',
+                        data: 'DOMAIN_ID'
+                    },
+                    {
+                        title: 'Vocabulary',
+                        data: 'VOCABULARY_ID'
+                    }
+                ];
+                let setsText = '';
+                this.sortedConceptSets().forEach((set) => {
+                    setsText += '\n' + set.name() + '\n';
+                    columns.forEach((c) => {
+                        setsText += c.title + ' ';
+                    });
+                    setsText += 'Excluded Descendants Mapped' + '\n';
+                    set.expression.items().forEach((item) => {
+                        columns.forEach((c) => {
+                            setsText += item.concept[c.data] + ' ';
+                        });
+                        setsText += (item.isExcluded() ? 'YES' : 'NO') + ' ';
+                        setsText += (item.includeDescendants() ? 'YES' : 'NO') + ' ';
+                        setsText += (item.includeMapped() ? 'YES' : 'NO') + ' \n';
+                    });
+                });
+                this.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage', setsText);
 			}
 
 			copyCohortExpressionJSONToClipboard () {
