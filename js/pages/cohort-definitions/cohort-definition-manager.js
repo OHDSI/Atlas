@@ -1219,7 +1219,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
 			}
 
-			copyTextViewToClipboard () {
+            copyTextViewToClipboard() {
                 let columns = [
                     {
                         title: 'Concept Id',
@@ -1255,7 +1255,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
                     });
                 });
                 this.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage', setsText);
-			}
+            }
 
 			copyCohortExpressionJSONToClipboard () {
 				this.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyCohortExpressionJSONMessage');
