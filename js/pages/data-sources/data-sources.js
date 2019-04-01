@@ -104,9 +104,9 @@ define([
 			];
 
 			this.model = params.model;
-			this.sources = sharedState.sources().filter(function (s) {
-				return s.hasResults && s.hasVocabulary;
-			});
+			this.sources = ko.computed(() => sharedState.sources().filter(function (s) {
+                return s.hasResults && s.hasVocabulary;
+            }));
 
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
