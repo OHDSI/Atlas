@@ -237,14 +237,14 @@
 								<br/>
 								<div class="heading">Appendix 1: Concept Set Definitions</div>
 								<br/>
-						    </div>
-						    <!-- ko foreach: sortedConceptSets -->
-						    <div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
-						    <div style="padding-left:20px">
-						        <conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
-						        <br/>
-						    </div>
-						    <!-- /ko -->
+							    </div>
+							    <!-- ko foreach: sortedConceptSets -->
+							    <div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+							    <div style="padding-left:20px">
+								<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+								<br/>
+							    </div>
+							    <!-- /ko -->
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'cartoon'}" class="tab-pane">
