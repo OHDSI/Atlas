@@ -51,6 +51,7 @@ define(['knockout',
 		};
 
 		self.attritionBarTooltip = function (index) {
+			let attritionStat = self.attritionStats[index];
 			return 'Rule ' +  attritionStat.name + ': ' + attritionStat.countSatisfying.toLocaleString()
 				+ ', ' + this.formatPercent(attritionStat.percentSatisfying);
 		};
