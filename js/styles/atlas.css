@@ -449,6 +449,10 @@ table.datatable thead th {
   padding: 4px 5px !important;
 }
 
+div.dt-button-collection {
+  width: max-content !important;
+}
+
 .asset-heading .fa-shopping-cart, td .fa-shopping-cart {
   color: #ccc;
   cursor: pointer;
@@ -494,6 +498,14 @@ span.classification {
   color: #fff;
   background-color: #a335ee;
   padding: 5px;
+}
+
+a.classification {
+  color: #a335ee;
+}
+
+a.non-standard {
+  color: #a71a19;
 }
 
 td.invalid {
@@ -1640,6 +1652,11 @@ table.inclusionRules td div.description {
   font-size: 75%;
   font-style: italic;
   white-space: pre-wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 table.inclusionRules td {

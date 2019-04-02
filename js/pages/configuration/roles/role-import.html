@@ -1,0 +1,41 @@
+<heading-title params="name: 'Import roles', icon: 'users', theme: 'dark'"></heading-title>
+
+<div data-bind="css: classes(), if: isAuthenticated() && hasAccess()">
+  <div data-bind="css: classes('source')">
+    <div data-bind="css: classes('json-header-wrapper')">
+      <heading-title params="name: 'Roles definition JSON'"></heading-title>
+      <button class="btn btn-success" data-bind="click: doImport, enable: isJSONValid">Import</button>
+    </div>
+    <textarea data-bind="textInput: json"></textarea>
+    <div data-bind="if: isProcessing">
+      <heading-title params="name: 'Progress'"></heading-title>
+      <div data-bind="css: classes(`results${processed() === roles().length ? '_ok' : ''}`)">
+        Created <span data-bind="text: processed"></span> of <span data-bind="text: roles().length"></span> roles.
+      </div>
+    </div>
+  </div>
+  <div data-bind="css: classes('result')">
+    <heading-title params="name: 'Preview'"></heading-title>
+      <!-- ko ifnot: isJSONValid -->
+        <div data-bind="css: classes('validation-errors'), text: validationErrors"></div>
+      <!-- /ko -->
+      <!-- ko if: roles() && isJSONValid() -->
+        <table data-bind="dataTable: {
+          data: roles(),
+          options: {
+            columns: [
+              { data: 'role', title: 'Role name' },
+              { data: 'usersList', title: 'Included users' },
+              { data: 'permissionsList', title: 'Permissions' }
+            ],
+          },
+        }">
+        </table>
+      <!-- /ko -->
+      <!-- ko if: !roles() && isJSONValid() -->
+        <empty-state params="message: 'Insert JSON containig roles definitions in the textarea'"></empty-state>
+      <!-- /ko -->
+  </div>
+</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

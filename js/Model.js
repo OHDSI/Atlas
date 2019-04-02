@@ -425,7 +425,7 @@ define(
 
 			renderCheckbox(field) {
 				if (this.canEditCurrentConceptSet()) {
-					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); $root.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
+					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 				} else {
 					return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
 				}
@@ -850,16 +850,12 @@ define(
 						console.warn('Roles are not updated');
 						return Promise.resolve();
 					}
-					if (this.roles() && this.roles().length > 0) {
-						console.info('Roles updated');
-						return Promise.resolve();
-					} else {
-						return roleService.getList()
-							.then((roles) => {
-								console.info('Roles updated');
-								this.roles(roles);
-							});
-					}
+					
+					return roleService.getList()
+						.then((roles) => {
+							console.info('Roles updated');
+							this.roles(roles);
+						});
 				}
 			}
 	

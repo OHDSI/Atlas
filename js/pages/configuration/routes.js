@@ -28,7 +28,9 @@ define(
           appModel.activePage(this.title);
           require(['./roles/role-details'], function () {
             appModel.currentRoleId(id);
-            router.setCurrentView('role-details');
+            router.setCurrentView('role-details', {
+              roleId: id,
+            });
           });
         }),
         'import' : new AuthorizedRoute(() => {
@@ -43,6 +45,12 @@ define(
           appModel.activePage(this.title);
           require(['./users-import/users-import'], function() {
             router.setCurrentView('users-import');
+          });
+        }),
+        'import/roles': new AuthorizedRoute(() => {
+          appModel.activePage(this.title);
+          require(['./roles/role-import'], function() {
+            router.setCurrentView('role-import');
           });
         }),
         '/source/:id': new AuthorizedRoute((id) => {

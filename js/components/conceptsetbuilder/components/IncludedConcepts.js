@@ -3,12 +3,14 @@ define([
 	'knockout',
 	'text!./IncludedConcepts.html',
 	'services/VocabularyProvider',
+	'utils/CommonUtils',
 	'faceted-datatable'
 ], function (
 		$,
 		ko,
 		template,
-		VocabularyAPI) {
+		VocabularyAPI,
+		commonUtils) {
 
 	function IncludedConcepts(params) {
 
@@ -107,10 +109,7 @@ define([
 			{
 				title: 'Name',
 				data: 'CONCEPT_NAME',
-				render: function (s, p, d) {
-					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-					return '<span class="' + valid + '">' + d.CONCEPT_NAME + '</span>';
-				}
+				render: commonUtils.renderLink,
 			},
 			{
 				title: 'Class',

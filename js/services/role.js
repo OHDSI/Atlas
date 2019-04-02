@@ -43,7 +43,7 @@ define(function(require, exports) {
     }
 
     static update(role) {
-      return httpService.doPut(constants.apiPaths.role(), role)
+      return httpService.doPut(constants.apiPaths.role() + role.id, role)
         .then(({ data }) => data);
     }
 

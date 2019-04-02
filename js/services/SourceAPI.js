@@ -54,7 +54,7 @@ define(function (require, exports) {
     });
   }
 
-  const connectionCheckState = {
+  const buttonCheckState = {
     unknown: 'unknown',
     success: 'success',
     checking: 'checking',
@@ -110,7 +110,8 @@ define(function (require, exports) {
       source.error = '';
       source.version = ko.observable('unknown');
       source.dialect = ko.observable();
-      source.connectionCheck = ko.observable(connectionCheckState.unknown);
+      source.connectionCheck = ko.observable(buttonCheckState.unknown);
+      source.refreshState = ko.observable(buttonCheckState.unknown);
       source.initialized = true;
       for (var d = 0; d < source.daimons.length; d++) {
         var daimon = source.daimons[d];
@@ -193,6 +194,10 @@ define(function (require, exports) {
     return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
   }
 
+  function refreshSourceCache(sourceKey) {
+    return httpService.doGet(config.webAPIRoot + 'cdmresults/' + sourceKey + '/refreshCache');
+  }
+
   function updateSourceDaimonPriority(sourceKey, daimonType) {
     return httpService.doPost(config.api.url + 'source/' + sourceKey + '/daimons/' + daimonType + '/set-priority');
   }
@@ -205,7 +210,8 @@ define(function (require, exports) {
     initSourcesConfig: initSourcesConfig,
     deleteSource: deleteSource,
     checkSourceConnection: checkSourceConnection,
-    connectionCheckState: connectionCheckState,
+    refreshSourceCache: refreshSourceCache,
+    buttonCheckState: buttonCheckState,
     setSharedStateSources: setSharedStateSources,
     updateSourceDaimonPriority,
 	};

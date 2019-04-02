@@ -5,7 +5,6 @@ define(
   ],
   (
     authApi,
-    FileSaver
   ) => {
     class FileService {
       // jQuery won't allow to set responseType other than 'text'
@@ -29,6 +28,11 @@ define(
         });
 
         return promise;
+      }
+
+      saveAsJson(data) {
+        const blob = new Blob([JSON.stringify(data)], {type: "text/json;charset=utf-8"});
+        saveAs(blob, 'data.json');
       }
     }
 

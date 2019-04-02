@@ -48,10 +48,7 @@ define([
         data: 'CONCEPT_CODE'
       }, {
         data: 'CONCEPT_NAME',
-        render: function (s, p, d) {
-          var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-          return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-        }
+        render: commonUtils.renderLink,
       }, {
         data: 'CONCEPT_CLASS_ID'
       }, {

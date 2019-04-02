@@ -136,6 +136,8 @@ define([
 					const hasOriginalRender = typeof originalRender === 'function';
 					const hasDataAccessor = typeof originalDataAccessor === 'function';
 					
+					if (binding.options.xssSafe || column.xssSafe) return column; // disable XSS filtering if column is marked 'safe'
+					
 					return Object.assign({}, column, {
 						data: hasDataAccessor
 							? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
@@ -162,6 +164,14 @@ define([
 						getSelectedData: function() { return _getSelectedData(element);}
 					});
 				}
+				
+				// setup dispose callback:
+				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+					// This will be called when the element is removed by Knockout or
+					// if some other part of your code calls ko.removeNode(element)
+					$(element).DataTable().destroy(true);
+					$(element).empty();
+				});				
 			}
 			
 			return {
@@ -196,7 +206,11 @@ define([
 			if (data.length > 0)
 				table.rows.add(data);
 			
-			table.draw();
+			// drawing may access observables, which updating we do not want to trigger a redraw to the table
+			// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
+			ko.ignoreDependencies(table.draw);
 		}
+		
+		
 	};
 });
