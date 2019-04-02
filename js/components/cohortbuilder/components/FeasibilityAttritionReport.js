@@ -48,7 +48,13 @@ define(['knockout',
 		
 		self.formatPercent = function (value) {
 			return (100.0 * value).toFixed(2) + '%';	
-		}
+		};
+
+		self.attritionBarTooltip = function (index) {
+            let attritionStat = self.attritionStats[index];
+            return 'Rule ' +  attritionStat.name + ': ' + attritionStat.countSatisfying.toLocaleString()
+				+ ', ' + this.formatPercent(attritionStat.percentSatisfying);
+        };
 		
 		self.color = d3.scaleThreshold()
 				.domain([0.1, 0.25, 0.5, 0.75])

@@ -61,7 +61,11 @@
 				<td style="padding-right: 25px;"><span data-bind="text:$component.formatPercent(pctDiff)"></span>
 				</td>
 				<td style="border-left: solid 1px #eee;"></td>
-				<td align="middle" style="padding-right: 25px"><div class="attritionbar" data-bind="style: {width: $component.formatPercent(percentSatisfying), backgroundColor: $component.color(percentSatisfying)}"></div></td>
+				<td align="middle" style="padding-right: 25px">
+					<div class="attritionbar" data-bind="style: {width: $component.formatPercent(percentSatisfying), backgroundColor: $component.color(percentSatisfying)},
+					tooltip: $component.attritionBarTooltip($index())">
+				</div>
+				</td>
 			</tr>
 		</tbody>
 	</table>
