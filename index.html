@@ -7,15 +7,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
 		<meta name="author" content="">
-		
+
 		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 		<link rel="stylesheet" href="js/styles/splash.css" />
 		<link rel="stylesheet" href="js/styles/browserWarning.css" />
-		
+
 		<title data-bind="text: pageTitle">ATLAS</title>
 		<script src="node_modules/bowser/bundled.js"></script>
 	</head>
-	
+
 	<body class="app">
 	<div id="b-alarm" style="display: none" class="browser-alarm">
 		<div class="browser-alarm__warning-text">
@@ -122,13 +122,19 @@
 		<terms-and-conditions params="model: $data"></terms-and-conditions>
 	<!-- /ko -->
 
-	<!-- non-bundled mode -->	
+	<script>
+		// define waitSeconds above require script tag
+		// to override the default, until main.js loads
+		//see https://github.com/yeoman/yeoman/issues/1051
+		window.require = { waitSeconds: 0 };
+	</script>
+	<!-- non-bundled mode -->
 	<script data-main="js/main" src="js/require.js"></script>
 
-	<!-- bundled mode -->	
+	<!-- bundled mode -->
 	<!-- <script data-main="js/assets/bundle/bundle" src="js/require.js"></script>-->
 	<script src="js/utils/BrowserDetection.js"></script>
-		
+
 </body>
 
 </html>
