@@ -1,5 +1,6 @@
 const settingsObject = {
 	baseUrl: 'js',
+	waitSeconds: 0, // this will be overridden in the compiled file
 	config: {
 		text: {
 			useXhr: function (url, protocol, hostname, port) {

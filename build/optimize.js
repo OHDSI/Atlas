@@ -25,20 +25,15 @@ const settings = {
 	name: 'main',
 	out: bundleName,
 	onBuildRead(moduleName, path, content) {
-		return babel.transform(
-      content, {
+		return babel.transform(content, {
 				plugins: [ "@babel/plugin-proposal-object-rest-spread" ],
 				presets: [ "@babel/preset-env" ],
 			}
-    ).code;
+		).code;
   },
 	findNestedDependencies: true,
-	generateSourceMaps: true,
-	uglify2: {
-		output: {
-			beautify: false
-		}
-	}
+	generateSourceMaps: false,
+	optimize: "none",
 };
 
 r.optimize(settings);
