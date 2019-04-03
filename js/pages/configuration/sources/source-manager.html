@@ -116,6 +116,18 @@
 												</div>
 												</div>
 											</div>
+											<div data-bind="visible: fieldsVisibility.bigQueryAuthSettings">
+												<div class="source-row">
+													<div data-bind="css: classes({element: 'auth-title', extra: 'control-group'})">
+														<label>Service account key file (OAuthPvtKeyPath)</label>
+													</div>
+													<div data-bind="css: classes('keytab')">
+														<input type="file" name="keytabFile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
+														<span data-bind="text: selectedSource().keytabName, hidden: fieldsVisibility.bqFileInput()"></span>
+														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeytab">Remove</button>
+													</div>
+												</div>
+											</div>
 											<div class="panel panel-primary">
 													<div class="panel-heading">Source daimons</div>
 													<div class="panel-body">

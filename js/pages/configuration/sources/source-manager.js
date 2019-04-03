@@ -189,14 +189,18 @@ define([
       this.init();
 
       this.fieldsVisibility = {
-        username: ko.computed(() => !this.isImpalaDS() || this.isKrbAuth()),
-        password: ko.computed(() => !this.isImpalaDS()),
+        username: ko.computed(() => !this.supportsKeytabAuth() || this.isKrbAuth()),
+        password: ko.computed(() => !this.supportsKeytabAuth()),
         krbAuthSettings: this.isKrbAuth,
         showKeytab: ko.computed(() => {
           return this.isKrbAuth() && this.selectedSource().krbAuthMethod() === 'keytab';
         }),
         krbFileInput: ko.computed(() => {
           return this.isKrbAuth() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
+        }),
+        bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
+        bqFileInput: ko.computed(() => {
+          return this.isBigQueryDS() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
         }),
         // warnings
         hostWarning: ko.computed(() => {
@@ -228,8 +232,16 @@ define([
       this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
     }
 
+    supportsKeytabAuth() {
+      return this.isImpalaDS() || this.isBigQueryDS();
+    }
+
     isImpalaDS() {
       return this.selectedSource() && this.selectedSource().dialect() === 'impala';
+    }
+
+    isBigQueryDS() {
+      return this.selectedSource() && this.selectedSource().dialect() === 'bigquery';
     }
 
     isNonEmptyConnectionString() {
