@@ -53,7 +53,7 @@ define([
         return {
           ...lodash.omit(value, ['tableQualifier']),
           tableQualifier: ko.observable(value.tableQualifier),
-          enabled: ko.observable(value.priority > 0),
+          enabled: ko.observable(true),
       };
       });
       var diff = lodash.difference(defaultKeys, keys).map(function(key){
