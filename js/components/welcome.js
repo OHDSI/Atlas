@@ -20,6 +20,7 @@ define([
         const bemHelper = new BemHelper(componentName);
 		this.classes = bemHelper.run.bind(bemHelper);
         self.token = authApi.token;
+        self.loadUserInfo = authApi.loadUserInfo;
         self.setAuthParams = authApi.setAuthParams;
         self.resetAuthParams = authApi.resetAuthParams;
         self.serviceUrl = appConfig.webAPIRoot;
@@ -61,11 +62,12 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
-            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER)).then(() => {
+            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
+            self.loadUserInfo().then(() => {
                 self.errorMsg(null);
                 self.isBadCredentials(null);
                 self.isInProgress(false);
-            });
+            })
         };
 
         self.onLoginFailed = function(jqXHR, defaultMessage) {
