@@ -348,6 +348,7 @@ define(
 					}
 				});
 				this.currentConceptSetMode.subscribe(this.onCurrentConceptSetModeChanged);
+
 				/*
 					probably unreachable code
 					
@@ -382,8 +383,9 @@ define(
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
 			resolveConceptSetExpression(resolveAgainstServer = true) {
-        this.includedConcepts.removeAll();
-        this.includedSourcecodes.removeAll();
+        		this.includedConcepts.removeAll();
+				this.includedSourcecodes.removeAll();
+				this.conceptSetInclusionIdentifiers.removeAll();
 				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
 				var highlightedJson = this.syntaxHighlight(conceptSetExpression);
 				this.currentConceptSetExpressionJson(highlightedJson);
@@ -416,7 +418,7 @@ define(
 				return resolvingPromise;
 			}
 
-			handleVocabularyDataSourceFailure(message = 'An error occured') {
+			handleVocabularyDataSourceFailure(message = 'An error occurred') {
 				alert(`${message}. Check vocabulary data source`);
 				document.location = '#/configure';
 			}
