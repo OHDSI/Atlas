@@ -23,6 +23,7 @@ define(function (require, exports, module) {
 		
 		self.Occurrence = new Occurrence(data.Occurrence);
 		self.RestrictVisit = ko.observable(data.RestrictVisit || false);
+		self.IgnoreObservationPeriod = ko.observable(data.IgnoreObservationPeriod || false);
 	}
 	
 	module.exports = AdditionalCriteria;
