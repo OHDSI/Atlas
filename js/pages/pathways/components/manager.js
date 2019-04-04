@@ -45,7 +45,7 @@ define([
 			this.isNameCorrect = ko.computed(() => {
 				return this.design() && this.design().name();
 			});
-			
+
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
@@ -55,7 +55,7 @@ define([
 			this.selectedTabKey = ko.observable("design");
 			this.componentParams = {
 				design: this.design,
-				analysisId: this.analysisId,
+				pathwayAnalysisId: this.analysisId,
 				executionId: this.executionId,
 			};
 			this.pathwayCaption = ko.computed(() => {
@@ -72,9 +72,9 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({analysisId, section, subId}) {
-			if (analysisId !== undefined) {
-				this.analysisId(parseInt(analysisId));
+		onRouterParamsChanged({ pathwayAnalysisId, section, subId }) {
+			if (pathwayAnalysisId !== undefined) {
+				this.analysisId(parseInt(pathwayAnalysisId));
 				this.load(this.analysisId() || 0);
 			}
 			this.setupSection(section);
@@ -84,17 +84,17 @@ define([
 		selectTab(index, { key }) {
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams.analysisId(), key));
 		}
-		
+
 		setupDesign(design) {
 			this.design(design);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
 		}
-		
+
 		setupSection(section) {
 				const tabKey = section === 'results' ? 'executions' : section;
 				this.selectedTabKey(tabKey || 'design');
 		}
-		
+
 		isEditPermittedResolver() {
 				return ko.computed(
 						() => (this.analysisId() ? PermissionService.isPermittedUpdate(this.analysisId()) : PermissionService.isPermittedCreate())
@@ -121,10 +121,10 @@ define([
 
 		async load(id) {
 			if (this.design() && (this.design().id === id || 0 == id)) return; // this design is already loaded.
-			
+
 			if(this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?"))
 				return;
-			
+
 			if (id < 1) {
 				this.setupDesign(new PathwayAnalysis());
 			} else {
@@ -133,7 +133,7 @@ define([
 				this.loading(false);
 			}
 		}
-		
+
 		async save() {
 			this.isSaving(true);
 			if (!this.design().id) {
@@ -174,7 +174,7 @@ define([
 			}
 			this.design(null);
 			this.dirtyFlag().reset();
-			
+
 			commonUtils.routeTo('/pathways');
 		}
 

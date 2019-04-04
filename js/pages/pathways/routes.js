@@ -11,7 +11,7 @@ define((require, factory) => {
 			appModel.activePage(this.title);
 			require(['./components/manager'], function () {
 				router.setCurrentView('pathways-manager', {
-					analysisId: id,
+					pathwayAnalysisId: id,
 					section: section,
 					subId: subId
 				});
@@ -24,7 +24,7 @@ define((require, factory) => {
 				router.setCurrentView('pathways-browser');
 			});
 		})
-		
+
 		return {
 			'pathways': pathwaysBrowser,
 			'pathways/:id:': pathwaysManager,
