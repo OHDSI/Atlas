@@ -74,13 +74,14 @@ define([
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
-            this.isSaving = ko.observable(false);
-            this.isCopying = ko.observable(false);
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
-            this.isProcessing = ko.computed(() => {
-                return this.isSaving() || this.isCopying() || this.isDeleting();
-            });
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+			this.defaultName = "New Patient Level Prediction Analysis";
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -114,8 +115,11 @@ define([
 				}
 			});
 
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() !== this.defaultName;
 			});
 
 			this.canSave = ko.computed(() => {
@@ -270,7 +274,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({id: 0, name: 'New Patient Level Prediction Analysis'}));
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({id: 0, name: this.defaultName}));
 			return new Promise(async (resolve, reject) => {
 				this.setAnalysisSettingsLists();
 				this.resetDirtyFlag();

@@ -104,6 +104,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.exitMessage = ko.observable();
 			this.exporting = ko.observable();
 			this.service = cohortDefinitionService;
+			this.defaultName = "New Cohort Definition";
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
@@ -123,14 +124,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
 					if (this.model.currentCohortDefinition().id() == 0) {
-					return 'New Cohort Definition';
+					return this.defaultName;
 				} else {
 						return 'Cohort #' + this.model.currentCohortDefinition().id();
 				}
 			}
 			});
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
+			});
+			
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.model.currentCohortDefinition().name() !== this.defaultName;
 			});
 			this.isAuthenticated = ko.pureComputed(() => {
 				return this.authApi.isAuthenticated();

@@ -41,9 +41,13 @@ define([
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
+			this.defaultName = "New Cohort Pathway";
 
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.design().name() !== this.defaultName;
 			});
 			
 			this.canEdit = this.isEditPermittedResolver();
@@ -62,7 +66,7 @@ define([
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
 					return 'Cohort Pathway #' + this.design().id;
 				}
-				return 'New Cohort Pathway';
+				return this.defaultName;
 			});
 			this.isSaving = ko.observable(false);
 			this.isCopying = ko.observable(false);

@@ -59,6 +59,7 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
+			this.defaultName = "New Incidence Rate Analysis";
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -132,7 +133,7 @@ define([
 				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
 					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
 				}
-				return 'New Incidence Rate Analysis';
+				return this.defaultName;
 			});
 
 			this.modifiedJSON = "";
@@ -153,8 +154,11 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
 			});
 			this.canSave = ko.computed(() => {
 				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();

@@ -48,8 +48,12 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.isNameCorrect = ko.computed(() => {
+            this.defaultName = 'New Characterization';
+            this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
+            });
+            this.isNameCorrect = ko.computed(() => {
+                return this.isNameFilled() && this.design().name() !== this.defaultName;
             });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -76,7 +80,7 @@ define([
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
                     if (this.characterizationId() === 0) {
-                        return 'New Characterization';
+                        return this.defaultName;
                     } else {
                         return 'Characterization #' + this.characterizationId();
                     }

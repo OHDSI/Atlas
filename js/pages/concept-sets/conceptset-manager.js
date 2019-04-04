@@ -52,12 +52,16 @@ define([
 			this.currentConceptSet = this.model.currentConceptSet;
 			this.isOptimizeModalShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
-			this.conceptSetName = ko.observable("New Concept Set");
+			this.defaultName = "New Concept Set";
+			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
 			this.fade = ko.observable(true);
 			this.canEdit = this.model.canEditCurrentConceptSet;
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.currentConceptSet().name() !== this.defaultName;
 			});
 			this.canSave = ko.computed(() => {
 				return (
@@ -75,7 +79,7 @@ define([
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.model.currentConceptSet()) {
 					if (this.model.currentConceptSet().id === 0) {
-						return 'New Concept Set';
+						return this.defaultName;
 					} else {
 						return 'Concept Set #' + this.model.currentConceptSet().id;
 					}
@@ -194,13 +198,6 @@ define([
 				selectedConcepts = this.selectedConcepts();
 			}
 			var abortSave = false;
-
-			// Do not allow someone to save a concept set with the default name of "New Concept Set"
-			if (conceptSet && conceptSet.name() === this.defaultConceptSetName) {
-				this.raiseConceptSetNameProblem('Please provide a different name for your concept set', txtElem);
-				this.loading(false);
-				return;
-			}
 
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the

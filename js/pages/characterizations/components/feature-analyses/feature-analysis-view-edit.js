@@ -72,13 +72,23 @@ define([
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
             this.previousDesign = {};
+            this.defaultName = "New Feature Analysis";
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
+            this.isNameFilled = ko.computed(() => {
+                return this.data() && this.data().name();
+            });
+            this.isNameCorrect = ko.computed(() => {
+                return this.isNameFilled() && this.data().name() !== this.defaultName;
+            });
             this.canSave = ko.computed(() => {
-                return this.dataDirtyFlag().isDirty() && this.areRequiredFieldsFilled() && (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
+                return this.dataDirtyFlag().isDirty() && 
+                    this.areRequiredFieldsFilled() &&
+                    this.isNameCorrect() &&
+                    (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
             this.canDelete = this.isDeletePermittedResolver();
             this.isNewEntity = this.isNewEntityResolver();
@@ -100,18 +110,15 @@ define([
                     if (this.featureId() !== 0) {
                         return 'Feature Analysis #' + this.featureId();
                     } else {
-                        return 'New Feature Analysis';
+                        return this.defaultName;
                     }
                 }
-            });
-            this.isNameCorrect = ko.computed(() => {
-                return this.data() && this.data().name();
-            });
+            });            
             this.isSaving = ko.observable(false);
             this.isDeleting = ko.observable(false);
             this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isDeleting();
-            });
+            });            
         }
 
         onPageCreated() {
@@ -152,7 +159,10 @@ define([
 
         areRequiredFieldsFilled() {
             const isDesignFilled = this.data() && ((typeof this.data().design() === 'string' || Array.isArray(this.data().design())) && this.data().design().length > 0);
-            return this.data() && (typeof this.data().name() === 'string' && this.data().name().length > 0 && typeof this.data().type() === 'string' && this.data().type().length > 0 && isDesignFilled);
+            return this.data() && (this.isNameFilled() &&
+                                   typeof this.data().type() === 'string' && 
+                                   this.data().type().length > 0 && 
+                                   isDesignFilled);
         }
 
         getSaveTooltipTextComputed() {
@@ -231,7 +241,7 @@ define([
                 parsedDesign = design;
             }
 
-            data.name(name || 'New Feature Analysis');
+            data.name(name || this.defaultName);
             data.descr(descr);
             data.domain(domain);
             data.type(type);
