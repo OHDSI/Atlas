@@ -459,13 +459,15 @@ define(
 			}
 
 			setConceptSet(conceptset, expressionItems) {
+				var conceptSetItemsToAdd = [];
 				expressionItems.forEach((conceptSet) => {
 					const conceptSetItem = conceptSetService.enchanceConceptSet(conceptSet);
 					
 					sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
-					sharedState.selectedConcepts.push(conceptSetItem);
+					conceptSetItemsToAdd.push(conceptSetItem);
 				});
 
+				sharedState.selectedConcepts(conceptSetItemsToAdd);
 				this.currentConceptSet({
 					name: ko.observable(conceptset.name),
 					id: conceptset.id

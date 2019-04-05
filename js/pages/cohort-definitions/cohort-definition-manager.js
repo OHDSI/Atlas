@@ -974,10 +974,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			};
 
 			appendConcepts(response) {
+				var conceptSetItemsToAdd = sharedState.selectedConcepts();
 				response.data.forEach((item) => {
-					sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
-						sharedState.selectedConcepts.push(this.model.createConceptSetItem(item));
+					if (sharedState.selectedConceptsIndex[item.CONCEPT_ID] != 1) {
+						sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
+						conceptSetItemsToAdd.push(commonUtils.createConceptSetItem(item));
+					}
 				});
+				sharedState.selectedConcepts(conceptSetItemsToAdd);
 				if (this.model.currentCohortDefinition() && this.model.currentConceptSetSource() === "cohort") {
 					var conceptSet = this.model.currentCohortDefinition()
 						.expression()
