@@ -192,7 +192,7 @@ define([
 		}
 
 		searchClick() {
-			const redirectUrl = '#/search/' + escape(this.currentSearch());
+			const redirectUrl = '#/search/' + encodeURIComponent(this.currentSearch().replace("/", " "));
 			if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0 || document.location.hash === redirectUrl) {
 				this.executeSearch();
 			} else if (this.currentSearch().length > 2) {
