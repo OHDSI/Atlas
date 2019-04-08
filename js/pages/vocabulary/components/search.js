@@ -190,9 +190,13 @@ define([
 				this.getVocabularies();
 			}
 		}
+		
+		encodeSearchString(searchTerm) {
+			return encodeURIComponent(searchTerm.replace("/", " "));
+		}
 
 		searchClick() {
-			const redirectUrl = '#/search/' + encodeURIComponent(this.currentSearch().replace("/", " "));
+			const redirectUrl = '#/search/' + this.encodeSearchString(this.currentSearch());
 			if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0 || document.location.hash === redirectUrl) {
 				this.executeSearch();
 			} else if (this.currentSearch().length > 2) {
@@ -264,7 +268,7 @@ define([
 				return;
 			}
 
-			const query = this.currentSearch() === undefined ? '' : this.currentSearch();
+			const query = this.currentSearch() === undefined ? '' : this.encodeSearchString(this.currentSearch());
 			this.loading(true);
 			this.data([]);
 
