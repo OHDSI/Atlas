@@ -55,7 +55,7 @@ define([
 			this.selectedTabKey = ko.observable("design");
 			this.componentParams = {
 				design: this.design,
-				pathwayAnalysisId: this.analysisId,
+				analysisId: this.analysisId,
 				executionId: this.executionId,
 			};
 			this.pathwayCaption = ko.computed(() => {
@@ -72,9 +72,9 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({ pathwayAnalysisId, section, subId }) {
-			if (pathwayAnalysisId !== undefined) {
-				this.analysisId(parseInt(pathwayAnalysisId));
+		onRouterParamsChanged({analysisId, section, subId}) {
+			if (analysisId !== undefined) {
+				this.analysisId(parseInt(analysisId));
 				this.load(this.analysisId() || 0);
 			}
 			this.setupSection(section);
