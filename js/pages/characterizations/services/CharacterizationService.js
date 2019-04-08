@@ -89,6 +89,12 @@ define([
           .then(res => res.data);
     }
 
+    function exists(name, id) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterization/exists?name=' + name + '&id=' + id)
+            .then(res => res.data);
+    }
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -104,6 +110,7 @@ define([
         loadCharacterizationExportDesignByGeneration,
         runGeneration,
         getPrevalenceStatsByGeneration,
-        cancelGeneration
+        cancelGeneration,
+        exists,
     };
 });

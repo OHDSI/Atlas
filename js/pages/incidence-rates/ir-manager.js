@@ -312,7 +312,7 @@ define([
 			this.loading(true);
 			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
 			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-			this.selectedAnalysisId(analysis.id)
+			this.selectedAnalysisId(analysis.id);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.isCopying(false);
 			this.loading(false);
@@ -333,20 +333,41 @@ define([
 			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
 				return;
 			}
-			this.close()
+			this.close();
 			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
 		save() {
 			this.isSaving(true);
 			this.loading(true);
-			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
-				this.isSaving(false);
-				this.loading(false);
-			});
+
+			var abortSave = false;
+
+			// Next check to see that an incidence rate with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
+			IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId())
+				.then((results) => {
+					if (results.length > 0) {
+						alert('An incidence rate with this name already exists. Please choose a different name.');
+						abortSave = true;
+					}
+				}, function(){
+					alert('An error occurred while attempting to find an incidence rate with the name you provided.');
+				})
+				.then(() => {
+					if (abortSave) {
+						this.isSaving(false);
+						this.loading(false);
+						return;
+					}
+					IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
+						this.selectedAnalysis(new IRAnalysisDefinition(analysis));
+						this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+						commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
+						this.isSaving(false);
+						this.loading(false);
+					});
+				})
 		}
 
 		delete() {

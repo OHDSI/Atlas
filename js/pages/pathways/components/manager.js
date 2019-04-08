@@ -140,16 +140,33 @@ define([
 		
 		async save() {
 			this.isSaving(true);
-			if (!this.design().id) {
-				const newAnalysis = await PathwayService.create(this.design());
-				this.dirtyFlag().reset();
-				this.isSaving(false);
-				commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
-			} else {
-				const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
-				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
-				this.isSaving(false);
-				this.loading(false);
+			var abortSave = false;
+
+			// Next check to see that a cohort pathway with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current cohort pathway is excluded in this check.
+			try {
+				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
+				if (results.length > 0) {
+					alert('A cohort pathway with this name already exists. Please choose a different name.');
+					abortSave = true;
+				}
+				if (abortSave) {
+					this.isSaving(false);
+				} else {
+					if (!this.design().id) {
+						const newAnalysis = await PathwayService.create(this.design());
+						this.dirtyFlag().reset();
+						this.isSaving(false);
+						commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
+					} else {
+						const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
+						this.setupDesign(new PathwayAnalysis(updatedAnalysis));
+						this.isSaving(false);
+						this.loading(false);
+					}
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to find a cohort pathway with the name you provided.');
 			}
 		}
 

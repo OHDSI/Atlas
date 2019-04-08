@@ -146,14 +146,34 @@ define([
 		save() {
 			this.isSaving(true);
 			this.loading(true);
-			this.fullAnalysisList.removeAll();
-			const payload = this.prepForSave();
-			EstimationService.saveEstimation(payload).then((analysis) => {
-				this.setAnalysis(analysis);
-				document.location =  constants.paths.ccaAnalysis(this.estimationAnalysis().id());
-				this.isSaving(false);
-				this.loading(false);
-			});
+			var abortSave = false;
+
+			// Next check to see that an estimation analysis with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.
+			EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id())
+				.then((results) => {
+					if (results.length > 0) {
+						alert('An estimation analysis with this name already exists. Please choose a different name.');
+						abortSave = true;
+					}
+				}, function(){
+					alert('An error occurred while attempting to find an estimation analysis with the name you provided.');
+				})
+				.then(() => {
+					if (abortSave) {
+						this.isSaving(false);
+						this.loading(false);
+						return;
+					}
+					this.fullAnalysisList.removeAll();
+					const payload = this.prepForSave();
+					EstimationService.saveEstimation(payload).then((analysis) => {
+						this.setAnalysis(analysis);
+						document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
+						this.isSaving(false);
+						this.loading(false);
+					});
+				});
 		}
 
 		prepForSave() {

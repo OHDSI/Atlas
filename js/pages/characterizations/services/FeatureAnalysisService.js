@@ -30,6 +30,11 @@ define([
         return httpService.doDelete(config.webAPIRoot + `feature-analysis/${id}`).then(res => res.data);
     }
 
+    function exists(name, id) {
+        return httpService.doGet(config.webAPIRoot + 'feature-analysis/exists?name=' + name + '&id=' + id)
+            .then(res => res.data);
+    }
+
     return {
         loadFeatureAnalysisList,
         loadFeatureAnalysis,
@@ -37,5 +42,6 @@ define([
         createFeatureAnalysis,
         updateFeatureAnalysis,
         deleteFeatureAnalysis,
+        exists,
     };
 });

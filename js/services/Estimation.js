@@ -73,6 +73,13 @@ define(function (require, exports) {
             .then(res => res.data);
     }
 
+	function exists(name, id) {
+		return httpService
+			.doGet(config.webAPIRoot + estimationEndpoint + 'exists?name=' + name + '&id=' + id)
+			.then(res => res.data)
+			.catch(error => authApi.handleAccessDenied(error));
+	}
+
     var api = {
 		getEstimationList: getEstimationList,
 		saveEstimation: saveEstimation,
@@ -83,6 +90,7 @@ define(function (require, exports) {
 		importEstimation: importEstimation,
 		generate,
 		listGenerations,
+		exists,
 	};
 
 	return api;

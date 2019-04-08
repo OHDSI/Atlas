@@ -206,14 +206,34 @@ define([
 		save() {
 			this.isSaving(true);
 			this.loading(true);
-			this.fullAnalysisList.removeAll();
-			const payload = this.prepForSave();
-			PredictionService.savePrediction(payload).then((analysis) => {
-				this.loadAnalysisFromServer(analysis);
-				document.location =  constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
-				this.isSaving(false);
-				this.loading(false);
-			});
+			var abortSave = false;
+
+			// Next check to see that a prediction analysis with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current prediction analysis is excluded in this check.
+			PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id())
+				.then((results) => {
+					if (results.length > 0) {
+						alert('A prediction analysis with this name already exists. Please choose a different name.');
+						abortSave = true;
+					}
+				}, function(){
+					alert('An error occurred while attempting to find a prediction analysis with the name you provided.');
+				})
+				.then(() => {
+					if (abortSave) {
+						this.isSaving(false);
+						this.loading(false);
+						return;
+					}
+					this.fullAnalysisList.removeAll();
+					const payload = this.prepForSave();
+					PredictionService.savePrediction(payload).then((analysis) => {
+						this.loadAnalysisFromServer(analysis);
+						document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+						this.isSaving(false);
+						this.loading(false);
+					});
+				});
 		}
 
 		prepForSave() {

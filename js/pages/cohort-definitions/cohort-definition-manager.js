@@ -217,9 +217,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.sharedState = sharedState;
 			this.identifiers = ko.observable();
 			this.sourcecodes = ko.observable();
-			this.isSaveable = ko.pureComputed(() => {
-				return this.dirtyFlag() && this.dirtyFlag().isDirty();
-			});
 			this.conceptLoading = ko.observable(false);
 			this.conceptSetName = ko.observable();
 			this.tabPath = ko.computed(() => {
@@ -663,32 +660,51 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			save () {
-			this.isSaving(true);
-			clearTimeout(this.pollTimeout);
-			this.model.clearConceptSet();
+				this.isSaving(true);
+				clearTimeout(this.pollTimeout);
+				var abortSave = false;
 
-			// If we are saving a new cohort definition (id == 0) then clear
-			// the id field before saving
-			if (this.model.currentCohortDefinition().id() == 0) {
-				this.model.currentCohortDefinition().id(undefined);
-			}
-			var definition = ko.toJS(this.model.currentCohortDefinition());
-
-			// for saving, we flatten the expression JS into a JSON string
-			definition.expression = ko.toJSON(definition.expression, pruneJSON);
-
-			// reset view after save
-			cohortDefinitionService.saveCohortDefinition(definition).then( (result) => {
-				result.expression = JSON.parse(result.expression);
-				var definition = new CohortDefinition(result);
-				var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
-				this.model.currentCohortDefinition(definition);
-				if (redirectWhenComplete) {
-					document.location = "#/cohortdefinition/" + definition.id();
+				// Next check to see that a cohort definition with this name does not already exist
+				// in the database. Also pass the id so we can make sure that the
+				// current Cohort Definition is excluded in this check.
+				cohortDefinitionService.exists(this.model.currentCohortDefinition().name(), this.model.currentCohortDefinition().id())
+					.then((results) => {
+						if (results.length > 0) {
+							alert('A cohort definition with this name already exists. Please choose a different name.');
+							abortSave = true;
+						}
+					}, function(){
+						alert('An error occurred while attempting to find a cohort definition with the name you provided.');
+					})
+					.then(() => {
+						if (abortSave) {
+							this.isSaving(false);
+							return;
+						}
+						this.model.clearConceptSet();
+						
+						// If we are saving a new cohort definition (id == 0) then clear
+						// the id field before saving
+						if (this.model.currentCohortDefinition().id() == 0) {
+							this.model.currentCohortDefinition().id(undefined);
+						}
+						var definition = ko.toJS(this.model.currentCohortDefinition());
+	
+						// for saving, we flatten the expression JS into a JSON string
+						definition.expression = ko.toJSON(definition.expression, pruneJSON);
+						// reset view after save
+						cohortDefinitionService.saveCohortDefinition(definition).then( (result) => {
+							result.expression = JSON.parse(result.expression);
+							var definition = new CohortDefinition(result);
+							var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
+							this.model.currentCohortDefinition(definition);
+							if (redirectWhenComplete) {
+								document.location = "#/cohortdefinition/" + definition.id();
+							}
+							this.isSaving(false);
+						});
+					})
 				}
-				this.isSaving(false);
-			});
-		}
 
 			close () {
 				if (this.model.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {

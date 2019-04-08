@@ -162,24 +162,42 @@ define([
         save() {
             this.isSaving(true);
             const ccId = this.componentParams().characterizationId();
+            var abortSave = false;
 
-            if (ccId < 1) {
-                CharacterizationService
-                    .createCharacterization(this.design())
-                    .then(res => {
-                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+            // Next check to see that a characterization with this name does not already exist
+            // in the database. Also pass the id so we can make sure that the current characterization is excluded in this check.
+            CharacterizationService.exists(this.design().name(), ccId)
+                .then((results) => {
+                    if (results.length > 0) {
+                        alert('A characterization with this name already exists. Please choose a different name.');
+                        abortSave = true;
+                    }
+                }, function(){
+                    alert('An error occurred while attempting to find a characterization with the name you provided.');
+                })
+                .then(() => {
+                    if (abortSave) {
                         this.isSaving(false);
-                        commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
-                    });
-            } else {
-                CharacterizationService
-                    .updateCharacterization(ccId, this.design())
-                    .then(res => {
-                        this.setupDesign(new CharacterizationAnalysis(res));
-                        this.isSaving(false);
-                        this.loading(false);
-                    });
-            }
+                        return;
+                    }
+                    if (ccId < 1) {
+                        CharacterizationService
+                            .createCharacterization(this.design())
+                            .then(res => {
+                                this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                                this.isSaving(false);
+                                commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
+                            });
+                    } else {
+                        CharacterizationService
+                            .updateCharacterization(ccId, this.design())
+                            .then(res => {
+                                this.setupDesign(new CharacterizationAnalysis(res));
+                                this.isSaving(false);
+                                this.loading(false);
+                            });
+                    }
+                })
         }
 
         copyCc() {
