@@ -246,7 +246,7 @@ define([
 		}
 
 		executeSearch() {
-			if (!this.currentSearch()) {
+			if (!this.currentSearch() && !this.showAdvanced()) {
                 this.data([]);
                 return;
 			}

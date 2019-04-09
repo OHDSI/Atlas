@@ -3,8 +3,8 @@
 </div>
 <div data-bind="eventListener:[{event:'click', selector: '.btn-fix', callback: fixRedundantConceptSet}]">
     <div class="conceptset-warnings">
-        <faceted-datatable params="{columns: $component.warningsColumns, options: $component.warningsOptions,reference: $component.warnings, order: [],
-           drawCallback: $component.drawCallback, stateSaveCallback: $component.stateSaveCallback, stateLoadCallback: $component.stateLoadCallback}"></faceted-datatable>
-    </div>
+<faceted-datatable params="{columns: $component.warningsColumns, options: $component.warningsOptions,reference: $component.warnings, order: [],
+           drawCallback: $component.drawCallback}"></faceted-datatable>
+		</div>
 </div>
 <loading data-bind="visible: loading" params="status: 'Running Diagnostics'"></loading>

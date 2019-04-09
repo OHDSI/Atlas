@@ -28,7 +28,9 @@ define(
           appModel.activePage(this.title);
           require(['./roles/role-details'], function () {
             appModel.currentRoleId(id);
-            router.setCurrentView('role-details');
+            router.setCurrentView('role-details', {
+              roleId: id,
+            });
           });
         }),
         'import' : new AuthorizedRoute(() => {
