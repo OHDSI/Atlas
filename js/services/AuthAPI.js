@@ -237,7 +237,7 @@ define(function(require, exports) {
         if (!isPromisePending(refreshTokenPromise)) {
           refreshTokenPromise = httpService.doGet(getServiceUrl() + "user/refresh");
           refreshTokenPromise.then(({ data, headers }) => {
-            setAuthParams(headers.get(TOKEN_HEADER));
+            setAuthParams(headers.get(TOKEN_HEADER), data.permissions);
           });
           refreshTokenPromise.catch(() => {
             resetAuthParams();
@@ -446,11 +446,12 @@ define(function(require, exports) {
 
     const hasSourceAccess = function (sourceKey) {
         return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
-	}
+    }
 
-	var setAuthParams = function (tokenHeader) {
-        token(tokenHeader);
-        return loadUserInfo();
+
+	const setAuthParams = (tokenHeader, permissionsStr = '') => {
+        !!tokenHeader && token(tokenHeader);
+        !!permissionsStr && permissions(permissionsStr.split('|'));
     };
 
     var resetAuthParams = function () {
