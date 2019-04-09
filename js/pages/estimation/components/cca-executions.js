@@ -84,10 +84,15 @@ define([
 			this.downloading = ko.observableArray();
 			this.isResultsDownloading = ko.computed(() => this.downloading().length > 0);
 			this.executionGroups = ko.observableArray([]);
-			if (this.isViewGenerationsPermitted()) {
-				this.loadData();
-				this.pollId = PollService.add(() => this.loadData({ silently: true }), 10000);
-			}
+			this.isViewGenerationsPermitted() && this.startPolling();
+		}
+
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.loadData({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		dispose() {

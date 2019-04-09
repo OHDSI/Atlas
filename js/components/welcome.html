@@ -42,6 +42,7 @@
 			<div data-bind="if: isLoggedIn() && !tokenExpired()">
                 <div data-bind="text: $component.status"></div>
 				<span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signout, visible: $component.token()"><i class="fa fa-sign-out"></i> Sign Out</span>
+				<span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signoutIap, visible: $component.isGoogleIapAuth()"><i class="fa fa-sign-out"></i> Sign Out</span>
 			</div>
 		</div>
 	</div>

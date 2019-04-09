@@ -120,7 +120,7 @@ define([
 		}
 
 		async load(id) {
-			if (this.design() && (this.design().id || 0 == id)) return; // this design is already loaded.
+			if (this.design() && (this.design().id === id || 0 == id)) return; // this design is already loaded.
 			
 			if(this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?"))
 				return;

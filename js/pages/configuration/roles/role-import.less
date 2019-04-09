@@ -1,0 +1,38 @@
+.role-import {
+  display: flex;
+  height: 100%;
+
+  &__source, &__result {
+    padding: 1rem;
+    flex-basis: 50%;
+
+    h1 {
+      margin: 0 0 1rem;
+    }
+  }
+
+  &__source {
+    display: flex;
+    flex-direction: column;
+
+    textarea {
+      width: 100%;
+      flex-grow: 1;
+    }
+  }
+
+  &__validation-errors {
+    color: red;
+  }
+
+  &__json-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0 1rem;
+  }
+
+  &__results_ok {
+    color: green;
+  }
+
+}

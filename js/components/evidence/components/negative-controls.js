@@ -13,6 +13,7 @@ define(['knockout',
 	'assets/ohdsi.util',
 	'databindings',
 	'evidence',
+	'conceptset-modal',
 ], function (
 	ko, 
 	view,
@@ -56,6 +57,7 @@ define(['knockout',
 			this.selectedReportCaption = ko.observable();
 			this.recordCountsRefreshing = ko.observable(false);
 			this.showEvidencePairs = ko.observable(false);
+			this.showNegControlsSaveNewModal = ko.observable(false);
 			this.linkoutDrugConceptIds = [];
 			this.linkoutConditionConceptIds = [];
 			this.sourceIds = config.cemOptions.evidenceLinkoutSources;
@@ -474,11 +476,6 @@ define(['knockout',
 				}
 			}
 
-			this.showNegControlsSaveNewModal = () => {
-				$('negative-controls #modalNegControlsSaveNew')
-					.modal('show');
-			}
-
 			this.saveNewConceptSet = () => {
 				var dtItems = $('#negControlResults table')
 					.DataTable()
@@ -511,8 +508,7 @@ define(['knockout',
 					selectedConcepts.push(newItem);
 				})
 				this.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
-				$('conceptset-manager #modalSaveNew')
-					.modal('hide');
+				this.showNegControlsSaveNewModal(false);
 			}
 			
 			this.chooseIncludeConceptSet = (source) => {

@@ -189,14 +189,18 @@ define([
       this.init();
 
       this.fieldsVisibility = {
-        username: ko.computed(() => !this.isImpalaDS() || this.isKrbAuth()),
-        password: ko.computed(() => !this.isImpalaDS()),
+        username: ko.computed(() => !this.supportsKeytabAuth() || this.isKrbAuth()),
+        password: ko.computed(() => !this.supportsKeytabAuth()),
         krbAuthSettings: this.isKrbAuth,
         showKeytab: ko.computed(() => {
           return this.isKrbAuth() && this.selectedSource().krbAuthMethod() === 'keytab';
         }),
         krbFileInput: ko.computed(() => {
           return this.isKrbAuth() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
+        }),
+        bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
+        bqFileInput: ko.computed(() => {
+          return this.isBigQueryDS() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
         }),
         // warnings
         hostWarning: ko.computed(() => {
@@ -228,8 +232,16 @@ define([
       this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
     }
 
+    supportsKeytabAuth() {
+      return this.isImpalaDS() || this.isBigQueryDS();
+    }
+
     isImpalaDS() {
       return this.selectedSource() && this.selectedSource().dialect() === 'impala';
+    }
+
+    isBigQueryDS() {
+      return this.selectedSource() && this.selectedSource().dialect() === 'bigquery';
     }
 
     isNonEmptyConnectionString() {
@@ -302,9 +314,9 @@ define([
     hasSelectedPriotirizableDaimons() {
 		const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
 		const otherPriotirizableDaimons = lodash.flatten(
-			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType)))
+			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId))
 		);
-		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType));
+		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId);
 		const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
 			// Daimon of the type with higher priority exists
 			return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);

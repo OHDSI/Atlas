@@ -16,6 +16,7 @@ define([
 			this.chartFormats = {};
 
 			this.context = params.context;
+			this.sourceName = ko.observable(this.context.currentSource().sourceName);
 			this.title = ko.computed(() => {
 				const title = this.context.currentReport() ?
 					`${this.context.currentSource() ? (this.context.currentSource().sourceName) : ''} ${this.context.currentReport().name} Report` :

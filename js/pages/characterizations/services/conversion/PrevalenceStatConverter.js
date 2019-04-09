@@ -29,7 +29,20 @@ define([
 		}
 
 		getDefaultColumns(analysis) {
-		    return [ this.getСovNameColumn() ];
+		    return [
+		        this.getСovNameColumn(),
+                {
+                    title: 'Concept ID',
+                    data: 'conceptId',
+                    render: (d, t, r) => {
+                        if (r.conceptId === null || r.conceptId === undefined) {
+                            return 'N/A';
+                        } else {
+                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace(/'/g, "\\'") : null}'">${r.conceptId}</a>`
+                        }
+					}
+                }
+            ];
 		}
 
 		getReportColumns(strataId, cohortId) {

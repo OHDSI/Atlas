@@ -1,13 +1,14 @@
 {
   "name": "atlas",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
     "prep": "npm i && npm run clean",
     "clean": "rimraf ./js/assets/bundle && rimraf ./js/assets/fonts && rimraf ./js/assets/images",
     "build": "npm run prep && npm run build:dev",
-    "build:dev": "node build/optimize.js"
+    "build:dev": "node build/optimize.js && npm run compress",
+    "compress": "terser ./js/assets/bundle/bundle.js -o ./js/assets/bundle/bundle.js -c --source-map"
   },
   "repository": {
     "type": "git",
@@ -38,12 +39,14 @@
     "esprima": "^4.0.1",
     "html-document": "^0.8.1",
     "requirejs": "^2.3.4",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "terser": "3.17.0"
   },
   "dependencies": {
-    "@ohdsi/atlascharts": "^1.7.0",
+    "@ohdsi/atlascharts": "^1.7.1",
     "@ohdsi/ui-toolbox": "^1.0.3",
     "@ohdsi/visibilityjs": "^2.0.2",
+    "ajv": "^6.10.0",
     "bootstrap": "^3.3.7",
     "bootstrap-datetimepicker": "^0.0.7",
     "bootstrap-select": "^1.13.3",

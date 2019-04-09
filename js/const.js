@@ -406,6 +406,7 @@ define([
 			RUNNING: 'RUNNING',
 			COMPLETED: 'COMPLETED',
 			FAILED: 'FAILED',
+			PENDING: 'PENDING',
 		};
 
 		return {

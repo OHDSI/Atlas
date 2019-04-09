@@ -121,9 +121,9 @@
 			 { event: 'click', selector: '.deleteInclusionRule', callback: deleteInclusionRule}]">
 
 			<div style="display: flex">
-				<div style="position:relative; min-width:220px; overflow-y:auto" data-bind="style: {'min-height': inclusionRuleNavMinHeight()}">
+				<div style="position:relative; min-width:220px; overflow-y:auto">
 
-					<div style="position:absolute; top:0px; bottom:0px; left:0px; right:2px;">
+					<div class="inclusion-criteria__block">
 						<div>
 							<button class="btn btn-sm btn-success" data-bind="click: addInclusionRule">New inclusion criteria</button>
 						</div>
@@ -136,15 +136,15 @@
 										<td style="vertical-align: top;" class="inclusionRules">
 											<div data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria'"></div>
 											<!-- ko if: (description() || '').length > 0 -->
-											<div class="description" data-bind="text: description()"></div>
+											<div class="description" data-bind="text: description(), attr: { title: description() }"></div>
 											<!-- /ko -->
 										</td>
 									</tr>
 								</tbody>
 							</table>
-						</div>				
+						</div>
 					</div>
-					
+
 				</div>
 
 				<div class="inclusion-criteria__rules-block">
@@ -240,14 +240,14 @@
 				<!-- ko if: $component.showCensorWindow -->
 				<li>
 					Left censor cohort start dates to <input placeholder="No Censoring" class="dateField" data-bind="datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /> <i data-bind="visible:CensorWindow().StartDate(),  click: () => CensorWindow().StartDate(null)" class="fa fa-times"></i>
-				</li>				
+				</li>
 				<li>
 					Right censor cohort end dates to <input placeholder="No Censoring" class="dateField" data-bind="datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /> <i data-bind="visible:CensorWindow().EndDate(),  click: () => CensorWindow().EndDate(null)" class="fa fa-times"></i>
 				</li>
 				<!-- /ko -->
 				<!-- ko ifnot: $component.showCensorWindow -->
 				<li>
-					<span class="linkish" data-bind="click: () => $component.showCensorWindow(!$component.showCensorWindow())"><i>add trimming options...</i></span>				
+					<span class="linkish" data-bind="click: () => $component.showCensorWindow(!$component.showCensorWindow())"><i>add trimming options...</i></span>
 				</li>
 				<!-- /ko -->
 			</ul>

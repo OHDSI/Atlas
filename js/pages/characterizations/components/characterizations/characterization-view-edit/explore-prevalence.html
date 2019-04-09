@@ -1,4 +1,4 @@
-<div>
+<div data-bind="css: classes()">
     <loading data-bind="visible: loading()" params="status: 'Loading prevalence stats...'"></loading>
     <div>Cohort: <span data-bind="text: cohortName"></span></div>
     <div data-bind="visible: exploring() && !loading()">
@@ -9,14 +9,15 @@
     </div>
     <!-- ko ifnot: loading() -->
     <table data-bind="
-        css: classes(),
         dataTable: {
-            data: relations().stats,
-            options: {
-                autoWidth: false,
-                order: [1, 'desc'],
-                columns: relations().columns,
-            }
+					data: relations().stats,
+					options: {
+						autoWidth: false,
+						order: [1, 'desc'],
+						columns: relations().columns,
+						buttons: $component.getButtonsConfig(),
+						dom: 'Blftipr',
+					}
         }
     ">
         <thead>
