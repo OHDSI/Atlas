@@ -190,9 +190,13 @@ define([
 				this.getVocabularies();
 			}
 		}
+
+		replaceSpecialCharacters(str) {
+			return str.replace("/", " ");
+		}
 		
 		encodeSearchString(searchTerm) {
-			return encodeURIComponent(searchTerm.replace("/", " "));
+			return encodeURIComponent(this.replaceSpecialCharacters(searchTerm));
 		}
 
 		searchClick() {
@@ -268,7 +272,11 @@ define([
 				return;
 			}
 
-			const query = this.currentSearch() === undefined ? '' : this.encodeSearchString(this.currentSearch());
+			let query = ''; 
+			if (this.currentSearch() !== undefined) {
+				query = this.encodeSearchString(this.currentSearch());	
+				this.currentSearch(this.replaceSpecialCharacters(this.currentSearch()));
+			}
 			this.loading(true);
 			this.data([]);
 
