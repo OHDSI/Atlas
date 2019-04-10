@@ -94,9 +94,9 @@ define(function (require, exports) {
     sharedState.sources([]);
     var serviceCacheKey = getCacheKey();
     var sourceList = [];
-    var evidencePriority = 0;
-    var vocabularyPriority = 0;
-    var densityPriority = 0;
+    var evidencePriority = 1;
+    var vocabularyPriority = 1;
+    var densityPriority = 1;
 
     $.each(sources, function (sourceIndex, source) {
       source.hasVocabulary = false;
@@ -108,7 +108,7 @@ define(function (require, exports) {
       source.evidenceUrl = '';
       source.resultsUrl = '';
       source.error = '';
-      source.version = ko.observable('unknown');
+      source.version = ko.observable();
       source.dialect = ko.observable();
       source.connectionCheck = ko.observable(buttonCheckState.unknown);
       source.refreshState = ko.observable(buttonCheckState.unknown);
