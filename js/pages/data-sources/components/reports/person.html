@@ -9,6 +9,7 @@
 			<histogram params="data: yearHistogramData, format: chartFormats.yearHistogram"></histogram>
 		</div>
 		<div class="panel-footer">
+			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
 			The number of people in this cohort shown with respect to their year of birth.
 		</div>
 	</div>
@@ -23,6 +24,7 @@
 			<donut params="data: genderData"></donut>
 		</div>
 		<div class="panel-footer">
+			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
 			The number of people in this cohort stratified by gender.
 		</div>
 	</div>
@@ -36,6 +38,7 @@
 			<donut params="data: raceData"></donut>
 		</div>
 		<div class="panel-footer">
+			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
 			The number of people in this cohort stratified by race.
 		</div>
 	</div>
@@ -49,6 +52,7 @@
 			<donut params="data: ethnicityData"></donut>
 		</div>
 		<div class="panel-footer">
+			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
 			The number of people in this cohort stratified by ethnicity.
 		</div>
 	</div>
