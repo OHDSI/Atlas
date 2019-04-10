@@ -51,9 +51,12 @@ define(['knockout',
 		};
 
 		self.attritionBarTooltip = function (index) {
-			let attritionStat = self.attritionStats[index];
-			return 'Rule ' +  attritionStat.name + ': ' + attritionStat.countSatisfying.toLocaleString()
-				+ ', ' + this.formatPercent(attritionStat.percentSatisfying);
+			if (self.attritionStats()) {
+				let attritionStat = self.attritionStats()[index];
+				return 'Rule ' + attritionStat.name + ': ' + attritionStat.countSatisfying.toLocaleString() + ', ' +
+					this.formatPercent(attritionStat.percentSatisfying);
+			}
+			return "";
 		};
 
 		self.color = d3.scaleThreshold()
