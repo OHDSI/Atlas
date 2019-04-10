@@ -1,10 +1,10 @@
-define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./LocationAreaTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
+define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./LocationRegionTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
 
-	function LocationAreaViewModel(params) {
+	function LocationRegionViewModel(params) {
 
 		var self = this;
 		self.expression = ko.utils.unwrapObservable(params.expression);
-		self.Criteria = params.criteria.LocationArea;
+		self.Criteria = params.criteria.LocationRegion;
 		self.options = options;
 
 		self.formatOption = function (d) {
@@ -53,7 +53,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 
 	// return compoonent definition
 	return {
-		viewModel: LocationAreaViewModel,
+		viewModel: LocationRegionViewModel,
 		template: template
 	};
 });

@@ -1,6 +1,6 @@
 define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
 
-	function LocationArea(data, conceptSets) {
+	function LocationRegion(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
@@ -16,7 +16,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			});
 		}, null, "arrayChange");
 
-		// General Location Area Criteria
+		// General Location Region Criteria
 
 		self.CodesetId = ko.observable(data.CodesetId);
 
@@ -24,12 +24,12 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.EndDate = ko.observable(data.OccurrenceEndDate && new Range(data.EndDate));
 	}
 
-	LocationArea.prototype = new Criteria();
-	LocationArea.prototype.constructor = LocationArea;
-	LocationArea.prototype.toJSON = function () {
+	LocationRegion.prototype = new Criteria();
+	LocationRegion.prototype.constructor = LocationRegion;
+	LocationRegion.prototype.toJSON = function () {
 		return this;
 	}
 
-	return LocationArea;
+	return LocationRegion;
 
 });

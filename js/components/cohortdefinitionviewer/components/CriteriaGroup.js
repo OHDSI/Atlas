@@ -42,8 +42,8 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 				return "observation-period-criteria-viewer";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria-viewer";
-			else if (data.hasOwnProperty("LocationArea"))
-				return "location-area-viewer";
+			else if (data.hasOwnProperty("LocationRegion"))
+				return "location-region-viewer";
 			else
 				return "unknown-criteria";
 		};

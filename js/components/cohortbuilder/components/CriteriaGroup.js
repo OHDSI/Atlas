@@ -83,11 +83,11 @@ define([
 			}, unwrappedExpression.ConceptSets));
 		};
 
-		self.addLocationAreaCriteria = function () {
+		self.addLocationRegionCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
-					LocationArea: {}
+					LocationRegion: {}
 				},
 				IgnoreObservationPeriod: true,
 			}, unwrappedExpression.ConceptSets));
@@ -196,7 +196,7 @@ define([
 		self.actions[consts.CriteriaTypes.DEVICE_EXPOSURE] = self.addDeviceCriteria;
 		self.actions[consts.CriteriaTypes.DRUG_ERA] = self.addDrugEraCriteria;
 		self.actions[consts.CriteriaTypes.DRUG_EXPOSURE] = self.addDrugExposureCriteria;
-		self.actions[consts.CriteriaTypes.LOCATION_AREA] = self.addLocationAreaCriteria;
+		self.actions[consts.CriteriaTypes.LOCATION_REGION] = self.addLocationRegionCriteria;
 		self.actions[consts.CriteriaTypes.MEASUREMENT] = self.addMeasurementCriteria;
 		self.actions[consts.CriteriaTypes.OBSERVATION] = self.addObservationCriteria;
 		self.actions[consts.CriteriaTypes.OBSERVATION_PERIOD] = self.addObservationPeriodCriteria;
@@ -227,7 +227,7 @@ define([
 				case "dose-era-criteria":
 				case "observation-period-criteria":
 				case "specimen-criteria":
-				case "location-area-criteria":
+				case "location-region-criteria":
 					return false;
 					break;
 				default:

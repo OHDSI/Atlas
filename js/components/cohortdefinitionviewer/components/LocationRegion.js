@@ -1,10 +1,10 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range', 'text!./LocationAreaTemplate.html'], function (ko, options, Range, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range', 'text!./LocationRegionTemplate.html'], function (ko, options, Range, template) {
 
-	function LocationAreaViewModel(params) {
+	function LocationRegionViewModel(params) {
 		
 		var self = this;
 		self.expression = ko.utils.unwrapObservable(params.expression);
-		self.Criteria = params.criteria.LocationArea;
+		self.Criteria = params.criteria.LocationRegion;
 		self.options = options;
 
 		self.getCodesetName = function(codesetId, defaultName) {
@@ -21,7 +21,7 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 
 	// return compoonent definition
 	return {
-		viewModel: LocationAreaViewModel,
+		viewModel: LocationRegionViewModel,
 		template: template
 	};
 });

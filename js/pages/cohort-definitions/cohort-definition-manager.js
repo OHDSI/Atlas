@@ -1207,8 +1207,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return "payer-plan-period-criteria-viewer";
 				else if (data.hasOwnProperty("Death"))
 					return "death-criteria-viewer";
-				else if (data.hasOwnProperty("LocationArea"))
-					return "location-area-viewer";
+				else if (data.hasOwnProperty("LocationRegion"))
+					return "location-region-viewer";
 				else
 					return "unknownCriteriaType";
 			};
