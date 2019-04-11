@@ -22,8 +22,8 @@ define([
     'services/MomentAPI',
     'services/Source',
     'utils/CsvUtils',
-	'services/Vocabulary',
-	'atlas-state',
+    'services/Vocabulary',
+    'atlas-state',
     './explore-prevalence',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
@@ -55,8 +55,8 @@ define([
     momentAPI,
     SourceService,
     CsvUtils,
-	vocabularyProvider,
-	sharedState
+    vocabularyProvider,
+    sharedState
 ) {
 
     class CharacterizationViewEditResults extends AutoBind(Component) {
@@ -64,7 +64,7 @@ define([
         constructor(params) {
             super();
 
-			this.model = params.model;
+            this.model = params.model;
 
             this.prevalenceStatConverter = new PrevalenceStatConverter(this.classes);
             this.distributionStatConverter = new DistributionStatConverter(this.classes);
@@ -112,12 +112,12 @@ define([
                 });
             }
 
-			if (this.extractConceptIds(analysis).length > 0) {
-				buttons.push({
-					text: 'Create new Concept Set',
-					action: () => this.createNewSet(analysis)
-				});
-			}
+           if (this.extractConceptIds(analysis).length > 0) {
+                buttons.push({
+                    text: 'Create new Concept Set',
+                    action: () => this.createNewSet(analysis)
+                });
+            }
 
             return buttons;
         }
@@ -184,57 +184,57 @@ define([
             CsvUtils.saveAsCsv(exprt);
         }
 
-		createNewSet(analysis) {
-			this.loading(true);
-			const conceptIds = this.extractConceptIds(analysis);
-			vocabularyProvider.getConceptsById(conceptIds)
-				.then(({ data: items }) => { this.initConceptSet(items) })
-				.then(() => this.showConceptSet())
-				.catch((er) => {
-					console.error('Problem with opening concept set:' + er);
-				})
-				.finally(() => {
-					this.loading(false);
-				});
-		}
+        createNewSet(analysis) {
+        	this.loading(true);
+        	const conceptIds = this.extractConceptIds(analysis);
+        	vocabularyProvider.getConceptsById(conceptIds)
+        		.then(({ data: items }) => { this.initConceptSet(items) })
+        		.then(() => this.showConceptSet())
+        		.catch((er) => {
+        			console.error('Problem with opening concept set:' + er);
+        		})
+        		.finally(() => {
+        			this.loading(false);
+        		});
+        }
 
-		extractConceptIds(analysis) {
-			const conceptIds = [];
-			analysis.data.forEach(r => {
-				if (r.conceptId > 0) {
-					conceptIds.push(r.conceptId);
-				}
-			});
-			return conceptIds;
-		}
+        extractConceptIds(analysis) {
+        	const conceptIds = [];
+        	analysis.data.forEach(r => {
+        		if (r.conceptId > 0) {
+        			conceptIds.push(r.conceptId);
+        		}
+        	});
+        	return conceptIds;
+        }
 
-		showConceptSet() {
-			document.location = '#/conceptset/0/details';
-		}
+        showConceptSet() {
+        	document.location = '#/conceptset/0/details';
+        }
 
-		initConceptSet(conceptSetItems) {
-			return new Promise((resolve, reject) => {
-				try {
-					if (this.model.currentConceptSet() === undefined) {
-						this.model.currentConceptSet({
-							name: ko.observable("New Concept Set"),
-							id: 0
-						});
-						this.model.currentConceptSetSource('repository');
-					}
-					for (let i = 0; i < conceptSetItems.length; i++) {
-						if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
-							sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-							let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
-							sharedState.selectedConcepts.push(conceptSetItem);
-						}
-					}
-					resolve();
-				} catch (er) {
-					reject(er);
-				}
-			});
-		}
+        initConceptSet(conceptSetItems) {
+        	return new Promise((resolve, reject) => {
+        		try {
+        			if (this.model.currentConceptSet() === undefined) {
+        				this.model.currentConceptSet({
+        					name: ko.observable("New Concept Set"),
+        					id: 0
+        				});
+        				this.model.currentConceptSetSource('repository');
+        			}
+        			for (let i = 0; i < conceptSetItems.length; i++) {
+        				if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
+        					sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+        					let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
+        					sharedState.selectedConcepts.push(conceptSetItem);
+        				}
+        			}
+        			resolve();
+        		} catch (er) {
+        			reject(er);
+        		}
+        	});
+        }
 
         exportComparison(analysis) {
             const exprt = [];

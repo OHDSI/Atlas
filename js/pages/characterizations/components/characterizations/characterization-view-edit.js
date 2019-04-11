@@ -65,7 +65,7 @@ define([
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
             this.componentParams = ko.observable({
-				...params,
+                ...params,
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
