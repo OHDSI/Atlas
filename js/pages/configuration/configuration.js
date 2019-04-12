@@ -93,6 +93,11 @@ define([
       });
     }
 
+    async onPageCreated() {
+      sourceApi.initSourcesConfig();
+      super.onPageCreated();
+    }
+
     canReadSource(source) {
 			if (!config.userAuthenticationEnabled) {
 				return false;

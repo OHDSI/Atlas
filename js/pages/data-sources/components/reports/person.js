@@ -10,6 +10,7 @@ define([
 	'components/heading',
 	'components/charts/histogram',
 	'components/charts/donut',
+	'less!./person.less',
 ], function (
 	ko,
 	view,

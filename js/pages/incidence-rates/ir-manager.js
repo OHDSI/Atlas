@@ -223,6 +223,9 @@ define([
 							}
 						}
 					}
+
+					const statuses = data.map(item => item.executionInfo.status)
+					this.isRunning(statuses.some(status => constants.isInProgress(status)));
 				}
 			} catch(e) {
 				this.close();

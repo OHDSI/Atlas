@@ -7,7 +7,7 @@ define(
       buildRoutes,
       navUrl: () => '#/datasources',
       icon: 'database',
-			statusCss: () => ''
+        statusCss: () => ''
     };
   }
 );
