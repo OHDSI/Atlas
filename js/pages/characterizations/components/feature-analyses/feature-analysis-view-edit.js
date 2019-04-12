@@ -22,6 +22,7 @@ define([
     'utils/Clipboard',
     'assets/ohdsi.util',
     '../../utils',
+    'const',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
@@ -51,6 +52,7 @@ define([
     Clipboard,
     ohdsiUtil,
     utils,
+    globalConstants,
 ) {
 
     const featureTypes = {
@@ -72,7 +74,7 @@ define([
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
             this.previousDesign = {};
-            this.defaultName = "New Feature Analysis";
+            this.defaultName = globalConstants.newEntityNames.featureAnalysis;
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
@@ -118,7 +120,7 @@ define([
             this.isDeleting = ko.observable(false);
             this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isDeleting();
-            });            
+            });
         }
 
         onPageCreated() {
@@ -329,18 +331,13 @@ define([
             this.isSaving(true);
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data())));
 
-            var abortSave = false;
-
             // Next check to see that a feature analysis with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current feature analysis is excluded in this check.
            try{
                 const results = await FeatureAnalysisService.exists(this.data().name(), this.featureId());
-                if (results.length > 0) {
-                    alert('A feature analysis with this name already exists. Please choose a different name.');
-                    abortSave = true;
-                }
-                if (abortSave) {
+                if (results > 0) {
                     this.isSaving(false);
+                    alert('A feature analysis with this name already exists. Please choose a different name.');
                 } else {
                     if (this.featureId() < 1) {
                         const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());

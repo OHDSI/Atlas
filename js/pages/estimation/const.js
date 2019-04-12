@@ -8,17 +8,18 @@ define(
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
-			downloadResults: id => `estimation/generation/${id}/result`,
+      downloadResults: id => `estimation/generation/${id}/result`,
     };
 
     const paths = {
         root: '/estimation/cca/',
-        ccaAnalysis: id => `#/estimation/cca/${id}`,
+        ccaAnalysis: id => `/estimation/cca/${id}`,
+        ccaAnalysisDash: id => `#/estimation/cca/${id}`,
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',
     };
 
-		const estimationGenerationStatus = consts.generationStatuses;
+    const estimationGenerationStatus = consts.generationStatuses;
 
     const conceptSetCrossReference = {
       targetComparatorOutcome: {

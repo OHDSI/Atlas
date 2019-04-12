@@ -87,7 +87,7 @@ define([
 
 	function exists(name, id) {
 		return httpService
-			.doGet(`${servicePath}` + '/exists?name=' + name + '&id=' + id)
+			.doGet(`${servicePath}/exists?name=${name}&id=${id}`)
 			.then(res => res.data);
 	}
 

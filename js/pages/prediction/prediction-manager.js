@@ -6,6 +6,7 @@ define([
 	'assets/ohdsi.util',
     'appConfig',
 	'./const',
+	'const',
 	'atlas-state',
 	'./PermissionService',
 	'services/Prediction',
@@ -35,6 +36,7 @@ define([
 	ohdsiUtil,
 	config,
 	constants,
+	globalConstants,
 	sharedState,
 	PermissionService,
 	PredictionService,
@@ -81,7 +83,7 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.defaultName = "New Patient Level Prediction Analysis";
+			this.defaultName = globalConstants.newEntityNames.plp;
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -203,37 +205,30 @@ define([
 			});
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			var abortSave = false;
 
 			// Next check to see that a prediction analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current prediction analysis is excluded in this check.
-			PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id())
-				.then((results) => {
-					if (results.length > 0) {
-						alert('A prediction analysis with this name already exists. Please choose a different name.');
-						abortSave = true;
-					}
-				}, function(){
-					alert('An error occurred while attempting to find a prediction analysis with the name you provided.');
-				})
-				.then(() => {
-					if (abortSave) {
-						this.isSaving(false);
-						this.loading(false);
-						return;
-					}
+			try{
+				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
+				if (results > 0) {
+					this.isSaving(false);
+					this.loading(false);
+					alert('A prediction analysis with this name already exists. Please choose a different name.');
+				} else {
 					this.fullAnalysisList.removeAll();
 					const payload = this.prepForSave();
-					PredictionService.savePrediction(payload).then((analysis) => {
-						this.loadAnalysisFromServer(analysis);
-						document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
-						this.isSaving(false);
-						this.loading(false);
-					});
-				});
+					const savedPrediction = await PredictionService.savePrediction(payload);
+					this.loadAnalysisFromServer(savedPrediction);
+					document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+					this.isSaving(false);
+					this.loading(false);
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to find a prediction analysis with the name you provided.');
+			}
 		}
 
 		prepForSave() {

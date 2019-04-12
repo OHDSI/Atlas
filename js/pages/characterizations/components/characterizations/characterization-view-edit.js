@@ -13,6 +13,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
+    'const',
     'less!./characterization-view-edit.less',
     'components/tabs',
     'faceted-datatable',
@@ -34,7 +35,8 @@ define([
     Page,
     AutoBind,
     commonUtils,
-    ohdsiUtil
+    ohdsiUtil,
+    constants
 ) {
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
@@ -48,7 +50,7 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.defaultName = 'New Characterization';
+            this.defaultName = constants.newEntityNames.characterization;
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });
@@ -159,45 +161,33 @@ define([
             commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/' + key);
         }
 
-        save() {
+        async save() {
             this.isSaving(true);
             const ccId = this.componentParams().characterizationId();
-            var abortSave = false;
 
             // Next check to see that a characterization with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current characterization is excluded in this check.
-            CharacterizationService.exists(this.design().name(), ccId)
-                .then((results) => {
-                    if (results.length > 0) {
-                        alert('A characterization with this name already exists. Please choose a different name.');
-                        abortSave = true;
-                    }
-                }, function(){
-                    alert('An error occurred while attempting to find a characterization with the name you provided.');
-                })
-                .then(() => {
-                    if (abortSave) {
-                        this.isSaving(false);
-                        return;
-                    }
+            try {
+                const results = await CharacterizationService.exists(this.design().name(), ccId);
+                if (results > 0) {
+                    this.isSaving(false);
+                    alert('A characterization with this name already exists. Please choose a different name.');
+                } else {
                     if (ccId < 1) {
-                        CharacterizationService
-                            .createCharacterization(this.design())
-                            .then(res => {
-                                this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                                this.isSaving(false);
-                                commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
-                            });
+                        const newCharacterization = await CharacterizationService.createCharacterization(this.design());
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
+                        this.isSaving(false);
+                        commonUtils.routeTo(`/cc/characterizations/${newCharacterization.id}/${this.selectedTabKey()}`);
                     } else {
-                        CharacterizationService
-                            .updateCharacterization(ccId, this.design())
-                            .then(res => {
-                                this.setupDesign(new CharacterizationAnalysis(res));
-                                this.isSaving(false);
-                                this.loading(false);
-                            });
+                        const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
+                        this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
+                        this.isSaving(false);
+                        this.loading(false);
                     }
-                })
+                }
+            } catch (e) {
+                alert('An error occurred while attempting to find a characterization with the name you provided.');
+            }
         }
 
         copyCc() {

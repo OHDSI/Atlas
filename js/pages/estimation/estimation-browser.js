@@ -62,7 +62,7 @@ define([
 			this.columns = [
 				{
 					title: 'Id',
-					data: 'estimationId'
+					data: 'id'
 				},
 				{
 					title: 'Type',
@@ -72,7 +72,7 @@ define([
 				{
 					title: 'Name',
 					render: datatableUtils.getLinkFormatter(d => ({
-						link: constants.paths.ccaAnalysis(d.estimationId),
+						link: constants.paths.ccaAnalysisDash(d.id),
 						label: d['name']
 					})),
 				},
@@ -92,7 +92,7 @@ define([
 				},
 				{
 					title: 'Author',
-					data: 'createdBy'
+					data: 'createdBy.login'
 				}
 			];
 		}

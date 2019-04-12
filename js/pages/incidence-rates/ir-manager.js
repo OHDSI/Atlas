@@ -19,6 +19,7 @@ define([
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'./const',
+	'const',
 	'./components/iranalysis/main',
 	'databindings',
 	'conceptsetbuilder/components',
@@ -44,7 +45,8 @@ define([
 	AutoBind,
 	commonUtils,
 	exceptionUtils,
-	constants
+	constants,
+	globalConstants,
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
@@ -59,7 +61,7 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
-			this.defaultName = "New Incidence Rate Analysis";
+			this.defaultName = globalConstants.newEntityNames.incidenceRate;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -337,37 +339,29 @@ define([
 			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
 
-			var abortSave = false;
-
 			// Next check to see that an incidence rate with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
-			IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId())
-				.then((results) => {
-					if (results.length > 0) {
-						alert('An incidence rate with this name already exists. Please choose a different name.');
-						abortSave = true;
-					}
-				}, function(){
-					alert('An error occurred while attempting to find an incidence rate with the name you provided.');
-				})
-				.then(() => {
-					if (abortSave) {
-						this.isSaving(false);
-						this.loading(false);
-						return;
-					}
-					IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
-						this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-						this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-						commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
-						this.isSaving(false);
-						this.loading(false);
-					});
-				})
+			try{
+				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
+				if (results > 0) {
+					this.isSaving(false);
+					this.loading(false);
+					alert('An incidence rate with this name already exists. Please choose a different name.');
+				} else {
+					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
+					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
+					this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
+					this.isSaving(false);
+					this.loading(false);
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to find an incidence rate with the name you provided.');
+			}
 		}
 
 		delete() {

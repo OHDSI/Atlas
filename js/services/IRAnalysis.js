@@ -152,7 +152,7 @@ define(function (require, exports) {
 
 	function exists(name, id) {
 		return httpService
-			.doGet(`${config.webAPIRoot}ir` + '/exists?name=' + name + '&id=' + id)
+			.doGet(`${config.webAPIRoot}ir/exists?name=${name}&id=${id}`)
 			.then(res => res.data)
 			.catch(response => {
 				authApi.handleAccessDenied(response);

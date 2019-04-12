@@ -69,10 +69,9 @@ define(function (require, exports) {
 	}
 
 	function exists(name, id) {
-		return $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/exists?name=' + name + '&id=' + id,
-			error: authApi.handleAccessDenied
-		});
+		return httpService
+			.doGet(config.webAPIRoot + 'cohortdefinition/exists?name=' + name + '&id=' + id)
+			.then(res => res.data);
 	}
 	
 	function getSql(expression, options) {
@@ -182,7 +181,7 @@ define(function (require, exports) {
 		getCohortCount,
 		getCohortAnalyses: getCohortAnalyses,
 		exists: exists,
-	}
+	};
 
 	return api;
 });

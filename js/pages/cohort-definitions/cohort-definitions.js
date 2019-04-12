@@ -28,7 +28,7 @@ define([
 			});
 		
 			this.cohortDefinitionId.subscribe((id) => {
-				document.location = constants.paths.details(id);
+				document.location = constants.paths.detailsDash(id);
 			});
 		
 		

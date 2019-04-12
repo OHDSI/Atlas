@@ -6,6 +6,7 @@ define([
 	'assets/ohdsi.util',
 	'appConfig',
 	'./const',
+	'const',
 	'atlas-state',
 	'./PermissionService',
 	'services/Estimation',
@@ -31,6 +32,7 @@ define([
 	ohdsiUtil,
 	config,
 	constants,
+	globalConstants,
 	sharedState,
 	PermissionService,
 	EstimationService,
@@ -45,7 +47,7 @@ define([
 	class ComparativeCohortAnalysisManager extends Page {
 		constructor(params) {
 			super(params);
-			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysis;
+			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysisDash;
 
 			this.selectTab = this.selectTab.bind(this);
 			this.defaultLoadingMessage = "Loading...";
@@ -69,7 +71,7 @@ define([
 			this.isSaving = ko.observable(false);
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
-			this.defaultName = "New Population Level Estimation Analysis";
+			this.defaultName = globalConstants.newEntityNames.ple;
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
@@ -143,37 +145,30 @@ define([
 			document.location = constants.paths.browser()
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			var abortSave = false;
 
 			// Next check to see that an estimation analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.
-			EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id())
-				.then((results) => {
-					if (results.length > 0) {
-						alert('An estimation analysis with this name already exists. Please choose a different name.');
-						abortSave = true;
-					}
-				}, function(){
-					alert('An error occurred while attempting to find an estimation analysis with the name you provided.');
-				})
-				.then(() => {
-					if (abortSave) {
-						this.isSaving(false);
-						this.loading(false);
-						return;
-					}
+			try{
+				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
+				if (results > 0) {
+					this.isSaving(false);
+					this.loading(false);
+					alert('An estimation analysis with this name already exists. Please choose a different name.');
+				} else {
 					this.fullAnalysisList.removeAll();
 					const payload = this.prepForSave();
-					EstimationService.saveEstimation(payload).then((analysis) => {
-						this.setAnalysis(analysis);
-						document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
-						this.isSaving(false);
-						this.loading(false);
-					});
-				});
+					const savedEstimation = await EstimationService.saveEstimation(payload);
+					this.setAnalysis(savedEstimation);
+					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
+					this.isSaving(false);
+					this.loading(false);
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to find an estimation analysis with the name you provided.');
+			}
 		}
 
 		prepForSave() {
@@ -282,7 +277,7 @@ define([
 				this.setAnalysis(analysis);
 				this.isCopying(false);
 				this.loading(false);
-				document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
+				commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
 			});
 		}
 

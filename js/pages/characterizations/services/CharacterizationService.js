@@ -30,7 +30,7 @@ define([
     }
 
     function createCharacterization(design) {
-        return request = httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
+        return httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
     }
 
     function copyCharacterization(id) {
