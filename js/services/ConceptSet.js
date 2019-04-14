@@ -83,7 +83,7 @@ define(function (require, exports) {
     }
 
   function exists(name, id) {
-		return httpService.doGet(config.webAPIRoot + 'conceptset/exists', { name, id })
+		return httpService.doGet(`${config.webAPIRoot}conceptset/${id}/exists?name=${name}`)
 			.then(({ data }) => data)
 			.catch(authApi.handleAccessDenied);
   }

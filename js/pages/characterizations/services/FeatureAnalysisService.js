@@ -31,7 +31,7 @@ define([
     }
 
     function exists(name, id) {
-        return httpService.doGet(config.webAPIRoot + 'feature-analysis/exists?name=' + name + '&id=' + id)
+        return httpService.doGet(`${config.webAPIRoot}feature-analysis/${id}/exists?name=${name}`)
             .then(res => res.data);
     }
 

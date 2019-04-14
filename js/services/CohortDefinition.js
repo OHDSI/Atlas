@@ -70,7 +70,7 @@ define(function (require, exports) {
 
 	function exists(name, id) {
 		return httpService
-			.doGet(config.webAPIRoot + 'cohortdefinition/exists?name=' + name + '&id=' + id)
+			.doGet(`${config.webAPIRoot}cohortdefinition/${id}/exists?name=${name}`)
 			.then(res => res.data);
 	}
 	

@@ -75,7 +75,7 @@ define(function (require, exports) {
 
 	function exists(name, id) {
 		return httpService
-			.doGet(config.webAPIRoot + estimationEndpoint + 'exists?name=' + name + '&id=' + id)
+			.doGet(`${config.webAPIRoot}${estimationEndpoint}${id}/exists?name=${name}`)
 			.then(res => res.data)
 			.catch(error => authApi.handleAccessDenied(error));
 	}

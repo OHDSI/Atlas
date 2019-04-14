@@ -336,24 +336,23 @@ define([
            try{
                 const results = await FeatureAnalysisService.exists(this.data().name(), this.featureId());
                 if (results > 0) {
-                    this.isSaving(false);
                     alert('A feature analysis with this name already exists. Please choose a different name.');
                 } else {
                     if (this.featureId() < 1) {
                         const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());
                         this.dataDirtyFlag().reset();
-                        this.isSaving(false);
                         commonUtils.routeTo('/cc/feature-analyses/' + res.id);
                     } else {
                         const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data());
                         this.setupAnalysisData(res);
-                        this.isSaving(false);
-                        this.loading(false);
                     }
                 }
             } catch (e) {
                 alert('An error occurred while attempting to find a feature analysis with the name you provided.');
-            }
+            } finally {
+               this.isSaving(false);
+               this.loading(false);
+           }
         }
 
         deleteFeature() {

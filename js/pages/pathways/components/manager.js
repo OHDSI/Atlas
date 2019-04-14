@@ -148,23 +148,22 @@ define([
 			try {
 				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
 				if (results > 0) {
-					this.isSaving(false);
 					alert('A cohort pathway with this name already exists. Please choose a different name.');
 				} else {
 					if (!this.design().id) {
 						const newAnalysis = await PathwayService.create(this.design());
 						this.dirtyFlag().reset();
-						this.isSaving(false);
 						commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
 					} else {
 						const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
 						this.setupDesign(new PathwayAnalysis(updatedAnalysis));
-						this.isSaving(false);
-						this.loading(false);
 					}
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to find a cohort pathway with the name you provided.');
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
 			}
 		}
 

@@ -351,19 +351,18 @@ define([
 			try{
 				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
 				if (results > 0) {
-					this.isSaving(false);
-					this.loading(false);
 					alert('An incidence rate with this name already exists. Please choose a different name.');
 				} else {
 					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
 					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
 					this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
-					this.isSaving(false);
-					this.loading(false);
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to find an incidence rate with the name you provided.');
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
 			}
 		}
 

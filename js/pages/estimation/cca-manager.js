@@ -154,8 +154,6 @@ define([
 			try{
 				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
 				if (results > 0) {
-					this.isSaving(false);
-					this.loading(false);
 					alert('An estimation analysis with this name already exists. Please choose a different name.');
 				} else {
 					this.fullAnalysisList.removeAll();
@@ -163,11 +161,12 @@ define([
 					const savedEstimation = await EstimationService.saveEstimation(payload);
 					this.setAnalysis(savedEstimation);
 					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
-					this.isSaving(false);
-					this.loading(false);
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to find an estimation analysis with the name you provided.');
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
 			}
 		}
 

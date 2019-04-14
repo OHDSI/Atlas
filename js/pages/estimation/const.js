@@ -14,7 +14,7 @@ define(
     const paths = {
         root: '/estimation/cca/',
         ccaAnalysis: id => `/estimation/cca/${id}`,
-        ccaAnalysisDash: id => `#/estimation/cca/${id}`,
+        ccaAnalysisDash: id => `#${paths.ccaAnalysis(id)}`,
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',
     };

@@ -674,14 +674,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				try {
 					const results = await cohortDefinitionService.exists(this.model.currentCohortDefinition().name(), this.model.currentCohortDefinition().id());
 					if (results > 0) {
-						this.isSaving(false);
 						alert('A cohort definition with this name already exists. Please choose a different name.');
 					} else {
 						this.model.clearConceptSet();
 
-						// If we are saving a new cohort definition (id == 0) then clear
+						// If we are saving a new cohort definition (id === 0) then clear
 						// the id field before saving
-						if (this.model.currentCohortDefinition().id() == 0) {
+						if (this.model.currentCohortDefinition().id() === "0") {
 							this.model.currentCohortDefinition().id(undefined);
 						}
 						var definition = ko.toJS(this.model.currentCohortDefinition());
@@ -693,13 +692,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						definition = new CohortDefinition(savedDefinition);
 						const redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
 						this.model.currentCohortDefinition(definition);
-						this.isSaving(false);
 						if (redirectWhenComplete) {
 							commonUtils.routeTo(constants.paths.details(definition.id()));
 						}
 					}
 				} catch (e) {
 					alert('An error occurred while attempting to find a cohort definition with the name you provided.');
+				} finally {
+					this.isSaving(false);
 				}
 			}
 

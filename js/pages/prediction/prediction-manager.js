@@ -214,8 +214,6 @@ define([
 			try{
 				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
 				if (results > 0) {
-					this.isSaving(false);
-					this.loading(false);
 					alert('A prediction analysis with this name already exists. Please choose a different name.');
 				} else {
 					this.fullAnalysisList.removeAll();
@@ -223,12 +221,13 @@ define([
 					const savedPrediction = await PredictionService.savePrediction(payload);
 					this.loadAnalysisFromServer(savedPrediction);
 					document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
-					this.isSaving(false);
-					this.loading(false);
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to find a prediction analysis with the name you provided.');
-			}
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
+            }
 		}
 
 		prepForSave() {

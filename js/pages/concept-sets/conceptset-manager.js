@@ -206,8 +206,6 @@ define([
 			try{
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
-					this.loading(false);
-					this.isSaving(false);
 					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
 				} else {
 					const conceptSetItems = utils.toConceptSetItems(selectedConcepts);
@@ -217,16 +215,16 @@ define([
 
 						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.model.currentConceptSetDirtyFlag().reset();
-						this.loading(false);
-						this.isSaving(false);
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
 					} catch(e){
-						this.isSaving(false);
 						alert('Unable to save concept set');
 					}
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to find a concept set with the name you provided.');
+			} finally {
+				this.loading(false);
+				this.isSaving(false);
 			}
 		}
 

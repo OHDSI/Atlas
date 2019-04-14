@@ -91,7 +91,7 @@ define([
 
     function exists(name, id) {
         return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/exists?name=' + name + '&id=' + id)
+            .doGet(`${config.webAPIRoot}cohort-characterization/${id}/exists?name=${name}`)
             .then(res => res.data);
     }
 

@@ -44,7 +44,6 @@ define(
     };
 
     const paths = {
-      detailsDash: id => `#/cohortdefinition/${id}`,
       details: id => `/cohortdefinition/${id}`,
     };
 

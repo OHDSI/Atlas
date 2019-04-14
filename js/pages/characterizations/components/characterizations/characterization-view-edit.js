@@ -168,23 +168,22 @@ define([
             try {
                 const results = await CharacterizationService.exists(this.design().name(), ccId);
                 if (results > 0) {
-                    this.isSaving(false);
                     alert('A characterization with this name already exists. Please choose a different name.');
                 } else {
                     if (ccId < 1) {
                         const newCharacterization = await CharacterizationService.createCharacterization(this.design());
-                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                        this.isSaving(false);
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));                        
                         commonUtils.routeTo(`/cc/characterizations/${newCharacterization.id}/${this.selectedTabKey()}`);
                     } else {
                         const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
                         this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
-                        this.isSaving(false);
-                        this.loading(false);
                     }
                 }
             } catch (e) {
                 alert('An error occurred while attempting to find a characterization with the name you provided.');
+            } finally {
+                this.isSaving(false);
+                this.loading(false);
             }
         }
 
