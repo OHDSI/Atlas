@@ -29,7 +29,7 @@ define([
 			
 			if (params.canEditName) {
 				nameCol.render = (s,p,d) => `<span data-bind="clickToEdit: name"/>`;
-				nameCol.className = this.classes('col-cohort-name', 'editable');
+				nameCol.className = this.classes('col-cohort-name', 'editable', 'editable-name');
 			} else {
 				nameCol.data = 'name',
 				nameCol.className = this.classes('col-cohort-name')
@@ -84,7 +84,13 @@ define([
 				return `<a href="#/cohortdefinition/${d[identifierField]}">Edit cohort</a>`;
 			}
 		}
-		
+
+
+		getEditCell2(action, identifierField = 'id') {
+			return (s, p, d) => {
+				return `testtt`;
+			}
+		}
 
 		showCohortModal() {
 			this.showModal(true);

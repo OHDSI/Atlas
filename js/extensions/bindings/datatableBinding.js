@@ -197,6 +197,16 @@ define([
 				table.rows.add(data);
 			
 			table.draw();
+
+			jQuery.fn.dataTableExt.search.pop();
+			jQuery.fn.dataTableExt.search.push(
+				function (settings, data, dataIndex) {
+					if (settings.oInit.aoColumns.filter(c => c.className.includes("editable-name")).length > 0) {
+						settings.aoData[dataIndex]._sFilterRow = settings.aoData[dataIndex]._aData.name();
+					}
+					return true;
+				}
+			);
 		}
 	};
 });
