@@ -348,6 +348,7 @@ define(
 					}
 				});
 				this.currentConceptSetMode.subscribe(this.onCurrentConceptSetModeChanged);
+
 				/*
 					probably unreachable code
 					
@@ -382,8 +383,9 @@ define(
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
 			resolveConceptSetExpression(resolveAgainstServer = true) {
-        this.includedConcepts.removeAll();
-        this.includedSourcecodes.removeAll();
+        		this.includedConcepts.removeAll();
+				this.includedSourcecodes.removeAll();
+				this.conceptSetInclusionIdentifiers.removeAll();
 				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
 				var highlightedJson = this.syntaxHighlight(conceptSetExpression);
 				this.currentConceptSetExpressionJson(highlightedJson);
@@ -416,14 +418,14 @@ define(
 				return resolvingPromise;
 			}
 
-			handleVocabularyDataSourceFailure(message = 'An error occured') {
+			handleVocabularyDataSourceFailure(message = 'An error occurred') {
 				alert(`${message}. Check vocabulary data source`);
 				document.location = '#/configure';
 			}
 
 			renderCheckbox(field) {
 				if (this.canEditCurrentConceptSet()) {
-					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); $root.resolveConceptSetExpression(); } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
+					return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
 				} else {
 					return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
 				}
@@ -848,16 +850,12 @@ define(
 						console.warn('Roles are not updated');
 						return Promise.resolve();
 					}
-					if (this.roles() && this.roles().length > 0) {
-						console.info('Roles updated');
-						return Promise.resolve();
-					} else {
-						return roleService.getList()
-							.then((roles) => {
-								console.info('Roles updated');
-								this.roles(roles);
-							});
-					}
+					
+					return roleService.getList()
+						.then((roles) => {
+							console.info('Roles updated');
+							this.roles(roles);
+						});
 				}
 			}
 	

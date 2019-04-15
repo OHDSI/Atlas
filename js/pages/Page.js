@@ -22,17 +22,18 @@ define([
   class Page extends Component {
     constructor(params) {
       super(params);
-			this.subscriptions = [];			
+			this.subscriptions = [];
       this.routerParams = params.routerParams();
+      this.activePage = params.model.activePage();
       this.subscriptions.push(params.routerParams.subscribe(newParams => {
         const np = Object.entries(newParams === undefined ? {} : newParams);
         const op = Object.entries(this.routerParams === undefined ? {} : this.routerParams);
         const changedParams = _.differenceWith(np, op, detectChanges);
-        if (changedParams.length === 0) {
+        if (changedParams.length === 0 || this.activePage !== params.model.activePage()) {
           return;
         }
         const changedParamsMap = changedParams.reduce((map, value) => { map[value[0]] = value[1]; return map; }, {});
-        
+
         this.onRouterParamsChanged(changedParamsMap, newParams);
         this.routerParams = newParams;
       }));

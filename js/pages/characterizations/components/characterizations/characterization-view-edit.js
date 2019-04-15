@@ -39,9 +39,10 @@ define([
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
             super(params);
-
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
             this.executionId = ko.observable();
+            this.areStratasNamesEmpty = ko.observable();
+            this.duplicatedStrataNames = ko.observable([]);
             this.design = sharedState.CohortCharacterization.current;
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
@@ -62,8 +63,6 @@ define([
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
-            this.areStratasNamesEmpty = ko.observable();
-            this.duplicatedStrataNames = ko.observable([]);
             this.componentParams = ko.observable({
                 characterizationId: this.characterizationId,
                 design: this.design,
