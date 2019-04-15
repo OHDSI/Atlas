@@ -85,13 +85,6 @@ define([
 			}
 		}
 
-
-		getEditCell2(action, identifierField = 'id') {
-			return (s, p, d) => {
-				return `testtt`;
-			}
-		}
-
 		showCohortModal() {
 			this.showModal(true);
 		}
