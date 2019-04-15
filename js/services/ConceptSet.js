@@ -84,8 +84,7 @@ define(function (require, exports) {
 
   function exists(name, id) {
 		return httpService.doGet(`${config.webAPIRoot}conceptset/${id}/exists?name=${name}`)
-			.then(({ data }) => data)
-			.catch(authApi.handleAccessDenied);
+			.then(({ data }) => data);
   }
 
   function saveConceptSet(conceptSet) {
