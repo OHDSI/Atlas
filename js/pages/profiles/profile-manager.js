@@ -315,6 +315,7 @@ define([
 			loadPerson() {
 				this.cantFindPerson(false);
 				this.loadingPerson(true);
+				this.xfDimensions = [];
 
 				let url = constants.paths.person(this.sourceKey(), this.personId());
 
