@@ -75,7 +75,7 @@ define([
     this.username = ko.observable(data.username || null);
     this.password = ko.observable(data.password || null);
     this.daimons = ko.observableArray(mapDaimons(data.daimons));
-    this.keytabName = ko.observable(data.keytabName);
+    this.keyfileName = ko.observable(data.keyfileName);
     this.krbAuthMethod = ko.observable(data.krbAuthMethod);
     this.krbAdminServer = ko.observable(data.krbAdminServer);
 
@@ -189,14 +189,18 @@ define([
       this.init();
 
       this.fieldsVisibility = {
-        username: ko.computed(() => !this.supportsKeytabAuth() || this.isKrbAuth()),
-        password: ko.computed(() => !this.supportsKeytabAuth()),
+        username: ko.computed(() => !this.supportsKeyfileAuth() || this.isKrbAuth()),
+        password: ko.computed(() => !this.supportsKeyfileAuth()),
         krbAuthSettings: this.isKrbAuth,
         showKeytab: ko.computed(() => {
           return this.isKrbAuth() && this.selectedSource().krbAuthMethod() === 'keytab';
         }),
         krbFileInput: ko.computed(() => {
-          return this.isKrbAuth() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
+          return this.isKrbAuth() && (typeof this.selectedSource().keyfileName() !== 'string' || this.selectedSource().keyfileName().length === 0);
+        }),
+        bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
+        bqFileInput: ko.computed(() => {
+          return this.isBigQueryDS() && (typeof this.selectedSource().keyfileName() !== 'string' || this.selectedSource().keyfileName().length === 0);
         }),
         bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
         bqFileInput: ko.computed(() => {
@@ -232,7 +236,7 @@ define([
       this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
     }
 
-    supportsKeytabAuth() {
+    supportsKeyfileAuth() {
       return this.isImpalaDS() || this.isBigQueryDS();
     }
 
@@ -255,12 +259,12 @@ define([
     removeKeytab() {
       $('#keytabFile').val(''); // TODO: create "ref" directive
       this.keytab = null;
-      this.selectedSource().keytabName(null);
+      this.selectedSource().keyfileName(null);
     }
 
     uploadFile(file) {
       this.keytab = file;
-      this.selectedSource().keytabName(file.name)
+      this.selectedSource().keyfileName(file.name)
     }
 
     save() {
@@ -276,7 +280,7 @@ define([
         daimons: ko.toJS(this.selectedSource().daimons()).filter(function(d) { return d.enabled; }).map(function(d) {
           return lodash.omit(d, ['enabled']);
         }),
-        keytabName: this.selectedSource().keytabName(),
+        keyfileName: this.selectedSource().keyfileName(),
         keytab: this.keytab,
       };
       this.loading(true);
