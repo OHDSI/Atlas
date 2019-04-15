@@ -22,6 +22,8 @@ define([
     'services/MomentAPI',
     'services/Source',
     'utils/CsvUtils',
+    'utils/ExceptionUtils',
+    'services/file',
     './explore-prevalence',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
@@ -53,6 +55,8 @@ define([
     momentAPI,
     SourceService,
     CsvUtils,
+    exceptionUtils,
+    FileService,
 ) {
 
     class CharacterizationViewEditResults extends AutoBind(Component) {
@@ -95,6 +99,17 @@ define([
             if (stat.stdDiff && Math.abs(stat.stdDiff) < 0.1) {
                 element.classList.add(this.classes('greyed-row').trim());
             }
+        }
+
+        getExportButtonConfig() {
+            const buttons = [];
+
+            buttons.push({
+                text: 'Export all',
+                action: ()  => this.exportAllCSV()
+            });
+
+            return buttons;
         }
 
         getButtonsConfig(type, analysis) {
@@ -290,6 +305,22 @@ define([
             });
         }
 
+        async exportAllCSV() {
+            try {
+                let {cohorts, analyses, domains} = filterUtils.getSelectedFilterValues(this.filterList());
+                let params = {
+                    cohortIds: cohorts,
+                    analisysIds: analyses,
+                    domainIds: domains
+                };
+                await FileService.loadZip(`${config.api.url}cohort-characterization/generation/${this.executionId()}/result/export`,
+                    `characterization_${this.characterizationId()}_execution_${this.executionId()}_reports.zip`, 'POST', params);
+
+            }catch (e) {
+                alert(exceptionUtils.translateException(e));
+            }
+        }
+
         findDomainById(domainId) {
             const domain = this.domains().find(d => d.id === domainId);
             return domain || {name: 'Unknown'};
@@ -465,6 +496,10 @@ define([
         analysisTitle(data) {
             const strata = data.stratified ? (' / stratified by ' + this.stratifiedByTitle()): '';
             return ko.computed(() => (data.domainId ? (data.domainId + ' / ') : '') + data.analysisName + strata);
+        }
+
+        canExportAll() {
+            return ko.computed(() => this.data().analyses.size > 0);
         }
     }
 

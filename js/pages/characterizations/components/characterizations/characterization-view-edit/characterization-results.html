@@ -26,6 +26,9 @@
         <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
     </div>
     <div data-bind="css: classes('report-section')">
+        <div>
+            <button class="btn btn-sm btn-primary" type="button" data-bind="enable: canExportAll, click: exportAllCSV">Export all</button>
+        </div>
         <!-- ko foreach: analysisList -->
             <div data-bind="css: $component.classes('report-group')">
                 <h3 data-bind="css: $component.classes('analysis-name'), text: $component.analysisTitle($data) "></h3>
