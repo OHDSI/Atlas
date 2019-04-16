@@ -143,7 +143,11 @@ define([
 
         self.signoutIap = function () {
             window.location = '/_gcp_iap/clear_login_cookie';
-		}
+        }
+
+        self.refreshPage = function () {
+            window.location.reload();
+        }
     }
 
     var component = {
