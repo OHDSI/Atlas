@@ -10,7 +10,7 @@
 				<select data-bind="options:$component.authProviders, optionsText:'name', value:$component.currentAuthProvider"></select> credentials
 				-->
 
-				<p class="text-danger" data-bind="if: isLoggedIn() && tokenExpired() && $component.token()">
+				<p class="text-danger" data-bind="if: isLoggedIn() && tokenExpired() && !$component.isGoogleIapAuth()">
 					Your session has expired. Please login again.
 				</p>
 				<div data-bind="if: isLoggedIn() && tokenExpired() && $component.isGoogleIapAuth()">
