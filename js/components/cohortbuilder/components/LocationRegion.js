@@ -16,7 +16,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 			{
 				text: "Add Start Date Criteria",
 				selected: false,
-				description: "Filter Condition Eras by the Start Date.",
+				description: "Filter Locations by date when Person started living there",
 				action: function () {
 					if (self.Criteria.StartDate() == null)
 						self.Criteria.StartDate(new Range({
@@ -27,7 +27,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 			{
 				text: "Add End Date Criteria",
 				selected: false,
-				description: "Filter Condition Eras  by the End Date",
+				description: "Filter Locations by date when Person finished living there",
 				action: function () {
 					if (self.Criteria.EndDate() == null)
 						self.Criteria.EndDate(new Range({

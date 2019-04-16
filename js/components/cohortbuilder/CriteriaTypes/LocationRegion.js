@@ -6,7 +6,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 
 		Criteria.call(this, data, conceptSets);
 
-		// set up subscription to update CodesetId and DrugSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
 				if (change.status === 'deleted') {
