@@ -9,11 +9,14 @@ define([
 ) {
 	class Route {
 		checkPermission() {
-			if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
+			if (
+				appConfig.userAuthenticationEnabled &&
+				((authApi.token() != null && authApi.tokenExpirationDate() > new Date()) ||
+					authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP)
+			) {
 				return authApi.refreshToken();
-			} else {
-				return new Promise(resolve => resolve());
-			}      
+			}
+			return Promise.resolve();
 		}
 
 		constructor(handler) {

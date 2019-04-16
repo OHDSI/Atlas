@@ -13,10 +13,10 @@
     <th>Ancestors</th>
   </tr>
 </script>
-<!-- ko if: $root.loadingIncluded -->
+<!-- ko if: loading -->
   <loading></loading>
 <!-- /ko -->
-<!-- ko if: !$root.loadingIncluded() -->
+<!-- ko ifnot: loading -->
 <faceted-datatable params="{
   columns: $component.searchConceptsColumns,
   options: $component.searchConceptsOptions,

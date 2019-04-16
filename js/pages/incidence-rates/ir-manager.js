@@ -50,7 +50,7 @@ define([
 		constructor(params) {
 			super(params);
 			// polling support
-			this.pollTimeout = null;
+			this.pollId = null;
 			this.model = params.model;
 			this.loading = ko.observable(false);
 			this.loadingInfo = ko.observable();
@@ -217,6 +217,9 @@ define([
 							}
 						}
 					}
+
+					const statuses = data.map(item => item.executionInfo.status)
+					this.isRunning(statuses.some(status => constants.isInProgress(status)));
 				}
 			} catch(e) {
 				this.close();
@@ -266,8 +269,7 @@ define([
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
-				this.pollForInfo();
-				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
+				this.startPolling();
 			});
 		}
 
@@ -275,7 +277,17 @@ define([
 			const { analysisId } = params;
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
+				this.startPolling();
 			}
+		}
+
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.pollForInfo({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		handleConceptSetImport(item) {
@@ -444,7 +456,7 @@ define([
 		dispose() {
 			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
-			PollService.stop(this.pollTimeout);
+			PollService.stop(this.pollId);
 		}
 	}
 

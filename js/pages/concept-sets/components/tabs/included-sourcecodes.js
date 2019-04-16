@@ -18,7 +18,8 @@ define([
 			});
 
       		// data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
-      		// or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
+			// or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
+			this.model.resolveConceptSetExpression().then(() => this.model.onCurrentConceptSetModeChanged(this.model.currentConceptSetMode()));
 		}		
 
 	}

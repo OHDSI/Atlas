@@ -24,7 +24,7 @@ define((require, factory) => {
 				router.setCurrentView('pathways-browser');
 			});
 		})
-		
+
 		return {
 			'pathways': pathwaysBrowser,
 			'pathways/:id:': pathwaysManager,

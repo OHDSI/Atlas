@@ -47,6 +47,8 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 					case 'PLP':
 						return 'plp/' + n.jobParameters.cohortId;
 				}
+      case 'warmCacheByUser':
+        return 'configure';
 		}
 		return null;
 	}

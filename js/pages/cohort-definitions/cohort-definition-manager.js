@@ -87,7 +87,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		var textB = b.name().toUpperCase();
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
-
+	
 	class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
@@ -482,10 +482,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
 				const cd = this.model.currentCohortDefinition();
-				if (source) {
-					this.pollId = PollService.add(() => this.queryHeraclesJob(cd, source), 10000);
-					this.queryHeraclesJob(cd, source);
-				}
+				source && this.startPolling(cd, source);
 			});
 
 			this.reportingState = ko.computed(() => {
@@ -619,6 +616,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 			// METHODS
+
+		startPolling(cd, source) {
+			this.pollId = PollService.add({
+				callback: () => this.queryHeraclesJob(cd, source),
+				interval: 10000,
+			});
+		}
 
 		async queryHeraclesJob(cd, source) {
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
@@ -1248,6 +1252,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			setExpressionJson(value) {
 				this.modifiedJSON = value;
 			}
+				
+			getDataboundColumn(field, title, width) {
+				return { 
+					data: field,
+					title: title, 
+					width: width, 
+					render: function (data,type,row) {
+						return (type == "display")	? `<span data-bind='text: ${field}'></span>` 
+																				: ko.utils.unwrapObservable(data)
+					} 
+				}
+			}				
 	}
 
 	return commonUtils.build('cohort-definition-manager', CohortDefinitionManager, view);
