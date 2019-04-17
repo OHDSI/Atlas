@@ -52,7 +52,7 @@ define(function(require, exports) {
             success: function (info) {
                 permissions(info.permissions.map(p => p.permission));
                 subject(info.login);
-                fullName(info.fullName ? info.fullName : info.login);
+                fullName(info.name ? info.name : info.login);
                 resolve();
             },
             error: function (err) {
