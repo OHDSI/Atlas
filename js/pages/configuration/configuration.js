@@ -9,6 +9,8 @@ define([
   'services/SourceAPI',
   'atlas-state',
   'const',
+  'services/JobDetailsService',
+  'services/Poll',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -21,7 +23,9 @@ define([
   authApi,
   sourceApi,
   sharedState,
-  constants
+  constants,
+  jobDetailsService,
+  PollService
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -30,6 +34,8 @@ define([
       this.api = config.api;
       this.sharedState = sharedState;
       this.isInProgress = ko.observable(false);
+      this.jobListing = sharedState.jobListing;
+      this.sourceJobs = new Map();
       this.sources = sharedState.sources;
       this.priorityOptions = [
         {name: 'Current Session', id: 'session'},
@@ -62,6 +68,34 @@ define([
       });
       
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+
+      this.intervalId = PollService.add({
+        callback: () => this.checkJobs(),
+        interval: 5000,
+      });
+    }
+
+    dispose() {
+      PollService.stop(this.intervalId);
+    }
+
+    getSource(job) {
+      return this.sourceJobs.get(job.executionId);
+    }
+
+    checkJobs() {
+      this.jobListing().forEach(job => {
+        let source = this.getSource(job);
+        if (source && (job.isComplete() || job.isFailed())) {
+          this.sourceJobs.delete(job.executionId);
+          source.refreshState(job.isComplete() ? sourceApi.buttonCheckState.success : sourceApi.buttonCheckState.failed);
+        }
+      });
+    }
+
+    async onPageCreated() {
+      sourceApi.initSourcesConfig();
+      super.onPageCreated();
     }
 
     canReadSource(source) {
@@ -78,6 +112,14 @@ define([
 			} else {
 				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCheckSourceConnection(source.sourceKey));
 			}
+    }
+
+    canRefreshSourceCache(source) {
+      if (!config.userAuthenticationEnabled) {
+        return false;
+      } else {
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey));
+      }
     }
     
 		clearLocalStorageCache() {
@@ -127,29 +169,53 @@ define([
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };
-    
+
     checkSourceConnection(source) {
       sourceApi.checkSourceConnection(source.sourceKey)
         .then( ({ data }) =>
-           source.connectionCheck(data.sourceId === undefined ?
-               sourceApi.connectionCheckState.failed : sourceApi.connectionCheckState.success))
-        .catch(() => {source.connectionCheck(sourceApi.connectionCheckState.failed);});
-        source.connectionCheck(sourceApi.connectionCheckState.checking);
+          source.connectionCheck(data.sourceId === undefined ?
+            sourceApi.buttonCheckState.failed : sourceApi.buttonCheckState.success))
+        .catch(() => {source.connectionCheck(sourceApi.buttonCheckState.failed);});
+      source.connectionCheck(sourceApi.buttonCheckState.checking);
     };
-    
+
+    async refreshSourceCache(source) {
+      try {
+        source.refreshState(sourceApi.buttonCheckState.checking);
+        const { data } = await sourceApi.refreshSourceCache(source.sourceKey);
+        if(data.executionId === undefined) {
+          source.refreshState(sourceApi.buttonCheckState.failed);
+        } else {
+          jobDetailsService.createJob(data);
+          this.sourceJobs.set(data.executionId, source);
+          source.refreshState(sourceApi.buttonCheckState.checking);
+        }
+      } catch (e) {
+        source.refreshState(sourceApi.buttonCheckState.failed);
+      }
+    }
+
+    getRefreshCacheButtonStyles(source) {
+      return this.getButtonStyles(source.refreshState())
+    };
+
     getCheckButtonStyles(source) {
+      return this.getButtonStyles(source.connectionCheck());
+    }
+
+    getButtonStyles(sourceState) {
       let iconClass = 'fa-caret-right';
       let buttonClass = 'btn-primary';
-      switch(source.connectionCheck()) {
-        case sourceApi.connectionCheckState.success:
+      switch(sourceState) {
+        case sourceApi.buttonCheckState.success:
           buttonClass = 'btn-success';
           iconClass = 'fa-check-square';
           break;
-        case sourceApi.connectionCheckState.failed:
+        case sourceApi.buttonCheckState.failed:
           buttonClass = 'btn-danger';
           iconClass = 'fa-exclamation-circle';
           break;
-        case sourceApi.connectionCheckState.checking:
+        case sourceApi.buttonCheckState.checking:
           buttonClass = 'btn-warning';
           iconClass = 'fa-circle-o-notch fa-spin';
           break;

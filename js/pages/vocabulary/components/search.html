@@ -35,7 +35,7 @@
 	</div>
 </script>
 
-<div class="vocabulary-search-tab">
+<div class="vocabulary-search-tab" data-bind="if: isAuthenticated() && hasAccess()">
 	<form data-bind="submit: searchClick">
 		<div class="input-group">
 			<input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
@@ -51,7 +51,7 @@
 	</form>
 	<div class="row">
 		<div data-bind="click: toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
-	</div>	
+	</div>
 	<!-- ko if: isInProgress() || loading() -->
 		<loading params="status: loadingMessage"></loading>
 	<!-- /ko -->
@@ -74,6 +74,7 @@
 			columns: searchColumns,
 			options: searchOptions,
 			reference: data,
+			buttons: buttons
 			rowCallback: $root.contextSensitiveLinkColor
 		}"></faceted-datatable>
 		<div class="linkLegend">
@@ -96,3 +97,5 @@
 		<div class="clear"></div>
 	</div>
 </div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

@@ -107,11 +107,15 @@ define([
 
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
+			this.isViewGenerationsPermitted() && this.startPolling();
+		}
 
-			if (this.isViewGenerationsPermitted()) {
-				this.loadData();
-				this.pollId = PollService.add(() => this.loadData({ silently: true }), 10000);
-			}
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.loadData({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		dispose() {
@@ -130,6 +134,12 @@ define([
 
 		isResultsViewPermitted(sourceKey) {
 			return PermissionService.isPermittedResults(sourceKey);
+		}
+
+		getExecutionGroupStatus(submissions) {
+			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
+				this.pathwayGenerationStatusOptions.STARTED :
+				this.pathwayGenerationStatusOptions.COMPLETED;
 		}
 
 		async loadData({silently = false} = {}) {
@@ -161,10 +171,7 @@ define([
 
 
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
-					group.status(group.submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
-						this.pathwayGenerationStatusOptions.STARTED :
-						this.pathwayGenerationStatusOptions.COMPLETED);
-
+					group.status(this.getExecutionGroupStatus(group.submissions));
 				});
 			} catch (e) {
 				console.error(e);
@@ -173,34 +180,19 @@ define([
 			}
 		}
 
-		generate(source) {
-			let confirmPromise;
-			this.stopping({...this.stopping(), [source]: false});
-
+		async generate(source) {
+			this.stopping({ ...this.stopping(), [source]: false });
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === source);
-			if (!executionGroup) {
-				confirmPromise = new Promise((resolve, reject) => reject());
-			} else {
-				if (executionGroup.status() === this.pathwayGenerationStatusOptions.STARTED) {
-					confirmPromise = new Promise((resolve, reject) => {
-						if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
-							resolve();
-						} else {
-							reject();
-						}
-					})
-				} else {
-					confirmPromise = new Promise(res => res());
-				}
+			if (!executionGroup) return false;
+			try {
+				executionGroup.status(this.pathwayGenerationStatusOptions.PENDING);
+				const data = await PathwayService.generate(this.analysisId(), source);
+				jobDetailsService.createJob(data);
+				this.loadData();
+			} catch(e) {
+				console.error(e);
+				executionGroup.status(this.getExecutionGroupStatus(executionGroup.submissions));
 			}
-
-			confirmPromise
-				.then(() => PathwayService.generate(this.analysisId(), source))
-        .then((data) => {
-          jobDetailsService.createJob(data);
-          this.loadData()
-        })
-				.catch(() => {});
 		}
 
 		showExitMessage(sourceKey, id) {
@@ -216,6 +208,8 @@ define([
 			this.stopping({...this.stopping(), [source.sourceKey]: true});
 			if (confirm('Do you want to stop generation?')) {
 				PathwayService.cancelGeneration(this.analysisId(), source.sourceKey);
+			} else {
+				this.stopping({...this.stopping(), [source.sourceKey]: false});
 			}
 		}
 

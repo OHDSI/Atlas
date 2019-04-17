@@ -1,14 +1,14 @@
 define([
-    'knockout',
-    '../../PathwayService',
-		'../../PermissionService',
-    'text!./pathway-utils.html',
-    'appConfig',
-    'services/AuthAPI',
-    'components/Component',
-    'utils/AutoBind',
-		'utils/CommonUtils',
-    'less!./pathway-utils.less',
+	'knockout', 
+	'../../PathwayService', 
+	'../../PermissionService', 
+	'text!./pathway-utils.html', 
+	'appConfig', 
+	'services/AuthAPI', 
+	'components/Component', 
+	'utils/AutoBind', 
+	'utils/CommonUtils', 
+	'less!./pathway-utils.less',
 ], function (
 	ko,
 	PathwayService,
@@ -34,29 +34,18 @@ define([
 			this.analysisId = params.analysisId;
 			this.mode = ko.observable(this.MODE_JSON);
 
-			this.isExportPermitted = this.isExportPermittedResolver();
-			this.isImportPermitted = this.isImportPermittedResolver();
+			this.isExportPermitted = PermissionService.isPermittedExport;
+			this.isImportPermitted = PermissionService.isPermittedImport;
 
 			this.exportEntity = ko.observable();
-			this.exportJSON = ko.computed(() => JSON.stringify(this.exportEntity(), null, 2));
-
-			this.importJSON = ko.observable();
-
-			this.isExportPermitted() && this.loadExportJSON();
+			this.exportService = PathwayService.loadExportDesign;
+			this.importService = PathwayService.importPathwayDesign;
 			
 			// subscriptions
 			this.subscriptions.push(this.analysisId.subscribe((newVal) => {
 				this.loadExportJSON();
 				console.log(`New value of analysisId: ${newVal}`);
 			}));
-		}
-
-		isExportPermittedResolver() {
-			return ko.computed(() => PermissionService.isPermittedExport(this.analysisId()));
-		}
-
-		isImportPermittedResolver() {
-			return PermissionService.isPermittedImport;
 		}
 
 		setMode(mode) {
@@ -70,17 +59,6 @@ define([
 				this.exportEntity(res);
 				this.loading(false);
 			}
-		}
-
-		doImport() {
-			this.loading(true);
-
-			PathwayService
-				.importPathwayDesign(JSON.parse(this.importJSON()))
-				.then(res => {
-					this.loading(false);
-					commonUtils.routeTo(`/pathways/${res.id}`);
-				});
 		}
 		
 		dispose() {

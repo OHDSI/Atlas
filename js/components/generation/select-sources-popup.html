@@ -14,7 +14,7 @@
 										 }">
 	<faceted-datatable
 	    data-bind="css: classes('tbl')"
-		params="order: [1, 'asc'], reference: sourceOptions, columns: columns, buttons: buttons, dom: tableDom, pageLength: 15, options: {}, createdRow: onRowCreated, rowClick: toggle "
+        params="order: [1, 'asc'], reference: sourceOptions, columns: columns, buttons: buttons, dom: tableDom, pageLength: 15, options: {}, createdRow: onRowCreated, rowClick: toggle "
     ></faceted-datatable>
     <div data-bind="css: classes('footer')">
         <button type="button" data-bind="click: generate, css: classes({ element: 'gen-btn', extra: 'btn btn-sm btn-primary' }), disable: selectedSources().length <= 0">

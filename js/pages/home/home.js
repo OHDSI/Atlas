@@ -31,7 +31,7 @@ define([
 		}
 
 		async onPageCreated() {
-			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=14");
+			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=24");
 			this.github_status(data);
 		}
 

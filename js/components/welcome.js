@@ -20,6 +20,7 @@ define([
         const bemHelper = new BemHelper(componentName);
 		this.classes = bemHelper.run.bind(bemHelper);
         self.token = authApi.token;
+        self.loadUserInfo = authApi.loadUserInfo;
         self.setAuthParams = authApi.setAuthParams;
         self.resetAuthParams = authApi.resetAuthParams;
         self.serviceUrl = appConfig.webAPIRoot;
@@ -37,13 +38,18 @@ define([
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
+		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
                 return "Please wait...";
             if (self.errorMsg())
                 return self.errorMsg();
             if (self.isLoggedIn()) {
-                return "Logged in as '" + self.login() + "' (exp: " + self.expiration() + ")";
+                if (self.expiration()) {
+                    return "Logged in as '" + self.login() + "' (exp: " + self.expiration() + ")";
+                } else {
+                    return "Logged in as '" + self.login() + "'";
+                }
             }
             return 'Not logged in';
         });
@@ -60,11 +66,12 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
-            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER)).then(() => {
+            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
+            self.loadUserInfo().then(() => {
                 self.errorMsg(null);
                 self.isBadCredentials(null);
                 self.isInProgress(false);
-            });
+            })
         };
 
         self.onLoginFailed = function(jqXHR, defaultMessage) {
@@ -133,6 +140,10 @@ define([
                 }
             });
         };
+
+        self.signoutIap = function () {
+            window.location = '/_gcp_iap/clear_login_cookie';
+		}
     }
 
     var component = {

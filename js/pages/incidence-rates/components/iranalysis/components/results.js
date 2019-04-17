@@ -154,12 +154,22 @@ define([
 			this.selectedSource(source);
 			this.isLoading(true);
 
-			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome()).then((report) => {
+			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome())
+			.then((response) => {
+				if (response.status && response.status !== 200) {
+					throw new Error(response);
+				}
+				const report = response;
 				// ensure report results are sorted in correct order (by id)
 				report.stratifyStats.sort(function (a, b) {
 					return a.id - b.id;
 				});
 				this.selectedReport(report);
+				this.isLoading(false);
+			})
+			.catch(er => {
+				console.error(er);
+				alert('There was an error while loading generation result reports');
 				this.isLoading(false);
 			});
 		};

@@ -73,10 +73,16 @@ define([
                 stratified,
                 cohorts,
                 strataNames: strataNames,
-                perStrataValues: this.getReportColumns(0,0).map(col => col.title),
+                defaultColNames: this.getDefaultColumns().map(col => col.title),
+                perStrataColNames: this.getReportColumns(0,0).map(col => col.title),
                 columns: columns,
+                defaultSort: this.getDefaultSort(columns.length, cohorts.length),
                 data: Array.from(data.values()),
             };
+        }
+
+        getDefaultSort(columnsCount, cohortsCount) {
+            return [[ columnsCount - 1, "desc" ]]; // this is either for Std Diff (in comparison mode) or Pct (in single cohort mode)
         }
 
         getRowId(stat) {

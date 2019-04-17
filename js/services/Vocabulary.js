@@ -20,16 +20,20 @@ define(function (require, exports) {
 	function getDomains() {
 		// if domains haven't yet been requested, create the promise
 		if (!domainsPromise) {
-			domainsPromise = new Promise((resolve, reject) => {
-				$.ajax({
-					url: sharedState.vocabularyUrl() + 'domains',
-				}).then(function (results) {
-					$.each(results, function (i, v) {
-						domains.push(v.DOMAIN_ID);
+			if (sharedState.vocabularyUrl()) {
+				domainsPromise = new Promise((resolve, reject) => {
+					$.ajax({
+						url: sharedState.vocabularyUrl() + 'domains',
+					}).then(function (results) {
+						$.each(results, function (i, v) {
+							domains.push(v.DOMAIN_ID);
+						});
+						resolve(domains);
 					});
-					resolve(domains);
 				});
-			});
+			} else {
+				return new Promise((resolve, reject) => resolve([]));
+			}
 		}
 		return domainsPromise;
 	}
@@ -121,17 +125,7 @@ define(function (require, exports) {
 
 	function resolveConceptSetExpression(expression, url, sourceKey) {
 		const vocabUrl = getVocabUrl(url, sourceKey);
-		const repositoryUrl = vocabUrl + 'resolveConceptSetExpression';
-
-		var resolveConceptSetExpressionPromise = $.ajax({
-			url: repositoryUrl,
-			data: JSON.stringify(expression),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-	});
-
-		return resolveConceptSetExpressionPromise;
+		return httpService.doPost(vocabUrl + 'resolveConceptSetExpression', expression).then(({ data }) => data);
 	}
 
 	function getConceptSetExpressionSQL(expression, url) {

@@ -46,7 +46,7 @@ define([
 
 	var htmlTipText = d => {
 		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
-		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
+		if (canViewProfileDates() && d.startDate != null) {
 			tipText += '<p>Start Date: ' + momentApi.formatDate(new Date(d.startDate)) + '</p>'
 		}
 		return tipText;
@@ -254,10 +254,7 @@ define([
 				return rectangle(d);
 			})
 			.classed('point', true)
-			.on('mouseover', (d) => {
-				d3Selection.event = d3.event; // otherwise, d3Selection.event is null
-				return focusTip.show(d);
-			})
+			.on('mouseover', focusTip.show)
 			.on('mouseout', focusTip.hide)
 			.each(rectangle)
 

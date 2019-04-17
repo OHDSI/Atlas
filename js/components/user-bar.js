@@ -87,7 +87,6 @@ define([
 					.then(({data}) => {
 						this.lastViewedTime = new Date(data);
 						this.startPolling();
-						this.updateJobStatus()
 					})
 					.catch(() => {
 							console.warn('The server error occurred while getting viewed notifications');
@@ -98,7 +97,10 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add(() => this.updateJobStatus(), appConfig.pollInterval);
+			this.pollId = PollService.add({
+				callback: () => this.updateJobStatus(),
+				interval: appConfig.pollInterval,
+			});
 		};
 
 		stopPolling() {

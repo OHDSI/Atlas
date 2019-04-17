@@ -1,8 +1,8 @@
 define(
   (require, exports) => {
     const apiPaths = {
-      analysis: id => `#/iranalysis${id ? `/${id}` : ''}`,
-      createAnalysis: () => '#/iranalysis/new',
+      analysis: id => `/iranalysis${id ? `/${id}` : ''}`,
+      createAnalysis: () => '/iranalysis/new',
     };
 
     const status = {
