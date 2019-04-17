@@ -73,6 +73,7 @@ define([
 					yLabel: 'Age at first occurence',
 					xLabel: 'Gender',
 					yFormat: d3.format(',.1s'),
+					valueFormatter: d3.format('d'),
 				},
 			};
 			this.loadData();
