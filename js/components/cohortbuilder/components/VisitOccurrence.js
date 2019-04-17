@@ -111,6 +111,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 				}
 			},
 			{
+				text: "Add Place of Service Distance Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences based on distance from Place of Service to Patient.",
+				action: function () {
+					if (self.Criteria.PlaceOfServiceDistance() === undefined) {
+						self.Criteria.PlaceOfServiceDistance(new Range());
+					}
+				}
+			},
+			{
 				text: "Add Nested Criteria...",
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",
