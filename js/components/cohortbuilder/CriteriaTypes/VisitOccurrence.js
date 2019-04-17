@@ -53,6 +53,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.PlaceOfService = ko.observable(data.PlaceOfService && ko.observableArray(data.PlaceOfService.map(function (d) {
 			return new Concept(d);
 		})));
+
+		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation);
 	}
 
 	VisitOccurence.prototype = new Criteria();

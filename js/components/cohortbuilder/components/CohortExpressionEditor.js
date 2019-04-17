@@ -389,6 +389,8 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				return "payer-plan-period-criteria";
 			else if (data.hasOwnProperty("Death"))
 				return "death-criteria";
+			else if (data.hasOwnProperty("LocationRegion"))
+				return "location-region-criteria";
 			else
 				return "unknownCriteriaType";
 		};
