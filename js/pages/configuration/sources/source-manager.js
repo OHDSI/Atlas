@@ -203,9 +203,7 @@ define([
           return this.isBigQueryDS() && (typeof this.selectedSource().keyfileName() !== 'string' || this.selectedSource().keyfileName().length === 0);
         }),
         bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
-        bqFileInput: ko.computed(() => {
-          return this.isBigQueryDS() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
-        }),
+
         // warnings
         hostWarning: ko.computed(() => {
           var showWarning = this.isKrbAuth() && this.krbHostFQDN() === "";
