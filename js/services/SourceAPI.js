@@ -25,7 +25,7 @@ define(function (require, exports) {
 
   function saveSource(sourceKey, source) {
       var formData = new FormData();
-      formData.append("keytab", source.keytab);
+      formData.append("keyfile", source.keytab);
       formData.append("source", new Blob([JSON.stringify(source)],{type: "application/json"}));
 
       lscache.remove(getCacheKey());
@@ -47,11 +47,7 @@ define(function (require, exports) {
 
   function deleteSource(sourceKey) {
 	  lscache.remove(getCacheKey());
-	  return $.ajax({
-      url: config.webAPIRoot + 'source/' + sourceKey,
-      method: 'DELETE',
-      error: authApi.handleAccessDenied,
-    });
+	  return httpService.doDelete(`${config.webAPIRoot}source/${sourceKey}`);
   }
 
   const connectionCheckState = {
@@ -60,7 +56,7 @@ define(function (require, exports) {
     checking: 'checking',
     failed: 'failed',
   };
-  
+
   function initSourcesConfig() {
     var servicePromise = $.Deferred();
     $.ajax({
