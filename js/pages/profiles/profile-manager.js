@@ -80,7 +80,6 @@ define([
 				} else if (this.cohortDefinitionId()) {
 					cohortDefinitionService.getCohortDefinition(this.cohortDefinitionId())
 						.then((cohortDefinition) => {
-							cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
 							this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 						});
 				}

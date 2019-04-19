@@ -19,6 +19,7 @@ define([
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'./const',
+	'const',
 	'./components/iranalysis/main',
 	'databindings',
 	'conceptsetbuilder/components',
@@ -44,7 +45,8 @@ define([
 	AutoBind,
 	commonUtils,
 	exceptionUtils,
-	constants
+	constants,
+	globalConstants,
 ) {
 	class IRAnalysisManager extends AutoBind(Page) {
 		constructor(params) {
@@ -59,6 +61,7 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
+			this.defaultName = globalConstants.newEntityNames.incidenceRate;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -132,7 +135,7 @@ define([
 				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
 					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
 				}
-				return 'New Incidence Rate Analysis';
+				return this.defaultName;
 			});
 
 			this.modifiedJSON = "";
@@ -153,8 +156,11 @@ define([
 			});
 			this.expressionMode = ko.observable('import');
 
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
 			});
 			this.canSave = ko.computed(() => {
 				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
@@ -311,7 +317,7 @@ define([
 			this.loading(true);
 			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
 			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-			this.selectedAnalysisId(analysis.id)
+			this.selectedAnalysisId(analysis.id);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.isCopying(false);
 			this.loading(false);
@@ -332,20 +338,32 @@ define([
 			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
 				return;
 			}
-			this.close()
+			this.close();
 			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
+
+			// Next check to see that an incidence rate with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
+			try{
+				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
+				if (results > 0) {
+					alert('An incidence rate with this name already exists. Please choose a different name.');
+				} else {
+					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
+					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
+					this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to find an incidence rate with the name you provided.');
+			} finally {
 				this.isSaving(false);
 				this.loading(false);
-			});
+			}
 		}
 
 		delete() {

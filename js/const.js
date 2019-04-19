@@ -4,7 +4,7 @@ define([
 	],
 	(
 		ko,
-    	config,
+		config,
 	) => {
 
 		const minChartHeight = 300;
@@ -384,22 +384,22 @@ define([
 		}];
 
 		const apiPaths = {
-			role: (id = '') => `${config.api.url}role/${id}`,
-      roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
-      permissions: () => `${config.api.url}permission`,
-      rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
-      relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
+			role: (id = '') => `${config.api.url}role/${id}`, 
+			roleUsers: roleId => `${config.api.url}role/${roleId}/users`, 
+			permissions: () => `${config.api.url}permission`, 
+			rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`, 
+			relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
 			job: (id) => `${config.api.url}job/${id}`,
 			jobByName: (name,  type) => `${config.api.url}job/type/${type}/name/${name}`,
 		};
 
-     const applicationStatuses = {
-		  initializing: 'initializing',
-		  running: 'running',
-		  noSourcesAvailable: 'no-sources-available',
-		  failed: 'failed',
-	  };
+		const applicationStatuses = {
+			initializing: 'initializing', 
+			running: 'running', 
+			noSourcesAvailable: 'no-sources-available', 
+			failed: 'failed',
+		};
 
 		const generationStatuses = {
 			STARTED: 'STARTED',
@@ -407,6 +407,17 @@ define([
 			COMPLETED: 'COMPLETED',
 			FAILED: 'FAILED',
 			PENDING: 'PENDING',
+		};
+		
+		const newEntityNames = {
+			characterization: 'New Characterization',
+			featureAnalysis: 'New Feature Analysis',
+			cohortDefinition: "New Cohort Definition",
+			incidenceRate: "New Incidence Rate Analysis",
+			pathway: 'New Cohort Pathway',
+			ple: 'New Population Level Estimation Analysis',
+			conceptSet: 'New Concept Set',
+			plp: 'New Patient Level Prediction Analysis',
 		};
 
 		return {
@@ -422,6 +433,7 @@ define([
 			applicationStatuses,
 			generationStatuses,
 			timeAtRiskCohortDate,
+			newEntityNames,
     };
   }
 );
