@@ -28,6 +28,10 @@ define((require, exports) => {
 
 	const FeatureAnalysisColumns = (classes) => [
 		{
+			title: 'Id',
+			data: 'id'
+		},
+		{
 			title: 'Name',
 			data: 'name',
 			className: classes('tbl-col', 'name'),
