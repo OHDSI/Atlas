@@ -25,7 +25,7 @@ define(function (require, exports) {
 
   function saveSource(sourceKey, source) {
       var formData = new FormData();
-      formData.append("keyfile", source.keytab);
+      formData.append("keyfile", source.keyfile);
       formData.append("source", new Blob([JSON.stringify(source)],{type: "application/json"}));
 
       lscache.remove(getCacheKey());
