@@ -6,6 +6,7 @@ define([
 	'utils/CommonUtils',
 	'appConfig',
 	'./const',
+	'const',
 	'components/conceptset/utils',
 	'services/Vocabulary',
 	'conceptsetbuilder/InputTypes/ConceptSet',
@@ -37,6 +38,7 @@ define([
 	commonUtils,
 	config,
 	constants,
+	globalConstants,
 	utils,
 	vocabularyAPI,
 	conceptSet,
@@ -52,12 +54,16 @@ define([
 			this.currentConceptSet = this.model.currentConceptSet;
 			this.isOptimizeModalShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
-			this.conceptSetName = ko.observable("New Concept Set");
+			this.defaultName = globalConstants.newEntityNames.conceptSet;
+			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
 			this.fade = ko.observable(true);
 			this.canEdit = this.model.canEditCurrentConceptSet;
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.currentConceptSet().name() !== this.defaultName;
 			});
 			this.canSave = ko.computed(() => {
 				return (
@@ -75,7 +81,7 @@ define([
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.model.currentConceptSet()) {
 					if (this.model.currentConceptSet().id === 0) {
-						return 'New Concept Set';
+						return this.defaultName;
 					} else {
 						return 'Concept Set #' + this.model.currentConceptSet().id;
 					}
@@ -178,7 +184,7 @@ define([
 			this.saveConceptSet("#txtConceptSetName");
 		}
 
-		saveConceptSet(txtElem, conceptSet, selectedConcepts) {
+		async saveConceptSet(txtElem, conceptSet, selectedConcepts) {
 			this.isSaving(true);
 			this.loading(true);
 			if (conceptSet === undefined) {
@@ -193,54 +199,33 @@ define([
 			if (selectedConcepts === undefined) {
 				selectedConcepts = this.selectedConcepts();
 			}
-			var abortSave = false;
-
-			// Do not allow someone to save a concept set with the default name of "New Concept Set"
-			if (conceptSet && conceptSet.name() === this.defaultConceptSetName) {
-				this.raiseConceptSetNameProblem('Please provide a different name for your concept set', txtElem);
-				this.loading(false);
-				return;
-			}
 
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
-			conceptSetService.exists(conceptSet.name(), conceptSet.id)
-				.then((results) => {
-					if (results.data.length > 0) {
-						this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
-						abortSave = true;
-					}
-				}, function(){
-					alert('An error occurred while attempting to find a concept set with the name you provided.');
-				})
-				.then(() => {
-					if (abortSave) {
-						this.loading(false);
-						this.isSaving(false);
-						return;
-					}
+			try{
+				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
+				if (results > 0) {
+					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
+				} else {
+					const conceptSetItems = utils.toConceptSetItems(selectedConcepts);
+					try{
+						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
+						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
 
-					var conceptSetItems = utils.toConceptSetItems(selectedConcepts);
-					var conceptSetId;
-					var itemsPromise = function({ data }) {
-						conceptSetId = data.id;
-						return conceptSetService.saveConceptSetItems(data.id, conceptSetItems);
-					};
-					conceptSetService.saveConceptSet(conceptSet)
-						.then(itemsPromise)
-						.then(() => {
-							//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
-							this.model.currentConceptSetDirtyFlag().reset();
-							this.loading(false);
-							this.isSaving(false);
-							document.location = '#/conceptset/' + conceptSetId + '/details';
-						})
-						.catch(() => {
-							this.isSaving(false);
-							alert('Unable to save concept set');
-						});
-				});
+						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
+						this.model.currentConceptSetDirtyFlag().reset();
+						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
+					} catch(e){
+						alert('Unable to save concept set');
+					}
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to find a concept set with the name you provided.');
+			} finally {
+				this.loading(false);
+				this.isSaving(false);
+			}
 		}
 
 		raiseConceptSetNameProblem(msg, elem) {

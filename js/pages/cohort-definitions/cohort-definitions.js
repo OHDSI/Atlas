@@ -28,7 +28,7 @@ define([
 			});
 		
 			this.cohortDefinitionId.subscribe((id) => {
-				document.location = constants.paths.details(id);
+				commonUtils.routeTo(constants.paths.details(id));
 			});
 		
 		

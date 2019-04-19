@@ -26,6 +26,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/AuthAPI',
 	'services/Poll',
 	'services/file',
+	'const',
+	'./const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -72,6 +74,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	authApi,
 	PollService,
 	FileService,
+	globalConstants,
+	constants,
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -104,6 +108,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.exitMessage = ko.observable();
 			this.exporting = ko.observable();
 			this.service = cohortDefinitionService;
+			this.defaultName = globalConstants.newEntityNames.cohortDefinition;
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
@@ -123,14 +128,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.model.currentCohortDefinition()) {
 					if (this.model.currentCohortDefinition().id() == 0) {
-					return 'New Cohort Definition';
+					return this.defaultName;
 				} else {
 						return 'Cohort #' + this.model.currentCohortDefinition().id();
 				}
 			}
 			});
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
+			});
+			
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.model.currentCohortDefinition().name() !== this.defaultName;
 			});
 			this.isAuthenticated = ko.pureComputed(() => {
 				return this.authApi.isAuthenticated();
@@ -212,9 +221,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.sharedState = sharedState;
 			this.identifiers = ko.observable();
 			this.sourcecodes = ko.observable();
-			this.isSaveable = ko.pureComputed(() => {
-				return this.dirtyFlag() && this.dirtyFlag().isDirty();
-			});
 			this.conceptLoading = ko.observable(false);
 			this.conceptSetName = ko.observable();
 			this.tabPath = ko.computed(() => {
@@ -657,33 +663,45 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					});
 			}
 
-			save () {
-			this.isSaving(true);
-			clearTimeout(this.pollTimeout);
-			this.model.clearConceptSet();
+			async save () {
+				this.isSaving(true);
+				clearTimeout(this.pollTimeout);
 
-			// If we are saving a new cohort definition (id == 0) then clear
-			// the id field before saving
-			if (this.model.currentCohortDefinition().id() == 0) {
-				this.model.currentCohortDefinition().id(undefined);
-			}
-			var definition = ko.toJS(this.model.currentCohortDefinition());
+				// Next check to see that a cohort definition with this name does not already exist
+				// in the database. Also pass the id so we can make sure that the
+				// current Cohort Definition is excluded in this check.
 
-			// for saving, we flatten the expression JS into a JSON string
-			definition.expression = ko.toJSON(definition.expression, pruneJSON);
+				try {
+					const results = await cohortDefinitionService.exists(this.model.currentCohortDefinition().name(), this.model.currentCohortDefinition().id());
+					if (results > 0) {
+						alert('A cohort definition with this name already exists. Please choose a different name.');
+					} else {
+						this.model.clearConceptSet();
 
-			// reset view after save
-			cohortDefinitionService.saveCohortDefinition(definition).then( (result) => {
-				result.expression = JSON.parse(result.expression);
-				var definition = new CohortDefinition(result);
-				var redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
-				this.model.currentCohortDefinition(definition);
-				if (redirectWhenComplete) {
-					document.location = "#/cohortdefinition/" + definition.id();
+						// If we are saving a new cohort definition (id === 0) then clear
+						// the id field before saving
+						if (this.model.currentCohortDefinition().id() === "0") {
+							this.model.currentCohortDefinition().id(undefined);
+						}
+						var definition = ko.toJS(this.model.currentCohortDefinition());
+
+						// for saving, we flatten the expression JS into a JSON string
+						definition.expression = ko.toJSON(definition.expression, pruneJSON);
+						// reset view after save
+						const savedDefinition = await cohortDefinitionService.saveCohortDefinition(definition);
+						definition = new CohortDefinition(savedDefinition);
+						const redirectWhenComplete = definition.id() != this.model.currentCohortDefinition().id();
+						this.model.currentCohortDefinition(definition);
+						if (redirectWhenComplete) {
+							commonUtils.routeTo(constants.paths.details(definition.id()));
+						}
+					}
+				} catch (e) {
+					alert('An error occurred while attempting to find a cohort definition with the name you provided.');
+				} finally {
+					this.isSaving(false);
 				}
-				this.isSaving(false);
-			});
-		}
+			}
 
 			close () {
 				if (this.model.currentCohortDefinitionDirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {
@@ -1207,6 +1225,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return "payer-plan-period-criteria-viewer";
 				else if (data.hasOwnProperty("Death"))
 					return "death-criteria-viewer";
+				else if (data.hasOwnProperty("LocationRegion"))
+					return "location-region-viewer";
 				else
 					return "unknownCriteriaType";
 			};

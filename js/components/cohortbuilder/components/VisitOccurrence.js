@@ -101,6 +101,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 				}
 			},
 			{
+				text: "Add Place of Service Location Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences based on where Place of Service is located.",
+				action: function () {
+					if (self.Criteria.PlaceOfServiceLocation() === undefined) {
+						self.Criteria.PlaceOfServiceLocation(null);
+					}
+				}
+			},
+			{
 				text: "Add Nested Criteria...",
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",
@@ -116,7 +126,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 		self.options = options;
 
 		self.removeCriterion = function (propertyName) {
-			self.Criteria[propertyName](null);
+			self.Criteria[propertyName](undefined);
 		}
 
 

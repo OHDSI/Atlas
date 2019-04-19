@@ -22,6 +22,7 @@ define([
     'utils/Clipboard',
     'assets/ohdsi.util',
     '../../utils',
+    'const',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
@@ -51,6 +52,7 @@ define([
     Clipboard,
     ohdsiUtil,
     utils,
+    globalConstants,
 ) {
 
     const featureTypes = {
@@ -72,13 +74,23 @@ define([
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
             this.previousDesign = {};
+            this.defaultName = globalConstants.newEntityNames.featureAnalysis;
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
+            this.isNameFilled = ko.computed(() => {
+                return this.data() && this.data().name();
+            });
+            this.isNameCorrect = ko.computed(() => {
+                return this.isNameFilled() && this.data().name() !== this.defaultName;
+            });
             this.canSave = ko.computed(() => {
-                return this.dataDirtyFlag().isDirty() && this.areRequiredFieldsFilled() && (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
+                return this.dataDirtyFlag().isDirty() && 
+                    this.areRequiredFieldsFilled() &&
+                    this.isNameCorrect() &&
+                    (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
             this.canDelete = this.isDeletePermittedResolver();
             this.isNewEntity = this.isNewEntityResolver();
@@ -100,13 +112,10 @@ define([
                     if (this.featureId() !== 0) {
                         return 'Feature Analysis #' + this.featureId();
                     } else {
-                        return 'New Feature Analysis';
+                        return this.defaultName;
                     }
                 }
-            });
-            this.isNameCorrect = ko.computed(() => {
-                return this.data() && this.data().name();
-            });
+            });            
             this.isSaving = ko.observable(false);
             this.isDeleting = ko.observable(false);
             this.isProcessing = ko.computed(() => {
@@ -152,7 +161,10 @@ define([
 
         areRequiredFieldsFilled() {
             const isDesignFilled = this.data() && ((typeof this.data().design() === 'string' || Array.isArray(this.data().design())) && this.data().design().length > 0);
-            return this.data() && (typeof this.data().name() === 'string' && this.data().name().length > 0 && typeof this.data().type() === 'string' && this.data().type().length > 0 && isDesignFilled);
+            return this.data() && (this.isNameFilled() &&
+                                   typeof this.data().type() === 'string' && 
+                                   this.data().type().length > 0 && 
+                                   isDesignFilled);
         }
 
         getSaveTooltipTextComputed() {
@@ -231,7 +243,7 @@ define([
                 parsedDesign = design;
             }
 
-            data.name(name || 'New Feature Analysis');
+            data.name(name || this.defaultName);
             data.descr(descr);
             data.domain(domain);
             data.type(type);
@@ -319,17 +331,28 @@ define([
             this.isSaving(true);
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data())));
 
-            if (this.featureId() < 1) {
-                const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());
-                this.dataDirtyFlag().reset();
-                this.isSaving(false);
-                commonUtils.routeTo('/cc/feature-analyses/' + res.id);
-            } else {
-                const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data());
-                this.setupAnalysisData(res);
-                this.isSaving(false);
-                this.loading(false);
-            }
+            // Next check to see that a feature analysis with this name does not already exist
+            // in the database. Also pass the id so we can make sure that the current feature analysis is excluded in this check.
+           try{
+                const results = await FeatureAnalysisService.exists(this.data().name(), this.featureId());
+                if (results > 0) {
+                    alert('A feature analysis with this name already exists. Please choose a different name.');
+                } else {
+                    if (this.featureId() < 1) {
+                        const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());
+                        this.dataDirtyFlag().reset();
+                        commonUtils.routeTo('/cc/feature-analyses/' + res.id);
+                    } else {
+                        const res = await FeatureAnalysisService.updateFeatureAnalysis(this.featureId(), this.data());
+                        this.setupAnalysisData(res);
+                    }
+                }
+            } catch (e) {
+                alert('An error occurred while attempting to find a feature analysis with the name you provided.');
+            } finally {
+               this.isSaving(false);
+               this.loading(false);
+           }
         }
 
         deleteFeature() {
