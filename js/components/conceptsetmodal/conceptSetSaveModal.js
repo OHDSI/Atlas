@@ -19,7 +19,7 @@ define(['knockout', 'appConfig', 'services/AuthAPI', 'services/ConceptSet', 'tex
         return self.isNameVerified() && !self.isNameUnique();
       });
       self.checkName = ko.computed(function () {
-        conceptSetService.exists(self.conceptSetName())
+        conceptSetService.exists(self.conceptSetName() === undefined ? '' : self.conceptSetName(), 0)
           .then(({ data }) => {
             self.isNameVerified(true);
             self.isNameUnique(!data || data.length === 0);

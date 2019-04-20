@@ -83,7 +83,13 @@ define([
 		return httpService
 			.doPost(`${servicePath}/import`, design)
 			.then(res => res.data);
-	}	
+	}
+
+	function exists(name, id) {
+		return httpService
+			.doGet(`${servicePath}/${id}/exists?name=${name}`)
+			.then(res => res.data);
+	}
 
 	return {
 		list,
@@ -99,6 +105,7 @@ define([
 		cancelGeneration,
 		loadExportDesign,
 		loadExportDesignByGeneration,
-		importPathwayDesign
+		importPathwayDesign,
+		exists,
 	};
 });
