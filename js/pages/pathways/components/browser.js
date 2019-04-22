@@ -51,6 +51,10 @@ define([
 		get gridColumns() {
 			return [
 				{
+					title: 'Id',
+					data: 'id'
+				},
+				{
 					title: 'Name',
 					data: 'name',
 					className: this.classes('tbl-col', 'name'),

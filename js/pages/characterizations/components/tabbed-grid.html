@@ -23,7 +23,7 @@
 
 <div data-bind="if: $component.isViewPermitted(), css: classes('grid')">
     <faceted-datatable params="{
-        order: [[0, 'asc']],
+        order: $component.order,
         columns: $component.gridColumns,
         options: $component.gridOptions,
         reference: $component.data
