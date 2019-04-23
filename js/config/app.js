@@ -103,6 +103,10 @@ define(function () {
   };
   appConfig.enableTermsAndConditions = true;
 	appConfig.webAPIRoot = appConfig.api.url;
+	// todo: move "userAuthenticationEnabled", "plpResultsEnabled", etc into the object
+	appConfig.features = {
+	  locationDistance: false,
+	};
 	
 	return appConfig;
 });

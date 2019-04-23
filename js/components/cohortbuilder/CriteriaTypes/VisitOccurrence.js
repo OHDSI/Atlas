@@ -55,6 +55,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		})));
 
 		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation);
+		self.PlaceOfServiceDistance = ko.observable(data.PlaceOfServiceDistance && new Range(data.PlaceOfServiceDistance));
 	}
 
 	VisitOccurence.prototype = new Criteria();
