@@ -29,7 +29,6 @@ define([
 		constructor(params) {
 			super(params);
 			this.model = params.model;
-			this.subscriptions = [];
 			this.currentConceptId = ko.observable();
 
 			this.commonUtils = commonUtils;
@@ -459,12 +458,6 @@ define([
 			this.model.relatedConcepts(related);
 
 			this.loadingRelated(false);
-		}
-
-		dispose() {
-			this.subscriptions.forEach(function (subscription) {
-				subscription.dispose();
-			});
 		}
 	}
 
