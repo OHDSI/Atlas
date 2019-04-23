@@ -38,7 +38,7 @@ define([
                         if (r.conceptId === null || r.conceptId === undefined) {
                             return 'N/A';
                         } else {
-                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace(/'/g, "\\'") : null}'">${r.conceptId}</a>`
+                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace(/'/g, "\\'").replace(/"/g, '&quot;') : null}'">${r.conceptId}</a>`
                         }
 					}
                 }
