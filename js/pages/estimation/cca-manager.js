@@ -68,15 +68,15 @@ define([
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
 			this.selectedTabKey = ko.observable(params.routerParams().section);
-			this.isSaving = ko.observable(false);
-			this.isCopying = ko.observable(false);
-			this.isDeleting = ko.observable(false);
+            this.isSaving = ko.observable(false);
+            this.isCopying = ko.observable(false);
+            this.isDeleting = ko.observable(false);
 			this.defaultName = globalConstants.newEntityNames.ple;
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
 			this.isProcessing = ko.computed(() => {
-				return this.isSaving() || this.isCopying() || this.isDeleting();
-			});
-			this.componentParams = ko.observable({
+                return this.isSaving() || this.isCopying() || this.isDeleting();
+            });
+            this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
 				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
@@ -88,7 +88,7 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
-			});
+            });
 
 			this.isNameFilled = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();

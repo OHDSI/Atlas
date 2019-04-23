@@ -43,7 +43,7 @@ define(function (require, exports) {
 	}
 		
 	function saveAnalysis(definition) {
-		var definitionCopy = JSON.parse(ko.toJSON(definition));
+		var definitionCopy = JSON.parse(ko.toJSON(definition))
 		
 		if (typeof definitionCopy.expression != 'string')
 			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
@@ -105,7 +105,7 @@ define(function (require, exports) {
 			});
 	}
 
-	const errorHandler = response => {
+	const errroHandler = response => {
 		if (response.status === 404) {
 			throw new Error("Not found entity");
 		}
@@ -118,7 +118,7 @@ define(function (require, exports) {
 		
 		return promise
 			.then(({ data }) => data)
-			.catch(errorHandler);
+			.catch(errroHandler);
 	}
 
 	function loadResultsSummary(id, sourceKey) {
@@ -126,7 +126,7 @@ define(function (require, exports) {
 
 		return promise
 			.then(({data}) => data)
-			.catch(errorHandler);
+			.catch(errroHandler);
 	}
 	
 	function deleteInfo(id, sourceKey) {
@@ -148,7 +148,7 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}
+	}	
 
 	function exists(name, id) {
 		return httpService
@@ -173,7 +173,7 @@ define(function (require, exports) {
 		getReport: getReport,
 		loadResultsSummary,
 		exists,
-	};
+	}
 
 	return api;
 });

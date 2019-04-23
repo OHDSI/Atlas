@@ -317,7 +317,7 @@ define([
 			this.loading(true);
 			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
 			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-			this.selectedAnalysisId(analysis.id);
+			this.selectedAnalysisId(analysis.id)
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.isCopying(false);
 			this.loading(false);
@@ -338,7 +338,7 @@ define([
 			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
 				return;
 			}
-			this.close();
+			this.close()
 			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 

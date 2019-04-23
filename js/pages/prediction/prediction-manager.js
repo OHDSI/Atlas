@@ -76,13 +76,13 @@ define([
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
-			this.isSaving = ko.observable(false);
-			this.isCopying = ko.observable(false);
+            this.isSaving = ko.observable(false);
+            this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
-			this.isProcessing = ko.computed(() => {
-				return this.isSaving() || this.isCopying() || this.isDeleting();
-			});
+            this.isProcessing = ko.computed(() => {
+                return this.isSaving() || this.isCopying() || this.isDeleting();
+            });
 			this.defaultName = globalConstants.newEntityNames.plp;
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,

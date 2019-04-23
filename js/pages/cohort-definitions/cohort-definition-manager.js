@@ -221,6 +221,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.sharedState = sharedState;
 			this.identifiers = ko.observable();
 			this.sourcecodes = ko.observable();
+			this.isSaveable = ko.pureComputed(() => {
+				return this.dirtyFlag() && this.dirtyFlag().isDirty();
+			});
 			this.conceptLoading = ko.observable(false);
 			this.conceptSetName = ko.observable();
 			this.tabPath = ko.computed(() => {
