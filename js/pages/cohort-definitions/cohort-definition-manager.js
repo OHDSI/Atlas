@@ -697,7 +697,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 				} catch (e) {
-					alert('An error occurred while attempting to find a cohort definition with the name you provided.');
+					alert('An error occurred while attempting to save a cohort definition.');
 				} finally {
 					this.isSaving(false);
 				}

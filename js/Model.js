@@ -508,6 +508,7 @@ define(
 					this.currentCohortDefinitionInfo([]);
 				} else {
 					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
+					cohortDefinition.expression = JSON.parse(cohortDefinition.expressionStr);
 					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 
 					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');					
