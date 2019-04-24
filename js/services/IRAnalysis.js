@@ -105,7 +105,7 @@ define(function (require, exports) {
 			});
 	}
 
-	const errroHandler = response => {
+	const errorHandler = response => {
 		if (response.status === 404) {
 			throw new Error("Not found entity");
 		}
@@ -118,7 +118,7 @@ define(function (require, exports) {
 		
 		return promise
 			.then(({ data }) => data)
-			.catch(errroHandler);
+			.catch(errorHandler);
 	}
 
 	function loadResultsSummary(id, sourceKey) {
@@ -126,7 +126,7 @@ define(function (require, exports) {
 
 		return promise
 			.then(({data}) => data)
-			.catch(errroHandler);
+			.catch(errorHandler);
 	}
 	
 	function deleteInfo(id, sourceKey) {
@@ -148,7 +148,7 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}	
+	}
 
 	function exists(name, id) {
 		return httpService
@@ -173,7 +173,7 @@ define(function (require, exports) {
 		getReport: getReport,
 		loadResultsSummary,
 		exists,
-	}
+	};
 
 	return api;
 });

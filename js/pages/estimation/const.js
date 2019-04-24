@@ -7,8 +7,8 @@ define(
     const consts = require('const');
 
     const apiPaths = {
-      downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
-			downloadResults: id => `estimation/generation/${id}/result`,
+      downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`, 
+      downloadResults: id => `estimation/generation/${id}/result`,
     };
 
     const paths = {
@@ -19,7 +19,7 @@ define(
         browser: () => '#/estimation',
     };
 
-		const estimationGenerationStatus = consts.generationStatuses;
+    const estimationGenerationStatus = consts.generationStatuses;
 
     const conceptSetCrossReference = {
       targetComparatorOutcome: {

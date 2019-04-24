@@ -4,7 +4,7 @@ define([
 	],
 	(
 		ko,
-    	config,
+		config,
 	) => {
 
 		const minChartHeight = 300;
@@ -385,21 +385,21 @@ define([
 
 		const apiPaths = {
 			role: (id = '') => `${config.api.url}role/${id}`,
-      roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
-      permissions: () => `${config.api.url}permission`,
-      rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
-      relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
+			roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
+			permissions: () => `${config.api.url}permission`,
+			rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
+			relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
 			job: (id) => `${config.api.url}job/${id}`,
 			jobByName: (name,  type) => `${config.api.url}job/type/${type}/name/${name}`,
 		};
 
-     const applicationStatuses = {
-		  initializing: 'initializing',
-		  running: 'running',
-		  noSourcesAvailable: 'no-sources-available',
-		  failed: 'failed',
-	  };
+		const applicationStatuses = {
+			initializing: 'initializing',
+			running: 'running',
+			noSourcesAvailable: 'no-sources-available',
+			failed: 'failed',
+		};
 
 		const generationStatuses = {
 			STARTED: 'STARTED',
