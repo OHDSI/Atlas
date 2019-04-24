@@ -46,6 +46,7 @@ define(function(require, exports) {
 
     var subject = ko.observable();
     var permissions = ko.observable();
+    var fullName = ko.observable();
     const authProvider = ko.observable();
 
     authProvider.subscribe(provider => {
@@ -65,6 +66,7 @@ define(function(require, exports) {
                 permissions(info.permissions.map(p => p.permission));
                 subject(info.login);
                 authProvider(jqXHR.getResponseHeader('x-auth-provider'));
+                fullName(info.name ? info.name : info.login);
                 resolve();
             },
             error: function (err) {
@@ -465,6 +467,7 @@ define(function(require, exports) {
 
         token: token,
         subject: subject,
+        fullName,
         tokenExpirationDate: tokenExpirationDate,
         tokenExpired: tokenExpired,
         authProvider: authProvider,
