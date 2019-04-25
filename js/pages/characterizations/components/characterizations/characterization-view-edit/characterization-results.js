@@ -187,7 +187,7 @@ define([
         async createNewSet(analysis) {
         	this.loading(true);
         	const conceptIds = this.extractConceptIds(analysis);
-			await vocabularyProvider.getConceptsById(conceptIds)
+        	await vocabularyProvider.getConceptsById(conceptIds)
         		.then(({ data: items }) => { this.initConceptSet(items) })
         		.then(() => this.showConceptSet())
         		.catch((er) => {
