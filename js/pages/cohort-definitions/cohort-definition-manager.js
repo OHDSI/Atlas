@@ -684,9 +684,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							this.model.currentCohortDefinition().id(undefined);
 						}
 						var definition = ko.toJS(this.model.currentCohortDefinition());
-
-						// for saving, we flatten the expression JS into a JSON string
-						definition.expression = ko.toJSON(definition.expression, pruneJSON);
+						
 						// reset view after save
 						const savedDefinition = await cohortDefinitionService.saveCohortDefinition(definition);
 						definition = new CohortDefinition(savedDefinition);
@@ -697,7 +695,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 				} catch (e) {
-					alert('An error occurred while attempting to find a cohort definition with the name you provided.');
+					alert('An error occurred while attempting to save a cohort definition.');
 				} finally {
 					this.isSaving(false);
 				}

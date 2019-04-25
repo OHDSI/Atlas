@@ -359,7 +359,7 @@ define([
 					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to find an incidence rate with the name you provided.');
+				alert('An error occurred while attempting to save an incidence rate.');
 			} finally {
 				this.isSaving(false);
 				this.loading(false);

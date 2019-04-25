@@ -348,7 +348,7 @@ define([
                     }
                 }
             } catch (e) {
-                alert('An error occurred while attempting to find a feature analysis with the name you provided.');
+                alert('An error occurred while attempting to save a feature analysis.');
             } finally {
                this.isSaving(false);
                this.loading(false);
