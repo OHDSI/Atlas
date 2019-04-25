@@ -187,25 +187,19 @@ define([
         return "";
       });
       this.init();
-
       this.fieldsVisibility = {
         username: ko.computed(() => !this.supportsKeyfileAuth() || this.isKrbAuth()),
         password: ko.computed(() => !this.supportsKeyfileAuth()),
-        krbAuthSettings: this.isKrbAuth,
-        showKeytab: ko.computed(() => {
-          return this.isKrbAuth() && this.selectedSource().krbAuthMethod() === 'keytab';
-        }),
+        krbAuthSettings: ko.computed(() => this.isKrbAuth()),
         krbFileInput: ko.computed(() => {
           return this.isKrbAuth() && (typeof this.selectedSource().keyfileName() !== 'string' || this.selectedSource().keyfileName().length === 0);
         }),
+        showKrbKeyfile: ko.computed(() => this.isImpalaDS() && this.selectedSource().krbAuthMethod() === 'keytab'),
         bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
         bqFileInput: ko.computed(() => {
           return this.isBigQueryDS() && (typeof this.selectedSource().keyfileName() !== 'string' || this.selectedSource().keyfileName().length === 0);
         }),
-        bigQueryAuthSettings: ko.computed(() => this.isBigQueryDS()),
-        bqFileInput: ko.computed(() => {
-          return this.isBigQueryDS() && (typeof this.selectedSource().keytabName() !== 'string' || this.selectedSource().keytabName().length === 0);
-        }),
+
         // warnings
         hostWarning: ko.computed(() => {
           var showWarning = this.isKrbAuth() && this.krbHostFQDN() === "";
@@ -256,19 +250,19 @@ define([
       return this.isImpalaDS() && this.isNonEmptyConnectionString() && this.selectedSource().connectionString().includes(substr);
     }
 
-    removeKeytab() {
-      $('#keytabFile').val(''); // TODO: create "ref" directive
-      this.keytab = null;
+    removeKeyfile() {
+      $('#keyfile').val(''); // TODO: create "ref" directive
+      this.keyfile = null;
       this.selectedSource().keyfileName(null);
     }
 
     uploadFile(file) {
-      this.keytab = file;
+      this.keyfile = file;
       this.selectedSource().keyfileName(file.name)
     }
 
-    save() {
-      var source = {
+    async save() {
+      const source = {
         name: this.selectedSource().name() || null,
         key: this.selectedSource().key() || null,
         dialect: this.selectedSource().dialect() || null,
@@ -281,28 +275,22 @@ define([
           return lodash.omit(d, ['enabled']);
         }),
         keyfileName: this.selectedSource().keyfileName(),
-        keytab: this.keytab,
+        keyfile: this.keyfile,
       };
-      this.loading(true);
-      sourceApi.saveSource(this.selectedSourceId(), source)
-        .then(() => sourceApi.initSourcesConfig())
-        .then(function (appStatus) {
-            sharedState.appInitializationStatus(appStatus);
-            return vocabularyProvider.getDomains();
-        })
-        .then(() => {
-          roleService.getList()
-            .then((roles) => {
-              this.model.roles(roles);
-              this.goToConfigure();
-            });
-        })
-        .catch(({data}) => {
-          this.loading(false);
-          alert('The Source was not saved. ' +
-            (data !== undefined && data.payload !== undefined && data.payload.message !== undefined ?
-             data.payload.message : 'Please contact your administrator to resolve this issue.'));
-         });
+      try {
+        this.loading(true);
+        await sourceApi.saveSource(this.selectedSourceId(), source);
+        const appStatus = await sourceApi.initSourcesConfig();
+        sharedState.appInitializationStatus(appStatus);
+        await vocabularyProvider.getDomains();
+        const roles = await roleService.getList();
+        this.model.roles(roles);
+        this.goToConfigure();
+      } catch ({ data = {} }) {
+        this.loading(false);
+        const { payload: { message = 'Please contact your administrator to resolve this issue.' } = {} } = data;
+        alert(`The Source was not saved. ${message}`);
+      }
     }
 
     close() {

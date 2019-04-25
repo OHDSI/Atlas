@@ -33,6 +33,7 @@ define([
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;
 			this.authLogin = authApi.subject;
+			this.fullName = authApi.fullName;
 			this.pollId = null;
 			this.loading = params.model.loading;
 			this.signInOpened = params.model.signInOpened;
