@@ -184,10 +184,10 @@ define([
             CsvUtils.saveAsCsv(exprt);
         }
 
-        createNewSet(analysis) {
+        async createNewSet(analysis) {
         	this.loading(true);
         	const conceptIds = this.extractConceptIds(analysis);
-        	vocabularyProvider.getConceptsById(conceptIds)
+			await vocabularyProvider.getConceptsById(conceptIds)
         		.then(({ data: items }) => { this.initConceptSet(items) })
         		.then(() => this.showConceptSet())
         		.catch((er) => {
@@ -209,7 +209,7 @@ define([
         }
 
         showConceptSet() {
-        	document.location = '#/conceptset/0/details';
+			commonUtils.routeTo('#/conceptset/0/details');
         }
 
         initConceptSet(conceptSetItems) {
