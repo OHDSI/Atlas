@@ -101,7 +101,7 @@
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: PlaceOfServiceLocation() !== undefined, visible: PlaceOfServiceLocation() !== undefined">
+			<tr data-bind="if: PlaceOfServiceLocation() !== null, visible: PlaceOfServiceLocation() !== null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceLocation') }" class="fa fa-times" /></td>
 				<td>
 					<div>
