@@ -223,7 +223,7 @@ define([
 					document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to find a prediction analysis with the name you provided.');
+				alert('An error occurred while attempting to save a prediction analysis.');
 			} finally {
 				this.isSaving(false);
 				this.loading(false);

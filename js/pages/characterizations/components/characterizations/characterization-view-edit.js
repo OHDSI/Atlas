@@ -180,7 +180,7 @@ define([
                     }
                 }
             } catch (e) {
-                alert('An error occurred while attempting to find a characterization with the name you provided.');
+                alert('An error occurred while attempting to save a characterization.');
             } finally {
                 this.isSaving(false);
                 this.loading(false);

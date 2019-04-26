@@ -160,7 +160,7 @@ define([
 					}
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to find a cohort pathway with the name you provided.');
+				alert('An error occurred while attempting to save a cohort pathway.');
 			} finally {
 				this.isSaving(false);
 				this.loading(false);

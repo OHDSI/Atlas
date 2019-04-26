@@ -163,7 +163,7 @@ define([
 					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to find an estimation analysis with the name you provided.');
+				alert('An error occurred while attempting to save an estimation analysis.');
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
