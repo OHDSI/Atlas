@@ -204,7 +204,7 @@ define([
         }
 
         showConceptSet() {
-        	commonUtils.routeTo('#/conceptset/0/details');
+            commonUtils.routeTo('#/conceptset/0/details');
         }
 
         async initConceptSet(conceptSetItems) {
