@@ -86,7 +86,7 @@ define([
 				}
 				const stat = stats[st.covariateId];
 				stat.count[st.strataId] = st.count;
-				stat.pct[st.strataId] = st.avg;
+				stat.pct[st.strataId] = st.avg * 100;
 			});
 			Object.keys(stratas).forEach(strataId => {
 				columns.push(this.getCountColumn(strataId));
