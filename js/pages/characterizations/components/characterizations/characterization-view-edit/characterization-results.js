@@ -185,17 +185,12 @@ define([
         }
 
         async createNewSet(analysis) {
-        	this.loading(true);
-        	const conceptIds = this.extractConceptIds(analysis);
-        	await vocabularyProvider.getConceptsById(conceptIds)
-        		.then(({ data: items }) => { this.initConceptSet(items) })
-        		.then(() => this.showConceptSet())
-        		.catch((er) => {
-        			console.error('Problem with opening concept set:' + er);
-        		})
-        		.finally(() => {
-        			this.loading(false);
-        		});
+            this.loading(true);
+            const conceptIds = this.extractConceptIds(analysis);
+            const items = await vocabularyProvider.getConceptsById(conceptIds);
+            await this.initConceptSet(items.data);
+            this.showConceptSet();
+            this.loading(false);
         }
 
         extractConceptIds(analysis) {
@@ -212,28 +207,19 @@ define([
         	commonUtils.routeTo('#/conceptset/0/details');
         }
 
-        initConceptSet(conceptSetItems) {
-        	return new Promise((resolve, reject) => {
-        		try {
-        			if (this.model.currentConceptSet() === undefined) {
-        				this.model.currentConceptSet({
-        					name: ko.observable("New Concept Set"),
-        					id: 0
-        				});
-        				this.model.currentConceptSetSource('repository');
-        			}
-        			for (let i = 0; i < conceptSetItems.length; i++) {
-        				if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
-        					sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-        					let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
-        					sharedState.selectedConcepts.push(conceptSetItem);
-        				}
-        			}
-        			resolve();
-        		} catch (er) {
-        			reject(er);
-        		}
-        	});
+        async initConceptSet(conceptSetItems) {
+            this.model.currentConceptSet({
+                name: ko.observable("New Concept Set"),
+                id: 0
+            });
+            this.model.currentConceptSetSource('repository');
+            for (let i = 0; i < conceptSetItems.length; i++) {
+                if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
+                    sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                    let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
+                    sharedState.selectedConcepts.push(conceptSetItem);
+                }
+            }
         }
 
         exportComparison(analysis) {
