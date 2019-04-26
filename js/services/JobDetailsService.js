@@ -37,7 +37,18 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 			case 'negativeControlsAnalysisJob':
 				return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
 			case 'generateCohortCharacterization':
-				return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id;
+				if (n.status == 'COMPLETED') {
+				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/results/' +
+				        n.executionId;
+				} else {
+				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/executions';
+				}
+			case 'generatePathwayAnalysis':
+				if (n.status == 'COMPLETED') {
+				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/results/' + n.executionId;
+				} else {
+				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/executions';
+				}
 			case "cohortAnalysisJob":
 				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/report?sourceKey=' + n.jobParameters.sourceKey;
 			case 'executionEngine':

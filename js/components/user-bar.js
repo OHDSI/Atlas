@@ -128,6 +128,7 @@ define([
 								job.viewed(false);
 								job.duration = duration;
 								job.endDate = displayedEndDate;
+								job.url = jobDetailsService.getJobURL(n);
 								this.jobListing.valueHasMutated();
 							}
 						} else {
