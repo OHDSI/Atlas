@@ -70,6 +70,7 @@ define([
 
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
+                ...params,
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
