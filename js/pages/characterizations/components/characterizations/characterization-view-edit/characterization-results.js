@@ -194,13 +194,13 @@ define([
         }
 
         extractConceptIds(analysis) {
-        	const conceptIds = [];
-        	analysis.data.forEach(r => {
-        		if (r.conceptId > 0) {
-        			conceptIds.push(r.conceptId);
-        		}
-        	});
-        	return conceptIds;
+            const conceptIds = [];
+            analysis.data.forEach(r => {
+        	if (r.conceptId > 0) {
+        		conceptIds.push(r.conceptId);
+        	}
+            });
+            return conceptIds;
         }
 
         showConceptSet() {
