@@ -107,8 +107,8 @@ define([
 		};
 		
 		dispose() {
-			console.debug && console.debug("IR Analysis Editor Dispose.");
 			super.dispose();
+			console.debug && console.debug("IR Analysis Editor Dispose.");
 		};
 	}
 
