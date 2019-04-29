@@ -23,7 +23,7 @@ define([
 			this.conceptSetSubscriptionRateLimit = params.conceptSetSubscriptionRateLimit || 1000;
 
 			this.getInclusionCount = this.getInclusionCount.bind(this);
-			this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.conceptSetExpression)).extend({rateLimit: this.conceptSetSubscriptionRateLimit}).subscribe(this.getInclusionCount));
+            this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.conceptSetExpression)).extend({rateLimit: this.conceptSetSubscriptionRateLimit}).subscribe(this.getInclusionCount));
             this.getInclusionCount();
 		}
 
