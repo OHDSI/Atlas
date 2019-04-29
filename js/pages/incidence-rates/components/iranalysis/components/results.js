@@ -75,15 +75,14 @@ define([
 
 			// observable subscriptions
 
-			this.targetSub = this.selectedTarget.subscribe((newVal) => {
+			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
-
-			this.outcomeSub = this.selectedOutcome.subscribe((newVal) => {
+			}));
+			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
+			}));
 
 			this.isExecutionDisabled = ko.computed(() => {
 				return this.dirtyFlag().isDirty();
@@ -189,11 +188,6 @@ define([
 
 		msToTime(s) {
 			return momentApi.formatDuration(s);
-		};
-
-		dispose() {
-			this.targetSub.dispose();
-			this.outcomeSub.dispose();
 		};
 	}
 

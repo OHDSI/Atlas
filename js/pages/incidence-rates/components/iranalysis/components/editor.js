@@ -35,11 +35,10 @@ define([
 
 			this.fieldOptions = [{id: 'StartDate', name: 'start date'}, {id: 'EndDate', name: 'end date'}];
 			// Subscriptions
-		
-			this.analysisSubscription = this.analysis.subscribe((newVal) => {
+			this.subscriptions.push(this.analysis.subscribe((newVal) => {
 				console.log("New analysis set.");
 				this.selectedStrataRule(params.analysis().strata()[this.selectedStrataRuleIndex]);
-			});
+			}));
 
 			this.addStudyWindow = this.addStudyWindow.bind(this);
 			this.addTargetCohort = this.addTargetCohort.bind(this);
@@ -109,7 +108,7 @@ define([
 		
 		dispose() {
 			console.debug && console.debug("IR Analysis Editor Dispose.");
-			this.analysisSubscription.dispose();
+			super.dispose();
 		};
 	}
 

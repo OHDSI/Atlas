@@ -66,11 +66,7 @@ define([
 			this.cohortSelected = ko.observable();
 
 			// subscriptions
-			this.cohortSelectedSubscr = this.cohortSelected.subscribe(cohort => this.attachCohort(cohort));
-		}
-
-		dispose() {
-			this.cohortSelectedSubscr.dispose();
+			this.subscriptions.push(this.cohortSelected.subscribe(cohort => this.attachCohort(cohort)));
 		}
 
 		getRemoveCell(action, identifierField = 'id') {
