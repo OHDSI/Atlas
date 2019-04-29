@@ -4,13 +4,15 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'services/MomentAPI',
+    'utils/DatatableUtils',
 	'faceted-datatable'
 ], function (
 	ko,
 	view,
 	Component,
 	commonUtils,
-	momentApi
+	momentApi,
+	datatableUtils,
 ) {
 	
 	class IRAnalysisBrowserModel extends Component {
@@ -69,7 +71,7 @@ define([
 				},
 				{
 					title: 'Author',
-					data: 'createdBy'
+					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 

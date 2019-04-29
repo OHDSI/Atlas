@@ -7,6 +7,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'services/http',
+    'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
 	ko,
@@ -16,7 +17,8 @@ define([
 	momentApi,
 	Component,
 	commonUtils,
-	httpService
+	httpService,
+	datatableUtils,
 ) {
 	class CohortDefinitionBrowser extends Component {
 		constructor(params) {
@@ -84,7 +86,7 @@ define([
 				},
 				{
 					title: 'Author',
-					data: 'createdBy'
+					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 

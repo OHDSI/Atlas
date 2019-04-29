@@ -77,7 +77,7 @@ define([
 				},
 				{
 					title: 'Author',
-					data: (d) => (d.createdBy && d.createdBy.login) || "",
+                    render: datatableUtils.getCreatedByFormatter(),
 					className: this.classes('tbl-col', 'author'),
 				}
 			];
