@@ -1,4 +1,4 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'services/MomentAPI', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'services/MomentAPI', 'utils/DatatableUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi, datatableUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -50,6 +50,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
     	return momentApi.formatDateTimeUTC(data);
 		};
 
+		self.datatableUtils = datatableUtils;
 		self.criteriaContext = params.criteriaContext;
 		self.cohortConceptSets = params.cohortConceptSets;
 		self.onActionComplete = params.onActionComplete;

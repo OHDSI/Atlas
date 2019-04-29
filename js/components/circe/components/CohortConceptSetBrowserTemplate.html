@@ -30,7 +30,7 @@
 						{ data: 'name', title: 'Title', width: '55%' },
 						{ data: 'createdDate', title: 'Created', width: '15%', render: $component.formatDate, type: 'datetime-formatted' },
 						{ data: 'modifiedDate', title: 'Modified', width: '15%', render: $component.formatDate, type: 'datetime-formatted' },
-						{ data: 'createdBy', title: 'Author', width: '15%' },
+						{ data: 'createdBy', title: 'Author', width: '15%', render: $component.datatableUtils.getCreatedByFormatter() },
 					],
 					language: {
 						search: 'Filter Repository Concept Sets:'
