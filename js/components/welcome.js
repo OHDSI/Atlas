@@ -156,7 +156,6 @@ define([
 							  self.errorMsg(msg || "User was not found");
 							},
             });
-          // authApi.runAs(self.runAsLogin()).then(() => self.isInProgress(false));
         };
 
         self.signoutIap = function () {
