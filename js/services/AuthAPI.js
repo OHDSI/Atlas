@@ -448,6 +448,8 @@ define(function(require, exports) {
         return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
 	}
 
+	const isPermittedRunAs = () => isPermitted('user:runas:post');
+
 	var setAuthParams = function (tokenHeader) {
         token(tokenHeader);
         return loadUserInfo();
@@ -538,6 +540,7 @@ define(function(require, exports) {
 
         isPermittedImportUsers,
         hasSourceAccess,
+        isPermittedRunAs,
 
         loadUserInfo,
         TOKEN_HEADER,
