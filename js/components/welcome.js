@@ -38,6 +38,8 @@ define([
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
+			  self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
+        self.runAsLogin = ko.observable();
 		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
@@ -139,6 +141,24 @@ define([
                     self.isInProgress(false);
                 }
             });
+        };
+
+        self.runAs = function() {
+          self.isInProgress(true);
+          $.ajax({
+            method: 'POST',
+						url: appConfig.webAPIRoot + 'user/runas',
+            data: {
+                login: self.runAsLogin(),
+            },
+            success: self.onLoginSuccessful,
+						error: (jqXHR, textStatus, errorThrown) => {
+							  const msg = jqXHR.getResponseHeader('x-auth-error');
+							  self.isInProgress(false);
+							  self.errorMsg(msg || "User was not found");
+							},
+            });
+          // authApi.runAs(self.runAsLogin()).then(() => self.isInProgress(false));
         };
 
         self.signoutIap = function () {
