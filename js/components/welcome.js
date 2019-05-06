@@ -143,19 +143,11 @@ define([
 
         self.runAs = function() {
           self.isInProgress(true);
-          $.ajax({
-            method: 'POST',
-						url: appConfig.webAPIRoot + 'user/runas',
-            data: {
-                login: self.runAsLogin(),
-            },
-            success: self.onLoginSuccessful,
-						error: (jqXHR, textStatus, errorThrown) => {
-							  const msg = jqXHR.getResponseHeader('x-auth-error');
-							  self.isInProgress(false);
-							  self.errorMsg(msg || "User was not found");
-							},
-            });
+          const xhr =  authApi.runAs(self.runAsLogin(), self.onLoginSuccessful, (jqXHR, textStatus, errorThrown) => {
+						const msg = jqXHR.getResponseHeader('x-auth-error');
+						self.isInProgress(false);
+						self.errorMsg(msg || "User was not found");
+					});
         };
 
         self.signoutIap = function () {

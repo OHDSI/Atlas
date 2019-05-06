@@ -461,6 +461,18 @@ define(function(require, exports) {
         permissions(null);
     };
 
+    const runAs = function(login, success, error) {
+        return $.ajax({
+					method: 'POST',
+					url: config.webAPIRoot + 'user/runas',
+					data: {
+						login,
+					},
+          success,
+          error,
+        });
+    };
+
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
 
@@ -544,6 +556,7 @@ define(function(require, exports) {
 
         loadUserInfo,
         TOKEN_HEADER,
+        runAs,
     };
 
     return api;
