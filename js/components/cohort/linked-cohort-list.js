@@ -28,7 +28,7 @@ define([
 			};
 			
 			if (params.canEditName) {
-				nameCol.render = (s,p,d) => `<span data-bind="clickToEdit: name"/>`;
+                nameCol.render = (s,p,d) =>  p === 'display' ? `<span data-bind="clickToEdit: name" />` : d.name();
 				nameCol.className = this.classes('col-cohort-name', 'editable');
 			} else {
 				nameCol.data = 'name',
