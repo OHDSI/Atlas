@@ -1,27 +1,26 @@
 define(
-	(require, factory) => {
+    (require, factory) => {
         const ko = require('knockout');
         const { AuthorizedRoute } = require('pages/Route');
 
-		function routes(appModel, router) {
+        function routes(appModel, router) {
 
-            const search = new AuthorizedRoute((query) => {
+            const search = new AuthorizedRoute(() => {
                 appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
                     let params = {
-                        query:query ? unescape(query) : null,
+                        qs: router.qs()
                     };
                     router.setCurrentView(view, params);
                 });
             });
 
-			return {        
-				'/search/:query:': search,
-				'/search': search,
-			};
-		}
+            return {
+                '/search': search
+            };
+        }
 
-		return routes;
-	}
+        return routes;
+    }
 );
