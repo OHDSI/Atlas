@@ -8,7 +8,7 @@ define(['knockout'], function (ko) {
                 let current = target();
     
                 //only write if it changed
-                if (isAlphaNumeric.test(newValue)) {
+                if (isAlphaNumeric.test(newValue) || newValue === "") {
 					target(newValue);
                 } else {
 					target.notifySubscribers(current);

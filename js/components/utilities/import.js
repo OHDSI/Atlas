@@ -36,9 +36,15 @@ define([
 
         async doImport() {
             this.loading(true);
-            const res = await this.importService(JSON.parse(this.importJSON()));
-            this.loading(false);
-            commonUtils.routeTo(this.routeToUrl + res.id);
+            try {
+							const res = await this.importService(JSON.parse(this.importJSON()));
+							commonUtils.routeTo(this.routeToUrl + res.id);
+						} catch (e) {
+              alert("Import failed, please, ensure that importing JSON is valid!");
+              this.importJSON("");
+						} finally {
+							this.loading(false);
+						}
         }
     }
 

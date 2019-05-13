@@ -92,7 +92,7 @@ define([
 				},
 				{
 					title: 'Author',
-					data: 'createdBy.login'
+					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 		}
