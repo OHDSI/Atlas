@@ -92,6 +92,9 @@ define([
             this.explorePrevalence = ko.observable();
             this.explorePrevalenceTitle = ko.observable();
             this.prevalenceStatData = ko.observableArray();
+            this.thresholdValue = ko.observable();
+            this.resultsCount = ko.observable();
+            this.resultsCountFiltered = ko.observable();
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
@@ -130,6 +133,14 @@ define([
 
         formatDate(date) {
             return momentAPI.formatDateTimeUTC(date);
+        }
+
+        updateThreshold() {
+            this.loadData();
+        }
+
+        resultCountText() {
+            return 'Viewing First ' + this.resultsCountFiltered() + ' of ' + this.resultsCount() + ' records';
         }
 
         showExecutionDesign() {
@@ -263,18 +274,23 @@ define([
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
-                CharacterizationService.loadCharacterizationResults(this.executionId())
+                CharacterizationService.loadCharacterizationResults(this.executionId(), this.thresholdValue()),
+                CharacterizationService.loadCharacterizationResultsCount(this.executionId())
             ]).then(([
                  sourceList,
                  domains,
                  design,
                  execution,
-                 resultsList
+                 resultsList,
+                 resultsCount
             ]) => {
 
                 this.design(design);
 
                 this.domains(domains);
+
+                this.resultsCount(resultsCount);
+                this.resultsCountFiltered(resultsList.length);
 
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
 
@@ -287,7 +303,7 @@ define([
                     analyses: lodash.uniqBy(
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
-                            domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
+                            domainId: null,
                             analysisName: r.analysisName,
                             type: r.resultType.toLowerCase(),
                         })),

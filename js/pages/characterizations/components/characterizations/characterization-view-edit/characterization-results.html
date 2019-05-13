@@ -25,6 +25,19 @@
     <div data-bind="css: classes('filter')">
         <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
     </div>
+    <div class="input-group" style="width: 30%">
+        <h4>Threshold Level:</h4>
+        <div style="display: flex">
+            <input type="number" class="form-control" style="margin-right: 10px" placeholder="Threshold value"
+                   data-bind="textInput: $component.thresholdValue">
+            <button data-bind="
+            css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
+            text: 'Apply',
+            click: $component.updateThreshold">
+            </button>
+        </div>
+        <span data-bind="css: classes('detail-value'), text: $component.resultCountText()"></span>
+    </div>
     <div data-bind="css: classes('report-section')">
         <!-- ko foreach: analysisList -->
             <div data-bind="css: $component.classes('report-group')">
