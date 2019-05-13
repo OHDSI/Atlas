@@ -303,7 +303,7 @@ define([
                     analyses: lodash.uniqBy(
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
-                            domainId: null,
+                            domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
                             analysisName: r.analysisName,
                             type: r.resultType.toLowerCase(),
                         })),
