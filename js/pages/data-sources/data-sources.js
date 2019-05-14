@@ -161,7 +161,7 @@ define([
 				this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
 				this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
 			} else {
-				if (changedParams.sourceKey) {
+				if (changedParams.sourceKey && this.currentSource() && changedParams.sourceKey !== this.currentSource().sourceKey) {
 					this.currentSource(this.sources().find(s => s.sourceKey == newParams.sourceKey));
 				}
 				if (changedParams.reportName) {
