@@ -60,6 +60,7 @@
     "datatables.net": "^1.10.19",
     "datatables.net-buttons": "^1.5.4",
     "director": "^1.2.8",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "facets": "^0.1.1",
     "file-saver": "^1.3.8",
     "jquery": "^1.11.2",
