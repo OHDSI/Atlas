@@ -122,8 +122,9 @@ define(
 							}
 						}
 						sharedState.selectedConcepts(selectedConcepts);
-						ko.contextFor(this)
-							.$component.reference.valueHasMutated();
+						for (var i = 0; i < table.rows()[0].length; i++) {
+							table.cell(i,0).data('<i class="fa fa-shopping-cart"></i>');
+						}
 					});
 
 				// handling concept set selections
