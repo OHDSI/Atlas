@@ -151,7 +151,7 @@ const settingsObject = {
 		"atlas.css": "css!styles/atlas.css",
 		"chart.css": "css!styles/chart.css",
 		"achilles.css": "css!styles/achilles.css",
-		"bootstrap-select.min.css": "css!https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css",
+		"bootstrap-select.min.css": "css!../node_modules/bootstrap-select/dist/css/bootstrap-select.css",
 		"buttons.css": "css!styles/buttons.css",
 		"cartoon.css": "css!styles/cartoon.css",
 		"d3.slider.css": "css!styles/d3.slider.css",
