@@ -55,6 +55,12 @@
                 <div data-bind="text: $component.status"></div>
 				<span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signout, visible: $component.token()"><i class="fa fa-sign-out"></i> Sign Out</span>
 				<span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signoutIap, visible: $component.isGoogleIapAuth()"><i class="fa fa-sign-out"></i> Sign Out</span>
+				<div data-bind="if: isPermittedRunAs() && $component.token()">
+					<div data-bind="css: classes({element: 'runas-container', extra: 'input-group'})">
+						<input type="text" data-bind="css: classes({ element: 'runas-text', extra: 'form-control' }), value: runAsLogin" placeholder="Username">
+						<span data-bind="css: classes({ element: 'runas-btn', extra: ['btn btn-sm btn-danger'] }), click: runAs"><i class="fa fa-users"></i> Run as</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
