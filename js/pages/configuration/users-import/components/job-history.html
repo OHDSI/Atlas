@@ -3,8 +3,8 @@
 </div>
 
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job History...'"></loading>
-
-<table width="100%" cellspacing="0" data-bind="visible: !$component.loading(), dataTable:{
+<!-- ko if: !$component.loading() -->
+<table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: jobHistory(),
                             options: {
                                         dom: 'lfiprt',
@@ -30,7 +30,7 @@
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
 </table>
-
+<!-- /ko -->
 <atlas-modal params="
     showModal: messageModal,
     title: 'Job Exit Message',
