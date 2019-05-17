@@ -140,7 +140,7 @@ define([
         }
 
         resultCountText() {
-            return 'Viewing First ' + this.resultsCountFiltered() + ' of ' + this.resultsCount() + ' records';
+            return `Viewing First ${this.resultsCountFiltered()} of ${this.resultsCount()} records`;
         }
 
         showExecutionDesign() {

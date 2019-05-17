@@ -2187,3 +2187,15 @@ div#wrapper_ohdsi a {
 	background-position: center right;
 	background-repeat: no-repeat;
 }
+
+.thresholdLevel {
+    width: 30%
+}
+
+.thresholdLevel div {
+    display: flex
+}
+
+.thresholdLevel div input {
+    margin-right: 10px
+}

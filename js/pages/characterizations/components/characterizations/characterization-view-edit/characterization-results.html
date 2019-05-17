@@ -25,10 +25,10 @@
     <div data-bind="css: classes('filter')">
         <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
     </div>
-    <div class="input-group" style="width: 30%">
+    <div class="input-group thresholdLevel">
         <h4>Threshold Level:</h4>
-        <div style="display: flex">
-            <input type="number" class="form-control" style="margin-right: 10px" placeholder="Threshold value"
+        <div>
+            <input type="number" class="form-control" placeholder="Threshold value"
                    data-bind="textInput: $component.thresholdValue">
             <button data-bind="
             css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
