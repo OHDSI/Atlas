@@ -2189,13 +2189,13 @@ div#wrapper_ohdsi a {
 }
 
 .thresholdLevel {
-    width: 30%
+	width: 30%
 }
 
 .thresholdLevel div {
-    display: flex
+	display: flex
 }
 
 .thresholdLevel div input {
-    margin-right: 10px
+	margin-right: 10px
 }
