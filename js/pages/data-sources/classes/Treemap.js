@@ -35,10 +35,6 @@ define([
 			this.byOperator = false;
 			this.byQualifier = false;
 
-			this.dispose = function () {
-				this.currentConceptSubscription.dispose();
-			}
-
 			this.chartFormats = {
 				treemap: {
 					useTip: true,
@@ -126,6 +122,11 @@ define([
 
 		selectTab(tab) {
 
+		}
+
+		dispose() {
+			this.currentConceptSubscription.dispose();
+			super.dispose();
 		}
 
 		parseData({
