@@ -160,6 +160,12 @@ table.data td {
 	font-size: 1.3rem;
 }
 
+@media only screen and (max-width: 1280px) {
+	.g-label-value.g-start, .g-label-value.g-end {
+		font-size: 1rem;
+	}
+  }
+
 .grouper {
 	fill: none;
 	stroke: white;
