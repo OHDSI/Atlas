@@ -28,7 +28,14 @@ define(['services/MomentAPI'],
             }
         };
 
-        const getCreatedByLogin = (d) => d.hasOwnProperty('createdBy') && d.createdBy !== null ? d.createdBy.login : 'anonymous';
+        const getCreatedByLogin = d =>
+            d.hasOwnProperty('createdBy') && d.createdBy !== null
+                ? typeof d.createdBy === 'string'
+                    ? d.createdBy
+                    : typeof d.createdBy === 'object' && !!d.createdBy.login
+                    ? d.createdBy.login
+                    : 'anonymous'
+                : 'anonymous';
 
         const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
 
