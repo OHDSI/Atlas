@@ -343,6 +343,7 @@ define([
 				}
 				newConceptSet.push(newItem);
 			})
+			sharedState.clearSelectedConcepts();
 			this.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
 		}
