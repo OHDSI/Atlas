@@ -81,11 +81,11 @@
     "
     >
         <div data-bind="css: classes('feature-analyses-list')">
-            <feature-analyses-browser params="selectedAnalyses: selectedAnalyses"></feature-analyses-browser>
-            <div data-bind="css: classes('button-panel')">
-                <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-primary'}), click: importFeatures, enable: importEnabled">Import</button>
-                <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-danger'}), click: closeFeatureBrowser">Cancel</button>
-            </div>
+            <feature-analyses-browser params="selectedAnalyses: selectedAnalyses, scrollY: '50vh', scrollCollapse: true"></feature-analyses-browser>
+        </div>
+        <div data-bind="css: classes('button-panel')">
+            <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-primary'}), click: importFeatures, enable: importEnabled">Import</button>
+            <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-danger'}), click: closeFeatureBrowser">Cancel</button>
         </div>
     </atlas-modal>
 

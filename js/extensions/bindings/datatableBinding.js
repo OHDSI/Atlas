@@ -164,6 +164,11 @@ define([
 						getSelectedData: function() { return _getSelectedData(element);}
 					});
 				}
+				// Workaround for bug when datatable header column width is not adjusted to column values when using scrollY datatable option
+				// https://stackoverflow.com/questions/32679625/jquery-datatables-header-is-not-adjusting-to-column-values-initially-but-adjust
+				if (!!binding.options.scrollY) {
+					setTimeout(() => 	$(element).DataTable().columns.adjust().draw('page'), 0);
+				}
 
 				// setup dispose callback:
 				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
