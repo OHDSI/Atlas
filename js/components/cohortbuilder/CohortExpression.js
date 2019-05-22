@@ -30,7 +30,7 @@ define(function (require, exports) {
 		self.CollapseSettings = {CollapseType: ko.observable(data.CollapseSettings && data.CollapseSettings.CollapseType || "ERA"), EraPad: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPad || 0 ) }
 		self.CensorWindow = ko.observable(new Period(data.CensorWindow));
 
-		self.cdmVersion = data.cdmVersion || null;
+		self.cdmVersionRange = data.cdmVersionRange || null;
 	}
 	return CohortExpression;
 });
