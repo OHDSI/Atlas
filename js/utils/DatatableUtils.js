@@ -29,7 +29,7 @@ define(['services/MomentAPI'],
         };
 
         const getCreatedByLogin = d =>
-            d.hasOwnProperty('createdBy') && d.createdBy !== null
+            d.hasOwnProperty('createdBy') && !!d.createdBy
                 ? typeof d.createdBy === 'string'
                     ? d.createdBy
                     : typeof d.createdBy === 'object' && !!d.createdBy.login
