@@ -303,7 +303,7 @@ define([
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.model.currentConceptSet().id)
 				.then(() => {
-					this.model.currentConceptSet(null);
+					this.model.clearConceptSet();
 					document.location = "#/conceptsets"
 				});
 		}
