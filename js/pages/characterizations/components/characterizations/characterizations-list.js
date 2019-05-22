@@ -60,7 +60,7 @@ define([
                     title: 'Updated',
                     className: this.classes('tbl-col', 'updated'),
                     type: 'datetime-formatted',
-                    render: datatableUtils.getDateFieldFormatter(),
+                    render: datatableUtils.getDateFieldFormatter('updatedAt'),
                 },
                 {
                     title: 'Author',
