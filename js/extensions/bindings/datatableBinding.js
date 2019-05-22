@@ -22,18 +22,18 @@ define([
 	function renderSelected(s, p, d) {
 		return '<span class="fa fa-check-circle"></span>';
 	}
-	
+
 	function _getSelectedData(element)
 	{
 		var selectedRows = $(element).DataTable().rows('tr:has(td.select:has(span.selected))', {
 			'search': 'applied'
 		}).data();
-		
+
 		var selectedData = [];
 		$.each(selectedRows, function(index, value) {
 			selectedData.push(value);
 		});
-		
+
 		return selectedData;
 	}
 
@@ -69,7 +69,7 @@ define([
 		return 0;
 	}
 
-	function parseDates(x, y) {		
+	function parseDates(x, y) {
 		let first = moment(x, momentApi.DATE_TIME_FORMAT);
 		let second = moment(y, momentApi.DATE_TIME_FORMAT);
 		if (!first.isValid()) {
@@ -83,7 +83,7 @@ define([
 	}
 
 	ko.bindingHandlers.dataTable = {
-	
+
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
 
             jQuery.fn.dataTableExt.oSort["numberAbs-desc"] = function(x, y) {
@@ -93,7 +93,7 @@ define([
             jQuery.fn.dataTableExt.oSort["numberAbs-asc"] = function(x, y) {
                 return sortAbs(x, y);
 						}
-						
+
 						jQuery.fn.dataTableExt.oSort["datetime-formatted-asc"] = (x, y) => {
 							const { first, second } = parseDates(x, y);
 							return formatDates(first, second);
@@ -108,9 +108,9 @@ define([
 			// If the binding is an object with an options field,
 			// initialise the dataTable with those options.
 			if (binding.options) {
-				
+
 				// allow row level binding context
-				const createdRow = binding.options.createdRow;  
+				const createdRow = binding.options.createdRow;
 				binding.options.createdRow = (row, data, index) => {
 					if (createdRow) {
 						createdRow(row, data, index);
@@ -120,14 +120,14 @@ define([
 				};
 				// test for 'select' column (must be first column in column definition
 				const columns = binding.options.columns;
-				
+
 				if (columns && columns[0] == 'select') {
 					columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected };
 					$(element).on("click","td > span.fa.fa-check-circle", function () {
 						$(this).toggleClass('selected');
 					});
 				}
-				
+
 				const xssOptions = config.xssOptions;
 
 				binding.options.columns = columns.map((column) => {
@@ -135,9 +135,9 @@ define([
 					const originalDataAccessor = column.data;
 					const hasOriginalRender = typeof originalRender === 'function';
 					const hasDataAccessor = typeof originalDataAccessor === 'function';
-					
+
 					if (binding.options.xssSafe || column.xssSafe) return column; // disable XSS filtering if column is marked 'safe'
-					
+
 					return Object.assign({}, column, {
 						data: hasDataAccessor
 							? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
@@ -146,7 +146,7 @@ define([
 							? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
               // https://datatables.net/reference/option/columns.render
               // "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
-							: undefined
+							: $.fn.dataTable.render.text()
 					});
 				});
 
@@ -156,7 +156,7 @@ define([
 				}
 
 				$(element).DataTable(binding.options);
-				
+
 				if (binding.api != null)
 				{
 					// expose datatable API to context's api binding.
@@ -164,19 +164,19 @@ define([
 						getSelectedData: function() { return _getSelectedData(element);}
 					});
 				}
-				
+
 				// setup dispose callback:
 				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 					// This will be called when the element is removed by Knockout or
 					// if some other part of your code calls ko.removeNode(element)
 					$(element).DataTable().destroy(true);
 					$(element).empty();
-				});				
+				});
 			}
-			
+
 			return {
 				controlsDescendantBindings: true
-			};			
+			};
 		},
 		update: function (element, valueAccessor) {
 			var binding = ko.utils.unwrapObservable(valueAccessor());
@@ -184,10 +184,10 @@ define([
 
 			// assign data to either the binding's data or the actual binding.
 			var data = ko.utils.unwrapObservable(binding.data || binding);
-			
+
 			// clear events that .on() attached to previously. Prior to this update, the binding may have specified an 'onRowClick' option, but no longer does.
 			$(element).off("click","tr");
-			
+
 			if (binding.onRowClick != null) // attach a onRowclick handler if the options binding specifies it.
 			{
 				$(element).on("click","tr", function(evt)
@@ -205,12 +205,12 @@ define([
 			// Rebuild table from data source specified in binding
 			if (data.length > 0)
 				table.rows.add(data);
-			
+
 			// drawing may access observables, which updating we do not want to trigger a redraw to the table
 			// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
 			ko.ignoreDependencies(table.draw);
 		}
-		
-		
+
+
 	};
 });
