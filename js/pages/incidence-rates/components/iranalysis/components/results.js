@@ -86,7 +86,7 @@ define([
 			});
 
 			this.isExecutionDisabled = ko.computed(() => {
-				return this.dirtyFlag().isDirty();
+				return !this.hasSourceAccess(source.sourceKey) || this.dirtyFlag().isDirty();
 			});
 			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? 'Save changes to generate' : 'Access denied');
 		}

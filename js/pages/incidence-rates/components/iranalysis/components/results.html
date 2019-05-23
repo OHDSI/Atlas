@@ -53,8 +53,7 @@
 			<tr>
 				<td data-bind="css: $component.classes('tbl-col')" nowrap>
 					<!-- ko ifnot: $component.isInProgress($data) -->
-						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: !$component.hasSourceAccess(source.sourceKey) || $component.isExecutionDisabled, 
-											disabledReason: $component.executionDisabledReason"></select-sources-btn>
+						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: $component.isExecutionDisabled, disabledReason: $component.executionDisabledReason"></select-sources-btn>
 					<!-- /ko -->
 					<!-- ko if: $component.isInProgress($data) -->
 						<a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelExecution(source.sourceKey), attr: {disabled: $component.stoppingSources()[source.sourceKey] }">
