@@ -12,6 +12,7 @@ define([
 	'services/Poll',
 	'services/file',
 	'utils/ExecutionUtils',
+    'services/JobDetailsService',
 	'../const',
 	'lodash',
 	'less!./prediction-executions.less',
@@ -30,6 +31,7 @@ define([
 	PollService,
 	FileService,
 	ExecutionUtils,
+    jobDetailsService,
 	consts,
 	lodash,
 ){
@@ -181,7 +183,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+                    jobDetailsService.createJob(data);
+				    this.loadData();
+                })
 				.catch(() => {});
 		}
 

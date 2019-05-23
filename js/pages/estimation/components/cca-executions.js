@@ -13,6 +13,7 @@ define([
 	'services/file',
 	'../const',
 	'utils/ExecutionUtils',
+    'services/JobDetailsService',
 	'lodash',
 	'less!./cca-executions.less',
 	'components/modal-exit-message',
@@ -31,6 +32,7 @@ define([
 	FileService,
 	consts,
 	ExecutionUtils,
+    jobDetailsService,
 	lodash,
 ) {
 
@@ -159,7 +161,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => EstimationService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+                    jobDetailsService.createJob(data);
+				    this.loadData();
+                })
 				.catch(() => {});
 		}
 

@@ -58,6 +58,10 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 					case 'PLP':
 						return 'plp/' + n.jobParameters.cohortId;
 				}
+			case 'generateEstimationAnalysis':
+				return 'estimation/cca/' + n.jobParameters.estimation_analysis_id + '/executions';
+			case 'generatePredictionAnalysis':
+				return 'prediction/' + n.jobParameters.prediction_analysis_id + '/executions';
       case 'warmCacheByUser':
         return 'configure';
 		}
