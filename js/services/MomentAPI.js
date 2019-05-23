@@ -1,6 +1,6 @@
 define(function (require, exports) {
 
-  var moment = require('moment');
+  const moment = require('moment');
   const PARSE_FORMAT = 'YYYY-MM-DD, H:mm';
   const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm A';
   const DATE_FORMAT = 'MM/DD/YYYY';
@@ -28,7 +28,7 @@ define(function (require, exports) {
   }
 
   function formatDateTimeUTC(timestamp) {
-    var m = moment(timestamp);
+    const m = moment(typeof timestamp === 'string' ? moment.utc(timestamp).valueOf() : timestamp);
     return m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
   }
 
