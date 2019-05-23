@@ -78,7 +78,7 @@ define(
         }, {});
         // anyway, we should track the moment when the user exits and check permissions once again
 				authApi.isAuthenticated.subscribe((isAuthenticated) => {
-					if (!isAuthenticated) {
+					if (!isAuthenticated && window.location.hash !== '#/feedback') {
             this.setCurrentView('white-page');
 						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
 					}
