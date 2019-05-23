@@ -162,9 +162,9 @@ define([
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => EstimationService.generate(this.analysisId(), sourceKey))
 				.then((data) => {
-                    jobDetailsService.createJob(data);
+				    jobDetailsService.createJob(data);
 				    this.loadData();
-                })
+				})
 				.catch(() => {});
 		}
 
