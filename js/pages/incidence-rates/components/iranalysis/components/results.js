@@ -88,7 +88,7 @@ define([
 			this.isExecutionDisabled = ko.computed(() => {
 				return this.dirtyFlag().isDirty();
 			});
-			this.executionDisabledReason = () => 'Save changes to generate';
+			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? 'Save changes to generate' : 'Access denied');
 		}
 
 		isInProgress(sourceItem) {
