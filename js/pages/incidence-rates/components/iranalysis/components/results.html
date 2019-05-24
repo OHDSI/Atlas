@@ -87,9 +87,11 @@
 					<td data-bind="css: $component.classes('tbl-col', 'exec-start', 'dataCol'), text: $component.formatDateTime(info().executionInfo.startTime)"></td>
 					<td data-bind="css: $component.classes({ element: 'tbl-col', extra: 'dataCol' }), text: $component.msToTime(info().executionInfo.executionDuration)"></td>
 					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports') ">
-						<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid, click:$parent.selectSource, attr: {disabled: !$component.hasSourceAccess(source.sourceKey)}">
-							<i class="fa fa-eye"></i> Reports
-						</button>
+						<span data-bind="tooltip: $component.reportDisabledReason(source)">
+							<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid, click:$parent.selectSource, enable: $component.hasSourceAccess(source.sourceKey)">
+								<i class="fa fa-eye"></i> Reports
+							</button>
+						</span>
 						<button class="btn btn-sm btn-danger removeResult">
                             <i class="fa fa-trash"></i>
                         </button>
