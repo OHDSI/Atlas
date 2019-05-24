@@ -31,7 +31,7 @@ define([
         getDefaultColumns(analysis) {
             return [
                 this.getСovNameColumn(),
-                this.getExportColumn(),
+                this.getExploreColumn(),
                 {
                     title: 'Concept ID',
                     data: 'conceptId',
@@ -64,21 +64,21 @@ define([
             };
         }
 
-        getExportColumn() {
+        getExploreColumn() {
             return {
                 title: 'Explore',
                 data: 'explore',
-                className: this.classes('col-prev-title'),
+                className: this.classes('col-explore'),
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
-                            html = "<div class='btn-group pull-left'>";
-                            html += "<button type='button' class='btn btn-primary btn-sm dropdown-toggle' data-toggle='dropdown'>Explore<span class='caret'></span></button>";
-                            html += "<ul class='dropdown-menu'>";
-                            stat.cohorts.forEach(function (cohort, idx) {
-                                html += `<li><a class='explore-link' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
+                            html = `<div class='${this.classes('explore-dropdown')}'>`;
+                            html += `<a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-expanded='false'>Explore<span class='${this.classes({ element: 'explore-caret', extra: 'caret'})}'></span></a>`;
+                            html += "<ul class='dropdown-menu' role='menu'>";
+                            stat.cohorts.forEach((cohort, idx) => {
+                                html += `<li class='${this.classes('explore-menu-item')}'><a data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
                             });
                             html += "</ul></div>";
                         } else {
