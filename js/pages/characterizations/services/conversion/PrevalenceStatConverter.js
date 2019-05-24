@@ -31,7 +31,7 @@ define([
         getDefaultColumns(analysis) {
             return [
                 this.getСovNameColumn(),
-                this.getExportColumn(),
+                this.getExploreColumn(),
                 {
                     title: 'Concept ID',
                     data: 'conceptId',
@@ -64,21 +64,20 @@ define([
             };
         }
 
-        getExportColumn() {
+        getExploreColumn() {
             return {
                 title: 'Explore',
                 data: 'explore',
-                className: this.classes('col-prev-title'),
                 render: (d, t, r) => {
                     const stat = r;
                     let html;
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
                             html = "<div class='btn-group pull-left'>";
-                            html += "<button type='button' class='btn btn-primary btn-sm dropdown-toggle' data-toggle='dropdown'>Explore<span class='caret'></span></button>";
+                            html += "<button type='button' class='btn btn-primary btn-xs dropdown-toggle' data-toggle='dropdown'>Explore <span class='caret'></span></button>";
                             html += "<ul class='dropdown-menu'>";
                             stat.cohorts.forEach(function (cohort, idx) {
-                                html += `<li><a class='explore-link' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
+                                html += `<li><a class='explore-link clickable' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
                             });
                             html += "</ul></div>";
                         } else {
