@@ -74,13 +74,13 @@ define([
                     let html;
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
-                        html = "<div class='btn-group pull-left'>";
-                        html += "<button type='button' class='btn btn-primary btn-sm dropdown-toggle' data-toggle='dropdown'>Explore<span class='caret'></span></button>";
-                        html += "<ul class='dropdown-menu'>";
-                        stat.cohorts.forEach(function (cohort, idx) {
-                            html += `<li><a class='explore-link' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
-                        });
-                        html += "</ul></div>";
+                            html = "<div class='btn-group pull-left'>";
+                            html += "<button type='button' class='btn btn-primary btn-sm dropdown-toggle' data-toggle='dropdown'>Explore<span class='caret'></span></button>";
+                            html += "<ul class='dropdown-menu'>";
+                            stat.cohorts.forEach(function (cohort, idx) {
+                                html += `<li><a class='explore-link' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
+                            });
+                            html += "</ul></div>";
                         } else {
                             html = name + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
                         }
