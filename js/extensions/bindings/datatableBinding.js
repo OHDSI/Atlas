@@ -146,7 +146,7 @@ define([
 							? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
               // https://datatables.net/reference/option/columns.render
               // "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
-							: undefined
+							: $.fn.dataTable.render.text()
 					});
 				});
 
