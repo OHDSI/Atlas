@@ -77,7 +77,7 @@ define(function () {
   ];
   appConfig.xssOptions = {
     "whiteList": {
-      "a": ["href", "class", "data-bind"],
+      "a": ["href", "class", "data-bind", "data-toggle", "aria-expanded"],
 			"button": ["class", "type", "data-toggle", "aria-expanded"],
       "span": ["class", "data-bind"],
       "i": ["class", "id", "aria-hidden"],
