@@ -63,9 +63,16 @@ define([
                     const name = utils.extractMeaningfulCovName(d);
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
-                          html = name + `<div class='${this.classes({element: 'explore'})}'>Explore ` + stat.cohorts.map((c, idx) => {
-                            return `<a class='${this.classes({element: 'explore-link'})}' data-bind='click: () => $component.exploreByFeature($data, ${idx})'>${c.cohortName}</a>`;
-                          }).join('&nbsp;&bull;&nbsp;') + '</div>';
+                          html = name;
+                          html += "<div class=\"btn-group pull-right\">";
+                          html += "<button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">Explore<span class=\"caret\"></span></button>\n";
+                          html += "<ul class=\"dropdown-menu\">";
+                          stat.cohorts.forEach(function(cohort) {
+                              html += "<li><a href=\"#\">";
+                              html += cohort.cohortName;
+                              html += "</a></li>";
+                          });
+                          html += "</ul></div>";
                         } else {
                             html = name + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
                         }
