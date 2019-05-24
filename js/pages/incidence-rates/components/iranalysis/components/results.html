@@ -15,7 +15,7 @@
 	<div>
 		<select-sources-btn
 			data-bind="css: classes('generate-btn')"
-			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: $component.isExecutionDisabled, disabledReason: $component.executionDisabledReason"
+			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: dirtyFlag().isDirty, disabledReason: $component.executionDisabledReason"
 		></select-sources-btn>
 		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
 	</div>
@@ -53,8 +53,7 @@
 			<tr>
 				<td data-bind="css: $component.classes('tbl-col')" nowrap>
 					<!-- ko ifnot: $component.isInProgress($data) -->
-						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: $component.isExecutionDisabled,
-											disabledReason: $component.executionDisabledReason"></select-sources-btn>
+						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: $component.isExecutionDisabled(source), disabledReason: $component.executionDisabledReason"></select-sources-btn>
 					<!-- /ko -->
 					<!-- ko if: $component.isInProgress($data) -->
 						<a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelExecution(source.sourceKey), attr: {disabled: $component.stoppingSources()[source.sourceKey] }">
