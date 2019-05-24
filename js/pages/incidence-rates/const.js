@@ -11,6 +11,11 @@ define(
         COMPLETE: 'COMPLETE',
     };
 
+    const disabledReasons = {
+      DIRTY: 'Save changes to generate',
+      ACCESS_DENIED: 'Access denied',
+    };
+
     function isInProgress(currentStatus) {
         return [status.PENDING, status.RUNNING].includes(currentStatus);
     }
@@ -19,6 +24,7 @@ define(
       apiPaths,
       status,
       isInProgress,
+      disabledReasons,
     };
   }
 );
