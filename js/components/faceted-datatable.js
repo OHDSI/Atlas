@@ -64,7 +64,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.createdRow = params.createdRow || null;
 
 		self.scrollY = params.scrollY || null;
-		self.scrollCollapse = params.scrollCollapse || true;
+		self.scrollCollapse = params.scrollCollapse || false;
 
 		self.updateFilters = function (data, event) {
 			var facet = data.facet;
