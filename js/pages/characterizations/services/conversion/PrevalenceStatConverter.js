@@ -28,9 +28,10 @@ define([
             });
 		}
 
-		getDefaultColumns(analysis) {
-		    return [
-		        this.getСovNameColumn(),
+        getDefaultColumns(analysis) {
+            return [
+                this.getСovNameColumn(),
+                this.getExportColumn(),
                 {
                     title: 'Concept ID',
                     data: 'conceptId',
@@ -40,10 +41,10 @@ define([
                         } else {
                             return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace(/'/g, "\\'").replace(/"/g, '&quot;') : null}'">${r.conceptId}</a>`
                         }
-					}
+                    }
                 }
             ];
-		}
+        }
 
 		getReportColumns(strataId, cohortId) {
             return [
@@ -58,29 +59,36 @@ define([
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, r) => {
+                    return utils.extractMeaningfulCovName(d);
+                 },
+            };
+        }
+
+        getExportColumn() {
+            return {
+                title: 'Explore',
+                data: 'explore',
+                className: this.classes('col-prev-title'),
+                render: (d, t, r) => {
                     const stat = r;
                     let html;
-                    const name = utils.extractMeaningfulCovName(d);
                     if (stat && stat.analysisId && (stat.domainId !== undefined && stat.domainId !== 'DEMOGRAPHICS')) {
                         if (stat.cohorts.length > 1) {
-                          html = name;
-                          html += "<div class=\"btn-group pull-right\">";
-                          html += "<button type=\"button\" class=\"btn btn-primary btn-sm dropdown-toggle\" data-toggle=\"dropdown\">Explore<span class=\"caret\"></span></button>\n";
-                          html += "<ul class=\"dropdown-menu\">";
-                          stat.cohorts.forEach(function(cohort) {
-                              html += "<li><a href=\"#\">";
-                              html += cohort.cohortName;
-                              html += "</a></li>";
-                          });
-                          html += "</ul></div>";
+                        html = "<div class='btn-group pull-left'>";
+                        html += "<button type='button' class='btn btn-primary btn-sm dropdown-toggle' data-toggle='dropdown'>Explore<span class='caret'></span></button>";
+                        html += "<ul class='dropdown-menu'>";
+                        stat.cohorts.forEach(function (cohort, idx) {
+                            html += `<li><a class='explore-link' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
+                        });
+                        html += "</ul></div>";
                         } else {
                             html = name + `<div><a class='${this.classes('explore-link')}' data-bind='click: () => $component.exploreByFeature($data, 0)'>Explore</a></div>`;
                         }
                     } else {
-                        html = name;
+                        html = "N/A";
                     }
                     return html;
-                 },
+                },
             };
         }
 
