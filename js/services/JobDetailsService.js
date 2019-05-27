@@ -50,7 +50,7 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/executions';
 				}
 			case "cohortAnalysisJob":
-				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/report?sourceKey=' + n.jobParameters.sourceKey;
+				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/reporting?sourceKey=' + n.jobParameters.sourceKey;
 			case 'executionEngine':
 				switch (n.jobParameters.scriptType) {
 					case "CCA":
