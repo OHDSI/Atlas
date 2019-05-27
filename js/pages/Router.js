@@ -78,7 +78,9 @@ define(
         }, {});
         // anyway, we should track the moment when the user exits and check permissions once again
 				authApi.isAuthenticated.subscribe((isAuthenticated) => {
-					if (!isAuthenticated && this.getModel().activePage() !== 'Feedback' && this.getModel().activePage() !== 'Home') {
+					const { AuthorizedRoute } = require('pages/Route');
+					const nonSecureRoutePaths = Object.keys(routes).filter(path => !(routes[path] instanceof AuthorizedRoute));
+                    if (!isAuthenticated && !nonSecureRoutePaths.filter(path => path.includes(this.getModel().activePage().toLowerCase())).length) {
             this.setCurrentView('white-page');
 						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
 					}
