@@ -247,8 +247,9 @@ define([
 			}
 		}
 
-		copy() {
-			this.conceptSetName("COPY OF: " + this.model.currentConceptSet().name());
+		async copy() {
+			const responseWithName = await conceptSetService.getCopyName(this.model.currentConceptSet().id);
+			this.conceptSetName(responseWithName.copyName);
 			this.model.currentConceptSet(undefined);
 			this.saveConceptSet("#txtConceptSetName");
 		}
