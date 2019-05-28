@@ -30,7 +30,7 @@
 </div>
 <div class="panel panel-primary" data-bind="css: classes('panel-buffer', 'panel-buffer-left'), collapsable: showCovariateDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
     <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleCovariateDisplay">
-        <span><i class="fa fa-cogs"></i> Additional Covariate Settings</span>
+        <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Additional Covariate Settings</span>
     </div>
     <div class="panel-body collapse">
         <div>
@@ -51,7 +51,7 @@
     <div class="col-md-6">
         <div class="panel panel-primary" data-bind="collapsable: showControlDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">
-                <span><i class="fa fa-cogs"></i> Control Settings</span>
+                <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Control Settings</span>
             </div>
             <div class="panel-body collapse">
                 <cyclops-control-editor params="control: $component.outcomeModelArgs.control"></cyclops-control-editor>
@@ -61,10 +61,10 @@
     <div class="col-md-6">
         <div class="panel panel-primary" data-bind="collapsable: showPriorDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePriorDisplay">
-                <span><i class="fa fa-cogs"></i> Prior</span>
+                <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Prior</span>
             </div>
             <div class="panel-body collapse">
-                <cyclops-prior-editor params="prior: $component.outcomeModelArgs.prior"></cyclops-prior-editor>    
+                <cyclops-prior-editor params="prior: $component.outcomeModelArgs.prior"></cyclops-prior-editor>
             </div>
         </div>
     </div>
