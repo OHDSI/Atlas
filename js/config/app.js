@@ -87,7 +87,7 @@ define(function () {
       "ui": ["class"],
       "path": ["d", "class"],
       "br": "",
-      "li": ["class"],
+      "li": ["class", "title"],
       "ul": ["class"]
     },
     "stripIgnoreTag": true,

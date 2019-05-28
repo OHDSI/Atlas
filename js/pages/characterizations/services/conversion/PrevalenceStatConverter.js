@@ -78,7 +78,9 @@ define([
                             html += `<a href='#' class='dropdown-toggle' data-toggle='dropdown' role='button' aria-expanded='false'>Explore<span class='${this.classes({ element: 'explore-caret', extra: 'caret'})}'></span></a>`;
                             html += "<ul class='dropdown-menu' role='menu'>";
                             stat.cohorts.forEach((cohort, idx) => {
-                                html += `<li class='${this.classes('explore-menu-item')}'><a data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a></li>`;
+                                html += `<li class='${this.classes('explore-menu-item')}' title='${cohort.cohortName}'>
+                                    <a class='${this.classes('explore-menu-item-link')}' data-bind="click: () => $component.exploreByFeature($data, '${idx}')">${cohort.cohortName}</a>
+                                </li>`;
                             });
                             html += "</ul></div>";
                         } else {
