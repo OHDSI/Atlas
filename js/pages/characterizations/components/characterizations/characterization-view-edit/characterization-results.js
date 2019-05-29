@@ -427,7 +427,7 @@ define([
                     ]
                   };
                 }
-            }            
+            }
         }
 
         prepareTabularData(data = [], filters = []) {
@@ -475,8 +475,8 @@ define([
             return `
                 <div>Series: ${d.seriesName}</div>
                 <div>Covariate: ${d.covariateName}</div>
-                <div>X: ${d.xValue}</div>
-                <div>Y: ${d.yValue}</div>
+                <div>X: ${d3.format('.2f')(d.xValue)}%</div>
+                <div>Y: ${d3.format('.2f')(d.yValue)}%</div>
             `;
         }
 

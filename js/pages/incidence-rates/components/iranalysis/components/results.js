@@ -85,10 +85,17 @@ define([
 					this.selectSource(this.selectedSource());
 			});
 
-			this.isExecutionDisabled = ko.computed(() => {
-				return this.dirtyFlag().isDirty();
+			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
+		}
+
+		reportDisabledReason(source) {
+			return ko.computed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+		}
+
+		isExecutionDisabled(source) {
+			return ko.computed(() => {
+				return !this.hasSourceAccess(source.sourceKey) || this.dirtyFlag().isDirty();
 			});
-			this.executionDisabledReason = () => 'Save changes to generate';
 		}
 
 		isInProgress(sourceItem) {
