@@ -32,12 +32,16 @@ table.cohort-generate-sources thead {
   width: calc(100%-1em)
 }
 
-td.dateColumn {
+td.date-column {
 	width: 125px;
 }
 
-td.authorColumn {
+td.author-column {
 	width: 125px;
+}
+
+td.id-column {
+	width: 45px;
 }
 
 .breadcrumb-container {
