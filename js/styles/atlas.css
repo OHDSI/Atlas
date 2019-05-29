@@ -32,6 +32,14 @@ table.cohort-generate-sources thead {
   width: calc(100%-1em)
 }
 
+td.dateColumn {
+	width: 125px;
+}
+
+td.authorColumn {
+	width: 125px;
+}
+
 .breadcrumb-container {
   background-color: #333;
   color: #fff;
