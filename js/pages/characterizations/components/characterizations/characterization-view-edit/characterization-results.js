@@ -472,7 +472,6 @@ define([
         }
 
         tooltipBuilder(d) {
-            console.log(d3);
             return `
                 <div>Series: ${d.seriesName}</div>
                 <div>Covariate: ${d.covariateName}</div>
