@@ -28,7 +28,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.drawCallback = params.drawCallback;
 
 		// Set some defaults for the data table
-		self.autoWidth = params.autoWidth || true;
+		self.autoWidth = params.autoWidth !== 'undefined' ? params.autoWidth : true;
 		self.buttons = params.buttons || [
 			'colvis',  'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'
 		];
