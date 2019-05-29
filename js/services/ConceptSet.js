@@ -111,7 +111,7 @@ define(function (require, exports) {
 	}
 
 	function getCopyName(id) {
-		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copyName")
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copy-name")
 			.then(({ data }) => data);
 	}
 	
