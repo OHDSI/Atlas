@@ -31,9 +31,19 @@ define([
 			this.loading(true);
 
 			httpService.doGet(`${config.api.url}cohortdefinition`)
-				.then(({ data }) => this.reference(data))
+				.then(({ data }) => {
+					let defList = data.map(d => {
+						return {
+							...d, 
+							...{
+								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
+								modifiedTimestamp: d.modifiedDate && new Date(d.modifiedDate).getTime()
+							}
+						};
+					});
+					this.reference(defList);
+				})
 				.finally(() => { this.loading(false) });
-
 
 			this.options = {
 				Facets: [{
@@ -64,6 +74,7 @@ define([
 
 			this.columns = [{
 					title: 'Id',
+					className: 'id-column',
 					data: 'id'
 				},
 				{
@@ -72,20 +83,21 @@ define([
 				},
 				{
 					title: 'Created',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
+					className: 'date-column',
+					render: function (row, type, val, meta) {
+						return type === "sort" ? val.createdTimestamp : momentApi.formatDateTimeUTC(val.createdDate);
 					}
 				},
 				{
 					title: 'Updated',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
+					className: 'date-column',
+					render: function (row, type, val, meta) {
+						return type === "sort" ? val.modifiedTimestamp : momentApi.formatDateTimeUTC(val.modifiedDate);
 					}
 				},
 				{
 					title: 'Author',
+					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
