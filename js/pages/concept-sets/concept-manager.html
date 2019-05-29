@@ -82,7 +82,7 @@
 						</div>
 					</div>
 				</div>
-                <div id="wrapperParents" data-bind="visible: $component.hierarchyPillMode() == 'all' || $component.hierarchyPillMode() == 'parents'">
+                <div id="wrapperParents" data-bind="visible: ['all', 'parents'].includes($component.hierarchyPillMode())">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<i class="fa fa-arrow-up"></i> Parents
@@ -111,7 +111,7 @@
 						</div>
 					</div>
                 </div>
-                <div id="wrapperHierarchyAnchor" data-bind="visible: $component.hierarchyPillMode() == 'all' || $component.hierarchyPillMode() == 'current'">
+                <div id="wrapperHierarchyAnchor" data-bind="visible: ['all', 'current'].includes($component.hierarchyPillMode())">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<i class="fa fa-arrow-right"></i> Current Concept
@@ -140,7 +140,7 @@
 						</div>
 					</div>
                 </div>
-                <div id="wrapperChildren" data-bind="visible: $component.hierarchyPillMode() == 'all' || $component.hierarchyPillMode() == 'children'">
+                <div id="wrapperChildren" data-bind="visible: ['all', 'children'].includes($component.hierarchyPillMode())">
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<i class="fa fa-arrow-down"></i> Children
