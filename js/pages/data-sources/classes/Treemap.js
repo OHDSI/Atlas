@@ -135,12 +135,12 @@ define([
 			const normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 
 			if (!normalizedData.empty) {
-				let distinctConceptIds = [];
+				let distinctConceptIds = new Set([]);
 				let tableData = [];
 				// Make the values unique per https://github.com/OHDSI/Atlas/issues/913
 				normalizedData.conceptPath.forEach((d, i) => {
-					if (!distinctConceptIds.includes(normalizedData.conceptId[i])) {
-						distinctConceptIds.push(normalizedData.conceptId[i]);
+					if (!distinctConceptIds.has(normalizedData.conceptId[i])) {
+						distinctConceptIds.add(normalizedData.conceptId[i]);
 						const pathParts = d.split('||');
 						tableData.push({
 							concept_id: normalizedData.conceptId[i],
