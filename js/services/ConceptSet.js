@@ -109,6 +109,11 @@ define(function (require, exports) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
 	}
+
+	function getCopyName(id) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copy-name")
+			.then(({ data }) => data);
+	}
 	
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
@@ -119,7 +124,7 @@ define(function (require, exports) {
 		loadConceptSetExpression,
 		lookupIdentifiers,
 		getInclusionCount,
-		
+		getCopyName: getCopyName,
 		getConceptSet: getConceptSet,
 		getGenerationInfo: getGenerationInfo,
 		deleteConceptSet: deleteConceptSet,
