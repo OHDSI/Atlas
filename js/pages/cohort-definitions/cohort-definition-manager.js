@@ -975,6 +975,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					return;
 				}
 
+				var conceptSetItemsToAdd = sharedState.selectedConcepts();
 				items.forEach((item)=> {
 					var conceptSetItem = {};
 					conceptSetItem.concept = item.concept;
@@ -983,9 +984,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					conceptSetItem.includeMapped = ko.observable(item.includeMapped);
 
 					sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
-					sharedState.selectedConcepts.push(conceptSetItem);
+					conceptSetItemsToAdd.push(conceptSetItem);
 				});
-				conceptSet.expression.items.valueHasMutated();
+				sharedState.selectedConcepts(conceptSetItemsToAdd);
+				this.model.loadCohortConceptSet(conceptSet.id, 'cohort-definition-manager', 'details');
 				this.clearImportConceptSetJson();
 			};
 
