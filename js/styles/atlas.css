@@ -696,7 +696,6 @@ ul.ColVis_collection li {
 
 #wrapperParents {
   padding-left: 5px;
-  padding-bottom: 10px;
 }
 
 #wrapperSelf {
@@ -706,7 +705,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperChildren {
-  padding-left: 90px;
+  padding-left: 5px;
 }
 
 .configureSourceTable i.fa {
@@ -730,11 +729,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperHierarchyAnchor {
-  margin-left: 30px;
-  padding-bottom: 10px;
-  padding-top: 10px;
-  /* font-size: 14px; */
-  padding-left: 10px;
+  padding-left: 5px;
   margin-bottom: 10px;
 }
 

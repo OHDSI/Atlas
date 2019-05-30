@@ -11,11 +11,11 @@ define(
     const defaultConceptHierarchyRelationships = {
 		childRelationships: [{
 			name: 'Has descendant of',
-			range: [0, 1]
+			range: [1, 1]
 		}],
 		parentRelationships: [{
 			name: 'Has ancestor of',
-			range: [0, 1]
+			range: [1, 1]
 		}]
 	};
 
