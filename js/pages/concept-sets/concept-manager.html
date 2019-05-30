@@ -88,6 +88,12 @@
 							<i class="fa fa-arrow-up"></i> Parents
 						</div>						
 						<div class="panel-body">
+							<!-- ko if: $component.metarchy.parents().length == 0 -->
+							<div>
+								No parent concepts found
+							</div>
+							<!-- /ko -->
+							<!-- ko if: $component.metarchy.parents().length > 0 -->
 							<faceted-datatable params="{
 								orderClasses: false,
 								ordering: true,
@@ -108,6 +114,7 @@
 								reference: $component.metarchy.parents, 
 								rowCallback: commonUtils.contextSensitiveLinkColor 
 							}"></faceted-datatable>
+							<!-- /ko -->
 						</div>
 					</div>
                 </div>
@@ -146,25 +153,32 @@
 								<i class="fa fa-arrow-down"></i> Children
 							</div>						
 							<div class="panel-body">
-									<faceted-datatable params="{
-										orderClasses: false,
-										ordering: true,
-										order: [[ 6, 'desc' ]],
-										columns: [
-											{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
-											{ title: 'Id', data: 'CONCEPT_ID'},
-											{ title: 'Code', data: 'CONCEPT_CODE'},
-											{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-											{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
-											{ title: 'RC', data: 'RECORD_COUNT'},
-											{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
-											{ title: 'Distance', data: function (d) { return String(Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-											{ title: 'Domain', data: 'DOMAIN_ID' },
-											{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
-										],
-										reference: $component.metarchy.children, 
-										options: hierarchyConceptsOptions,										
-									}"></faceted-datatable>								
+								<!-- ko if: $component.metarchy.children().length == 0 -->
+								<div>
+									No child concepts found
+								</div>
+								<!-- /ko -->
+								<!-- ko if: $component.metarchy.children().length > 0 -->
+								<faceted-datatable params="{
+									orderClasses: false,
+									ordering: true,
+									order: [[ 6, 'desc' ]],
+									columns: [
+										{ title: '', render: $root.renderConceptSelector, orderable:false, searchable:false},
+										{ title: 'Id', data: 'CONCEPT_ID'},
+										{ title: 'Code', data: 'CONCEPT_CODE'},
+										{ title: 'Name', data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
+										{ title: 'Class', data: 'CONCEPT_CLASS_ID' },
+										{ title: 'RC', data: 'RECORD_COUNT'},
+										{ title: 'DRC', data: 'DESCENDANT_RECORD_COUNT'},
+										{ title: 'Distance', data: function (d) { return String(Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
+										{ title: 'Domain', data: 'DOMAIN_ID' },
+										{ title: 'Vocabulary', data: 'VOCABULARY_ID', width: '100px' }
+									],
+									reference: $component.metarchy.children, 
+									options: hierarchyConceptsOptions,										
+								}"></faceted-datatable>								
+								<!-- /ko -->
 							</div>
 						</div>
                 </div>
