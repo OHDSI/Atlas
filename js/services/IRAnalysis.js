@@ -161,14 +161,18 @@ define(function (require, exports) {
 	}
 
 	function importAnalysis(definition) {
-		var definitionCopy = JSON.parse(ko.toJSON(definition));
-
-		if (typeof definitionCopy.expression != 'string') {
-			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
-		}
-
 		return httpService
-			.doPost(config.webAPIRoot + 'ir/import', definitionCopy)
+			.doPost(`${config.webAPIRoot}ir/design`, definition)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
+
+	function exportAnalysis(id) {
+		return httpService
+			.doGet(config.webAPIRoot + `ir/${id}/design`)
 			.then(res => res.data)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
@@ -189,7 +193,8 @@ define(function (require, exports) {
 		getReport: getReport,
 		loadResultsSummary,
 		exists,
-		importAnalysis: importAnalysis
+		importAnalysis: importAnalysis,
+		exportAnalysis: exportAnalysis,
 	};
 
 	return api;

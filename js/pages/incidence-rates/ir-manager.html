@@ -80,11 +80,11 @@
                         </div>
                     </div>                
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
-                        <div data-bind="if: $component.dirtyFlag().isDirty()">
+                        <div data-bind="if: !$component.canExport()">
                             You must save your analysis before you can export the definition.
                         </div>
-                        <div class="paddedWrapper" data-bind="if: !($component.dirtyFlag().isDirty())">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+                        <div class="paddedWrapper" data-bind="if: $component.canExport()">
+                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.exportJSON"></textarea>
                         </div>
                     </div>
                 </div>
