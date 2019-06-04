@@ -159,6 +159,22 @@ define(function (require, exports) {
 				return response;
 			});
 	}
+
+	function importAnalysis(definition) {
+		var definitionCopy = JSON.parse(ko.toJSON(definition));
+
+		if (typeof definitionCopy.expression != 'string') {
+			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
+		}
+
+		return httpService
+			.doPost(config.webAPIRoot + 'ir/import', definitionCopy)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -173,6 +189,7 @@ define(function (require, exports) {
 		getReport: getReport,
 		loadResultsSummary,
 		exists,
+		importAnalysis: importAnalysis
 	};
 
 	return api;

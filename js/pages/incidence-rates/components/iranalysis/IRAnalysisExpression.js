@@ -14,6 +14,8 @@ define(function (require, exports) {
 		self.ConceptSets = ko.observableArray(data.ConceptSets && data.ConceptSets.map(function(d) { return new ConceptSet(d) }));
 		self.targetIds = ko.observableArray(data.targetIds);
 		self.outcomeIds = ko.observableArray(data.outcomeIds);
+		self.targetCohorts = ko.observableArray(data.targetCohorts);
+		self.outcomeCohorts = ko.observableArray(data.outcomeCohorts);
 		self.timeAtRisk = new TimeAtRisk(data.timeAtRisk);
 		self.studyWindow =  ko.observable(data.studyWindow && new StudyWindow(data.studyWindow));
 		self.strata = ko.observableArray(data.strata && data.strata.map(function (rule) {

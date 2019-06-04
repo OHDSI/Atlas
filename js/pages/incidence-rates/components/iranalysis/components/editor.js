@@ -6,6 +6,7 @@ define([
 	'components/cohortbuilder/options',
 	'components/Component',
 	'utils/CommonUtils',
+	'services/CohortDefinition',
 	'conceptsetbuilder/components',
 	'components/cohort-definition-browser',				
 	'databindings',
@@ -17,7 +18,8 @@ define([
 	StratifyRule,
 	options,
 	Component,
-	commonUtils
+	commonUtils,
+	cohortAPI
 ) {
 	class IRAnalysisEditorModel extends Component {
 		constructor(params) {
@@ -29,6 +31,7 @@ define([
 			this.loading = ko.observable(false);
 			this.showCohortDefinitionBrowser = ko.observable(false);
 			this.selectedCohortList = null;
+			this.selectedCohorts = null;
 			this.selectedStrataRule = ko.observable();
 			this.selectedStrataRuleIndex = null;
 			this.isEditable = params.isEditable;
@@ -60,27 +63,43 @@ define([
 		
 		addTargetCohort() {
 			this.selectedCohortList = this.analysis().targetIds;
+			this.selectedCohorts = this.analysis().targetCohorts;
 			this.showCohortDefinitionBrowser(true);
 		};
 
 		addOutcomeCohort() {
 			this.selectedCohortList = this.analysis().outcomeIds;
+            this.selectedCohorts = this.analysis().outcomeCohorts;
 			this.showCohortDefinitionBrowser(true);
 		};
 		
 		deleteTargetCohort(cohortDef) {
-			this.analysis().targetIds.remove(cohortDef.id);	
+			this.analysis().targetIds.remove(cohortDef.id);
+			var removeIndex = this.analysis().targetCohorts().map(function(item) { return item.id; })
+			    .indexOf(cohortDef.id);
+			if (removeIndex !== -1) {
+			    this.analysis().targetCohorts.splice(removeIndex, 1);
+			}
 		};
 
 		deleteOutcomeCohort(cohortDef) {
-			this.analysis().outcomeIds.remove(cohortDef.id);	
+			this.analysis().outcomeIds.remove(cohortDef.id);
+			var removeIndex = this.analysis().outcomeCohorts().map(function(item) { return item.id; })
+			    .indexOf(cohortDef.id);
+			if (removeIndex !== -1) {
+			    this.analysis().outcomeCohorts.splice(removeIndex, 1);
+			}
 		};
 		
 		cohortSelected(cohortId) {
 			if (this.selectedCohortList().filter((item) => {
 				return cohortId == item;
-			}).length == 0)
+			}).length == 0) {
 				this.selectedCohortList.push(cohortId);
+				cohortAPI.getCohortDefinition(cohortId).then((cohort) => {
+				    this.selectedCohorts.push(cohort);
+				});
+            }
 		};
 
 		copyStrataRule(rule) {

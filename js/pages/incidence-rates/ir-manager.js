@@ -428,12 +428,28 @@ define([
 				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
-		import() {
+		async import() {
 			if (this.importJSON() && this.importJSON().length > 0) {
-				var updatedExpression = JSON.parse(this.importJSON());
-				this.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
-				this.importJSON("");
-				this.activeTab('definition');
+				this.isSaving(true);
+				this.loading(true);
+				try {
+					var updatedExpression = JSON.parse(this.importJSON());
+					this.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
+					const savedIR = await IRAnalysisService.importAnalysis(this.selectedAnalysis());
+
+					this.refreshDefs();
+
+					this.importJSON("");
+					this.activeTab('definition');
+
+					this.close();
+					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
+				} catch (e) {
+					alert('An error occurred while attempting to import an incidence rate.');
+				} finally {
+					this.isSaving(false);
+					this.loading(false);
+				}
 			}
 		};
 
