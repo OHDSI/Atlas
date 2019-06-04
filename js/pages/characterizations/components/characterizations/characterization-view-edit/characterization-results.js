@@ -118,12 +118,17 @@ define([
                 });
             }
 
+           /*
+            * Taking this out per https://github.com/OHDSI/Atlas/issues/1834
+
            if (this.extractConceptIds(analysis).length > 0) {
                 buttons.push({
                     text: 'Create new Concept Set',
                     action: () => this.createNewSet(analysis)
                 });
             }
+
+            */
 
             return buttons;
         }
