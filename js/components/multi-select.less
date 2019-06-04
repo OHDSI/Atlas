@@ -1,12 +1,17 @@
 .multi-select {
+  display: flex;
   .bootstrap-select {
     padding: 0;
-    width: 100% !important;
+    flex-grow: 1;
     .dropdown-menu li a {
       padding: 1rem 2rem 1rem 2rem;
     }
     .check-mark {
       top: 1rem !important;
+    }
+
+    .filter-option-inner-inner {
+      text-overflow: ellipsis;
     }
   }
 }
