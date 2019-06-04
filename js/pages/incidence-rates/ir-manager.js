@@ -138,22 +138,10 @@ define([
 				return this.defaultName;
 			});
 
-			this.modifiedJSON = "";
 			this.importJSON = ko.observable();
-			this.expressionJSON = ko.pureComputed({
-				read: () => {
-					return ko.toJSON(this.selectedAnalysis().expression(), function (key, value) {
-						if (value === 0 || value) {
-							return value;
-						} else {
-							return
-						}
-					}, 2);
-				},
-				write: (value) => {
-					this.modifiedJSON = value;
-				}
-			});
+			this.exportJSON = ko.observable();
+			this.canExport = ko.computed(() => !this.dirtyFlag().isDirty() && this.selectedAnalysisId());
+			this.dirtyFlag.subscribe(df => !df.isDirty() && this.selectedAnalysisId() && this.loadExportJSON());
 			this.expressionMode = ko.observable('import');
 
 			this.isNameFilled = ko.computed(() => {
@@ -428,12 +416,31 @@ define([
 				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
-		import() {
+		async loadExportJSON() {
+			const json = await IRAnalysisService.exportAnalysis(this.selectedAnalysisId());
+			this.exportJSON(JSON.stringify(json, null, 2));
+		}
+
+		async import() {
 			if (this.importJSON() && this.importJSON().length > 0) {
-				var updatedExpression = JSON.parse(this.importJSON());
-				this.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
-				this.importJSON("");
-				this.activeTab('definition');
+				this.isSaving(true);
+				this.loading(true);
+				try {
+					const savedIR = await IRAnalysisService.importAnalysis(JSON.parse(this.importJSON()));
+
+					this.refreshDefs();
+
+					this.importJSON("");
+					this.activeTab('definition');
+
+					this.close();
+					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
+				} catch (e) {
+					alert('An error occurred while attempting to import an incidence rate.');
+				} finally {
+					this.isSaving(false);
+					this.loading(false);
+				}
 			}
 		};
 
