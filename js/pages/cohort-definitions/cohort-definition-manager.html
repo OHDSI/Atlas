@@ -417,27 +417,7 @@
 				<!-- ko if: (loadingReport() || selectedReport())   -->
 				<div data-bind="visible:$component.loadingReport" class="loading">loading inclusion report</div>
 				<div data-bind="visible:!$component.loadingReport()">
-					<div class="tab-content nospace">
-						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
-							<ul class="nav nav-tabs nospace right-to-left">
-								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'person' }, click: function() { $component.inclusionTabMode('person'); }">
-									<a>By Person</a>
-								</li>
-								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'event' }, click: function() { $component.inclusionTabMode('event'); }">
-									<a>By Events</a>
-								</li>
-							</ul>
-							<div class="tab-content">
-								<div class="heading">Inclusion Report for <span data-bind="text:selectedReportCaption"></span></div>
-								<div role="tabpanel" data-bind="css: {active: $component.inclusionTabMode() == 'person'}" class="tab-pane">
-									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byPerson"></feasibility-report-viewer>
-								</div>
-								<div role="tabpanel" data-bind="css: {active: $component.inclusionTabMode() == 'event'}" class="tab-pane">
-									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byEvent"></feasibility-report-viewer>
-								</div>
-							</div>
-						</div>
-					</div>
+					<inclusion-reports params="sourceName: selectedReportCaption, report: selectedReport"></inclusion-reports>
 				</div>
 				<!-- /ko -->
 			</div>
