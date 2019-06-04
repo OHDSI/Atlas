@@ -1,4 +1,4 @@
-define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/Concept', 'services/VocabularyProvider', 'assets/knockout-jqueryui/dialog', 'less!./conceptpicker.less'], function ($, ko, template, Concept, VocabularyProvider) {
+define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/Concept', './InputTypes/ConceptSetItem', 'services/VocabularyProvider', 'assets/knockout-jqueryui/dialog', 'less!./conceptpicker.less'], function ($, ko, template, Concept, ConceptSetItem, VocabularyProvider) {
 	
 	function _mapConceptRowToConcept (row)
 	{
@@ -83,8 +83,8 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 			self.importValues("");			
 			return; // Nothing to do, import values is blank.
 		}
-		
-		var importConceptIds = this.importValues().split(',').map(function (e) { return +e; });
+		var parsedItems = JSON.parse(this.importValues());
+		var importConceptIds = parsedItems.items.map(item => new ConceptSetItem(item).concept.CONCEPT_ID);
 		var uniqueConceptIds = [];
 		$.each(importConceptIds, function(i, el) {
 			if ($.inArray(el, uniqueConceptIds) === -1)
