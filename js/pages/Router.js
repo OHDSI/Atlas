@@ -14,7 +14,7 @@ define(
 	) => {
     return class AtlasRouter {
       constructor() {
-        this.activeRouteHandler = null;
+        this.activeRoute = null;
         this.onLoginSubscription;
         this.setCurrentView = () => { throw new Exception('View setter is not set'); };
         this.getModel = () => { throw new Exception('Model getter is not set'); };
@@ -72,18 +72,20 @@ define(
                 this.getModel().loading(false);
               });
 
-						this.activeRouteHandler = handler;
+            this.activeRoute = {
+              handler,
+              isSecured: routes[key].isSecured,
+            };
 					};
 					return accumulator;
         }, {});
         // anyway, we should track the moment when the user exits and check permissions once again
 				authApi.isAuthenticated.subscribe((isAuthenticated) => {
-					const { AuthorizedRoute } = require('pages/Route');
-					const nonSecureRoutePaths = Object.keys(routes).filter(path => !(routes[path] instanceof AuthorizedRoute));
-                    if (!isAuthenticated && !nonSecureRoutePaths.filter(path => path.includes(this.getModel().activePage().toLowerCase())).length) {
+          const { isSecured, handler } = this.activeRoute;
+          if (!isAuthenticated && isSecured) {
             this.setCurrentView('white-page');
-						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
-					}
+            this.schedulePageUpdateOnLogin(handler);
+          }
 				});
 
         return routesWithRefreshedToken;
