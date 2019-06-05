@@ -6,6 +6,8 @@ define(['extensions/customElementsRegistry'], () => {
 		}
 	}
 
+	// Dynamic Service Locator pattern
+	// https://martinfowler.com/articles/injection.html#UsingAServiceLocator
 	function getCustomComponentsByType(type, dataKeys) {
 		const components = [];
 		for (let [index, value] of window.customElements.registry.entries()) {
