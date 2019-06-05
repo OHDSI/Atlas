@@ -19,9 +19,12 @@ define([
 		constructor(params) {
 			super();
 
+			this.sourceKey = ko.computed(() => params.source() && params.source().sourceKey);
+			this.cohortId = ko.computed(() => params.cohort() && params.cohort().id());
+
 			const componentParams =  {
-				sourceKey: ko.computed(() => params.source() && params.source().sourceKey),
-				cohortId: ko.computed(() => params.cohort() && params.cohort().id())
+				sourceKey: this.sourceKey,
+				cohortId: this.cohortId
 			};
 
 			const reports = customComponentsUtils.getCustomComponentsByType(
@@ -35,6 +38,11 @@ define([
 					componentParams
 				}))
 				.sort((a, b) => (a.PRIORITY > b.PRIORITY) ? 1 : -1);
+		}
+
+		dispose() {
+			this.sourceKey.dispose();
+			this.cohortId.dispose();
 		}
 	}
 
