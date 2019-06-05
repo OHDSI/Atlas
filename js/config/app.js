@@ -109,6 +109,8 @@ define(function () {
 	appConfig.features = {
 	  locationDistance: false,
 	};
+
+	appConfig.externalLibraries = [];
 	
 	return appConfig;
 });
