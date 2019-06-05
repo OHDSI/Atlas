@@ -13,7 +13,7 @@ define([
 	commonUtils,
 	view
 ) {
-	class InclusionReports extends Component {
+	class CohortReports extends Component {
 		constructor(params) {
 			super();
 
@@ -42,5 +42,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('cohort-reports', InclusionReports, view);
+	return commonUtils.build('cohort-reports', CohortReports, view);
 });
