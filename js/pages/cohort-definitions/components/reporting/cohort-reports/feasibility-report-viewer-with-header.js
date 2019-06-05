@@ -25,12 +25,14 @@ define([
 			this.loadReport();
 
 			this.subscriptions = [];
-			this.subscriptions.push(this.source.subscribe(s => s && this.loadReport()));
-			this.subscriptions.push(this.cohortId.subscribe(c => c && this.loadReport()));
+			this.reportParams = ko.pureComputed(() =>
+				(this.cohortId() && this.source()) ? {cohortId: this.cohortId(), source: this.source()} : null
+			).extend({deferred: true});
+			this.subscriptions.push(this.reportParams.subscribe(rp => rp && this.loadReport()));
 		}
 
 		dispose() {
-		  this.subscriptions.forEach(sub => sub.dispose());
+			this.subscriptions.forEach(sub => sub.dispose());
 		}
 
 		async loadReport() {
