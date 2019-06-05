@@ -1,19 +1,39 @@
 define([
 	'knockout',
 	'components/Component',
+	'services/CohortDefinition',
 	'utils/CommonUtils',
 	'text!./feasibility-report-viewer-with-header.html'
 ], function (
 	ko,
 	Component,
+	CohortDefinitionService,
 	commonUtils,
 	view
 ) {
 	class FeasibilityReportViewerWithHeader extends Component {
 		constructor(params) {
 			super();
-			this.sourceName = params.sourceName;
-			this.report = params.report;
+
+			this.reportType = params.reportType;
+			this.source = params.source;
+			this.cohortId = params.cohortId;
+
+			this.isLoading = ko.observable(false);
+			this.report = ko.observable();
+
+			this.loadReport();
+		}
+
+		loadReport() {
+			this.isLoading(true);
+
+			CohortDefinitionService
+				.getReport(this.cohortId(), this.source().sourceKey, this.reportType)
+				.then(report => {
+					this.report(report);
+					this.isLoading(false);
+				});
 		}
 	}
 

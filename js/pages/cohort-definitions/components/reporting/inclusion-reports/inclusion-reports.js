@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'components/Component',
+	'./const',
 	'utils/CommonUtils',
 	'text!./inclusion-reports.html',
 	'components/tabs',
@@ -8,6 +9,7 @@ define([
 ], function (
 	ko,
 	Component,
+	constants,
 	commonUtils,
 	view
 ) {
@@ -22,16 +24,18 @@ define([
 					title: 'By Person',
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: {
-						sourceName: params.sourceName,
-						report: ko.computed(() => params.report() && params.report().byPerson)
+						source: ko.computed(() => params.source()),
+						cohortId: ko.computed(() => params.cohort().id()),
+						reportType: constants.INCLUSION_REPORT.BY_PERSON,
 					},
 				},
 				{
 					title: 'By Events',
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: {
-						sourceName: params.sourceName,
-						report: ko.computed(() => params.report() && params.report().byEvent)
+						source: ko.computed(() => params.source()),
+						cohortId: ko.computed(() => params.cohort().id()),
+						reportType: constants.INCLUSION_REPORT.BY_PERSON,
 					},
 				}
 			];
