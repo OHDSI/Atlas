@@ -23,6 +23,8 @@ define([
 			this.report = ko.observable();
 
 			this.loadReport();
+			this.source.subscribe(s => s && this.loadReport());
+			this.cohortId.subscribe(c => c && this.loadReport());
 		}
 
 		loadReport() {
