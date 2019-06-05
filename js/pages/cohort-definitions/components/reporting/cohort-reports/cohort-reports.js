@@ -19,13 +19,15 @@ define([
 
 			this.params = params;
 
+			this.cohortId = ko.computed(() => params.cohort().id());
+
 			this.tabs = [
 				{
 					title: 'By Person',
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: {
-						source: ko.computed(() => params.source()),
-						cohortId: ko.computed(() => params.cohort().id()),
+						source: params.source,
+						cohortId: this.cohortId,
 						reportType: constants.INCLUSION_REPORT.BY_PERSON,
 					},
 				},
@@ -33,12 +35,16 @@ define([
 					title: 'By Events',
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: {
-						source: ko.computed(() => params.source()),
-						cohortId: ko.computed(() => params.cohort().id()),
+						source: params.source,
+						cohortId: this.cohortId,
 						reportType: constants.INCLUSION_REPORT.BY_EVENT,
 					},
 				}
 			];
+		}
+
+		dispose() {
+			this.cohortId.dispose();
 		}
 	}
 
