@@ -25,6 +25,8 @@ define([
 	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
+	'utilities/import',
+	'utilities/export',
 ], function (
 	ko,
 	view,
@@ -61,6 +63,7 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
+			this.constants = constants;
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
@@ -97,7 +100,9 @@ define([
 					)
 			});
 			this.selectedAnalysisId.subscribe((id) => {
-				authAPI.loadUserInfo();
+				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
+					authAPI.loadUserInfo();
+				}
 			});
 
 			this.isRunning = ko.observable(false);
@@ -138,10 +143,7 @@ define([
 				return this.defaultName;
 			});
 
-			this.importJSON = ko.observable();
-			this.exportJSON = ko.observable();
 			this.canExport = ko.computed(() => !this.dirtyFlag().isDirty() && this.selectedAnalysisId());
-			this.dirtyFlag.subscribe(df => !df.isDirty() && this.selectedAnalysisId() && this.loadExportJSON());
 			this.expressionMode = ko.observable('import');
 
 			this.isNameFilled = ko.computed(() => {
@@ -161,9 +163,21 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 
+			this.exportService = IRAnalysisService.exportAnalysis;
+			this.importService = IRAnalysisService.importAnalysis;
+
 			// startup actions
 			this.init();
 		}
+
+		isPermittedImport() {
+			return authAPI.isPermitted(`ir:design:post`);
+		}
+
+		isPermittedExport(id) {
+			return authAPI.isPermitted(`ir:${id}:design:get`);
+		}
+
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {
@@ -416,31 +430,19 @@ define([
 				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
-		async loadExportJSON() {
-			const json = await IRAnalysisService.exportAnalysis(this.selectedAnalysisId());
-			this.exportJSON(JSON.stringify(json, null, 2));
-		}
-
-		async import() {
-			if (this.importJSON() && this.importJSON().length > 0) {
-				this.isSaving(true);
-				this.loading(true);
-				try {
-					const savedIR = await IRAnalysisService.importAnalysis(JSON.parse(this.importJSON()));
-
-					this.refreshDefs();
-
-					this.importJSON("");
-					this.activeTab('definition');
-
-					this.close();
-					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
-				} catch (e) {
-					alert('An error occurred while attempting to import an incidence rate.');
-				} finally {
-					this.isSaving(false);
-					this.loading(false);
-				}
+		async afterImportSuccess(res) {
+			this.isSaving(true);
+			this.loading(true);
+			try {
+				this.refreshDefs();
+				this.activeTab('definition');
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
+			} catch (e) {
+				alert('An error occurred while attempting to import an incidence rate.');
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
 			}
 		};
 

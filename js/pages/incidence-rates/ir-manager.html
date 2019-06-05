@@ -72,20 +72,25 @@
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
-                        <div class="paddedWrapper">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
-                            <div style="text-align: right">
-                                <button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
-                            </div>
-                        </div>
+						<import params="{
+							entityId: selectedAnalysisId,
+							routeToUrl: constants.apiPaths.root,
+							isPermittedImport: isPermittedImport,
+							importService: importService,
+							afterImportSuccess: afterImportSuccess
+						}"></import>
                     </div>                
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
                         <div data-bind="if: !$component.canExport()">
                             You must save your analysis before you can export the definition.
                         </div>
                         <div class="paddedWrapper" data-bind="if: $component.canExport()">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.exportJSON"></textarea>
-                        </div>
+							<export params="{
+								entityId: selectedAnalysisId,
+								isPermittedExport: isPermittedExport,
+								exportService: exportService,
+							}"></export>
+						</div>
                     </div>
                 </div>
             </div>
