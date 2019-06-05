@@ -35,7 +35,7 @@ define([
 					componentParams: {
 						source: ko.computed(() => params.source()),
 						cohortId: ko.computed(() => params.cohort().id()),
-						reportType: constants.INCLUSION_REPORT.BY_PERSON,
+						reportType: constants.INCLUSION_REPORT.BY_EVENT,
 					},
 				}
 			];
