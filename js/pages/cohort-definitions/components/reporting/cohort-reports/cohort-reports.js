@@ -3,7 +3,7 @@ define([
 	'components/Component',
 	'./const',
 	'utils/CommonUtils',
-	'text!./inclusion-reports.html',
+	'text!./cohort-reports.html',
 	'components/tabs',
 	'./feasibility-report-viewer-with-header'
 ], function (
@@ -42,5 +42,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('inclusion-reports', InclusionReports, view);
+	return commonUtils.build('cohort-reports', InclusionReports, view);
 });

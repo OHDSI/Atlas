@@ -43,7 +43,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
 	'components/modal-exit-message',
-	'./components/reporting/inclusion-reports/inclusion-reports'
+	'./components/reporting/cohort-reports/cohort-reports'
 ], function (
 	$,
 	ko,

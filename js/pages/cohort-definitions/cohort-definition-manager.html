@@ -418,7 +418,7 @@
 					</tbody>
 				</table>
 				<!-- ko if: selectedReportSource() -->
-					<inclusion-reports params="cohort: model.currentCohortDefinition, source: selectedReportSource"></inclusion-reports>
+					<cohort-reports params="cohort: model.currentCohortDefinition, source: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
