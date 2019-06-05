@@ -28,6 +28,7 @@ define([
             this.importService = params.importService;
             this.isImportPermitted = this.isImportPermittedResolver();
             this.importJSON = ko.observable();
+            this.afterImportSuccess = params.afterImportSuccess || ((res) => commonUtils.routeTo(this.routeToUrl + res.id));
         }
 
         isImportPermittedResolver() {
@@ -38,7 +39,7 @@ define([
             this.loading(true);
             try {
 							const res = await this.importService(JSON.parse(this.importJSON()));
-							commonUtils.routeTo(this.routeToUrl + res.id);
+							this.afterImportSuccess(res);
 						} catch (e) {
               alert("Import failed, please, ensure that importing JSON is valid!");
               this.importJSON("");
