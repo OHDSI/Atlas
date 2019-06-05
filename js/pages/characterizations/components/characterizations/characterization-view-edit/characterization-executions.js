@@ -73,12 +73,14 @@ define([
 					title: 'Design',
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, data) => {
+						let html = '';
 						if (PermissionService.isPermittedExportGenerationDesign(data.id)) {
-							return `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a>
-								${this.currentHash() === data.hashCode ? ' (same as now)' : ''}`
+							html = `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a>`;
 						} else {
-							return (data.tag || '-')
+							html = data.tag || '-';
 						}
+						html += this.currentHash() === data.hashCode ? ' (same as now)' : '';
+						return html;
 					}
 				},
 				{

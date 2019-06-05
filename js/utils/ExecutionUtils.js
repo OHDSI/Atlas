@@ -22,7 +22,18 @@ define([
 		return confirmPromise;
 	}
 
+	function generateVersionTags(generations) {
+		let sortedHashes = _.orderBy([...generations], 'startTime', 'asc')
+			.map(info => info.hashCode)
+			.filter((element, index, array) => array.indexOf(element) === index);
+		generations.forEach((info) => {
+			info.tag = (info.hashCode) ? `V${sortedHashes.indexOf(info.hashCode) + 1}` : '-';
+		});
+		return generations;
+	}
+
 	return {
 		StartExecution,
+		generateVersionTags,
 	};
 });

@@ -1,9 +1,11 @@
 define([
     'services/http',
     'appConfig',
+    'utils/ExecutionUtils'
 ], function (
 	httpService,
 	config,
+    executionUtils,
 ) {
 	const servicePath = config.webAPIRoot + 'pathway-analysis';
 
@@ -40,7 +42,7 @@ define([
 	function listExecutions(id) {
 		return httpService
 			.doGet(`${servicePath}/${id}/generation`)
-			.then(res => res.data);
+			.then(res => executionUtils.generateVersionTags(res.data));
 	}
 
 	function getExecution(id) {

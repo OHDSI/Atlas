@@ -1,9 +1,11 @@
 define([
     'services/http',
     'appConfig',
+    'utils/ExecutionUtils'
 ], function (
     httpService,
     config,
+    executionUtils,
 ) {
     function loadCharacterizationList() {
         return httpService
@@ -44,17 +46,7 @@ define([
     function loadCharacterizationExecutionList(id) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/generation')
-            .then(res => generateVersionTags(res.data));
-    }
-
-    function generateVersionTags(ccGenerations) {
-        let sortedHashes = _.orderBy([...ccGenerations], 'startTime', 'asc')
-            .map(info => info.hashCode)
-            .filter((element, index, array) => array.indexOf(element) === index);
-        ccGenerations.forEach((info) => {
-            info.tag = (info.hashCode) ? `V${sortedHashes.indexOf(info.hashCode) + 1}` : '-';
-        });
-        return ccGenerations;
+            .then(res => executionUtils.generateVersionTags(res.data));
     }
 
     function loadCharacterizationExecution(id) {
