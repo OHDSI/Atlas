@@ -33,15 +33,11 @@ define([
 		  this.subscriptions.forEach(sub => sub.dispose());
 		}
 
-		loadReport() {
+		async loadReport() {
 			this.isLoading(true);
-
-			CohortDefinitionService
-				.getReport(this.cohortId(), this.source().sourceKey, this.reportType)
-				.then(report => {
-					this.report(report);
-					this.isLoading(false);
-				});
+			const report = await CohortDefinitionService.getReport(this.cohortId(), this.source().sourceKey, this.reportType);
+			this.report(report);
+			this.isLoading(false);
 		}
 	}
 
