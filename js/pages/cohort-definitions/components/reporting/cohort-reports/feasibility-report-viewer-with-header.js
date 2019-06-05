@@ -27,19 +27,21 @@ define([
 			this.report = ko.observable();
 
 			this.loadReport();
-			this.source.subscribe(s => s && this.loadReport());
-			this.cohortId.subscribe(c => c && this.loadReport());
+
+			this.subscriptions = [];
+			this.subscriptions.push(this.source.subscribe(s => s && this.loadReport()));
+			this.subscriptions.push(this.cohortId.subscribe(c => c && this.loadReport()));
 		}
 
-		loadReport() {
-			this.isLoading(true);
+		dispose() {
+		  this.subscriptions.forEach(sub => sub.dispose());
+		}
 
-			CohortDefinitionService
-				.getReport(this.cohortId(), this.source().sourceKey, this.reportType)
-				.then(report => {
-					this.report(report);
-					this.isLoading(false);
-				});
+		async loadReport() {
+			this.isLoading(true);
+			const report = await CohortDefinitionService.getReport(this.cohortId(), this.source().sourceKey, this.reportType);
+			this.report(report);
+			this.isLoading(false);
 		}
 	}
 
