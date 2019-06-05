@@ -23,8 +23,14 @@ define([
 			this.report = ko.observable();
 
 			this.loadReport();
-			this.source.subscribe(s => s && this.loadReport());
-			this.cohortId.subscribe(c => c && this.loadReport());
+
+			this.subscriptions = [];
+			this.subscriptions.push(this.source.subscribe(s => s && this.loadReport()));
+			this.subscriptions.push(this.cohortId.subscribe(c => c && this.loadReport()));
+		}
+
+		dispose() {
+		  this.subscriptions.forEach(sub => sub.dispose());
 		}
 
 		loadReport() {
