@@ -662,7 +662,7 @@ define(
 				}
 			}
 
-			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode, forceUpdate = false) {
+			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode, forceLoad = false) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
@@ -676,7 +676,7 @@ define(
 				if (
 					this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
-					&& !forceUpdate
+					&& !forceLoad
 				) {
 					this.currentConceptSetMode(mode);
 					this.handleViewChange(viewToShow, { conceptSetId, mode });
