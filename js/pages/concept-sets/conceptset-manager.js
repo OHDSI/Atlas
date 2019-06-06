@@ -90,13 +90,13 @@ define([
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
 			this.canOptimize = ko.computed(() => {
 				return (
-					this.currentConceptSet() 
-					&& this.currentConceptSet().id != 0 
+					this.currentConceptSet()
+					&& this.currentConceptSet().id != 0
 					&& sharedState.selectedConcepts().length > 1
 					&& this.canCreate()
 					&& this.canEdit()
 				);
-			}); 
+			});
 			this.optimalConceptSet = ko.observable(null);
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
@@ -179,7 +179,7 @@ define([
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
 		}
-		
+
 		saveClick() {
 			this.saveConceptSet("#txtConceptSetName");
 		}
@@ -212,7 +212,7 @@ define([
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-
+						await this.model.loadRepositoryConceptSet(savedConceptSet.data.id, 'conceptset-manager', 'details', true);
 						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.model.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
@@ -299,7 +299,7 @@ define([
 		delete() {
 			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.model.currentConceptSet().id)
@@ -312,7 +312,7 @@ define([
 		getIndexByComponentName(name = 'conceptset-expression') {
 			let index = this.tabs
 				.map(tab => tab.componentName)
-				.indexOf(name);				
+				.indexOf(name);
 			if (index === -1) {
 				index = 0;
 			}
@@ -321,6 +321,10 @@ define([
 		}
 
 		getComponentNameByTabIndex(idx) {
+			if (this.model.currentConceptSetDirtyFlag().isDirty() && this.tabs[idx] && this.tabs[idx].title === 'Export') {
+				alert('You have to save Concept Set before export');
+				return false;
+			}
 			return this.tabs[idx] ? this.tabs[idx].componentName : this.tabs[0].componentName;
 		}
 
@@ -329,9 +333,9 @@ define([
 				? this.model.currentConceptSet().id
 				: 0;
 			const mode = this.getComponentNameByTabIndex(index);
-			document.location = constants.paths.mode(id, mode);
+			!!mode && commonUtils.routeTo(constants.paths.mode(id, mode));
 		}
-		
+
 		overwriteConceptSet() {
 			var newConceptSet = [];
 			this.optimalConceptSet().forEach((item) => {

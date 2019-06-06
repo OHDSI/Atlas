@@ -1,6 +1,6 @@
 <div class="paddedWrapper">
   <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-        xssSafe: true,																																															
+        xssSafe: true,
         data: selectedConcepts(),
         options: {
           dom: 'Clfiprt',
@@ -28,17 +28,17 @@
             {
               class: 'text-center',
               orderable: false,
-              render: function() { return $root.renderCheckbox('isExcluded');}
+              render: function() { return $component.renderCheckbox('isExcluded');}
             },
             {
               class: 'text-center',
               orderable: false,
-              render: function() { return $root.renderCheckbox('includeDescendants');}
+              render: function() { return $component.renderCheckbox('includeDescendants');}
             },
             {
               class: 'text-center',
               orderable: false,
-              render: function() { return $root.renderCheckbox('includeMapped');}
+              render: function() { return $component.renderCheckbox('includeMapped');}
             }
           ]
         }

@@ -153,7 +153,7 @@ define(
 						url = url + "/" + (this.currentPatientLevelPrediction().analysisId || 0);
 					return url;
 				});
-	
+
 				this.currentConceptSetDirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
 					header: this.currentConceptSet,
 					details: sharedState.selectedConcepts
@@ -171,7 +171,7 @@ define(
 						url = url + "conceptsets";
 					return url;
 				});
-	
+
 				this.canEditCurrentConceptSet = ko.pureComputed(() => {
 					if (this.currentConceptSetSource() == 'cohort') {
 						return this.canEditCurrentCohortDefinition();
@@ -179,7 +179,7 @@ define(
 						if (!authApi.isAuthenticated()) {
 							return false;
 						}
-	
+
 						if (this.currentConceptSet() && (this.currentConceptSet()
 								.id != 0)) {
 							return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
@@ -194,7 +194,7 @@ define(
 				this.canDeleteCurrentConceptSet = ko.pureComputed(() => {
 					if (!config.userAuthenticationEnabled)
 						return true;
-	
+
 					/*
 					TODO:
 						if (this.currentConceptSetSource() == 'cohort') {
@@ -207,7 +207,7 @@ define(
 						return false;
 					}
 				});
-	
+
 				this.cohortDefCss = ko.pureComputed(() => {
 					if (this.currentCohortDefinition())
 						return this.currentCohortDefinitionDirtyFlag()
@@ -222,12 +222,12 @@ define(
 						url = url + "cohortdefinitions"
 					return url;
 				});
-	
+
 				this.canEditCurrentCohortDefinition = ko.pureComputed(() => {
 					if (!authApi.isAuthenticated()) {
 						return false;
 					}
-	
+
 					if (this.currentCohortDefinition() && (this.currentCohortDefinition()
 							.id() != 0)) {
 						return authApi.isPermittedUpdateCohort(this.currentCohortDefinition()
@@ -261,13 +261,13 @@ define(
 							.id() || 'new');
 					return url;
 				});
-	
+
 				this.irStatusCss = ko.pureComputed(() => {
 					if (this.currentIRAnalysis())
 						return this.currentIRAnalysisDirtyFlag()
 							.isDirty() ? "unsaved" : "open";
 				});
-				
+
 				this.hasUnsavedChanges = ko.pureComputed(() => {
 					return ((
 						this.currentCohortDefinitionDirtyFlag()
@@ -282,7 +282,7 @@ define(
 						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
 					);
 				});
-	
+
 				this.initializationComplete = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
 				});
@@ -327,12 +327,12 @@ define(
 					return pageTitle;
 				});
 
-				this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);				
+				this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
 				this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
 				this.renderHierarchyLink = commonUtils.renderHierarchyLink.bind(this);
 				this.createConceptSetItem = commonUtils.createConceptSetItem.bind(this);
 				this.syntaxHighlight = commonUtils.syntaxHighlight.bind(this);
-				
+
 				this.currentConceptSetSubscription = this.currentConceptSet.subscribe((newValue) => {
 					if (newValue != null) {
 						this.currentConceptSetDirtyFlag(new ohdsiUtil.dirtyFlag({
@@ -350,7 +350,7 @@ define(
 
 				/*
 					probably unreachable code
-					
+
 					this.currentView.subscribe(function (newView) {
 						switch (newView) {
 							case 'reports':
@@ -461,7 +461,7 @@ define(
 				var conceptSetItemsToAdd = [];
 				expressionItems.forEach((conceptSet) => {
 					const conceptSetItem = conceptSetService.enchanceConceptSet(conceptSet);
-					
+
 					sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
 					conceptSetItemsToAdd.push(conceptSetItem);
 				});
@@ -511,7 +511,7 @@ define(
 					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
 					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 
-					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');					
+					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');
 					this.currentCohortDefinitionInfo(generationInfo);
 				}
 
@@ -661,8 +661,8 @@ define(
 					this.loadCohortConceptSet(conceptSetId, viewToShow, mode);
 				}
 			}
-			
-			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
+
+			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode, forceUpdate = false) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
@@ -676,6 +676,7 @@ define(
 				if (
 					this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
+					&& !forceUpdate
 				) {
 					this.currentConceptSetMode(mode);
 					this.handleViewChange(viewToShow, { conceptSetId, mode });
@@ -686,7 +687,7 @@ define(
 					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
 					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
 					const expression = _.isEmpty(data) ? { items: [] } : data;
-					this.setConceptSet(conceptset, expression.items);	
+					this.setConceptSet(conceptset, expression.items);
 					await this.resolveConceptSetExpression();
 					this.currentConceptSetMode(mode);
 					$('#conceptSetLoadDialog').modal('hide');
@@ -696,7 +697,7 @@ define(
 				}
 				this.handleViewChange(viewToShow, { conceptSetId, mode });
 			}
-			
+
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
 				// Load up the selected concept set from the cohort definition
 				const conceptSet = this.currentCohortDefinition()
@@ -747,7 +748,7 @@ define(
 				const data = { ancestors, descendants };
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors', data);
 			};
-			
+
 			loadAndApplyAncestors(data) {
 				const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
 				const ids = [];
@@ -775,7 +776,7 @@ define(
 					}
 				});
 			};
-			
+
 			loadIncluded(identifiers) {
 				this.loadingIncluded(true);
 				const data = identifiers || this.conceptSetInclusionIdentifiers();
@@ -794,17 +795,17 @@ define(
 							});
 					});
 			}
-			
+
 			loadSourcecodes() {
 				this.loadingSourcecodes(true);
-	
+
 				// load mapped
 				var identifiers = [];
 				var concepts = this.includedConcepts();
 				for (var i = 0; i < concepts.length; i++) {
 					identifiers.push(concepts[i].CONCEPT_ID);
 				}
-				
+
 				const data = identifiers;
 				return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/mapped', data)
 					.then(({ data: sourcecodes }) => {
@@ -839,18 +840,18 @@ define(
 						break;
 				}
 			}
-	
+
 			updateRoles() {
 				if (authApi.isPermittedReadRoles()){
 					if (!config.userAuthenticationEnabled)
 							return true;
-	
+
 					console.info('Updating roles');
 					if (!authApi.isAuthenticated()) {
 						console.warn('Roles are not updated');
 						return Promise.resolve();
 					}
-					
+
 					return roleService.getList()
 						.then((roles) => {
 							console.info('Roles updated');
@@ -858,7 +859,7 @@ define(
 						});
 				}
 			}
-	
+
 		}
 	}
 );

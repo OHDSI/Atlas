@@ -19,7 +19,6 @@ define([
       this.model = params.model;
 			this.selectedConcepts = sharedState.selectedConcepts;
       this.canEdit = this.model.canEditCurrentConceptSet;
-      
       this.allExcludedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.isExcluded()) === undefined;
       });
@@ -29,7 +28,6 @@ define([
       this.allMappedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
       });
-      
     }
 
     toggleExcluded() {
@@ -48,14 +46,30 @@ define([
       );
     }
 
+    toggleCheckbox(d, field) {
+      if (this.canEdit) {
+        const concept = this.selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
+        if (!!concept) {
+            concept[field](!concept[field]());
+            this.model.resolveConceptSetExpression();
+          }
+      }
+    }
+
+    renderCheckbox(field) {
+      return this.canEdit()
+        ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
+        : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
+  }
+
     toggleMapped() {
       this.selectAllConceptSetItems(
         this.allExcludedChecked(),
         this.allDescendantsChecked(),
         !this.allMappedChecked()
       );
-    }    
-    
+    }
+
 		selectAllConceptSetItems(isExcluded = null, includeDescendants = null, includeMapped = null) {
 			if (!this.canEdit()) {
 				return;
@@ -72,7 +86,7 @@ define([
 				}
 			});
 			this.model.resolveConceptSetExpression();
-    }    
+    }
 
 	}
 
