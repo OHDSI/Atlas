@@ -240,6 +240,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
 
+			this.disableConceptSetExport = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() || this.model.currentCohortDefinition().expression().ConceptSets().length === 0;
+			});
+
+			this.disableConceptSetExportMessage = ko.pureComputed(() => {
+				if (this.model.currentCohortDefinition().expression().ConceptSets().length === 0) {
+					return "No concept sets to export.";
+				}
+				if (this.dirtyFlag().isDirty()) {
+					return "You must save the definition before you can export.";
+				}
+			})
+
 			this.delayedCartoonUpdate = ko.observable(null);
 
 			this.saveConceptSetShow = ko.observable(false);
