@@ -321,10 +321,6 @@ define([
 		}
 
 		getComponentNameByTabIndex(idx) {
-			if (this.model.currentConceptSetDirtyFlag().isDirty() && this.tabs[idx] && this.tabs[idx].title === 'Export') {
-				alert('You have to save Concept Set before export');
-				return false;
-			}
 			return this.tabs[idx] ? this.tabs[idx].componentName : this.tabs[0].componentName;
 		}
 

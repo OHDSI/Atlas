@@ -412,6 +412,7 @@ define(
 				this.resolvingConceptSetExpression(true);
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
 					.then(callback)
+					.then(this.resolvingConceptSetExpression(false))
 					.catch(() => this.handleVocabularyDataSourceFailure());
 
 				return resolvingPromise;
@@ -662,7 +663,7 @@ define(
 				}
 			}
 
-			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode, forceLoad = false) {
+			async loadRepositoryConceptSet(conceptSetId, viewToShow, mode) {
 				// $('body').removeClass('modal-open');
 				this.componentParams({});
 				if (conceptSetId == 0 && !this.currentConceptSet()) {
@@ -676,7 +677,6 @@ define(
 				if (
 					this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
-					&& !forceLoad
 				) {
 					this.currentConceptSetMode(mode);
 					this.handleViewChange(viewToShow, { conceptSetId, mode });

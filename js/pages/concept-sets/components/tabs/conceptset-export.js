@@ -21,9 +21,10 @@ define([
 	class ConceptsetExport extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-      this.model = params.model;
+			this.model = params.model;
 			this.currentConceptSet = this.model.currentConceptSet;
-      this.exporting = ko.observable(false);
+			this.exporting = ko.observable(false);
+			this.loading = this.model.resolvingConceptSetExpression();
     }
 
     copyToClipboard(clipboardButtonId, clipboardButtonMessageId) {
