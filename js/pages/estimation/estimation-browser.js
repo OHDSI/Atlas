@@ -102,6 +102,9 @@ define([
 				this.loading(true);
 				EstimationService.getEstimationList()
 					.then(({data}) => {
+						data.forEach(p => {
+							if (!p.modifiedDate) p.modifiedDate = p.createdDate;
+						});
 						this.loading(false);
 						this.reference(data);
 					});
