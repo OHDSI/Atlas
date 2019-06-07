@@ -174,9 +174,7 @@ define(
 								});
 							}
 							conceptSet.expression.items.valueHasMutated();
-							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression)
-								.then(res => self.pageModel.loadIncluded(res.data))
-								.then(res => self.pageModel.loadSourcecodes());
+							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression);
 						}
 					});
 
