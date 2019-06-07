@@ -212,7 +212,7 @@ define([
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-						await this.model.loadRepositoryConceptSet(savedConceptSet.data.id, 'conceptset-manager', 'details', true);
+						await this.model.resolveConceptSetExpression();
 						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.model.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
