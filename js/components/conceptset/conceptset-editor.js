@@ -1,4 +1,17 @@
-define(['knockout', 'text!./conceptset-editor.html', 'atlas-state', 'databindings', 'bootstrap','faceted-datatable'], function (ko, view, sharedState) {
+define([
+	'knockout', 
+	'text!./conceptset-editor.html', 
+	'atlas-state',
+	'utils/CommonUtils',
+	'databindings', 
+	'bootstrap',
+	'faceted-datatable'
+], function (
+	ko, 
+	view, 
+	sharedState,
+	commonUtils,
+) {
 	function conceptsetEditor(params) {
 		var self = this;
 		self.model = params.model;
@@ -11,19 +24,17 @@ define(['knockout', 'text!./conceptset-editor.html', 'atlas-state', 'databinding
 		}
 
 		self.toggleCheckbox = function(d, field) {
-			if (self.model.canEditCurrentConceptSet()) {
-			  const concept = sharedState.selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
-			  if (!!concept) {
-				  concept[field](!concept[field]());
-				  self.model.resolveConceptSetExpression();
-				}
-			}
+			commonUtils.toggleCheckbox(
+				self.model.canEditCurrentConceptSet, 
+				sharedState.selectedConcepts, 
+				d, 
+				field,
+				self.model.resolveConceptSetExpression
+			);
 		  }
 	  
 		self.renderCheckbox = function(field) {
-			return self.model.canEditCurrentConceptSet()
-			  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
-			  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
+			return commonUtils.renderCheckbox(self.model.canEditCurrentConceptSet, field);
 		}
 	}
 

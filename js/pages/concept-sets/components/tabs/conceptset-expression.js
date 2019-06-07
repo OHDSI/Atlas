@@ -47,20 +47,18 @@ define([
     }
 
     toggleCheckbox(d, field) {
-      if (this.canEdit) {
-        const concept = this.selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
-        if (!!concept) {
-            concept[field](!concept[field]());
-            this.model.resolveConceptSetExpression();
-          }
-      }
+			commonUtils.toggleCheckbox(
+				this.canEdit, 
+				sharedState.selectedConcepts, 
+				d, 
+				field,
+				this.model.resolveConceptSetExpression
+			);
     }
 
     renderCheckbox(field) {
-      return this.canEdit()
-        ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
-        : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
-  }
+      return commonUtils.renderCheckbox(this.canEdit, field);
+    }
 
     toggleMapped() {
       this.selectAllConceptSetItems(

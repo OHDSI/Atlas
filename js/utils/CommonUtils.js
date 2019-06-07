@@ -126,6 +126,12 @@ define([
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
+    const renderCheckbox = function(hasPermissions, field) {
+		return hasPermissions()
+		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
+		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
+	}
+
 	const createConceptSetItem = function (concept) {
 		var conceptSetItem = {};
 		conceptSetItem.concept = {
@@ -186,6 +192,16 @@ define([
 	const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 	const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
 
+	const toggleCheckbox = function(hasPermissions, selectedConcepts, d, field, successFunction) {
+		if (hasPermissions()) {
+			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
+			if (!!concept) {
+				concept[field](!concept[field]());
+				successFunction();
+			  }
+		}
+	}
+
 
 	return {
 		build,
@@ -201,9 +217,11 @@ define([
 		renderBoundLink,
 		renderConceptSelector,
 		renderHierarchyLink,
+		renderCheckbox,
 		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
-		normalizeUrl
+		normalizeUrl,
+		toggleCheckbox
 	};
 });
