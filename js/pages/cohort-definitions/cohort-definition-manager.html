@@ -63,7 +63,7 @@
 				<div class="cohort-conceptset-button-pane pull-right">
 					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
 					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
-					<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
+					<span data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null" data-placement="bottom"><button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': disableConceptSetExport}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button></span>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: $root.currentCohortDefinition() && $root.currentCohortDefinition().expression().ConceptSets,
@@ -377,8 +377,8 @@
 						<th class="text-right nowrap">Generation Duration</th>
 						<th></th>
 					</thead>
-					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3, 'max-height': $component.loadingReport() || $component.selectedReport()}">
-						<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
+					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3, 'max-height': $component.selectedReportSource()}">
+						<tr data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
 							<td>
 								<span data-bind="tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
 									<span data-bind="tooltip: !$component.canGenerate() ? 'Initial event is not set or changes not saved' : null" data-placement="right">
@@ -409,36 +409,16 @@
 							<td class="text-right nowrap" data-bind="text: executionDuration">
 							</td>
 							<td>
-								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectViewReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>
+								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
+									<i class="fa fa-eye"></i>
+									<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey) ? 'Hide Reports' : 'View Reports')"></span>
+								</div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
-				<!-- ko if: (loadingReport() || selectedReport())   -->
-				<div data-bind="visible:$component.loadingReport" class="loading">loading inclusion report</div>
-				<div data-bind="visible:!$component.loadingReport()">
-					<div class="tab-content nospace">
-						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
-							<ul class="nav nav-tabs nospace right-to-left">
-								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'person' }, click: function() { $component.inclusionTabMode('person'); }">
-									<a>By Person</a>
-								</li>
-								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'event' }, click: function() { $component.inclusionTabMode('event'); }">
-									<a>By Events</a>
-								</li>
-							</ul>
-							<div class="tab-content">
-								<div class="heading">Inclusion Report for <span data-bind="text:selectedReportCaption"></span></div>
-								<div role="tabpanel" data-bind="css: {active: $component.inclusionTabMode() == 'person'}" class="tab-pane">
-									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byPerson"></feasibility-report-viewer>
-								</div>
-								<div role="tabpanel" data-bind="css: {active: $component.inclusionTabMode() == 'event'}" class="tab-pane">
-									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byEvent"></feasibility-report-viewer>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<!-- ko if: selectedReportSource() -->
+					<cohort-reports params="cohort: model.currentCohortDefinition, source: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">

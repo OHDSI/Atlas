@@ -43,6 +43,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
 	'components/modal-exit-message',
+	'./components/reporting/cohort-reports/cohort-reports'
 ], function (
 	$,
 	ko,
@@ -239,6 +240,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
 
+			this.disableConceptSetExport = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() || this.model.currentCohortDefinition().expression().ConceptSets().length === 0;
+			});
+
+			this.disableConceptSetExportMessage = ko.pureComputed(() => {
+				if (this.model.currentCohortDefinition().expression().ConceptSets().length === 0) {
+					return "No concept sets to export.";
+				}
+				if (this.dirtyFlag().isDirty()) {
+					return "You must save the definition before you can export.";
+				}
+			})
+
 			this.delayedCartoonUpdate = ko.observable(null);
 
 			this.saveConceptSetShow = ko.observable(false);
@@ -259,10 +273,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.selectedSource = ko.observable();
-			this.selectedReport = ko.observable();
-			this.selectedReportCaption = ko.observable();
-			this.selectedSourceKey = ko.pureComputed(() => this.selectedSource().sourceKey);
-			this.loadingReport = ko.observable(false);
+			this.selectedReportSource = ko.observable();
+
 			this.sortedConceptSets = ko.computed((d) => {
 				if (this.model.currentCohortDefinition() != null) {
 					var clone = this.model.currentCohortDefinition().expression().ConceptSets().slice(0);
@@ -423,14 +435,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 									if (info.status != "COMPLETE" && info.status != "FAILED") {
 										hasPending = true;
-											if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
-												this.loadingReport(true);
+											if (this.selectedReportSource() && source.sourceId === this.selectedReportSource().sourceId) {
+												this.selectedReportSource(null);
 										}
 									} else {
-											if (this.selectedSource() && source.sourceId === this.selectedSource().sourceId) {
-												this.loadingReport(false);
-												this.selectViewReport(source);
-										}
 										var commaFormatted = d3.format(",");
 										source.executionDuration(momentApi.formatDuration(info.executionDuration));
 										source.personCount(commaFormatted(info.personCount));
@@ -816,7 +824,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.stopping[source.sourceKey](false);
 				this.getSourceInfo(source.sourceKey).status('PENDING');
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
-					this.loadingReport(true);
+					this.toggleCohortReport(null);
 				}
 				cohortDefinitionService.generate(this.model.currentCohortDefinition().id(), source.sourceKey, includeFeatures)
 					.catch(this.authApi.handleAccessDenied)
@@ -1067,19 +1075,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			selectViewReport (item) {
-				this.selectedSource(item);
-				this.loadingReport(true);
-				this.selectedReportCaption(item.name);
-
-				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
-				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
-
-				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
-					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
-					this.selectedReport(report);
-					this.loadingReport(false);
-				});
+			toggleCohortReport(item) {
+				if (this.selectedReportSource() && this.selectedReportSource().sourceKey === item.sourceKey) {
+					this.selectedReportSource(null);
+				} else {
+					this.selectedReportSource(item);
+				}
 			}
 
 			getStatusMessage (info) {
