@@ -128,7 +128,18 @@ define([
 
 	const createConceptSetItem = function (concept) {
 		var conceptSetItem = {};
-		conceptSetItem.concept = concept;
+		conceptSetItem.concept = {
+			"CONCEPT_ID": concept.CONCEPT_ID,
+			"CONCEPT_NAME": concept.CONCEPT_NAME,
+			"STANDARD_CONCEPT": concept.STANDARD_CONCEPT,
+			"STANDARD_CONCEPT_CAPTION": concept.STANDARD_CONCEPT_CAPTION,
+			"INVALID_REASON": concept.INVALID_REASON,
+			"INVALID_REASON_CAPTION": concept.INVALID_REASON_CAPTION,
+			"CONCEPT_CODE": concept.CONCEPT_CODE,
+			"DOMAIN_ID": concept.DOMAIN_ID,
+			"VOCABULARY_ID": concept.VOCABULARY_ID,
+			"CONCEPT_CLASS_ID": concept.CONCEPT_CLASS_ID
+		};
 		conceptSetItem.isExcluded = ko.observable(false);
 		conceptSetItem.includeDescendants = ko.observable(false);
 		conceptSetItem.includeMapped = ko.observable(false);

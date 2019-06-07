@@ -378,6 +378,16 @@ define(
 				this.currentView(view);
 			}
 
+			setConceptSetExpressionExportItems() {
+				var highlightedJson = this.syntaxHighlight(sharedState.conceptSetExpression());
+				this.currentConceptSetExpressionJson(highlightedJson);
+				var conceptIdentifierList = [];
+				for (var i = 0; i < sharedState.selectedConcepts().length; i++) {
+					conceptIdentifierList.push(sharedState.selectedConcepts()[i].concept.CONCEPT_ID);
+				}
+				this.currentConceptIdentifierList(conceptIdentifierList.join(','));
+			}
+
 			// for the current selected concepts:
 			// update the export panel
 			// resolve the included concepts and update the include concept set identifier list
@@ -385,16 +395,10 @@ define(
         		this.includedConcepts.removeAll();
 				this.includedSourcecodes.removeAll();
 				this.conceptSetInclusionIdentifiers.removeAll();
-				var conceptSetExpression = { "items": sharedState.selectedConcepts() };
-				var highlightedJson = this.syntaxHighlight(conceptSetExpression);
-				this.currentConceptSetExpressionJson(highlightedJson);
-				var conceptIdentifierList = [];
-				for (var i = 0; i < sharedState.selectedConcepts().length; i++) {
-					conceptIdentifierList.push(sharedState.selectedConcepts()[i].concept.CONCEPT_ID);
-				}
-				this.currentConceptIdentifierList(conceptIdentifierList.join(','));
-
-				return resolveAgainstServer ? this.resolveConceptSetExpressionSimple(conceptSetExpression) : null;
+				this.currentConceptIdentifierList(null);
+				this.currentIncludedConceptIdentifierList(null);
+				this.setConceptSetExpressionExportItems(sharedState.conceptSetExpression());
+				return resolveAgainstServer ? this.resolveConceptSetExpressionSimple(sharedState.conceptSetExpression()) : null;
 			}
 
 			resolveConceptSetExpressionSimple(expression, success) {
