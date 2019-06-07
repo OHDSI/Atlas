@@ -324,14 +324,16 @@ define([
         }
 
         async delete() {
-            this.loading(true);
-            await roleService.delete(this.roleId());
-            var roles = this.model.roles().filter((role) => {
-                return role.id != this.roleId();
-            });
-            this.model.roles(roles);
-            this.close();
-            this.loading(false);
+            if (confirm("Are you sure to delete role?")) {
+							this.loading(true);
+							await roleService.delete(this.roleId());
+							var roles = this.model.roles().filter((role) => {
+								return role.id != this.roleId();
+							});
+							this.model.roles(roles);
+							this.close();
+							this.loading(false);
+						}
         }
 
         async copy() {
