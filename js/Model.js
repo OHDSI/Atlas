@@ -412,7 +412,7 @@ define(
 				this.resolvingConceptSetExpression(true);
 				const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
 					.then(callback)
-					.then(this.resolvingConceptSetExpression(false))
+					.then(() => this.resolvingConceptSetExpression(false))
 					.catch(() => this.handleVocabularyDataSourceFailure());
 
 				return resolvingPromise;
