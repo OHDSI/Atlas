@@ -6,7 +6,7 @@
             <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !isExportPermitted() -->
-            Export is not permitted
+            <div data-bind="css: classes('error-message'), text: errorMessage"></div>
         <!-- /ko -->
     </div>
 </div>

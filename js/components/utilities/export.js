@@ -25,7 +25,8 @@ define([
             this.entityId = params.entityId;
             this.isPermittedExport = params.isPermittedExport || (() => false);
             this.exportService = params.exportService;
-
+            this.dirtyFlag = params.dirtyFlag;
+            this.errorMessage = params.errorMessage || 'Export is not permitted';
             this.isExportPermitted = this.isExportPermittedResolver();
             this.exportEntity = ko.observable();
             this.exportJSON = ko.computed(() => JSON.stringify(this.exportEntity(), null, 2));
@@ -33,7 +34,10 @@ define([
         }
 
         isExportPermittedResolver() {
-            return ko.computed(() => this.isPermittedExport(this.entityId()));
+            return ko.computed(() => {
+                const isPermitted = this.isPermittedExport(this.entityId());
+                return this.dirtyFlag ? !this.dirtyFlag().isDirty() && isPermitted : isPermitted;
+            });
         }
 
         async loadExportJSON() {
