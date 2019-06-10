@@ -321,6 +321,7 @@ define([
 			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 			this.selectedAnalysisId(analysis.id);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.clearResults();
 			this.isCopying(false);
 			this.loading(false);
 			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
