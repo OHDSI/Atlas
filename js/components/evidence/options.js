@@ -10,7 +10,7 @@ define(['components/evidence/utils'], function (utils) {
         },
         {
             title: '',
-            data: d => {
+            render: (s, p, d) => {
                 if (utils.hasEvidence(d)) {
                     return '<button type=\"button\" title=\"View Details\" class=\"btn btn-default btn-xs\"><i class=\"fa fa-external-link\" aria-hidden=\"true\"></i>&nbsp;</button>';
                 }
@@ -19,9 +19,8 @@ define(['components/evidence/utils'], function (utils) {
         },
         {
             title: 'Name',
-            data: d => {
-                var valid = true; //d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-                return '<a class=' + valid + ' href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
+            render: (s, p, d) => {
+                return '<a target=\"_new\" href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
             },
         },
         {
@@ -31,176 +30,163 @@ define(['components/evidence/utils'], function (utils) {
         },
         {
             title: 'Suggested Negative Control',
-            data: d => {
-                return d.negativeControl.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.negativeControl);
             },
         },
         {
             title: 'Sort Order',
-            data: d => {
-                return d.sortOrder.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.sortOrder);
             },
         },
         {
             title: 'Publication Count (Descendant Concept Match)',
-            data: d => {
-                return d.descendantPmidCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.descendantPmidCount);
             },
         },
         {
             title: 'Publication Count (Exact Concept Match)',
-            render: function(s, p, d) {
-                return d.exactPmidCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.exactPmidCount);
             },
             orderable: true,
             searchable: true
         },
         {
             title: 'Publication Count (Parent Concept Match)',
-            data: d => {
-                return d.parentPmidCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.parentPmidCount);
             },
         },
         {
             title: 'Publication Count (Ancestor Concept Match)',
-            data: d => {
-                return d.ancestorPmidCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.ancestorPmidCount);
             },
             visible: false,
         },
         {
             title: 'Indicated / Contraindicated',
-            data: d => {
-                return d.indCi.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.indCi);
             },
             visible: false,
         },
         {
             title: 'Broad Concept',
-            data: d => {
-                return d.tooBroad.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.tooBroad);
             },
             visible: false,
         },
         {
             title: 'Drug Induced Concept',
-            data: d => {
-                return d.drugInduced.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.drugInduced);
             },
             visible: false,
         },
         {
             title: 'Pregnancy Concept',
-            data: d => {
-                return d.pregnancy.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.pregnancy);
             },
             visible: false,
         },
         {
             title: 'Product Label Count (Descendant Concept Match)',
-            data: d => {
-                return d.descendantSplicerCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.descendantSplicerCount);
             },
         },
         {
             title: 'Product Label (Exact Concept Match)',
-            data: d => {
-                return d.exactSplicerCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.exactSplicerCount);
             },
         },
         {
             title: 'Product Label (Parent Concept Match)',
-            data: d => {
-                return d.parentSplicerCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.parentSplicerCount);
             },
         },
         {
             title: 'Product Label (Ancestor Concept Match)',
-            data: d => {
-                return d.ancestorSplicerCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.ancestorSplicerCount);
             },
             visible: false,
         },
         {
             title: 'FAERS Count (Descendant Concept Match)',
-            data: d => {
-                return d.descendantFaersCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.descendantFaersCount);
             },
         },
         {
             title: 'FAERS Count (Exact Concept Match)',
-            data: d => {
-                return d.exactFaersCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.exactFaersCount);
             },
         },
         {
             title: 'FAERS Count (Parent Concept Match)',
-            data: d => {
-                return d.parentFaersCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.parentFaersCount);
             },
         },
         {
             title: 'FAERS Count (Ancestor Concept Match)',
-            data: d => {
-                return d.ancestorFaersCount.toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            render: (s, p, d) => {
+                return utils.formatNumberWithCommas(d.ancestorFaersCount);
             },
             visible: false,
         },
         {
             title: 'User Excluded',
-            data: d => {
-                return d.userExcluded.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.userExcluded);
             },
         },
         {
             title: 'User Included',
-            data: d => {
-                return d.userIncluded.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.userIncluded);
             },
         },
         {
             title: 'Optimized Out',
-            data: d => {
-                return d.optimizedOut.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.optimizedOut);
             },
             visible: false,
         },
         {
             title: 'Not Prevalent',
-            data: d => {
-                return d.notPrevalent.toString() == "1" ? 'Y' : 'N';
+            render: (s, p, d) => {
+                return utils.formatBooleanDisplay(d.notPrevalent);
             },
             visible: false,
         },
         { 
             title: 'Drug Label Exists',
-            data: d => {
+            render: (s, p, d) => {
                 return d.drugLabelExists.toString()
             },
             visible: true,
         },
         {
             title: '<i id="dtNegCtrlRC" class="fa fa-database" aria-hidden="true"></i> RC',
-            data: d => {
+            render: (s, p, d) => {
                 return `<span class="ncRecordCount">${d.recordCount}</span>`;
             },
         },
         {
             title: '<i id="dtNegCtrlDRC" class="fa fa-database" aria-hidden="true"></i> DRC',
-            data: d => {
+            render: (s, p, d) => {
                 return `<span class="ncRecordCount">${d.descendantRecordCount}</span>`;
             },
         },
