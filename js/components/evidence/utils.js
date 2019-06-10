@@ -12,8 +12,18 @@ define(['knockout'], function(ko){
             row.ancestorSplicerCount > 0
         )
     }
+
+    function formatNumberWithCommas(val) {
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function formatBooleanDisplay(val) {
+      return val.toString() == "1" ? 'Y' : 'N';
+    }
   
     return {
       hasEvidence,
+      formatNumberWithCommas,
+      formatBooleanDisplay,
     };
   });
