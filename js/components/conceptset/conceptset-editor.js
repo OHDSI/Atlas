@@ -24,7 +24,7 @@ define([
 		}
 
 		self.toggleCheckbox = function(d, field) {
-			commonUtils.toggleCheckbox(
+			commonUtils.toggleConceptSetCheckbox(
 				self.model.canEditCurrentConceptSet, 
 				sharedState.selectedConcepts, 
 				d, 
@@ -34,7 +34,7 @@ define([
 		  }
 	  
 		self.renderCheckbox = function(field) {
-			return commonUtils.renderCheckbox(self.model.canEditCurrentConceptSet, field);
+			return commonUtils.renderConceptSetCheckbox(self.model.canEditCurrentConceptSet, field);
 		}
 	}
 

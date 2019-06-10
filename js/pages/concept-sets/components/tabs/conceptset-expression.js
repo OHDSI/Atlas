@@ -47,7 +47,7 @@ define([
     }
 
     toggleCheckbox(d, field) {
-			commonUtils.toggleCheckbox(
+			commonUtils.toggleConceptSetCheckbox(
 				this.canEdit, 
 				sharedState.selectedConcepts, 
 				d, 
@@ -57,7 +57,7 @@ define([
     }
 
     renderCheckbox(field) {
-      return commonUtils.renderCheckbox(this.canEdit, field);
+      return commonUtils.renderConceptSetCheckbox(this.canEdit, field);
     }
 
     toggleMapped() {
