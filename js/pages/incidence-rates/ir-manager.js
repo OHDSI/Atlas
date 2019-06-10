@@ -461,7 +461,7 @@ define([
 
 		async init() {
 			this.refreshDefs();
-			const sources = await sourceAPI.getSources();
+			const sources = sharedState.sources();
 			const sourceList = [];
 			sources.forEach(source => {
 				if (source.daimons.filter(function (daimon) {
