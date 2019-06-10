@@ -1,4 +1,4 @@
-define(['knockout'], function(ko){
+define(['knockout', 'numeral'], function(ko, numeral){
 
     function hasEvidence(row){
         return (
@@ -14,7 +14,7 @@ define(['knockout'], function(ko){
     }
 
     function formatNumberWithCommas(val) {
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return numeral(val).format('0,0');
     }
 
     function formatBooleanDisplay(val) {
