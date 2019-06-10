@@ -111,6 +111,12 @@ define([
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
 
+			this.canStartPolling = ko.computed(() => {
+				if (this.sources().length > 0 && this.selectedAnalysis() && this.selectedAnalysis().id() > 0) {
+					this.startPolling();
+				} 
+			});
+
 			this.cohortDefs = ko.observableArray();
 			this.analysisCohorts = ko.pureComputed(() => {
 				var analysisCohorts = {targetCohorts: ko.observableArray(), outcomeCohorts: ko.observableArray()};
@@ -277,7 +283,6 @@ define([
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
-				this.startPolling();
 			});
 		}
 
@@ -285,11 +290,12 @@ define([
 			const { analysisId } = params;
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
-			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
-				this.startPolling();
 			}
 		}
 
+		// startPolling is called once the conditions
+		// in the computed observable canStartPolling
+		// are satisfied
 		startPolling() {
 			this.pollId = PollService.add({
 				callback: silently => this.pollForInfo({ silently }),
