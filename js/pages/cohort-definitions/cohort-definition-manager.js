@@ -1192,6 +1192,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingState.dispose();
 				this.showReportNameDropdown.dispose();
 				this.reportSourceKeySub.dispose();
+				this.ancestorsModalIsShown(false);
 				PollService.stop(this.pollId);
 			}
 
