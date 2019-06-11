@@ -201,8 +201,11 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', domain = '', type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
-            domain = !!domain ? domain : !!this.domains()[0] && !!this.domains()[0].value ? this.domains()[0].value : '';
+        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
+            const isDomainAvailable = !!this.domains() && !!this.domains()[0];
+            const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
+            const anaylisisDomain = domain || defaultDomain;
+
             let parsedDesign;
             const data = {
               id: id,
@@ -246,7 +249,7 @@ define([
 
             data.name(name || this.defaultName);
             data.descr(descr);
-            data.domain(domain);
+            data.domain(anaylisisDomain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
