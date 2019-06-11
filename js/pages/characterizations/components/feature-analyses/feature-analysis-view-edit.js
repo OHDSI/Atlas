@@ -204,7 +204,7 @@ define([
         setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
-            const anaylisisDomain = domain || defaultDomain;
+            const anaylysisDomain = domain || defaultDomain;
 
             let parsedDesign;
             const data = {
@@ -249,7 +249,7 @@ define([
 
             data.name(name || this.defaultName);
             data.descr(descr);
-            data.domain(anaylisisDomain);
+            data.domain(anaylysisDomain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
