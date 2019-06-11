@@ -176,7 +176,6 @@ define([
 
 		dispose() {
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
-			// this.ancestorsModalIsShown(false);
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
 		}
