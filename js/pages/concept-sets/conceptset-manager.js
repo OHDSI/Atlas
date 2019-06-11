@@ -53,7 +53,6 @@ define([
 			this.model = params.model;
 			this.currentConceptSet = this.model.currentConceptSet;
 			this.isOptimizeModalShown = ko.observable(false);
-			this.ancestorsModalIsShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.defaultName = globalConstants.newEntityNames.conceptSet;
 			this.conceptSetName = ko.observable(this.defaultName);
@@ -91,13 +90,13 @@ define([
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
 			this.canOptimize = ko.computed(() => {
 				return (
-					this.currentConceptSet() 
-					&& this.currentConceptSet().id != 0 
+					this.currentConceptSet()
+					&& this.currentConceptSet().id != 0
 					&& sharedState.selectedConcepts().length > 1
 					&& this.canCreate()
 					&& this.canEdit()
 				);
-			}); 
+			});
 			this.optimalConceptSet = ko.observable(null);
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
@@ -131,10 +130,7 @@ define([
 				{
 						title: 'Included Concepts',
 						componentName: 'included-conceptsets',
-						componentParams: {
-							ancestorsModalIsShown: this.ancestorsModalIsShown,
-							...params
-						},
+						componentParams: params,
 						hasBadge: true,
 				},
 				{
@@ -180,11 +176,11 @@ define([
 
 		dispose() {
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
-			this.ancestorsModalIsShown(false);
+			// this.ancestorsModalIsShown(false);
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
 		}
-		
+
 		saveClick() {
 			this.saveConceptSet("#txtConceptSetName");
 		}
@@ -304,7 +300,7 @@ define([
 		delete() {
 			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.model.currentConceptSet().id)
@@ -317,7 +313,7 @@ define([
 		getIndexByComponentName(name = 'conceptset-expression') {
 			let index = this.tabs
 				.map(tab => tab.componentName)
-				.indexOf(name);				
+				.indexOf(name);
 			if (index === -1) {
 				index = 0;
 			}
@@ -336,7 +332,7 @@ define([
 			const mode = this.getComponentNameByTabIndex(index);
 			document.location = constants.paths.mode(id, mode);
 		}
-		
+
 		overwriteConceptSet() {
 			var newConceptSet = [];
 			this.optimalConceptSet().forEach((item) => {
