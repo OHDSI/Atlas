@@ -88,7 +88,7 @@ define([
 			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
 
 			this.disableExportAnalysis = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() || this.sources().filter(s => s.info() != null).length === 0;
+				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === "COMPLETE");
 			});
 		}
 
