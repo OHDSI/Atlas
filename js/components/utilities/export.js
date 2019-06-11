@@ -26,7 +26,10 @@ define([
             this.isPermittedExport = params.isPermittedExport || (() => false);
             this.exportService = params.exportService;
             this.dirtyFlag = params.dirtyFlag;
-            this.errorMessage = params.errorMessage || 'Export is not permitted';
+            this.errorMessage = this.dirtyFlag
+                ? params.errorMessage
+                    ? params.errorMessage : 'The export is prevented until the calling entity is saved.'
+                : 'You do not have permissions to export.'
             this.isExportPermitted = this.isExportPermittedResolver();
             this.exportEntity = ko.observable();
             this.exportJSON = ko.computed(() => JSON.stringify(this.exportEntity(), null, 2));
