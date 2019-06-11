@@ -152,6 +152,7 @@ define(
 							var conceptSetItem = self.pageModel.createConceptSetItem(concept);
 							sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 							sharedState.selectedConcepts.push(conceptSetItem);
+							self.pageModel.setConceptSetExpressionExportItems();
 						} else {
 							delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
 							sharedState.selectedConcepts.remove(function (i) {

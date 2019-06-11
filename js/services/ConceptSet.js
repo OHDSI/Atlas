@@ -42,7 +42,10 @@ define(function (require, exports) {
 	}
 
 	function getAncestorsRenderFunction() {
-		return (s, p, d) => `<a data-bind="click: function() {$parents[1].showAncestorsModal(${d.CONCEPT_ID});}, tooltip: '${d.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>')}'" class="clickable">${d.ANCESTORS.length}</a>`;
+		return (s,p,d) => {
+			const tooltip = d.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>');
+			return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: \`${tooltip}\`">${d.ANCESTORS.length}</a>`
+		};
 	}
 
 	function enchanceConceptSet(conceptSetItem) {
@@ -76,7 +79,7 @@ define(function (require, exports) {
 			.then(({ data }) => data)
 			.catch(authApi.handleAccessDenied);
 	}
-    
+
     function deleteConceptSet(conceptSetId) {
 		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
@@ -114,7 +117,7 @@ define(function (require, exports) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copy-name")
 			.then(({ data }) => data);
 	}
-	
+
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,

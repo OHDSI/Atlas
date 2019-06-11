@@ -126,9 +126,26 @@ define([
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
+    const renderConceptSetCheckbox = function(hasPermissions, field) {
+		return hasPermissions()
+		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
+		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
+	}
+
 	const createConceptSetItem = function (concept) {
 		var conceptSetItem = {};
-		conceptSetItem.concept = concept;
+		conceptSetItem.concept = {
+			"CONCEPT_ID": concept.CONCEPT_ID,
+			"CONCEPT_NAME": concept.CONCEPT_NAME,
+			"STANDARD_CONCEPT": concept.STANDARD_CONCEPT,
+			"STANDARD_CONCEPT_CAPTION": concept.STANDARD_CONCEPT_CAPTION,
+			"INVALID_REASON": concept.INVALID_REASON,
+			"INVALID_REASON_CAPTION": concept.INVALID_REASON_CAPTION,
+			"CONCEPT_CODE": concept.CONCEPT_CODE,
+			"DOMAIN_ID": concept.DOMAIN_ID,
+			"VOCABULARY_ID": concept.VOCABULARY_ID,
+			"CONCEPT_CLASS_ID": concept.CONCEPT_CLASS_ID
+		};
 		conceptSetItem.isExcluded = ko.observable(false);
 		conceptSetItem.includeDescendants = ko.observable(false);
 		conceptSetItem.includeMapped = ko.observable(false);
@@ -175,6 +192,16 @@ define([
 	const f = (a, b) => [].concat(...a.map(d => b.map(e => [].concat(d, e))));
 	const cartesian = (a, b, ...c) => (b ? cartesian(f(a, b), ...c) : a);
 
+	const toggleConceptSetCheckbox = function(hasPermissions, selectedConcepts, d, field, successFunction) {
+		if (hasPermissions()) {
+			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
+			if (!!concept) {
+				concept[field](!concept[field]());
+				successFunction();
+			  }
+		}
+	}
+
 
 	return {
 		build,
@@ -190,9 +217,11 @@ define([
 		renderBoundLink,
 		renderConceptSelector,
 		renderHierarchyLink,
+		renderConceptSetCheckbox,
 		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
-		normalizeUrl
+		normalizeUrl,
+		toggleConceptSetCheckbox
 	};
 });

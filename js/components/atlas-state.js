@@ -15,6 +15,9 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
+	state.conceptSetExpression = ko.pureComputed(() => {
+		return { "items": state.selectedConcepts() };
+	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
 	state.clearSelectedConcepts = function () {
