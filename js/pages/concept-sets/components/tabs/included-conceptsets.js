@@ -21,8 +21,8 @@ define([
 		constructor(params) {
 			super(params);
       this.model = params.model;
-      this.ancestorsModalIsShown = ko.observable(false);
-      this.ancestors = ko.observableArray([]);		
+      this.ancestorsModalIsShown = params.ancestorsModalIsShown;
+      this.ancestors = ko.observableArray([]);
 			this.loading = ko.pureComputed(() => {
 				return this.model.loadingSourcecodes() || this.model.loadingIncluded();
 			});

@@ -53,6 +53,7 @@ define([
 			this.model = params.model;
 			this.currentConceptSet = this.model.currentConceptSet;
 			this.isOptimizeModalShown = ko.observable(false);
+			this.ancestorsModalIsShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.defaultName = globalConstants.newEntityNames.conceptSet;
 			this.conceptSetName = ko.observable(this.defaultName);
@@ -130,7 +131,10 @@ define([
 				{
 						title: 'Included Concepts',
 						componentName: 'included-conceptsets',
-						componentParams: params,
+						componentParams: {
+							ancestorsModalIsShown: this.ancestorsModalIsShown,
+							...params
+						},
 						hasBadge: true,
 				},
 				{
@@ -176,6 +180,7 @@ define([
 
 		dispose() {
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
+			this.ancestorsModalIsShown(false);
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
 		}
