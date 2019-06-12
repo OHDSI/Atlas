@@ -20,7 +20,7 @@
             isPermittedExport: isExportPermitted,
             exportService: exportService,
             dirtyFlag: dirtyFlag,
-            errorMessage: 'You must save the cohort pathway before you can export.'
+            message: { entityName: 'cohort pathway' }
         }"></export>
     </div>
     <div data-bind="if: mode() == MODE_IMPORT, css: classes('content')">

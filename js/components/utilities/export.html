@@ -2,11 +2,11 @@
 
 <div data-bind="css: classes(), visible: !loading()">
     <div data-bind="css: classes('content')">
-        <!-- ko if: isExportPermitted() -->
+        <!-- ko if: canExport() -->
             <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
         <!-- /ko -->
-        <!-- ko if: !isExportPermitted() -->
-            <div data-bind="css: classes('error-message'), text: errorMessage"></div>
+        <!-- ko if: !canExport() -->
+            <div data-bind="css: classes('error-message'), text: $component.message()"></div>
         <!-- /ko -->
     </div>
 </div>
