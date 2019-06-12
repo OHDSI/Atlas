@@ -87,7 +87,7 @@ define([
                 return this.isNameFilled() && this.data().name() !== this.defaultName;
             });
             this.canSave = ko.computed(() => {
-                return this.dataDirtyFlag().isDirty() && 
+                return this.dataDirtyFlag().isDirty() &&
                     this.areRequiredFieldsFilled() &&
                     this.isNameCorrect() &&
                     (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
@@ -115,7 +115,7 @@ define([
                         return this.defaultName;
                     }
                 }
-            });            
+            });
             this.isSaving = ko.observable(false);
             this.isDeleting = ko.observable(false);
             this.isProcessing = ko.computed(() => {
@@ -123,8 +123,8 @@ define([
             });
         }
 
-        onPageCreated() {
-            this.loadDomains();
+        async onPageCreated() {
+            await this.loadDomains();
             super.onPageCreated();
         }
 
@@ -162,8 +162,8 @@ define([
         areRequiredFieldsFilled() {
             const isDesignFilled = this.data() && ((typeof this.data().design() === 'string' || Array.isArray(this.data().design())) && this.data().design().length > 0);
             return this.data() && (this.isNameFilled() &&
-                                   typeof this.data().type() === 'string' && 
-                                   this.data().type().length > 0 && 
+                                   typeof this.data().type() === 'string' &&
+                                   this.data().type().length > 0 &&
                                    isDesignFilled);
         }
 
@@ -201,7 +201,11 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', domain = '', type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
+        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
+            const isDomainAvailable = !!this.domains() && !!this.domains()[0];
+            const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
+            const anaylysisDomain = domain || defaultDomain;
+
             let parsedDesign;
             const data = {
               id: id,
@@ -245,7 +249,7 @@ define([
 
             data.name(name || this.defaultName);
             data.descr(descr);
-            data.domain(domain);
+            data.domain(anaylysisDomain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
