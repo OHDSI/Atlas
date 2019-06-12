@@ -54,7 +54,7 @@ define([
             const messageForUnpermittedExport = this.transformTemplateToMesage(constants.MESSAGE_TEMPLATES.UNPERMITTED, entityName);
             return ko.pureComputed(() => {
                 return !this.isExportForUnsavedEntityPermitted()
-                    ? messageForUnsavedEntity : this.isExportPermitted()
+                    ? messageForUnsavedEntity : !this.isExportPermitted()
                     ? messageForUnpermittedExport : '';
             });
         }
