@@ -40,6 +40,9 @@ define([
 		async loadData() {
 			this.loading(true);
 			const analysisList = await PathwayService.list();
+			analysisList.content.forEach(a => {
+				a.modifiedDate = a.modifiedDate || a.createdDate;
+			});
 			this.analysisList(analysisList.content);
 			this.loading(false);
 		}
@@ -66,13 +69,11 @@ define([
 				{
 					title: 'Created',
 					className: this.classes('tbl-col', 'created'),
-					type: 'datetime-formatted',
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Updated',
 					className: this.classes('tbl-col', 'updated'),
-					type: 'datetime-formatted',
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{

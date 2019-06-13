@@ -36,6 +36,7 @@ define([
 						return {
 							...d, 
 							...{
+								modifiedDate: d.modifiedDate || d.createdDate,
 								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
 								modifiedTimestamp: d.modifiedDate && new Date(d.modifiedDate).getTime()
 							}

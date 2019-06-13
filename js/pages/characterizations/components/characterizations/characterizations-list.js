@@ -53,13 +53,11 @@ define([
                 {
                     title: 'Created',
                     className: this.classes('tbl-col', 'created'),
-                    type: 'datetime-formatted',
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
                     title: 'Updated',
                     className: this.classes('tbl-col', 'updated'),
-                    type: 'datetime-formatted',
                     render: datatableUtils.getDateFieldFormatter('updatedAt'),
                 },
                 {
@@ -94,6 +92,9 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
+                    res.content.forEach(cc => {
+                        cc.updatedAt = cc.updatedAt || cc.createdAt;
+                    });
                     this.data(res.content);
                     this.loading(false);
                 });

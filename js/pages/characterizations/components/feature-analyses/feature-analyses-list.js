@@ -55,6 +55,9 @@ define([
         async loadData() {
             this.loading(true);
             const res = await FeatureAnalysisService.loadFeatureAnalysisList();
+            res.content.forEach(a => {
+              a.modifiedDate = a.modifiedDate || a.createdDate;
+            });
             this.data(res.content);
             this.loading(false);
         }

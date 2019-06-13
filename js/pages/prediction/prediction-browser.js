@@ -79,17 +79,11 @@ define([
 				},
 				{
 					title: 'Created',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Modified',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
@@ -106,6 +100,7 @@ define([
 						data.forEach(p => {
 							if (!p.modifiedDate) p.modifiedDate = p.createdDate;
 						});
+						console.log("Loaded prediction", data);
 						this.loading(false);
 						this.reference(data);
 					});
