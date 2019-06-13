@@ -1,5 +1,6 @@
 define([
 	'knockout',
+	'const',
 	'components/Component',
 	'services/PluginRegistry',
 	'./const',
@@ -9,6 +10,7 @@ define([
 	'./inclusion-report'
 ], function (
 	ko,
+	globalConstants,
 	Component,
 	PluginRegistry,
 	constants,
@@ -16,7 +18,7 @@ define([
 	view
 ) {
 
-	PluginRegistry.add(constants.COHORT_REPORT_COMPONENT_TYPE, {
+	PluginRegistry.add(globalConstants.pluginTypes.COHORT_REPORT, {
 		title: 'Inclusion Report',
 		priority: 1,
 		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId }"></cohort-report-inclusion>`
@@ -34,7 +36,7 @@ define([
 				cohortId: this.cohortId
 			};
 
-			this.tabs = PluginRegistry.findByType(constants.COHORT_REPORT_COMPONENT_TYPE).map(t => ({ ...t, componentParams }));
+			this.tabs = PluginRegistry.findByType(globalConstants.pluginTypes.COHORT_REPORT).map(t => ({ ...t, componentParams }));
 		}
 
 		dispose() {
