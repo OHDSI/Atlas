@@ -324,16 +324,19 @@ define([
         }
 
         async delete() {
-            if (confirm("Are you sure to delete role?")) {
-							this.loading(true);
-							await roleService.delete(this.roleId());
-							var roles = this.model.roles().filter((role) => {
-								return role.id != this.roleId();
-							});
-							this.model.roles(roles);
-							this.close();
-							this.loading(false);
-						}
+            commonUtils.confirmAndDelete({
+              message: "Are you sure you want to delete the role?",
+              loading: this.loading,
+              remove: () => roleService.delete(this.roleId()),
+              redirect: () => {
+								const roles = this.model.roles().filter((role) => {
+									return role.id !== this.roleId();
+								});
+								this.model.roles(roles);
+								this.close();
+								this.loading(false);
+              }
+            });
         }
 
         async copy() {
