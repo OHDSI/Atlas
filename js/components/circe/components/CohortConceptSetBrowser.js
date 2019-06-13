@@ -77,9 +77,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
-					results.forEach(cs => {
-						cs.modifiedDate = cs.modifiedDate || cs.createdDate;
-					});
+					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
 					self.repositoryConceptSets(results);
 					self.loading(false);
 				})

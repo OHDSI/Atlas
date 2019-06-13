@@ -55,9 +55,7 @@ define([
         async loadData() {
             this.loading(true);
             const res = await FeatureAnalysisService.loadFeatureAnalysisList();
-            res.content.forEach(a => {
-              a.modifiedDate = a.modifiedDate || a.createdDate;
-            });
+            datatableUtils.coalesceField(res.content, 'modifiedDate', 'createdDate');
             this.data(res.content);
             this.loading(false);
         }

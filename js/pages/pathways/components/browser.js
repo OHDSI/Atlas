@@ -40,9 +40,7 @@ define([
 		async loadData() {
 			this.loading(true);
 			const analysisList = await PathwayService.list();
-			analysisList.content.forEach(a => {
-				a.modifiedDate = a.modifiedDate || a.createdDate;
-			});
+			datatableUtils.coalesceField(analysisList.content, 'modifiedDate', 'createdDate');
 			this.analysisList(analysisList.content);
 			this.loading(false);
 		}
