@@ -92,9 +92,7 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
-                    res.content.forEach(cc => {
-                        cc.updatedAt = cc.updatedAt || cc.createdAt;
-                    });
+                    datatableUtils.coalesceField(res.content, 'updatedAt', 'createdAt');
                     this.data(res.content);
                     this.loading(false);
                 });

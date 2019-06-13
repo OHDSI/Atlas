@@ -97,10 +97,7 @@ define([
 				this.loading(true);
 				PredictionService.getPredictionList()
 					.then(({ data }) => {
-						data.forEach(p => {
-							if (!p.modifiedDate) p.modifiedDate = p.createdDate;
-						});
-						console.log("Loaded prediction", data);
+						datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
 						this.loading(false);
 						this.reference(data);
 					});

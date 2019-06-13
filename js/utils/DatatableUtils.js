@@ -49,6 +49,8 @@ define(['services/MomentAPI'],
 
         const renderCountColumn = (value) => value ? value : '...';
 
+        const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
+
         return {
             getDateFieldFormatter,
             getFacetForDate,
@@ -57,6 +59,7 @@ define(['services/MomentAPI'],
             getFacetForCreatedBy,
             renderCountColumn,
             getFacetForDomain,
+            coalesceField,
         };
     }
 );
