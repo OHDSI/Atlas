@@ -1,6 +1,7 @@
 "use strict";
 define([
 		'knockout',
+		'services/PluginRegistry',
 		'text!./profile-manager.html',
 		'd3',
 		'appConfig',
@@ -26,6 +27,7 @@ define([
 	],
 	function (
 		ko,
+		pluginRegistry,
 		view,
 		d3,
 		config,
@@ -309,6 +311,8 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+
+				this.plugins = pluginRegistry.findByType('atlas-profile-widget');
 			}
 
 			loadPerson() {

@@ -17,18 +17,9 @@ define([
 ) {
 
 	PluginRegistry.add(constants.COHORT_REPORT_COMPONENT_TYPE, {
-		title: 'By Person',
+		title: 'Inclusion Report',
 		priority: 1,
 		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId }"></cohort-report-inclusion>`
-	});
-
-	PluginRegistry.add(constants.COHORT_REPORT_COMPONENT_TYPE, {
-		title: 'By Events',
-		priority: 2,
-		html: `
-			<feasibility-report-viewer-with-header params="{ sourceKey: sourceKey, cohortId: cohortId, reportType: ${constants.INCLUSION_REPORT.BY_EVENT} }">
-			</feasibility-report-viewer-with-header>
-		`,
 	});
 
 	class CohortReports extends Component {
