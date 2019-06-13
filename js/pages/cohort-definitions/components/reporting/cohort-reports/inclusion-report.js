@@ -1,11 +1,13 @@
 define([
 	'knockout',
 	'components/Component',
+	'./const',
 	'utils/CommonUtils',
 	'./feasibility-report-viewer-with-header'
 ], function (
 	ko,
 	Component,
+	constants,
 	commonUtils,
 ) {
 	class CohortInclusionReport extends Component {
@@ -17,12 +19,12 @@ define([
 				{
 					title: 'By Person',
 					componentName: 'feasibility-report-viewer-with-header',
-					componentParams: params,
+					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_PERSON },
 				},
 				{
 					title: 'By Events',
 					componentName: 'feasibility-report-viewer-with-header',
-					componentParams: params,
+					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_EVENT },
 				}
 			];
 		}
