@@ -46,6 +46,9 @@ define([
       IRAnalysisService
         .getAnalysisList()
         .then(({ data }) => {
+          data.forEach(a => {
+            a.modifiedDate = a.modifiedDate || a.createdDate;
+          });
           this.analysisList(data);
           this.loading(false);
         });
