@@ -92,7 +92,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		var textB = b.name().toUpperCase();
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
-	
+
 	class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
@@ -138,14 +138,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isNameFilled = ko.computed(() => {
 				return this.model.currentCohortDefinition() && this.model.currentCohortDefinition().name();
 			});
-			
+
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && this.model.currentCohortDefinition().name() !== this.defaultName;
 			});
 			this.isAuthenticated = ko.pureComputed(() => {
 				return this.authApi.isAuthenticated();
 			});
-			var isNew = ko.pureComputed(() => {
+			this.isNew = ko.pureComputed(() => {
 				return !this.model.currentCohortDefinition() || (this.model.currentCohortDefinition().id() == 0);
 			});
 			this.canEdit = this.model.canEditCurrentCohortDefinition;
@@ -156,11 +156,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			    return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.canCopy = ko.pureComputed(() => {
-				return !this.dirtyFlag().isDirty() && !isNew() &&
+				return !this.dirtyFlag().isDirty() && !this.isNew() &&
 					(this.isAuthenticated() && this.authApi.isPermittedCopyCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
 			});
 			this.canDelete = ko.pureComputed(() => {
-				if (isNew()) {
+				if (this.isNew()) {
 					return false;
 				}
 				return ((this.isAuthenticated() && this.authApi.isPermittedDeleteCohort(this.model.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
@@ -172,7 +172,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (!this.isAuthenticated()) {
 					return false;
 				}
-				if (isNew()) {
+				if (this.isNew()) {
 					return this.authApi.isPermittedCreateCohort();
 				}
 
@@ -180,17 +180,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.hasAccessToGenerate = (sourceKey) => {
-				if (isNew()) {
+				if (this.isNew()) {
 					return false;
 				}
 
 				return this.authApi.isPermittedGenerateCohort(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			this.hasAccessToReadCohortReport = (sourceKey) => {
-				if (isNew()) {
-					return false;
-				}
-
 				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.model.currentCohortDefinition().id(), sourceKey);
 			}
 			if (!this.hasAccess()) return;
@@ -692,7 +688,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							this.model.currentCohortDefinition().id(undefined);
 						}
 						var definition = ko.toJS(this.model.currentCohortDefinition());
-						
+
 						// reset view after save
 						const savedDefinition = await cohortDefinitionService.saveCohortDefinition(definition);
 						definition = new CohortDefinition(savedDefinition);
@@ -1196,6 +1192,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingState.dispose();
 				this.showReportNameDropdown.dispose();
 				this.reportSourceKeySub.dispose();
+				this.ancestorsModalIsShown(false);
 				PollService.stop(this.pollId);
 			}
 
@@ -1311,18 +1308,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			setExpressionJson(value) {
 				this.modifiedJSON = value;
 			}
-				
+
 			getDataboundColumn(field, title, width) {
-				return { 
+				return {
 					data: field,
-					title: title, 
-					width: width, 
+					title: title,
+					width: width,
 					render: function (data,type,row) {
-						return (type == "display")	? `<span data-bind='text: ${field}'></span>` 
+						return (type == "display")	? `<span data-bind='text: ${field}'></span>`
 																				: ko.utils.unwrapObservable(data)
-					} 
+					}
 				}
-			}				
+			}
 	}
 
 	return commonUtils.build('cohort-definition-manager', CohortDefinitionManager, view);
