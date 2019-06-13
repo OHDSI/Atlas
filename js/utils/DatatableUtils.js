@@ -9,8 +9,12 @@ define(['services/MomentAPI'],
             return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
         };
 
-        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, p, d) => {
-            return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
+            if (type === "sort") {
+              return (defaultValue && d[field]) || d[field] ? d[field] : defaultValue;
+            } else {
+							return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+						}
         };
 
         const getFacetForDate = function(date) {
