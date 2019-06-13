@@ -3,12 +3,14 @@ define([
 	'components/Component',
 	'services/CohortDefinition',
 	'utils/CommonUtils',
+	'atlas-state',
 	'text!./feasibility-report-viewer-with-header.html'
 ], function (
 	ko,
 	Component,
 	CohortDefinitionService,
 	commonUtils,
+	sharedState,
 	view
 ) {
 	class FeasibilityReportViewerWithHeader extends Component {
@@ -16,7 +18,9 @@ define([
 			super();
 
 			this.reportType = params.reportType;
-			this.source = params.source;
+			this.source = ko.pureComputed(() => {
+				return sharedState.sources().find(s => s.sourceKey === params.sourceKey());
+			});
 			this.cohortId = params.cohortId;
 
 			this.isLoading = ko.observable(false);
