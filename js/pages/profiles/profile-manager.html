@@ -129,4 +129,12 @@
 	</div>
 </div>
 
+<div>
+	<!-- ko foreach: $component.plugins -->
+		<div data-bind="with: { html: $data.html, personId: $component.personId, sourceKey: $component.sourceKey }">
+			<div data-bind="template: {nodes: ko.utils.parseHtmlFragment(html)}"></div>
+		</div>
+	<!-- /ko -->
+</div>
+
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: canViewProfiles"></access-denied>

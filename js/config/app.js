@@ -113,5 +113,7 @@ define(function () {
 	  locationDistance: false,
 	};
 
+ 	appConfig.externalLibraries = [];
+
 	return appConfig;
 });

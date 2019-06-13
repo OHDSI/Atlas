@@ -1,6 +1,8 @@
 "use strict";
 define([
 		'knockout',
+		'const',
+		'services/PluginRegistry',
 		'text!./profile-manager.html',
 		'd3',
 		'appConfig',
@@ -26,6 +28,8 @@ define([
 	],
 	function (
 		ko,
+		globalConstants,
+		pluginRegistry,
 		view,
 		d3,
 		config,
@@ -309,6 +313,8 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+
+				this.plugins = pluginRegistry.findByType(globalConstants.pluginTypes.PROFILE_WIDGET);
 			}
 
 			loadPerson() {

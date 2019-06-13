@@ -1,6 +1,8 @@
 define([
 	'knockout',
+	'const',
 	'components/Component',
+	'services/PluginRegistry',
 	'./const',
 	'utils/CommonUtils',
 	'text!./cohort-reports.html',
@@ -8,33 +10,37 @@ define([
 	'./inclusion-report'
 ], function (
 	ko,
+	globalConstants,
 	Component,
+	PluginRegistry,
 	constants,
 	commonUtils,
 	view
 ) {
+
+	PluginRegistry.add(globalConstants.pluginTypes.COHORT_REPORT, {
+		title: 'Inclusion Report',
+		priority: 1,
+		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId }"></cohort-report-inclusion>`
+	});
+
 	class CohortReports extends Component {
 		constructor(params) {
 			super();
 
-			this.params = params;
-
+			this.sourceKey = ko.computed(() => params.source() && params.source().sourceKey);
 			this.cohortId = ko.computed(() => params.cohort().id());
 
-			this.tabs = [
-				{
-					title: 'Inclusion Report',
-					componentName: 'cohort-report-inclusion',
-					componentParams: {
-						source: params.source,
-						cohortId: this.cohortId,
-						reportType: constants.INCLUSION_REPORT.BY_PERSON,
-					},
-				}
-			];
+			const componentParams =  {
+				sourceKey: this.sourceKey,
+				cohortId: this.cohortId
+			};
+
+			this.tabs = PluginRegistry.findByType(globalConstants.pluginTypes.COHORT_REPORT).map(t => ({ ...t, componentParams }));
 		}
 
 		dispose() {
+			this.sourceKey.dispose();
 			this.cohortId.dispose();
 		}
 	}
