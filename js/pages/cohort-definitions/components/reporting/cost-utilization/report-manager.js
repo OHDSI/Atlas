@@ -2642,7 +2642,7 @@ define([
 
 							// create svg with range bands based on the trellis names
 							let chart = new atlascharts.trellisline();
-							const size = this.breakpoints.guessFromNode("#conditoinera_trellisLinePlot");
+							const size = this.breakpoints.guessFromNode("#conditionera_trellisLinePlot");
 							chart.render(dataByDecile, "#conditionera_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
@@ -2762,7 +2762,7 @@ define([
 							// create svg with range bands based on the trellis names
 							let chart = new atlascharts.trellisline();
 							const size = this.breakpoints.guessFromNode("#drugera_trellisLinePlot");
-							chart.render(dataByDecile, "#drugera_trellisLinePlot", size.width, size.breakpoints.wide.height, {
+							chart.render(dataByDecile, "#drugera_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
