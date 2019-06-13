@@ -178,10 +178,10 @@ define([
 
 	const getPathwaysUrl = (id, section) => `/pathways/${id}/${section}`;
 
-	async function confirmAndDelete({ loading, remove, redirect }) {
-		if (confirm('Are you sure?')) {
+	async function confirmAndDelete({ loading, remove, redirect, message = 'Are you sure?' } = {}) {
+		if (confirm(message)) {
 			loading(true);
-			await remove()
+			await remove();
 			loading(false);
 			redirect();
 		}
