@@ -6,6 +6,7 @@ define([
   'services/AuthAPI',
   'pages/Page',
   'utils/CommonUtils',
+	'utils/DatatableUtils',
   './const',
   'components/ac-access-denied',
   'faceted-datatable',
@@ -19,6 +20,7 @@ define([
   authApi,
   Page,
   commonUtils,
+  datatableUtils,
   constants
 ) {
   class IRBrowser extends Page {
@@ -46,6 +48,7 @@ define([
       IRAnalysisService
         .getAnalysisList()
         .then(({ data }) => {
+          datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
           this.analysisList(data);
           this.loading(false);
         });

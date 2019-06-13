@@ -6,7 +6,7 @@ define([
 	'utils/CommonUtils',
 	'text!./cohort-reports.html',
 	'components/tabs',
-	'./feasibility-report-viewer-with-header'
+	'./inclusion-report'
 ], function (
 	ko,
 	Component,
@@ -19,10 +19,7 @@ define([
 	PluginRegistry.add(constants.COHORT_REPORT_COMPONENT_TYPE, {
 		title: 'By Person',
 		priority: 1,
-		html: `
-			<feasibility-report-viewer-with-header params="{ sourceKey: sourceKey, cohortId: cohortId, reportType: ${constants.INCLUSION_REPORT.BY_PERSON} }">
-			</feasibility-report-viewer-with-header>
-		`
+		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId }"></cohort-report-inclusion>`
 	});
 
 	PluginRegistry.add(constants.COHORT_REPORT_COMPONENT_TYPE, {
