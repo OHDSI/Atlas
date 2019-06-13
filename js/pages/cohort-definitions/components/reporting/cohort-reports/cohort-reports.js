@@ -5,7 +5,7 @@ define([
 	'utils/CommonUtils',
 	'text!./cohort-reports.html',
 	'components/tabs',
-	'./feasibility-report-viewer-with-header'
+	'./inclusion-report'
 ], function (
 	ko,
 	Component,
@@ -23,21 +23,12 @@ define([
 
 			this.tabs = [
 				{
-					title: 'By Person',
-					componentName: 'feasibility-report-viewer-with-header',
+					title: 'Inclusion Report',
+					componentName: 'cohort-report-inclusion',
 					componentParams: {
 						source: params.source,
 						cohortId: this.cohortId,
 						reportType: constants.INCLUSION_REPORT.BY_PERSON,
-					},
-				},
-				{
-					title: 'By Events',
-					componentName: 'feasibility-report-viewer-with-header',
-					componentParams: {
-						source: params.source,
-						cohortId: this.cohortId,
-						reportType: constants.INCLUSION_REPORT.BY_EVENT,
 					},
 				}
 			];
