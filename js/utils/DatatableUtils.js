@@ -9,8 +9,12 @@ define(['services/MomentAPI'],
             return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
         };
 
-        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, p, d) => {
-            return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
+            if (type === "sort") {
+              return (defaultValue && d[field]) || d[field] ? d[field] : defaultValue;
+            } else {
+							return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+						}
         };
 
         const getFacetForDate = function(date) {
@@ -45,6 +49,8 @@ define(['services/MomentAPI'],
 
         const renderCountColumn = (value) => value ? value : '...';
 
+        const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
+
         return {
             getDateFieldFormatter,
             getFacetForDate,
@@ -53,6 +59,7 @@ define(['services/MomentAPI'],
             getFacetForCreatedBy,
             renderCountColumn,
             getFacetForDomain,
+            coalesceField,
         };
     }
 );

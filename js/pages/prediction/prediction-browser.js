@@ -79,17 +79,11 @@ define([
 				},
 				{
 					title: 'Created',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Modified',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
@@ -103,6 +97,7 @@ define([
 				this.loading(true);
 				PredictionService.getPredictionList()
 					.then(({ data }) => {
+						datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
 						this.loading(false);
 						this.reference(data);
 					});
