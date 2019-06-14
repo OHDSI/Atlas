@@ -15,13 +15,16 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
+	state.conceptSetExpression = ko.pureComputed(() => {
+		return { "items": state.selectedConcepts() };
+	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
 	state.clearSelectedConcepts = function () {
 		this.selectedConceptsIndex = {};
 		this.selectedConcepts([]);
 	}
-	
+
 	state.IRAnalysis = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null)
@@ -45,10 +48,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortPathways = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null)
-	};	
+	};
 	state.CohortPathways.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortPathways.current()));
-	
-	
+
+
 	state.estimationAnalysis = {
 		current: ko.observable(null),
 		analysisPath: null,
@@ -62,7 +65,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		analysisPath: null,
 		selectedId: ko.observable(null),
 		targetCohorts: ko.observableArray(),
-		outcomeCohorts: ko.observableArray(), 
+		outcomeCohorts: ko.observableArray(),
 	}
 	state.predictionAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current()));
 

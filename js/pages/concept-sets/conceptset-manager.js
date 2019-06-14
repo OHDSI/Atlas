@@ -212,7 +212,7 @@ define([
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-
+						await this.model.resolveConceptSetExpression();
 						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.model.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
@@ -329,7 +329,7 @@ define([
 				? this.model.currentConceptSet().id
 				: 0;
 			const mode = this.getComponentNameByTabIndex(index);
-			document.location = constants.paths.mode(id, mode);
+			!!mode && commonUtils.routeTo(constants.paths.mode(id, mode));
 		}
 
 		overwriteConceptSet() {
