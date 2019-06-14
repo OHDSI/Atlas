@@ -7,8 +7,8 @@ define([
     'services/AuthAPI',
     'components/Component',
     'utils/AutoBind',
-    'utils/CommonUtils', 
-    'utilities/import', 
+    'utils/CommonUtils',
+    'utilities/import',
     'utilities/export',
     'less!./characterization-utils.less',
 ], function (
@@ -30,7 +30,7 @@ define([
 
             this.MODE_JSON = 0;
             this.MODE_IMPORT = 1;
-
+            this.dirtyFlag = params.designDirtyFlag;
             this.characterizationId = params.characterizationId;
             this.mode = ko.observable(this.MODE_JSON);
 
