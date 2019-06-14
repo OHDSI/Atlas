@@ -33,7 +33,7 @@ define([
             this.isExportForUnsavedEntityPermitted = this.isExportForUnsavedEntityPermittedResolver();
             this.canExport = ko.pureComputed(() => this.isExportForUnsavedEntityPermitted() && this.isExportPermitted());
             this.exportEntity = ko.observable();
-            this.message = this.messageResolver();
+            this.errorMessage = this.messageResolver();
             this.exportJSON = ko.pureComputed(() => JSON.stringify(this.exportEntity(), null, 2));
             this.canExport() && this.loadExportJSON();
             this.subscriptions = [];
