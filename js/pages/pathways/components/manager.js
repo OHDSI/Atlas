@@ -51,7 +51,7 @@ define([
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && this.design().name() !== this.defaultName;
 			});
-			
+
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
@@ -63,6 +63,7 @@ define([
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
+				dirtyFlag: this.dirtyFlag,
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
