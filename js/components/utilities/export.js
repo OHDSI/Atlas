@@ -21,7 +21,6 @@ define([
     class ExportUtil extends AutoBind(Component) {
         constructor(params) {
             super();
-
             const { entityId, message = {}, isPermittedExport = () => false, exportService, dirtyFlag } = params;
             this.loading = ko.observable(false);
             this.entityId = entityId;
@@ -33,7 +32,6 @@ define([
             this.isExportForUnsavedEntityPermitted = this.isExportForUnsavedEntityPermittedResolver();
             this.canExport = ko.pureComputed(() => this.isExportForUnsavedEntityPermitted() && this.isExportPermitted());
             this.exportEntity = ko.observable();
-            this.exportJSON = ko.computed(() => JSON.stringify(this.exportEntity(), null, 2));
             this.isExportPermitted() && this.loadExportJSON();
             this.errorMessage = this.messageResolver();
             this.exportJSON = ko.pureComputed(() => JSON.stringify(this.exportEntity(), null, 2));
@@ -64,6 +62,7 @@ define([
         transformTemplateToMesage(template, entityName) {
             return template.replace('%s', entityName);
         }
+
 
         dispose() {
             this.subscriptions.forEach(s => s.dispose());
