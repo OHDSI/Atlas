@@ -21,14 +21,14 @@ define([
 		constructor(params) {
 			super(params);
 			this.model = params.model;
-	
+
 			this.canCreateConceptSet = ko.pureComputed(function () {
 				return authApi.isPermittedCreateConceptset();
 			});
-		}		
+		}
 
 		onRespositoryConceptSetSelected (conceptSet) {
-			window.location.href = constants.paths.mode(conceptSet.id);
+			commonUtils.routeTo(constants.paths.mode(conceptSet.id));
 		}
 
 		onConceptSetBrowserAction (result) {
@@ -42,7 +42,7 @@ define([
 		newConceptSet() {
 			if (this.model.currentConceptSet() == undefined) {
 				this.model.currentConceptSetSource('repository');
-				document.location = constants.paths.mode();
+				commonUtils.routeTo(constants.paths.mode());
 			}
 		}
 
