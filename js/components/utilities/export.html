@@ -6,7 +6,7 @@
             <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !canExport() -->
-            <div data-bind="css: classes('error-message'), text: $component.message()"></div>
+            <div data-bind="css: classes('error-message'), text: $component.errorMessage()"></div>
         <!-- /ko -->
     </div>
 </div>
