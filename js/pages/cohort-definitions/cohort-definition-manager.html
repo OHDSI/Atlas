@@ -472,93 +472,96 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
-						<div class="panel-heading">
-							Cohort Not Generated
+					<loading data-bind="visible: $component.isReportGenerating()"></loading>
+					<div data-bind="visible: !$component.isReportGenerating()">
+						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
+							<div class="panel-heading">
+								Cohort Not Generated
+							</div>
+							<div class="panel-body">
+								This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.
+							</div>
 						</div>
-						<div class="panel-body">
-							This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.
+						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='reports_not_generated'">
+							<div class="panel-heading ">
+								Reports Not Generated
+							</div>
+							<div class="panel-body">
+								Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='reports_not_generated'">
-						<div class="panel-heading ">
-							Reports Not Generated
+						<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
+							<div class="panel-heading ">
+								Make a Selection
+							</div>
+							<div class="panel-body">
+								Please make a selection in the Report Selections panel.
+							</div>
 						</div>
-						<div class="panel-body">
-							Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.
-						</div>
-					</div>
-					<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
-						<div class="panel-heading ">
-							Make a Selection
-						</div>
-						<div class="panel-body">
-							Please make a selection in the Report Selections panel.
-						</div>
-					</div>
-					<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
-						<div class="panel-heading ">
-							Generating Reports
-						</div>
-						<div class="panel-body">
-							<table class="pad-5" style="width:100%;">
-								<thead>
-									<th>Job Name</th>
-									<th>Progress</th>
-									<th>Status</th>
-								</thead>
-								<tbody>
-									<tr data-bind="with:$component.currentJob">
-										<td class="pad-5"><i class="fa fa-tasks"></i> <span data-bind="html: name"></span></td>
-										<td class="pad-5">
-											<div data-bind="if:$data.progress">
-												<div class="progress">
-													<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>
+						<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
+							<div class="panel-heading ">
+								Generating Reports
+							</div>
+							<div class="panel-body">
+								<table class="pad-5" style="width:100%;">
+									<thead>
+										<th>Job Name</th>
+										<th>Progress</th>
+										<th>Status</th>
+									</thead>
+									<tbody>
+										<tr data-bind="with:$component.currentJob">
+											<td class="pad-5"><i class="fa fa-tasks"></i> <span data-bind="html: name"></span></td>
+											<td class="pad-5">
+												<div data-bind="if:$data.progress">
+													<div class="progress">
+														<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>
+													</div>
 												</div>
-											</div>
-										</td>
-										<td class="pad-5" data-bind="html: status"></td>
-									</tr>
-								</tbody>
-							</table>
+											</td>
+											<td class="pad-5" data-bind="html: status"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
-						<div class="panel-heading ">
-							Report Unavailable
+						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
+							<div class="panel-heading ">
+								Report Unavailable
+							</div>
+							<div class="panel-body">
+								The report you requested is not available. Please click the generate button to generate cohort reports for this data source.
+							</div>
 						</div>
-						<div class="panel-body">
-							The report you requested is not available. Please click the generate button to generate cohort reports for this data source.
+						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
+							<div class="panel-heading ">
+								Whoops
+							</div>
+							<div class="panel-body">
+								The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
+							</div>
+							<div class="panel-footer">
+								<div data-bind="html:$component.reportingError"></div>
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
-						<div class="panel-heading ">
-							Whoops
+						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
+							<div class="panel-heading ">
+								Create Reporting Job Failed
+							</div>
+							<div class="panel-body">
+								The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
+							</div>
+							<div class="panel-footer">
+								<div data-bind="html:$component.createReportJobError"></div>
+							</div>
 						</div>
-						<div class="panel-body">
-							The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
-						</div>
-						<div class="panel-footer">
-							<div data-bind="html:$component.reportingError"></div>
-						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
-						<div class="panel-heading ">
-							Create Reporting Job Failed
-						</div>
-						<div class="panel-body">
-							The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
-						</div>
-						<div class="panel-footer">
-							<div data-bind="html:$component.createReportJobError"></div>
-						</div>
-					</div>
-					<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
-						<div class="panel-heading ">
-							Please Wait
-						</div>
-						<div class="panel-body">
-							Please wait while for the report status to be loaded.
+						<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
+							<div class="panel-heading ">
+								Please Wait
+							</div>
+							<div class="panel-body">
+								Please wait while for the report status to be loaded.
+							</div>
 						</div>
 					</div>
 				</div>

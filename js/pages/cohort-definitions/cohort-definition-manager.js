@@ -109,6 +109,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.exporting = ko.observable();
 			this.service = cohortDefinitionService;
 			this.defaultName = globalConstants.newEntityNames.cohortDefinition;
+			this.isReportGenerating = ko.observable(false);
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
@@ -1112,7 +1113,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return j.progress() + '%';
 			}
 
-			generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
+			async generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 					return;
 				}
@@ -1144,19 +1145,25 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cohortJob.rollupUtilizationDrug = rollupUtilizationDrug;
 
 				this.createReportJobFailed(false);
-				return cohortDefinitionService.getCohortAnalyses(cohortJob)
-					.then(({data}) => jobDetailsService.createJob(data))
-					.catch(response => {
-						this.createReportJobFailed(true);
-						var createReportJobErrorPackage = {};
-						createReportJobErrorPackage.status = status;
-						createReportJobErrorPackage.error = xhr.responseText;
-						this.createReportJobError(JSON.stringify(createReportJobErrorPackage));
+				try {
+					this.isReportGenerating(true);
+					const { data } = await cohortDefinitionService.getCohortAnalyses(cohortJob);
+					jobDetailsService.createJob(data);
+				} catch (err) {
+					this.createReportJobFailed(true);
+					const { status, data } = err;
+					const createReportJobErrorPackage = {
+						status,
+						error: data.payload,
+					};
+					this.createReportJobError(JSON.stringify(createReportJobErrorPackage));
 
-						// reset button to allow generation attempt
-						this.generateReportsEnabled(true);
-						this.generateButtonCaption('Generate');
-					});
+					// reset button to allow generation attempt
+					this.generateReportsEnabled(true);
+					this.generateButtonCaption('Generate');
+				}
+				await this.queryHeraclesJob(this.model.currentCohortDefinition(), this.model.reportSourceKey());
+				this.isReportGenerating(false);
 			}
 
 			generateQuickAnalysis () {
