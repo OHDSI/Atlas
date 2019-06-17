@@ -13,8 +13,8 @@ define(
           appModel.activePage(this.title);
           require(['./data-sources'], function () {
             router.setCurrentView('data-sources', {
-              reportName: reportName,
-              sourceKey: sourceKey
+              reportName: reportName ? decodeURIComponent(reportName) : reportName,
+              sourceKey: sourceKey ? decodeURIComponent(sourceKey) : sourceKey,
             });
           });
         }),
