@@ -1,12 +1,12 @@
-define(['services/MomentAPI'],
-    (momentApi) => {
+define(['services/MomentAPI', 'xss'],
+    (momentApi, filterXSS) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
                 link,
                 label
             } = builder(d);
-            return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
+            return `<a ${link ? ('href="' + link + '"') : ''}>${filterXSS(label)}</a>`;
         };
 
         const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {

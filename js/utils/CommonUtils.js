@@ -2,13 +2,15 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
-		'urijs'
+		'urijs',
+		'xss',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
 		URI,
+		filterXSS,
 	) => {
 
 	const build = function (name, viewModelClass, template) {
@@ -105,7 +107,7 @@ define([
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		return '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+		return '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + filterXSS(d.CONCEPT_NAME) + '</a>';
 	}
 
 	function renderBoundLink(s, p, d) {
@@ -123,7 +125,7 @@ define([
 
 	const renderHierarchyLink = function (d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
-		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + filterXSS(d.CONCEPT_NAME) + '</a>';
 	}
 
     const renderConceptSetCheckbox = function(hasPermissions, field) {

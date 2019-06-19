@@ -5,7 +5,7 @@
 	<div>
 		<span class="pull-right btn btn-sm btn-primary" data-bind="click:$component.newAnalysis, css: {disabled: !$component.canCreateIR()}">New Analysis</span>
 	</div>
-	<div data-bind="eventListener: [{event: 'click', selector: '.linkish', callback: onAnalysisSelected}]">
+	<div>
 		<ir-analysis-browser params="analysisList: analysisList"></ir-analysis-browser>
 	</div>
 

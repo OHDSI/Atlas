@@ -25,7 +25,7 @@ define([
 ) {
   class IRBrowser extends Page {
     constructor(params) {
-      super(params);      
+      super(params);
       this.loading = ko.observable(false);
       this.config = config;
       this.analysisList = ko.observableArray();
@@ -36,7 +36,7 @@ define([
       this.canCreateIR = ko.pureComputed(() => {
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
       });
-      
+
       // startup actions
       if (this.isAuthenticated() && this.canReadIRs()) {
         this.refresh();
@@ -52,10 +52,6 @@ define([
           this.analysisList(data);
           this.loading(false);
         });
-    };
-
-    onAnalysisSelected(d) {
-      commonUtils.routeTo(constants.apiPaths.analysis(d.id));
     };
 
     newAnalysis() {

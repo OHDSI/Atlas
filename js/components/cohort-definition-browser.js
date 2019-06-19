@@ -34,7 +34,7 @@ define([
 				.then(({ data }) => {
 					let defList = data.map(d => {
 						return {
-							...d, 
+							...d,
 							...{
 								modifiedDate: d.modifiedDate || d.createdDate,
 								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
@@ -80,7 +80,10 @@ define([
 				},
 				{
 					title: 'Name',
-					render: this.renderCohortDefinitionLink
+					render: datatableUtils.getLinkFormatter(d => ({
+						link: `#/cohortdefinition/${d.id}`,
+						label: d['name'],
+					})),
 				},
 				{
 					title: 'Created',
@@ -103,12 +106,7 @@ define([
 				}
 			];
 
-			this.renderCohortDefinitionLink = this.renderCohortDefinitionLink.bind(this);
 			this.rowClick = this.rowClick.bind(this);
-		}
-		
-		renderCohortDefinitionLink (data,type,row) {
-			return (type == "display")	? `<span class="linkish">${row.name}</span>` : row.name;
 		}
 
 		rowClick(data) {
