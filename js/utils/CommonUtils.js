@@ -3,16 +3,12 @@ define([
 		'atlas-state',
 		'pages/Page',
 		'urijs',
-		'xss',
-		'appConfig',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
 		URI,
-		filterXSS,
-		appConfig,
 	) => {
 
 	const build = function (name, viewModelClass, template) {
@@ -109,10 +105,9 @@ define([
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		const name = filterXSS(d.CONCEPT_NAME, appConfig.strictXSSOptions);
 		return p === 'display'
-			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + name + '</a>'
-			: name;
+			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>'
+			: d.CONCEPT_NAME;
 	}
 
 	function renderBoundLink(s, p, d) {
@@ -130,7 +125,7 @@ define([
 
 	const renderHierarchyLink = function (d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
-		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + filterXSS(d.CONCEPT_NAME, appConfig.strictXSSOptions) + '</a>';
+		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
     const renderConceptSetCheckbox = function(hasPermissions, field) {
