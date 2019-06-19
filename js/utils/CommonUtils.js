@@ -107,7 +107,10 @@ define([
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		return '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + filterXSS(d.CONCEPT_NAME) + '</a>';
+		const name = filterXSS(d.CONCEPT_NAME);
+		return p === 'display'
+			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + name + '</a>'
+			: name;
 	}
 
 	function renderBoundLink(s, p, d) {

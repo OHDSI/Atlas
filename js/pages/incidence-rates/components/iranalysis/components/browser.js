@@ -51,8 +51,7 @@ define([
 				},
 				{
 					title: 'Name',
-					render: datatableUtils.getLinkFormatter(d => ({
-						link:  `#/iranalysis/${d.id}`,
+					render: datatableUtils.getLinkishTextFormatter(d => ({
 						label: d['name'],
 					})),
 				},

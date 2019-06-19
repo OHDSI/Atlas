@@ -54,6 +54,10 @@ define([
         });
     };
 
+    onAnalysisSelected(d) {
+      commonUtils.routeTo(constants.apiPaths.analysis(d.id));
+    };
+
     newAnalysis() {
       commonUtils.routeTo(constants.apiPaths.createAnalysis());
     };

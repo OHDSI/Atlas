@@ -7,7 +7,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'services/http',
-    'utils/DatatableUtils',
+	'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
 	ko,
@@ -80,8 +80,7 @@ define([
 				},
 				{
 					title: 'Name',
-					render: datatableUtils.getLinkFormatter(d => ({
-						link: `#/cohortdefinition/${d.id}`,
+					render: datatableUtils.getLinkishTextFormatter(d => ({
 						label: d['name'],
 					})),
 				},
