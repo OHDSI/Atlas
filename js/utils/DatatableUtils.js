@@ -1,5 +1,5 @@
-define(['services/MomentAPI', 'xss'],
-    (momentApi, filterXSS) => {
+define(['services/MomentAPI', 'xss', 'appConfig'],
+    (momentApi, filterXSS, appConfig) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
@@ -7,7 +7,7 @@ define(['services/MomentAPI', 'xss'],
                 label,
                 linkish = false,
             } = builder(d);
-            const name = filterXSS(label);
+            const name = filterXSS(label, appConfig.strictXSSOptions);
             const renderedLink = linkish
                 ? `<span class="linkish">${name}</span>`
                 : `<a ${link ? ('href="' + link + '"') : ''}>${name}</a>`;

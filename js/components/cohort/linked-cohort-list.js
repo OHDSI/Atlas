@@ -4,6 +4,7 @@ define([
 	'utils/CommonUtils',
 	'lodash',
 	'xss',
+	'appConfig',
 	'text!./linked-cohort-list.html',
 	'components/cohort-definition-browser',
 	'less!./linked-cohort-list.less',
@@ -16,6 +17,7 @@ define([
 	commonUtils,
 	lodash,
 	filterXSS,
+	appConfig,
 	view
 ) {
 	class LinkedCohortList extends Component {
@@ -34,7 +36,7 @@ define([
 				nameCol.className = this.classes('col-cohort-name', 'editable');
 			} else {
 				nameCol.data = 'name';
-				nameCol.render = (s,p,d) => filterXSS(d.name());
+				nameCol.render = (s,p,d) => filterXSS(d.name(), appConfig.strictXSSOptions);
 				nameCol.className = this.classes('col-cohort-name');
 			}
 
