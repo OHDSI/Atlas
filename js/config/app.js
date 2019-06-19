@@ -75,6 +75,9 @@ define(function () {
       "isUseCredentialsForm": true
     }
   ];
+  appConfig.strictXSSOptions = {
+    whiteList: [],
+  };
   appConfig.xssOptions = {
     "whiteList": {
       "a": ["href", "class", "data-bind", "data-toggle", "aria-expanded"],
@@ -109,6 +112,6 @@ define(function () {
 	appConfig.features = {
 	  locationDistance: false,
 	};
-	
+
 	return appConfig;
 });
