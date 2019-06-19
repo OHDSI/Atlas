@@ -121,6 +121,10 @@ define([
             this.isProcessing = ko.computed(() => {
                 return this.isSaving() || this.isDeleting();
             });
+            this.initialFeatureType = ko.observable();
+            this.isPresetFeatureTypeAvailable = ko.pureComputed(() => {
+                return !this.isNewEntity() && this.initialFeatureType() === featureTypes.PRESET;
+            });
         }
 
         async onPageCreated() {
@@ -205,7 +209,7 @@ define([
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
             const anaylysisDomain = domain || defaultDomain;
-
+            this.initialFeatureType(type);
             let parsedDesign;
             const data = {
               id: id,
