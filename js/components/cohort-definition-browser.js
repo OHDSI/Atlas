@@ -80,8 +80,9 @@ define([
 				},
 				{
 					title: 'Name',
-					render: datatableUtils.getLinkishTextFormatter(d => ({
+					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['name'],
+						linkish: true,
 					})),
 				},
 				{

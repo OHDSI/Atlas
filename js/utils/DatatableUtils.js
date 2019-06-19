@@ -4,21 +4,15 @@ define(['services/MomentAPI', 'xss'],
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
                 link,
-                label
+                label,
+                linkish = false,
             } = builder(d);
             const name = filterXSS(label);
-            return p === 'display'
-               ? `<a ${link ? ('href="' + link + '"') : ''}>${name}</a>`
-               : name;
+            const renderedLink = linkish
+                ? `<span class="linkish">${name}</span>`
+                : `<a ${link ? ('href="' + link + '"') : ''}>${name}</a>`;
+            return p === 'display' ? renderedLink : name;
         };
-
-        const getLinkishTextFormatter = builder => (s, p, d) => {
-            const { label } = builder(d);
-            const name = filterXSS(label);
-            return p === 'display'
-               ? `<span class="linkish">${name}</span>`
-               : name;
-        }
 
         const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
             if (type === "sort") {
@@ -66,7 +60,6 @@ define(['services/MomentAPI', 'xss'],
             getDateFieldFormatter,
             getFacetForDate,
             getLinkFormatter,
-            getLinkishTextFormatter,
             getCreatedByFormatter,
             getFacetForCreatedBy,
             renderCountColumn,
