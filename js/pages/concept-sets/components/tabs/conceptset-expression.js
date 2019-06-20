@@ -19,7 +19,6 @@ define([
       this.model = params.model;
 			this.selectedConcepts = sharedState.selectedConcepts;
       this.canEdit = this.model.canEditCurrentConceptSet;
-      
       this.allExcludedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.isExcluded()) === undefined;
       });
@@ -29,7 +28,6 @@ define([
       this.allMappedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
       });
-      
     }
 
     toggleExcluded() {
@@ -48,14 +46,28 @@ define([
       );
     }
 
+    toggleCheckbox(d, field) {
+			commonUtils.toggleConceptSetCheckbox(
+				this.canEdit,
+				sharedState.selectedConcepts,
+				d,
+				field,
+				this.model.resolveConceptSetExpression
+			);
+    }
+
+    renderCheckbox(field) {
+      return commonUtils.renderConceptSetCheckbox(this.canEdit, field);
+    }
+
     toggleMapped() {
       this.selectAllConceptSetItems(
         this.allExcludedChecked(),
         this.allDescendantsChecked(),
         !this.allMappedChecked()
       );
-    }    
-    
+    }
+
 		selectAllConceptSetItems(isExcluded = null, includeDescendants = null, includeMapped = null) {
 			if (!this.canEdit()) {
 				return;
@@ -72,7 +84,7 @@ define([
 				}
 			});
 			this.model.resolveConceptSetExpression();
-    }    
+    }
 
 	}
 

@@ -1,4 +1,17 @@
-define(['knockout', 'text!./conceptset-editor.html', 'databindings', 'bootstrap','faceted-datatable'], function (ko, view) {
+define([
+	'knockout',
+	'text!./conceptset-editor.html',
+	'atlas-state',
+	'utils/CommonUtils',
+	'databindings',
+	'bootstrap',
+	'faceted-datatable'
+], function (
+	ko,
+	view,
+	sharedState,
+	commonUtils,
+) {
 	function conceptsetEditor(params) {
 		var self = this;
 		self.model = params.model;
@@ -8,6 +21,20 @@ define(['knockout', 'text!./conceptset-editor.html', 'databindings', 'bootstrap'
 
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
+		}
+
+		self.toggleCheckbox = function(d, field) {
+			commonUtils.toggleConceptSetCheckbox(
+				self.model.canEditCurrentConceptSet,
+				sharedState.selectedConcepts,
+				d,
+				field,
+				self.model.resolveConceptSetExpression
+			);
+		  }
+
+		self.renderCheckbox = function(field) {
+			return commonUtils.renderConceptSetCheckbox(self.model.canEditCurrentConceptSet, field);
 		}
 	}
 

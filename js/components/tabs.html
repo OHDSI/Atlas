@@ -1,4 +1,4 @@
-<div data-bind="css: classes()">
+<div data-bind="css: classes({ modifiers: $component.componentModifiers })">
 	<div data-bind="css: classes('header')">
 		<!-- ko foreach: $component.tabs -->
 			<!-- ko if: $data.title && $data.title.length > 0 -->
@@ -27,7 +27,14 @@
 	<div data-bind="css: classes('tab')">
 		<!-- ko foreach: $component.previouslyLoadedTabs -->
 			<div data-bind="visible: $component.selectedTab() == $data">
-				<div data-bind='component: { name: $component.tabs()[$data].componentName, params: $component.tabs()[$data].componentParams }'></div>
+				<!-- ko if: $component.tabs()[$data].html -->
+					<div data-bind="with: Object.assign({}, $component.tabs()[$data].componentParams, { html: $component.tabs()[$data].html })">
+						<div data-bind="template: {nodes: ko.utils.parseHtmlFragment(html)}"></div>
+					</div>
+				<!-- /ko -->
+				<!-- ko if: $component.tabs()[$data].componentName -->
+					<div data-bind='component: { name: $component.tabs()[$data].componentName, params: $component.tabs()[$data].componentParams }'></div>
+				<!-- /ko -->
 			</div>
 		<!-- /ko -->
 	</div>

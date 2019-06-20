@@ -143,7 +143,6 @@ define([
 				return this.defaultName;
 			});
 
-			this.canExport = ko.computed(() => !this.dirtyFlag().isDirty() && this.selectedAnalysisId());
 			this.expressionMode = ko.observable('import');
 
 			this.isNameFilled = ko.computed(() => {
