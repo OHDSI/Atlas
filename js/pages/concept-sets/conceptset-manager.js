@@ -334,20 +334,16 @@ define([
 
 		overwriteConceptSet() {
 			var newConceptSet = [];
-			this.optimalConceptSet().forEach((item) => {
-				var newItem;
-				newItem = {
-					concept: item.concept,
-					isExcluded: ko.observable(item.isExcluded),
-					includeDescendants: ko.observable(item.includeDescendants),
-					includeMapped: ko.observable(item.includeMapped),
-				}
-				newConceptSet.push(newItem);
-			})
 			sharedState.clearSelectedConcepts();
-			this.selectedConcepts(newConceptSet);
+			this.optimalConceptSet().forEach((item) => {
+				let newItem = conceptSetService.enhanceConceptSet(item);
+				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
+				newConceptSet.push(newItem);
+			});
+			sharedState.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
 		}
+
 		copyOptimizedConceptSet () {
 			if (this.model.currentConceptSet() == undefined) {
 				this.optimizerSavingNewName(this.conceptSetName());
