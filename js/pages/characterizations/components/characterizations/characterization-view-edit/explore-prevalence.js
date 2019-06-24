@@ -30,7 +30,7 @@ define([
 			this.tableColumns = [
 				{ title: 'Relationship type', render: this.renderRelationship, class: this.classes('col-type'), },
 				{ title: 'Distance', data: 'distance', class: this.classes('col-distance'), },
-				{ title: 'Concept name', data: 'covariateName', class: this.classes('col-concept'), render: (d, t, r) => pageUtils.extractMeaningfulCovName(d) },
+				{ title: 'Concept name', data: 'covariateName', class: this.classes('col-concept'), render: (d, t, { covariateName, faType }) =>  pageUtils.extractMeaningfulCovName(covariateName, faType) },
 			];
 			this.data = ko.observableArray();
 			this.loading = ko.observable();
@@ -121,7 +121,7 @@ define([
 
 			return buttons;
 		}
-		
+
 		exportTable() {
 			const exprt = this.relations().stats.map(stat => {
 				return ({
@@ -133,7 +133,7 @@ define([
 					'Strata ID': stat.strataId,
 					'Strata name': stat.strataName,
 					'Analysis ID': stat.analysisId,
-					'Analysis name': stat.analysisName,					
+					'Analysis name': stat.analysisName,
 					'Covariate ID': stat.covariateId,
 					'Covariate name': stat.covariateName
 				});
@@ -153,7 +153,7 @@ define([
 			const binding = distance !== 0 ? 'click: () => $component.exploreByFeature({...$data, cohortId: $component.cohortId})' : '';
 			return "<a class='"+ cls + "' data-bind='" + binding + "'>Explore</a> " + rel;
 		}
-		
+
 		getRelationshipTypeFromDistance(distance) {
 			return distance > 0 ? 'Ancestor' : distance < 0 ? 'Descendant' : 'Selected';
 		}
