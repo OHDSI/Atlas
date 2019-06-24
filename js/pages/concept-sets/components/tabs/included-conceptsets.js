@@ -121,7 +121,7 @@ define([
     }
 
     dispose() {
-      this.ancestorsModalIsShown(false);
+      this.ancestorsModalIsShown(false)
     }
 
 	}

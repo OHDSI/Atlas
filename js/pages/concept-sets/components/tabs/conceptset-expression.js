@@ -48,9 +48,9 @@ define([
 
     toggleCheckbox(d, field) {
 			commonUtils.toggleConceptSetCheckbox(
-				this.canEdit,
-				sharedState.selectedConcepts,
-				d,
+				this.canEdit, 
+				sharedState.selectedConcepts, 
+				d, 
 				field,
 				this.model.resolveConceptSetExpression
 			);

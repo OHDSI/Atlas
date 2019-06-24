@@ -1,14 +1,14 @@
 define([
-	'knockout',
-	'text!./conceptset-editor.html',
+	'knockout', 
+	'text!./conceptset-editor.html', 
 	'atlas-state',
 	'utils/CommonUtils',
-	'databindings',
+	'databindings', 
 	'bootstrap',
 	'faceted-datatable'
 ], function (
-	ko,
-	view,
+	ko, 
+	view, 
 	sharedState,
 	commonUtils,
 ) {
@@ -25,14 +25,14 @@ define([
 
 		self.toggleCheckbox = function(d, field) {
 			commonUtils.toggleConceptSetCheckbox(
-				self.model.canEditCurrentConceptSet,
-				sharedState.selectedConcepts,
-				d,
+				self.model.canEditCurrentConceptSet, 
+				sharedState.selectedConcepts, 
+				d, 
 				field,
 				self.model.resolveConceptSetExpression
 			);
 		  }
-
+	  
 		self.renderCheckbox = function(field) {
 			return commonUtils.renderConceptSetCheckbox(self.model.canEditCurrentConceptSet, field);
 		}

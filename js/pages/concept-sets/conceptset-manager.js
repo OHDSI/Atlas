@@ -333,21 +333,15 @@ define([
 		}
 
 		overwriteConceptSet() {
-			var newConceptSet = [];
-			this.optimalConceptSet().forEach((item) => {
-				var newItem;
-				newItem = {
-					concept: item.concept,
-					isExcluded: ko.observable(item.isExcluded),
-					includeDescendants: ko.observable(item.includeDescendants),
-					includeMapped: ko.observable(item.includeMapped),
-				}
-				newConceptSet.push(newItem);
-			})
 			sharedState.clearSelectedConcepts();
-			this.selectedConcepts(newConceptSet);
+			const newConceptSet = this.optimalConceptSet().map((item) => {
+				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
+				return conceptSetService.enhanceConceptSet(item);
+			});
+			sharedState.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
 		}
+
 		copyOptimizedConceptSet () {
 			if (this.model.currentConceptSet() == undefined) {
 				this.optimizerSavingNewName(this.conceptSetName());
@@ -358,20 +352,18 @@ define([
 		}
 
 		saveNewOptimizedConceptSet() {
-			var conceptSet = {};
-			conceptSet.id = 0;
-			conceptSet.name = this.optimizerSavingNewName;
-			var selectedConcepts = [];
-			this.optimalConceptSet().forEach((item) => {
-				var newItem;
-				newItem = {
+			const conceptSet = {
+				id: 0,
+				name: this.optimizerSavingNewName,
+			};
+			const selectedConcepts = this.optimalConceptSet().map((item) => (
+				{
 					concept: item.concept,
 					isExcluded: ko.observable(item.isExcluded),
 					includeDescendants: ko.observable(item.includeDescendants),
 					includeMapped: ko.observable(item.includeMapped),
 				}
-				selectedConcepts.push(newItem);
-			});
+			));
 			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
 			this.optimizerSavingNew(false);
 			this.isOptimizeModalShown(false);

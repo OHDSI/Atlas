@@ -465,7 +465,7 @@ define(
 			setConceptSet(conceptset, expressionItems) {
 				var conceptSetItemsToAdd = [];
 				expressionItems.forEach((conceptSet) => {
-					const conceptSetItem = conceptSetService.enchanceConceptSet(conceptSet);
+					const conceptSetItem = conceptSetService.enhanceConceptSet(conceptSet);
 
 					sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
 					conceptSetItemsToAdd.push(conceptSetItem);

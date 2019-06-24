@@ -75,6 +75,7 @@ define([
 
 			this.columns = [{
 					title: 'Id',
+					className: 'id-column',
 					data: 'id'
 				},
 				{
@@ -86,21 +87,21 @@ define([
 				},
 				{
 					title: 'Created',
-					className: 'dateColumn',
+					className: 'date-column',
 					render: function (row, type, val, meta) {
 						return type === "sort" ? val.createdTimestamp : momentApi.formatDateTimeUTC(val.createdDate);
 					}
 				},
 				{
 					title: 'Updated',
-					className: 'dateColumn',
+					className: 'date-column',
 					render: function (row, type, val, meta) {
 						return type === "sort" ? val.modifiedTimestamp : momentApi.formatDateTimeUTC(val.modifiedDate);
 					}
 				},
 				{
 					title: 'Author',
-					className: 'authorColumn',
+					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
