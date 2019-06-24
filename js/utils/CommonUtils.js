@@ -2,7 +2,7 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
-		'urijs'
+		'urijs',
 	],
 	(
 		ko,
@@ -105,7 +105,9 @@ define([
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		return '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+		return p === 'display'
+			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>'
+			: d.CONCEPT_NAME;
 	}
 
 	function renderBoundLink(s, p, d) {
