@@ -35,7 +35,7 @@ define(
 				this.pageModel = model;
 				this.router = router;
 			}
-			
+
 			/**
 			 * Performs initial setup
 			 * @returns Promise

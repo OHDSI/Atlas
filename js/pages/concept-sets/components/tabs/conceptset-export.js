@@ -42,13 +42,13 @@ define([
 			currentClipboard.on('error', function (e) {
 				console.log('Error copying to clipboard');
 				console.log(e);
-			});		
+			});
 		}
-    
+
     copyExpressionToClipboard() {
 			this.copyToClipboard('#btnCopyExpressionClipboard', '#copyExpressionToClipboardMessage');
     }
-    
+
     copyIdentifierListToClipboard() {
       this.copyToClipboard('#btnCopyIdentifierListClipboard', '#copyIdentifierListMessage');
     }

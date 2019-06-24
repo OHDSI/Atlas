@@ -23,7 +23,6 @@ define([
             super();
             const { entityId, message = {}, isPermittedExport = () => false, exportService, dirtyFlag } = params;
             this.loading = ko.observable(false);
-
             this.entityId = entityId;
             this.isPermittedExport = isPermittedExport;
             this.exportService = exportService;
