@@ -32,11 +32,17 @@ define([
 			};
 
 			if (params.canEditName) {
-				nameCol.render = (s,p,d) =>  p === 'display' ? `<span data-bind="clickToEdit: name" />` : d.name();
+				nameCol.render = (s,p,d) =>  p === 'display' ? `<span data-bind="clickToEdit: name" />` : ko.utils.unwrapObservable(d.name);
 				nameCol.className = this.classes('col-cohort-name', 'editable');
 			} else {
 				nameCol.data = 'name';
-				nameCol.render = (s,p,d) => filterXSS(d.name(), appConfig.strictXSSOptions);
+				nameCol.render = (s,p,d) => {
+					const name = ko.utils.unwrapObservable(d.name);
+					if (p === 'display') {
+						return filterXSS(name, appConfig.strictXSSOptions);
+					}
+					return name;
+				};
 				nameCol.className = this.classes('col-cohort-name');
 			}
 
