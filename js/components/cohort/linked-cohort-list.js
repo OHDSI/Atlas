@@ -3,6 +3,8 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'lodash',
+	'xss',
+	'appConfig',
 	'text!./linked-cohort-list.html',
 	'components/cohort-definition-browser',
 	'less!./linked-cohort-list.less',
@@ -14,6 +16,8 @@ define([
 	Component,
 	commonUtils,
 	lodash,
+	filterXSS,
+	appConfig,
 	view
 ) {
 	class LinkedCohortList extends Component {

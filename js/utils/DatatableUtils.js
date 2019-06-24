@@ -1,12 +1,20 @@
-define(['services/MomentAPI'],
-    (momentApi) => {
+define(['services/MomentAPI', 'xss', 'appConfig'],
+    (momentApi, filterXSS, appConfig) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
                 link,
-                label
+                label,
+                linkish = false,
             } = builder(d);
-            return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
+
+            if (p === 'display') {
+                const name = filterXSS(label, appConfig.strictXSSOptions);
+                return linkish
+                    ? `<span class="linkish">${name}</span>`
+                    : `<a ${link ? ('href="' + link + '"') : ''}>${name}</a>`;
+            }
+            return label;
         };
 
         const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
