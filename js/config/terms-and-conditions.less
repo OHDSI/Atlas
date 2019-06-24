@@ -1,0 +1,34 @@
+.terms-and-conditions-container {
+    .license-container {
+        &:not(:last-child) {
+            margin-bottom: 2rem;
+        }
+        .license-title {
+            margin: 0;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            font-weight: bold;
+
+            .license-content {
+                padding: 0 1rem;
+            }
+        }
+        ol li {
+            padding-bottom: 1rem;
+        }
+        .nested-list-container {
+            padding-top: 1rem;
+            padding-left: 2rem;
+            &.alpha-bracket {
+                counter-reset: list;
+                li {
+                    list-style: none;
+                }
+                li:before {
+                    content: counter(list, lower-alpha) ") ";
+                    counter-increment: list;
+                }
+            }
+        }
+    }
+}
