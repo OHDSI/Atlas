@@ -10,8 +10,8 @@ define(['knockout'], function (ko) {
 
 	ko.bindingHandlers.clickToEdit = {
 		init: function (element, valueAccessor) {
-			var observable = valueAccessor(),
-				span = document.createElement("span"),
+			const observable = ko.isObservable(valueAccessor()) ? valueAccessor() : ko.observable(valueAccessor());
+			const span = document.createElement("span"),
 				input = document.createElement("input");
 
 			element.appendChild(span);

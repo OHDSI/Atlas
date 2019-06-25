@@ -48,7 +48,7 @@ define(function (require, exports) {
 		};
 	}
 
-	function enchanceConceptSet(conceptSetItem) {
+	function enhanceConceptSet(conceptSetItem) {
 		return {
 			...conceptSetItem,
 			isExcluded: ko.observable(conceptSetItem.isExcluded),
@@ -122,7 +122,7 @@ define(function (require, exports) {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,
-		enchanceConceptSet,
+		enhanceConceptSet,
 		loadConceptSet,
 		loadConceptSetExpression,
 		lookupIdentifiers,

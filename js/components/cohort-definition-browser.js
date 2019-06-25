@@ -7,7 +7,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'services/http',
-    'utils/DatatableUtils',
+	'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
 	ko,
@@ -34,7 +34,7 @@ define([
 				.then(({ data }) => {
 					let defList = data.map(d => {
 						return {
-							...d, 
+							...d,
 							...{
 								modifiedDate: d.modifiedDate || d.createdDate,
 								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
@@ -75,39 +75,38 @@ define([
 
 			this.columns = [{
 					title: 'Id',
+					className: 'id-column',
 					data: 'id'
 				},
 				{
 					title: 'Name',
-					render: this.renderCohortDefinitionLink
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['name'],
+						linkish: true,
+					})),
 				},
 				{
 					title: 'Created',
-					className: 'dateColumn',
+					className: 'date-column',
 					render: function (row, type, val, meta) {
 						return type === "sort" ? val.createdTimestamp : momentApi.formatDateTimeUTC(val.createdDate);
 					}
 				},
 				{
 					title: 'Updated',
-					className: 'dateColumn',
+					className: 'date-column',
 					render: function (row, type, val, meta) {
 						return type === "sort" ? val.modifiedTimestamp : momentApi.formatDateTimeUTC(val.modifiedDate);
 					}
 				},
 				{
 					title: 'Author',
-					className: 'authorColumn',
+					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 
-			this.renderCohortDefinitionLink = this.renderCohortDefinitionLink.bind(this);
 			this.rowClick = this.rowClick.bind(this);
-		}
-		
-		renderCohortDefinitionLink (data,type,row) {
-			return (type == "display")	? `<span class="linkish">${row.name}</span>` : row.name;
 		}
 
 		rowClick(data) {

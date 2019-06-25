@@ -1,6 +1,6 @@
 {
   "name": "atlas",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
@@ -43,7 +43,7 @@
     "terser": "3.17.0"
   },
   "dependencies": {
-    "@ohdsi/atlascharts": "^1.7.1",
+    "@ohdsi/atlascharts": "^1.7.3",
     "@ohdsi/ui-toolbox": "^1.0.3",
     "@ohdsi/visibilityjs": "^2.0.2",
     "ajv": "^6.10.0",

@@ -2,7 +2,7 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
-		'urijs'
+		'urijs',
 	],
 	(
 		ko,
@@ -105,7 +105,9 @@ define([
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		return '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+		return p === 'display'
+			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>'
+			: d.CONCEPT_NAME;
 	}
 
 	function renderBoundLink(s, p, d) {
@@ -126,7 +128,7 @@ define([
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
-	const renderConceptSetCheckbox = function(hasPermissions, field) {
+    const renderConceptSetCheckbox = function(hasPermissions, field) {
 		return hasPermissions()
 		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
 		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;

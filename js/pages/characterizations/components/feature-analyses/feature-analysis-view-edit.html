@@ -57,6 +57,7 @@
             <div data-bind="css: classes({ element: 'design-panel-body' })">
                 <div data-bind="css: classes('type-selector')">
                     <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
+                        <!-- ko if: $component.isPresetFeatureTypeAvailable-->
                         <li role="presentation"
                             data-bind="
                             if: $component.canEdit() || $component.data().type() === $component.featureTypes.PRESET,
@@ -65,6 +66,7 @@
                         ">
                             <a>Preset</a>
                         </li>
+                        <!-- /ko -->
                         <li role="presentation"
                             data-bind="
                             if: $component.canEdit() || $component.data().type() === $component.featureTypes.CRITERIA_SET,
@@ -83,7 +85,7 @@
                         </li>
                     </ul>
                 </div>
-
+                <!-- ko if: $component.isPresetFeatureTypeAvailable-->
                 <div data-bind="if: $component.data().type() === $component.featureTypes.PRESET, css: classes('design')">
                     <span data-bind="css: classes('criteria-descr')">FeatureExtraction preset name:</span>
                     <input data-bind="
@@ -92,6 +94,7 @@
                         textInput: $component.data().design
                     " />
                 </div>
+                <!-- /ko -->
                 <div data-bind="
                     if: $component.data().type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
                 ">
