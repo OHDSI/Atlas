@@ -21,19 +21,8 @@ define([
 			this.importProvider = params.importProvider;
 			this.selectedRole = params.selectedRole;
 			this.searchResults = params.searchResults;
-		}
-
-		closeModal() {
-			this.open(false);
-		}
-
-		setGroupMapping() {
-			const selectedGroups = this.searchResults().filter(g => g.included()).map(g => {
-				delete g.included;
-				return g;
-			});
-			this.selectedRole().groups(selectedGroups);
-			this.closeModal();
+			this.setGroupMapping = params.setGroupMapping;
+			this.closeModal = params.closeModal;
 		}
 	}
 
