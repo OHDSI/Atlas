@@ -99,6 +99,9 @@ define([
 				this.cantFindPerson = ko.observable(false);
 				this.shadedRegions = ko.observable([]);
 
+				this.startDate = ko.observable();
+				this.endDate = ko.observable();
+
 				this.setSourceKey = (d) => {
 					this.sourceKey(d.sourceKey);
 				};
@@ -349,6 +352,8 @@ define([
 									.value()
 							};
 						}
+						this.startDate(cohort.startDate);
+						this.endDate(cohort.endDate);
 						person.records.forEach((rec) => {
 							// have to get startDate from person.cohorts
 							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
