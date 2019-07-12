@@ -35,7 +35,7 @@ define(
 				this.pageModel = model;
 				this.router = router;
 			}
-			
+
 			/**
 			 * Performs initial setup
 			 * @returns Promise
@@ -174,8 +174,8 @@ define(
 									return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
 								});
 							}
-							conceptSet.expression.items.valueHasMutated();
-							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression);
+							setTimeout(() => conceptSet.expression.items.valueHasMutated(), 0);
+							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression)
 						}
 					});
 
