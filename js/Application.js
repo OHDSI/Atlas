@@ -174,7 +174,7 @@ define(
 									return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
 								});
 							}
-							setTimeout(() => conceptSet.expression.items.valueHasMutated(), 0);
+							conceptSet.expression.items.valueHasMutated();
 							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression)
 						}
 					});
@@ -191,7 +191,7 @@ define(
 						sharedState.selectedConcepts.remove(function (i) {
 							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 						});
-
+						self.pageModel.currentCohortDefinition().expression().ConceptSets.valueHasMutated();
 						self.pageModel.resolveConceptSetExpression();
 					});
 
