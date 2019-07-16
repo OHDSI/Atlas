@@ -9,11 +9,9 @@ define([
 ) {
 	class Route {
 		checkPermission() {
-			if (
-				appConfig.userAuthenticationEnabled &&
-				((authApi.token() != null && authApi.tokenExpirationDate() > new Date()) ||
-					authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP)
-			) {
+			if (authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP) {
+				return authApi.loadUserInfo();
+			} else if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
 				return authApi.refreshToken();
 			}
 			return Promise.resolve();
