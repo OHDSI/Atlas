@@ -30,7 +30,7 @@ define([
     const defaultRoleName = "New Role";
     class RoleDetails extends AutoBind(Page) {
         constructor(params) {
-            super(params);        
+            super(params);
 
             this.currentTab = ko.observable('users');
 
@@ -83,8 +83,8 @@ define([
             this.canSave = ko.pureComputed(() => { return (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName(); });
             this.canCreate = authApi.isPermittedCreateRole;
 
-            this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });    
-            
+            this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });
+
         }
 
         onRouterParamsChanged() {
@@ -108,7 +108,7 @@ define([
         }
 
         async getRole() {
-            const role = await roleService.load(this.roleId());            
+            const role = await roleService.load(this.roleId());
             this.roleName(role.role);
         }
 
@@ -128,7 +128,7 @@ define([
         async getPermissions() {
             if (!this.permissions() || this.permissions().length == 0) {
                 const permissions = await roleService.getPermissions();
-                this.permissions(permissions);                
+                this.permissions(permissions);
             }
         }
 
@@ -216,18 +216,18 @@ define([
         getPermissionsList() {
             return this.permissionItems()
                 .filter(permission => permission.isRolePermission())
-                .map(u => u.id);
+                // .map(u => u.id);
         }
-        
+
         getUsersList() {
             return this.userItems()
                 .filter(user => user.isRoleUser())
-                .map(u => u.id);
+                // .map(u => u.id);
         }
 
         async saveUsers() {
             if (this.canEditRoleUsers()){
-                const currentRoleUserIds = this.getUsersList();
+                const currentRoleUserIds = this.getUsersList().map(u => u.id);
                 var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds);
                 var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds);
                 this.roleUserIds = currentRoleUserIds;
@@ -239,7 +239,7 @@ define([
 
         async savePermissions() {
             if (this.canEditRolePermissions()){
-                var currentRolePermissionIds = this.getPermissionsList();
+                var currentRolePermissionIds = this.getPermissionsList().map(p => p.id);
 
                 var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds);
                 var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds);
@@ -360,10 +360,11 @@ define([
         }
 
         export() {
+            console.log(this)
             const role = [{
                 role: this.roleName(),
-                permissions: this.getPermissionsList().map(id => ({ id })),
-                users: this.getUsersList().map(id => ({ id })),
+                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
+                users: this.getUsersList().map(u => ({ id: u.login })),
             }];
 
             fileService.saveAsJson(role);
