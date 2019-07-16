@@ -215,14 +215,12 @@ define([
 
         getPermissionsList() {
             return this.permissionItems()
-                .filter(permission => permission.isRolePermission())
-                // .map(u => u.id);
+                .filter(permission => permission.isRolePermission());
         }
 
         getUsersList() {
             return this.userItems()
-                .filter(user => user.isRoleUser())
-                // .map(u => u.id);
+                .filter(user => user.isRoleUser());
         }
 
         async saveUsers() {
