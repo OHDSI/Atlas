@@ -349,11 +349,11 @@ define([
 
     onRouterParamsChanged(params = {}) {
       const selectedSourceId = parseInt(this.selectedSourceId());
-			if (this.isNew() && !this.dirtyFlag().isDirty()) {
-				this.newSource();
-			} else if (selectedSourceId > 0 && selectedSourceId !== (this.selectedSource() && this.selectedSource().sourceId())) {
-				this.onSourceSelected();
-			}
+      if (this.isNew() && !this.dirtyFlag().isDirty()) {
+        this.newSource();
+      } else if (selectedSourceId > 0 && selectedSourceId !== (this.selectedSource() && this.selectedSource().sourceId())) {
+        this.onSourceSelected();
+      }
     }
 
     async onSourceSelected() {
