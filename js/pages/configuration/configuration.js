@@ -41,9 +41,9 @@ define([
         {name: 'Current Session', id: 'session'},
         {name: 'Whole Application', id: 'application'},
       ];
-  
+
       this.isAuthenticated = authApi.isAuthenticated;
-      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running || 
+      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running ||
           sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable);
       this.hasSourceAccess = authApi.hasSourceAccess;
       this.hasPageAccess = ko.pureComputed(() => {
@@ -66,7 +66,7 @@ define([
           return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditSourcePriority())
         }
       });
-      
+
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
 
       this.intervalId = PollService.add({
@@ -121,14 +121,14 @@ define([
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey));
       }
     }
-    
+
 		clearLocalStorageCache() {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
 
 		newSource() {
-			document.location = "#/source/new";
+      commonUtils.routeTo('/source/0');
     };
 
 		selectSource(source) {
@@ -145,7 +145,7 @@ define([
         sourceApi.initSourcesConfig();
       } catch(err) {
         alert('Failed to update priority source daimon');
-      }        
+      }
       this.isInProgress(false);
     }
 

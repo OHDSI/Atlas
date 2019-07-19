@@ -1,5 +1,6 @@
 define(
 	(require, factory) => {
+    const atlasState = require('atlas-state');
     const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
       const JobViewEdit = new AuthorizedRoute((id, section) => {
@@ -53,11 +54,11 @@ define(
             router.setCurrentView('role-import');
           });
         }),
-        '/source/:id': new AuthorizedRoute((id) => {
+        '/source/:id': new AuthorizedRoute((sourceId) => {
           appModel.activePage(this.title);
           require(['./sources/source-manager'], function () {
-            appModel.selectedSourceId(id !== 'new' ? id : null);
-            router.setCurrentView('source-manager');
+            atlasState.ConfigurationSource.selectedId(sourceId);
+            router.setCurrentView('source-manager', { sourceId });
           });
         }),
       };
