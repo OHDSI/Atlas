@@ -32,6 +32,7 @@ define([
       super(params);
       this.config = config;
       this.api = config.api;
+      this.loading = ko.observable(false);
       this.sharedState = sharedState;
       this.isInProgress = ko.observable(false);
       this.jobListing = sharedState.jobListing;
@@ -94,8 +95,10 @@ define([
     }
 
     async onPageCreated() {
-      sourceApi.initSourcesConfig();
+      this.loading(true);
+      await sourceApi.initSourcesConfig();
       super.onPageCreated();
+      this.loading(false);
     }
 
     canReadSource(source) {
