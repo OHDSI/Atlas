@@ -191,7 +191,7 @@ define(
 						sharedState.selectedConcepts.remove(function (i) {
 							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 						});
-
+						self.pageModel.currentCohortDefinition() && self.pageModel.currentCohortDefinition().expression().ConceptSets.valueHasMutated();
 						self.pageModel.resolveConceptSetExpression();
 					});
 
