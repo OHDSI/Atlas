@@ -29,7 +29,7 @@ define(function (require, exports) {
       formData.append("source", new Blob([JSON.stringify(source)],{type: "application/json"}));
 
       lscache.remove(getCacheKey());
-      if (sourceKey) {
+      if (sourceKey && parseInt(sourceKey) !== 0) {
         return httpService.doPut(config.api.url + 'source/' + (sourceKey), formData);
       } else {
         return httpService.doPost(config.api.url + 'source/' + (''), formData);
