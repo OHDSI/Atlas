@@ -24,7 +24,6 @@ define(
       constructor() {
         this.activeRoute = ko.observable({});
         this.currentView = ko.observable('loading');
-        console.log(constants)
         this.onLoginSubscription;
         this.getModel = () => { throw new Exception('Model getter is not set'); };
         this.pages = Object.values(pages);
