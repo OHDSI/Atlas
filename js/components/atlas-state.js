@@ -69,5 +69,11 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	}
 	state.predictionAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current()));
 
+	state.ConfigurationSource = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+	}
+	state.ConfigurationSource.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.ConfigurationSource.current()));
+
 	return state;
 });
