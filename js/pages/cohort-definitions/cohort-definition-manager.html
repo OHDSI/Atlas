@@ -1,4 +1,4 @@
-<div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
+<div data-bind="if: $root.currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
@@ -107,7 +107,7 @@
 					</li>
 				</ul>
 
-				<div data-bind="if: $root.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
+				<div data-bind="if: $root.router.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
 					<div class="paddedWrapper">
 						<div class="heading">
 							Name:
@@ -124,7 +124,7 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:$root.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
+				<div class="loading" data-bind="if:$root.router.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !$root.loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
@@ -545,7 +545,7 @@
 						</div>
 					</div>
 				</div>
-				<loading params="status:'loading'" data-bind="visible:$root.currentView() == 'loading' || $root.loadingReport()">
+				<loading params="status:'loading'" data-bind="visible:$root.router.currentView() == 'loading' || $root.loadingReport()">
 				</loading>
 				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{model: model, showSelectionArea: false} "></report-manager>
 			</div>

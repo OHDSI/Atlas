@@ -1,7 +1,8 @@
 define([
-	'knockout', 
-	'text!./prediction-manager.html',	
+	'knockout',
+	'text!./prediction-manager.html',
 	'pages/Page',
+	'pages/Router',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
     'appConfig',
@@ -29,9 +30,10 @@ define([
 	'less!./prediction-manager.less',
 	'databindings',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Page,
+	router,
 	commonUtils,
 	ohdsiUtil,
 	config,
@@ -56,7 +58,7 @@ define([
 			sharedState.predictionAnalysis.analysisPath = constants.paths.analysis;
 
 			this.selectTab = this.selectTab.bind(this);
-			this.selectedTabKey = ko.observable(params.routerParams().section);
+			this.selectedTabKey = ko.observable(router.routerParams().section);
 
 			this.isAuthenticated = authAPI.isAuthenticated;
 			this.hasAccess = authAPI.isPermittedReadPlps;
@@ -140,7 +142,7 @@ define([
 				this.loading(false);
 			}
 		}
-		
+
         onRouterParamsChanged({ id, section }) {
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
@@ -301,7 +303,7 @@ define([
 		onAnalysisSelected() {
 			this.loading(true);
 			PredictionService.getPrediction(this.selectedAnalysisId()).then((analysis) => {
-				this.loadAnalysisFromServer(analysis);				
+				this.loadAnalysisFromServer(analysis);
 				this.loading(false);
 			});
 		}
@@ -319,7 +321,7 @@ define([
 			this.patientLevelPredictionAnalysis().description(header.description);
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
-			this.setAnalysisSettingsLists();	
+			this.setAnalysisSettingsLists();
 			this.fullSpecification(null);
 			this.resetDirtyFlag();
 		}
@@ -358,7 +360,7 @@ define([
 					if (xref.propertyName === constants.conceptSetCrossReference.covariateSettings.propertyName.excludedCovariateConcepts) {
 						this.patientLevelPredictionAnalysis().covariateSettings()[xref.targetIndex].excludedCovariateConceptSet(selectedConceptSet);
 					}
-				}				
+				}
 			});
 		}
 

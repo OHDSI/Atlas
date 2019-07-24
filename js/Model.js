@@ -13,6 +13,7 @@ define(
 		'assets/ohdsi.util',
 		'appConfig',
 		'atlas-state',
+		'pages/Router',
 		'utils/BemHelper',
 		'lodash',
 		'd3',
@@ -35,6 +36,7 @@ define(
 		ohdsiUtil,
 		config,
 		sharedState,
+		router,
 		BemHelper,
 		_,
 		d3,
@@ -65,6 +67,7 @@ define(
 				this.reportReportName = ko.observable();
 				this.reportSourceKey = ko.observable();
 				this.EventBus = EventBus;
+				this.router = router;
 				this.reportValid = ko.computed(() => {
 					return (
 						this.reportReportName() != undefined
@@ -255,20 +258,10 @@ define(
 				this.initializationComplete = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
 				});
-				this.currentViewAccessible = ko.pureComputed(() => {
-					return sharedState.currentView && (
-						sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
-						&& (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
-						|| ['ohdsi-configuration', 'source-manager'].includes(sharedState.currentView())
-					));
-				});
 
-				sharedState.currentView.subscribe(() => {
-					EventBus.errorMsg(undefined);
-				});
 
 				this.noSourcesAvailable = ko.pureComputed(() => {
-					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && sharedState.currentView() !== 'ohdsi-configuration';
+					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.router.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
 				this.appInitializationErrorMessage =  ko.computed(() => {
@@ -450,7 +443,7 @@ define(
 					// If we continue, then clear the loaded concept set
 					this.clearConceptSet();
 				}
-				sharedState.currentView('loading');
+				this.router.setCurrentView('loading');
 
 				if (cohortDefinitionId == '0') {
 					this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
@@ -554,7 +547,7 @@ define(
 						} catch(er) {
 							this.handleVocabularyDataSourceFailure('Loading cohort definition failed');
 					}
-					sharedState.currentView(viewToShow);
+					this.router.setCurrentView(viewToShow);
 
 			}
 
@@ -565,7 +558,7 @@ define(
 					&& this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
 				) {
-					this.handleViewChange(viewToShow, { conceptSetId, mode });
+					this.router.setCurrentView(viewToShow, { conceptSetId, mode });
 					this.currentConceptSetMode(mode);
 					return;
 				}
@@ -626,10 +619,10 @@ define(
 					&& this.currentConceptSet().id == conceptSetId
 				) {
 					this.currentConceptSetMode(mode);
-					this.handleViewChange(viewToShow, { conceptSetId, mode });
+					this.router.setCurrentView(viewToShow, { conceptSetId, mode });
 					return;
 				}
-				sharedState.currentView('loading');
+				this.router.setCurrentView('loading');
 				try {
 					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
 					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
@@ -642,7 +635,7 @@ define(
 					this.resolvingConceptSetExpression(false);
 					this.handleVocabularyDataSourceFailure('Resolving concept set failed');
 				}
-				this.handleViewChange(viewToShow, { conceptSetId, mode });
+				this.router.setCurrentView(viewToShow, { conceptSetId, mode });
 			}
 
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
@@ -682,7 +675,7 @@ define(
 							name: conceptSet.name,
 							id: conceptSet.id
 						});
-						sharedState.currentView(viewToShow);
+						this.router.setCurrentView(viewToShow);
 						this.resolveConceptSetExpression()
 							.then(() => {
 								this.currentConceptSetMode(mode);

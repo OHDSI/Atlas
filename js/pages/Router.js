@@ -6,6 +6,8 @@ define(
     'services/AuthAPI',
     'atlas-state',
     'knockout',
+    'const',
+    'services/EventBus',
     'director',
 	],
 	(
@@ -15,14 +17,29 @@ define(
     authApi,
     sharedState,
     ko,
+    constants,
+    EventBus,
 	) => {
-    return class AtlasRouter {
+    class AtlasRouter {
       constructor() {
         this.activeRoute = ko.observable({});
+        this.currentView = ko.observable('loading');
+        console.log(constants)
         this.onLoginSubscription;
         this.getModel = () => { throw new Exception('Model getter is not set'); };
         this.pages = Object.values(pages);
         this.routerParams = ko.observable();
+        this.currentViewAccessible = ko.pureComputed(() => {
+          // return true;
+          return this.currentView && (
+						sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
+						&& (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
+						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
+					));
+        });
+        this.currentView.subscribe(() => {
+					EventBus.errorMsg(undefined);
+				});
       }
 
       run() {
@@ -106,13 +123,13 @@ define(
 
 
       setCurrentView(view, routerParams = false) {
-        if (view !== sharedState.currentView()) {
-					sharedState.currentView('loading');
+        if (view !== this.currentView()) {
+					this.currentView('loading');
 				}
 				if (routerParams !== false) {
 					this.routerParams(routerParams);
 				}
-				sharedState.currentView(view);
+				this.currentView(view);
       }
 
       /**
@@ -122,6 +139,7 @@ define(
       setModelGetter(getter) {
         this.getModel = getter;
       }
-		}
+    }
+    return new AtlasRouter();
 	}
 );

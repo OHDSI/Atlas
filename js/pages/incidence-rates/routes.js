@@ -23,7 +23,7 @@ define(
           }
           require(['./ir-manager'], function () {
             atlasState.IRAnalysis.selectedId(+analysisId);
-            router.setCurrentView('ir-manager', { analysisId });
+            router.setCurrentView('ir-manager', { analysisId, activeTab });
           });
         }),
       };

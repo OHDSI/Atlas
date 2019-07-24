@@ -12,6 +12,13 @@ define(
         COMPLETE: 'COMPLETE',
     };
 
+    const tabs = {
+      DEFINITION: 'definition',
+      CONCEPT_SETS: 'conceptsets',
+      GENERATION: 'generation',
+      UTILITIES: 'utilities',
+    };
+
     const disabledReasons = {
       DIRTY: 'Save changes to generate',
       ACCESS_DENIED: 'Access denied',
@@ -26,6 +33,7 @@ define(
       status,
       isInProgress,
       disabledReasons,
+      tabs,
     };
   }
 );

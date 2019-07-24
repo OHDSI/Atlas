@@ -38,7 +38,7 @@ define(
 				this.router = router;
 				this.pageTitle = ko.pureComputed(() => {
 					let pageTitle = "ATLAS";
-					switch (sharedState.currentView()) {
+					switch (this.router.currentView()) {
 						case 'loading':
 							pageTitle = pageTitle + ": Loading";
 							break;
@@ -68,7 +68,6 @@ define(
 						// provide to a view access to both model and the router via this.router
 						...this.pageModel,
 						...this,
-						currentView: sharedState.currentView,
 					}, document.getElementsByTagName('html')[0]);
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());

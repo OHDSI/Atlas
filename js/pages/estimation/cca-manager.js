@@ -1,6 +1,6 @@
 define([
-	'knockout', 
-	'text!./cca-manager.html',	
+	'knockout',
+	'text!./cca-manager.html',
     'pages/Page',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
@@ -8,6 +8,7 @@ define([
 	'./const',
 	'const',
 	'atlas-state',
+	'pages/Router',
 	'./PermissionService',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
@@ -25,8 +26,8 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Page,
 	commonUtils,
 	ohdsiUtil,
@@ -34,6 +35,7 @@ define([
 	constants,
 	globalConstants,
 	sharedState,
+	router,
 	PermissionService,
 	EstimationService,
 	EstimationAnalysis,
@@ -67,7 +69,7 @@ define([
 			this.isExporting = ko.observable(false);
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
-			this.selectedTabKey = ko.observable(params.routerParams().section);
+			this.selectedTabKey = ko.observable(router.routerParams().section);
 			this.isSaving = ko.observable(false);
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
@@ -190,21 +192,21 @@ define([
 				comp.outcomes().map(o => this.addCohortToEstimation(specification, o));
 
 				if (comp.negativeControlOutcomesConceptSet() !== null && comp.negativeControlOutcomesConceptSet().id > 0) {
-					this.addConceptSetToEstimation(specification, ko.toJS(comp.negativeControlOutcomesConceptSet), 
-						constants.conceptSetCrossReference.negativeControlOutcomes.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, ko.toJS(comp.negativeControlOutcomesConceptSet),
+						constants.conceptSetCrossReference.negativeControlOutcomes.targetName,
+						index,
 						constants.conceptSetCrossReference.negativeControlOutcomes.propertyName);
 				}
 				if (comp.includedCovariateConceptSet() !== null && comp.includedCovariateConceptSet().id > 0) {
-					this.addConceptSetToEstimation(specification, ko.toJS(comp.includedCovariateConceptSet), 
+					this.addConceptSetToEstimation(specification, ko.toJS(comp.includedCovariateConceptSet),
 						constants.conceptSetCrossReference.targetComparatorOutcome.targetName,
-						index, 
+						index,
 						constants.conceptSetCrossReference.targetComparatorOutcome.propertyName.includedCovariateConcepts);
 				}
 				if (comp.excludedCovariateConceptSet() !== null && comp.excludedCovariateConceptSet().id > 0) {
-					this.addConceptSetToEstimation(specification, ko.toJS(comp.excludedCovariateConceptSet), 
+					this.addConceptSetToEstimation(specification, ko.toJS(comp.excludedCovariateConceptSet),
 						constants.conceptSetCrossReference.targetComparatorOutcome.targetName,
-						index, 
+						index,
 						constants.conceptSetCrossReference.targetComparatorOutcome.propertyName.excludedCovariateConcepts);
 				}
 			});
@@ -214,15 +216,15 @@ define([
 
 				const covarSettings = a.getDbCohortMethodDataArgs.covariateSettings;
 				if (covarSettings.includedCovariateConceptSet !== null && covarSettings.includedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, covarSettings.includedCovariateConceptSet, 
-						constants.conceptSetCrossReference.analysisCovariateSettings.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, covarSettings.includedCovariateConceptSet,
+						constants.conceptSetCrossReference.analysisCovariateSettings.targetName,
+						index,
 						constants.conceptSetCrossReference.analysisCovariateSettings.propertyName.includedCovariateConcepts);
 				}
 				if (covarSettings.excludedCovariateConceptSet !== null && covarSettings.excludedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, covarSettings.excludedCovariateConceptSet, 
+					this.addConceptSetToEstimation(specification, covarSettings.excludedCovariateConceptSet,
 						constants.conceptSetCrossReference.analysisCovariateSettings.targetName,
-						index, 
+						index,
 						constants.conceptSetCrossReference.analysisCovariateSettings.propertyName.excludedCovariateConcepts);
 				}
 
@@ -230,17 +232,17 @@ define([
 				specification.estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList[index].getDbCohortMethodDataArgs.covariateSettings = ko.toJS(new CovariateSettings(covarSettings));
 			});
 			let pcsaCovarSettings = specification.positiveControlSynthesisArgs.covariateSettings;
-			if (pcsaCovarSettings != null) {				
+			if (pcsaCovarSettings != null) {
 				if (pcsaCovarSettings.includedCovariateConceptSet !== null && pcsaCovarSettings.includedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, pcsaCovarSettings.includedCovariateConceptSet, 
-						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, pcsaCovarSettings.includedCovariateConceptSet,
+						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName,
+						index,
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
 				if (pcsaCovarSettings.excludedCovariateConceptSet !== null && pcsaCovarSettings.excludedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, pcsaCovarSettings.excludedCovariateConceptSet, 
-						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, pcsaCovarSettings.excludedCovariateConceptSet,
+						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName,
+						index,
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
 
@@ -311,7 +313,7 @@ define([
 				let target = null;
 				let comparator = null;
 				const outcomes = [];
-		
+
 				if (tco.targetId() !== null) {
 					const tCohortDefinitionList = cohortDefinitions.filter(d => d.id() === tco.targetId());
 					if (tCohortDefinitionList.length > 0) {
@@ -338,7 +340,7 @@ define([
 				});
 
 				const comp = new Comparison({
-					target: target, 
+					target: target,
 					comparator: comparator,
 					outcomes: outcomes,
 				});
@@ -442,7 +444,7 @@ define([
 					targetIndex: targetIndex,
 					propertyName: propertyName
 				})
-			);				
+			);
 		}
 	}
 
