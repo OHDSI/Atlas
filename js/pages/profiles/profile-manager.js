@@ -14,6 +14,7 @@ define([
 		'pages/Page',
 		'utils/AutoBind',
 		'utils/CommonUtils',
+		'moment',
 		'./const',
 		'lodash',
 		'crossfilter',
@@ -41,6 +42,7 @@ define([
 		Page,
 		AutoBind,
 		commonUtils,
+		moment,
 		constants,
 		_,
 		crossfilter,
@@ -98,9 +100,6 @@ define([
 				this.loadingPerson = ko.observable(false);
 				this.cantFindPerson = ko.observable(false);
 				this.shadedRegions = ko.observable([]);
-
-				this.startDate = ko.observable();
-				this.endDate = ko.observable();
 
 				this.setSourceKey = (d) => {
 					this.sourceKey(d.sourceKey);
@@ -160,6 +159,25 @@ define([
 						}
 					}
 				});
+				this.dateRange = ko.computed(() => {
+					if (this.canViewProfileDates() && this.xfObservable && this.xfObservable() && this.xfObservable().isElementFiltered()) {
+						const filtered = this.xfObservable().allFiltered();
+						return filtered.map(v => ({
+							startDate: moment(v.startDate).add(v.startDays, 'days').valueOf(),
+							endDate: moment(v.endDate).subtract(v.endDays, 'days').valueOf(),
+						}))
+							.reduce((a, v) => ({
+								startDate: a.startDate < v.startDate ? a.startDate : v.startDate,
+								endDate: a.endDate > v.endDate ? a.endDate : v.endDate,
+							}));
+					}
+					return {
+						startDate: null, endDate: null,
+					};
+				});
+				this.startDate = ko.computed(() => this.dateRange().startDate);
+				this.endDate = ko.computed(() => this.dateRange().endDate);
+
 				this.dimensions = {
 					'Domain': {
 						caption: 'Domain',
@@ -352,8 +370,6 @@ define([
 									.value()
 							};
 						}
-						this.startDate(cohort.startDate);
-						this.endDate(cohort.endDate);
 						person.records.forEach((rec) => {
 							// have to get startDate from person.cohorts
 							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
@@ -463,6 +479,10 @@ define([
 			highlightRowClick(data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
+			}
+
+			canViewProfileDates() {
+				return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
 			}
 		}
 
