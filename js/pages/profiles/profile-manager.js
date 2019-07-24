@@ -1,31 +1,31 @@
 "use strict";
 define([
-		'knockout',
-		'const',
-		'services/PluginRegistry',
-		'text!./profile-manager.html',
-		'd3',
-		'appConfig',
-		'services/AuthAPI',
-		'services/Profile',
-		'atlas-state',
-		'components/cohortbuilder/CohortDefinition',
-		'services/CohortDefinition',
-		'pages/Page',
-		'utils/AutoBind',
-		'utils/CommonUtils',
-		'./const',
-		'lodash',
-		'crossfilter',
-		'assets/ohdsi.util',
-		'd3-tip',
-		'databindings',
-		'faceted-datatable',
-		'extensions/bindings/profileChart',
-		'less!./profile-manager.less',
-		'components/heading',
+	'knockout',
+	'const',
+	'services/PluginRegistry',
+	'text!./profile-manager.html',
+	'd3',
+	'appConfig',
+	'services/AuthAPI',
+	'services/Profile',
+	'atlas-state',
+	'components/cohortbuilder/CohortDefinition',
+	'services/CohortDefinition',
+	'pages/Page',
+	'utils/AutoBind',
+	'utils/CommonUtils',
+	'./const',
+	'lodash',
+	'crossfilter',
+	'assets/ohdsi.util',
+	'd3-tip',
+	'databindings',
+	'faceted-datatable',
+	'extensions/bindings/profileChart',
+	'less!./profile-manager.less',
+	'components/heading',
 	'components/ac-access-denied'
-	],
+],
 	function (
 		ko,
 		globalConstants,
@@ -193,7 +193,7 @@ define([
 				};
 				this.searchHighlight = ko.observable();
 				this.highlightData = ko.observableArray();
-				this.defaultColor = '#888';
+				this.defaultColor = '#eee';
 				this.words = ko.computed(() => {
 					if (!this.xfObservable()) {
 						return;
@@ -219,17 +219,17 @@ define([
 							}
 							return d.value.length && stopWords.indexOf(d.key) === -1 && filtered;
 						});
-						words = words.map(d => {
-							return {
-								caption: d.key,
-								domain: d.value[0].domain,
-								text: d.key,
-								recs: d.value,
-								count: d.value.length,
-								highlight: ko.observable(this.defaultColor)
-							}
-						});
-						words = _.sortBy(words, d => -d.recs.length)
+					words = words.map(d => {
+						return {
+							caption: d.key,
+							domain: d.value[0].domain,
+							text: d.key,
+							recs: d.value,
+							count: d.value.length,
+							highlight: ko.observable(this.defaultColor)
+						}
+					});
+					words = _.sortBy(words, d => -d.recs.length)
 					// profile chart will render all data in case when no data is captured by filter
 					if (words.length !== 0) {
 						this.highlightData(words);
@@ -254,36 +254,36 @@ define([
 					data: 'highlight()',
 					sortable: false
 				}, {
-					title: 'Concept Name',
-					data: 'caption'
-				}, {
-					title: 'Domain',
-					data: 'domain'
-				}, {
-					title: 'Total Records',
-					data: 'count'
-				}];
-
-				this.columns = [{
-						title: 'Concept Id',
-						data: 'conceptId'
-					},
-					{
 						title: 'Concept Name',
-						data: 'conceptName'
-					},
-					{
+						data: 'caption'
+					}, {
 						title: 'Domain',
 						data: 'domain'
-					},
-					{
-						title: 'Start Day',
-						data: 'startDay'
-					},
-					{
-						title: 'End Day',
-						data: 'endDay'
-					}
+					}, {
+						title: 'Total Records',
+						data: 'count'
+					}];
+
+				this.columns = [{
+					title: 'Concept Id',
+					data: 'conceptId'
+				},
+				{
+					title: 'Concept Name',
+					data: 'conceptName'
+				},
+				{
+					title: 'Domain',
+					data: 'domain'
+				},
+				{
+					title: 'Start Day',
+					data: 'startDay'
+				},
+				{
+					title: 'End Day',
+					data: 'endDay'
+				}
 				];
 				// d3.schemePaired
 				this.palette = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ff9', '#b15928'];
@@ -350,9 +350,6 @@ define([
 							};
 						}
 						person.records.forEach((rec) => {
-							// have to get startDate from person.cohorts
-							// rec.startDay = Math.floor((rec.startDate - cohort.startDate) / (1000 * 60 * 60 * 24));
-							// rec.endDay = rec.endDate ? Math.floor((rec.endDate - cohort.startDate) / (1000 * 60 * 60 * 24)) : rec.startDay;
 							rec.highlight = this.defaultColor;
 							rec.stroke = this.defaultColor;
 						});

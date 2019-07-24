@@ -174,7 +174,7 @@ table.data td {
 .d3-tip {
 	font-size: 10px;
 	padding: 5px 10px 5px 10px;
-	background: rgba(0,49,66,.6);
+	background: rgba(0,49,66,.9);
 	color: #fff;
 	border-radius: 0px;
 	pointer-events: none !important;
