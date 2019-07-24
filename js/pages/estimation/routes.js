@@ -4,11 +4,10 @@ define((require, factory) => {
     function routes(appModel, router) {
 
       const ccaViewEdit = new AuthorizedRoute((estimationId, section) => {
-        appModel.activePage(this.title);
         require(['./cca-manager'], function () {
           atlasState.estimationAnalysis.selectedId(estimationId);
           router.setCurrentView('cca-manager', {
-            id: estimationId, 
+            id: estimationId,
             section: section || 'specification',
           });
         });
@@ -16,7 +15,6 @@ define((require, factory) => {
 
       return {
         '/estimation': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require(['./estimation-browser'], function () {
             router.setCurrentView('estimation-browser');
           });

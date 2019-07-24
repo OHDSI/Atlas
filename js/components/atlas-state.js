@@ -6,7 +6,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
+	state.users = ko.observableArray();
 	state.sources = ko.observableArray([]);
+	state.currentView = ko.observable('loading');
+	state.loading = ko.observable(false);
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;

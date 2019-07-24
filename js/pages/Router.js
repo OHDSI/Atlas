@@ -4,6 +4,8 @@ define(
     'pages/vocabulary/index', // for not found route
     'querystring',
     'services/AuthAPI',
+    'atlas-state',
+    'knockout',
     'director',
 	],
 	(
@@ -11,14 +13,16 @@ define(
     vocabularyPage,
     querystring,
     authApi,
+    sharedState,
+    ko,
 	) => {
     return class AtlasRouter {
       constructor() {
-        this.activeRoute = null;
+        this.activeRoute = ko.observable({});
         this.onLoginSubscription;
-        this.setCurrentView = () => { throw new Exception('View setter is not set'); };
         this.getModel = () => { throw new Exception('Model getter is not set'); };
         this.pages = Object.values(pages);
+        this.routerParams = ko.observable();
       }
 
       run() {
@@ -52,7 +56,7 @@ define(
         }, {});
         const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
 					accumulator[key] = (...args) => {
-            this.getModel().loading(true);
+            sharedState.loading(true);
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
 						}
@@ -62,26 +66,26 @@ define(
 							.then(() => handler())
 							.catch((ex) => {
 								console.error(ex !== undefined ? ex : 'Permission error');
-								this.getModel().activePage(title);
 								// protected route didn't pass the token check -> show white page
 								this.setCurrentView('white-page');
 								// wait until user authenticates
 								this.schedulePageUpdateOnLogin(handler);
               })
               .finally(() => {
-                this.getModel().loading(false);
+                sharedState.loading(false);
               });
 
-            this.activeRoute = {
+            this.activeRoute({
               handler,
               isSecured: routes[key].isSecured,
-            };
+              title: routes[key].title,
+            });
 					};
 					return accumulator;
         }, {});
         // anyway, we should track the moment when the user exits and check permissions once again
 				authApi.isAuthenticated.subscribe((isAuthenticated) => {
-          const { isSecured, handler } = this.activeRoute;
+          const { isSecured, handler } = this.activeRoute();
           if (!isAuthenticated && isSecured) {
             this.setCurrentView('white-page');
             this.schedulePageUpdateOnLogin(handler);
@@ -100,12 +104,15 @@ define(
         });
       }
 
-      /**
-       * Callback that should change the state of the model
-       * @param {function} handler
-       */
-      setCurrentViewHandler(handler) {
-        this.setCurrentView = handler;
+
+      setCurrentView(view, routerParams = false) {
+        if (view !== sharedState.currentView()) {
+					sharedState.currentView('loading');
+				}
+				if (routerParams !== false) {
+					this.routerParams(routerParams);
+				}
+				sharedState.currentView(view);
       }
 
       /**

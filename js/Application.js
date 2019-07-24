@@ -3,6 +3,7 @@ define(
 		'knockout',
 		'services/http',
 		'services/AuthAPI',
+		'services/role',
 		'appConfig',
 		'lscache',
 		'atlas-state',
@@ -17,6 +18,7 @@ define(
 		ko,
 		httpService,
 		authApi,
+		roleService,
 		config,
 		lscache,
 		sharedState,
@@ -34,6 +36,23 @@ define(
 				this.densityPriority = 0;
 				this.pageModel = model;
 				this.router = router;
+				this.pageTitle = ko.pureComputed(() => {
+					let pageTitle = "ATLAS";
+					switch (sharedState.currentView()) {
+						case 'loading':
+							pageTitle = pageTitle + ": Loading";
+							break;
+						default:
+							pageTitle = `${pageTitle}: ${this.router.activeRoute().title}`;
+							break;
+					}
+
+					if (this.pageModel.hasUnsavedChanges()) {
+						pageTitle = "*" + pageTitle + " (unsaved)";
+					}
+
+					return pageTitle;
+				})
 			}
 
 			/**
@@ -49,6 +68,7 @@ define(
 						// provide to a view access to both model and the router via this.router
 						...this.pageModel,
 						...this,
+						currentView: sharedState.currentView,
 					}, document.getElementsByTagName('html')[0]);
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
@@ -61,7 +81,6 @@ define(
 
 					}
 					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
-					this.router.setCurrentViewHandler(this.pageModel.handleViewChange);
 					this.router.setModelGetter(() => this.pageModel);
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
@@ -79,7 +98,7 @@ define(
 			synchronize() {
 				const promise = Promise.all([
 					this.initServiceInformation(),
-					this.pageModel.updateRoles(),
+					roleService.updateRoles(),
 				]);
 				promise.then(() => {
 					this.router.run();
