@@ -36,12 +36,12 @@ define([
 						return {
 							...d,
 							...{
-								modifiedDate: d.modifiedDate || d.createdDate,
 								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
-								modifiedTimestamp: d.modifiedDate && new Date(d.modifiedDate).getTime()
+								modifiedTimestamp: d.modifiedDate && new Date(d.modifiedDate || d.createdDate).getTime()
 							}
 						};
 					});
+					datatableUtils.coalesceField(defList, 'modifiedTimestamp', 'createdTimestamp');
 					this.reference(defList);
 				})
 				.finally(() => { this.loading(false) });
@@ -88,16 +88,12 @@ define([
 				{
 					title: 'Created',
 					className: 'date-column',
-					render: function (row, type, val, meta) {
-						return type === "sort" ? val.createdTimestamp : momentApi.formatDateTimeUTC(val.createdDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('createdTimestamp'),
 				},
 				{
 					title: 'Updated',
 					className: 'date-column',
-					render: function (row, type, val, meta) {
-						return type === "sort" ? val.modifiedTimestamp : momentApi.formatDateTimeUTC(val.modifiedDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('modifiedTimestamp'),
 				},
 				{
 					title: 'Author',
