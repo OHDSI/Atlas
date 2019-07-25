@@ -15,6 +15,7 @@ define([
 		'utils/AutoBind',
 		'utils/CommonUtils',
 		'pages/Router',
+		'moment',
 		'./const',
 		'lodash',
 		'crossfilter',
@@ -43,6 +44,7 @@ define([
 		AutoBind,
 		commonUtils,
 		router,
+		moment,
 		constants,
 		_,
 		crossfilter,
@@ -159,6 +161,25 @@ define([
 						}
 					}
 				});
+				this.dateRange = ko.computed(() => {
+					if (this.canViewProfileDates() && this.xfObservable && this.xfObservable() && this.xfObservable().isElementFiltered()) {
+						const filtered = this.xfObservable().allFiltered();
+						return filtered.map(v => ({
+							startDate: moment(v.startDate).add(v.startDays, 'days').valueOf(),
+							endDate: moment(v.endDate).subtract(v.endDays, 'days').valueOf(),
+						}))
+							.reduce((a, v) => ({
+								startDate: a.startDate < v.startDate ? a.startDate : v.startDate,
+								endDate: a.endDate > v.endDate ? a.endDate : v.endDate,
+							}));
+					}
+					return {
+						startDate: null, endDate: null,
+					};
+				});
+				this.startDate = ko.computed(() => this.dateRange().startDate);
+				this.endDate = ko.computed(() => this.dateRange().endDate);
+
 				this.dimensions = {
 					'Domain': {
 						caption: 'Domain',
@@ -460,6 +481,10 @@ define([
 			highlightRowClick(data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
+			}
+
+			canViewProfileDates() {
+				return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
 			}
 		}
 
