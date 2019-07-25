@@ -62,12 +62,6 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationResultsCount(generationId) {
-        return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/count')
-            .then(res => res.data);
-    }
-
     function loadCharacterizationExportDesignByGeneration(generationId) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/design')
@@ -116,7 +110,6 @@ define([
         loadCharacterizationExecutionList,
         loadCharacterizationExecution,
         loadCharacterizationResults,
-        loadCharacterizationResultsCount,
         loadCharacterizationExportDesignByGeneration,
         runGeneration,
         getPrevalenceStatsByGeneration,

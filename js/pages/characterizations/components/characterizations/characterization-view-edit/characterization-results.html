@@ -1,42 +1,47 @@
 <loading data-bind="visible: loading()" params="status: 'Loading execution results...'"></loading>
 
 <div data-bind="css: classes(), visible: !loading()">
-    <h2 data-bind="css: classes('title')">
-        <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
-        <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
-        <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
-    </h2>
-    <div data-bind="css: classes('toolbar')">
-        <ul data-bind="css: classes('detail-list')">
-            <li data-bind="css: classes('detail')">
-                <label data-bind="css: classes('detail-label')">Date:</label>
-                <span data-bind="css: classes('detail-value'), text: $component.formatDate($component.data().date)"></span>
-            </li>
-            <li data-bind="css: classes('detail')">
-                <label data-bind="css: classes('detail-label')">Design:</label>
-                <a href='#' data-bind="css: classes('detail-value'), click: showExecutionDesign, text: $component.data().designHash">x6t21cda</a>
-            </li>
-            <li data-bind="css: classes('detail')">
-                <label data-bind="css: classes('detail-label')">Results:</label>
-                <span data-bind="css: classes('detail-value'), text: ($component.data().analyses || []).length + ' reports'"></span>
-            </li>
-        </ul>
+    <div data-bind="css: classes('header')">
+        <div>
+            <h2 data-bind="css: classes('title')">
+                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
+                <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
+                <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
+            </h2>
+            <div data-bind="css: classes('toolbar')">
+                <ul data-bind="css: classes('detail-list')">
+                    <li data-bind="css: classes('detail')">
+                        <label data-bind="css: classes('detail-label')">Date:</label>
+                        <span data-bind="css: classes('detail-value'), text: $component.formatDate($component.data().date)"></span>
+                    </li>
+                    <li data-bind="css: classes('detail')">
+                        <label data-bind="css: classes('detail-label')">Design:</label>
+                        <a href='#' data-bind="css: classes('detail-value'), click: showExecutionDesign, text: $component.data().designHash">x6t21cda</a>
+                    </li>
+                    <li data-bind="css: classes('detail')">
+                        <label data-bind="css: classes('detail-label')">Results:</label>
+                        <span data-bind="css: classes('detail-value'), text: ($component.data().analyses || []).length + ' reports'"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div data-bind="css: classes('threshold')">
+            <div data-bind="css: classes('threshold-setter')">
+                <label  data-bind="css: classes('threshold-label')">Threshold Level:</label>
+                <input type="number" class="form-control" placeholder="Threshold value"
+                       data-bind="css: classes('threshold-input'), textInput: $component.thresholdValue">
+                <button data-bind="
+                    css: classes({ element: 'threshold-submit', extra: 'btn btn-primary btn-sm' }),
+                    text: 'Apply',
+                    click: $component.updateThreshold"
+                >
+                </button>
+            </div>
+            <span data-bind="css: classes('threshold-result-descr'), text: $component.resultCountText()"></span>
+        </div>
     </div>
     <div data-bind="css: classes('filter')">
         <visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
-    </div>
-    <div class="input-group thresholdLevel">
-        <h4>Threshold Level:</h4>
-        <div>
-            <input type="number" class="form-control" placeholder="Threshold value"
-                   data-bind="textInput: $component.thresholdValue">
-            <button data-bind="
-            css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
-            text: 'Apply',
-            click: $component.updateThreshold">
-            </button>
-        </div>
-        <span data-bind="css: classes('detail-value'), text: $component.resultCountText()"></span>
     </div>
     <div data-bind="css: classes('report-section')">
         <!-- ko foreach: analysisList -->

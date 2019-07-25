@@ -93,7 +93,7 @@ define([
             this.explorePrevalenceTitle = ko.observable();
             this.prevalenceStatData = ko.observableArray();
             this.thresholdValue = ko.observable();
-            this.resultsCount = ko.observable();
+            this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
 
             this.executionId.subscribe(id => id && this.loadData());
@@ -145,7 +145,7 @@ define([
         }
 
         resultCountText() {
-            return `Viewing First ${this.resultsCountFiltered()} of ${this.resultsCount()} records`;
+            return `Viewing most prevalent ${this.resultsCountFiltered()} of total ${this.totalResultsCount()} records`;
         }
 
         showExecutionDesign() {
@@ -279,22 +279,23 @@ define([
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
-                CharacterizationService.loadCharacterizationResults(this.executionId(), this.thresholdValue()),
-                CharacterizationService.loadCharacterizationResultsCount(this.executionId())
+                CharacterizationService.loadCharacterizationResults(this.executionId(), this.thresholdValue())
             ]).then(([
                  sourceList,
                  domains,
                  design,
                  execution,
-                 resultsList,
-                 resultsCount
+                 generationResults
             ]) => {
+
+                const resultsList = generationResults.results;
 
                 this.design(design);
 
                 this.domains(domains);
 
-                this.resultsCount(resultsCount);
+                this.totalResultsCount(generationResults.totalCount);
+                this.thresholdValue(generationResults.prevalenceThreshold);
                 this.resultsCountFiltered(resultsList.length);
 
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
