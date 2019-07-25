@@ -24,8 +24,6 @@ define([
 		constructor(params) {
 			super();
 
-			this.subscriptions = [];
-
 			this.loading = ko.observable(false);
 
 			this.MODE_JSON = 0;
@@ -62,9 +60,6 @@ define([
 			}
 		}
 
-		dispose() {
-			this.subscriptions.forEach(s => s.dispose());
-		}
 	}
 
 	return commonUtils.build('pathway-utils', PathwayUtils, view);
