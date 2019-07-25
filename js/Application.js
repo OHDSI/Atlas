@@ -40,7 +40,7 @@ define(
 					let pageTitle = "ATLAS";
 					switch (this.router.currentView()) {
 						case 'loading':
-							pageTitle = pageTitle + ": Loading";
+							pageTitle = `${pageTitle}: Loading`;
 							break;
 						default:
 							pageTitle = `${pageTitle}: ${this.router.activeRoute().title}`;
@@ -48,7 +48,7 @@ define(
 					}
 
 					if (this.pageModel.hasUnsavedChanges()) {
-						pageTitle = "*" + pageTitle + " (unsaved)";
+						pageTitle = `*${pageTitle} (unsaved)`;
 					}
 
 					return pageTitle;

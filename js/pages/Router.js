@@ -29,16 +29,15 @@ define(
         this.pages = Object.values(pages);
         this.routerParams = ko.observable();
         this.currentViewAccessible = ko.pureComputed(() => {
-          // return true;
           return this.currentView && (
-						sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
-						&& (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
-						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
-					));
+            sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
+            && (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
+            || ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
+          ));
         });
         this.currentView.subscribe(() => {
-					EventBus.errorMsg(undefined);
-				});
+          EventBus.errorMsg(undefined);
+        });
       }
 
       run() {

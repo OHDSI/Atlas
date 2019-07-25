@@ -23,19 +23,19 @@
 		</div>
 
 		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.activeTab(tabs.DEFINITION) };">
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.selectTab(tabs.DEFINITION) };">
 				<a>Definition</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.CONCEPT_SETS }, click: function() { $component.activeTab(tabs.CONCEPT_SETS) };">
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.CONCEPT_SETS }, click: function() { $component.selectTab(tabs.CONCEPT_SETS) };">
 				<a>Concept Sets</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.GENERATION }, click: function() { $component.activeTab(tabs.GENERATION) };">
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.GENERATION }, click: function() { $component.selectTab(tabs.GENERATION) };">
 				<a>Generation</a>
 			</li>
 
-            <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.activeTab(tabs.UTILITIES) };">
+            <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
 				<a>Utilities</a>
             </li>
 

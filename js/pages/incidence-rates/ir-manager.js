@@ -281,17 +281,21 @@ define([
 			});
 		}
 
+		selectTab(tab) {
+			commonUtils.routeTo(`${this.constants.apiPaths.analysis(this.selectedAnalysisId())}/${tab}`);
+		}
+
 		onRouterParamsChanged(params = {}) {
 			const { analysisId, activeTab } = params;
-			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
-				this.onAnalysisSelected();
-			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
-				this.startPolling();
-			}
 			if (activeTab) {
 				if (Object.values(this.constants.tabs).includes(activeTab)) {
 					this.activeTab(activeTab);
 				}
+			}
+			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
+				this.onAnalysisSelected();
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id() && !this.pollId) {
+				this.startPolling();
 			}
 		}
 
