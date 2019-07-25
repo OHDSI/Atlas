@@ -33,7 +33,8 @@ define([
 		}
 
 		showConceptSet() {
-			document.location = '#/conceptset/0/details';	
+			const conceptSetId = this.model.currentConceptSet() ? this.model.currentConceptSet().id : 0;
+			document.location = `#/conceptset/${conceptSetId}/details`;	
 		}
 
 		importConceptSetExpression() {
@@ -120,13 +121,14 @@ define([
 						this.model.currentConceptSetSource('repository');
 					}
 
+					var conceptSetItemsToAdd = sharedState.selectedConcepts();
 					for (var i = 0; i < conceptSetItems.length; i++) {
 						if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] != 1) {
 							sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-							var conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
-							sharedState.selectedConcepts.push(conceptSetItem);
+							conceptSetItemsToAdd.push(commonUtils.createConceptSetItem(conceptSetItems[i]));
 						}
 					}
+					sharedState.selectedConcepts(conceptSetItemsToAdd);
 					resolve();
 				} catch(er) {
 					reject(er);

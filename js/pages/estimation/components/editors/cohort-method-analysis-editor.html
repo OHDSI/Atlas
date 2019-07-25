@@ -136,7 +136,7 @@
                         <input class="form-control" type="text" data-bind="value: $component.cvIncludeCovariateIds" />
                     </div>
                 </div>
-            </div>        
+            </div>
         </div>
     </div>
     <div role="tabpanel" data-bind="visible: $component.editorMode() == 'all' || $component.editorMode() == 'timeAtRisk'" class="tab-pane">
@@ -228,7 +228,7 @@
                 </div>
                 <div class="panel panel-primary" data-bind="css: classes('panel-buffer', 'panel-buffer-left'), collapsable: showPsCovariateDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
                     <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePsCovariateDisplay">
-                        <span><i class="fa fa-cogs"></i> Additional Covariate Settings</span>
+                        <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Additional Covariate Settings</span>
                     </div>
                     <div class="panel-body collapse">
                         <div>
@@ -243,13 +243,13 @@
                                 <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.includeCovariateIds"></textarea>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="row" data-bind="css: classes('subsection')">
                     <div class="col-md-6">
                         <div class="panel panel-primary" data-bind="collapsable: showControlDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
                             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">
-                                <span><i class="fa fa-cogs"></i> Control Settings</span>
+                                <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Control Settings</span>
                             </div>
                             <div class="panel-body collapse">
                                 <cyclops-control-editor params="control: $component.analysis.createPsArgs.control"></cyclops-control-editor>
@@ -259,10 +259,10 @@
                     <div class="col-md-6">
                         <div class="panel panel-primary" data-bind="collapsable: showPriorDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
                             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePriorDisplay">
-                                <span><i class="fa fa-cogs"></i> Prior</span>
+                                <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Prior</span>
                             </div>
                             <div class="panel-body collapse">
-                                <cyclops-prior-editor params="prior: $component.analysis.createPsArgs.prior"></cyclops-prior-editor>    
+                                <cyclops-prior-editor params="prior: $component.analysis.createPsArgs.prior"></cyclops-prior-editor>
                             </div>
                         </div>
                     </div>
@@ -280,7 +280,7 @@
                     <outcome-model-args-editor params="matchStratifySelection: $component.matchStratifySelection, outcomeModelArgs: $component.analysis.fitOutcomeModelArgs, subscriptions: $component.subscriptions"></outcome-model-args-editor>
                 </div>
             </div>
-        </div>    
+        </div>
     </div>
 </div>
 <atlas-modal params="{

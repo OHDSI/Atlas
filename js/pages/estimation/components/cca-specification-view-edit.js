@@ -32,6 +32,7 @@ define([
 			this.editorComponentParams = ko.observable({});
 			this.editorDescription = ko.observable();
 			this.editorHeading = ko.observable();
+			this.editorArray = ko.observableArray();
 			this.estimationAnalysis = params.estimationAnalysis;
 			this.options = constants.options;
 			this.loading = params.loading;
@@ -81,6 +82,7 @@ define([
 		}
 
 		editAnalysis(analysis) {
+			this.editorArray = this.cohortMethodAnalysisList;
 			this.editorHeading('Analysis Settings');
 			this.editorDescription('Add or update the analysis settings');
 			this.editorComponentName('cohort-method-analysis-editor');
@@ -108,6 +110,7 @@ define([
 		}
 
 		editComparison(comparison) {
+			this.editorArray = this.comparisons;
 			this.editorHeading('Comparison');
 			this.editorDescription('Add or update the target, comparator, outcome(s) cohorts and negative control outcomes');
 			this.editorComponentName('comparison-editor');
@@ -136,6 +139,7 @@ define([
 		}
 
 		closeEditor() {
+			this.editorArray.valueHasMutated();
 			this.managerMode('summary');
 		}
 	}

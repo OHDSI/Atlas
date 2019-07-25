@@ -21,7 +21,7 @@
 				<label>Incidence Rate Analysis name is empty.</label>
 			</div>
 		</div>
-	
+
 		<ul class="nav nav-tabs">
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'definition' }, click: function() { $component.activeTab('definition') };">
 				<a>Definition</a>
@@ -32,12 +32,12 @@
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == 'generation' }, click: function() { $component.activeTab('generation') };">
-				<a>Generation</a>                
+				<a>Generation</a>
 			</li>
-            
+
             <li role="presentation" data-bind="css: { active: $component.activeTab() == 'utilities' }, click: function() { $component.activeTab('utilities') };"><a>Utilities</a>
             </li>
-            
+
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'definition' }" class="tab-pane">
@@ -50,11 +50,11 @@
 					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
-				<!-- ko with: selectedAnalysis().expression -->										
+				<!-- ko with: selectedAnalysis().expression -->
 					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
-				<!-- /ko -->			
+				<!-- /ko -->
 			</div>
-			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'generation' }, 
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'generation' },
 																			eventListener: [
 																				{ event: 'click', selector: 'button.removeResult', callback: removeResult},
 																				{ event: 'click', selector: 'button.exportAnalysisCSV', callback: exportAnalysisCSV},
@@ -64,7 +64,7 @@
 				<div data-bind="hidden: exporting() || loadingInfo()">
 					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources, loadingSummary: loadingSummary"></ir-analysis-results>
 				</div>
-			</div>		
+			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == 'utilities' }" class="tab-pane">
 				<div class="paddedWrapper">
                     <ul class="nav nav-pills">
@@ -72,21 +72,28 @@
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
-                        <div class="paddedWrapper">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.importJSON"></textarea>
-                            <div style="text-align: right">
-                                <button class="btn btn-sm btn-primary" data-bind="click: $component.import">Import</button>
-                            </div>
-                        </div>
-                    </div>                
+						<import params="{
+							entityId: selectedAnalysisId,
+							routeToUrl: constants.apiPaths.root,
+							isPermittedImport: isPermittedImport,
+							importService: importService,
+							afterImportSuccess: afterImportSuccess
+						}"></import>
+                    </div>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
                         <div class="paddedWrapper">
-                            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
-                        </div>
+							<export params="{
+								entityId: selectedAnalysisId,
+								isPermittedExport: isPermittedExport,
+								exportService: exportService,
+								dirtyFlag: dirtyFlag,
+								message: { entityName: 'analysis' }
+							}"></export>
+						</div>
                     </div>
                 </div>
             </div>
-        </div>	
+        </div>
 	</div>
 
 	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">

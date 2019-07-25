@@ -16,6 +16,7 @@ require(["./settings"], (settings) => {
 	require([
 		'bootstrap',
 		'ko.sortable',
+		'services/PluginRegistry',
 		...Object.values(settings.cssPaths),
 	], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
@@ -23,6 +24,7 @@ require(["./settings"], (settings) => {
 			'knockout',
 			'Application',
 			'Model',
+			'appConfig',
 			'const',
 			'pages/Router',
 			'atlas-state',
@@ -36,6 +38,7 @@ require(["./settings"], (settings) => {
 				ko,
 				Application,
 				Model,
+				appConfig,
 				constants,
 				Router,
 				sharedState,
@@ -45,6 +48,7 @@ require(["./settings"], (settings) => {
 				app.bootstrap()
 					.then(() => app.checkOAuthError())
 					.then(() => app.synchronize())
+					.then(() => require(appConfig.externalLibraries, () => console.log('Loaded external plugins')))
 					.catch(er => {
 						sharedState.appInitializationStatus(constants.applicationStatuses.failed);
 						console.error('App initialization failed', er);

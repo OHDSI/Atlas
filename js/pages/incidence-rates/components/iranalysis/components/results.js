@@ -85,10 +85,21 @@ define([
 					this.selectSource(this.selectedSource());
 			});
 
-			this.isExecutionDisabled = ko.computed(() => {
-				return this.dirtyFlag().isDirty();
+			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
+
+			this.disableExportAnalysis = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
 			});
-			this.executionDisabledReason = () => 'Save changes to generate';
+		}
+
+		reportDisabledReason(source) {
+			return ko.computed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+		}
+
+		isExecutionDisabled(source) {
+			return ko.computed(() => {
+				return !this.hasSourceAccess(source.sourceKey) || this.dirtyFlag().isDirty();
+			});
 		}
 
 		isInProgress(sourceItem) {

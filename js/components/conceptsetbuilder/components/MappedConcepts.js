@@ -71,13 +71,13 @@ define([
 				{
 					'caption': 'Has Records',
 					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.RECORD_COUNT) > 0;
 					}
 				},
 				{
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 					}
 				}
 			]

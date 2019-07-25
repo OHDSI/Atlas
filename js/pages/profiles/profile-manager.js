@@ -1,6 +1,8 @@
 "use strict";
 define([
 		'knockout',
+		'const',
+		'services/PluginRegistry',
 		'text!./profile-manager.html',
 		'd3',
 		'appConfig',
@@ -12,6 +14,7 @@ define([
 		'pages/Page',
 		'utils/AutoBind',
 		'utils/CommonUtils',
+		'moment',
 		'./const',
 		'lodash',
 		'crossfilter',
@@ -26,6 +29,8 @@ define([
 	],
 	function (
 		ko,
+		globalConstants,
+		pluginRegistry,
 		view,
 		d3,
 		config,
@@ -37,6 +42,7 @@ define([
 		Page,
 		AutoBind,
 		commonUtils,
+		moment,
 		constants,
 		_,
 		crossfilter,
@@ -153,6 +159,25 @@ define([
 						}
 					}
 				});
+				this.dateRange = ko.computed(() => {
+					if (this.canViewProfileDates() && this.xfObservable && this.xfObservable() && this.xfObservable().isElementFiltered()) {
+						const filtered = this.xfObservable().allFiltered();
+						return filtered.map(v => ({
+							startDate: moment(v.startDate).add(v.startDays, 'days').valueOf(),
+							endDate: moment(v.endDate).subtract(v.endDays, 'days').valueOf(),
+						}))
+							.reduce((a, v) => ({
+								startDate: a.startDate < v.startDate ? a.startDate : v.startDate,
+								endDate: a.endDate > v.endDate ? a.endDate : v.endDate,
+							}));
+					}
+					return {
+						startDate: null, endDate: null,
+					};
+				});
+				this.startDate = ko.computed(() => this.dateRange().startDate);
+				this.endDate = ko.computed(() => this.dateRange().endDate);
+
 				this.dimensions = {
 					'Domain': {
 						caption: 'Domain',
@@ -309,6 +334,8 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+
+				this.plugins = pluginRegistry.findByType(globalConstants.pluginTypes.PROFILE_WIDGET);
 			}
 
 			loadPerson() {
@@ -452,6 +479,10 @@ define([
 			highlightRowClick(data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
+			}
+
+			canViewProfileDates() {
+				return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
 			}
 		}
 

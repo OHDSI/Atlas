@@ -90,13 +90,13 @@ define([
 			this.canDelete = this.model.canDeleteCurrentConceptSet;
 			this.canOptimize = ko.computed(() => {
 				return (
-					this.currentConceptSet() 
-					&& this.currentConceptSet().id != 0 
+					this.currentConceptSet()
+					&& this.currentConceptSet().id != 0
 					&& sharedState.selectedConcepts().length > 1
 					&& this.canCreate()
 					&& this.canEdit()
 				);
-			}); 
+			});
 			this.optimalConceptSet = ko.observable(null);
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
@@ -179,7 +179,7 @@ define([
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
 		}
-		
+
 		saveClick() {
 			this.saveConceptSet("#txtConceptSetName");
 		}
@@ -212,7 +212,7 @@ define([
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-
+						await this.model.resolveConceptSetExpression();
 						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.model.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
@@ -247,8 +247,9 @@ define([
 			}
 		}
 
-		copy() {
-			this.conceptSetName("COPY OF: " + this.model.currentConceptSet().name());
+		async copy() {
+			const responseWithName = await conceptSetService.getCopyName(this.model.currentConceptSet().id);
+			this.conceptSetName(responseWithName.copyName);
 			this.model.currentConceptSet(undefined);
 			this.saveConceptSet("#txtConceptSetName");
 		}
@@ -298,12 +299,12 @@ define([
 		delete() {
 			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
 				return;
-			
+
 			this.isDeleting(true);
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.model.currentConceptSet().id)
 				.then(() => {
-					this.model.currentConceptSet(null);
+					this.model.clearConceptSet();
 					document.location = "#/conceptsets"
 				});
 		}
@@ -311,7 +312,7 @@ define([
 		getIndexByComponentName(name = 'conceptset-expression') {
 			let index = this.tabs
 				.map(tab => tab.componentName)
-				.indexOf(name);				
+				.indexOf(name);
 			if (index === -1) {
 				index = 0;
 			}
@@ -328,24 +329,19 @@ define([
 				? this.model.currentConceptSet().id
 				: 0;
 			const mode = this.getComponentNameByTabIndex(index);
-			document.location = constants.paths.mode(id, mode);
+			!!mode && commonUtils.routeTo(constants.paths.mode(id, mode));
 		}
-		
+
 		overwriteConceptSet() {
-			var newConceptSet = [];
-			this.optimalConceptSet().forEach((item) => {
-				var newItem;
-				newItem = {
-					concept: item.concept,
-					isExcluded: ko.observable(item.isExcluded),
-					includeDescendants: ko.observable(item.includeDescendants),
-					includeMapped: ko.observable(item.includeMapped),
-				}
-				newConceptSet.push(newItem);
-			})
-			this.selectedConcepts(newConceptSet);
+			sharedState.clearSelectedConcepts();
+			const newConceptSet = this.optimalConceptSet().map((item) => {
+				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
+				return conceptSetService.enhanceConceptSet(item);
+			});
+			sharedState.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
 		}
+
 		copyOptimizedConceptSet () {
 			if (this.model.currentConceptSet() == undefined) {
 				this.optimizerSavingNewName(this.conceptSetName());
@@ -356,20 +352,18 @@ define([
 		}
 
 		saveNewOptimizedConceptSet() {
-			var conceptSet = {};
-			conceptSet.id = 0;
-			conceptSet.name = this.optimizerSavingNewName;
-			var selectedConcepts = [];
-			this.optimalConceptSet().forEach((item) => {
-				var newItem;
-				newItem = {
+			const conceptSet = {
+				id: 0,
+				name: this.optimizerSavingNewName,
+			};
+			const selectedConcepts = this.optimalConceptSet().map((item) => (
+				{
 					concept: item.concept,
 					isExcluded: ko.observable(item.isExcluded),
 					includeDescendants: ko.observable(item.includeDescendants),
 					includeMapped: ko.observable(item.includeMapped),
 				}
-				selectedConcepts.push(newItem);
-			});
+			));
 			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
 			this.optimizerSavingNew(false);
 			this.isOptimizeModalShown(false);

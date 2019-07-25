@@ -3,6 +3,8 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'lodash',
+	'xss',
+	'appConfig',
 	'text!./linked-cohort-list.html',
 	'components/cohort-definition-browser',
 	'less!./linked-cohort-list.less',
@@ -14,6 +16,8 @@ define([
 	Component,
 	commonUtils,
 	lodash,
+	filterXSS,
+	appConfig,
 	view
 ) {
 	class LinkedCohortList extends Component {
@@ -26,15 +30,22 @@ define([
 			const nameCol = {
 				title: 'Name'
 			};
-			
+
 			if (params.canEditName) {
-				nameCol.render = (s,p,d) => `<span data-bind="clickToEdit: name"/>`;
+				nameCol.render = (s,p,d) =>  p === 'display' ? `<span data-bind="clickToEdit: name" />` : ko.utils.unwrapObservable(d.name);
 				nameCol.className = this.classes('col-cohort-name', 'editable');
 			} else {
-				nameCol.data = 'name',
-				nameCol.className = this.classes('col-cohort-name')
+				nameCol.data = 'name';
+				nameCol.render = (s,p,d) => {
+					const name = ko.utils.unwrapObservable(d.name);
+					if (p === 'display') {
+						return filterXSS(name, appConfig.strictXSSOptions);
+					}
+					return name;
+				};
+				nameCol.className = this.classes('col-cohort-name');
 			}
-			
+
 			// Linked entity list props
 			this.title = params.title || 'Cohort definitions';
 			this.descr = params.descr;
@@ -58,9 +69,9 @@ define([
 					render: this.getRemoveCell('removeCohort'),
 					className: this.classes('col-cohort-remove'),
 				},
-				
+
 			];
-			
+
 			// Modal props
 			this.showModal = ko.observable(false);
 			this.cohortSelected = ko.observable();
@@ -78,13 +89,13 @@ define([
 				return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
 			}
 		}
-		
+
 		getEditCell(action, identifierField = 'id') {
 			return (s, p, d) => {
 				return `<a href="#/cohortdefinition/${d[identifierField]}">Edit cohort</a>`;
 			}
 		}
-		
+
 
 		showCohortModal() {
 			this.showModal(true);
@@ -107,7 +118,7 @@ define([
 		removeCohort(id) {
 			this.data(this.data().filter(a => a.id !== parseInt(id)));
 		}
-		
+
 	}
 
 	return commonUtils.build('linked-cohort-list', LinkedCohortList, view);

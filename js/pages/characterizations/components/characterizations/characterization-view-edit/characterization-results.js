@@ -121,12 +121,17 @@ define([
                 });
             }
 
+           /*
+            * Taking this out per https://github.com/OHDSI/Atlas/issues/1834
+
            if (this.extractConceptIds(analysis).length > 0) {
                 buttons.push({
                     text: 'Create new Concept Set',
                     action: () => this.createNewSet(analysis)
                 });
             }
+
+            */
 
             return buttons;
         }
@@ -332,6 +337,7 @@ define([
                         covariateName: r.covariateName,
                         conceptId: r.conceptId,
                         conceptName: r.conceptName,
+                        faType: r.faType,
                         avg: r.avg,
                         count: r.count,
                         pct: r.avg * 100,
@@ -443,7 +449,7 @@ define([
                     ]
                   };
                 }
-            }            
+            }
         }
 
         prepareTabularData(data = [], filters = []) {
@@ -491,8 +497,8 @@ define([
             return `
                 <div>Series: ${d.seriesName}</div>
                 <div>Covariate: ${d.covariateName}</div>
-                <div>X: ${d.xValue}</div>
-                <div>Y: ${d.yValue}</div>
+                <div>X: ${d3.format('.2f')(d.xValue)}%</div>
+                <div>Y: ${d3.format('.2f')(d.yValue)}%</div>
             `;
         }
 

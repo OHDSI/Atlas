@@ -31,8 +31,8 @@ define([
 				{title: 'ExecutionId', data: 'executionId'},
 				{title: 'Job Name', data: 'jobParameters.jobName'},
 				{title: 'Status', data: 'status'},
-				{title: 'Start Date', data: 'startDate', type: 'datetime-formatted'},
-				{title: 'End Date', data: 'endDate', type: 'datetime-formatted'}
+				{title: 'Start Date', data: 'startDate'},
+				{title: 'End Date', data: 'endDate'}
 			]);
 			if (config.userAuthenticationEnabled) {
 				this.model.columns.splice(3, 0, {title: 'Author', data: 'jobParameters.jobAuthor', 'defaultContent': ''});

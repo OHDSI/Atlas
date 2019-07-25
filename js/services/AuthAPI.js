@@ -450,6 +450,7 @@ define(function(require, exports) {
         return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
     }
 
+	const isPermittedRunAs = () => isPermitted('user:runas:post');
 
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
         !!tokenHeader && token(tokenHeader);
@@ -460,6 +461,18 @@ define(function(require, exports) {
         token(null);
         subject(null);
         permissions(null);
+    };
+
+    const runAs = function(login, success, error) {
+        return $.ajax({
+					method: 'POST',
+					url: config.webAPIRoot + 'user/runas',
+					data: {
+						login,
+					},
+          success,
+          error,
+        });
     };
 
     var api = {
@@ -542,9 +555,11 @@ define(function(require, exports) {
 
         isPermittedImportUsers,
         hasSourceAccess,
+        isPermittedRunAs,
 
         loadUserInfo,
         TOKEN_HEADER,
+        runAs,
     };
 
     return api;

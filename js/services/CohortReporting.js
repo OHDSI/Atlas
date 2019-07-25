@@ -24,7 +24,7 @@ define(function (require, exports) {
       name: "Condition Eras",
       reportKey: 'Condition Eras',
       // analyses: [1001, 1000, 1007, 1006, 1004, 1002, 116, 117, 1]
-      analyses: [1, 1000, 1007] // allows for quick analysis minimum requirements
+      analyses: [1, 1000, 1002, 1004, 1006, 1007] // allows for quick analysis minimum requirements
     },
     conditionByIndex: {
       name: "Conditions by Index",
@@ -50,7 +50,7 @@ define(function (require, exports) {
       name: "Drug Eras",
       reportKey: 'Drug Eras',
       // analyses: [900, 901, 907, 906, 904, 902, 116, 117, 1]
-      analyses: [1, 900, 907] // allows for quick analysis minimum requirements
+      analyses: [1, 900, 902, 904, 906, 907] // allows for quick analysis minimum requirements
     },
     drugExposure: {
       name: "Drug Exposure",

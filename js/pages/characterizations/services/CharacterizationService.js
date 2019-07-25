@@ -1,9 +1,11 @@
 define([
     'services/http',
     'appConfig',
+    'utils/ExecutionUtils'
 ], function (
     httpService,
     config,
+    executionUtils,
 ) {
     function loadCharacterizationList() {
         return httpService
@@ -44,7 +46,7 @@ define([
     function loadCharacterizationExecutionList(id) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/generation')
-            .then(res => res.data);
+            .then(res => executionUtils.generateVersionTags(res.data));
     }
 
     function loadCharacterizationExecution(id) {
