@@ -65,7 +65,13 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(error);
 			}
 		});
-		return loadPromise;	
+		return loadPromise;
+	}
+
+	function exists(name, id) {
+		return httpService
+			.doGet(`${config.webAPIRoot}cohortdefinition/${id}/exists?name=${name}`)
+			.then(res => res.data);
 	}
 	
 	function getSql(expression, options) {
@@ -174,7 +180,8 @@ define(function (require, exports) {
 		cancelGenerate,
 		getCohortCount,
 		getCohortAnalyses: getCohortAnalyses,
-	}
+		exists: exists,
+	};
 
 	return api;
 });

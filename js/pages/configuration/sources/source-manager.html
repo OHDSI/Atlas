@@ -96,19 +96,19 @@
 													<label>Kerberos authentication method:</label>
 												</div>
 												<label>
-													<input type="radio" value="keyfile" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
+													<input type="radio" value="keytab" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
 													<span class="source-manager__radio-btn-label">Keytab</span>
 												</label>
-												<div data-bind="visible: fieldsVisibility.showKeytab" class="source-manager__keytab">
-													<input type="file" id="keytabFile" name="keytabFile" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.krbFileInput()"/>
+												<div data-bind="visible: fieldsVisibility.showKrbKeyfile()" class="source-manager__keytab">
+													<input type="file" id="keyfile" name="keytab" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.krbFileInput()"/>
 													<span data-bind="text: selectedSource().keyfileName, visible: !fieldsVisibility.krbFileInput()"></span>
-													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !fieldsVisibility.krbFileInput(), click: removeKeytab">Remove</button>
+													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !fieldsVisibility.krbFileInput(), click: removeKeyfile">Remove</button>
 												 </div>
 												<label class="source-manager__pwd-label">
 													<input type="radio" value="password" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
 													<span class="source-manager__radio-btn-label">User name and password</span>
 												</label>
-												<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKeytab()">
+												<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKrbKeyfile()">
 													<label>Password:</label>
 													<div class="form-group">
 														<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
@@ -122,9 +122,9 @@
 														<label>Service account key file (OAuthPvtKeyPath)</label>
 													</div>
 													<div data-bind="css: classes('keytab')">
-														<input type="file" name="keyfileFile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
+														<input type="file" name="keyfileFile" id="keyfile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
 														<span data-bind="text: selectedSource().keyfileName, hidden: fieldsVisibility.bqFileInput()"></span>
-														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeytab">Remove</button>
+														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeyfile">Remove</button>
 													</div>
 												</div>
 											</div>

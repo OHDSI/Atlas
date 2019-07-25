@@ -43,7 +43,7 @@ define(function (require, exports) {
 	}
 		
 	function saveAnalysis(definition) {
-		var definitionCopy = JSON.parse(ko.toJSON(definition))
+		var definitionCopy = JSON.parse(ko.toJSON(definition));
 		
 		if (typeof definitionCopy.expression != 'string')
 			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
@@ -105,7 +105,7 @@ define(function (require, exports) {
 			});
 	}
 
-	const errroHandler = response => {
+	const errorHandler = response => {
 		if (response.status === 404) {
 			throw new Error("Not found entity");
 		}
@@ -118,7 +118,7 @@ define(function (require, exports) {
 		
 		return promise
 			.then(({ data }) => data)
-			.catch(errroHandler);
+			.catch(errorHandler);
 	}
 
 	function loadResultsSummary(id, sourceKey) {
@@ -126,7 +126,7 @@ define(function (require, exports) {
 
 		return promise
 			.then(({data}) => data)
-			.catch(errroHandler);
+			.catch(errorHandler);
 	}
 	
 	function deleteInfo(id, sourceKey) {
@@ -148,7 +148,37 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}	
+	}
+
+	function exists(name, id) {
+		return httpService
+			.doGet(`${config.webAPIRoot}ir/${id}/exists?name=${name}`)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+	}
+
+	function importAnalysis(definition) {
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/design`, definition)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
+
+	function exportAnalysis(id) {
+		return httpService
+			.doGet(config.webAPIRoot + `ir/${id}/design`)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -162,7 +192,10 @@ define(function (require, exports) {
 		deleteInfo: deleteInfo,
 		getReport: getReport,
 		loadResultsSummary,
-	}
+		exists,
+		importAnalysis: importAnalysis,
+		exportAnalysis: exportAnalysis,
+	};
 
 	return api;
 });

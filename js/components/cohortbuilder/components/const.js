@@ -13,6 +13,7 @@ function (
 		DOSE_ERA: "DoseEra",
 		DRUG_ERA: "DrugEra",
 		DRUG_EXPOSURE: "DrugExposure",
+		LOCATION_REGION: "LocationRegion",
 		MEASUREMENT: "Measurement",
 		OBSERVATION: "Observation",
 		OBSERVATION_PERIOD: "ObservationPeriod",
@@ -62,7 +63,7 @@ function (
 	const AddDrugEra = {
 		text: "Add Drug Era",
 		selected: false,
-		description: "Find patients with with drug eras.",
+		description: "Find patients with drug eras.",
 		type: CriteriaTypes.DRUG_ERA,
 	};
 	const AddDrugExposure = {
@@ -71,6 +72,14 @@ function (
 		description: "Find patients with exposure to specific drugs or drug classes.",
 		type: CriteriaTypes.DRUG_EXPOSURE,
 	};
+
+	const AddLocationRegion = {
+		text: "Add Location Region",
+		selected: false,
+		description: "Find patients within geographical area.",
+		type: CriteriaTypes.LOCATION_REGION,
+	};
+
 	const AddMeasurement = {
 		text: "Add Measurement",
 		selected: false,
@@ -129,6 +138,7 @@ function (
 		AddDoseEra,
 		AddDrugEra,
 		AddDrugExposure,
+		AddLocationRegion,
 		AddMeasurement,
 		AddObservation,
 		AddObservationPeriod,
@@ -148,6 +158,7 @@ function (
 		AddDoseEra,
 		AddDrugEra,
 		AddDrugExposure,
+		AddLocationRegion,
 		AddMeasurement,
 		AddObservation,
 		AddObservationPeriod,

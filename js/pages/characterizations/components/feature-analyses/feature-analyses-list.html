@@ -2,6 +2,7 @@
 
 <div data-bind="visible: !$component.loading()">
     <characterizations-tabbed-grid params="{
+        order: [[ 4, 'desc' ]],
         activeTab: $component.gridTab,
         isViewPermitted: $component.isGetListPermitted,
         gridColumns: $component.gridColumns,

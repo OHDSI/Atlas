@@ -22,6 +22,8 @@ define([
     'services/MomentAPI',
     'services/Source',
     'utils/CsvUtils',
+    'services/Vocabulary',
+    'atlas-state',
     './explore-prevalence',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
@@ -53,12 +55,16 @@ define([
     momentAPI,
     SourceService,
     CsvUtils,
+    vocabularyProvider,
+    sharedState
 ) {
 
     class CharacterizationViewEditResults extends AutoBind(Component) {
 
         constructor(params) {
             super();
+
+            this.model = params.model;
 
             this.prevalenceStatConverter = new PrevalenceStatConverter(this.classes);
             this.distributionStatConverter = new DistributionStatConverter(this.classes);
@@ -111,6 +117,18 @@ define([
                     action: () => this.exportComparison(analysis),
                 });
             }
+
+           /*
+            * Taking this out per https://github.com/OHDSI/Atlas/issues/1834
+
+           if (this.extractConceptIds(analysis).length > 0) {
+                buttons.push({
+                    text: 'Create new Concept Set',
+                    action: () => this.createNewSet(analysis)
+                });
+            }
+
+            */
 
             return buttons;
         }
@@ -175,6 +193,44 @@ define([
                 }
             });
             CsvUtils.saveAsCsv(exprt);
+        }
+
+        async createNewSet(analysis) {
+            this.loading(true);
+            const conceptIds = this.extractConceptIds(analysis);
+            const items = await vocabularyProvider.getConceptsById(conceptIds);
+            await this.initConceptSet(items.data);
+            this.showConceptSet();
+            this.loading(false);
+        }
+
+        extractConceptIds(analysis) {
+            const conceptIds = [];
+            analysis.data.forEach(r => {
+        	if (r.conceptId > 0) {
+        		conceptIds.push(r.conceptId);
+        	}
+            });
+            return conceptIds;
+        }
+
+        showConceptSet() {
+            commonUtils.routeTo('#/conceptset/0/details');
+        }
+
+        async initConceptSet(conceptSetItems) {
+            this.model.currentConceptSet({
+                name: ko.observable("New Concept Set"),
+                id: 0
+            });
+            this.model.currentConceptSetSource('repository');
+            for (let i = 0; i < conceptSetItems.length; i++) {
+                if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
+                    sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                    let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
+                    sharedState.selectedConcepts.push(conceptSetItem);
+                }
+            }
         }
 
         exportComparison(analysis) {
@@ -265,6 +321,7 @@ define([
                         covariateName: r.covariateName,
                         conceptId: r.conceptId,
                         conceptName: r.conceptName,
+                        faType: r.faType,
                         avg: r.avg,
                         count: r.count,
                         pct: r.avg * 100,
@@ -376,7 +433,7 @@ define([
                     ]
                   };
                 }
-            }            
+            }
         }
 
         prepareTabularData(data = [], filters = []) {
@@ -424,8 +481,8 @@ define([
             return `
                 <div>Series: ${d.seriesName}</div>
                 <div>Covariate: ${d.covariateName}</div>
-                <div>X: ${d.xValue}</div>
-                <div>Y: ${d.yValue}</div>
+                <div>X: ${d3.format('.2f')(d.xValue)}%</div>
+                <div>Y: ${d3.format('.2f')(d.yValue)}%</div>
             `;
         }
 

@@ -6,6 +6,7 @@ define([
 	'assets/ohdsi.util',
     'appConfig',
 	'./const',
+	'const',
 	'atlas-state',
 	'./PermissionService',
 	'services/Prediction',
@@ -35,6 +36,7 @@ define([
 	ohdsiUtil,
 	config,
 	constants,
+	globalConstants,
 	sharedState,
 	PermissionService,
 	PredictionService,
@@ -74,13 +76,14 @@ define([
 			this.defaultTemporalCovariateSettings = null;
 			this.fullSpecification = ko.observable(null);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
-            this.isSaving = ko.observable(false);
-            this.isCopying = ko.observable(false);
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
-            this.isProcessing = ko.computed(() => {
-                return this.isSaving() || this.isCopying() || this.isDeleting();
-            });
+			this.isProcessing = ko.computed(() => {
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+			this.defaultName = globalConstants.newEntityNames.plp;
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -114,8 +117,11 @@ define([
 				}
 			});
 
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() !== this.defaultName;
 			});
 
 			this.canSave = ko.computed(() => {
@@ -199,17 +205,29 @@ define([
 			});
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			this.fullAnalysisList.removeAll();
-			const payload = this.prepForSave();
-			PredictionService.savePrediction(payload).then((analysis) => {
-				this.loadAnalysisFromServer(analysis);
-				document.location =  constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+
+			// Next check to see that a prediction analysis with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current prediction analysis is excluded in this check.
+			try{
+				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
+				if (results > 0) {
+					alert('A prediction analysis with this name already exists. Please choose a different name.');
+				} else {
+					this.fullAnalysisList.removeAll();
+					const payload = this.prepForSave();
+					const savedPrediction = await PredictionService.savePrediction(payload);
+					this.loadAnalysisFromServer(savedPrediction);
+					document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to save a prediction analysis.');
+			} finally {
 				this.isSaving(false);
 				this.loading(false);
-			});
+            }
 		}
 
 		prepForSave() {
@@ -270,7 +288,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({id: 0, name: 'New Patient Level Prediction Analysis'}));
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({id: 0, name: this.defaultName}));
 			return new Promise(async (resolve, reject) => {
 				this.setAnalysisSettingsLists();
 				this.resetDirtyFlag();

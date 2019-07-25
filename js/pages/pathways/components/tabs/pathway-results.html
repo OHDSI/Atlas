@@ -25,6 +25,9 @@
 
 	<!-- ko with: pathwaysObserver -->
 		<h3 data-bind="css: $component.classes('analysis-name')">Pathways Analysis for <span data-bind="text: title"></span></h3>
+		<div data-bind="if: !eventCodes.length && !cohortPathways.length && !eventCohorts.length">
+			No pathways were found
+		</div>
 		<!-- ko foreach: cohortPathways -->
 			<div data-bind="css: $component.classes('report-group')">
 				<div data-bind="css: $component.classes({ element: 'legend-panel', extra: ['panel panel-primary'] })">

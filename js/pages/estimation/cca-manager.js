@@ -6,6 +6,7 @@ define([
 	'assets/ohdsi.util',
 	'appConfig',
 	'./const',
+	'const',
 	'atlas-state',
 	'./PermissionService',
 	'services/Estimation',
@@ -31,6 +32,7 @@ define([
 	ohdsiUtil,
 	config,
 	constants,
+	globalConstants,
 	sharedState,
 	PermissionService,
 	EstimationService,
@@ -45,7 +47,7 @@ define([
 	class ComparativeCohortAnalysisManager extends Page {
 		constructor(params) {
 			super(params);
-			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysis;
+			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysisDash;
 
 			this.selectTab = this.selectTab.bind(this);
 			this.defaultLoadingMessage = "Loading...";
@@ -66,14 +68,15 @@ define([
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
 			this.selectedTabKey = ko.observable(params.routerParams().section);
-            this.isSaving = ko.observable(false);
-            this.isCopying = ko.observable(false);
-            this.isDeleting = ko.observable(false);
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.defaultName = globalConstants.newEntityNames.ple;
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
 			this.isProcessing = ko.computed(() => {
-                return this.isSaving() || this.isCopying() || this.isDeleting();
-            });
-            this.componentParams = ko.observable({
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
 				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
@@ -85,8 +88,14 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
-            });
+			});
 
+			this.isNameFilled = ko.computed(() => {
+				return this.estimationAnalysis() && this.estimationAnalysis().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.estimationAnalysis().name() !== this.defaultName;
+			});
 			this.canSave = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
@@ -109,10 +118,6 @@ define([
 						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
 					}
 				}
-			});
-
-			this.isNameCorrect = ko.computed(() => {
-				return this.estimationAnalysis() && this.estimationAnalysis().name();
 			});
 		}
 
@@ -140,17 +145,29 @@ define([
 			document.location = constants.paths.browser()
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			this.fullAnalysisList.removeAll();
-			const payload = this.prepForSave();
-			EstimationService.saveEstimation(payload).then((analysis) => {
-				this.setAnalysis(analysis);
-				document.location =  constants.paths.ccaAnalysis(this.estimationAnalysis().id());
+
+			// Next check to see that an estimation analysis with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.
+			try{
+				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
+				if (results > 0) {
+					alert('An estimation analysis with this name already exists. Please choose a different name.');
+				} else {
+					this.fullAnalysisList.removeAll();
+					const payload = this.prepForSave();
+					const savedEstimation = await EstimationService.saveEstimation(payload);
+					this.setAnalysis(savedEstimation);
+					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to save an estimation analysis.');
+			} finally {
 				this.isSaving(false);
 				this.loading(false);
-			});
+			}
 		}
 
 		prepForSave() {
@@ -259,7 +276,7 @@ define([
 				this.setAnalysis(analysis);
 				this.isCopying(false);
 				this.loading(false);
-				document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
+				commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
 			});
 		}
 

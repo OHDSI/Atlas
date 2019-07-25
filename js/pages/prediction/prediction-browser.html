@@ -6,7 +6,7 @@
 		extra: `pull-right btn btn-sm btn-primary ${canCreatePrediction() ? '' : 'disabled'}`,
 	})">New Patient Level Prediction</span>
 
-	<faceted-datatable data-bind="visible: loading()==false" params="order: [[3, 'desc']], reference: reference, columns: columns, options: options"></faceted-datatable>
+	<faceted-datatable data-bind="visible: loading()==false" params="order: [[4, 'desc']], reference: reference, columns: columns, options: options"></faceted-datatable>
 
 	<loading data-bind="visible:loading()" params="status: 'retrieving predictions'"></loading>
 </div>

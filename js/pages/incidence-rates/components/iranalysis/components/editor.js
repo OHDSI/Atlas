@@ -68,11 +68,11 @@ define([
 		};
 		
 		deleteTargetCohort(cohortDef) {
-			this.analysis().targetIds.remove(cohortDef.id);	
+			this.analysis().targetIds.remove(cohortDef.id);
 		};
 
 		deleteOutcomeCohort(cohortDef) {
-			this.analysis().outcomeIds.remove(cohortDef.id);	
+			this.analysis().outcomeIds.remove(cohortDef.id);
 		};
 		
 		cohortSelected(cohortId) {

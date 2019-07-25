@@ -40,6 +40,7 @@ define([
 		async loadData() {
 			this.loading(true);
 			const analysisList = await PathwayService.list();
+			datatableUtils.coalesceField(analysisList.content, 'modifiedDate', 'createdDate');
 			this.analysisList(analysisList.content);
 			this.loading(false);
 		}
@@ -50,6 +51,10 @@ define([
 
 		get gridColumns() {
 			return [
+				{
+					title: 'Id',
+					data: 'id'
+				},
 				{
 					title: 'Name',
 					data: 'name',
@@ -62,18 +67,16 @@ define([
 				{
 					title: 'Created',
 					className: this.classes('tbl-col', 'created'),
-					type: 'datetime-formatted',
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Updated',
 					className: this.classes('tbl-col', 'updated'),
-					type: 'datetime-formatted',
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
-					data: (d) => (d.createdBy && d.createdBy.login) || "",
+                    render: datatableUtils.getCreatedByFormatter(),
 					className: this.classes('tbl-col', 'author'),
 				}
 			];

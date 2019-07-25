@@ -35,10 +35,6 @@ define([
 			this.byOperator = false;
 			this.byQualifier = false;
 
-			this.dispose = function () {
-				this.currentConceptSubscription.dispose();
-			}
-
 			this.chartFormats = {
 				treemap: {
 					useTip: true,
@@ -128,24 +124,35 @@ define([
 
 		}
 
+		dispose() {
+			this.currentConceptSubscription.dispose();
+			super.dispose();
+		}
+
 		parseData({
 			data
 		}) {
 			const normalizedData = atlascharts.chart.normalizeDataframe(ChartUtils.normalizeArray(data, true));
 
 			if (!normalizedData.empty) {
-				const tableData = normalizedData.conceptPath.map((d, i) => {
-					const pathParts = d.split('||');
-					return {
-						concept_id: normalizedData.conceptId[i],
-						name: pathParts[pathParts.length - 1],
-						ingredient: pathParts[3],
-						num_persons: ChartUtils.formatComma(normalizedData.numPersons[i]),
-						percent_persons: ChartUtils.formatPercent(normalizedData.percentPersons[i]),
-						agg_value: ChartUtils.formatFixed(normalizedData[this.aggProperty.name][i])
-					};
+				let distinctConceptIds = new Set([]);
+				let tableData = [];
+				// Make the values unique per https://github.com/OHDSI/Atlas/issues/913
+				normalizedData.conceptPath.forEach((d, i) => {
+					if (!distinctConceptIds.has(normalizedData.conceptId[i])) {
+						distinctConceptIds.add(normalizedData.conceptId[i]);
+						const pathParts = d.split('||');
+						tableData.push({
+							concept_id: normalizedData.conceptId[i],
+							name: pathParts[pathParts.length - 1],
+							ingredient: pathParts[3],
+							num_persons: ChartUtils.formatComma(normalizedData.numPersons[i]),
+							percent_persons: ChartUtils.formatPercent(normalizedData.percentPersons[i]),
+							agg_value: ChartUtils.formatFixed(normalizedData[this.aggProperty.name][i])
+						});
+					}
 				});
-				this.tableData(tableData);
+				this.tableData(tableData); 
 				this.treeData(normalizedData);
 
 				return {

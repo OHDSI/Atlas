@@ -31,5 +31,11 @@ a visit occurrence of <conceptset-reference params="{conceptSetId: CodesetId, co
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PlaceOfServiceLocation) != null -->
+	<li>with Place of Service located in <conceptset-reference params="{conceptSetId: PlaceOfServiceLocation, conceptSets: $component.expression.ConceptSets, defaultName: 'Any region'}"></conceptset-reference></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PlaceOfServiceDistance) != null -->
+	<li>with distance from a Place of Service to Patient <numeric-range-viewer params="Range: PlaceOfServiceDistance"></numeric-range-viewer></li>
+<!-- /ko -->
 </ul>
 <!-- /ko -->

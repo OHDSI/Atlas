@@ -38,6 +38,8 @@ define([
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
+			  self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
+        self.runAsLogin = ko.observable();
 		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
@@ -141,9 +143,22 @@ define([
             });
         };
 
+        self.runAs = function() {
+          self.isInProgress(true);
+          const xhr =  authApi.runAs(self.runAsLogin(), self.onLoginSuccessful, (jqXHR, textStatus, errorThrown) => {
+						const msg = jqXHR.getResponseHeader('x-auth-error');
+						self.isInProgress(false);
+						self.errorMsg(msg || "User was not found");
+					});
+        };
+
         self.signoutIap = function () {
             window.location = '/_gcp_iap/clear_login_cookie';
-		}
+        }
+
+        self.refreshPage = function () {
+            window.location.reload();
+        }
     }
 
     var component = {

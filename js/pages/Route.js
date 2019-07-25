@@ -21,6 +21,7 @@ define([
 
 		constructor(handler) {
 			this.handler = handler;
+			this.isSecured = false;
 		}
 
 		handler() {
@@ -29,6 +30,11 @@ define([
 	}
 
 	class AuthorizedRoute extends Route {
+		constructor(props) {
+			super(props);
+			this.isSecured = true;
+		}
+
 		checkPermission() {
 			if (appConfig.userAuthenticationEnabled && authApi.subject() === undefined) {
 				return this.waitForSubject();

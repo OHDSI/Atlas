@@ -42,7 +42,9 @@ define(['knockout', 'components/cohortbuilder/options', 'text!./CohortExpression
 			else if (data.hasOwnProperty("PayerPlanPeriod"))
 				return "payer-plan-period-criteria-viewer";
 			else if (data.hasOwnProperty("Death"))
-				return "death-criteria-viewer";			
+				return "death-criteria-viewer";
+			else if (data.hasOwnProperty("LocationRegion"))
+				return "location-region-viewer";
 			else
 				return "unknownCriteriaType";
 		};

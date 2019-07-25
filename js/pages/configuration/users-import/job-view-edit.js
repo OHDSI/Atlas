@@ -98,7 +98,7 @@ define([
 			this.job({
 				...job,
 				enabled: ko.observable(job.enabled),
-				preseveRoles: ko.observable(job.preserveRoles),
+				preserveRoles: ko.observable(job.preserveRoles),
 				providerType: ko.observable(job.providerType),
 				startDate: ko.observable(toDate(job.startDate)),
 				frequency: ko.observable(job.frequency),
@@ -133,7 +133,7 @@ define([
 			}
 			this.weekdays.removeAll();
 			job.weekDays.forEach(wd => this.weekdays.push(wd));
-			this.jobDirtyFlag(new ohdsiUtil.dirtyFlag(this.job));
+			this.jobDirtyFlag(new ohdsiUtil.dirtyFlag(this.job()));
 			this.jobId.valueHasMutated();
 		}
 

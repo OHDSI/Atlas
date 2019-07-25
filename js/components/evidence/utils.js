@@ -1,4 +1,4 @@
-define(['knockout'], function(ko){
+define(['knockout', 'numeral'], function(ko, numeral){
 
     function hasEvidence(row){
         return (
@@ -12,8 +12,18 @@ define(['knockout'], function(ko){
             row.ancestorSplicerCount > 0
         )
     }
+
+    function formatNumberWithCommas(val) {
+      return numeral(val).format('0,0');
+    }
+
+    function formatBooleanDisplay(val) {
+      return val.toString() == "1" ? 'Y' : 'N';
+    }
   
     return {
       hasEvidence,
+      formatNumberWithCommas,
+      formatBooleanDisplay,
     };
   });

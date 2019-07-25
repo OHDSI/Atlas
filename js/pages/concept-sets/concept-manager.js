@@ -12,6 +12,7 @@ define([
 	'./PermissionService',
 	'faceted-datatable',
 	'components/heading',
+	'less!./concept-manager.less',
 ], function (
 	ko,
 	view,
@@ -30,6 +31,7 @@ define([
 			super(params);
 			this.model = params.model;
 			this.currentConceptId = ko.observable();
+			this.hierarchyPillMode = ko.observable('all');
 
 			this.commonUtils = commonUtils;
 			this.sourceCounts = ko.observableArray();
@@ -88,12 +90,12 @@ define([
 				}, {
 					'caption': 'Has Records',
 					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.RECORD_COUNT) > 0;
 					}
 				}, {
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 					}
 				}, {
 					'caption': 'Distance',
@@ -156,187 +158,31 @@ define([
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
 			}];
-			
-			this.metatrix = {
-				'ICD9CM.5-dig billing code': {
-					childRelationships: [{
-						name: 'Subsumes',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Is a',
-						range: [0, 1]
-					}]
-				},
-				'ICD9CM.4-dig nonbill code': {
-					childRelationships: [{
-						name: 'Subsumes',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Is a',
-						range: [0, 1]
-					}, {
-						name: 'Non-standard to Standard map (OMOP)',
-						range: [0, 1]
-					}]
-				},
-				'ICD9CM.3-dig nonbill code': {
-					childRelationships: [{
-						name: 'Subsumes',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Non-standard to Standard map (OMOP)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Ingredient': {
-					childRelationships: [{
-						name: 'Ingredient of (RxNorm)',
-						range: [0, 999]
-					}],
-					parentRelationships: [{
-						name: 'Has inferred drug class (OMOP)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Brand Name': {
-					childRelationships: [{
-						name: 'Ingredient of (RxNorm)',
-						range: [0, 999]
-					}],
-					parentRelationships: [{
-						name: 'Tradename of (RxNorm)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Branded Drug': {
-					childRelationships: [{
-						name: 'Consists of (RxNorm)',
-						range: [0, 999]
-					}],
-					parentRelationships: [{
-						name: 'Has ingredient (RxNorm)',
-						range: [0, 999]
-					}, {
-						name: 'RxNorm to ATC (RxNorm)',
-						range: [0, 999]
-					}, {
-						name: 'RxNorm to ETC (FDB)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Clinical Drug Comp': {
-					childRelationships: [],
-					parentRelationships: [{
-						name: 'Has precise ingredient (RxNorm)',
-						range: [0, 999]
-					}, {
-						name: 'Has ingredient (RxNorm)',
-						range: [0, 999]
-					}]
-				},
-				'CPT4.CPT4': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'CPT4.CPT4 Hierarchy': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'ETC.ETC': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.LLT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.PT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.HLT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.SOC': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.HLGT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'SNOMED.Clinical Finding': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'SNOMED.Procedure': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				}
+
+			this.hierarchyConceptsOptions = {
+				Facets: [{
+					'caption': 'Vocabulary',
+					'binding': function (o) {
+						return o.VOCABULARY_ID;
+					}
+				}, {
+					'caption': 'Class',
+					'binding': function (o) {
+						return o.CONCEPT_CLASS_ID;
+					}
+				}, {
+					'caption': 'Has Records',
+					'binding': function (o) {
+						return parseInt(o.RECORD_COUNT.toString()
+							.replace(',', '')) > 0;
+					}
+				}, {
+					'caption': 'Has Descendant Records',
+					'binding': function (o) {
+						return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
+							.replace(',', '')) > 0;
+					}
+				}]
 			};
 
 			this.currentConceptArray = ko.observableArray();
@@ -405,13 +251,10 @@ define([
 		}
 
 		metagorize(metarchy, related) {
-			var concept = this.model.currentConcept();
-			var key = concept.VOCABULARY_ID + '.' + concept.CONCEPT_CLASS_ID;
-			var meta = this.metatrix[key] || constants.defaultConceptHierarchyRelationships;
-			if (this.hasRelationship(related, meta.childRelationships)) {
+			if (this.hasRelationship(related, constants.defaultConceptHierarchyRelationships.childRelationships)) {
 				metarchy.children.push(related);
 			}
-			if (this.hasRelationship(related, meta.parentRelationships)) {
+			if (this.hasRelationship(related, constants.defaultConceptHierarchyRelationships.parentRelationships)) {
 				metarchy.parents.push(related);
 			}
 		}

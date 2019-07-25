@@ -35,7 +35,7 @@ define(
 				this.pageModel = model;
 				this.router = router;
 			}
-			
+
 			/**
 			 * Performs initial setup
 			 * @returns Promise
@@ -122,8 +122,9 @@ define(
 							}
 						}
 						sharedState.selectedConcepts(selectedConcepts);
-						ko.contextFor(this)
-							.$component.reference.valueHasMutated();
+						for (var i = 0; i < table.rows()[0].length; i++) {
+							table.cell(i,0).data('<i class="fa fa-shopping-cart"></i>');
+						}
 					});
 
 				// handling concept set selections
@@ -151,6 +152,7 @@ define(
 							var conceptSetItem = self.pageModel.createConceptSetItem(concept);
 							sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 							sharedState.selectedConcepts.push(conceptSetItem);
+							self.pageModel.setConceptSetExpressionExportItems();
 						} else {
 							delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
 							sharedState.selectedConcepts.remove(function (i) {
@@ -173,9 +175,7 @@ define(
 								});
 							}
 							conceptSet.expression.items.valueHasMutated();
-							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression)
-								.then(res => self.pageModel.loadIncluded(res.data))
-								.then(res => self.pageModel.loadSourcecodes());
+							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression);
 						}
 					});
 
@@ -191,7 +191,7 @@ define(
 						sharedState.selectedConcepts.remove(function (i) {
 							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 						});
-
+						self.pageModel.currentCohortDefinition() && self.pageModel.currentCohortDefinition().expression().ConceptSets.valueHasMutated();
 						self.pageModel.resolveConceptSetExpression();
 					});
 
