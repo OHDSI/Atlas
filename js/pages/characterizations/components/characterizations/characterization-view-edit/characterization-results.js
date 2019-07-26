@@ -92,7 +92,8 @@ define([
             this.explorePrevalence = ko.observable();
             this.explorePrevalenceTitle = ko.observable();
             this.prevalenceStatData = ko.observableArray();
-            this.thresholdValue = ko.observable();
+            this.thresholdValuePct = ko.observable();
+            this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^[0-9]{1,3}$', allowEmpty: false } });
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
 
@@ -279,7 +280,7 @@ define([
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
-                CharacterizationService.loadCharacterizationResults(this.executionId(), this.thresholdValue())
+                CharacterizationService.loadCharacterizationResults(this.executionId(), this.newThresholdValuePct() / 100)
             ]).then(([
                  sourceList,
                  domains,
@@ -295,7 +296,8 @@ define([
                 this.domains(domains);
 
                 this.totalResultsCount(generationResults.totalCount);
-                this.thresholdValue(generationResults.prevalenceThreshold);
+                this.thresholdValuePct(generationResults.prevalenceThreshold * 100);
+                this.newThresholdValuePct(this.thresholdValuePct());
                 this.resultsCountFiltered(resultsList.length);
 
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
@@ -310,7 +312,7 @@ define([
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
                             domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
-                            analysisName: r.analysisName,
+                            analysisName: this.getAnalysisName(r.analysisName),
                             type: r.resultType.toLowerCase(),
                         })),
                         'analysisId'
@@ -362,6 +364,11 @@ define([
                 this.data(result);
                 this.loading(false);
             });
+        }
+
+        getAnalysisName(rawName) {
+
+            return `${rawName} (prevalence > ${this.thresholdValuePct()}%)`;
         }
 
         findDomainById(domainId) {
@@ -442,7 +449,7 @@ define([
                   const secondCohort = analyses[0].reports[1];
 
                   return {
-                    analysisName: 'All prevalence covariates',
+                    analysisName: this.getAnalysisName('All prevalence covariates'),
                     type: 'prevalence',
                     reports: [
                       {...firstCohort, stats: getAllCohortStats(firstCohort.cohortId)},

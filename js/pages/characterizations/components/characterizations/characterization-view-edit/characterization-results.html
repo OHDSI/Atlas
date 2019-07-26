@@ -27,9 +27,10 @@
         </div>
         <div data-bind="css: classes('threshold')">
             <div data-bind="css: classes('threshold-setter')">
-                <label  data-bind="css: classes('threshold-label')">Threshold Level:</label>
-                <input type="number" class="form-control" placeholder="Threshold value"
-                       data-bind="css: classes('threshold-input'), textInput: $component.thresholdValue">
+                <label  data-bind="css: classes('threshold-label')">Filter results to covariates with prevalence greater than:</label>
+                <input type="number" min="1" max="100" class="form-control" placeholder="Threshold value"
+                       data-bind="css: classes('threshold-input'), textInput: $component.newThresholdValuePct">
+                <label>%</label>
                 <button data-bind="
                     css: classes({ element: 'threshold-submit', extra: 'btn btn-primary btn-sm' }),
                     text: 'Apply',
