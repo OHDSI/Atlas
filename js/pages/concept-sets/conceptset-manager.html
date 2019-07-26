@@ -4,7 +4,7 @@
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
     <div class="input-group">
-      <input class="form-control" id="txtConceptSetName" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }"/>
+      <input class="form-control" id="txtConceptSetName" placeholder="New Concept Set" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }"/>
       <div class="input-group-btn">
         <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
@@ -69,7 +69,7 @@
           <div class="form-group">
             <label for="txtOptimizerSavingNewName">Please provide a name for your new concept set:</label>
             </br>
-            <input id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
+            <input placeholder="Concept Set Name" id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
             <div class="btn-group">
               <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet">Save</button>
               <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>

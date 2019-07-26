@@ -7,7 +7,7 @@
 <div data-bind="visible: $component.prior.priorType() == 'hierarchical'">
     <label>Child-to-parent mapping for a hierarchical prior:</label>
     <div class="input-group">
-        <input class="form-control" type="text" data-bind="textInput: $component.prior.graph" />
+        <input placeholder="Child-to-parent mapping for a hierarchical prior" class="form-control" type="text" data-bind="textInput: $component.prior.graph" />
     </div>
 </div>
 <div>
@@ -15,17 +15,17 @@
     <div class="input-group">
         <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.prior.useCrossValidation"></select>
     </div>
-</div>    
+</div>
 <div>
     <label>Force intercept coefficient into prior:</label>
     <div class="input-group">
         <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.prior.forceIntercept"></select>
     </div>
-</div>    
+</div>
 <div>
     <label>Specify the prior distribution variance:</label>
     <div class="input-group">
-        <input class="form-control" type="text" data-bind="value: $component.prior.variance" />
+        <input placeholder="Specify the prior distribution variance" class="form-control" type="text" data-bind="value: $component.prior.variance" />
     </div>
 </div>
 <div>
