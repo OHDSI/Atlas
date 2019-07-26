@@ -22,7 +22,6 @@ define([
   class Page extends Component {
     constructor(params) {
       super(params);
-      this.subscriptions = [];
       this.routerParams = params.router.routerParams();
       this.activeRoute = params.router.activeRoute();
       this.subscriptions.push(params.router.routerParams.subscribe(newParams => {
@@ -45,10 +44,6 @@ define([
 
     onPageCreated() {
       this.onRouterParamsChanged(this.routerParams);
-    }
-
-    dispose() {
-      this.subscriptions.forEach(sub => sub.dispose());
     }
   }
 
