@@ -59,6 +59,8 @@ define([
     sharedState
 ) {
 
+	const TYPE_PREVALENCE = 'prevalence';
+
     class CharacterizationViewEditResults extends AutoBind(Component) {
 
         constructor(params) {
@@ -93,7 +95,7 @@ define([
             this.explorePrevalenceTitle = ko.observable();
             this.prevalenceStatData = ko.observableArray();
             this.thresholdValuePct = ko.observable();
-            this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^[0-9]{1,3}$', allowEmpty: false } });
+            this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^[0-9]{1,2}$', allowEmpty: false } });
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
 
@@ -185,7 +187,7 @@ define([
                                 'Covariate short name': pageUtils.extractMeaningfulCovName(stat.covariateName),
                                 'Count': stat.count[strataId][cohort.cohortId],
                                 ...(
-                                    type === 'prevalence'
+                                    type === TYPE_PREVALENCE
                                     ? { 'Percent': stat.pct[strataId][cohort.cohortId] }
                                     : {
                                         'Avg': stat.avg[strataId][cohort.cohortId],
@@ -312,7 +314,7 @@ define([
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
                             domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
-                            analysisName: this.getAnalysisName(r.analysisName),
+                            analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             type: r.resultType.toLowerCase(),
                         })),
                         'analysisId'
@@ -366,9 +368,9 @@ define([
             });
         }
 
-        getAnalysisName(rawName) {
+        getAnalysisName(rawName, { faType, statType }) {
 
-            return `${rawName} (prevalence > ${this.thresholdValuePct()}%)`;
+            return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.thresholdValuePct()}%)` : '');
         }
 
         findDomainById(domainId) {
@@ -427,13 +429,13 @@ define([
         }
 
         getPrevalenceReports(reports) {
-            return reports.filter(analysis => analysis.type === 'prevalence');
+            return reports.filter(analysis => analysis.type === TYPE_PREVALENCE);
         }
 
         getCovariatesSummaryAnalysis(analyses) {
             if (analyses.length > 1 && analyses[0].reports.length === 2) {
 
-                const prevalenceAnalyses = analyses.filter(a => a.type === "prevalence");
+                const prevalenceAnalyses = analyses.filter(a => a.type === TYPE_PREVALENCE);
                 if (prevalenceAnalyses.length > 0) {
                   const getAllCohortStats = (cohortId) => {
                     return lodash.flatten(prevalenceAnalyses.map(a => {
@@ -449,8 +451,8 @@ define([
                   const secondCohort = analyses[0].reports[1];
 
                   return {
-                    analysisName: this.getAnalysisName('All prevalence covariates'),
-                    type: 'prevalence',
+                    analysisName: 'All prevalence covariates',
+                    type: TYPE_PREVALENCE,
                     reports: [
                       {...firstCohort, stats: getAllCohortStats(firstCohort.cohortId)},
                       {...secondCohort, stats: getAllCohortStats(secondCohort.cohortId)}
@@ -471,7 +473,7 @@ define([
             const convertedData = filteredData.map(analysis => {
                 let convertedAnalysis;
 
-                if (analysis.type === 'prevalence') {
+                if (analysis.type === TYPE_PREVALENCE) {
                     convertedAnalysis = this.prevalenceStatConverter.convertAnalysisToTabularData(analysis);
                 } else {
                     if (this.isComparatativeMode(filters)) {
