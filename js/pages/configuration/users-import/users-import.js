@@ -4,6 +4,7 @@ define(['knockout',
 		'atlas-state',
 		'services/AuthAPI',
 		'services/User',
+		'services/role',
 		'utils/AutoBind',
 		'components/Component',
 		'utils/CommonUtils',
@@ -20,12 +21,13 @@ define(['knockout',
 		'components/heading'
 	],
 	function (
-		ko, 
-		view, 
+		ko,
+		view,
 		config,
 		sharedState,
-		authApi, 
+		authApi,
 		userService,
+		roleService,
 		AutoBind,
 		Component,
 		commonUtils,
@@ -69,7 +71,6 @@ define(['knockout',
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
 				this.model = params.model;
-				this.updateRoles = params.model.updateRoles;
 				this.roles = sharedState.roles;
 				this.rolesMapping = ko.observableArray();
 				this.selectedRole = ko.observable();
@@ -166,7 +167,7 @@ define(['knockout',
 					}));
 				userService.importUsers(users, this.importProvider()).finally(() => {
 						this.loading(false);
-						userService.getUsers().then(data => this.model.users(data));
+						userService.getUsers().then(data => sharedState.users(data));
 				});
 				return true;
 			}
@@ -301,7 +302,7 @@ define(['knockout',
 				userService.getAuthenticationProviders().then(providers => {
 					this.providers(providers);
 				}).finally(() => this.loading(false));
-				this.updateRoles().then(() => {
+				roleService.updateRoles().then(() => {
 					const mapping = this.roles().filter(role => !role.defaultImported).map(role => (
 						{
 							...role,

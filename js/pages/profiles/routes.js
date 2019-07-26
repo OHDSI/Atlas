@@ -2,9 +2,8 @@ define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
-      return {        
+      return {
         '/profiles/?((\w|.)*)': new AuthorizedRoute((path) => {
-          appModel.activePage(this.title);
           require(['./profile-manager', 'components/cohort-definition-browser'], function () {
             path = path.split("/");
             const params = {};

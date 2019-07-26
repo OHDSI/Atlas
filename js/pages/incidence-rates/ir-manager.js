@@ -59,11 +59,12 @@ define([
 			this.loading = ko.observable(false);
 			this.loadingInfo = ko.observable();
 			this.loadingSummary = ko.observableArray();
+			this.constants = constants;
+			this.tabs = constants.tabs;
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
-			this.constants = constants;
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
@@ -106,7 +107,7 @@ define([
 			});
 
 			this.isRunning = ko.observable(false);
-			this.activeTab = ko.observable(params.activeTab || 'definition');
+			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
@@ -280,11 +281,20 @@ define([
 			});
 		}
 
+		selectTab(tab) {
+			commonUtils.routeTo(`${this.constants.apiPaths.analysis(this.selectedAnalysisId())}/${tab}`);
+		}
+
 		onRouterParamsChanged(params = {}) {
-			const { analysisId } = params;
+			const { analysisId, activeTab } = params;
+			if (activeTab) {
+				if (Object.values(this.constants.tabs).includes(activeTab)) {
+					this.activeTab(activeTab);
+				}
+			}
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
-			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id() && !this.pollId) {
 				this.startPolling();
 			}
 		}
@@ -308,7 +318,7 @@ define([
 			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab('conceptsets');
+				this.activeTab(this.tabs.CONCEPT_SETS);
 			}
 			this.criteriaContext(null);
 		}
@@ -435,7 +445,7 @@ define([
 			this.loading(true);
 			try {
 				this.refreshDefs();
-				this.activeTab('definition');
+				this.activeTab(this.tabs.DEFINITION);
 				this.close();
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
