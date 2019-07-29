@@ -95,7 +95,7 @@ define([
             this.explorePrevalenceTitle = ko.observable();
             this.prevalenceStatData = ko.observableArray();
             this.thresholdValuePct = ko.observable();
-            this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^[0-9]{1,2}$', allowEmpty: false } });
+            this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$', allowEmpty: false } });
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
 
