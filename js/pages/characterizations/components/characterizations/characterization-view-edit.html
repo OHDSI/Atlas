@@ -11,6 +11,9 @@
                 <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity() -->
                 <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }" title="Create a copy of this cohort characterization"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                    <i class="fa fa-lock"></i>
+                </button>
                 <button type="button" class="btn btn-danger"  data-bind="click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
                 <!-- /ko -->
             </div>
@@ -47,3 +50,12 @@
     </tabs>
 </div>
 <!-- /ko -->
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>

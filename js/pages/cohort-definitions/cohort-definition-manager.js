@@ -633,7 +633,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.model.currentCohortDefinition().id(),
-				createdByUsernameGetter: () => this.model.currentCohortDefinition().createdBy()
+				createdByUsernameGetter: () => this.model.currentCohortDefinition() && this.model.currentCohortDefinition().createdBy()
 			});
 		}
 
