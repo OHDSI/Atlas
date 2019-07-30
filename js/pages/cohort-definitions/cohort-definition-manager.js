@@ -631,7 +631,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.analysisTypesOpened = ko.observable(false);
 
 			this.isAccessModalShown = ko.observable(false);
-			this.isOwner = ko.computed(() => this.isOwnerFn(authApi.subject()));
+			PermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.COHORT_DEFINITION,
+				entityIdGetter: () => this.model.currentCohortDefinition().id(),
+				createdByUsernameGetter: () => this.model.currentCohortDefinition().createdBy()
+			});
 		}
 
 			// METHODS
@@ -1334,26 +1338,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 																				: ko.utils.unwrapObservable(data)
 					}
 				}
-			}
-
-			isOwnerFn(username) {
-				return this.model.currentCohortDefinition().createdBy() === username;
-			}
-
-			loadAccessList() {
-				return PermissionService.loadEntityAccessList(entityType.COHORT_DEFINITION, this.model.currentCohortDefinition().id());
-			}
-
-			grantAccess(roleId) {
-				return PermissionService.grantEntityAccess(entityType.COHORT_DEFINITION, this.model.currentCohortDefinition().id(), roleId);
-			}
-
-			revokeAccess(roleId) {
-				return PermissionService.revokeEntityAccess(entityType.COHORT_DEFINITION, this.model.currentCohortDefinition().id(), roleId);
-			}
-
-			loadRoleSuggestions(searchStr) {
-				return PermissionService.loadRoleSuggestions(searchStr);
 			}
 	}
 

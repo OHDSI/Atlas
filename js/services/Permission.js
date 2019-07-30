@@ -1,7 +1,9 @@
 define(function (require, exports) {
 
+	const ko = require('knockout');
 	const config = require('appConfig');
 	const httpService = require('services/http');
+	const authApi = require('services/AuthAPI');
 
 	async function loadRoleSuggestions(roleSearch) {
 		const res = await httpService.doGet(config.webAPIRoot + `permission/access/suggest`, { roleSearch });
@@ -31,11 +33,36 @@ define(function (require, exports) {
 		);
 	}
 
+	function decorateComponent(component, { entityTypeGetter, entityIdGetter, createdByUsernameGetter }) {
+		component.isOwnerFn = (username) => {
+			return createdByUsernameGetter() === username;
+		};
+
+		component.isOwner = ko.computed(() => component.isOwnerFn(authApi.subject()));
+
+		component.loadAccessList = () => {
+			return loadEntityAccessList(entityTypeGetter(), entityIdGetter());
+		};
+
+		component.grantAccess = (roleId) => {
+			return grantEntityAccess(entityTypeGetter(), entityIdGetter(), roleId);
+		};
+
+		component.revokeAccess = (roleId) => {
+			return revokeEntityAccess(entityTypeGetter(), entityIdGetter(), roleId);
+		};
+
+		component.loadAccessRoleSuggestions = (searchStr) => {
+			return loadRoleSuggestions(searchStr);
+		};
+	}
+
     return {
 		loadEntityAccessList,
 		grantEntityAccess,
 		revokeEntityAccess,
 		loadRoleSuggestions,
+		decorateComponent,
 	};
 });
 
