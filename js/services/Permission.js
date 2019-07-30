@@ -34,6 +34,9 @@ define(function (require, exports) {
 	}
 
 	function decorateComponent(component, { entityTypeGetter, entityIdGetter, createdByUsernameGetter }) {
+
+		component.isAccessModalShown = ko.observable(false);
+
 		component.isOwnerFn = (username) => {
 			return createdByUsernameGetter() === username;
 		};

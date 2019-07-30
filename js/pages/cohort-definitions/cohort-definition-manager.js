@@ -630,7 +630,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortDefinitionOpened = ko.observable(false);
 			this.analysisTypesOpened = ko.observable(false);
 
-			this.isAccessModalShown = ko.observable(false);
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.model.currentCohortDefinition().id(),
