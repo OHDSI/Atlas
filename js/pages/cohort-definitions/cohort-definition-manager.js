@@ -4,6 +4,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/CohortDefinition',
 	'services/MomentAPI',
 	'services/ConceptSet',
+	'services/Permission',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
@@ -28,6 +29,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/file',
 	'const',
 	'./const',
+	'components/security/access/const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -43,7 +45,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
 	'components/modal-exit-message',
-	'./components/reporting/cohort-reports/cohort-reports'
+	'./components/reporting/cohort-reports/cohort-reports',
+	'components/security/access/configure-access-modal'
 ], function (
 	$,
 	ko,
@@ -53,6 +56,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	cohortDefinitionService,
 	momentApi,
 	conceptSetService,
+	PermissionService,
 	conceptSetUitls,
 	datatableUtils,
 	CohortExpression,
@@ -77,6 +81,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	FileService,
 	globalConstants,
 	constants,
+	{ entityType }
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -624,6 +629,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortLinkModalOpened = ko.observable(false);
 			this.cohortDefinitionOpened = ko.observable(false);
 			this.analysisTypesOpened = ko.observable(false);
+
+			this.isAccessModalShown = ko.observable(false);
+			this.isOwner = ko.computed(() => this.isOwnerFn(authApi.subject()));
 		}
 
 			// METHODS
@@ -1326,6 +1334,26 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 																				: ko.utils.unwrapObservable(data)
 					}
 				}
+			}
+
+			isOwnerFn(username) {
+				return this.model.currentCohortDefinition().createdBy() === username;
+			}
+
+			loadAccessList() {
+				return PermissionService.loadEntityAccessList(entityType.COHORT_DEFINITION, this.model.currentCohortDefinition().id());
+			}
+
+			grantAccess(roleId) {
+				return PermissionService.grantEntityAccess(entityType.COHORT_DEFINITION, this.model.currentCohortDefinition().id(), roleId);
+			}
+
+			revokeAccess(roleId) {
+				return PermissionService.revokeEntityAccess(entityType.COHORT_DEFINITION, this.model.currentCohortDefinition().id(), roleId);
+			}
+
+			loadRoleSuggestions(searchStr) {
+				return PermissionService.loadRoleSuggestions(searchStr);
 			}
 	}
 

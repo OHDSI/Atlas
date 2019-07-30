@@ -14,6 +14,9 @@
 					<!-- ko if: $root.currentCohortDefinition().id() != null && $root.currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+						<i class="fa fa-lock"></i>
+					</button>
 					<!-- ko if: !isRunning() -->
 					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
@@ -621,6 +624,15 @@
 </div>
 
 <conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadRoleSuggestions
+"></configure-access-modal>
 
 <script type="text/html" id="success-status-tmpl">
 	<span data-bind="text: $data.status"></span>
