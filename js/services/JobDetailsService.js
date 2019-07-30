@@ -1,4 +1,4 @@
-define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
+define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (ko, appConfig, jobDetail, sharedState, httpService) {
 
 	function list() {
 		return httpService.doGet(appConfig.api.url + 'notifications');
@@ -10,9 +10,9 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 		job.status(updated.status);
 		job.name = updated.jobParameters.jobName;
 		job.executionId = updated.executionId;
-		job.url = getJobURL(updated)
-		job.duration = '';
-		job.endDate = '';
+		job.url = getJobURL(updated);
+		job.duration = ko.observable('');
+		job.endDate = ko.observable('');
 		queue(job);
 	}
 

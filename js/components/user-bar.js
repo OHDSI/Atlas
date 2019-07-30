@@ -126,8 +126,8 @@ define([
 							if (job.status() !== n.status) {
 								job.status(n.status);
 								job.viewed(false);
-								job.duration = duration;
-								job.endDate = displayedEndDate;
+								job.duration(duration);
+								job.endDate(displayedEndDate);
 								job.url = jobDetailsService.getJobURL(n);
 								this.jobListing.valueHasMutated();
 							}
@@ -142,12 +142,11 @@ define([
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;
 								}),
-								duration,
+								duration: duration,
 								endDate: displayedEndDate,
 							};
 							this.jobListing.push(job);
 							this.jobListing.valueHasMutated();
-
 						}
 					});
 				} catch (e) {
