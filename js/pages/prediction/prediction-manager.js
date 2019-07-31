@@ -10,6 +10,8 @@ define([
 	'const',
 	'atlas-state',
 	'./PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'services/Prediction',
 	'services/analysis/Cohort',
 	'./inputTypes/PatientLevelPredictionAnalysis',
@@ -28,6 +30,7 @@ define([
 	'./components/prediction-utilities',
 	'./components/prediction-executions',
 	'less!./prediction-manager.less',
+	'components/security/access/configure-access-modal',
 	'databindings',
 ], function (
 	ko,
@@ -41,6 +44,8 @@ define([
 	globalConstants,
 	sharedState,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	PredictionService,
 	Cohort,
 	PatientLevelPredictionAnalysis,
@@ -128,6 +133,12 @@ define([
 
 			this.canSave = ko.computed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+			});
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.PREDICTION,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().createdBy.login
 			});
 		}
 
@@ -315,10 +326,7 @@ define([
 		loadAnalysisFromServer(analysis) {
 			var header = analysis.json;
 			var specification = JSON.parse(analysis.data.specification);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis(specification));
-			this.patientLevelPredictionAnalysis().id(header.id);
-			this.patientLevelPredictionAnalysis().name(header.name);
-			this.patientLevelPredictionAnalysis().description(header.description);
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...header }));
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
 			this.setAnalysisSettingsLists();

@@ -10,6 +10,8 @@ define([
 	'atlas-state',
 	'pages/Router',
 	'./PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
 	'./inputTypes/Comparison',
@@ -25,6 +27,7 @@ define([
 	'./components/cca-executions',
 	'less!./cca-manager.less',
 	'databindings',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
@@ -37,6 +40,8 @@ define([
 	sharedState,
 	router,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	EstimationService,
 	EstimationAnalysis,
 	Comparison,
@@ -120,6 +125,12 @@ define([
 						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
 					}
 				}
+			});
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.ESTIMATION,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.estimationAnalysis() && this.estimationAnalysis().createdBy.login
 			});
 		}
 
@@ -293,7 +304,7 @@ define([
 		setAnalysis(analysis) {
 			const header = analysis.json;
 			const specification = JSON.parse(analysis.data.specification);
-			this.estimationAnalysis(new EstimationAnalysis(specification, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...analysis.data }, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);

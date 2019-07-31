@@ -10,6 +10,9 @@
 					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing()"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
 					<button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>
+					<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+						<i class="fa fa-lock"></i>
+					</button>
 					<!-- ko ifnot: isRunning -->
 					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
@@ -110,3 +113,12 @@
 	<!-- /ko -->
 </div>
 <div data-bind="visible:loading()" class="loading">loading</div>
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>
