@@ -449,7 +449,7 @@ define(
 					this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
 					this.currentCohortDefinitionInfo([]);
 				} else {
-					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
+					const cohortDefinition = await cohortDefinitionService.getCohortDefinition(cohortDefinitionId);
 					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 
 					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');

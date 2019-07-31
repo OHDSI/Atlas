@@ -64,6 +64,9 @@ define(function (require, exports) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			}
+		}).then(cohortDef => { 
+			cohortDef.expression = JSON.parse(cohortDef.expression)
+			return cohortDef;
 		});
 		return loadPromise;
 	}
