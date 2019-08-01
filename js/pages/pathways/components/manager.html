@@ -5,7 +5,7 @@
 	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
 	<div class="asset-heading">
 		<div class="input-group">
-			<input type="text" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
+			<input type="text" placeholder="New Cohort Pathway" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}"><i class="fa fa-save"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="click: $component.close, css: {disabled: isProcessing()}"><i class="fa fa-times"></i></button>
