@@ -13,6 +13,9 @@
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
         <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() || isProcessing() }">Optimize</button>
+        <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+            <i class="fa fa-lock"></i>
+        </button>
         <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
         <!-- /ko -->
       </div>
@@ -155,3 +158,12 @@
 </atlas-modal>
 <!-- /ko -->
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>

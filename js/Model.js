@@ -409,6 +409,7 @@ define(
 
 				sharedState.selectedConcepts(conceptSetItemsToAdd);
 				this.currentConceptSet({
+					...conceptset,
 					name: ko.observable(conceptset.name),
 					id: conceptset.id
 				});

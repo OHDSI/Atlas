@@ -9,6 +9,8 @@ define([
 	'const',
 	'components/conceptset/utils',
 	'services/Vocabulary',
+	'services/Permission',
+	'components/security/access/const',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/ConceptSet',
@@ -30,6 +32,7 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
+	'components/security/access/configure-access-modal'
 ], function (
 	ko,
 	view,
@@ -41,6 +44,8 @@ define([
 	globalConstants,
 	utils,
 	vocabularyAPI,
+	GlobalPermissionService,
+	{ entityType },
 	conceptSet,
 	sharedState,
 	conceptSetService,
@@ -163,6 +168,12 @@ define([
 			];
 			this.selectedTab = ko.observable(this.routerParams.mode);
 			this.activeUtility = ko.observable("");
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.CONCEPT_SET,
+				entityIdGetter: () => this.model.currentConceptSet() && this.model.currentConceptSet().id,
+				createdByUsernameGetter: () => this.model.currentConceptSet() && this.model.currentConceptSet().createdBy
+			});
 		}
 
 		onRouterParamsChanged({ conceptSetId, mode }) {
