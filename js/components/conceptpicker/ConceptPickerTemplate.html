@@ -3,8 +3,8 @@
 <button class="btn btn-primary btn-sm" data-bind="click: function() { isImportEnabled(true); }">Import</button>
 <!-- /ko -->
 <!-- ko if: isImportEnabled -->
-<div title="Import Concepts..." data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: '' }">
-<textarea rows="1" style="width: 650px; height:400px; resize: none; overflow: auto; word-wrap: break-word"  data-bind=" textInput: importValues"></textarea>
+<div title="Import Concepts" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: '' }">
+<textarea placeholder="Import Concepts" rows="1" style="width: 650px; height:400px; resize: none; overflow: auto; word-wrap: break-word"  data-bind=" textInput: importValues"></textarea>
 <button class="btn btn-primary btn-sm" data-bind="click: doImport">Done</button>
 </div>
 <!-- /ko -->
