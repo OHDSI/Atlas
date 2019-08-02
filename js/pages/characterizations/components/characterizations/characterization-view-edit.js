@@ -2,6 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
+	'services/Permission',
+	'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
@@ -21,10 +23,13 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
+	'components/security/access/configure-access-modal',
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
+	GlobalPermissionService,
+	{ entityType },
     CriteriaGroup,
     ConceptSet,
     CharacterizationAnalysis,
@@ -87,6 +92,12 @@ define([
                     }
                 }
             });
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
+				entityIdGetter: () => this.characterizationId(),
+				createdByUsernameGetter: () => this.design() && this.design().createdBy.login
+			});
         }
 
         onRouterParamsChanged({ characterizationId, section, subId }) {

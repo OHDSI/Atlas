@@ -129,20 +129,10 @@ define([
 			this.currentSource.subscribe((source) => source && this.hasError(false));
 			this.currentReport.subscribe((report) => report && this.hasError(false));
 
-			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
-				this.updateLocation();
-			});
-
-			this.selectedSourceSubscription = this.currentSource.subscribe(r => {
-				this.updateLocation();
-			})
+			this.subscriptions.push(this.selectedReport.subscribe(r => this.updateLocation()));
+			this.subscriptions.push(this.currentSource.subscribe(r => this.updateLocation()));
 
 			this.currentConcept = ko.observable();
-		}
-
-		dispose() {
-			this.selectedReportSubscription.dispose();
-			this.selectedSourceSubscription.dispose();
 		}
 
 		updateLocation() {

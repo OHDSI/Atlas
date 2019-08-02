@@ -1,4 +1,4 @@
-<div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
+<div data-bind="if: $root.currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager'" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
@@ -7,13 +7,16 @@
 	<div data-bind="$root.currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
-				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
+				<input class="form-control" type="text" placeholder="New Cohort Definition" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
 				<div class="input-group-btn">
 					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
 					<!-- ko if: $root.currentCohortDefinition().id() != null && $root.currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+						<i class="fa fa-lock"></i>
+					</button>
 					<!-- ko if: !isRunning() -->
 					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
@@ -107,12 +110,12 @@
 					</li>
 				</ul>
 
-				<div data-bind="if: $root.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
+				<div data-bind="if: $root.router.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
 					<div class="paddedWrapper">
 						<div class="heading">
 							Name:
 						</div>
-						<div class="divtext" data-bind="attr: { contenteditable:canEdit() }, htmlValue:$root.currentConceptSet().name"></div>
+						<div class="divtext" placeholder="Concept Set Name" data-bind="attr: { contenteditable:canEdit() }, htmlValue:$root.currentConceptSet().name"></div>
 						<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
 
 						<div class="clear"></div>
@@ -124,7 +127,7 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:$root.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
+				<div class="loading" data-bind="if:$root.router.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !$root.loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
@@ -545,7 +548,7 @@
 						</div>
 					</div>
 				</div>
-				<loading params="status:'loading'" data-bind="visible:$root.currentView() == 'loading' || $root.loadingReport()">
+				<loading params="status:'loading'" data-bind="visible:$root.router.currentView() == 'loading' || $root.loadingReport()">
 				</loading>
 				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{model: model, showSelectionArea: false} "></report-manager>
 			</div>
@@ -621,6 +624,15 @@
 </div>
 
 <conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>
 
 <script type="text/html" id="success-status-tmpl">
 	<span data-bind="text: $data.status"></span>

@@ -12,7 +12,7 @@ require(["./settings"], (settings) => {
 			...settings.localRefs,
 		},
 //		urlArgs: bustCache,
-	});	
+	});
 	require([
 		'bootstrap',
 		'ko.sortable',
@@ -40,10 +40,10 @@ require(["./settings"], (settings) => {
 				Model,
 				appConfig,
 				constants,
-				Router,
+				router,
 				sharedState,
 			) => {
-				const app = new Application(new Model(), new Router());
+				const app = new Application(new Model(), router);
 
 				app.bootstrap()
 					.then(() => app.checkOAuthError())

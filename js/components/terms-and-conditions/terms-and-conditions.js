@@ -6,6 +6,7 @@ define([
   'utils/CommonUtils',
   'services/MomentAPI',
   'services/AuthAPI',
+  'pages/Router',
   'moment',
   'appConfig',
   'less!./terms-and-conditions.less',
@@ -18,6 +19,7 @@ define([
   commonUtils,
   momentApi,
   authApi,
+  router,
   momentjs,
   appConfig,
 ) {
@@ -37,11 +39,11 @@ define([
       this.content = appConfig.termsAndConditions.content;
       this.isAccepted = ko.observable(true);
 
-      params.model.currentView.subscribe(() => {
+      router.currentView.subscribe(() => {
         this.isAccepted(this.checkAcceptance());
       });
     }
-    
+
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {

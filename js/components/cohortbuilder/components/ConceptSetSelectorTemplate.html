@@ -1,16 +1,16 @@
 <div class="undraggable" style="position: relative; display: inline">
 	<div style="position:relative" class="btn-group btn-group-sm thumb-dropdown" data-bind="dropup, eventListener: [
-																																	{ event: 'mouseenter', selector: '.conceptset', callback: showConceptSetPreview},	
-																																	{ event: 'hidden.bs.dropdown', callback: hideConceptSetPreview}		
+																																	{ event: 'mouseenter', selector: '.conceptset', callback: showConceptSetPreview},
+																																	{ event: 'hidden.bs.dropdown', callback: hideConceptSetPreview}
 																																]">
 		<button type="button" class="btn btn-primary conceptset_edit" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="text:conceptSetName, attr:{'title': conceptSetName}"></button>
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 			<span class="caret"></span>  <!-- caret -->
 			<span class="sr-only" data-bind="text:conceptSetName"></span>
 		</button>
-			
+
 		<ul class="dropdown-menu dropdown-menu-right" style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
-			<li class="dropdown-item" onclick="event.stopPropagation();"><input type="text" style="width:100%; border: solid 1px #9bc1fd; border-radius: 3px" data-bind="textInput: filterText"></li>
+			<li class="dropdown-item" onclick="event.stopPropagation();"><input type="text" placeholder="Search..." style="width:100%; border: solid 1px #9bc1fd; border-radius: 3px" data-bind="textInput: filterText"></li>
 			<!-- ko foreach: filteredConceptSets -->
 			<li class="dropdown-item conceptset" style="cursor:pointer">
 				<a>
@@ -18,7 +18,7 @@
 				</a>
 			</li>
 			<!-- ko if: $component.conceptSetId() != null && $index() == 0  -->
-			<li class="divider"></li>			
+			<li class="divider"></li>
 			<!-- /ko -->
 			<!-- /ko -->
 			<!-- ko if: filteredConceptSets().length > 1 -->
@@ -34,7 +34,7 @@
 			<conceptset-quickview params="conceptSet: previewConceptSet"></conceptset-quickview>
 		</div>
 		<!-- /ko -->
-		</ul>	
+		</ul>
 
 	</div>
 

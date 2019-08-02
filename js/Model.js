@@ -13,6 +13,7 @@ define(
 		'assets/ohdsi.util',
 		'appConfig',
 		'atlas-state',
+		'pages/Router',
 		'utils/BemHelper',
 		'lodash',
 		'd3',
@@ -35,6 +36,7 @@ define(
 		ohdsiUtil,
 		config,
 		sharedState,
+		router,
 		BemHelper,
 		_,
 		d3,
@@ -47,18 +49,12 @@ define(
 				super();
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
-				this.activePage = ko.observable();
 				this.componentParams = ko.observable({});
-				this.routerParams = ko.observable();
-				this.pendingSearch = ko.observable(false);
-				this.supportURL = config.supportUrl;
-				this.targetSupportURL = config.supportUrl.startsWith("#") ? "_this" : "_blank";
 				this.relatedConceptsColumns = constants.getRelatedConceptsColumns(sharedState);
 				this.relatedConceptsOptions = constants.relatedConceptsOptions;
 				this.relatedSourcecodesOptions = constants.relatedSourcecodesOptions;
 				this.relatedSourcecodesColumns = constants.getRelatedSourcecodesColumns(sharedState, this);
 				this.enableRecordCounts = ko.observable(true);
-				this.loading = ko.observable(false);
 				this.loadingIncluded = ko.observable(false);
 				this.loadingSourcecodes = ko.observable(false);
 				this.loadingEvidence = ko.observable(false);
@@ -71,6 +67,7 @@ define(
 				this.reportReportName = ko.observable();
 				this.reportSourceKey = ko.observable();
 				this.EventBus = EventBus;
+				this.router = router;
 				this.reportValid = ko.computed(() => {
 					return (
 						this.reportReportName() != undefined
@@ -87,7 +84,6 @@ define(
 				this.cohortDefinitionSourceInfo = ko.observableArray();
 				this.recentSearch = ko.observableArray(null);
 				this.recentConcept = ko.observableArray(null);
-				this.currentView = ko.observable('loading');
 				this.conceptSetInclusionIdentifiers = ko.observableArray();
 				this.currentConceptSetExpressionJson = ko.observable();
 				this.currentConceptIdentifierList = ko.observable();
@@ -136,12 +132,7 @@ define(
 				this.metarchy = {};
 				this.conceptSetInclusionCount = ko.observable(0);
 				this.sourcecodeInclusionCount = ko.observable(0);
-				this.users = ko.observableArray();
-				this.permissions = ko.observableArray();
 				this.currentConceptSet = ko.observable();
-				this.currentRoleId = ko.observable();
-				this.roles = sharedState.roles;
-				this.signInOpened = authApi.signInOpened;
 
 				this.plpCss = ko.pureComputed(() => {
 					if (this.currentPatientLevelPrediction())
@@ -249,25 +240,6 @@ define(
 					return url;
 				});
 
-				this.irStatusCss = ko.pureComputed(() => {
-					if (this.currentIRAnalysis())
-						return this.currentIRAnalysisDirtyFlag()
-							.isDirty() ? "unsaved" : "open";
-				});
-				this.irAnalysisURL = ko.pureComputed(() => {
-					var url = "#/iranalysis";
-					if (this.currentIRAnalysis())
-						url = url + "/" + (this.currentIRAnalysis()
-							.id() || 'new');
-					return url;
-				});
-
-				this.irStatusCss = ko.pureComputed(() => {
-					if (this.currentIRAnalysis())
-						return this.currentIRAnalysisDirtyFlag()
-							.isDirty() ? "unsaved" : "open";
-				});
-
 				this.hasUnsavedChanges = ko.pureComputed(() => {
 					return ((
 						this.currentCohortDefinitionDirtyFlag()
@@ -286,20 +258,10 @@ define(
 				this.initializationComplete = ko.pureComputed(() => {
 					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
 				});
-				this.currentViewAccessible = ko.pureComputed(() => {
-					return this.currentView && (
-						sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
-						&& (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
-						|| ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
-					));
-				});
 
-				this.currentView.subscribe(() => {
-					EventBus.errorMsg(undefined);
-				});
 
 				this.noSourcesAvailable = ko.pureComputed(() => {
-					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.currentView() !== 'ohdsi-configuration';
+					return sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable && this.router.currentView() !== 'ohdsi-configuration';
 				});
 				this.appInitializationStatus = ko.computed(() => sharedState.appInitializationStatus());
 				this.appInitializationErrorMessage =  ko.computed(() => {
@@ -309,23 +271,7 @@ define(
 						return 'unable to connect to an instance of the webapi.<br/>please contact your administrator to resolve this issue.'
 					}
 				});
-				this.pageTitle = ko.pureComputed(() => {
-					let pageTitle = "ATLAS";
-					switch (this.currentView()) {
-						case 'loading':
-							pageTitle = pageTitle + ": Loading";
-							break;
-						default:
-							pageTitle = `${pageTitle}: ${this.activePage()}`;
-							break;
-					}
 
-					if (this.hasUnsavedChanges()) {
-						pageTitle = "*" + pageTitle + " (unsaved)";
-					}
-
-					return pageTitle;
-				});
 
 				this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
 				this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
@@ -366,16 +312,6 @@ define(
 						}
 					});
 			*/
-			}
-
-			handleViewChange(view, routerParams = false) {
-				if (view !== this.currentView()) {
-					this.currentView('loading');
-				}
-				if (routerParams !== false) {
-					this.routerParams(routerParams);
-				}
-				this.currentView(view);
 			}
 
 			setConceptSetExpressionExportItems() {
@@ -473,6 +409,7 @@ define(
 
 				sharedState.selectedConcepts(conceptSetItemsToAdd);
 				this.currentConceptSet({
+					...conceptset,
 					name: ko.observable(conceptset.name),
 					id: conceptset.id
 				});
@@ -507,13 +444,13 @@ define(
 					// If we continue, then clear the loaded concept set
 					this.clearConceptSet();
 				}
-				this.currentView('loading');
+				this.router.setCurrentView('loading');
 
 				if (cohortDefinitionId == '0') {
 					this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
 					this.currentCohortDefinitionInfo([]);
 				} else {
-					const { data: cohortDefinition } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId);
+					const cohortDefinition = await cohortDefinitionService.getCohortDefinition(cohortDefinitionId);
 					this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 
 					const { data: generationInfo } = await httpService.doGet(config.api.url + 'cohortdefinition/' + cohortDefinitionId + '/info');
@@ -611,7 +548,7 @@ define(
 						} catch(er) {
 							this.handleVocabularyDataSourceFailure('Loading cohort definition failed');
 					}
-					this.currentView(viewToShow);
+					this.router.setCurrentView(viewToShow);
 
 			}
 
@@ -622,7 +559,7 @@ define(
 					&& this.currentConceptSet()
 					&& this.currentConceptSet().id == conceptSetId
 				) {
-					this.handleViewChange(viewToShow, { conceptSetId, mode });
+					this.router.setCurrentView(viewToShow, { conceptSetId, mode });
 					this.currentConceptSetMode(mode);
 					return;
 				}
@@ -683,10 +620,10 @@ define(
 					&& this.currentConceptSet().id == conceptSetId
 				) {
 					this.currentConceptSetMode(mode);
-					this.handleViewChange(viewToShow, { conceptSetId, mode });
+					this.router.setCurrentView(viewToShow, { conceptSetId, mode });
 					return;
 				}
-				this.currentView('loading');
+				this.router.setCurrentView('loading');
 				try {
 					const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
 					const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
@@ -699,7 +636,7 @@ define(
 					this.resolvingConceptSetExpression(false);
 					this.handleVocabularyDataSourceFailure('Resolving concept set failed');
 				}
-				this.handleViewChange(viewToShow, { conceptSetId, mode });
+				this.router.setCurrentView(viewToShow, { conceptSetId, mode });
 			}
 
 			loadCohortConceptSet(conceptSetId, viewToShow, mode) {
@@ -739,7 +676,7 @@ define(
 							name: conceptSet.name,
 							id: conceptSet.id
 						});
-						this.currentView(viewToShow);
+						this.router.setCurrentView(viewToShow);
 						this.resolveConceptSetExpression()
 							.then(() => {
 								this.currentConceptSetMode(mode);
@@ -844,26 +781,6 @@ define(
 						break;
 				}
 			}
-
-			updateRoles() {
-				if (authApi.isPermittedReadRoles()){
-					if (!config.userAuthenticationEnabled)
-							return true;
-
-					console.info('Updating roles');
-					if (!authApi.isAuthenticated()) {
-						console.warn('Roles are not updated');
-						return Promise.resolve();
-					}
-
-					return roleService.getList()
-						.then((roles) => {
-							console.info('Roles updated');
-							this.roles(roles);
-						});
-				}
-			}
-
 		}
 	}
 );

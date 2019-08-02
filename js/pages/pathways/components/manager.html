@@ -5,12 +5,15 @@
 	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
 	<div class="asset-heading">
 		<div class="input-group">
-			<input type="text" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
+			<input type="text" placeholder="New Cohort Pathway" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}"><i class="fa fa-save"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="click: $component.close, css: {disabled: isProcessing()}"><i class="fa fa-times"></i></button>
 				<!-- ko ifnot: isNewEntity -->
 				<button type="button" class="btn btn-primary" data-bind="click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}" title="Create a copy of this Pathway Analysis"><i class="fa fa-copy"></i></button>
+				<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                    <i class="fa fa-lock"></i>
+                </button>
 				<button type="button" class="btn btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete() || isProcessing()}"><i class="fa fa-trash-o"></i></button>
 				<!-- /ko -->
 			</div>
@@ -47,3 +50,12 @@
 	</tabs>
 </div>
 <!-- /ko -->
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>

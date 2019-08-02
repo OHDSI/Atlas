@@ -3,6 +3,8 @@ define([
 	'text!./manager.html',
 	'../PathwayService',
 	'../PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'../PathwayAnalysis',
 	'atlas-state',
 	'appConfig',
@@ -18,12 +20,15 @@ define([
 	'./tabs/pathway-exec-wrapper',
 	'./tabs/pathway-results',
 	'./tabs/pathway-utils',
-	'faceted-datatable'
+	'faceted-datatable',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
 	PathwayService,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	PathwayAnalysis,
 	sharedState,
 	config,
@@ -76,6 +81,12 @@ define([
 			this.isDeleting = ko.observable(false);
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
+				entityIdGetter: () => this.analysisId(),
+				createdByUsernameGetter: () => this.design() && this.design().createdBy.login
 			});
 		}
 

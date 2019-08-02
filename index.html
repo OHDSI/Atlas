@@ -42,7 +42,7 @@
 
 			<div class="app__menu">
 				<!-- ko foreach: router.pages -->
-				<a data-bind="attr: {href: navUrl()}, css: $parent.classes({ element: 'menu-item', modifiers: $parent.activePage() === $data.title ? 'selected' : '', extra: statusCss() })">
+				<a data-bind="attr: {href: navUrl()}, css: $parent.classes({ element: 'menu-item', modifiers: $parent.router.activeRoute().title === $data.title ? 'selected' : '', extra: statusCss() })">
 					<i data-bind="css: $parent.classes({ element: 'menu-icon', extra: `fa fa-fw fa-${icon}`})" aria-hidden="true"></i>
 					<span data-bind="text: $data.title, css: $parent.classes('menu-title')"></span>
 				</a>
@@ -62,7 +62,7 @@
 		<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete(), css: classes({ element: 'main-window'})">
 			<div id="wrapperMainWindowContainer">
 				<user-bar params="{model: $data}"></user-bar>
-				<div data-bind="if: !currentViewAccessible()">
+				<div data-bind="if: !router.currentViewAccessible()">
 					<div style="width:100px;margin-left:auto;margin-right:auto;">
 						<svg width="100" height="100" viewBox="0 -200 400 400">
 							<g id="rings">
@@ -85,7 +85,7 @@
 					</div>
 				</div>
 				<!-- ko if: $data.currentCohortDefinition() || $data.currentConceptSet() -->
-				<!-- ko if: $data.currentCohortDefinition() != null && $data.currentView() !='cohort-definition-manager' && $data.currentView() != 'loading' -->
+				<!-- ko if: $data.currentCohortDefinition() != null && $data.router.currentView() !='cohort-definition-manager' && $data.router.currentView() != 'loading' -->
 				<div class="breadcrumb-container">
 					<i class="fa fa-arrow-left"></i>
 					<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id()}, text: $data.currentCohortDefinition().name"></a>
@@ -95,7 +95,7 @@
 					<!-- /ko -->
 				</div>
 				<!-- /ko -->
-				<!-- ko if: $data.currentConceptSet() && $data.currentConceptSetSource() == 'repository' && $data.currentView() != 'conceptset-manager' -->
+				<!-- ko if: $data.currentConceptSet() && $data.currentConceptSetSource() == 'repository' && $data.router.currentView() != 'conceptset-manager' -->
 				<div class="breadcrumb-container">
 					<i class="fa fa-arrow-left"></i>
 					<a data-bind="attr: { href: '#/conceptset/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name"></a>
@@ -104,8 +104,8 @@
 				<!-- /ko -->
 
 				<!-- ko ifnot: EventBus.errorMsg() -->
-				<div data-bind="if: currentViewAccessible" class="flexed">
-					<div id="currentComponent" class="flexed" data-bind='component: {name: $data.currentView, params: { routerParams: routerParams, model: $data } }'></div>
+				<div data-bind="if: $data.router.currentViewAccessible" class="flexed">
+					<div id="currentComponent" class="flexed" data-bind='component: {name: $data.router.currentView, params: { router: $data.router, model: $data } }'></div>
 				</div>
 				<!-- /ko -->
 

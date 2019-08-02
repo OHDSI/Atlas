@@ -1,5 +1,6 @@
 define([
     'knockout',
+    'atlas-state',
     'text!./role-details.html',
     'pages/Page',
     'utils/AutoBind',
@@ -16,6 +17,7 @@ define([
     'components/heading'
 ], function (
     ko,
+    sharedState,
     view,
     Page,
     AutoBind,
@@ -35,14 +37,14 @@ define([
             this.currentTab = ko.observable('users');
 
             this.model = params.model;
-            this.roleId = params.model.currentRoleId;
+            this.roleId = ko.observable();
             this.roleName = ko.observable();
-
-            this.users = params.model.users;
+            this.roles = sharedState.roles;
+            this.users = sharedState.users;
             this.userItems = ko.observableArray();
             this.roleUserIds = [];
 
-            this.permissions = params.model.permissions;
+            this.permissions = ko.observableArray();
             this.permissionItems = ko.observableArray();
             this.rolePermissionIds = [];
 
@@ -56,7 +58,7 @@ define([
                 role: this.roleName
             });
 
-            this.isNewRole = ko.pureComputed(() => { return this.roleId() === '0'; });
+            this.isNewRole = ko.pureComputed(() => this.roleId() === 0);
 
             this.roleCaption = ko.computed(() => {
                 return this.isNewRole() ? 'New Role' : 'Role #' + this.roleId();
@@ -87,8 +89,9 @@ define([
 
         }
 
-        onRouterParamsChanged() {
+        onRouterParamsChanged({ roleId }) {
             if (this.hasAccess()) {
+                this.roleId(roleId);
                 this.updateRole();
             }
         }
@@ -180,7 +183,7 @@ define([
         async updateRole () {
             this.loading(true);
             if (this.canReadRoles()) {
-                await this.model.updateRoles();
+                await roleService.updateRoles();
             }
             if (this.isNewRole()) {
                 this.roleName(defaultRoleName)
@@ -280,7 +283,7 @@ define([
             }
 
             // check if such role already exists
-            if (this.model.roles()
+            if (this.roles()
                 .filter((role) => {
                     return (role.id != this.roleId()
                         && role.role == this.roleName());
@@ -294,7 +297,7 @@ define([
 
             this.loading(true);
             await this.saveRole();
-            const roles = this.model.roles();
+            const roles = this.roles();
             if (create) {
                 roles.push({
                     id: this.roleId(),
@@ -306,7 +309,7 @@ define([
                 });
                 updatedRole.role = this.roleName();
             }
-            this.model.roles(roles);
+            this.roles(roles);
 
             await authApi.loadUserInfo();
             await this.saveUsers();
@@ -327,10 +330,10 @@ define([
               loading: this.loading,
               remove: () => roleService.delete(this.roleId()),
               redirect: () => {
-								const roles = this.model.roles().filter((role) => {
+								const roles = this.roles().filter((role) => {
 									return role.id !== this.roleId();
 								});
-								this.model.roles(roles);
+								sharedState.roles(roles);
 								this.close();
 								this.loading(false);
               }
@@ -351,14 +354,13 @@ define([
                     alert("Failed to fully copy the role");
                 }
             }
-            await this.model.updateRoles();
+            await roleService.updateRoles();
             if (id) {
                 commonUtils.routeTo(`/role/${id}`);
             }
         }
 
         export() {
-            console.log(this)
             const role = [{
                 role: this.roleName(),
                 permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),

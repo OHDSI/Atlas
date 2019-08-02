@@ -14,6 +14,8 @@ define([
     'atlas-state',
     'services/AuthAPI',
     'services/Vocabulary',
+	'services/Permission',
+	'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'pages/Page',
     'pages/characterizations/const',
@@ -28,6 +30,7 @@ define([
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
+	'components/security/access/configure-access-modal',
 ], function (
     ko,
     clipboard,
@@ -44,6 +47,8 @@ define([
     sharedState,
     authApi,
     VocabularyAPI,
+	GlobalPermissionService,
+	{ entityType },
     ConceptSet,
     Page,
     constants,
@@ -125,6 +130,12 @@ define([
             this.isPresetFeatureTypeAvailable = ko.pureComputed(() => {
                 return !this.isNewEntity() && this.initialFeatureType() === featureTypes.PRESET;
             });
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.FE_ANALYSIS,
+				entityIdGetter: () => this.featureId(),
+				createdByUsernameGetter: () => this.data() && this.data().createdBy()
+			});
         }
 
         async onPageCreated() {
@@ -205,7 +216,7 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE' }) {
+        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
             const anaylysisDomain = domain || defaultDomain;
@@ -220,6 +231,7 @@ define([
               design: ko.observable(),
               statType: ko.observable(),
               conceptSets: ko.observableArray(),
+              createdBy: ko.observable(),
             };
             data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
@@ -258,6 +270,7 @@ define([
             data.design(parsedDesign);
             data.statType(statType);
             data.statType.subscribe(() => this.data().design([]));
+            data.createdBy(createdBy);
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
             this.previousDesign = { [type]: parsedDesign };
