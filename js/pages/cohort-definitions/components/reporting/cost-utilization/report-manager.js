@@ -621,6 +621,9 @@ define([
 
 									let datatable = $('#procedure_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [5, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -732,6 +735,9 @@ define([
 
 									let datatable = $('#drug_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [6, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -846,6 +852,9 @@ define([
 
 									let datatable = $('#drugera_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [5, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -955,6 +964,9 @@ define([
 
 									let datatable = $('#condition_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											dom: this.dom,
 											buttons: this.buttons,
 											lengthMenu: this.lengthMenu,
@@ -1343,6 +1355,9 @@ define([
 
 									let datatable = $('#conditionera_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [6, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -1463,6 +1478,9 @@ define([
 
 										let datatable = $('#drugs-by-index-table')
 											.DataTable({
+												language: {
+													searchPlaceholder: 'Search...',
+												},
 												order: [5, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
@@ -1586,6 +1604,9 @@ define([
 
 										let datatable = $('#condition_table')
 											.DataTable({
+												language: {
+													searchPlaceholder: 'Search...',
+												},
 												order: [6, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
@@ -1711,6 +1732,9 @@ define([
 
 										let datatable = $('#procedure_table')
 											.DataTable({
+												language: {
+													searchPlaceholder: 'Search...',
+												},
 												order: [6, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
@@ -2102,6 +2126,9 @@ define([
 								});
 
 								this.careSiteDatatable = $('#care_site_table').DataTable({
+									language: {
+										searchPlaceholder: 'Search...',
+									},
 									order: [],
 									dom: this.dom,
 									buttons: this.buttons,

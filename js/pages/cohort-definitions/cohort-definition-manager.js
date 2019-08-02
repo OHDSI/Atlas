@@ -4,6 +4,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/CohortDefinition',
 	'services/MomentAPI',
 	'services/ConceptSet',
+	'services/Permission',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
@@ -29,6 +30,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/http',
 	'const',
 	'./const',
+	'components/security/access/const',
 	'components/cohortbuilder/components/FeasibilityReportViewer',
 	'databindings',
 	'faceted-datatable',
@@ -44,7 +46,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/conceptsetInclusionCount/conceptsetInclusionCount',
 	'components/modal',
 	'components/modal-exit-message',
-	'./components/reporting/cohort-reports/cohort-reports'
+	'./components/reporting/cohort-reports/cohort-reports',
+	'components/security/access/configure-access-modal'
 ], function (
 	$,
 	ko,
@@ -54,6 +57,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	cohortDefinitionService,
 	momentApi,
 	conceptSetService,
+	PermissionService,
 	conceptSetUitls,
 	datatableUtils,
 	CohortExpression,
@@ -79,6 +83,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	httpService,
 	globalConstants,
 	constants,
+	{ entityType }
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -672,6 +677,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				reportSourceKey: this.reportSourceKey,
 
 			}
+			PermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.COHORT_DEFINITION,
+				entityIdGetter: () => this.currentCohortDefinition().id(),
+				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
+			});
 		}
 
 			// METHODS

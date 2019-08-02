@@ -14,6 +14,8 @@ define([
 	'services/AuthAPI',
 	'services/file',
 	'services/Poll',
+	'services/Permission',
+	'components/security/access/const',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -27,6 +29,7 @@ define([
 	'components/heading',
 	'utilities/import',
 	'utilities/export',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
@@ -43,6 +46,8 @@ define([
 	authAPI,
 	FileService,
 	PollService,
+	GlobalPermissionService,
+	{ entityType },
 	Page,
 	AutoBind,
 	commonUtils,
@@ -164,6 +169,12 @@ define([
 
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.INCIDENCE_RATE,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
+			});
 
 			// startup actions
 			this.init();
