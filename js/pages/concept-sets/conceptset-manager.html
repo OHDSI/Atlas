@@ -1,4 +1,8 @@
-<!-- ko if: currentConceptSet() != null -->
+<!-- ko if: loading() -->
+<loading></loading>
+<!-- /ko -->
+
+<!-- ko if: currentConceptSet() != null && !loading() -->
 <heading-title params="name: conceptSetCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes()">
@@ -90,7 +94,7 @@
                                                   showAll: 'Show All Columns',
                                                   restore: 'Reset Columns'
                                               },
-                                              rowCallback: $root.contextSensitiveLinkColor,
+                                              rowCallback: commonUtils.contextSensitiveLinkColor,
                                               lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
                                               orderClasses: false,
                                               deferRender: true,
@@ -99,13 +103,13 @@
                                 columns: [
                                                       { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
                                                       { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                                                      { title: 'Concept Name', render: $root.renderBoundLink},
+                                                      { title: 'Concept Name', render: commonUtils.renderBoundLink},
                                                       { title: 'Domain', data: 'concept.DOMAIN_ID' },
                                                       { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
                                                       { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-                                                      { title: 'Exclude', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('isExcluded');} },
-                                                      { title: 'Descendants', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeDescendants');} },
-                                                      { title: 'Mapped', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeMapped');} }
+                                                      { title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderCheckbox('isExcluded');} },
+                                                      { title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeDescendants');} },
+                                                      { title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeMapped');} }
                                 ]
                               }
                           }">
@@ -128,7 +132,7 @@
                                                       showAll: 'Show All Columns',
                                                       restore: 'Reset Columns'
                                                   },
-                                                  rowCallback: $root.contextSensitiveLinkColor,
+                                                  rowCallback: commonUtils.contextSensitiveLinkColor,
                                                   lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
                                                   orderClasses: false,
                                                   deferRender: true,
@@ -137,13 +141,13 @@
                                     columns: [
                                                           { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
                                                           { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-                                                          { title: 'Concept Name', render: $root.renderBoundLink},
+                                                          { title: 'Concept Name', render: commonUtils.renderBoundLink},
                                                           { title: 'Domain', data: 'concept.DOMAIN_ID' },
                                                           { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
                                                           { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-                                                          { title: 'Exclude', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('isExcluded');} },
-                                                          { title: 'Descendants', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeDescendants');} },
-                                                          { title: 'Mapped', class:'text-center', orderable:false,render: function() { return $root.renderCheckbox('includeMapped');} }
+                                                          { title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderCheckbox('isExcluded');} },
+                                                          { title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeDescendants');} },
+                                                          { title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeMapped');} }
                                     ]
                                   }
                               }">

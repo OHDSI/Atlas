@@ -87,13 +87,14 @@ define([
     constructor(params) {
       super(params);
       this.config = config;
-      this.model = params.model;
       this.loading = ko.observable(false);
       this.dirtyFlag = sharedState.ConfigurationSource.dirtyFlag;
       this.selectedSource = sharedState.ConfigurationSource.current;
       this.selectedSourceId = sharedState.ConfigurationSource.selectedId;
       this.options = {};
       this.isAuthenticated = authApi.isAuthenticated;
+      this.roles = sharedState.roles;
+      this.appInitializationStatus = sharedState.appInitializationStatus;
 
       this.hasAccess = ko.pureComputed(() => {
         if (!config.userAuthenticationEnabled) {
@@ -284,10 +285,10 @@ define([
         const sourceId = this.isNew() ? null : this.selectedSourceId();
         await sourceApi.saveSource(sourceId, source);
         const appStatus = await sourceApi.initSourcesConfig();
-        sharedState.appInitializationStatus(appStatus);
+        this.appInitializationStatus(appStatus);
         await vocabularyProvider.getDomains();
         const roles = await roleService.getList();
-        this.model.roles(roles);
+        this.roles(roles);
         this.goToConfigure();
       } catch ({ data = {} }) {
         this.loading(false);
@@ -332,9 +333,9 @@ define([
         this.loading(true);
         await sourceApi.deleteSource(this.selectedSourceId());
         const appStatus = await sourceApi.initSourcesConfig();
-        sharedState.appInitializationStatus(appStatus);
+        this.appInitializationStatus(appStatus);
         const roles = await roleService.getList();
-        this.model.roles(roles); // TODO: Move roles to shared state
+        this.roles(roles);
         this.goToConfigure();
       } catch (err) {
         console.error(err);

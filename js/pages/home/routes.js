@@ -3,7 +3,7 @@ define(
     const { Route } = require('pages/Route');
     const authApi = require('services/AuthAPI');
 
-    function routes(appModel, router) {
+    function routes(router) {
       return {
         '/': new Route(() => {
           document.location = "#/home";

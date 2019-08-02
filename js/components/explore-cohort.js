@@ -9,9 +9,7 @@ define(['knockout', 'text!./explore-cohort.html', 'd3', 'atlas-state', 'appConfi
 
 			self.sources = ko.observableArray(sharedState.sources().filter(source => source.hasCDM));
 			self.sourceKey = ko.observable();
-			self.cohortDefinitionId = params.model.currentCohortDefinition()
-				.id;
-			self.model = params.model;
+			self.cohortDefinitionId = sharedState.CohortDefinition.current().id;
 			self.breakdown = ko.observable({});
 			self.cf = ko.observable({});
 			self.facets = ko.observableArray([]);

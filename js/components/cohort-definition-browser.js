@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'text!./cohort-definition-browser.html',
 	'appConfig',
+	'atlas-state',
 	'services/AuthAPI',
 	'services/MomentAPI',
 	'components/Component',
@@ -13,6 +14,7 @@ define([
 	ko,
 	view,
 	config,
+	sharedState,
 	authApi,
 	momentApi,
 	Component,
@@ -27,6 +29,8 @@ define([
 			this.selected = params.cohortDefinitionSelected;
 			this.loading = ko.observable(false);
 			this.config = config;
+			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
 
 			this.loading(true);
 
@@ -106,7 +110,16 @@ define([
 		}
 
 		rowClick(data) {
-			this.selected(data);
+			this.action(() => this.selected(data));
+		}
+
+		action(callback) {
+			const isConceptSetDirty = this.currentConceptSet() && this.currentConceptSetDirtyFlag().isDirty();
+			if (isConceptSetDirty) {
+				confirm('Concept set changes are not saved. Would you like to continue?') && callback();
+			} else {
+				callback();
+			}
 		}
 	}
 

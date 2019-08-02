@@ -36,7 +36,6 @@ define([
 
             this.currentTab = ko.observable('users');
 
-            this.model = params.model;
             this.roleId = ko.observable();
             this.roleName = ko.observable();
             this.roles = sharedState.roles;

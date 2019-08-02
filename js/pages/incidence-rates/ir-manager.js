@@ -55,7 +55,6 @@ define([
 			super(params);
 			// polling support
 			this.pollId = null;
-			this.model = params.model;
 			this.loading = ko.observable(false);
 			this.loadingInfo = ko.observable();
 			this.loadingSummary = ko.observableArray();
