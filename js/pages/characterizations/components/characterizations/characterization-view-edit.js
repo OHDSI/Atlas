@@ -16,6 +16,7 @@ define([
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'const',
+    'lodash',
     'less!./characterization-view-edit.less',
     'components/tabs',
     'faceted-datatable',
@@ -41,7 +42,8 @@ define([
     AutoBind,
     commonUtils,
     ohdsiUtil,
-    constants
+    constants,
+    lodash
 ) {
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
@@ -96,7 +98,7 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
 				entityIdGetter: () => this.characterizationId(),
-				createdByUsernameGetter: () => this.design() && this.design().createdBy.login
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
 			});
         }
 
