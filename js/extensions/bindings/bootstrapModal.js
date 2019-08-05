@@ -7,7 +7,12 @@ define(['knockout'], function (ko) {
 
 			var value = valueAccessor();
 			if (ko.isObservable(value)) {
-				$(element).on('hide.bs.modal', function () {
+				 // Update 28/02/2018
+				// Thank @HeyJude for fixing a bug on
+				// double "hide.bs.modal" event firing.
+				// Use "hidden.bs.modal" event to avoid
+				// bootstrap running internal modal.hide() twice.
+				$(element).on('hidden.bs.modal', function () {
 					value(false);
 				});
 			}
