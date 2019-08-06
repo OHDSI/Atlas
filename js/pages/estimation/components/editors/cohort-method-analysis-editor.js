@@ -37,7 +37,6 @@ define([
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);
 			this.showConceptSetSelector = ko.observable(false);
-			this.showPsCovariateDisplay = ko.observable(false);
 			this.currentConceptSet = ko.observable(null);
 			this.trimSelection = ko.observable();
 			this.matchStratifySelection = ko.observable();
@@ -48,6 +47,11 @@ define([
 			this.bounds = ko.observable(this.analysis.trimByPsToEquipoiseArgs.bounds() && this.analysis.trimByPsToEquipoiseArgs.bounds().length > 0 ? dataTypeConverterUtils.percentArrayToCommaDelimitedList(this.analysis.trimByPsToEquipoiseArgs.bounds()) : '');
 			this.studyStartDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyStartDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyStartDate()) : null);
 			this.studyEndDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyEndDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyEndDate()) : null);
+			this.useRegularization = ko.observable(estimationConstants.isUsingRegularization(this.analysis.createPsArgs.prior) ? true : false);
+
+			console.log("DEBUG: this.analysis.createPsArgs.prior.priorType() == " + this.analysis.createPsArgs.prior.priorType())
+			console.log("DEBUG: this.analysis.createPsArgs.prior.useCrossValidation() == " + this.analysis.createPsArgs.prior.useCrossValidation())
+			console.log("DEBUG: " + this.useRegularization());
 
 			this.subscriptions.push(this.includeCovariateIds.subscribe(newValue => {
 				this.analysis.createPsArgs.includeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
@@ -81,6 +85,10 @@ define([
 				this.analysis.trimByPs(this.trimSelection() === "byPercent");
 				this.analysis.trimByPsToEquipoise(this.trimSelection() === "toEquipoise");
 				this.setCreatePs();
+			}));
+
+			this.subscriptions.push(this.useRegularization.subscribe(newValue => {
+				estimationConstants.setRegularization(newValue, this.analysis.createPsArgs.prior);
 			}));
 
 			// Initialize trimSelection
@@ -144,10 +152,6 @@ define([
 		
 		clearExcludedCovariates () {
 			this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet(new ConceptSet());
-		}
-
-		togglePsCovariateDisplay() {
-			this.showPsCovariateDisplay(!this.showPsCovariateDisplay());
 		}
 		
 		setCreatePs() {
