@@ -1278,9 +1278,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			loadConceptSet(conceptSetId) {
 				this.currentConceptSetSource('cohort');
 				this.conceptSetTabMode('details');
-				if (this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
-					return;
-				}
 				const conceptSet = this.currentCohortDefinition()
 					.expression()
 					.ConceptSets()
