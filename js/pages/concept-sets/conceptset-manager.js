@@ -65,6 +65,7 @@ define([
 			this.defaultName = globalConstants.newEntityNames.conceptSet;
 			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
+			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(true);
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -234,6 +235,7 @@ define([
 					name: ko.observable('New Concept Set'),
 					id: 0
 				});
+				this.loading(false);
 			}
 			if (
 				this.currentConceptSet()
@@ -340,7 +342,7 @@ define([
 		optimize() {
 			this.isOptimizing(true);
 			this.activeUtility("optimize");
-			this.loading(true);
+			this.optimizeLoading(true);
 			this.optimalConceptSet(null);
 			this.optimizerRemovedConceptSet(null);
 			this.isOptimizeModalShown(true);
@@ -373,7 +375,7 @@ define([
 					});
 					this.optimalConceptSet(optimizedConcepts);
 					this.optimizerRemovedConceptSet(removedConcepts);
-					this.loading(false);
+					this.optimizeLoading(false);
 					this.activeUtility("");
 					this.isOptimizing(false);
 				});

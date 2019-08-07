@@ -126,7 +126,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
-	console.log(state);
 
 
 	return state;
