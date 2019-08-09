@@ -20,6 +20,7 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
+	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
 	'featureextraction/components/temporal-covariate-settings-editor',
@@ -53,7 +54,8 @@ define([
 	TemporalCovariateSettings,
 	ConceptSet,
 	ConceptSetCrossReference,
-	authAPI
+	authAPI,
+	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
 
@@ -138,7 +140,7 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.PREDICTION,
 				entityIdGetter: () => this.selectedAnalysisId(),
-				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().createdBy.login
+				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.login')
 			});
 		}
 

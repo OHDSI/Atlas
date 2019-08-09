@@ -20,6 +20,7 @@ define([
 	'services/analysis/ConceptSetCrossReference',
 	'featureextraction/InputTypes/CovariateSettings',
 	'services/FeatureExtraction',
+	'lodash',
 	'faceted-datatable',
     'components/tabs',
 	'./components/cca-specification-view-edit',
@@ -50,6 +51,7 @@ define([
 	ConceptSetCrossReference,
 	CovariateSettings,
 	FeatureExtractionService,
+	lodash
 ) {
 	class ComparativeCohortAnalysisManager extends Page {
 		constructor(params) {
@@ -130,7 +132,7 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.ESTIMATION,
 				entityIdGetter: () => this.selectedAnalysisId(),
-				createdByUsernameGetter: () => this.estimationAnalysis() && this.estimationAnalysis().createdBy.login
+				createdByUsernameGetter: () => this.estimationAnalysis() && lodash.get(this.estimationAnalysis(), 'createdBy.login')
 			});
 		}
 

@@ -14,6 +14,7 @@ define([
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
 	'const',
+	'lodash',
 	'less!./manager.less',
 	'components/tabs',
 	'./tabs/pathway-design',
@@ -38,6 +39,7 @@ define([
 	commonUtils,
 	ohdsiUtil,
 	constants,
+	lodash
 ) {
 	class PathwaysManager extends AutoBind(Page) {
 		constructor(params) {
@@ -86,7 +88,7 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
 				entityIdGetter: () => this.analysisId(),
-				createdByUsernameGetter: () => this.design() && this.design().createdBy.login
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
 			});
 		}
 
