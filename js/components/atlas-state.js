@@ -6,7 +6,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
+	state.users = ko.observableArray();
 	state.sources = ko.observableArray([]);
+	state.currentView = ko.observable('loading');
+	state.loading = ko.observable(false);
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
@@ -15,13 +18,16 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	// shared concept selection state
 	state.selectedConceptsIndex = {};
 	state.selectedConcepts = ko.observableArray(null);
+	state.conceptSetExpression = ko.pureComputed(() => {
+		return { "items": state.selectedConcepts() };
+	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
 	state.clearSelectedConcepts = function () {
 		this.selectedConceptsIndex = {};
 		this.selectedConcepts([]);
 	}
-	
+
 	state.IRAnalysis = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null)
@@ -45,10 +51,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortPathways = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null)
-	};	
+	};
 	state.CohortPathways.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortPathways.current()));
-	
-	
+
+
 	state.estimationAnalysis = {
 		current: ko.observable(null),
 		analysisPath: null,
@@ -62,9 +68,15 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		analysisPath: null,
 		selectedId: ko.observable(null),
 		targetCohorts: ko.observableArray(),
-		outcomeCohorts: ko.observableArray(), 
+		outcomeCohorts: ko.observableArray(),
 	}
 	state.predictionAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current()));
+
+	state.ConfigurationSource = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+	}
+	state.ConfigurationSource.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.ConfigurationSource.current()));
 
 	return state;
 });

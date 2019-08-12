@@ -4,7 +4,7 @@ define([
 	],
 	(
 		ko,
-    	config,
+		config,
 	) => {
 
 		const minChartHeight = 300;
@@ -145,199 +145,6 @@ define([
 			}]
 		};
 
-		const metatrix = {
-			'ATC.ATC 4th': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 5]
-				}]
-			},
-			'ICD9CM.5-dig billing code': {
-				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 1]
-				}]
-			},
-			'ICD9CM.4-dig nonbill code': {
-				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Is a',
-					range: [0, 1]
-				}, {
-					name: 'Non-standard to Standard map (OMOP)',
-					range: [0, 1]
-				}]
-			},
-			'ICD9CM.3-dig nonbill code': {
-				childRelationships: [{
-					name: 'Subsumes',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Non-standard to Standard map (OMOP)',
-					range: [0, 999]
-				}]
-			},
-			'RxNorm.Ingredient': {
-				childRelationships: [{
-					name: 'Ingredient of (RxNorm)',
-					range: [0, 999]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					vocabulary: ['ATC', 'ETC'],
-					range: [0, 1]
-				}]
-			},
-			'RxNorm.Brand Name': {
-				childRelationships: [{
-					name: 'Ingredient of (RxNorm)',
-					range: [0, 999]
-				}],
-				parentRelationships: [{
-					name: 'Tradename of (RxNorm)',
-					range: [0, 999]
-				}]
-			},
-			'RxNorm.Branded Drug': {
-				childRelationships: [{
-					name: 'Consists of (RxNorm)',
-					range: [0, 999]
-				}],
-				parentRelationships: [{
-					name: 'Has ingredient (RxNorm)',
-					range: [0, 999]
-				}, {
-					name: 'RxNorm to ATC (RxNorm)',
-					range: [0, 999]
-				}, {
-					name: 'RxNorm to ETC (FDB)',
-					range: [0, 999]
-				}]
-			},
-			'RxNorm.Clinical Drug Comp': {
-				childRelationships: [],
-				parentRelationships: [{
-					name: 'Has precise ingredient (RxNorm)',
-					range: [0, 999]
-				}, {
-					name: 'Has ingredient (RxNorm)',
-					range: [0, 999]
-				}]
-			},
-			'CPT4.CPT4': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'CPT4.CPT4 Hierarchy': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'ETC.ETC': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'MedDRA.LLT': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'MedDRA.PT': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'MedDRA.HLT': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'MedDRA.SOC': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'MedDRA.HLGT': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'SNOMED.Clinical Finding': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			},
-			'SNOMED.Procedure': {
-				childRelationships: [{
-					name: 'Has descendant of',
-					range: [0, 1]
-				}],
-				parentRelationships: [{
-					name: 'Has ancestor of',
-					range: [0, 1]
-				}]
-			}
-		};
-
 		const getRelatedSourcecodesColumns = (sharedState, context) => [{
 			title: '',
 			render: (s, p, d) => {
@@ -384,22 +191,22 @@ define([
 		}];
 
 		const apiPaths = {
-			role: (id = '') => `${config.api.url}role/${id}`,
-      roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
-      permissions: () => `${config.api.url}permission`,
-      rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
-      relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
+			role: (id = '') => `${config.api.url}role/${id}`, 
+			roleUsers: roleId => `${config.api.url}role/${roleId}/users`, 
+			permissions: () => `${config.api.url}permission`, 
+			rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`, 
+			relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
 			job: (id) => `${config.api.url}job/${id}`,
 			jobByName: (name,  type) => `${config.api.url}job/type/${type}/name/${name}`,
 		};
 
-     const applicationStatuses = {
-		  initializing: 'initializing',
-		  running: 'running',
-		  noSourcesAvailable: 'no-sources-available',
-		  failed: 'failed',
-	  };
+		const applicationStatuses = {
+			initializing: 'initializing', 
+			running: 'running', 
+			noSourcesAvailable: 'no-sources-available', 
+			failed: 'failed',
+		};
 
 		const generationStatuses = {
 			STARTED: 'STARTED',
@@ -407,6 +214,22 @@ define([
 			COMPLETED: 'COMPLETED',
 			FAILED: 'FAILED',
 			PENDING: 'PENDING',
+		};
+		
+		const newEntityNames = {
+			characterization: 'New Characterization',
+			featureAnalysis: 'New Feature Analysis',
+			cohortDefinition: "New Cohort Definition",
+			incidenceRate: "New Incidence Rate Analysis",
+			pathway: 'New Cohort Pathway',
+			ple: 'New Population Level Estimation Analysis',
+			conceptSet: 'New Concept Set',
+			plp: 'New Patient Level Prediction Analysis',
+		};
+
+		const pluginTypes = {
+			COHORT_REPORT: 'atlas-cohort-report',
+			PROFILE_WIDGET: 'atlas-profile-widget',
 		};
 
 		return {
@@ -416,12 +239,13 @@ define([
 			relatedConceptsOptions,
 			getRelatedConceptsColumns,
 			relatedSourcecodesOptions,
-			metatrix,
 			getRelatedSourcecodesColumns,
 			apiPaths,
 			applicationStatuses,
 			generationStatuses,
 			timeAtRiskCohortDate,
+			newEntityNames,
+			pluginTypes,
     };
   }
 );

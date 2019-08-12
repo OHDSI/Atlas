@@ -33,9 +33,10 @@ define([
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;
 			this.authLogin = authApi.subject;
+			this.fullName = authApi.fullName;
 			this.pollId = null;
-			this.loading = params.model.loading;
-			this.signInOpened = params.model.signInOpened;
+			this.loading = state.loading;
+			this.signInOpened = authApi.signInOpened;
 			this.jobListing = state.jobListing;
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
@@ -127,6 +128,7 @@ define([
 								job.viewed(false);
 								job.duration = duration;
 								job.endDate = displayedEndDate;
+								job.url = jobDetailsService.getJobURL(n);
 								this.jobListing.valueHasMutated();
 							}
 						} else {

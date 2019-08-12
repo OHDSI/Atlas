@@ -104,9 +104,9 @@ define([
 			];
 
 			this.model = params.model;
-			this.sources = sharedState.sources().filter(function (s) {
-				return s.hasResults && s.hasVocabulary;
-			});
+			this.sources = ko.computed(() => sharedState.sources().filter(function (s) {
+                return s.hasResults && s.hasVocabulary;
+            }));
 
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
@@ -122,27 +122,17 @@ define([
 			});
 
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
-			this.currentSource = ko.observable(this.sources[0]);
+			this.currentSource = ko.observable(this.sources()[0]);
 			this.currentReport = ko.observable();
 			this.selectedReport = ko.observable();
 
 			this.currentSource.subscribe((source) => source && this.hasError(false));
 			this.currentReport.subscribe((report) => report && this.hasError(false));
 
-			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
-				this.updateLocation();
-			});
-
-			this.selectedSourceSubscription = this.currentSource.subscribe(r => {
-				this.updateLocation();
-			})
+			this.subscriptions.push(this.selectedReport.subscribe(r => this.updateLocation()));
+			this.subscriptions.push(this.currentSource.subscribe(r => this.updateLocation()));
 
 			this.currentConcept = ko.observable();
-		}
-
-		dispose() {
-			this.selectedReportSubscription.dispose();
-			this.selectedSourceSubscription.dispose();
 		}
 
 		updateLocation() {
@@ -157,12 +147,12 @@ define([
 
 			if (newParams == null) {
 				// initial page load direct from URL
-				this.currentSource(this.sources.find(s => s.sourceKey == changedParams.sourceKey));
+				this.currentSource(this.sources().find(s => s.sourceKey == changedParams.sourceKey));
 				this.currentReport(this.reports.find(r => r.path == changedParams.reportName));
 				this.selectedReport(this.reports.find(r => r.path == changedParams.reportName));
 			} else {
-				if (changedParams.sourceKey) {
-					this.currentSource(this.sources.find(s => s.sourceKey == newParams.sourceKey));
+				if (changedParams.sourceKey && this.currentSource() && changedParams.sourceKey !== this.currentSource().sourceKey) {
+					this.currentSource(this.sources().find(s => s.sourceKey == newParams.sourceKey));
 				}
 				if (changedParams.reportName) {
 					this.currentReport(this.reports.find(r => r.path == newParams.reportName));

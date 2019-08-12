@@ -4,7 +4,7 @@
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
     <div class="input-group">
-      <input class="form-control" id="txtConceptSetName" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameCorrect() }"/>
+      <input class="form-control" id="txtConceptSetName" placeholder="New Concept Set" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }"/>
       <div class="input-group-btn">
         <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
@@ -13,11 +13,14 @@
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
         <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() || isProcessing() }">Optimize</button>
+        <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+            <i class="fa fa-lock"></i>
+        </button>
         <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
         <!-- /ko -->
       </div>
     </div>
-    <div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+    <div data-bind="visible: !isNameFilled()" class="empty-name-error">
       <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
       <label>Concept Set name is empty.</label>
     </div>
@@ -41,7 +44,7 @@
   <div data-bind="css: classes('optimize-modal-content')">
     <div data-bind="if: loading()">
       <i class="fa fa-circle-o-notch fa-spin fa-lg">
-      </i> Attempting to find an optimal definition for this concept set....
+      </i> Attempting to find an optimal definition for this concept set...
     </div>
     <div data-bind="if: !loading() && !optimizerFoundSomething()">
       The current concept set definition is fully optimized.
@@ -69,7 +72,7 @@
           <div class="form-group">
             <label for="txtOptimizerSavingNewName">Please provide a name for your new concept set:</label>
             </br>
-            <input id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
+            <input placeholder="Concept Set Name" id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
             <div class="btn-group">
               <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet">Save</button>
               <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>
@@ -155,3 +158,12 @@
 </atlas-modal>
 <!-- /ko -->
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>

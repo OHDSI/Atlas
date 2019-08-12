@@ -73,6 +73,13 @@ define(function (require, exports) {
             .then(res => res.data);
     }
 
+	function exists(name, id) {
+		return httpService
+			.doGet(`${config.webAPIRoot}${predictionEndpoint}${id}/exists?name=${name}`)
+			.then(res => res.data)
+			.catch(error => authApi.handleAccessDenied(error));
+	}
+
 
     var api = {
 		getPredictionList: getPredictionList,
@@ -84,6 +91,7 @@ define(function (require, exports) {
 		importPrediction: importPrediction,
 		generate,
 		listGenerations,
+		exists,
 	};
 
 	return api;

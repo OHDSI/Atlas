@@ -8,6 +8,7 @@ define([
 	'assets/ohdsi.util',
 	'./services/JobService',
 	'services/User',
+	'services/role',
 	'./services/PermissionService',
 	'./const',
 	'moment',
@@ -26,6 +27,7 @@ define([
 	ohdsiUtil,
 	jobService,
 	userService,
+	roleService,
 	permissionService,
 	Const,
 	moment,
@@ -55,7 +57,6 @@ define([
 			super(params);
 
 			this.model = params.model;
-			this.updateRoles = params.model.updateRoles;
 			this.roles = sharedState.roles;
 			this.jobId = ko.observable();
 			this.loading = ko.observable();
@@ -98,7 +99,7 @@ define([
 			this.job({
 				...job,
 				enabled: ko.observable(job.enabled),
-				preseveRoles: ko.observable(job.preserveRoles),
+				preserveRoles: ko.observable(job.preserveRoles),
 				providerType: ko.observable(job.providerType),
 				startDate: ko.observable(toDate(job.startDate)),
 				frequency: ko.observable(job.frequency),
@@ -108,7 +109,7 @@ define([
 				weekdays: this.weekdays,
 				roleGroups: this.roleGroups,
 			});
-			this.updateRoles()
+			roleService.updateRoles()
 				.then(roles => {
 					const mapping = this.roles().filter(role => !role.defaultImported).map(role => (
 						{
@@ -133,7 +134,7 @@ define([
 			}
 			this.weekdays.removeAll();
 			job.weekDays.forEach(wd => this.weekdays.push(wd));
-			this.jobDirtyFlag(new ohdsiUtil.dirtyFlag(this.job));
+			this.jobDirtyFlag(new ohdsiUtil.dirtyFlag(this.job()));
 			this.jobId.valueHasMutated();
 		}
 

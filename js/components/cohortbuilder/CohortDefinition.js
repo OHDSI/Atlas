@@ -12,7 +12,8 @@ define(function (require, exports) {
 		self.name = ko.observable(data.name || null);
 		self.description = ko.observable(data.description || null);
 		self.expressionType = (data.expressionType || "SIMPLE_EXPRESSION");
-		self.expression = ko.observable(new CohortExpression(data.expression))
+		self.expression = ko.observable(new CohortExpression(data.expression));
+		self.createdBy = ko.observable(data.createdBy || null);
 	}
 	return CohortDefinition;
 });

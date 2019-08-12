@@ -1,13 +1,17 @@
 define([
-	'knockout', 
-	'text!./cca-manager.html',	
+	'knockout',
+	'text!./cca-manager.html',
     'pages/Page',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
 	'appConfig',
 	'./const',
+	'const',
 	'atlas-state',
+	'pages/Router',
 	'./PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
 	'./inputTypes/Comparison',
@@ -16,6 +20,7 @@ define([
 	'services/analysis/ConceptSetCrossReference',
 	'featureextraction/InputTypes/CovariateSettings',
 	'services/FeatureExtraction',
+	'lodash',
 	'faceted-datatable',
     'components/tabs',
 	'./components/cca-specification-view-edit',
@@ -23,16 +28,21 @@ define([
 	'./components/cca-executions',
 	'less!./cca-manager.less',
 	'databindings',
+	'components/security/access/configure-access-modal',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Page,
 	commonUtils,
 	ohdsiUtil,
 	config,
 	constants,
+	globalConstants,
 	sharedState,
+	router,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	EstimationService,
 	EstimationAnalysis,
 	Comparison,
@@ -41,11 +51,12 @@ define([
 	ConceptSetCrossReference,
 	CovariateSettings,
 	FeatureExtractionService,
+	lodash
 ) {
 	class ComparativeCohortAnalysisManager extends Page {
 		constructor(params) {
 			super(params);
-			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysis;
+			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysisDash;
 
 			this.selectTab = this.selectTab.bind(this);
 			this.defaultLoadingMessage = "Loading...";
@@ -65,15 +76,16 @@ define([
 			this.isExporting = ko.observable(false);
 			this.loadingMessage = ko.observable(this.defaultLoadingMessage);
 			this.packageName = ko.observable().extend({alphaNumeric: null});
-			this.selectedTabKey = ko.observable(params.routerParams().section);
-            this.isSaving = ko.observable(false);
-            this.isCopying = ko.observable(false);
-            this.isDeleting = ko.observable(false);
+			this.selectedTabKey = ko.observable(router.routerParams().section);
+			this.isSaving = ko.observable(false);
+			this.isCopying = ko.observable(false);
+			this.isDeleting = ko.observable(false);
+			this.defaultName = globalConstants.newEntityNames.ple;
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
 			this.isProcessing = ko.computed(() => {
-                return this.isSaving() || this.isCopying() || this.isDeleting();
-            });
-            this.componentParams = ko.observable({
+				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
 				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
@@ -85,8 +97,14 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
-            });
+			});
 
+			this.isNameFilled = ko.computed(() => {
+				return this.estimationAnalysis() && this.estimationAnalysis().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.estimationAnalysis().name() !== this.defaultName;
+			});
 			this.canSave = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
@@ -111,8 +129,10 @@ define([
 				}
 			});
 
-			this.isNameCorrect = ko.computed(() => {
-				return this.estimationAnalysis() && this.estimationAnalysis().name();
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.ESTIMATION,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.estimationAnalysis() && lodash.get(this.estimationAnalysis(), 'createdBy.login')
 			});
 		}
 
@@ -140,17 +160,29 @@ define([
 			document.location = constants.paths.browser()
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			this.fullAnalysisList.removeAll();
-			const payload = this.prepForSave();
-			EstimationService.saveEstimation(payload).then((analysis) => {
-				this.setAnalysis(analysis);
-				document.location =  constants.paths.ccaAnalysis(this.estimationAnalysis().id());
+
+			// Next check to see that an estimation analysis with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.
+			try{
+				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
+				if (results > 0) {
+					alert('An estimation analysis with this name already exists. Please choose a different name.');
+				} else {
+					this.fullAnalysisList.removeAll();
+					const payload = this.prepForSave();
+					const savedEstimation = await EstimationService.saveEstimation(payload);
+					this.setAnalysis(savedEstimation);
+					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to save an estimation analysis.');
+			} finally {
 				this.isSaving(false);
 				this.loading(false);
-			});
+			}
 		}
 
 		prepForSave() {
@@ -173,21 +205,21 @@ define([
 				comp.outcomes().map(o => this.addCohortToEstimation(specification, o));
 
 				if (comp.negativeControlOutcomesConceptSet() !== null && comp.negativeControlOutcomesConceptSet().id > 0) {
-					this.addConceptSetToEstimation(specification, ko.toJS(comp.negativeControlOutcomesConceptSet), 
-						constants.conceptSetCrossReference.negativeControlOutcomes.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, ko.toJS(comp.negativeControlOutcomesConceptSet),
+						constants.conceptSetCrossReference.negativeControlOutcomes.targetName,
+						index,
 						constants.conceptSetCrossReference.negativeControlOutcomes.propertyName);
 				}
 				if (comp.includedCovariateConceptSet() !== null && comp.includedCovariateConceptSet().id > 0) {
-					this.addConceptSetToEstimation(specification, ko.toJS(comp.includedCovariateConceptSet), 
+					this.addConceptSetToEstimation(specification, ko.toJS(comp.includedCovariateConceptSet),
 						constants.conceptSetCrossReference.targetComparatorOutcome.targetName,
-						index, 
+						index,
 						constants.conceptSetCrossReference.targetComparatorOutcome.propertyName.includedCovariateConcepts);
 				}
 				if (comp.excludedCovariateConceptSet() !== null && comp.excludedCovariateConceptSet().id > 0) {
-					this.addConceptSetToEstimation(specification, ko.toJS(comp.excludedCovariateConceptSet), 
+					this.addConceptSetToEstimation(specification, ko.toJS(comp.excludedCovariateConceptSet),
 						constants.conceptSetCrossReference.targetComparatorOutcome.targetName,
-						index, 
+						index,
 						constants.conceptSetCrossReference.targetComparatorOutcome.propertyName.excludedCovariateConcepts);
 				}
 			});
@@ -197,15 +229,15 @@ define([
 
 				const covarSettings = a.getDbCohortMethodDataArgs.covariateSettings;
 				if (covarSettings.includedCovariateConceptSet !== null && covarSettings.includedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, covarSettings.includedCovariateConceptSet, 
-						constants.conceptSetCrossReference.analysisCovariateSettings.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, covarSettings.includedCovariateConceptSet,
+						constants.conceptSetCrossReference.analysisCovariateSettings.targetName,
+						index,
 						constants.conceptSetCrossReference.analysisCovariateSettings.propertyName.includedCovariateConcepts);
 				}
 				if (covarSettings.excludedCovariateConceptSet !== null && covarSettings.excludedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, covarSettings.excludedCovariateConceptSet, 
+					this.addConceptSetToEstimation(specification, covarSettings.excludedCovariateConceptSet,
 						constants.conceptSetCrossReference.analysisCovariateSettings.targetName,
-						index, 
+						index,
 						constants.conceptSetCrossReference.analysisCovariateSettings.propertyName.excludedCovariateConcepts);
 				}
 
@@ -213,17 +245,17 @@ define([
 				specification.estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList[index].getDbCohortMethodDataArgs.covariateSettings = ko.toJS(new CovariateSettings(covarSettings));
 			});
 			let pcsaCovarSettings = specification.positiveControlSynthesisArgs.covariateSettings;
-			if (pcsaCovarSettings != null) {				
+			if (pcsaCovarSettings != null) {
 				if (pcsaCovarSettings.includedCovariateConceptSet !== null && pcsaCovarSettings.includedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, pcsaCovarSettings.includedCovariateConceptSet, 
-						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, pcsaCovarSettings.includedCovariateConceptSet,
+						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName,
+						index,
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
 				if (pcsaCovarSettings.excludedCovariateConceptSet !== null && pcsaCovarSettings.excludedCovariateConceptSet.id > 0) {
-					this.addConceptSetToEstimation(specification, pcsaCovarSettings.excludedCovariateConceptSet, 
-						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName, 
-						index, 
+					this.addConceptSetToEstimation(specification, pcsaCovarSettings.excludedCovariateConceptSet,
+						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName,
+						index,
 						constants.conceptSetCrossReference.positiveControlCovariateSettings.targetName.includedCovariateConcepts);
 				}
 
@@ -259,7 +291,7 @@ define([
 				this.setAnalysis(analysis);
 				this.isCopying(false);
 				this.loading(false);
-				document.location = constants.paths.ccaAnalysis(this.estimationAnalysis().id());
+				commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
 			});
 		}
 
@@ -274,7 +306,7 @@ define([
 		setAnalysis(analysis) {
 			const header = analysis.json;
 			const specification = JSON.parse(analysis.data.specification);
-			this.estimationAnalysis(new EstimationAnalysis(specification, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...analysis.data }, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);
@@ -294,7 +326,7 @@ define([
 				let target = null;
 				let comparator = null;
 				const outcomes = [];
-		
+
 				if (tco.targetId() !== null) {
 					const tCohortDefinitionList = cohortDefinitions.filter(d => d.id() === tco.targetId());
 					if (tCohortDefinitionList.length > 0) {
@@ -321,7 +353,7 @@ define([
 				});
 
 				const comp = new Comparison({
-					target: target, 
+					target: target,
 					comparator: comparator,
 					outcomes: outcomes,
 				});
@@ -425,7 +457,7 @@ define([
 					targetIndex: targetIndex,
 					propertyName: propertyName
 				})
-			);				
+			);
 		}
 	}
 

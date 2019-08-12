@@ -46,6 +46,7 @@ define(function(require, exports) {
 
     var subject = ko.observable();
     var permissions = ko.observable();
+    var fullName = ko.observable();
     const authProvider = ko.observable();
 
     authProvider.subscribe(provider => {
@@ -65,6 +66,7 @@ define(function(require, exports) {
                 permissions(info.permissions.map(p => p.permission));
                 subject(info.login);
                 authProvider(jqXHR.getResponseHeader('x-auth-provider'));
+                fullName(info.name ? info.name : info.login);
                 resolve();
             },
             error: function (err) {
@@ -448,6 +450,7 @@ define(function(require, exports) {
         return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
     }
 
+	const isPermittedRunAs = () => isPermitted('user:runas:post');
 
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
         !!tokenHeader && token(tokenHeader);
@@ -460,11 +463,24 @@ define(function(require, exports) {
         permissions(null);
     };
 
+    const runAs = function(login, success, error) {
+        return $.ajax({
+					method: 'POST',
+					url: config.webAPIRoot + 'user/runas',
+					data: {
+						login,
+					},
+          success,
+          error,
+        });
+    };
+
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
 
         token: token,
         subject: subject,
+        fullName,
         tokenExpirationDate: tokenExpirationDate,
         tokenExpired: tokenExpired,
         authProvider: authProvider,
@@ -539,9 +555,11 @@ define(function(require, exports) {
 
         isPermittedImportUsers,
         hasSourceAccess,
+        isPermittedRunAs,
 
         loadUserInfo,
         TOKEN_HEADER,
+        runAs,
     };
 
     return api;

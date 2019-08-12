@@ -2,9 +2,8 @@ define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     function routes(appModel, router) {
-      return {        
+      return {
         '/cohortdefinitions': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require([
             './cohort-definitions',
             './cohort-definition-manager',
@@ -14,7 +13,6 @@ define(
           });
         }),
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path = 'definition') => {
-          appModel.activePage(this.title);
           require([
            'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
@@ -41,7 +39,6 @@ define(
           });
         }),
         '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
-          appModel.activePage(this.title);
           require([
            'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
@@ -58,7 +55,6 @@ define(
           });
         }),
         '/reports': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require([
             './components/reporting/cost-utilization/report-manager',
             './cohort-definition-manager',

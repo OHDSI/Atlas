@@ -63,7 +63,8 @@ define([
 					yMax: 0,
 					yFormat: d3.format(',.1s'),
 					xLabel: 'Concept Type',
-					yLabel: 'Concepts per Person'
+					yLabel: 'Concepts per Person',
+					valueFormatter: d3.format('d'),
 				},
 			};
 

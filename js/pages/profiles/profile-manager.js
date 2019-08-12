@@ -1,6 +1,8 @@
 "use strict";
 define([
 		'knockout',
+		'const',
+		'services/PluginRegistry',
 		'text!./profile-manager.html',
 		'd3',
 		'appConfig',
@@ -12,6 +14,8 @@ define([
 		'pages/Page',
 		'utils/AutoBind',
 		'utils/CommonUtils',
+		'pages/Router',
+		'moment',
 		'./const',
 		'lodash',
 		'crossfilter',
@@ -26,6 +30,8 @@ define([
 	],
 	function (
 		ko,
+		globalConstants,
+		pluginRegistry,
 		view,
 		d3,
 		config,
@@ -37,6 +43,8 @@ define([
 		Page,
 		AutoBind,
 		commonUtils,
+		router,
+		moment,
 		constants,
 		_,
 		crossfilter,
@@ -60,11 +68,11 @@ define([
 				this.filterHighlightsText = ko.observable();
 				this.loadingStatus = ko.observable('loading');
 
-				this.sourceKey = ko.observable(params.routerParams().sourceKey);
-				this.personId = ko.observable(params.routerParams().personId);
+				this.sourceKey = ko.observable(router.routerParams().sourceKey);
+				this.personId = ko.observable(router.routerParams().personId);
 				this.personRecords = ko.observableArray();
 
-				this.cohortDefinitionId = ko.observable(params.routerParams().cohortDefinitionId);
+				this.cohortDefinitionId = ko.observable(router.routerParams().cohortDefinitionId);
 				this.currentCohortDefinition = ko.observable(null);
 				// if a cohort definition id has been specified, see if it is
 				// already loaded into the page model. If not, load it from the
@@ -80,7 +88,6 @@ define([
 				} else if (this.cohortDefinitionId()) {
 					cohortDefinitionService.getCohortDefinition(this.cohortDefinitionId())
 						.then((cohortDefinition) => {
-							cohortDefinition.expression = JSON.parse(cohortDefinition.expression);
 							this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
 						});
 				}
@@ -154,6 +161,25 @@ define([
 						}
 					}
 				});
+				this.dateRange = ko.computed(() => {
+					if (this.canViewProfileDates() && this.xfObservable && this.xfObservable() && this.xfObservable().isElementFiltered()) {
+						const filtered = this.xfObservable().allFiltered();
+						return filtered.map(v => ({
+							startDate: moment(v.startDate).add(v.startDays, 'days').valueOf(),
+							endDate: moment(v.endDate).subtract(v.endDays, 'days').valueOf(),
+						}))
+							.reduce((a, v) => ({
+								startDate: a.startDate < v.startDate ? a.startDate : v.startDate,
+								endDate: a.endDate > v.endDate ? a.endDate : v.endDate,
+							}));
+					}
+					return {
+						startDate: null, endDate: null,
+					};
+				});
+				this.startDate = ko.computed(() => this.dateRange().startDate);
+				this.endDate = ko.computed(() => this.dateRange().endDate);
+
 				this.dimensions = {
 					'Domain': {
 						caption: 'Domain',
@@ -310,11 +336,14 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+
+				this.plugins = pluginRegistry.findByType(globalConstants.pluginTypes.PROFILE_WIDGET);
 			}
 
 			loadPerson() {
 				this.cantFindPerson(false);
 				this.loadingPerson(true);
+				this.xfDimensions = [];
 
 				let url = constants.paths.person(this.sourceKey(), this.personId());
 
@@ -452,6 +481,10 @@ define([
 			highlightRowClick(data, evt, row) {
 				evt.stopPropagation();
 				$(row).toggleClass('selected');
+			}
+
+			canViewProfileDates() {
+				return config.viewProfileDates && (!config.userAuthenticationEnabled || (config.userAuthenticationEnabled && authApi.isPermittedViewProfileDates()));
 			}
 		}
 

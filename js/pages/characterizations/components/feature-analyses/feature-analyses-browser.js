@@ -31,6 +31,8 @@ define([
 			super();
 
 			this.selectedAnalyses = params.selectedAnalyses;
+			this.scrollY = params.scrollY;
+			this.scrollCollapse = params.scrollCollapse;
 
 			this.data = ko.observableArray();
 			this.loading = ko.observable(false);

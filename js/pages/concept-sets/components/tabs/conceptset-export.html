@@ -1,5 +1,6 @@
 <loading data-bind="visible: exporting" params="status: 'Exporting CSV...'"></loading>
-<div data-bind="hidden: exporting()">
+<loading data-bind="visible: $root.resolvingConceptSetExpression()" params="status: 'Loading for export...'"></loading>
+<div data-bind="hidden: exporting() && !$root.resolvingConceptSetExpression()">
   <div class="heading">Concept Set Expression JSON
     <button
       class="btn btn-sm btn-primary"

@@ -4,6 +4,10 @@ define(
     'pages/vocabulary/index', // for not found route
     'querystring',
     'services/AuthAPI',
+    'atlas-state',
+    'knockout',
+    'const',
+    'services/EventBus',
     'director',
 	],
 	(
@@ -11,14 +15,29 @@ define(
     vocabularyPage,
     querystring,
     authApi,
+    sharedState,
+    ko,
+    constants,
+    EventBus,
 	) => {
-    return class AtlasRouter {
+    class AtlasRouter {
       constructor() {
-        this.activeRouteHandler = null;
+        this.activeRoute = ko.observable({});
+        this.currentView = ko.observable('loading');
         this.onLoginSubscription;
-        this.setCurrentView = () => { throw new Exception('View setter is not set'); };
         this.getModel = () => { throw new Exception('Model getter is not set'); };
         this.pages = Object.values(pages);
+        this.routerParams = ko.observable();
+        this.currentViewAccessible = ko.pureComputed(() => {
+          return this.currentView && (
+            sharedState.appInitializationStatus() !== constants.applicationStatuses.failed
+            && (sharedState.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable
+            || ['ohdsi-configuration', 'source-manager'].includes(this.currentView())
+          ));
+        });
+        this.currentView.subscribe(() => {
+          EventBus.errorMsg(undefined);
+        });
       }
 
       run() {
@@ -52,7 +71,7 @@ define(
         }, {});
         const routesWithRefreshedToken = Object.keys(routes).reduce((accumulator, key) => {
 					accumulator[key] = (...args) => {
-            this.getModel().loading(true);
+            sharedState.loading(true);
 						if (this.onLoginSubscription) {
 							this.onLoginSubscription.dispose();
 						}
@@ -62,26 +81,30 @@ define(
 							.then(() => handler())
 							.catch((ex) => {
 								console.error(ex !== undefined ? ex : 'Permission error');
-								this.getModel().activePage(title);
 								// protected route didn't pass the token check -> show white page
 								this.setCurrentView('white-page');
 								// wait until user authenticates
 								this.schedulePageUpdateOnLogin(handler);
               })
               .finally(() => {
-                this.getModel().loading(false);
+                sharedState.loading(false);
               });
 
-						this.activeRouteHandler = handler;
+            this.activeRoute({
+              handler,
+              isSecured: routes[key].isSecured,
+              title: routes[key].title,
+            });
 					};
 					return accumulator;
         }, {});
         // anyway, we should track the moment when the user exits and check permissions once again
 				authApi.isAuthenticated.subscribe((isAuthenticated) => {
-					if (!isAuthenticated) {
+          const { isSecured, handler } = this.activeRoute();
+          if (!isAuthenticated && isSecured) {
             this.setCurrentView('white-page');
-						this.schedulePageUpdateOnLogin(this.activeRouteHandler);
-					}
+            this.schedulePageUpdateOnLogin(handler);
+          }
 				});
 
         return routesWithRefreshedToken;
@@ -96,12 +119,15 @@ define(
         });
       }
 
-      /**
-       * Callback that should change the state of the model
-       * @param {function} handler
-       */
-      setCurrentViewHandler(handler) {
-        this.setCurrentView = handler;
+
+      setCurrentView(view, routerParams = false) {
+        if (view !== this.currentView()) {
+					this.currentView('loading');
+				}
+				if (routerParams !== false) {
+					this.routerParams(routerParams);
+				}
+				this.currentView(view);
       }
 
       /**
@@ -111,6 +137,7 @@ define(
       setModelGetter(getter) {
         this.getModel = getter;
       }
-		}
+    }
+    return new AtlasRouter();
 	}
 );

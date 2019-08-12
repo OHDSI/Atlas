@@ -42,10 +42,13 @@ define(function (require, exports) {
 	}
 
 	function getAncestorsRenderFunction() {
-		return (s, p, d) => `<a data-bind="click: function() {$parents[1].showAncestorsModal(${d.CONCEPT_ID});}, tooltip: '${d.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>')}'" class="clickable">${d.ANCESTORS.length}</a>`;
+		return (s,p,d) => {
+			const tooltip = d.ANCESTORS.map(d => d.CONCEPT_NAME).join('<br>');
+			return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: \`${tooltip}\`">${d.ANCESTORS.length}</a>`
+		};
 	}
 
-	function enchanceConceptSet(conceptSetItem) {
+	function enhanceConceptSet(conceptSetItem) {
 		return {
 			...conceptSetItem,
 			isExcluded: ko.observable(conceptSetItem.isExcluded),
@@ -76,15 +79,15 @@ define(function (require, exports) {
 			.then(({ data }) => data)
 			.catch(authApi.handleAccessDenied);
 	}
-    
+
     function deleteConceptSet(conceptSetId) {
 		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
     }
 
   function exists(name, id) {
-		return httpService.doGet(config.webAPIRoot + 'conceptset/exists', { name, id })
-			.catch(authApi.handleAccessDenied);
+		return httpService.doGet(`${config.webAPIRoot}conceptset/${id}/exists?name=${name}`)
+			.then(({ data }) => data);
   }
 
   function saveConceptSet(conceptSet) {
@@ -109,17 +112,22 @@ define(function (require, exports) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
 	}
-	
+
+	function getCopyName(id) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copy-name")
+			.then(({ data }) => data);
+	}
+
 	const api = {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,
-		enchanceConceptSet,
+		enhanceConceptSet,
 		loadConceptSet,
 		loadConceptSetExpression,
 		lookupIdentifiers,
 		getInclusionCount,
-		
+		getCopyName: getCopyName,
 		getConceptSet: getConceptSet,
 		getGenerationInfo: getGenerationInfo,
 		deleteConceptSet: deleteConceptSet,

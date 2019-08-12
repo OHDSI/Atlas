@@ -23,6 +23,7 @@ define([
         constructor(data = {}) {
             this.id = ko.observable(data.id || null);
             this.name = ko.observable(data.name || null);
+            this.description = ko.observable(data.description || null);
             this.version = ko.observable(data.version || "v2.7.0");
             this.description = ko.observable(data.description || null);
             this.packageName = ko.observable(data.packageName || null);

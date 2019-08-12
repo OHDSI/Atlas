@@ -3,8 +3,8 @@
 </div>
 
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job History...'"></loading>
-
-<table width="100%" cellspacing="0" data-bind="visible: !$component.loading(), dataTable:{
+<!-- ko if: !$component.loading() -->
+<table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: jobHistory(),
                             options: {
                                         dom: 'lfiprt',
@@ -22,15 +22,15 @@
                                                 { title: 'Provider', data: 'providerType', render: utils.ProviderRender },
                                                 { title: 'Title', data: 'jobTitle', },
                                                 { title: 'Author', data: 'author', },
-                                                { title: 'Started', type: 'datetime-formatted', render: datatableUtils.getDateFieldFormatter('startTime') },
-                                                { title: 'Finished', type: 'datetime-formatted', render: datatableUtils.getDateFieldFormatter('endTime') },
+                                                { title: 'Started', render: datatableUtils.getDateFieldFormatter('startTime') },
+                                                { title: 'Finished', render: datatableUtils.getDateFieldFormatter('endTime') },
                                                 { title: 'Message', data: 'exitMessage', render: utils.ExitMessageRender },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
 </table>
-
+<!-- /ko -->
 <atlas-modal params="
     showModal: messageModal,
     title: 'Job Exit Message',
