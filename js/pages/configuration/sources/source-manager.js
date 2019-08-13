@@ -87,7 +87,7 @@ define([
     constructor(params) {
       super(params);
       this.config = config;
-      this.model = params.model;
+      this.roles = sharedState.roles;
       this.loading = ko.observable(false);
       this.dirtyFlag = sharedState.ConfigurationSource.dirtyFlag;
       this.selectedSource = sharedState.ConfigurationSource.current;
@@ -287,7 +287,7 @@ define([
         sharedState.appInitializationStatus(appStatus);
         await vocabularyProvider.getDomains();
         const roles = await roleService.getList();
-        this.model.roles(roles);
+        this.roles(roles);
         this.goToConfigure();
       } catch ({ data = {} }) {
         this.loading(false);
@@ -334,7 +334,7 @@ define([
         const appStatus = await sourceApi.initSourcesConfig();
         sharedState.appInitializationStatus(appStatus);
         const roles = await roleService.getList();
-        this.model.roles(roles); // TODO: Move roles to shared state
+        this.roles(roles); // TODO: Move roles to shared state
         this.goToConfigure();
       } catch (err) {
         console.error(err);
