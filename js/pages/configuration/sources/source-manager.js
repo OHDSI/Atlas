@@ -334,7 +334,7 @@ define([
         const appStatus = await sourceApi.initSourcesConfig();
         sharedState.appInitializationStatus(appStatus);
         const roles = await roleService.getList();
-        this.roles(roles); // TODO: Move roles to shared state
+        this.roles(roles);
         this.goToConfigure();
       } catch (err) {
         console.error(err);
