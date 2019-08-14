@@ -49,10 +49,6 @@ define([
 			this.studyEndDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyEndDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyEndDate()) : null);
 			this.useRegularization = ko.observable(estimationConstants.isUsingRegularization(this.analysis.createPsArgs.prior) ? true : false);
 
-			console.log("DEBUG: this.analysis.createPsArgs.prior.priorType() == " + this.analysis.createPsArgs.prior.priorType())
-			console.log("DEBUG: this.analysis.createPsArgs.prior.useCrossValidation() == " + this.analysis.createPsArgs.prior.useCrossValidation())
-			console.log("DEBUG: " + this.useRegularization());
-
 			this.subscriptions.push(this.includeCovariateIds.subscribe(newValue => {
 				this.analysis.createPsArgs.includeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
 			}));
