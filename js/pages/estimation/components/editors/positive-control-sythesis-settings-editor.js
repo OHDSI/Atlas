@@ -3,6 +3,7 @@ define([
 	'text!./positive-control-sythesis-settings-editor.html',	
 	'components/Component',
 	'utils/CommonUtils',
+	'const',
 	'../../const',
 	'utils/DataTypeConverterUtils',
 	'databindings',
@@ -13,6 +14,7 @@ define([
 	Component,
 	commonUtils,
 	constants,
+	estimationConstants,
 	dataTypeConverterUtils
 ) {
 	class PositiveControlSythesisSettingsEditor extends Component {
@@ -20,11 +22,11 @@ define([
             super(params);
 
 			this.settings = params.settings;
-			this.options = constants.options.positiveControlSynthesisArgs;
+			this.constants = constants;
+			this.options = estimationConstants.options.positiveControlSynthesisArgs;
 			this.subscriptions = params.subscriptions;
 			this.showCovariateSelector = ko.observable(false);
-			this.showControlDisplay = ko.observable(false);
-			this.showPriorDisplay = ko.observable(false);
+			this.showAdditionalSettings = ko.observable(false);
 			this.effectSizes = ko.observable(this.settings().effectSizes() && this.settings().effectSizes().length > 0 ? this.settings().effectSizes().join() : '');
 
 			this.subscriptions.push(this.effectSizes.subscribe(newValue => {
@@ -32,12 +34,8 @@ define([
 			}));
 		}
 
-		toggleControlDisplay() {
-			this.showControlDisplay(!this.showControlDisplay());
-		}
-
-		togglePriorDisplay() {
-			this.showPriorDisplay(!this.showPriorDisplay());
+		toggleAdditionalSettings() {
+			this.showAdditionalSettings(!this.showAdditionalSettings());
 		}
 	}
 
