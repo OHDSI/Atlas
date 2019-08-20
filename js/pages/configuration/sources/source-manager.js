@@ -87,6 +87,7 @@ define([
     constructor(params) {
       super(params);
       this.config = config;
+      this.roles = sharedState.roles;
       this.loading = ko.observable(false);
       this.dirtyFlag = sharedState.ConfigurationSource.dirtyFlag;
       this.selectedSource = sharedState.ConfigurationSource.current;

@@ -49,6 +49,20 @@ define(
       }
     };
 
+    const isUsingRegularization = (prior) => {
+      return !(prior.priorType() === "none" && prior.useCrossValidation() === false);
+    }
+
+    const setRegularization = (enable, prior) => {
+      if (enable === true) {
+        prior.priorType("laplace");
+        prior.useCrossValidation(true);
+      } else {
+        prior.priorType("none");
+        prior.useCrossValidation(false);
+      }
+    }
+
     const getTimeAtRisk = (createStudyPopArgs) => {
         return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + "d<br/>(min: " + createStudyPopArgs.minDaysAtRisk() + "d)");
     };
@@ -424,6 +438,8 @@ define(
       estimationGenerationStatus,
       paths: paths,
       conceptSetCrossReference,
+      isUsingRegularization,
+      setRegularization,
       options,
     };
   }
