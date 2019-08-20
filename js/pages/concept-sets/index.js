@@ -6,7 +6,7 @@ define(
     const constants = require('./const');
 
     const statusCss = ko.pureComputed(() => {
-      if (appState.ConceptSet.current()) {
+      if (appState.ConceptSet.current() && appState.ConceptSet.source() === 'repository') {
         return appState.ConceptSet.dirtyFlag().isDirty() ? 'unsaved' : 'open';
       }
       return '';
@@ -14,7 +14,7 @@ define(
 
     const navUrl = ko.pureComputed(function () {
       let url = "#/conceptsets";
-      if (appState.ConceptSet.current()) {
+      if (appState.ConceptSet.current() && appState.ConceptSet.source() === 'repository') {
         url = `#${constants.paths.mode(appState.ConceptSet.current().id || 0)}`;
       }
       return url;
