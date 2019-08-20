@@ -1,7 +1,7 @@
 <!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
-	<span data-bind="if:!$root.loadingReport()"><i class="fa fa-area-chart"></i></span>
-	<span data-bind="if:$root.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Cohort Reporting
+	<span data-bind="if:!$component.loadingReport()"><i class="fa fa-area-chart"></i></span>
+	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Cohort Reporting
 </div>
 
 <div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
@@ -34,20 +34,20 @@
 	<div class="row">
 		<div class="col-xs-10"></div>
 		<div class="col-xs-2">
-			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.reportValid(), text: $root.loadingReport() ? 'Loading...' : 'View Report'"></button>
+			<button class="pull-right form-control btn btn-sm btn-primary" data-bind="click: $component.runReport, enable: $component.reportValid(), text: $component.loadingReport() ? 'Loading...' : 'View Report'"></button>
 		</div>
 	</div>
 	<div class="clear"></div>
 </div>
 <!-- /ko -->
 
-<div id="reportHeel" data-bind="if: $component.currentReport() == 'Heracles Heel' && !$root.loadingReport()">
+<div id="reportHeel" data-bind="if: $component.currentReport() == 'Heracles Heel' && !$component.loadingReport()">
 	<div class=" report">
 		<faceted-datatable params="{columns: $component.heelDataColumns, reference:$component.reference, options:$component.heelOptions }"></faceted-datatable>
 	</div>
 </div>
 
-<div id="reportDataCompleteness" data-bind="if: $component.currentReport() == 'Data Completeness' && !$root.loadingReport()">
+<div id="reportDataCompleteness" data-bind="if: $component.currentReport() == 'Data Completeness' && !$component.loadingReport()">
 	<div class="pad-10 report">
 		<div class="reportHeading"><i class="fa fa-area-chart"></i> Data Completeness (<span data-bind="text:$component.reportSourceKey()"></span>)</div>
 		<faceted-datatable params="{columns: $component.dataCompletColumns, reference:$component.dataCompleteReference, options:$component.dataCompleteOptions, rowClick:$component.dataCompleteRowClick }"></faceted-datatable>
@@ -59,7 +59,7 @@
 	</div>
 </div>
 
-<div id="reportEntropy" data-bind="if: $component.currentReport() == 'Entropy' && !$root.loadingReport()">
+<div id="reportEntropy" data-bind="if: $component.currentReport() == 'Entropy' && !$component.loadingReport()">
 	<div class="tab-pane" id="care_site_div">
 		<table id="care_site_table" class="stripe compact hover dataTable no-footer">
 			<thead>
@@ -76,7 +76,7 @@
 	</div>
 </div>
 
-<div id="reportPerson" data-bind="if: $component.currentReport() == 'Person' && !$root.loadingReport()">
+<div id="reportPerson" data-bind="if: $component.currentReport() == 'Person' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -112,7 +112,7 @@
 	</div>
 </div>
 
-<!-- ko if: $component.currentReport() == 'Measurement' && !$root.loadingReport() -->
+<!-- ko if: $component.currentReport() == 'Measurement' && !$component.loadingReport() -->
 <div class="panel panel-danger">
 	<div class="panel-heading">
 		Report Not implemented
@@ -123,7 +123,7 @@
 </div>
 <!-- /ko -->
 
-<div id="reportCohortSpecific" data-bind="if: $component.currentReport() == 'Cohort Specific' && !$root.loadingReport()">
+<div id="reportCohortSpecific" data-bind="if: $component.currentReport() == 'Cohort Specific' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -190,7 +190,7 @@
 	</div>
 </div>
 
-<div id="reportTornado" data-bind="if: $component.currentReport() == 'Tornado' && !$root.loadingReport()">
+<div id="reportTornado" data-bind="if: $component.currentReport() == 'Tornado' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -224,7 +224,7 @@
 	</div>
 </div>
 
-<div id="reportConditionsByIndex" data-bind="if: $component.currentReport() == 'Conditions by Index' && !$root.loadingReport()">
+<div id="reportConditionsByIndex" data-bind="if: $component.currentReport() == 'Conditions by Index' && !$component.loadingReport()">
 	<div class="pad-5 report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -283,7 +283,7 @@
 	</div>
 </div>
 
-<div id="reportDrugErasByIndex" data-bind="if: $component.currentReport() == 'Drugs by Index' && !$root.loadingReport()">
+<div id="reportDrugErasByIndex" data-bind="if: $component.currentReport() == 'Drugs by Index' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -335,7 +335,7 @@
 	</div>
 </div>
 
-<div id="reportConditionPeriods" data-bind="if: $component.currentReport() == 'Observation Periods' && !$root.loadingReport()">
+<div id="reportConditionPeriods" data-bind="if: $component.currentReport() == 'Observation Periods' && !$component.loadingReport()">
 	<div class="report">
 
 		<div class="panel panel-primary">
@@ -434,7 +434,7 @@
 	</div>
 </div>
 
-<div id="reportConditionEras" data-bind="if: $component.currentReport() == 'Condition Eras' && !$root.loadingReport()">
+<div id="reportConditionEras" data-bind="if: $component.currentReport() == 'Condition Eras' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -518,7 +518,7 @@
 	</div>
 </div>
 
-<div id="reportProceduresByIndex" data-bind="if: $component.currentReport() == 'Procedures by Index' && !$root.loadingReport()">
+<div id="reportProceduresByIndex" data-bind="if: $component.currentReport() == 'Procedures by Index' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -580,7 +580,7 @@
 		}
 	}"></atlas-modal>
 
-<div id="reportCondition" data-bind="visible: $component.currentReport() == 'Condition' && !$root.loadingReport()">
+<div id="reportCondition" data-bind="visible: $component.currentReport() == 'Condition' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -663,7 +663,7 @@
 	</div>
 </div>
 
-<div id="reportDrugEras" data-bind="if: $component.currentReport() == 'Drug Eras' && !$root.loadingReport()">
+<div id="reportDrugEras" data-bind="if: $component.currentReport() == 'Drug Eras' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -746,7 +746,7 @@
 	</div>
 </div>
 
-<div id="reportDrugExposure" data-bind="if: $component.currentReport() == 'Drug Exposure' && !$root.loadingReport()">
+<div id="reportDrugExposure" data-bind="if: $component.currentReport() == 'Drug Exposure' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -853,7 +853,7 @@
 	</div>
 </div>
 
-<div id="reportProcedure" data-bind="if: $component.currentReport() == 'Procedure' && !$root.loadingReport()">
+<div id="reportProcedure" data-bind="if: $component.currentReport() == 'Procedure' && !$component.loadingReport()">
 	<div class=" report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -935,7 +935,7 @@
 	</div>
 </div>
 
-<div id="reportDeath" data-bind="if: $component.currentReport() == 'Death' && !$root.loadingReport()">
+<div id="reportDeath" data-bind="if: $component.currentReport() == 'Death' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -975,7 +975,7 @@
 	</div>
 </div>
 
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilPersonAndExposureBaseline.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilPersonAndExposureBaseline.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -992,7 +992,7 @@
 	</div>
 </div>
 
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilPersonAndExposureCohort.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilPersonAndExposureCohort.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1009,7 +1009,7 @@
 	</div>
 </div>
 
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitRecordsBaseline.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitRecordsBaseline.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1027,7 +1027,7 @@
 	</div>
 </div>
 
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitDatesBaseline.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitDatesBaseline.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1045,7 +1045,7 @@
 	</div>
 </div>
 
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilCareSiteDatesBaseline.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilCareSiteDatesBaseline.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1063,7 +1063,7 @@
 	</div>
 </div>
 
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitRecordsCohort.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitRecordsCohort.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1080,7 +1080,7 @@
 		</div>
 	</div>
 </div>
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitDatesCohort.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilVisitDatesCohort.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1097,7 +1097,7 @@
 		</div>
 	</div>
 </div>
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilCareSiteDatesCohort.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilCareSiteDatesCohort.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1114,7 +1114,7 @@
 		</div>
 	</div>
 </div>
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilDrugBaseline.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilDrugBaseline.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
@@ -1130,7 +1130,7 @@
 		</div>
 	</div>
 </div>
-<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilDrugCohort.name && !$root.loadingReport()">
+<div data-bind="if: $component.currentReport() == visualizationPacks.healthcareUtilDrugCohort.name && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
