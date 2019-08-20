@@ -242,6 +242,7 @@ define([
 				&& this.currentConceptSet().id == conceptSetId
 			) {
 				this.currentConceptSetSource('repository');
+				this.loading(false);
 				return;
 			}
 			try {
