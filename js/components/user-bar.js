@@ -28,7 +28,6 @@ define([
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
 			this.appConfig = appConfig;
 			this.token = authApi.token;
 			this.tokenExpired = authApi.tokenExpired;

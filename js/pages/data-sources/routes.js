@@ -1,7 +1,7 @@
 define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
-    function routes(appModel, router) {
+    function routes(router) {
       return {
         '/datasources': new AuthorizedRoute(() => {
           require(['./data-sources'], function () {

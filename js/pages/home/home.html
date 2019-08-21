@@ -15,7 +15,7 @@
 	</div>
 	<div class="home-getting-started">
 		<div>
-			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: $root.currentCohortDefinition() != undefined || !canCreateCohort()}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: currentCohortDefinition() != undefined || !canCreateCohort()}">Define a New Cohort</span> Begin performing research by defining the group of people you intend to study
 		</div>
 		<div>
 			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.browseVocabulary, css: {disabled: !canSearch()}">Search the Vocabulary</span> Search the different ontologies used to describe patient level data around the world

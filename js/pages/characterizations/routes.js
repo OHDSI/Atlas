@@ -6,7 +6,7 @@ define(
 	   } = require('pages/Route');
 	   require('./components/characterizations/characterization-view-edit');
 
-		function routes(appModel, router) {
+		function routes(router) {
 
             const characterizationViewEdit = new AuthorizedRoute((id, section, subId) => {
                 router.setCurrentView('characterization-view-edit', {

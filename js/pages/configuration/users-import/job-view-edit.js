@@ -56,7 +56,6 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.model = params.model;
 			this.roles = sharedState.roles;
 			this.jobId = ko.observable();
 			this.loading = ko.observable();

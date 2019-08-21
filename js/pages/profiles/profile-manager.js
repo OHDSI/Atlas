@@ -11,6 +11,7 @@ define([
 		'atlas-state',
 		'components/cohortbuilder/CohortDefinition',
 		'services/CohortDefinition',
+		'services/ConceptSet',
 		'pages/Page',
 		'utils/AutoBind',
 		'utils/CommonUtils',
@@ -40,6 +41,7 @@ define([
 		sharedState,
 		CohortDefinition,
 		cohortDefinitionService,
+		conceptSetService,
 		Page,
 		AutoBind,
 		commonUtils,
@@ -61,7 +63,6 @@ define([
 		class ProfileManager extends AutoBind(Page) {
 			constructor(params) {
 				super(params);
-				this.model = params.model;
 				this.sharedState = sharedState;
 				this.aspectRatio = ko.observable();
 				this.config = config;
@@ -74,17 +75,18 @@ define([
 
 				this.cohortDefinitionId = ko.observable(router.routerParams().cohortDefinitionId);
 				this.currentCohortDefinition = ko.observable(null);
+				this.cohortDefinition = sharedState.CohortDefinition.current;
 				// if a cohort definition id has been specified, see if it is
 				// already loaded into the page model. If not, load it from the
 				// server
 				if (this.cohortDefinitionId() &&
 					(
-						this.model.currentCohortDefinition() &&
-						this.model.currentCohortDefinition().id() === this.cohortDefinitionId
+						this.cohortDefinition() &&
+						this.cohortDefinition().id() === this.cohortDefinitionId
 					)
 				) {
 					// The cohort definition requested is already loaded into the page model - just reference it
-					this.currentCohortDefinition(this.model.currentCohortDefintion())
+					this.currentCohortDefinition(this.cohortDefinition())
 				} else if (this.cohortDefinitionId()) {
 					cohortDefinitionService.getCohortDefinition(this.cohortDefinitionId())
 						.then((cohortDefinition) => {
@@ -122,7 +124,7 @@ define([
 					var conceptSets = ko.toJS(o.cohortDef.expression()
 						.ConceptSets());
 					conceptSets.forEach((conceptSet) => {
-						this.model.resolveConceptSetExpressionSimple(
+						conceptSetService.resolveConceptSetExpressionSimple(
 							ko.toJS(conceptSet.expression),
 							_.bind(this.loadedConceptSet, this, conceptSet))
 					});
