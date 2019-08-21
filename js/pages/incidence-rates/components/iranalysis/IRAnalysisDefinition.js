@@ -12,6 +12,7 @@ define(function (require, exports) {
 		self.name = ko.observable(data.name || "New Incidence Rate Analysis");
 		self.description = ko.observable(data.description || null);
 		self.expression = ko.observable(new IRAnalysisExpression(data.expression))
+		self.createdBy = ko.observable(data.createdBy || null);
 	}
 	return IRAnalysisDefinition;
 });

@@ -1,6 +1,7 @@
 <heading-title params="name: 'Configuration', icon: 'cogs', theme: 'dark'"></heading-title>
 <div data-bind="if: $component.hasPageAccess(), css: classes({ extra: 'paddedWrapper' })">
-		<div data-bind="if: $component.initializationCompleted()">
+		<loading data-bind="visible:loading()"></loading>
+		<div data-bind="if: $component.initializationCompleted() && !loading()">
 			<div data-bind="with:config.api">
 				<div class="configureHeader">
 					<div class="left">

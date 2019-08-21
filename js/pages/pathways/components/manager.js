@@ -3,6 +3,8 @@ define([
 	'text!./manager.html',
 	'../PathwayService',
 	'../PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'../PathwayAnalysis',
 	'atlas-state',
 	'appConfig',
@@ -12,18 +14,22 @@ define([
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
 	'const',
+	'lodash',
 	'less!./manager.less',
 	'components/tabs',
 	'./tabs/pathway-design',
 	'./tabs/pathway-exec-wrapper',
 	'./tabs/pathway-results',
 	'./tabs/pathway-utils',
-	'faceted-datatable'
+	'faceted-datatable',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
 	PathwayService,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	PathwayAnalysis,
 	sharedState,
 	config,
@@ -33,6 +39,7 @@ define([
 	commonUtils,
 	ohdsiUtil,
 	constants,
+	lodash
 ) {
 	class PathwaysManager extends AutoBind(Page) {
 		constructor(params) {
@@ -51,7 +58,7 @@ define([
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && this.design().name() !== this.defaultName;
 			});
-			
+
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
@@ -63,6 +70,7 @@ define([
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
+				dirtyFlag: this.dirtyFlag,
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
@@ -75,6 +83,12 @@ define([
 			this.isDeleting = ko.observable(false);
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
+				entityIdGetter: () => this.analysisId(),
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
 			});
 		}
 

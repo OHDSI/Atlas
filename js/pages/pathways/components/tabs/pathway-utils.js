@@ -1,13 +1,13 @@
 define([
-	'knockout', 
-	'../../PathwayService', 
-	'../../PermissionService', 
-	'text!./pathway-utils.html', 
-	'appConfig', 
-	'services/AuthAPI', 
-	'components/Component', 
-	'utils/AutoBind', 
-	'utils/CommonUtils', 
+	'knockout',
+	'../../PathwayService',
+	'../../PermissionService',
+	'text!./pathway-utils.html',
+	'appConfig',
+	'services/AuthAPI',
+	'components/Component',
+	'utils/AutoBind',
+	'utils/CommonUtils',
 	'less!./pathway-utils.less',
 ], function (
 	ko,
@@ -24,13 +24,12 @@ define([
 		constructor(params) {
 			super();
 
-			this.subscriptions = [];
-			
 			this.loading = ko.observable(false);
 
 			this.MODE_JSON = 0;
 			this.MODE_IMPORT = 1;
 
+			this.dirtyFlag = params.dirtyFlag;
 			this.analysisId = params.analysisId;
 			this.mode = ko.observable(this.MODE_JSON);
 
@@ -40,7 +39,7 @@ define([
 			this.exportEntity = ko.observable();
 			this.exportService = PathwayService.loadExportDesign;
 			this.importService = PathwayService.importPathwayDesign;
-			
+
 			// subscriptions
 			this.subscriptions.push(this.analysisId.subscribe((newVal) => {
 				this.loadExportJSON();
@@ -60,10 +59,7 @@ define([
 				this.loading(false);
 			}
 		}
-		
-		dispose() {
-			this.subscriptions.forEach(s => s.dispose());
-		}
+
 	}
 
 	return commonUtils.build('pathway-utils', PathwayUtils, view);

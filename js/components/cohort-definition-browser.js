@@ -7,7 +7,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'services/http',
-    'utils/DatatableUtils',
+	'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
 	ko,
@@ -31,9 +31,11 @@ define([
 			this.loading(true);
 
 			httpService.doGet(`${config.api.url}cohortdefinition`)
-				.then(({ data }) => this.reference(data))
+				.then(({ data }) => {
+					datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
+					this.reference(data);
+				})
 				.finally(() => { this.loading(false) });
-
 
 			this.options = {
 				Facets: [{
@@ -64,38 +66,34 @@ define([
 
 			this.columns = [{
 					title: 'Id',
+					className: 'id-column',
 					data: 'id'
 				},
 				{
 					title: 'Name',
-					render: this.renderCohortDefinitionLink
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['name'],
+						linkish: true,
+					})),
 				},
 				{
 					title: 'Created',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
-					}
+					className: 'date-column',
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Updated',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
-					}
+					className: 'date-column',
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
+					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 
-			this.renderCohortDefinitionLink = this.renderCohortDefinitionLink.bind(this);
 			this.rowClick = this.rowClick.bind(this);
-		}
-		
-		renderCohortDefinitionLink (data,type,row) {
-			return (type == "display")	? `<span class="linkish">${row.name}</span>` : row.name;
 		}
 
 		rowClick(data) {

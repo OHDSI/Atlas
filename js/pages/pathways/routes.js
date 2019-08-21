@@ -8,7 +8,6 @@ define((require, factory) => {
 	function routes(appModel, router) {
 
 		const pathwaysManager = new AuthorizedRoute((id, section, subId) => {
-			appModel.activePage(this.title);
 			require(['./components/manager'], function () {
 				router.setCurrentView('pathways-manager', {
 					analysisId: id,
@@ -19,7 +18,6 @@ define((require, factory) => {
 		});
 
 		const pathwaysBrowser = new AuthorizedRoute(() => {
-			appModel.activePage(this.title);
 			require(['./components/browser'], function () {
 				router.setCurrentView('pathways-browser');
 			});

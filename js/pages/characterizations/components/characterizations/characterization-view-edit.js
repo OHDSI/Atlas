@@ -2,6 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
+	'services/Permission',
+	'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
@@ -14,6 +16,7 @@ define([
     'utils/CommonUtils',
     'assets/ohdsi.util',
     'const',
+    'lodash',
     'less!./characterization-view-edit.less',
     'components/tabs',
     'faceted-datatable',
@@ -21,10 +24,13 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
+	'components/security/access/configure-access-modal',
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
+	GlobalPermissionService,
+	{ entityType },
     CriteriaGroup,
     ConceptSet,
     CharacterizationAnalysis,
@@ -36,7 +42,8 @@ define([
     AutoBind,
     commonUtils,
     ohdsiUtil,
-    constants
+    constants,
+    lodash
 ) {
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
@@ -87,6 +94,12 @@ define([
                     }
                 }
             });
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
+				entityIdGetter: () => this.characterizationId(),
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+			});
         }
 
         onRouterParamsChanged({ characterizationId, section, subId }) {

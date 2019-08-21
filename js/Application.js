@@ -3,6 +3,7 @@ define(
 		'knockout',
 		'services/http',
 		'services/AuthAPI',
+		'services/role',
 		'appConfig',
 		'lscache',
 		'atlas-state',
@@ -17,6 +18,7 @@ define(
 		ko,
 		httpService,
 		authApi,
+		roleService,
 		config,
 		lscache,
 		sharedState,
@@ -34,8 +36,25 @@ define(
 				this.densityPriority = 0;
 				this.pageModel = model;
 				this.router = router;
+				this.pageTitle = ko.pureComputed(() => {
+					let pageTitle = "ATLAS";
+					switch (this.router.currentView()) {
+						case 'loading':
+							pageTitle = `${pageTitle}: Loading`;
+							break;
+						default:
+							pageTitle = `${pageTitle}: ${this.router.activeRoute().title}`;
+							break;
+					}
+
+					if (this.pageModel.hasUnsavedChanges()) {
+						pageTitle = `*${pageTitle} (unsaved)`;
+					}
+
+					return pageTitle;
+				})
 			}
-			
+
 			/**
 			 * Performs initial setup
 			 * @returns Promise
@@ -61,7 +80,6 @@ define(
 
 					}
 					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
-					this.router.setCurrentViewHandler(this.pageModel.handleViewChange);
 					this.router.setModelGetter(() => this.pageModel);
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
@@ -79,7 +97,7 @@ define(
 			synchronize() {
 				const promise = Promise.all([
 					this.initServiceInformation(),
-					this.pageModel.updateRoles(),
+					roleService.updateRoles(),
 				]);
 				promise.then(() => {
 					this.router.run();
@@ -152,6 +170,7 @@ define(
 							var conceptSetItem = self.pageModel.createConceptSetItem(concept);
 							sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 							sharedState.selectedConcepts.push(conceptSetItem);
+							self.pageModel.setConceptSetExpressionExportItems();
 						} else {
 							delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
 							sharedState.selectedConcepts.remove(function (i) {
@@ -174,9 +193,7 @@ define(
 								});
 							}
 							conceptSet.expression.items.valueHasMutated();
-							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression)
-								.then(res => self.pageModel.loadIncluded(res.data))
-								.then(res => self.pageModel.loadSourcecodes());
+							self.pageModel.resolveConceptSetExpressionSimple(conceptSet.expression);
 						}
 					});
 
@@ -192,7 +209,7 @@ define(
 						sharedState.selectedConcepts.remove(function (i) {
 							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
 						});
-
+						self.pageModel.currentCohortDefinition() && self.pageModel.currentCohortDefinition().expression().ConceptSets.valueHasMutated();
 						self.pageModel.resolveConceptSetExpression();
 					});
 

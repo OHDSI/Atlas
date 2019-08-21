@@ -606,6 +606,9 @@ define([
 
 									let datatable = $('#procedure_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [5, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -717,6 +720,9 @@ define([
 
 									let datatable = $('#drug_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [6, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -831,6 +837,9 @@ define([
 
 									let datatable = $('#drugera_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [5, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -940,6 +949,9 @@ define([
 
 									let datatable = $('#condition_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											dom: this.dom,
 											buttons: this.buttons,
 											lengthMenu: this.lengthMenu,
@@ -1328,6 +1340,9 @@ define([
 
 									let datatable = $('#conditionera_table')
 										.DataTable({
+											language: {
+												searchPlaceholder: 'Search...',
+											},
 											order: [6, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
@@ -1448,6 +1463,9 @@ define([
 
 										let datatable = $('#drugs-by-index-table')
 											.DataTable({
+												language: {
+													searchPlaceholder: 'Search...',
+												},
 												order: [5, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
@@ -1571,6 +1589,9 @@ define([
 
 										let datatable = $('#condition_table')
 											.DataTable({
+												language: {
+													searchPlaceholder: 'Search...',
+												},
 												order: [6, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
@@ -1696,6 +1717,9 @@ define([
 
 										let datatable = $('#procedure_table')
 											.DataTable({
+												language: {
+													searchPlaceholder: 'Search...',
+												},
 												order: [6, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
@@ -2087,6 +2111,9 @@ define([
 								});
 
 								this.careSiteDatatable = $('#care_site_table').DataTable({
+									language: {
+										searchPlaceholder: 'Search...',
+									},
 									order: [],
 									dom: this.dom,
 									buttons: this.buttons,
@@ -2642,7 +2669,7 @@ define([
 
 							// create svg with range bands based on the trellis names
 							let chart = new atlascharts.trellisline();
-							const size = this.breakpoints.guessFromNode("#conditoinera_trellisLinePlot");
+							const size = this.breakpoints.guessFromNode("#conditionera_trellisLinePlot");
 							chart.render(dataByDecile, "#conditionera_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
@@ -2762,7 +2789,7 @@ define([
 							// create svg with range bands based on the trellis names
 							let chart = new atlascharts.trellisline();
 							const size = this.breakpoints.guessFromNode("#drugera_trellisLinePlot");
-							chart.render(dataByDecile, "#drugera_trellisLinePlot", size.width, size.breakpoints.wide.height, {
+							chart.render(dataByDecile, "#drugera_trellisLinePlot", size.width, this.breakpoints.wide.height, {
 								trellisSet: allDeciles,
 								trellisLabel: "Age Decile",
 								seriesLabel: "Year of Observation",
