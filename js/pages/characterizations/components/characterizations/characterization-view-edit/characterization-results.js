@@ -322,7 +322,7 @@ define([
             return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.thresholdValuePct()}%)` : '');
         }
 
-        exportAllCSV() {
+        async exportAllCSV() {
             try {
                 let {cohorts, analyses, domains} = filterUtils.getSelectedFilterValues(this.filterList());
                 let params = {
@@ -331,7 +331,7 @@ define([
                     domainIds: domains,
                     thresholdValuePct: this.thresholdValuePct() / 100
                 };
-                FileService.loadZip(`${config.api.url}cohort-characterization/generation/${this.executionId()}/result/export`,
+                await FileService.loadZip(`${config.api.url}cohort-characterization/generation/${this.executionId()}/result/export`,
                     `characterization_${this.characterizationId()}_execution_${this.executionId()}_reports.zip`, 'POST', params);
 
             }catch (e) {
