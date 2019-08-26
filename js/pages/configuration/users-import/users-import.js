@@ -70,7 +70,6 @@ define(['knockout',
 				this.nextClasses = ko.computed(() => this.classes({ extra: this.getNextClasses(), }));
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
-				this.model = params.model;
 				this.roles = sharedState.roles;
 				this.rolesMapping = ko.observableArray();
 				this.selectedRole = ko.observable();

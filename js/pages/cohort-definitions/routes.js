@@ -1,7 +1,8 @@
 define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
-    function routes(appModel, router) {
+    const sharedState = require('atlas-state');
+    function routes(router) {
       return {
         '/cohortdefinitions': new AuthorizedRoute(() => {
           require([
@@ -10,6 +11,26 @@ define(
             'components/cohort-definition-browser',
           ], function () {
             router.setCurrentView('cohort-definitions');
+          });
+        }),
+        '/cohortdefinition/:cohortDefinitionId/conceptsets/:conceptSetId/:mode': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
+          require([
+           'components/cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definition-browser',
+            'conceptset-editor',
+            './components/reporting/cost-utilization/report-manager',
+            'explore-cohort',
+          ], function () {
+            sharedState.CohortDefinition.mode('conceptsets');
+            sharedState.ConceptSet.source('cohort');
+            router.setCurrentView('cohort-definition-manager', {
+              cohortDefinitionId,
+              mode: 'conceptsets',
+              conceptSetId,
+            });
           });
         }),
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path = 'definition') => {
@@ -33,27 +54,16 @@ define(
             // Determine any optional parameters to set based on the query string
             qs = router.qs(); // Get the query string parameters
             var sourceKey = qs.sourceKey || null;
-            router.setCurrentView('cohort-definition-manager');
-            appModel.currentCohortDefinitionMode(view);
-            appModel.loadCohortDefinition(cohortDefinitionId, null, 'cohort-definition-manager', 'details', sourceKey);
+            router.setCurrentView('cohort-definition-manager', {
+              cohortDefinitionId,
+              mode: 'definition',
+              sourceKey,
+            });
+            sharedState.ConceptSet.source('cohort');
+            sharedState.CohortDefinition.mode(view);
           });
         }),
-        '/cohortdefinition/:cohortDefinitionId/conceptset/:conceptSetId/:mode:': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
-          require([
-           'components/cohortbuilder/CohortDefinition',
-            'components/atlas.cohort-editor',
-            './cohort-definitions',
-            './cohort-definition-manager',
-            'components/cohort-definition-browser',
-            'conceptset-editor',
-            './components/reporting/cost-utilization/report-manager',
-            'explore-cohort',
-          ], function () {
-            router.setCurrentView('cohort-definition-manager');
-            appModel.currentCohortDefinitionMode('conceptsets');
-            appModel.loadCohortDefinition(cohortDefinitionId, conceptSetId, 'cohort-definition-manager', 'details');
-          });
-        }),
+
         '/reports': new AuthorizedRoute(() => {
           require([
             './components/reporting/cost-utilization/report-manager',

@@ -2,7 +2,7 @@ define(
 	(require, factory) => {
     const atlasState = require('atlas-state');
     const { AuthorizedRoute } = require('pages/Route');
-    function routes(appModel, router) {
+    function routes(router) {
       const JobViewEdit = new AuthorizedRoute((id, section) => {
 				require(['./users-import/job-view-edit'], function () {
 					router.setCurrentView('import-job-view-edit', {
@@ -10,7 +10,7 @@ define(
 						section: section,
 					});
 				});
-			}, this.title);
+			});
       return {
         '/configure': new AuthorizedRoute(() => {
           require(['./configuration', './sources/source-manager'], function () {

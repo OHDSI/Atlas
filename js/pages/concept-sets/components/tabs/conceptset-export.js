@@ -4,27 +4,32 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
-  'services/file',
-  'clipboard',
-  '../../const',
+	'services/file',
+	'atlas-state',
+	'clipboard',
+	'../../const',
 	'loading',
 ], function (
 	ko,
 	view,
 	Component,
-  AutoBind,
-  commonUtils,
-  FileService,
-  clipboard,
-  constants,
+	AutoBind,
+	commonUtils,
+	FileService,
+	sharedState,
+	clipboard,
+	constants,
 ) {
 	class ConceptsetExport extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
-			this.currentConceptSet = this.model.currentConceptSet;
+			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
+			this.currentIncludedConceptIdentifierList = sharedState.currentIncludedConceptIdentifierList;
+			this.currentConceptIdentifierList = sharedState.currentConceptIdentifierList;
+			this.currentConceptSetExpressionJson = sharedState.currentConceptSetExpressionJson;
 			this.exporting = ko.observable(false);
-			this.loading = this.model.resolvingConceptSetExpression();
+			this.loading = sharedState.resolvingConceptSetExpression;
     }
 
     copyToClipboard(clipboardButtonId, clipboardButtonMessageId) {

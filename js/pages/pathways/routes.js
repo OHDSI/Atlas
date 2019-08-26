@@ -5,7 +5,7 @@ define((require, factory) => {
 	} = require('pages/Route');
 
 	// return the routes that #/pathways responds to
-	function routes(appModel, router) {
+	function routes(router) {
 
 		const pathwaysManager = new AuthorizedRoute((id, section, subId) => {
 			require(['./components/manager'], function () {

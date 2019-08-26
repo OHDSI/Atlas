@@ -204,7 +204,6 @@ define([
 		}
 	}
 
-
 	return {
 		build,
 		confirmAndDelete,
@@ -224,6 +223,6 @@ define([
 		syntaxHighlight,
 		getPathwaysUrl,
 		normalizeUrl,
-		toggleConceptSetCheckbox
+		toggleConceptSetCheckbox,
 	};
 });

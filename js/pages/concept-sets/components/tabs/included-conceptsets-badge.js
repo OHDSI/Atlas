@@ -17,9 +17,8 @@ define([
 	class IncludedConceptsetsBadge extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-      this.model = params.model;
 			this.selectedConcepts = sharedState.selectedConcepts;
-		}		
+		}
 
 	}
 

@@ -31,7 +31,6 @@ define([
   class PredictionBrowser extends Page {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
 			this.reference = ko.observableArray();
 			this.loading = ko.observable(false);
 			this.config = config;
@@ -58,7 +57,7 @@ define([
                     },
 				]
 			};
-			
+
 			this.columns = [
 				{
 					title: 'Id',

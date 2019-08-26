@@ -34,6 +34,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.currentSearch = ko.observable('');
+			this.commonUtils = commonUtils;
 			this.loading = ko.observable(false);
 			this.domainsLoading = ko.observable(true);
 			this.vocabulariesLoading = ko.observable(true);
@@ -194,7 +195,7 @@ define([
 		replaceSpecialCharacters(str) {
 			return str.replace("/", " ");
 		}
-		
+
 		encodeSearchString(searchTerm) {
 			return encodeURIComponent(this.replaceSpecialCharacters(searchTerm));
 		}
@@ -272,9 +273,9 @@ define([
 				return;
 			}
 
-			let query = ''; 
+			let query = '';
 			if (this.currentSearch() !== undefined) {
-				query = this.encodeSearchString(this.currentSearch());	
+				query = this.encodeSearchString(this.currentSearch());
 				this.currentSearch(this.replaceSpecialCharacters(this.currentSearch()));
 			}
 			this.loading(true);
