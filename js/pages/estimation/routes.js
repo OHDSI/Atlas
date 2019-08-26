@@ -1,7 +1,7 @@
 define((require, factory) => {
   const { AuthorizedRoute } = require('pages/Route');
   const atlasState = require('atlas-state');
-    function routes(appModel, router) {
+    function routes(router) {
 
       const ccaViewEdit = new AuthorizedRoute((estimationId, section) => {
         require(['./cca-manager'], function () {

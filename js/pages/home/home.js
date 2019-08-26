@@ -6,6 +6,7 @@ define([
 	'services/http',
 	'appConfig',
 	'services/AuthAPI',
+	'atlas-state',
 	'components/heading',
 ], function (
 	ko,
@@ -14,24 +15,25 @@ define([
 	commonUtils,
 	httpService,
 	config,
-	authApi
+	authApi,
+	sharedState,
 ) {
 	class Home extends Page {
 		constructor(params) {
 			super(params);
 			this.github_status = ko.observableArray();
-			
+
 			this.canCreateCohort = ko.pureComputed(() => {
 				return (authApi.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
 			});
-
+			this.currentCohortDefinition = sharedState.CohortDefinition.current;
 			this.canSearch = ko.computed(() => {
 				return authApi.isAuthenticated();
 			});
 		}
 
 		async onPageCreated() {
-			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=26");
+			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=22");
 			this.github_status(data);
 		}
 

@@ -4,6 +4,7 @@ define([
 	'components/Component',
 	'utils/AutoBind',
   'utils/CommonUtils',
+  'services/ConceptSet',
   'atlas-state',
 ], function (
 	ko,
@@ -11,14 +12,16 @@ define([
 	Component,
   AutoBind,
   commonUtils,
+  conceptSetService,
   sharedState,
 ) {
 	class ConceptsetExpression extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-      this.model = params.model;
 			this.selectedConcepts = sharedState.selectedConcepts;
-      this.canEdit = this.model.canEditCurrentConceptSet;
+      this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
+      this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
+      this.commonUtils = commonUtils;
       this.allExcludedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.isExcluded()) === undefined;
       });
@@ -48,17 +51,18 @@ define([
 
     toggleCheckbox(d, field) {
 			commonUtils.toggleConceptSetCheckbox(
-				this.canEdit, 
-				sharedState.selectedConcepts, 
-				d, 
+				this.canEditCurrentConceptSet,
+				sharedState.selectedConcepts,
+				d,
 				field,
-				this.model.resolveConceptSetExpression
+				conceptSetService.resolveConceptSetExpression
 			);
     }
 
     renderCheckbox(field) {
-      return commonUtils.renderConceptSetCheckbox(this.canEdit, field);
+      return commonUtils.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
     }
+
 
     toggleMapped() {
       this.selectAllConceptSetItems(
@@ -69,7 +73,7 @@ define([
     }
 
 		selectAllConceptSetItems(isExcluded = null, includeDescendants = null, includeMapped = null) {
-			if (!this.canEdit()) {
+			if (!this.canEditCurrentConceptSet()) {
 				return;
 			}
 			this.selectedConcepts().forEach((conceptSetItem) => {
@@ -83,7 +87,7 @@ define([
 					conceptSetItem.includeMapped(includeMapped);
 				}
 			});
-			this.model.resolveConceptSetExpression();
+			conceptSetService.resolveConceptSetExpression();
     }
 
 	}

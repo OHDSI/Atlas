@@ -2,16 +2,17 @@ define(['knockout', 'text!./conceptset-warnings.html',
     'services/CohortDefinition',
     './const',
     './utils',
+    'atlas-state',
     'databindings',
     'faceted-datatable',
     'css!./style.css',
   ],
-  function (ko, view, cohortDefinitionApi, consts, utils) {
+  function (ko, view, cohortDefinitionApi, consts, utils, sharedState) {
 
     function conceptSetWarnings(params){
       var self = this;
-      self.model = params.model;
-      self.cohortDefinitionId = self.model.currentCohortDefinition().id || ko.observable(-1);
+      this.currentCohortDefinition = sharedState.CohortDefinition.current;
+      self.cohortDefinitionId = this.currentCohortDefinition().id || ko.observable(-1);
       self.count = params.count || ko.observable();
       self.infoCount = params.infoCount || ko.observable();
       self.warningCount = params.warningCount || ko.observable();
@@ -48,15 +49,15 @@ define(['knockout', 'text!./conceptset-warnings.html',
           });
         }
       };
-      
+
       self.stateSaveCallback = function(settings, data){
         if (!self.isFixConceptSetCalled){
           self.state = data;
         }
       };
-      
+
       self.stateLoadCallback = function(settings, callback) {
-        return self.state;          
+        return self.state;
       };
 
       self.fixRedundantConceptSet = function(value, parent, event){
@@ -99,14 +100,14 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       self.onDiagnose = function(){
-        var expressionJSON = ko.toJSON(self.model.currentCohortDefinition().expression(), function(key, value){
+        const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
           return (value === 0 || value) ?  value : undefined;
         }, 2);
         self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
       };
 
 
-      self.warningSubscription = self.model.currentCohortDefinition.subscribe(() => self.getWarnings());
+      self.warningSubscription = this.currentCohortDefinition.subscribe(() => self.getWarnings());
 
       self.getWarnings();
 

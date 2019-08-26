@@ -1,10 +1,13 @@
 define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
-    function routes(appModel, router) {
+    function routes(router) {
       const detailsRoute = new AuthorizedRoute((conceptSetId, mode = 'conceptset-expression') => {
         require(['./conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {
-          appModel.loadConceptSet(conceptSetId, 'conceptset-manager', 'repository', mode);
+          router.setCurrentView('conceptset-manager', {
+            conceptSetId,
+            mode,
+          })
         });
       });
 
@@ -18,7 +21,6 @@ define(
         }),
         '/concept/:conceptId:': new AuthorizedRoute((conceptId) => {
           require(['./concept-manager'], function () {
-            appModel.currentConceptId(conceptId);
             router.setCurrentView('concept-manager', { conceptId });
           });
         }),

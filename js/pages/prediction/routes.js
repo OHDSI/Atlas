@@ -2,7 +2,7 @@ define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     const atlasState = require('atlas-state');
-    function routes(appModel, router) {
+    function routes(router) {
 
       const predictionViewEdit = new AuthorizedRoute((analysisId, section) => {
         require([

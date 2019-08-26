@@ -1,6 +1,6 @@
 define([
-	'knockout', 
-	'text!./cohort-method-analysis-editor.html',	
+	'knockout',
+	'text!./cohort-method-analysis-editor.html',
 	'components/Component',
 	'utils/CommonUtils',
 	'const',
@@ -15,8 +15,8 @@ define([
 	'featureextraction/components/covariate-settings-editor',
 	'components/cohort-definition-browser',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Component,
 	commonUtils,
 	constants,
@@ -76,7 +76,7 @@ define([
 			this.subscriptions.push(this.studyEndDate.subscribe(newValue => {
 				this.analysis.getDbCohortMethodDataArgs.studyEndDate(dataTypeConverterUtils.convertToDateForR(newValue));
 			}));
-			
+
 			this.subscriptions.push(this.trimSelection.subscribe(newValue => {
 				this.analysis.trimByPs(this.trimSelection() === "byPercent");
 				this.analysis.trimByPsToEquipoise(this.trimSelection() === "toEquipoise");
@@ -122,7 +122,7 @@ define([
 		toggleControlDisplay() {
 			this.showControlDisplay(!this.showControlDisplay());
 		}
-	
+
 		togglePriorDisplay() {
 			this.showPriorDisplay(!this.showPriorDisplay());
 		}
@@ -136,7 +136,7 @@ define([
 			this.showConceptSetSelector(true);
 			this.currentConceptSet(this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet);
 		}
-		
+
 		clearIncludedCovariates () {
 			this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet(new ConceptSet());
 		}
@@ -145,19 +145,19 @@ define([
 			this.showConceptSetSelector(true);
 			this.currentConceptSet(this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet);
 		}
-		
+
 		clearExcludedCovariates () {
 			this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet(new ConceptSet());
 		}
-		
+
 		setCreatePs() {
-			if (this.matchStratifySelection() && this.trimSelection()) {				
+			if (this.matchStratifySelection() && this.trimSelection()) {
 				this.analysis.createPs(
 					!(this.matchStratifySelection() === "none" && this.trimSelection() === "none")
 				);
 			}
 		}
-	
+
 	}
 
 	return commonUtils.build('cohort-method-analysis-editor', CohortMethodAnalysisEditor, view);
