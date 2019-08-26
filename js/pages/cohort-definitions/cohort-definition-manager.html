@@ -326,6 +326,9 @@
 									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'bigquery' }, click: function() { $component.exportSqlMode('bigquery') };">
 										<a>BigQuery</a>
 									</li>
+									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'hive' }, click: function() { $component.exportSqlMode('hive') };">
+										<a>Hive</a>
+									</li>
 								</ul>
 							</div>
 							<div class="col-md-3" style="text-align: right">
@@ -364,6 +367,9 @@
 								</div>
 								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'bigquery' && !$component.isLoadingSql()">
 									<pre data-bind="text: $component.generatedSql.bigquery"></pre>
+								</div>
+								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'hive' && !$component.isLoadingSql()">
+									<pre data-bind="text: $component.generatedSql.hive"></pre>
 								</div>
 							</div>
 						</div>

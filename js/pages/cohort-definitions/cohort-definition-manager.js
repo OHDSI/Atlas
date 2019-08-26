@@ -208,6 +208,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.generatedSql.impala = ko.observable('');
 			this.generatedSql.netezza = ko.observable('');
 			this.generatedSql.bigquery = ko.observable('');
+			this.generatedSql.hive = ko.observable('');
 			this.templateSql = ko.observable('');
 			this.tabMode = this.model.currentCohortDefinitionMode;
 			this.cohortConst = cohortConst;
@@ -769,6 +770,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.generatedSql.impala('');
 				this.generatedSql.netezza('');
 				this.generatedSql.bigquery('');
+				this.generatedSql.hive('');
 
 				var templateSqlPromise = this.service.getSql(ko.toJS(this.model.currentCohortDefinition().expression, pruneJSON));
 
@@ -812,7 +814,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					const bigqueryTranslatePromise = this.service.translateSql(result.templateSql, 'bigquery');
 					bigqueryTranslatePromise.then(({data}) => this.generatedSql.bigquery(data.targetSQL));
 
-					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
+					const hiveTranslatePromise = this.service.translateSql(result.templateSql, 'hive');
+					hiveTranslatePromise.then(({data}) => this.generatedSql.hive(data.targetSQL));
+
+					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise,
+						impalaTranslatePromise, netezzaTranslatePromise, hiveTranslatePromise).then(() => {
 							this.isLoadingSql(false);
 					});
 				});
