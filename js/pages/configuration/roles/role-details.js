@@ -5,6 +5,8 @@ define([
     'pages/Page',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'utils/Clipboard',
+    'pages/configuration/roles/roleJsonParser',
     'services/role',
     'lodash',
     'assets/ohdsi.util',
@@ -14,7 +16,7 @@ define([
     'databindings',
     'components/ac-access-denied',
     'less!./role-details.less',
-    'components/heading'
+    'components/heading',
 ], function (
     ko,
     sharedState,
@@ -22,6 +24,8 @@ define([
     Page,
     AutoBind,
     commonUtils,
+    Clipboard,
+    roleJsonParser,
     roleService,
     _,
     ohdsiUtils,
@@ -30,7 +34,7 @@ define([
     fileService,
 ) {
     const defaultRoleName = "New Role";
-    class RoleDetails extends AutoBind(Page) {
+    class RoleDetails extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
 
@@ -42,20 +46,14 @@ define([
             this.users = sharedState.users;
             this.userItems = ko.observableArray();
             this.roleUserIds = [];
+            this.currentRole= {};
+            this.existingRoles = [];
+            this.validetedRoles = [];
 
             this.permissions = ko.observableArray();
             this.permissionItems = ko.observableArray();
             this.rolePermissionIds = [];
 
-            this.loading = ko.observable();
-            this.dirtyFlag = new ohdsiUtils.dirtyFlag({
-                role: this.roleName,
-                users: this.userItems,
-                permissions: this.permissionItems
-            });
-            this.roleDirtyFlag = new ohdsiUtils.dirtyFlag({
-                role: this.roleName
-            });
 
             this.isNewRole = ko.pureComputed(() => this.roleId() === 0);
 
@@ -86,6 +84,26 @@ define([
 
             this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });
 
+            this.loading = ko.observable();
+            this.dirtyFlag = new ohdsiUtils.dirtyFlag({
+                role: this.roleName,
+                users: this.userItems,
+                permissions: this.permissionItems
+            });
+            this.roleDirtyFlag = new ohdsiUtils.dirtyFlag({
+                role: this.roleName
+            });
+
+            this.modifiedJSON = ko.observable();
+            Object.defineProperty(this, 'expressionJSON', {
+                get: () => this.getExpressionJson(),
+                set: (val) => this.setExpressionJson(val),
+            });
+
+            this.isJSONValid = ko.observable(false);
+            this.validationErrors = ko.observable();
+            this.warnings = ko.observable({});
+
         }
 
         onRouterParamsChanged({ roleId }) {
@@ -109,36 +127,75 @@ define([
                 : '<span data-bind="css: { selected: ' + field + '}" class="fa fa-check readonly"></span>';
         }
 
-        async getRole() {
-            const role = await roleService.load(this.roleId());
-            this.roleName(role.role);
-        }
 
-        async getUsers() {
-            if (!this.users() || this.users().length == 0) {
-                const users = await userService.getUsers();
-                this.users(users);
-            }
-        }
-        async getRoleUsers() {
-            const roleUsers = await roleService.getRoleUsers(this.roleId());
-            roleUsers.forEach((user) => {
-                this.roleUserIds.push(user.id);
-            });
-        }
+        reload () {
+            if (this.modifiedJSON().length > 0 && this.isJSONValid) {
+                let object = JSON.parse(this.modifiedJSON());
+                let role = Array.isArray(object) ? object[0] : object;
 
-        async getPermissions() {
-            if (!this.permissions() || this.permissions().length == 0) {
-                const permissions = await roleService.getPermissions();
-                this.permissions(permissions);
+                this.roleName(role.role);
+                this.userItems().forEach(userItem => {
+                    let isUserPartOfTheRole = role.users.some(user => user.id === userItem.login);
+                    userItem.isRoleUser(isUserPartOfTheRole);
+                });
+                this.permissionItems().forEach(permissionItem => {
+                    let isPermissionPartOfTheRole = role.permissions.some(permission => permission.id === permissionItem.permission())
+                    permissionItem.isRolePermission(isPermissionPartOfTheRole);
+                });
+
             }
         }
 
-        async getRolePermissions() {
-            const rolePermissions = await roleService.getRolePermissions(this.roleId());
-            rolePermissions.forEach((permission) => {
-                this.rolePermissionIds.push(permission.id);
+        fixJSON(type = 'jsonIssues') {
+            let json = this.modifiedJSON();
+            const newJson = roleJsonParser.fixRoles(json, this.validetedRoles, type);
+
+            this.setExpressionJson(newJson);
+        }
+
+        getExpressionJson() {
+            return this.modifiedJSON();
+        }
+
+        setExpressionJson(json) {
+            this.modifiedJSON(json);
+
+            const usersMap = {};
+            this.users().forEach(user => {
+                usersMap[user.login] = user;
             });
+
+            const permissionsMap = {};
+            this.permissions().forEach(p => {
+                permissionsMap[p.permission] = p;
+            });
+
+            let existedRolesWithoutCurrent = this.existingRoles
+              .filter(role => role.id !== this.currentRole.id);
+
+            let parseJsonResult = roleJsonParser.validateAndParseRoles(json, usersMap, permissionsMap, existedRolesWithoutCurrent);
+            this.isJSONValid(parseJsonResult.isValid);
+            this.validationErrors(parseJsonResult.error);
+            this.validetedRoles = parseJsonResult.roles;
+            this.setWarnings(parseJsonResult.roles);
+        }
+
+        getJsonFromRoles() {
+            const role = [{
+                role: this.roleName(),
+                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
+                users: this.getUsersList().map(u => ({ id: u.login })),
+            }];
+
+            return JSON.stringify(role, null, 2);
+        }
+
+        setWarnings(roles) {
+            const jsonIssues = roles
+              .some(role => role.permissions.unavailable.length || role.users.unavailable.length);
+            const permissionSpecificIdsIssues = roles
+              .some(role => role.rolePermissions.some(p => roleJsonParser.PERMISSION_ID_REGEX.test(p.id)));
+            this.warnings({ jsonIssues, permissionSpecificIdsIssues });
         }
 
         updateUserItems() {
@@ -179,6 +236,73 @@ define([
         }
 
 
+        getPermissionsList() {
+            return this.permissionItems()
+              .filter(permission => permission.isRolePermission());
+        }
+
+        getUsersList() {
+            return this.userItems()
+              .filter(user => user.isRoleUser());
+        }
+
+        export() {
+            const role = [{
+                role: this.roleName(),
+                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
+                users: this.getUsersList().map(u => ({ id: u.login })),
+            }];
+
+            fileService.saveAsJson(role);
+        }
+
+
+        copyRoleExpressionJSONToClipboard () {
+            this.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyRoleExpressionJSONMessage');
+        }
+
+        close() {
+            commonUtils.routeTo("/roles");
+        }
+
+        async getRole() {
+            const role = await roleService.load(this.roleId());
+            this.currentRole = role;
+            this.roleName(role.role);
+        }
+
+        async getUsers() {
+            if (!this.users() || this.users().length == 0) {
+                const users = await userService.getUsers();
+                this.users(users);
+            }
+        }
+        async getRoleUsers() {
+            const roleUsers = await roleService.getRoleUsers(this.roleId());
+            roleUsers.forEach((user) => {
+                this.roleUserIds.push(user.id);
+            });
+        }
+
+        async getExistingRoles() {
+            const roles = await roleService.getList();
+            this.existingRoles = roles;
+        }
+
+        async getPermissions() {
+            if (!this.permissions() || this.permissions().length == 0) {
+                const permissions = await roleService.getPermissions();
+                this.permissions(permissions);
+            }
+        }
+
+        async getRolePermissions() {
+            const rolePermissions = await roleService.getRolePermissions(this.roleId());
+            rolePermissions.forEach((permission) => {
+                this.rolePermissionIds.push(permission.id);
+            });
+        }
+
         async updateRole () {
             this.loading(true);
             if (this.canReadRoles()) {
@@ -193,6 +317,8 @@ define([
                 await this.getRoleUsers();
                 await this.getRolePermissions();
             }
+
+            await this.getExistingRoles();
             await this.getUsers();
             this.updateUserItems();
 
@@ -202,6 +328,7 @@ define([
             this.roleDirtyFlag.reset();
             this.dirtyFlag.reset();
             this.loading(false);
+            this.modifiedJSON(this.getJsonFromRoles());
         }
 
         async addRelations(ids, relation) {
@@ -213,16 +340,6 @@ define([
             if (ids.length > 0) {
                 return await roleService.removeRelations(this.roleId(), relation, ids);
             }
-        }
-
-        getPermissionsList() {
-            return this.permissionItems()
-                .filter(permission => permission.isRolePermission());
-        }
-
-        getUsersList() {
-            return this.userItems()
-                .filter(user => user.isRoleUser());
         }
 
         async saveUsers() {
@@ -319,9 +436,7 @@ define([
             this.loading(false);
         }
 
-        close() {
-            commonUtils.routeTo("/roles");
-        }
+
 
         async delete() {
             commonUtils.confirmAndDelete({
@@ -357,16 +472,6 @@ define([
             if (id) {
                 commonUtils.routeTo(`/role/${id}`);
             }
-        }
-
-        export() {
-            const role = [{
-                role: this.roleName(),
-                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
-                users: this.getUsersList().map(u => ({ id: u.login })),
-            }];
-
-            fileService.saveAsJson(role);
         }
 
     }

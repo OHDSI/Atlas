@@ -4,7 +4,7 @@ define([
   'components/Component',
   'utils/AutoBind',
   'utils/CommonUtils',
-  'ajv',
+  'pages/configuration/roles/roleJsonParser',
   'services/User',
   'services/AuthAPI',
   'services/role',
@@ -19,13 +19,11 @@ define([
   Component,
   AutoBind,
   commonUtils,
-  Ajv,
+  roleJsonParser,
   UserService,
   AuthService,
   RoleService
 ) {
-  const ajv = new Ajv({ allErrors: true });
-  const PERMISSION_ID_REGEX = /:[0-9]+:/;
 
   class RolesImport extends AutoBind(Component) {
 
@@ -44,42 +42,6 @@ define([
         this.json = ko.observable();
         this.isJSONValid = ko.observable(true);
         this.validationErrors = ko.observable();
-        this.rolesJSONSchema = {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["role"],
-            "properties": {
-              "role": {
-                "type": "string",
-              },
-              "users": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                    },
-                  },
-                },
-              },
-              "permissions": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                    },
-                  },
-                },
-              },
-            },
-          },
-        };
 
         this.isAuthenticated = AuthService.isAuthenticated;
         this.hasAccess = AuthService.isPermittedCreateRole;
@@ -87,6 +49,30 @@ define([
         this.updateExisting();
         this.json.subscribe(this.parseJSON);
         this.warnings = ko.observable({});
+      }
+
+      parseJSON(json) {
+        this.isProcessing(false);
+        let parseJsonResult = roleJsonParser.validateAndParseRoles(json,  this.users, this.permissions, this.existingRoles);
+
+        this.isJSONValid(parseJsonResult.isValid);
+        this.validationErrors(parseJsonResult.error);
+        this.roles(parseJsonResult.roles);
+        this.setWarnings();
+
+      }
+
+      setWarnings() {
+        const jsonIssues = this.roles().some(role => role.permissions.unavailable.length || role.users.unavailable.length);
+        const permissionSpecificIdsIssues = this.roles().some(role => role.rolePermissions.some(p => roleJsonParser.PERMISSION_ID_REGEX.test(p.id)));
+        this.warnings({ jsonIssues, permissionSpecificIdsIssues });
+      }
+
+      fixJSON(type = 'jsonIssues') {
+        let json = this.json();
+        let roles = this.roles();
+        const newJson = roleJsonParser.fixRoles(json, roles, type);
+        this.json(newJson);
       }
 
       async updateExisting() {
@@ -108,87 +94,6 @@ define([
         this.permissions = permissionsMap;
         this.existingPermissions = permissions;
       }
-
-      parseJSON(json) {
-        let isValid = true;
-        let error = '';
-        let roles = [];
-        this.isProcessing(false);
-        try {
-          roles = JSON.parse(json);
-          isValid = ajv.validate(this.rolesJSONSchema, roles);
-          if (!isValid) {
-            throw new Error(ajv.errorsText(ajv.errors));
-          }
-          roles = roles.map(role => {
-            if (this.existingRoles.find(erole => erole.role === role.role)) {
-              throw new Error(`Role "${role.role}" already exists`);
-            }
-
-            const users = this.reduceArray(role.users, 'id', this.users);
-            const permissions = this.reduceArray(role.permissions, 'id', this.permissions);
-            return {
-              ...role,
-              users,
-              permissions,
-              roleUsers: role.users,
-              rolePermissions: role.permissions,
-              usersList: role.users.map(u => u.id).join(', '),
-              permissionsList: role.permissions.map(p => p.id).join(', '),
-            };
-          })
-        } catch(er) {
-          roles = [];
-          isValid = false;
-          error = er;
-        } finally {
-          this.isJSONValid(isValid);
-          this.validationErrors(error);
-          this.roles(roles);
-          this.setWarnings();
-        }
-      }
-
-      setWarnings() {
-        const jsonIssues = this.roles().some(role => role.permissions.unavailable.length || role.users.unavailable.length);
-        const permissionSpecificIdsIssues = this.roles().some(role => role.rolePermissions.some(p => PERMISSION_ID_REGEX.test(p.id)));
-        this.warnings({ jsonIssues, permissionSpecificIdsIssues });
-      }
-
-      reduceArray(inputArray = [], key = '', existingPermissionsMap = []) {
-        const defaultObject = { available: [], unavailable: [] };
-        return inputArray
-        ? inputArray.reduce((prev, curr) => {
-            const permission = existingPermissionsMap[curr[key]];
-            const availabilityKey = permission ? 'available' : 'unavailable';
-            return {
-              ...prev,
-              [availabilityKey]: [ ...prev[availabilityKey], (permission || curr) ],
-            }
-          }, defaultObject)
-        : defaultObject;
-      }
-
-      fixJSON(type = 'jsonIssues') {
-        const newJson = JSON.stringify(JSON.parse(this.json()).map(role => {
-          const r = this.roles().find(r => r.role === role.role);
-          const newRole = { role: r.role };
-          if (type === 'jsonIssues') {
-            Object.assign(newRole, {
-              users: r.users.available.map(u => ({ id: u.login })),
-              permissions: r.permissions.available.map(p => ({ id: p.permission })),
-            })
-          } else if (type === 'permissionSpecificIdsIssues') {
-            Object.assign(newRole, {
-              users: r.roleUsers,
-              permissions: r.rolePermissions.filter(p => !PERMISSION_ID_REGEX.test(p.id)),
-            })
-          }
-          return newRole;
-         }));
-         this.json(newJson);
-      }
-
 
       async createRole(role) {
         const { id } = await RoleService.create(role);
