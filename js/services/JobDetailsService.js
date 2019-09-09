@@ -31,9 +31,17 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 	function getJobURL(n) {
 		switch (n.jobInstance.name) {
 			case "generateCohort":
-				return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
+				if (n.status == 'COMPLETED') {
+					return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation/' + n.jobParameters.source_id;
+				} else {
+					return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
+				}
 			case 'irAnalysis':
-				return 'iranalysis/' + n.jobParameters.analysis_id + '/generation';
+				if (n.status == 'COMPLETED') {
+					return 'iranalysis/' + n.jobParameters.analysis_id + '/generation/' + n.jobParameters.source_id;
+				} else {
+					return 'iranalysis/' + n.jobParameters.analysis_id + '/generation';
+				}
 			case 'negativeControlsAnalysisJob':
 				return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
 			case 'generateCohortCharacterization':

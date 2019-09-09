@@ -73,15 +73,23 @@ define([
 				return "per " + multiplier  + " persons";
 			});
 
+			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
+
 			// observable subscriptions
 
 			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
-				if (this.selectedSource()) // this will cause a report refresh
+				if (this.selectedSource()) {// this will cause a report refresh
 					this.selectSource(this.selectedSource());
+				} else {
+					this.selectSourceBySourceId();
+				}
 			}));
 			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
-				if (this.selectedSource()) // this will cause a report refresh
+				if (this.selectedSource()) {// this will cause a report refresh
 					this.selectSource(this.selectedSource());
+				} else {
+					this.selectSourceBySourceId();
+				}
 			}));
 
 			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
@@ -89,6 +97,25 @@ define([
 			this.disableExportAnalysis = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
 			});
+		}
+
+		selectSourceBySourceId() {
+			if (this.selectedSourceId() && this.selectedTarget() && this.selectedOutcome()) {
+				const source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
+				if (source) {
+					if (!source.info()) {
+						// if sources were not loaded yet - wait for their loading
+						this.sourceInfoSubscribeId = source.info.subscribe(() => this.selectSourceBySourceId())
+					}
+					else {
+						if (this.sourceInfoSubscribeId) {
+							this.sourceInfoSubscribeId.dispose();
+						}
+						this.selectSource(source);
+						this.selectedSourceId(null);
+					}
+				}
+			}
 		}
 
 		reportDisabledReason(source) {

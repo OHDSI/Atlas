@@ -1114,11 +1114,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			onRouterParamsChanged(params) {
-				const { cohortDefinitionId, conceptSetId, mode = 'definition', sourceKey } = params;
+				const { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey } = params;
 				this.clearConceptSet();
 				this.tabMode(mode);
 				if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
-					this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, sourceKey);
+					this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
 				}
 			}
 
@@ -1170,7 +1170,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return cdsi;
 			}
 
-			async loadRequiredData(conceptSetId, sourceKey) {
+			async loadRequiredData(conceptSetId, selectedSourceId, sourceKey) {
 				try {
 					if (this.currentCohortDefinition().expression().ConceptSets()) {
 						const identifiers = [];
@@ -1204,6 +1204,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					// now that we have required information lets compile them into data objects for our view
 					const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
 					let results = [];
+					let selectedSourceInfo = null;
 					for (let s = 0; s < cdmSources.length; s++) {
 						const source = cdmSources[s];
 						this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
@@ -1213,8 +1214,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						const sourceInfo = this.getSourceInfo(source);
 						let cdsi = this.getCDSI(source, sourceInfo);
 						results.push(cdsi);
+
+						if (selectedSourceId && source.sourceId === selectedSourceId) {
+							selectedSourceInfo = cdsi;
+						}
 					}
 					this.cohortDefinitionSourceInfo(results);
+
+					if (selectedSourceInfo) {
+						this.toggleCohortReport(selectedSourceInfo);
+					}
 
 					if (conceptSetId != null) {
 						await this.loadConceptSet(conceptSetId);
@@ -1227,14 +1236,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			async prepareCohortDefinition(cohortDefinitionId, conceptSetId, sourceKey) {
+			async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey) {
 				this.isLoading(true);
 				if(parseInt(cohortDefinitionId) === 0) {
 					this.setNewCohortDefinition();
 				} else {
 					await this.loadExistingCohortDefinition(cohortDefinitionId);
 				}
-				await this.loadRequiredData(conceptSetId, sourceKey);
+				await this.loadRequiredData(conceptSetId, selectedSourceId, sourceKey);
 				this.isLoading(false);
 			}
 

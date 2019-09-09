@@ -13,14 +13,20 @@ define(
           analysisId = parseInt(analysisId);
           path = path.split("/");
           let activeTab = null;
+          let selectedSourceId = null;
           if (path.length > 0 && path[0] !== "") {
             activeTab = path[0];
           }
+          // source_id
+          if (path.length > 1 && path[1] !== "") { 
+            selectedSourceId = parseInt(path[1]);
+          }
           require(['./ir-manager'], function () {
             atlasState.IRAnalysis.selectedId(+analysisId);
+            atlasState.IRAnalysis.selectedSourceId(+selectedSourceId);
             router.setCurrentView('ir-manager', { analysisId, activeTab });
           });
-        }),
+        })
       };
     }
 

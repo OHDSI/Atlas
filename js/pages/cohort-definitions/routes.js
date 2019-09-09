@@ -48,15 +48,20 @@ define(
             // Determine the view to show on the cohort manager screen based on the path
             path = path.split("/");
             let view = 'definition';
+            let selectedSourceId = null;
             if (path.length > 0 && path[0] != "") {
               view = path[0];
+            }
+            if (path.length > 1 && path[1] != "") {
+              selectedSourceId = parseInt(path[1]);
             }
             // Determine any optional parameters to set based on the query string
             qs = router.qs(); // Get the query string parameters
             var sourceKey = qs.sourceKey || null;
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
-              mode: 'definition',
+              selectedSourceId,
+              mode: view,
               sourceKey,
             });
             sharedState.ConceptSet.source('cohort');
