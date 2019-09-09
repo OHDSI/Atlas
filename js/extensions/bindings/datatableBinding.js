@@ -9,6 +9,7 @@ define([
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
+    'datatables.net-plugins.row.show',
 ], function (
 	$,
 	ko,

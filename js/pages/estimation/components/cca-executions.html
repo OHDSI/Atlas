@@ -12,6 +12,10 @@
                     data: Object.assign({}, $data, {
                         classes: $parent.classes,
                         execColumns: $parent.execColumns,
+                        createdRowCallback: $parent.createdRowCallback,
+                        drawCallback: $parent.drawCallback,
+                        stateSaveCallback: $parent.stateSaveCallback,
+                        stateLoadCallback: $parent.stateLoadCallback,
                         isExpanded: $parent.expandedSection() === $index(),
                         toggleSection: $parent.toggleSection.bind(null, $index())
                     })
@@ -88,7 +92,8 @@
                     css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                     dataTable:{
                         data: submissions,
-                        options: {columns: execColumns, order: [[ 0, 'desc' ]]}
+                        options: { columns: execColumns, order: [[ 0, 'desc' ]], createdRow: createdRowCallback, drawCallback: drawCallback,
+                            stateSaveCallback: stateSaveCallback, stateLoadCallback: stateLoadCallback, stateSave: true}
                     }
                 "/>
             </li>

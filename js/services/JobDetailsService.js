@@ -59,9 +59,9 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 						return 'plp/' + n.jobParameters.cohortId;
 				}
 			case 'generateEstimationAnalysis':
-				return 'estimation/cca/' + n.jobParameters.estimation_analysis_id + '/executions';
+				return 'estimation/cca/' + n.jobParameters.estimation_analysis_id + '/executions/' + n.executionId;
 			case 'generatePredictionAnalysis':
-				return 'prediction/' + n.jobParameters.prediction_analysis_id + '/executions';
+				return 'prediction/' + n.jobParameters.prediction_analysis_id + '/executions/' + n.executionId;
       case 'warmCacheByUser':
         return 'configure';
 		}

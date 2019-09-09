@@ -107,6 +107,7 @@ const settingsObject = {
 		"knockout-mapping": "../node_modules/knockout-mapping/dist/knockout.mapping",
 		"datatables": "../node_modules/datatables/media/js/jquery.dataTables",
 		"datatables.net": "../node_modules/datatables.net/js/jquery.dataTables",
+        "datatables.net-plugins.row.show": "../node_modules/datatables.net-plugins/api/row().show()",
 		"datatables.net-buttons": "../node_modules/datatables.net-buttons/js/dataTables.buttons",
 		"datatables.net-buttons-html5": "../node_modules/ouanalyse-datatables.net-buttons-html5/js/buttons.html5",
 		"colvis": "../node_modules/datatables.net-buttons/js/buttons.colVis.min",

@@ -15,6 +15,7 @@ define([
 	'utils/ExecutionUtils',
     'services/JobDetailsService',
 	'lodash',
+	'pages/Router',
 	'less!./cca-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -34,6 +35,7 @@ define([
 	ExecutionUtils,
     jobDetailsService,
 	lodash,
+	router,
 ) {
 
 	class EstimationGeneration extends AutoBind(Component) {
@@ -42,6 +44,10 @@ define([
 
 			this.loading = ko.observable();
 			this.expandedSection = ko.observable();
+			this.generationId = ko.observable(router.routerParams().generationId);
+			if (this.generationId()) {
+				this.selectedGenerationId = parseInt(this.generationId());
+			}
 
 			this.analysisId = params.estimationId;
 			this.dirtyFlag = params.dirtyFlag;
@@ -51,6 +57,7 @@ define([
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
 			this.pollId = null;
+			this.row = null;
 
 			this.execColumns = [
 				{
@@ -87,6 +94,31 @@ define([
 			this.executionGroups = ko.observableArray([]);
 			this.isViewGenerationsPermitted() && this.startPolling();
 		}
+
+		createdRowCallback(row, data, dataIndex) {
+			if ( data.id === this.selectedGenerationId ) {
+				$(row).addClass( 'alert alert-warning' );
+				if (this.generationId()) {
+					this.row = row;
+				}
+			}
+		}
+
+		drawCallback(settings) {
+			// if (this.generationId() && this.row) {
+			// 	const table = settings.oInstance.api();
+			// 	this.row = null;
+			// 	table.page( 2 ).draw(false);
+			// }
+		}
+
+		stateSaveCallback(settings, data) {
+			this.state = data;
+		  };
+	
+		stateLoadCallback(settings, callback) {
+			return this.state;
+		};
 
 		startPolling() {
 			this.pollId = PollService.add({
@@ -128,7 +160,7 @@ define([
 
 				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
 
-				sourceList.forEach(s => {
+				sourceList.forEach((s, index) => {
 					let group = this.executionGroups().find(g => g.sourceKey === s.sourceKey);
 					if (!group) {
 						group = {
@@ -145,7 +177,16 @@ define([
 						|| s.status === this.estimationStatusGenerationOptions.RUNNING) ?
 						this.estimationStatusGenerationOptions.STARTED :
 						this.estimationStatusGenerationOptions.COMPLETED);
+
+					if (this.generationId() && this.isResultsViewPermitted(group.sourceKey)) {
+						const activeSubmission = group.submissions().find(e => e.id === parseInt(this.generationId()));
+						if (activeSubmission) {
+							this.toggleSection(index);
+						}
+					}
 				});
+				// prevent futher section toggling
+				this.generationId(null);
 			} catch (e) {
 				console.error(e);
 			} finally {
