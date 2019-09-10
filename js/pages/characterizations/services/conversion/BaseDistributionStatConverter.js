@@ -31,6 +31,7 @@ define([
               title: 'Strata',
               data: 'strataName',
               className: this.classes('col-distr-title'),
+							xssSafe:false,
             }];
         }
 

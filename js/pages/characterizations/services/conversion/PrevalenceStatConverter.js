@@ -59,6 +59,7 @@ define([
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
+							  xssSafe:false,
             };
         }
 
@@ -89,6 +90,7 @@ define([
                     }
                     return html;
                 },
+							  xssSafe:false,
             };
         }
 
