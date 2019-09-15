@@ -193,5 +193,5 @@
         showCohortSelector: $component.showCohortSelector,
     }
 }">
-    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data), data: currentCohortList(), multi: true, showModal: showCohortSelector}"></cohort-definition-browser>
+    <cohort-definition-browser params="{onSelect: data => cohortSelected(data), selectedData: currentCohortList(), multiChoice: true, showModal: showCohortSelector}"></cohort-definition-browser>
 </atlas-modal>

@@ -3,9 +3,7 @@ define([
 	'text!./cohort-definition-browser.html',
 	'appConfig',
 	'atlas-state',
-	'services/AuthAPI',
-	'services/MomentAPI',
-	'components/Component',
+	'components/entity-browser',
 	'utils/CommonUtils',
 	'services/http',
 	'utils/DatatableUtils',
@@ -17,27 +15,20 @@ define([
 	view,
 	config,
 	sharedState,
-	authApi,
-	momentApi,
-	Component,
+	EntityBrowser,
 	commonUtils,
 	httpService,
 	datatableUtils,
 	renderers,
 ) {
 
-	class CohortDefinitionBrowser extends Component {
+	class CohortDefinitionBrowser extends EntityBrowser {
 		constructor(params) {
 			super(params);
-			this.selected = params.cohortDefinitionSelected;
-			this.multi = params.multi || false;
 			this.showModal = params.showModal;
-			this.selectedIds = this.mulit && param.data ? (params.data() || []).map(({ id }) => id) : [];
 			this.data = ko.observableArray();
 			this.currentConceptSet = sharedState.ConceptSet.current;
 			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-			this.isLoading = ko.observable(false);
-			this.importEnabled = ko.pureComputed(() => this.data().some(i => i.selected()));
 			this.options = {
 				Facets: [
 					{
@@ -72,7 +63,7 @@ define([
 				},
 				{
 					title: 'Name',
-					render: datatableUtils.getLinkFormatter(d => ({ label: d['name'], linkish: !this.multi })),
+					render: datatableUtils.getLinkFormatter(d => ({ label: d['name'], linkish: !this.multiChoice })),
 				},
 				{
 					title: 'Created',
@@ -91,7 +82,7 @@ define([
 				},
 			];
 
-			if (!!this.multi) {
+			if (!!this.multiChoice) {
 				this.columns = [
 					{
 						data: 'selected',
@@ -104,29 +95,12 @@ define([
 				];
 			}
 
-			this.buttons = !!this.multi ? [
-				{
-					text: 'Select All', action: () => this.toggleSelected(true), className: this.classes({extra: 'btn btn-sm btn-success'}),
-					init: this.removeClass('dt-button')
-				},
-				{
-					text: 'Deselect All', action: () => this.toggleSelected(false), className: this.classes({extra: 'btn btn-sm btn-primary'}),
-					init: this.removeClass('dt-button')
-				}
-			] : null;
-
-			this.tableDom = "Bfiprt<'page-size'l>ip";
-
 			this.rowClick = this.rowClick.bind(this);
-			this.loadData();
 		}
 
-		removeClass(className) {
-			return (dt, node, cfg) => node.removeClass(className);
-		}
 
 		rowClick(data) {
-			this.action(() => this.selected(data));
+			this.action(() => this.onSelect(data));
 		}
 
 		action(callback) {
@@ -145,25 +119,12 @@ define([
 				this.isLoading(true);
 				const { data } = await httpService.doGet(`${config.api.url}cohortdefinition`);
 				datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate')
-				this.data(data.map(item => ({ selected: ko.observable(this.selectedIds.includes(item.id)), ...item })));
+				this.data(data.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
 			} catch (err) {
 				console.error(err);
 			} finally {
 				this.isLoading(false);
 			}
-		}
-
-		import() {
-			const selected = this.data().filter(i => i.selected());
-			this.action(() => this.selected(selected));
-		}
-
-		cancel() {
-			this.showModal(false);
-		}
-
-		toggleSelected(selected) {
-			this.data().forEach(i => i.selected(selected));
 		}
 
 	}

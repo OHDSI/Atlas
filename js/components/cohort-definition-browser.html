@@ -1,11 +1,11 @@
 <div data-bind="visible: !isLoading()">
-    <faceted-datatable params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multi ? rowClick : null, scrollY: '50vh'">
+    <faceted-datatable params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY">
     </faceted-datatable>
-    <div data-bind="css: classes('button-panel'), isVisible: multi">
+    <div data-bind="css: classes('button-panel'), visible: multiChoice">
             <button class="btn btn-sm btn-primary" type="button" data-bind="click: $component.import, enable: $component.importEnabled">Import</button>
             <button class="btn btn-sm btn-danger" type="button" data-bind="click: $component.cancel">Cancel</button>
         </div>
 
 </div>
 
-<loading data-bind="visible: isLoading()" params="status: 'retrieving cohort definitions'"></loading>
+<loading data-bind="visible: isLoading()" params="status: 'Retrieving cohort definitions...'"></loading>

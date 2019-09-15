@@ -72,21 +72,14 @@
         title: 'Choose a Feature analyses',
         dialogExtraClasses: [ $component.classes('feature-analyses-modal') ],
         data: {
-            selectedAnalyses: $component.featureAnalysesSelected,
+            onSelect: $component.onSelect,
             classes: $component.classes,
-            closeFeatureBrowser: $component.closeFeatureBrowser,
-            importFeatures: $component.importFeatures,
-            importEnabled: $component.featureAnalysesAvailable
+            selectedData: $component.design().featureAnalyses,
+            showModal: showFeatureAnalysesBrowser,
         }
     "
     >
-        <div data-bind="css: classes('feature-analyses-list')">
-            <feature-analyses-browser params="selectedAnalyses: selectedAnalyses, scrollY: '50vh'"></feature-analyses-browser>
-        </div>
-        <div data-bind="css: classes('button-panel')">
-            <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-primary'}), click: importFeatures, enable: importEnabled">Import</button>
-            <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-danger'}), click: closeFeatureBrowser">Cancel</button>
-        </div>
+        <feature-analyses-browser params="onSelect: data => onSelect(data), selectedData: selectedData, scrollY: '50vh', multiChoice: true, showModal: showModal"></feature-analyses-browser>
     </atlas-modal>
 
     <atlas-modal params="{

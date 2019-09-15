@@ -115,8 +115,6 @@ define([
             };
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
-            this.featureAnalysesSelected = ko.observableArray();
-            this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
             this.showConceptSetBrowser = ko.observable(false);
@@ -152,9 +150,9 @@ define([
             this.showFeatureAnalysesBrowser(false);
         }
 
-        importFeatures() {
+        onSelect(data) {
             this.closeFeatureBrowser();
-            this.featureAnalysesSelected().forEach(fe => this.attachFeature(fe));
+            data.forEach(fe => this.attachFeature(fe));
         }
 
         attachFeature({ id, name, description }) {

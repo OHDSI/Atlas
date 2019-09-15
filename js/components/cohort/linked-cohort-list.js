@@ -23,7 +23,7 @@ define([
 	class LinkedCohortList extends Component {
 		constructor(params) {
 			super();
-			this.multi = params.multi || false;
+			this.multiChoice = params.multiChoice || false;
 			this.showCohortModal = this.showCohortModal.bind(this);
 			this.removeCohort = this.removeCohort.bind(this);
 
@@ -98,7 +98,7 @@ define([
 
 		attachCohorts(data) {
 			this.showModal(false);
-			this.multi ? this.data(data) : this.attachCohort(data);
+			this.multiChoice ? this.data(data) : this.attachCohort(data);
 		}
 
 		attachCohort({ id, name }) {

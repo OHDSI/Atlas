@@ -1,6 +1,23 @@
-<faceted-datatable
-        data-bind="visible:loading()==false"
-        params="order: [2, 'asc'], reference: data, selectedData: selectedData, columns: columns, options: options, buttons: buttons, dom: tableDom, scrollY: scrollY, scrollCollapse: scrollCollapse"
-></faceted-datatable>
+<div data-bind="visible: !isLoading()">
+    <faceted-datatable
+        params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, scrollY: scrollY, scrollCollapse: scrollCollapse"
+    >
+    </faceted-datatable>
+    <div data-bind="css: classes('button-panel'), visible: multiChoice">
+        <button
+            class="btn btn-sm btn-primary"
+            type="button"
+            data-bind="click: $component.import, enable: $component.importEnabled"
+        >
+            Import
+        </button>
+        <button class="btn btn-sm btn-danger" type="button" data-bind="click: $component.cancel">
+            Cancel
+        </button>
+    </div>
+</div>
 
-<loading data-bind="css: classes('loading-panel'), visible:loading()" params="status: 'Retrieving feature analyses list...'"></loading>
+<loading
+    data-bind="visible: isLoading()"
+    params="status: 'Retrieving feature analyses list...'"
+></loading>

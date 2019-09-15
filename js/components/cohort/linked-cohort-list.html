@@ -17,13 +17,13 @@
 		classes: $component.classes,
 		data: $component.data,
 		showModal: $component.showModal,
-		multi: $component.multi,
+		multiChoice: $component.multiChoice,
 	}
 ">
 <div data-bind="css: classes('cohort-definitions-list')">
 	<cohort-definition-browser
 		data-bind="css: classes('modal-cohort-list')"
-		params="cohortDefinitionSelected: data => cohortSelected(data), data: data, showModal: showModal, multi: multi">
+		params="onSelect: data => cohortSelected(data), data: data, showModal: showModal, multiChoice: multiChoice">
 	</cohort-definition-browser>
 	</div>
 </atlas-modal>
