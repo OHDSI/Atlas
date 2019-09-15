@@ -1,6 +1,6 @@
 define([
-	'knockout', 
-	'text!./comparison-editor.html',	
+	'knockout',
+	'text!./comparison-editor.html',
 	'components/Component',
 	'utils/CommonUtils',
 	'services/analysis/Cohort',
@@ -9,8 +9,8 @@ define([
 	'components/cohort/linked-cohort-list',
 	'circe',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Component,
 	commonUtils,
 	Cohort,
@@ -41,7 +41,7 @@ define([
 			this.showCohortSelector(true);
 			this.currentCohort(this.comparison.comparator);
         }
-            
+
 		clearTarget() {
 			this.comparison.target(new Cohort());
 		}

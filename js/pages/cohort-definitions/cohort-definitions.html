@@ -7,7 +7,7 @@
 					<div class="btn btn-sm btn-primary" data-bind="click:$component.newDefinition, css: {disabled: currentCohortDefinition() != undefined || !$component.canCreateCohort()}">New Cohort</div>
 				</div>
 			</div>
-			<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortDefinitionId(data.id)}"></cohort-definition-browser>
+			<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortDefinitionId(data[0].id)}"></cohort-definition-browser>
 		</div>
 	</div>
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canReadCohorts"></access-denied>

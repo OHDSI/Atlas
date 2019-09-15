@@ -10,13 +10,20 @@
 
 <atlas-modal params="
 	showModal: $component.showModal,
+	dialogExtraClasses: [ $component.classes('cohort-definitions-modal') ],
 	title: 'Choose a Cohort definition',
 	data: {
 		cohortSelected: $component.cohortSelected,
 		classes: $component.classes,
+		data: $component.data,
+		showModal: $component.showModal,
+		multi: $component.multi,
 	}
 ">
-	<cohort-definition-browser data-bind="css: classes('modal-cohort-list')" 
-														 params="cohortDefinitionSelected: data => cohortSelected(data)">
+<div data-bind="css: classes('cohort-definitions-list')">
+	<cohort-definition-browser
+		data-bind="css: classes('modal-cohort-list')"
+		params="cohortDefinitionSelected: data => cohortSelected(data), data: data, showModal: showModal, multi: multi">
 	</cohort-definition-browser>
+	</div>
 </atlas-modal>

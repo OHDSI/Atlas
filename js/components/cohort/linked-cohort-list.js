@@ -23,7 +23,7 @@ define([
 	class LinkedCohortList extends Component {
 		constructor(params) {
 			super();
-
+			this.multi = params.multi || false;
 			this.showCohortModal = this.showCohortModal.bind(this);
 			this.removeCohort = this.removeCohort.bind(this);
 
@@ -77,7 +77,7 @@ define([
 			this.cohortSelected = ko.observable();
 
 			// subscriptions
-			this.subscriptions.push(this.cohortSelected.subscribe(cohort => this.attachCohort(cohort)));
+			this.subscriptions.push(this.cohortSelected.subscribe(cohorts => this.attachCohorts(cohorts)));
 		}
 
 		getRemoveCell(action, identifierField = 'id') {
@@ -92,14 +92,17 @@ define([
 			}
 		}
 
-
 		showCohortModal() {
 			this.showModal(true);
 		}
 
+		attachCohorts(items) {
+			this.showModal(false);
+			this.multi ? this.data(items) : items.forEach(item => this.attachCohort(item));
+		}
+
 		attachCohort({ id, name }) {
 			const data = this.data();
-			this.showModal(false);
 			this.data(
 				lodash.uniqBy(
 					[

@@ -13,7 +13,7 @@
                             <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a>Analysis Settings</a></li>
                             <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'executionSettings' }, click: function() {$component.specificationPillMode('executionSettings') };"><a>Execution Settings</a></li>
                             <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'trainingSettings' }, click: function() {$component.specificationPillMode('trainingSettings') };"><a>Training Settings</a></li>
-                        </ul>        
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -31,9 +31,9 @@
                             <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget"><i class="fa fa-plus"></i> Add Target Cohort</button>
                             </div>
                             <div class="panel-body">
-                                <faceted-datatable params="{ 
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                                <faceted-datatable params="{
+                                columns: options.cohortTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.domNoButtons,
@@ -48,9 +48,9 @@
                             <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome"><i class="fa fa-plus"></i> Add Outcome Cohort</button>
                             </div>
                             <div class="panel-body">
-                                <faceted-datatable params="{ 
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                                <faceted-datatable params="{
+                                columns: options.cohortTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.domNoButtons,
@@ -83,9 +83,9 @@
                             </div>
                             </div>
                             <div class="panel-body">
-                            <faceted-datatable params="{ 
-                                columns: options.modelSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                            <faceted-datatable params="{
+                                columns: options.modelSettingsTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.domNoButtons,
@@ -102,9 +102,9 @@
                             </div>
                             </div>
                             <div class="panel-body">
-                                <faceted-datatable params="{ 
-                                columns: options.covariateSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                                <faceted-datatable params="{
+                                columns: options.covariateSettingsTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.dom,
@@ -119,9 +119,9 @@
                             <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addPopulationSettings"><i class="fa fa-plus"></i> Add Population Settings</button>
                             </div>
                             <div class="panel-body">
-                            <faceted-datatable params="{ 
-                                columns: options.populationSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                            <faceted-datatable params="{
+                                columns: options.populationSettingsTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.dom,
@@ -160,7 +160,7 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
     <div id="editors" data-bind="visible: $component.managerMode() == 'editor'">
         <div id="editor-heading" class="editor-container">
         <div class="paddedWrapper">
@@ -193,5 +193,5 @@
         showCohortSelector: $component.showCohortSelector,
     }
 }">
-    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data), data: currentCohortList(), multi: true, showModal: showCohortSelector}"></cohort-definition-browser>
 </atlas-modal>
