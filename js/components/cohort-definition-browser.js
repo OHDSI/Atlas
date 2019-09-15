@@ -126,7 +126,7 @@ define([
 		}
 
 		rowClick(data) {
-			this.action(() => this.selected([data]));
+			this.action(() => this.selected(data));
 		}
 
 		action(callback) {

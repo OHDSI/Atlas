@@ -96,9 +96,9 @@ define([
 			this.showModal(true);
 		}
 
-		attachCohorts(items) {
+		attachCohorts(data) {
 			this.showModal(false);
-			this.multi ? this.data(items) : items.forEach(item => this.attachCohort(item));
+			this.multi ? this.data(data) : this.attachCohort(data);
 		}
 
 		attachCohort({ id, name }) {
