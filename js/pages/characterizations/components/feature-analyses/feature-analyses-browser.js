@@ -30,13 +30,6 @@ define([
 
 			this.columns = [
 				{
-					data: 'selected',
-					class: this.classes({extra: 'text-center'}),
-					render: () => renderers.renderCheckbox('selected'),
-					searchable: false,
-					orderable: false,
-				},
-				{
 					title: 'ID',
 					data: 'id'
 				},
@@ -50,7 +43,18 @@ define([
 				}
 			];
 
-			this.loadData();
+			if (!!this.multiChoice) {
+				this.columns = [
+					{
+						data: 'selected',
+						class: this.classes({extra: 'text-center'}),
+						render: () => renderers.renderCheckbox('selected'),
+						searchable: false,
+						orderable: false,
+					},
+					...this.columns,
+				]
+			}
 		}
 
 		async loadData() {

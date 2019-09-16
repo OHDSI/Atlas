@@ -94,13 +94,6 @@ define([
 					...this.columns,
 				];
 			}
-
-			this.rowClick = this.rowClick.bind(this);
-		}
-
-
-		rowClick(data) {
-			this.action(() => this.onSelect(data));
 		}
 
 		action(callback) {

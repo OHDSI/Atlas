@@ -38,9 +38,14 @@ define([
                   ]
                 : null;
 
-            this.tableDom = "Bfiprt<'page-size'l>ip";
+			this.tableDom = "Bfiprt<'page-size'l>ip";
+			this.rowClick = this.rowClick.bind(this);
             this.loadData();
-        }
+		}
+
+		rowClick(data) {
+			this.action(() => this.onSelect(data));
+		}
 
         removeClass(className) {
             return (dt, node, cfg) => node.removeClass(className);

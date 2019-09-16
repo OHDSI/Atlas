@@ -1,6 +1,6 @@
 <div data-bind="visible: !isLoading()">
     <faceted-datatable
-        params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, scrollY: scrollY, scrollCollapse: scrollCollapse"
+        params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY, scrollCollapse: scrollCollapse"
     >
     </faceted-datatable>
     <div data-bind="css: classes('button-panel'), visible: multiChoice">

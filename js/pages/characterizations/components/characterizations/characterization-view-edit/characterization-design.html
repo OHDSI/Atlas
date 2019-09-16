@@ -6,7 +6,7 @@
         <b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.
     </p>
     <div data-bind="css: classes('linked-entities')">
-        <linked-cohort-list params="data: $component.cohorts"></linked-cohort-list>
+        <linked-cohort-list params="data: $component.cohorts, multiChoice: true"></linked-cohort-list>
     </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
