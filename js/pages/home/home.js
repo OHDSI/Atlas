@@ -22,7 +22,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.github_status = ko.observableArray();
-			
+
 			this.canCreateCohort = ko.pureComputed(() => {
 				return (authApi.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled;
 			});
@@ -33,14 +33,22 @@ define([
 		}
 
 		async onPageCreated() {
-			const [{ data: atlasIssues }, { data: webapiIssues }] = await Promise.all([
-				httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=28"),
-				httpService.doGet("https://api.github.com/repos/OHDSI/WebAPI/issues?state=closed&milestone=30")
-			]);
-			let data = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
+			const atlasIssues = await this.getIssuesFromAllPages('OHDSI/Atlas', 28);
+			const webapiIssues = await this.getIssuesFromAllPages('OHDSI/WebAPI', 30);
+			let issues = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
 			// The API returns both issues and PRs and PRs in most cases would duplicate issues, therefore just leave issues
-			data = data.filter(item => item.html_url.includes('/issues/'));
-			this.github_status(data);
+			issues = issues.filter(item => item.html_url.includes('/issues/'));
+			this.github_status(issues);
+		}
+
+		async getIssuesFromAllPages(repo, milestone, page = 1, list = []) {
+
+			const { data } = await httpService.doGet(`https://api.github.com/repos/${repo}/issues?state=closed&per_page=100&page=${page}&milestone=${milestone}`);
+			if (data.length > 0) {
+				return this.getIssuesFromAllPages(repo, milestone, page + 1, list.concat(data));
+			} else {
+				return list;
+			}
 		}
 
 		newCohortDefinition() {
