@@ -37,7 +37,9 @@ define([
 				httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=28"),
 				httpService.doGet("https://api.github.com/repos/OHDSI/WebAPI/issues?state=closed&milestone=30")
 			]);
-			const data = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
+			let data = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
+			// The API returns both issues and PRs and PRs in most cases would duplicate issues, therefore just leave issues
+			data = data.filter(item => item.html_url.includes('/issues/'));
 			this.github_status(data);
 		}
 
