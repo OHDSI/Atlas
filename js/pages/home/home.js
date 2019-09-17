@@ -7,6 +7,7 @@ define([
 	'appConfig',
 	'services/AuthAPI',
 	'atlas-state',
+	'lodash',
 	'components/heading',
 ], function (
 	ko,
@@ -17,6 +18,7 @@ define([
 	config,
 	authApi,
 	sharedState,
+	lodash
 ) {
 	class Home extends Page {
 		constructor(params) {
@@ -33,7 +35,11 @@ define([
 		}
 
 		async onPageCreated() {
-			const { data } = await httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=22");
+			const [{ data: atlasIssues }, { data: webapiIssues }] = await Promise.all([
+				httpService.doGet("https://api.github.com/repos/OHDSI/Atlas/issues?state=closed&milestone=22"),
+				httpService.doGet("https://api.github.com/repos/OHDSI/WebAPI/issues?state=closed&milestone=25")
+			]);
+			const data = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
 			this.github_status(data);
 		}
 
