@@ -299,6 +299,7 @@ pre span.key {
   border-bottom: solid 1px #ccc;
   white-space: nowrap;
   text-align: right;
+  overflow: hidden;
 }
 
 .wrapperHeader a {
