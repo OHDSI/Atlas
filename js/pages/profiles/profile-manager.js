@@ -447,7 +447,7 @@ define([
 			}
 
 			setHighlights(colorIndex) {
-				const dt = $('#highlight-table table').DataTable()
+				const dt = $('#highlight-table table').DataTable();
 				const rows = dt.rows('.selected');
 				var selectedData = rows.data();
 				for (let i = 0; i < selectedData.length; i++) {
@@ -470,7 +470,7 @@ define([
 			}
 
 			clearHighlights() {
-				const dt = $('#highlight-table table').DataTable()
+				const dt = $('#highlight-table table').DataTable();
 				const rows = dt.rows('.selected');
 				var selectedData = rows.data();
 				for (let i = 0; i < selectedData.length; i++) {
