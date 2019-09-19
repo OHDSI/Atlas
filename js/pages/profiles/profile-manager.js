@@ -419,7 +419,7 @@ define([
 				const dt = $('#highlight-table table').DataTable();
 				const rows = dt.rows('.selected');
 				const selectedData = rows.data();
-				for (var i = 0; i < selectedData.length; i++) {
+				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.getHighlightBackground(colorIndex)); // set the swatch color
 					selectedData[i].recs.forEach(r => {
 						r.highlight = this.getHighlightBackground(colorIndex);
