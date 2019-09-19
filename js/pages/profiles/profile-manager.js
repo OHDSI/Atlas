@@ -447,15 +447,19 @@ define([
 			}
 
 			setHighlights(colorIndex) {
-				var selectedData = $('#highlight-table table').DataTable().rows('.selected').data();
-				for (var i = 0; i < selectedData.length; i++) {
+				const dt = $('#highlight-table table').DataTable()
+				const rows = dt.rows('.selected');
+				var selectedData = rows.data();
+				console.log(rows);
+
+				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.getHighlightBackground(colorIndex)); // set the swatch color
 					selectedData[i].recs.forEach(r => {
 						r.highlight = this.getHighlightBackground(colorIndex);
 						r.stroke = this.getHighlightColor(colorIndex);
 					}); // set the record colors
 				}
-
+				rows && rows[0] && rows[0].forEach(r => dt.row(r).invalidate());
 				this.highlightRecs.valueHasMutated();
 			};
 
@@ -468,7 +472,9 @@ define([
 			}
 
 			clearHighlights() {
-				const selectedData = $('#highlight-table table').DataTable().data();
+				const dt = $('#highlight-table table').DataTable()
+				const rows = dt.rows('.selected');
+				var selectedData = rows.data();
 				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.defaultColor); // set the swatch color
 					selectedData[i].recs.forEach(r => {
@@ -476,7 +482,7 @@ define([
 						r.stroke = this.defaultColor; // set the record colors
 					})
 				}
-
+				rows && rows[0] && rows[0].forEach(r => dt.row(r).invalidate());
 				this.highlightRecs.valueHasMutated();
 			}
 
