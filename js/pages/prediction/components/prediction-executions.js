@@ -11,9 +11,11 @@ define([
 	'services/Source',
 	'services/Poll',
 	'services/file',
+	'services/JobDetailsService',
 	'utils/ExecutionUtils',
 	'../const',
 	'lodash',
+	'jquery',
 	'less!./prediction-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -29,9 +31,11 @@ define([
 	SourceService,
 	PollService,
 	FileService,
+	jobDetailsService,
 	ExecutionUtils,
 	consts,
 	lodash,
+	$,
 ){
 
 	class PredictionGeneration extends AutoBind(Component) {
@@ -50,7 +54,12 @@ define([
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
 			this.pollId = null;
-
+			this.sourceList = ko.observableArray();
+			this.notificationExecutionId = params.notificationExecutionId;
+			this.notificationSourceId = params.notificationSourceId;
+			this.isSourceListLoaded = ko.observable(false);
+			this.notificationRowId = ko.pureComputed(() => `${this.notificationSourceId()}_${this.notificationExecutionId()}`);
+			this.subscriptions.push(this.notificationRowId.subscribe(this.highlightGeneration));
 			this.execColumns = [
 				{
 					title: 'Date',
@@ -85,6 +94,28 @@ define([
 			this.isResultsDownloading = ko.computed(() => this.downloading().length > 0);
 			this.executionGroups = ko.observableArray([]);
 			this.isViewGenerationsPermitted() && this.startPolling();
+			this.loadData();
+		}
+
+		highlightGeneration() {
+			if (this.isSourceListLoaded()) {
+				if (this.notificationSourceId() && this.notificationExecutionId()) {
+					const sourceId = this.notificationSourceId();
+					const executionId = this.notificationExecutionId();
+					const groupIdx = this.executionGroups().findIndex(item => item.sourceId == sourceId);
+					if (groupIdx >= 0) {
+						this.expandedSection() !== groupIdx && this.expandedSection(groupIdx);
+						const row = $(`#${this.notificationRowId()}`);
+						setTimeout(() => {
+							const $row = $(`#${this.notificationRowId()}`);
+							if ($row && $row[0]) {
+								$row.addClass('alert alert-warning');
+								$row[0].scrollIntoView({ behavior: 'smooth' });
+							}
+						}, 0);
+					}
+				}
+			}
 		}
 
 		startPolling() {
@@ -96,6 +127,7 @@ define([
 		}
 
 		dispose() {
+			super.dispose();
 			PollService.stop(this.pollId);
 		}
 
@@ -147,13 +179,15 @@ define([
 				});
 
 				sourceList = lodash.sortBy(sourceList, ["sourceName"]);
-
+				this.sourceList(sourceList);
+				this.isSourceListLoaded(true);
 				sourceList.forEach(s => {
 					let group = this.executionGroups().find(g => g.sourceKey === s.sourceKey);
 					if (!group) {
 						group = {
 							sourceKey: s.sourceKey,
 							sourceName: s.sourceName,
+							sourceId: s.sourceId,
 							submissions: ko.observableArray(),
 							status: ko.observable(),
 						};
@@ -166,6 +200,7 @@ define([
 						this.predictionStatusGenerationOptions.STARTED :
 						this.predictionStatusGenerationOptions.COMPLETED);
 				});
+				!silently && this.highlightGeneration();
 			} catch (e) {
 				console.error(e);
 			} finally {
@@ -173,15 +208,19 @@ define([
 			}
 		}
 
-		generate(sourceKey) {
-
-			const executionGroup = this.executionGroups().find(g => g.sourceKey === sourceKey);
-
-			this.loading(true);
-			ExecutionUtils.StartExecution(executionGroup)
-				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
-				.catch(() => {});
+		async generate(sourceKey) {
+			try {
+				this.loading(true);
+				const executionGroup = this.executionGroups().find(g => g.sourceKey === sourceKey);
+				await ExecutionUtils.StartExecution(executionGroup);
+				const data = await PredictionService.generate(this.analysisId(), sourceKey);
+				await jobDetailsService.createJob(data);
+				await this.loadData();
+			} catch(err) {
+				console.error(err);
+			} finally {
+				this.loading(false);
+			}
 		}
 
 		toggleSection(idx) {
@@ -205,7 +244,6 @@ define([
 				this.isExitMessageShown(true);
 			}
 		}
-
 	}
 
 	commonUtils.build('prediction-executions', PredictionGeneration, view);

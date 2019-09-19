@@ -89,6 +89,8 @@ define([
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
+			this.notificationExecutionId = sharedState.predictionAnalysis.notificationExecutionId;
+			this.notificationSourceId = sharedState.predictionAnalysis.notificationSourceId;
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
@@ -104,6 +106,8 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
+				notificationExecutionId: this.notificationExecutionId,
+				notificationSourceId: this.notificationSourceId,
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -156,7 +160,9 @@ define([
 			}
 		}
 
-        onRouterParamsChanged({ id, section }) {
+        onRouterParamsChanged({ id, section, sourceId, executionId }) {
+			this.notificationSourceId(sourceId);
+			this.notificationExecutionId(executionId);
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
 					this.selectedTabKey(section);

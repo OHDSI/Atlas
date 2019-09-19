@@ -68,6 +68,8 @@ define([
 			this.loading = ko.observable(true);
 			this.estimationAnalysis = sharedState.estimationAnalysis.current;
 			this.selectedAnalysisId = sharedState.estimationAnalysis.selectedId;
+			this.notificationExecutionId = sharedState.estimationAnalysis.notificationExecutionId;
+			this.notificationSourceId = sharedState.estimationAnalysis.notificationSourceId;
 			this.dirtyFlag = sharedState.estimationAnalysis.dirtyFlag;
 			this.tabMode = ko.observable('specification');
 			this.comparisons = sharedState.estimationAnalysis.comparisons;
@@ -97,6 +99,8 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
+				notificationExecutionId: this.notificationExecutionId,
+				notificationSourceId: this.notificationSourceId,
 			});
 
 			this.isNameFilled = ko.computed(() => {
@@ -430,14 +434,16 @@ define([
 			});
 		}
 
-        onRouterParamsChanged({ id, section }) {
+		onRouterParamsChanged({ id, section, sourceId, executionId }) {
+			this.notificationSourceId(sourceId);
+			this.notificationExecutionId(executionId);
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
 					this.selectedTabKey(section);
 				}
 				this.onPageCreated();
 			}
-        }
+		}
 
 		addCohortToEstimation(specification, cohort) {
 			cohort = ko.isObservable(cohort) ? ko.utils.unwrapObservable(cohort) : cohort;
