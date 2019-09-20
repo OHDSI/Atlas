@@ -5,7 +5,7 @@ define([
 	'atlas-state',
 	'components/entity-browser',
 	'utils/CommonUtils',
-	'services/http',
+	'services/CohortDefinition',
 	'utils/DatatableUtils',
 	'utils/Renderers',
 	'faceted-datatable',
@@ -17,7 +17,7 @@ define([
 	sharedState,
 	EntityBrowser,
 	commonUtils,
-	httpService,
+	CohortDefinitionService,
 	datatableUtils,
 	renderers,
 ) {
@@ -110,7 +110,7 @@ define([
 		async loadData() {
 			try {
 				this.isLoading(true);
-				const { data } = await httpService.doGet(`${config.api.url}cohortdefinition`);
+				const data = await CohortDefinitionService.getCohortDefinitionList();
 				datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate')
 				this.data(data.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
 			} catch (err) {
