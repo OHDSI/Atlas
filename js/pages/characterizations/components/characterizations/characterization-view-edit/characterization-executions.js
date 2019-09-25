@@ -67,17 +67,19 @@ define([
 					title: 'Date',
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
-					type: 'datetime-formatted'
 				},
 				{
 					title: 'Design',
 					className: this.classes('col-exec-checksum'),
-					render: (s, p, d) => {
-						return (
-							PermissionService.isPermittedExportGenerationDesign(d.id) ?
-							`<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${this.currentHash() === d.hashCode ? ' (same as now)' : ''}` :
-							(d.hashCode || '-')
-						);
+					render: (s, p, data) => {
+						let html = '';
+						if (PermissionService.isPermittedExportGenerationDesign(data.id)) {
+							html = `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a>`;
+						} else {
+							html = data.tag || '-';
+						}
+						html += this.currentHash() === data.hashCode ? ' (same as now)' : '';
+						return html;
 					}
 				},
 				{

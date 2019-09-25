@@ -1,6 +1,6 @@
 <div class="paddedWrapper">
   <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-        xssSafe: true,																																															
+        xssSafe: true,
         data: selectedConcepts(),
         options: {
           dom: 'Clfiprt',
@@ -11,34 +11,34 @@
             showAll: 'Show All Columns',
             restore: 'Reset Columns'
           },
-          rowCallback: $root.contextSensitiveLinkColor,
+          rowCallback: commonUtils.contextSensitiveLinkColor,
           lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
           orderClasses: false,
           deferRender: true,
           autoWidth: false,
           order: [[3, 'desc']],
           columns: [
-            { render: $root.renderConceptSetItemSelector, orderable:false, searchable:false},
+            { render: $component.renderConceptSetItemSelector, orderable:false, searchable:false},
             { data: 'concept.CONCEPT_ID'},
             { data: 'concept.CONCEPT_CODE'},
-            { render: $root.renderBoundLink},
+            { render: commonUtils.renderBoundLink},
             { data: 'concept.DOMAIN_ID' },
             { data: 'concept.STANDARD_CONCEPT', visible:false },
             { data: 'concept.STANDARD_CONCEPT_CAPTION' },
             {
               class: 'text-center',
               orderable: false,
-              render: function() { return $root.renderCheckbox('isExcluded');}
+              render: function() { return $component.renderCheckbox('isExcluded');}
             },
             {
               class: 'text-center',
               orderable: false,
-              render: function() { return $root.renderCheckbox('includeDescendants');}
+              render: function() { return $component.renderCheckbox('includeDescendants');}
             },
             {
               class: 'text-center',
               orderable: false,
-              render: function() { return $root.renderCheckbox('includeMapped');}
+              render: function() { return $component.renderCheckbox('includeMapped');}
             }
           ]
         }
@@ -52,7 +52,7 @@
         <th>Standard Concept Code</th>
         <th>Standard Concept Caption</th>
         <th>
-          <!-- ko if: canEdit -->
+          <!-- ko if: canEditCurrentConceptSet -->
             <span data-bind="
               css: classes({
                   element: 'checkmark',
@@ -63,7 +63,7 @@
           <!-- /ko --> Exclude
         </th>
         <th>
-          <!-- ko if: canEdit -->
+          <!-- ko if: canEditCurrentConceptSet -->
           <span data-bind="
             css: classes({
                 element: 'checkmark',
@@ -74,7 +74,7 @@
           <!-- /ko --> Descendants
         </th>
         <th>
-            <!-- ko if: canEdit -->
+            <!-- ko if: canEditCurrentConceptSet -->
               <span data-bind="
                 css: classes({
                     element: 'checkmark',

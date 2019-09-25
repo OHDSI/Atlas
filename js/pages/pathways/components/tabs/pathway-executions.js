@@ -42,7 +42,7 @@ define([
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
-			const currentHash = ko.pureComputed(() => params.design().hash);
+			const currentHash = ko.pureComputed(() => params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 
@@ -60,17 +60,19 @@ define([
 					title: 'Date',
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
-					type: 'datetime-formatted'
 				},
 				{
 					title: 'Design',
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, d) => {
-						return (
-							PermissionService.isPermittedExportByGeneration(d.id) ?
-							`<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${currentHash() === d.hashCode ? ' (same as now)' : ''}` :
-							(d.hashCode || '-')
-						);
+						let html = '';
+						if (PermissionService.isPermittedExportByGeneration(d.id)) {
+							html = `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.tag || '-')}</a>`
+						} else {
+							html = d.tag || '-';
+						}
+						html += currentHash() === d.hashCode ? ' (same as now)' : '';
+						return html;
 					}
 				},
 				{

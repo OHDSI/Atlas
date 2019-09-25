@@ -1,16 +1,28 @@
-define(['services/MomentAPI'],
-    (momentApi) => {
+define(['services/MomentAPI', 'xss', 'appConfig'],
+    (momentApi, filterXSS, appConfig) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
                 link,
-                label
+                label,
+                linkish = false,
             } = builder(d);
-            return `<a ${link ? ('href="' + link + '"') : ''}>${label}</a>`;
+
+            if (p === 'display') {
+                const name = filterXSS(label, appConfig.strictXSSOptions);
+                return linkish
+                    ? `<span class="linkish">${name}</span>`
+                    : `<a ${link ? ('href="' + link + '"') : ''}>${name}</a>`;
+            }
+            return label;
         };
 
-        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, p, d) => {
-            return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
+            if (type === "sort") {
+              return (defaultValue && d[field]) || d[field] ? d[field] : defaultValue;
+            } else {
+							return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+						}
         };
 
         const getFacetForDate = function(date) {
@@ -28,7 +40,14 @@ define(['services/MomentAPI'],
             }
         };
 
-        const getCreatedByLogin = (d) => d.hasOwnProperty('createdBy') && d.createdBy !== null ? d.createdBy.login : 'anonymous';
+        const getCreatedByLogin = d =>
+            d.hasOwnProperty('createdBy') && !!d.createdBy
+                ? typeof d.createdBy === 'string'
+                    ? d.createdBy
+                    : typeof d.createdBy === 'object' && !!d.createdBy.login
+                    ? d.createdBy.login
+                    : 'anonymous'
+                : 'anonymous';
 
         const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
 
@@ -38,6 +57,8 @@ define(['services/MomentAPI'],
 
         const renderCountColumn = (value) => value ? value : '...';
 
+        const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
+
         return {
             getDateFieldFormatter,
             getFacetForDate,
@@ -46,6 +67,7 @@ define(['services/MomentAPI'],
             getFacetForCreatedBy,
             renderCountColumn,
             getFacetForDomain,
+            coalesceField,
         };
     }
 );

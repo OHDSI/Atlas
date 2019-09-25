@@ -2,11 +2,15 @@ define((require, exports) => {
 
 	const constants = require('pages/characterizations/const');
 	const datatableUtils = require('utils/DatatableUtils');
-
+	const feAnalysisTypes = {
+		PRESET: 'Preset',
+		CRITERIA_SET: 'Criteria set',
+		CUSTOM_FE: 'Custom'
+	};
 	const FeatureAnalysisFacets = [
 		{
 			'caption': 'Type',
-			'binding': (o) => constants.feAnalysisTypes[o.type]
+			'binding': (o) => feAnalysisTypes[o.type]
 		},
 		{
 			'caption': 'Domain',
@@ -48,13 +52,11 @@ define((require, exports) => {
 		{
 			title: 'Created',
 			className: classes('tbl-col', 'created'),
-			type: 'datetime-formatted',
 			render: datatableUtils.getDateFieldFormatter('createdDate'),
 		},
 		{
 			title: 'Updated',
 			className: classes('tbl-col', 'updated'),
-			type: 'datetime-formatted',
 			render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 		},
 		{

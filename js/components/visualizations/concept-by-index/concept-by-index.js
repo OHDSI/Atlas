@@ -1,7 +1,6 @@
 define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function (ko, view, d3, jnj_chart) {
 	function conceptByIndex(params) {
 		var self = this;
-		self.model = params.model;
 		self.conceptId = params.conceptId;
 		self.cohortDefinitionId = params.cohortDefinitionId;
 		self.caption = params.caption;
@@ -26,7 +25,7 @@ define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function 
 			}
 			return result;
 		}
-		
+
 		self.normalizeArray = function (ary, numerify) {
 			var obj = {};
 			var keys;
@@ -56,17 +55,17 @@ define(['knockout', 'text!./concept-by-index.html','d3', 'jnj_chart'], function 
 
 			return obj;
 		}
-		
+
 		self.render = function () {
 			$('#concept-by-index-caption').html(self.caption);
-			
+
 			$.ajax({
 				type: "GET",
 				url: self.resultsUrl + self.cohortDefinitionId + '/cohortspecific' + self.conceptDomain + "/" + self.conceptId,
 				contentType: "application/json; charset=utf-8",
 				success: function (result) {
-					
-					
+
+
 					if (result && result.length > 0) {
 						var normalized = self.dataframeToArray(self.normalizeArray(result));
 

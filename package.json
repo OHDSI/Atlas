@@ -1,6 +1,6 @@
 {
   "name": "atlas",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
@@ -48,8 +48,7 @@
     "@ohdsi/visibilityjs": "^2.0.2",
     "ajv": "^6.10.0",
     "bootstrap": "^3.3.7",
-    "bootstrap-datetimepicker": "^0.0.7",
-    "bootstrap-select": "^1.13.3",
+    "bootstrap-select": "1.13.5",
     "bowser": "2.0.0-beta.3",
     "clipboard": "^1.5.16",
     "colorbrewer": "^1.3.0",
@@ -61,6 +60,7 @@
     "datatables.net": "^1.10.19",
     "datatables.net-buttons": "^1.5.4",
     "director": "^1.2.8",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "facets": "^0.1.1",
     "file-saver": "^1.3.8",
     "jquery": "^1.11.2",

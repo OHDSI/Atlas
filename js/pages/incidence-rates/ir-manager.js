@@ -14,6 +14,8 @@ define([
 	'services/AuthAPI',
 	'services/file',
 	'services/Poll',
+	'services/Permission',
+	'components/security/access/const',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -25,6 +27,9 @@ define([
 	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
+	'utilities/import',
+	'utilities/export',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
@@ -41,6 +46,8 @@ define([
 	authAPI,
 	FileService,
 	PollService,
+	GlobalPermissionService,
+	{ entityType },
 	Page,
 	AutoBind,
 	commonUtils,
@@ -53,10 +60,11 @@ define([
 			super(params);
 			// polling support
 			this.pollId = null;
-			this.model = params.model;
 			this.loading = ko.observable(false);
 			this.loadingInfo = ko.observable();
 			this.loadingSummary = ko.observableArray();
+			this.constants = constants;
+			this.tabs = constants.tabs;
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -97,11 +105,13 @@ define([
 					)
 			});
 			this.selectedAnalysisId.subscribe((id) => {
-				authAPI.loadUserInfo();
+				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
+					authAPI.loadUserInfo();
+				}
 			});
 
 			this.isRunning = ko.observable(false);
-			this.activeTab = ko.observable(params.activeTab || 'definition');
+			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
@@ -138,22 +148,6 @@ define([
 				return this.defaultName;
 			});
 
-			this.modifiedJSON = "";
-			this.importJSON = ko.observable();
-			this.expressionJSON = ko.pureComputed({
-				read: () => {
-					return ko.toJSON(this.selectedAnalysis().expression(), function (key, value) {
-						if (value === 0 || value) {
-							return value;
-						} else {
-							return
-						}
-					}, 2);
-				},
-				write: (value) => {
-					this.modifiedJSON = value;
-				}
-			});
 			this.expressionMode = ko.observable('import');
 
 			this.isNameFilled = ko.computed(() => {
@@ -173,9 +167,27 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 
+			this.exportService = IRAnalysisService.exportAnalysis;
+			this.importService = IRAnalysisService.importAnalysis;
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.INCIDENCE_RATE,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
+			});
+
 			// startup actions
 			this.init();
 		}
+
+		isPermittedImport() {
+			return authAPI.isPermitted(`ir:design:post`);
+		}
+
+		isPermittedExport(id) {
+			return authAPI.isPermitted(`ir:${id}:design:get`);
+		}
+
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {
@@ -279,11 +291,20 @@ define([
 			});
 		}
 
+		selectTab(tab) {
+			commonUtils.routeTo(`${this.constants.apiPaths.analysis(this.selectedAnalysisId())}/${tab}`);
+		}
+
 		onRouterParamsChanged(params = {}) {
-			const { analysisId } = params;
+			const { analysisId, activeTab } = params;
+			if (activeTab) {
+				if (Object.values(this.constants.tabs).includes(activeTab)) {
+					this.activeTab(activeTab);
+				}
+			}
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
-			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id() && !this.pollId) {
 				this.startPolling();
 			}
 		}
@@ -307,7 +328,7 @@ define([
 			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab('conceptsets');
+				this.activeTab(this.tabs.CONCEPT_SETS);
 			}
 			this.criteriaContext(null);
 		}
@@ -319,6 +340,7 @@ define([
 			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 			this.selectedAnalysisId(analysis.id);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.clearResults();
 			this.isCopying(false);
 			this.loading(false);
 			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
@@ -428,12 +450,19 @@ define([
 				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
-		import() {
-			if (this.importJSON() && this.importJSON().length > 0) {
-				var updatedExpression = JSON.parse(this.importJSON());
-				this.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
-				this.importJSON("");
-				this.activeTab('definition');
+		async afterImportSuccess(res) {
+			this.isSaving(true);
+			this.loading(true);
+			try {
+				this.refreshDefs();
+				this.activeTab(this.tabs.DEFINITION);
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
+			} catch (e) {
+				alert('An error occurred while attempting to import an incidence rate.');
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
 			}
 		};
 
@@ -449,9 +478,9 @@ define([
 			}
 		}
 
-		async init() {
+		init() {
 			this.refreshDefs();
-			const sources = await sourceAPI.getSources();
+			const sources = sharedState.sources();
 			const sourceList = [];
 			sources.forEach(source => {
 				if (source.daimons.filter(function (daimon) {

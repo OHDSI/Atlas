@@ -1,5 +1,6 @@
 <loading data-bind="visible: exporting" params="status: 'Exporting CSV...'"></loading>
-<div data-bind="hidden: exporting()">
+<loading data-bind="visible: $component.loading()" params="status: 'Loading for export...'"></loading>
+<div data-bind="hidden: exporting() || $component.loading()">
   <div class="heading">Concept Set Expression JSON
     <button
       class="btn btn-sm btn-primary"
@@ -15,7 +16,7 @@
       <strong>Copied To Clipboard!</strong>
     </span>
   </div>
-  <pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="conceptSetExpression" data-bind="html: currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">Concept Identifer List
     <button
       class="btn btn-sm btn-primary"
@@ -31,7 +32,7 @@
       <strong>Copied To Clipboard!</strong>
     </span>
   </div>
-  <pre id="conceptIdentifierList" data-bind="html: $root.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="conceptIdentifierList" data-bind="html: currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">Included Concept Identifer List
     <button
       class="btn btn-sm btn-primary"
@@ -47,12 +48,12 @@
       <strong>Copied To Clipboard!</strong>
     </span>
   </div>
-  <pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <br/>
   <button type="button" class="btn btn-success" data-bind="
     click: exportCSV,
     css: {
-      disabled:! ($root.currentConceptSet() != null && !$root.currentConceptSetDirtyFlag().isDirty())
+      disabled:! (currentConceptSet() != null && !currentConceptSetDirtyFlag().isDirty())
     }">
     <i class="fa fa-download" aria-hidden="true"></i>Export To CSV
   </button>
