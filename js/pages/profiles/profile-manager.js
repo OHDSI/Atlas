@@ -163,8 +163,8 @@ define([
 					if (this.canViewProfileDates() && this.xfObservable && this.xfObservable() && this.xfObservable().isElementFiltered()) {
 						const filtered = this.xfObservable().allFiltered();
 						return filtered.map(v => ({
-							startDate: moment(v.startDate).add(v.startDays, 'days').valueOf(),
-							endDate: moment(v.endDate).subtract(v.endDays, 'days').valueOf(),
+							startDate: !!v.startDate ? moment(v.startDate).add(v.startDays, 'days').valueOf() : null,
+							endDate: !!v.endDate ? moment(v.endDate).subtract(v.endDays, 'days').valueOf() : null,
 						}))
 							.reduce((a, v) => ({
 								startDate: a.startDate < v.startDate ? a.startDate : v.startDate,
