@@ -5,7 +5,6 @@ define([
 	'components/entity-browser',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
-	'utils/Renderers',
 	'./const',
 	'less!./feature-analyses-browser.less',
 ], function (
@@ -15,7 +14,6 @@ define([
 	EntityBrowser,
 	commonUtils,
 	datatableUtils,
-	renderers,
 	feConst,
 ) {
 	class FeatureAnalysesBrowser extends EntityBrowser {
@@ -29,6 +27,7 @@ define([
 			this.tableDom = "Bfiprt<'page-size'l>ip";
 
 			this.columns = [
+				...this.columns,
 				{
 					title: 'ID',
 					data: 'id'
@@ -42,19 +41,6 @@ define([
 					data: 'description'
 				}
 			];
-
-			if (!!this.multiChoice) {
-				this.columns = [
-					{
-						data: 'selected',
-						class: this.classes({extra: 'text-center'}),
-						render: () => renderers.renderCheckbox('selected'),
-						searchable: false,
-						orderable: false,
-					},
-					...this.columns,
-				]
-			}
 		}
 
 		async loadData() {

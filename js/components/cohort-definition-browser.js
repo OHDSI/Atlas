@@ -7,7 +7,6 @@ define([
 	'utils/CommonUtils',
 	'services/CohortDefinition',
 	'utils/DatatableUtils',
-	'utils/Renderers',
 	'faceted-datatable',
 	'less!./cohort-definition-browser.less',
 ], function (
@@ -19,7 +18,6 @@ define([
 	commonUtils,
 	CohortDefinitionService,
 	datatableUtils,
-	renderers,
 ) {
 
 	class CohortDefinitionBrowser extends EntityBrowser {
@@ -56,6 +54,7 @@ define([
 			};
 
 			this.columns = [
+				...this.columns,
 				{
 					title: 'Id',
 					className: 'id-column',
@@ -81,19 +80,6 @@ define([
 					render: datatableUtils.getCreatedByFormatter(),
 				},
 			];
-
-			if (!!this.multiChoice) {
-				this.columns = [
-					{
-						data: 'selected',
-						class: this.classes({extra: 'text-center'}),
-						render: () => renderers.renderCheckbox('selected'),
-						searchable: false,
-						orderable: false,
-					},
-					...this.columns,
-				];
-			}
 		}
 
 		action(callback) {

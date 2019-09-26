@@ -2,9 +2,10 @@ define([
     'knockout',
     'text!./cohort-definition-browser.html',
     'components/Component',
+	'utils/Renderers',
     'faceted-datatable',
     'less!./cohort-definition-browser.less',
-], function(ko, view, Component) {
+], function(ko, view, Component, renderers) {
     class EntityBrowser extends Component {
         constructor(params) {
             super(params);
@@ -37,6 +38,17 @@ define([
                       },
                   ]
                 : null;
+
+            this.columns = !!this.multiChoice
+                ? [
+                    {
+                        data: 'selected',
+                        class: this.classes({extra: 'text-center'}),
+                        render: () => renderers.renderCheckbox('selected'),
+                        searchable: false,
+                        orderable: false,
+                    },
+                ] : [];
 
 			this.tableDom = "Bfiprt<'page-size'l>ip";
 			this.rowClick = this.rowClick.bind(this);
