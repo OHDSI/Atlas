@@ -24,6 +24,7 @@ define([
 			this.includedSourcecodes = sharedState.includedSourcecodes;
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, this);
+			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 		}
 
 	}
