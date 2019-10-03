@@ -6,8 +6,6 @@ define((require, factory) => {
       const ccaViewEdit = new AuthorizedRoute((estimationId, section, sourceId, executionId) => {
         require(['./cca-manager'], function () {
           atlasState.estimationAnalysis.selectedId(estimationId);
-          atlasState.estimationAnalysis.notificationSourceId(sourceId);
-          atlasState.estimationAnalysis.notificationExecutionId(executionId);
           router.setCurrentView('cca-manager', {
             id: estimationId,
             section: section || 'specification',

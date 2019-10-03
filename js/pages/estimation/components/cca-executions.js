@@ -111,22 +111,20 @@ define([
 		}
 
 		highlightGeneration() {
-			if (this.isSourceListLoaded()) {
-				if (this.notificationSourceId() && this.notificationExecutionId()) {
-					const sourceId = this.notificationSourceId();
-					const executionId = this.notificationExecutionId();
-					const groupIdx = this.executionGroups().findIndex(item => item.sourceId == sourceId);
-					if (groupIdx >= 0) {
-						this.expandedSection() !== groupIdx && this.expandedSection(groupIdx);
-						const row = $(`#${this.notificationRowId()}`);
-						setTimeout(() => {
-							const $row = $(`#${this.notificationRowId()}`);
-							if ($row && $row[0]) {
-								$row.addClass('alert alert-warning');
-								$row[0].scrollIntoView({ behavior: 'smooth' });
-							}
-						}, 0);
-					}
+			if (this.isSourceListLoaded() && this.notificationSourceId() && this.notificationExecutionId()) {
+				const sourceId = this.notificationSourceId();
+				const executionId = this.notificationExecutionId();
+				const groupIdx = this.executionGroups().findIndex(item => item.sourceId == sourceId);
+				if (groupIdx >= 0) {
+					this.expandedSection() !== groupIdx && this.expandedSection(groupIdx);
+					const row = $(`#${this.notificationRowId()}`);
+					setTimeout(() => {
+						const $row = $(`#${this.notificationRowId()}`);
+						if ($row && $row[0]) {
+							$row.addClass('alert alert-warning');
+							$row[0].scrollIntoView({ behavior: 'smooth' });
+						}
+					}, 0);
 				}
 			}
 		}

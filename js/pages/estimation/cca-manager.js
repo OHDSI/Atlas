@@ -68,8 +68,8 @@ define([
 			this.loading = ko.observable(true);
 			this.estimationAnalysis = sharedState.estimationAnalysis.current;
 			this.selectedAnalysisId = sharedState.estimationAnalysis.selectedId;
-			this.notificationExecutionId = sharedState.estimationAnalysis.notificationExecutionId;
-			this.notificationSourceId = sharedState.estimationAnalysis.notificationSourceId;
+			this.notificationExecutionId = ko.observable();
+			this.notificationSourceId = ko.observable();
 			this.dirtyFlag = sharedState.estimationAnalysis.dirtyFlag;
 			this.tabMode = ko.observable('specification');
 			this.comparisons = sharedState.estimationAnalysis.comparisons;
@@ -420,6 +420,9 @@ define([
 		}
 
 		onPageCreated() {
+			const { executionId, sourceId } = router.routerParams();
+			!!executionId && this.notificationExecutionId(executionId);
+			!!sourceId && this.notificationSourceId(sourceId);
 			FeatureExtractionService.getDefaultCovariateSettings().then(({ data }) => {
 				const selectedAnalysisId = parseInt(this.selectedAnalysisId());
 				this.defaultCovariateSettings(data);
@@ -435,8 +438,8 @@ define([
 		}
 
 		onRouterParamsChanged({ id, section, sourceId, executionId }) {
-			this.notificationSourceId(sourceId);
-			this.notificationExecutionId(executionId);
+			!!sourceId && this.notificationSourceId(sourceId);
+			!!executionId && this.notificationExecutionId(executionId);
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
 					this.selectedTabKey(section);

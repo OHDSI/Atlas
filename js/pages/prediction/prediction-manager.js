@@ -89,8 +89,8 @@ define([
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
-			this.notificationExecutionId = sharedState.predictionAnalysis.notificationExecutionId;
-			this.notificationSourceId = sharedState.predictionAnalysis.notificationSourceId;
+			this.notificationExecutionId = ko.observable();
+			this.notificationSourceId = ko.observable();
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
@@ -149,6 +149,9 @@ define([
 		}
 
 		onPageCreated() {
+			const { executionId, sourceId } = router.routerParams();
+			!!executionId && this.notificationExecutionId(executionId);
+			!!sourceId && this.notificationSourceId(sourceId);
 			const selectedAnalysisId = parseInt(this.selectedAnalysisId());
 			if (selectedAnalysisId === 0 && !this.dirtyFlag().isDirty()) {
 				this.newAnalysis();
@@ -161,8 +164,8 @@ define([
 		}
 
         onRouterParamsChanged({ id, section, sourceId, executionId }) {
-			this.notificationSourceId(sourceId);
-			this.notificationExecutionId(executionId);
+			!!sourceId && this.notificationSourceId(sourceId);
+			!!executionId && this.notificationExecutionId(executionId);
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
 					this.selectedTabKey(section);

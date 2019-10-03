@@ -14,8 +14,6 @@ define(
           './components/editors/prediction-covariate-settings-editor',
         ], function() {
           atlasState.predictionAnalysis.selectedId(analysisId);
-          atlasState.predictionAnalysis.notificationSourceId(sourceId);
-          atlasState.predictionAnalysis.notificationExecutionId(executionId);
           router.setCurrentView('prediction-manager', {
             id: analysisId,
             section: section || 'specification',
