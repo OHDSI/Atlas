@@ -1,11 +1,12 @@
 <button class="btn btn-primary btn-sm" data-bind="click: open, disable: isOpen">Add</button>
 <!-- ko ifnot: isImportEnabled -->
-<button class="btn btn-primary btn-sm" data-bind="click: function() { isImportEnabled(true); }">Import</button>
+<button class="btn btn-primary btn-sm" data-bind="click: function() { openImportModal('ids') }">Import by IDs</button>
+<button class="btn btn-primary btn-sm" data-bind="click: function() { openImportModal('json') }">Import JSON</button>
 <!-- /ko -->
 <!-- ko if: isImportEnabled -->
 <div title="Import Concepts" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: '' }">
 <textarea placeholder="Import Concepts" rows="1" style="width: 650px; height:400px; resize: none; overflow: auto; word-wrap: break-word"  data-bind=" textInput: importValues"></textarea>
-<button class="btn btn-primary btn-sm" data-bind="click: doImport">Done</button>
+<button class="btn btn-primary btn-sm" data-bind="click: importMode() === 'ids' ? doIdsImport : doJSONImport">Done</button>
 </div>
 <!-- /ko -->
 <!-- ko if: isOpen -->
