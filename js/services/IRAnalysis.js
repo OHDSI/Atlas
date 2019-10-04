@@ -159,6 +159,26 @@ define(function (require, exports) {
 				return response;
 			});
 	}
+
+	function importAnalysis(definition) {
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/design`, definition)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
+
+	function exportAnalysis(id) {
+		return httpService
+			.doGet(config.webAPIRoot + `ir/${id}/design`)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -173,6 +193,8 @@ define(function (require, exports) {
 		getReport: getReport,
 		loadResultsSummary,
 		exists,
+		importAnalysis: importAnalysis,
+		exportAnalysis: exportAnalysis,
 	};
 
 	return api;

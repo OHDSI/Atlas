@@ -32,12 +32,16 @@ table.cohort-generate-sources thead {
   width: calc(100%-1em)
 }
 
-td.dateColumn {
+td.date-column {
 	width: 125px;
 }
 
-td.authorColumn {
+td.author-column {
 	width: 125px;
+}
+
+td.id-column {
+	width: 45px;
 }
 
 .breadcrumb-container {
@@ -2189,4 +2193,16 @@ div#wrapper_ohdsi a {
 	background-image: url(images/arrow_down.png);
 	background-position: center right;
 	background-repeat: no-repeat;
+}
+
+.thresholdLevel {
+	width: 30%
+}
+
+.thresholdLevel div {
+	display: flex
+}
+
+.thresholdLevel div input {
+	margin-right: 10px
 }

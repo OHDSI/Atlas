@@ -1,14 +1,22 @@
 define(
   (require, exports) => {
     const apiPaths = {
-      analysis: id => `/iranalysis${id ? `/${id}` : ''}`,
-      createAnalysis: () => '/iranalysis/new',
+      root: '/iranalysis/',
+      analysis: id => `/iranalysis${typeof id !== 'undefined' ? `/${id}` : ''}`,
+      createAnalysis: () => '/iranalysis/0',
     };
 
     const status = {
         PENDING: 'PENDING',
         RUNNING: 'RUNNING',
         COMPLETE: 'COMPLETE',
+    };
+
+    const tabs = {
+      DEFINITION: 'definition',
+      CONCEPT_SETS: 'conceptsets',
+      GENERATION: 'generation',
+      UTILITIES: 'utilities',
     };
 
     const disabledReasons = {
@@ -25,6 +33,7 @@ define(
       status,
       isInProgress,
       disabledReasons,
+      tabs,
     };
   }
 );

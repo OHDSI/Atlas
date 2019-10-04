@@ -40,7 +40,12 @@ define([
 				return g;
 			});
 			this.selectedRole().groups(selectedGroups);
+			this.rolesMapping.valueHasMutated();
 			this.closeGroupModal();
+		}
+
+		closeGroupModal() {
+			this.isSearchGroupDialog(false);
 		}
 	}
 

@@ -14,12 +14,12 @@ define([
 	momentApi,
 	datatableUtils,
 ) {
-	
+
 	class IRAnalysisBrowserModel extends Component {
 		constructor(params) {
 			super(params);
 			this.analysisList = params.analysisList;
-			
+
 			this.options = {
 				Facets: [
 					{
@@ -51,23 +51,18 @@ define([
 				},
 				{
 					title: 'Name',
-					render: (s, p, d) => {
-						return '<span class="linkish">' + d.name + '</span>';
-					}
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['name'],
+						linkish: true,
+					})),
 				},
 				{
 					title: 'Created',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Updated',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
@@ -77,7 +72,7 @@ define([
 
 			this.rowClick = this.rowClick.bind(this);
 		}
-		
+
 		rowClick (d) {
 			this.selected(d.id);
 		}

@@ -75,17 +75,20 @@ define([
 
 			// observable subscriptions
 
-			this.targetSub = this.selectedTarget.subscribe((newVal) => {
+			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
-
-			this.outcomeSub = this.selectedOutcome.subscribe((newVal) => {
+			}));
+			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
+			}));
 
 			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
+
+			this.disableExportAnalysis = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
+			});
 		}
 
 		reportDisabledReason(source) {
@@ -196,11 +199,6 @@ define([
 
 		msToTime(s) {
 			return momentApi.formatDuration(s);
-		};
-
-		dispose() {
-			this.targetSub.dispose();
-			this.outcomeSub.dispose();
 		};
 	}
 

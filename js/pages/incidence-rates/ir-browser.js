@@ -6,6 +6,7 @@ define([
   'services/AuthAPI',
   'pages/Page',
   'utils/CommonUtils',
+	'utils/DatatableUtils',
   './const',
   'components/ac-access-denied',
   'faceted-datatable',
@@ -19,11 +20,12 @@ define([
   authApi,
   Page,
   commonUtils,
+  datatableUtils,
   constants
 ) {
   class IRBrowser extends Page {
     constructor(params) {
-      super(params);      
+      super(params);
       this.loading = ko.observable(false);
       this.config = config;
       this.analysisList = ko.observableArray();
@@ -34,7 +36,7 @@ define([
       this.canCreateIR = ko.pureComputed(() => {
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
       });
-      
+
       // startup actions
       if (this.isAuthenticated() && this.canReadIRs()) {
         this.refresh();
@@ -46,6 +48,7 @@ define([
       IRAnalysisService
         .getAnalysisList()
         .then(({ data }) => {
+          datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
           this.analysisList(data);
           this.loading(false);
         });

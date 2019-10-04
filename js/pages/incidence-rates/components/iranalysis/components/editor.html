@@ -1,5 +1,5 @@
 <div class="tabcontent">
-	
+
 	<div class="criteriaGroup">
 		<div class="criteriaHeading">
 			<b>Study Cohorts</b>
@@ -21,7 +21,7 @@
 							<td align="top"><i class="fa fa-times targetCohort"></i></td>
 							<td align="top">#<span data-bind="text: id"/>: </td>
 							<td align="top"><span data-bind="text: name"/></td>
-						</tr>					
+						</tr>
 					</table>
 				</td>
 				<td valign="top">
@@ -33,7 +33,7 @@
 							<td align="top"><i class="fa fa-times outcomeCohort"></i></td>
 							<td align="top">#<span data-bind="text: id"/>: </td>
 							<td align="top"><span data-bind="text: name"/></td>
-						</tr>					
+						</tr>
 					</table>
 				</td>
 			</tr>
@@ -66,14 +66,18 @@
 	<div style="padding-top:10px" data-bind="if: analysis().studyWindow() == null && isEditable()">
 	No study window defined. <button class="btn btn-sm btn-success" data-bind="click: addStudyWindow">Add Study Window</button>
 	</div>
-	<div data-bind="if: analysis().studyWindow() != null">
-		Study window begins on 
-		<input style="width:75px" class="dateField" placeholder="YYYY-MM-DD" data-bind="textInput: analysis().studyWindow().startDate"/> 
-		and ends on 
-		<input style="width:75px" class="dateField" placeholder="YYYY-MM-DD" data-bind="textInput: analysis().studyWindow().endDate"/> 
+	<div class="form-inline" data-bind="if: analysis().studyWindow() != null">
+		<div class="form-group">
+			<label for="studyWindowStartDate">Study window begins on</label>
+			<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowStartDate" data-bind="datepicker: analysis().studyWindow().startDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }">
+		</div>
+		<div class="form-group">
+				<label for="studyWindowEndDate">and ends on</label>
+				<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowEndDate" data-bind="datepicker: analysis().studyWindow().endDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }">
+		</div>
 		<button class="btn btn-sm btn-danger" data-bind="click: function() { analysis().studyWindow(null); }">Remove Study Window</button>
 	</div>
-	
+
 	<div class="heading">
 		<b>Stratify Criteria:  </b>
 		You can provide optional stratification criteria to the analysis that will divide the population into unique groups based on their satisified criteria.

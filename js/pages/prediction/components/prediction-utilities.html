@@ -46,9 +46,9 @@
                                         </ul>
                                         <div id="downloadTabContent" class="tab-content">
                                             <div role="tabpanel" data-bind="css: { active: $component.downloadTabMode() == 'full' }" class="tab-pane">
-                                                <faceted-datatable params="{ 
-                                                    columns: options.fullAnalysisTableColumns, 
-                                                    options: options.fullAnalysisTableOptions, 
+                                                <faceted-datatable params="{
+                                                    columns: options.fullAnalysisTableColumns,
+                                                    options: options.fullAnalysisTableOptions,
                                                     pageLength: options.fullAnalysisTableOptions.pageLength,
                                                     lengthMenu: options.fullAnalysisTableOptions.lengthMenu,
                                                     dom: options.fullAnalysisTableOptions.dom,
@@ -56,9 +56,9 @@
                                                 }"></faceted-datatable>
                                             </div>
                                             <div role="tabpanel" data-bind="css: { active: $component.downloadTabMode() == 'predictions' }" class="tab-pane">
-                                                <faceted-datatable params="{ 
-                                                    columns: options.targetOutcomeTableColumns, 
-                                                    options: options.specificationSummaryTableOptions, 
+                                                <faceted-datatable params="{
+                                                    columns: options.targetOutcomeTableColumns,
+                                                    options: options.specificationSummaryTableOptions,
                                                     pageLength: options.specificationSummaryTableOptions.pageLength,
                                                     lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                                     dom: options.specificationSummaryTableOptions.dom,
@@ -66,9 +66,9 @@
                                                 }"></faceted-datatable>
                                             </div>
                                             <div role="tabpanel" data-bind="css: { active: $component.downloadTabMode() == 'analysis' }" class="tab-pane">
-                                                <faceted-datatable params="{ 
-                                                    columns: options.modelCovarPopTupleTableColumns, 
-                                                    options: options.specificationSummaryTableOptions, 
+                                                <faceted-datatable params="{
+                                                    columns: options.modelCovarPopTupleTableColumns,
+                                                    options: options.specificationSummaryTableOptions,
                                                     pageLength: options.specificationSummaryTableOptions.pageLength,
                                                     lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                                     dom: options.specificationSummaryTableOptions.dom,
@@ -78,7 +78,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="panel panel-default">                
+                                <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <i class="fa fa-download"></i> Download Study Package
                                     </div>
@@ -89,7 +89,7 @@
                                                 <input class="form-control" type="text" data-bind="textInput: $component.packageName" placeholder="Package name..." />
                                             </div>
                                             <label><b>Please Note:</b> The package name should consist of alphanumeric characters only. No spaces or special characters are permitted.</label>
-                                        </div>                        
+                                        </div>
                                         <div style="padding-top: 10px;">
                                             <button type="button" class="btn btn-primary" data-bind="enable: validPackageName, click: downloadPackage"><i class="fa fa-download"></i> Download</button>
                                         </div>
@@ -116,14 +116,13 @@
                 <div data-bind="if: !$component.specificationValid()">
                 Please see the downloads area to review problems with your analysis specification. These must be corrected before you can export your definition.
                 </div>
-                <div data-bind="if: $component.dirtyFlag().isDirty()">
-                You must save your analysis before you can export the definition.
-                </div>
-                <div data-bind="if: $component.specificationValid() && !($component.dirtyFlag().isDirty())">
+                <div data-bind="if: $component.specificationValid()">
                     <export params="{
                         entityId: selectedAnalysisId,
                         isPermittedExport: isPermittedExport,
                         exportService: exportService,
+                        dirtyFlag: $component.dirtyFlag,
+                        message: { entityName: 'analysis' }
                     }"></export>
                 </div>
             </div>

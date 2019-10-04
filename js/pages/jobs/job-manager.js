@@ -26,16 +26,17 @@ define([
 	class JobManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
-			this.model.columns = ko.observableArray([
+			this.jobs = ko.observableArray([]);
+			this.columns = ko.observableArray([
 				{title: 'ExecutionId', data: 'executionId'},
 				{title: 'Job Name', data: 'jobParameters.jobName'},
 				{title: 'Status', data: 'status'},
-				{title: 'Start Date', data: 'startDate', type: 'datetime-formatted'},
-				{title: 'End Date', data: 'endDate', type: 'datetime-formatted'}
+				{title: 'Start Date', data: 'startDate'},
+				{title: 'End Date', data: 'endDate'}
 			]);
 			if (config.userAuthenticationEnabled) {
-				this.model.columns.splice(3, 0, {title: 'Author', data: 'jobParameters.jobAuthor', 'defaultContent': ''});
+				// Add 'Author' column after 'Status' column
+				this.columns.splice(3, 0, {title: 'Author', data: 'jobParameters.jobAuthor', 'defaultContent': ''});
 			}
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.canReadJobs = ko.pureComputed(() => {
@@ -48,10 +49,8 @@ define([
 		}
 
 		async updateJobs() {
-			this.model.jobs([]);
-
 			const jobs = await jobsService.getList();
-			this.model.jobs(jobs.map((job) => {
+			this.jobs(jobs.map((job) => {
 				const { startDate = null, endDate = null } = job;
 				job.startDate = startDate ? momentApi.formatDateTime(new Date(startDate)) : '-';
 				job.endDate = endDate && (endDate > startDate) ? momentApi.formatDateTime(new Date(endDate)) : '-';

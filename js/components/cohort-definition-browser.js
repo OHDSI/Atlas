@@ -2,17 +2,19 @@ define([
 	'knockout',
 	'text!./cohort-definition-browser.html',
 	'appConfig',
+	'atlas-state',
 	'services/AuthAPI',
 	'services/MomentAPI',
 	'components/Component',
 	'utils/CommonUtils',
 	'services/http',
-    'utils/DatatableUtils',
+	'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
 	ko,
 	view,
 	config,
+	sharedState,
 	authApi,
 	momentApi,
 	Component,
@@ -27,21 +29,15 @@ define([
 			this.selected = params.cohortDefinitionSelected;
 			this.loading = ko.observable(false);
 			this.config = config;
+			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
 
 			this.loading(true);
 
 			httpService.doGet(`${config.api.url}cohortdefinition`)
 				.then(({ data }) => {
-					let defList = data.map(d => {
-						return {
-							...d, 
-							...{
-								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
-								modifiedTimestamp: d.modifiedDate && new Date(d.modifiedDate).getTime()
-							}
-						};
-					});
-					this.reference(defList);
+					datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
+					this.reference(data);
 				})
 				.finally(() => { this.loading(false) });
 
@@ -74,43 +70,49 @@ define([
 
 			this.columns = [{
 					title: 'Id',
+					className: 'id-column',
 					data: 'id'
 				},
 				{
 					title: 'Name',
-					render: this.renderCohortDefinitionLink
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['name'],
+						linkish: true,
+					})),
 				},
 				{
 					title: 'Created',
-					className: 'dateColumn',
-					render: function (row, type, val, meta) {
-						return type === "sort" ? val.createdTimestamp : momentApi.formatDateTimeUTC(val.createdDate);
-					}
+					className: 'date-column',
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Updated',
-					className: 'dateColumn',
-					render: function (row, type, val, meta) {
-						return type === "sort" ? val.modifiedTimestamp : momentApi.formatDateTimeUTC(val.modifiedDate);
-					}
+					className: 'date-column',
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
-					className: 'authorColumn',
+					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 
-			this.renderCohortDefinitionLink = this.renderCohortDefinitionLink.bind(this);
 			this.rowClick = this.rowClick.bind(this);
-		}
-		
-		renderCohortDefinitionLink (data,type,row) {
-			return (type == "display")	? `<span class="linkish">${row.name}</span>` : row.name;
 		}
 
 		rowClick(data) {
-			this.selected(data);
+			this.action(() => this.selected(data));
+		}
+
+		action(callback) {
+			const isConceptSetDirty = this.currentConceptSet() && this.currentConceptSetDirtyFlag().isDirty();
+			if (isConceptSetDirty) {
+				if (confirm('Concept set changes are not saved. Would you like to continue?')) {
+					callback();
+				}
+			} else {
+				callback();
+			}
 		}
 	}
 

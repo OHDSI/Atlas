@@ -11,6 +11,7 @@ define([
 			this.conceptId = stat.conceptId;
 			this.conceptName = stat.conceptName;
 			this.domainId = stat.domainId;
+			this.faType = stat.faType;
 			this.cohorts = [];
 			this.count = {};
 			this.pct = {};

@@ -58,9 +58,7 @@ define([
                 title: 'Covariate',
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
-                render: (d, t, r) => {
-                    return utils.extractMeaningfulCovName(d);
-                 },
+                render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
             };
         }
 

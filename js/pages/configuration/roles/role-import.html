@@ -6,6 +6,18 @@
       <heading-title params="name: 'Roles definition JSON'"></heading-title>
       <button class="btn btn-success" data-bind="click: doImport, enable: isJSONValid">Import</button>
     </div>
+    <!-- ko if: warnings().jsonIssues -->
+      <div class="alert alert-danger" role="alert">
+        Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.
+        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('jsonIssues')">Fix JSON</a>
+      </div>
+    <!-- /ko -->
+    <!-- ko if: warnings().permissionSpecificIdsIssues -->
+      <div class="alert alert-warning" role="alert">
+        Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.
+        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('permissionSpecificIdsIssues')">Remove the permissions</a>
+      </div>
+    <!-- /ko -->
     <textarea data-bind="textInput: json"></textarea>
     <div data-bind="if: isProcessing">
       <heading-title params="name: 'Progress'"></heading-title>

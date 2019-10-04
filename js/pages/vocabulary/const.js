@@ -8,9 +8,16 @@ define(
 			vocabularies: () => sharedState.vocabularyUrl() + 'vocabularies',
 		};
 
+		const importModes = {
+			IDENTIFIERS: 'identifiers',
+			SOURCE_CODES: 'sourcecodes',
+			CONCEPT_SET: 'conceptset',
+		};
+
 		return {
 			pageTitle,
 			apiPaths,
+			importModes,
 		};
 	}
 );

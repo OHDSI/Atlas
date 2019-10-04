@@ -53,13 +53,11 @@ define([
                 {
                     title: 'Created',
                     className: this.classes('tbl-col', 'created'),
-                    type: 'datetime-formatted',
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
                     title: 'Updated',
                     className: this.classes('tbl-col', 'updated'),
-                    type: 'datetime-formatted',
                     render: datatableUtils.getDateFieldFormatter('updatedAt'),
                 },
                 {
@@ -94,6 +92,7 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
+                    datatableUtils.coalesceField(res.content, 'updatedAt', 'createdAt');
                     this.data(res.content);
                     this.loading(false);
                 });

@@ -8,6 +8,7 @@ define([
 	'assets/ohdsi.util',
 	'./services/JobService',
 	'services/User',
+	'services/role',
 	'./services/PermissionService',
 	'./const',
 	'moment',
@@ -26,6 +27,7 @@ define([
 	ohdsiUtil,
 	jobService,
 	userService,
+	roleService,
 	permissionService,
 	Const,
 	moment,
@@ -54,8 +56,6 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.model = params.model;
-			this.updateRoles = params.model.updateRoles;
 			this.roles = sharedState.roles;
 			this.jobId = ko.observable();
 			this.loading = ko.observable();
@@ -108,7 +108,7 @@ define([
 				weekdays: this.weekdays,
 				roleGroups: this.roleGroups,
 			});
-			this.updateRoles()
+			roleService.updateRoles()
 				.then(roles => {
 					const mapping = this.roles().filter(role => !role.defaultImported).map(role => (
 						{

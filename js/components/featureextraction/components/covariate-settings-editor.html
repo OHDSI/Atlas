@@ -31,7 +31,7 @@
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsPostObservationTime" /></td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsTimeInCohort" /></td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DemographicsIndexYearMonth" /></td>
-                </tr>            
+                </tr>
             </tbody>
         </table>
     </div>
@@ -53,10 +53,10 @@
                 <tr>
                     <td><b>Time Windows</b></td>
                     <td>All Time</td>
-                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.longTermStartDays" /></td>
-                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.mediumTermStartDays" /></td>
-                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.shortTermStartDays" /></td>
-                    <td><input type="text" data-bind="css: classes('window'), value: $component.covariateSettings.endDays" /></td>
+                    <td><input type="text" placeholder="Long Term" data-bind="css: classes('window'), value: $component.covariateSettings.longTermStartDays" /></td>
+                    <td><input type="text" placeholder="Medium Term" data-bind="css: classes('window'), value: $component.covariateSettings.mediumTermStartDays" /></td>
+                    <td><input type="text" placeholder="Short Term" data-bind="css: classes('window'), value: $component.covariateSettings.shortTermStartDays" /></td>
+                    <td><input type="text" placeholder="End Days" data-bind="css: classes('window'), value: $component.covariateSettings.endDays" /></td>
                 </tr>
             </tbody>
         </table>
@@ -195,7 +195,7 @@
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.MeasurementShortTerm" /></td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountLongTerm" /></td>
                     <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountMediumTerm" /></td>
-                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountShortTerm" /></td>                    
+                    <td><input type="checkbox" data-bind="checked: $component.covariateSettings.DistinctMeasurementCountShortTerm" /></td>
                 </tr>
                 <tr>
                     <td><b>Measurement - Value</b></td>

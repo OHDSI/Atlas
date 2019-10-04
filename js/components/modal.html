@@ -1,5 +1,5 @@
 <div data-bind="modal: $component.showModal, css: classes({ extra: ['modal', fade() ? 'fade' : ''], modifiers: $component.modifiers })" tabindex="-1" role="dialog">
-	<div data-bind="css: classes({ element: 'modal-dialog', extra: [ 'modal-dialog', ...dialogExtraClasses ] })">
+	<div class="modal-dialog" data-bind="css: classes({ element: 'modal-dialog', extra: [ 'modal-dialog', ...dialogExtraClasses ] })">
 		<div data-bind="css: 'modal-content'">
 			<div class="modal-header">
 				<!-- ko if: backdropClosable -->
