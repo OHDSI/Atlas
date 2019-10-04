@@ -63,7 +63,6 @@ define([
 
 			doImport() {
 				var parsedItems, importedConceptSetItems;
-				console.log(this.importValues());
 				parsedItems = JSON.parse(this.importValues());
 
 				importedConceptSetItems = parsedItems.items.map(item => new ConceptSetItem(item));
