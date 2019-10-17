@@ -44,7 +44,7 @@ define(
     };
 
     const paths = {
-      details: id => `#/cohortdefinition/${id}`,
+      details: id => `/cohortdefinition/${id}`,
     };
 
 		const getPeriodTypeFilter = (chosenPeriods) => ({

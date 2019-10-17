@@ -32,6 +32,7 @@ define([
             this.data = params.data;
             this.gridColumns = params.gridColumns;
             this.gridOptions = params.gridOptions;
+            this.order = params.order || [[3, 'desc']];
 
             this.createNew = params.createNew;
             this.createNewEnabled = typeof params.createNewEnabled === 'undefined' ? () => true : params.createNewEnabled;

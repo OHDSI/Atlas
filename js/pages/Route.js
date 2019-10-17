@@ -9,15 +9,17 @@ define([
 ) {
 	class Route {
 		checkPermission() {
-			if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
+			if (authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP) {
+				return authApi.loadUserInfo();
+			} else if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
 				return authApi.refreshToken();
-			} else {
-				return new Promise(resolve => resolve());
-			}      
+			}
+			return Promise.resolve();
 		}
 
 		constructor(handler) {
 			this.handler = handler;
+			this.isSecured = false;
 		}
 
 		handler() {
@@ -26,6 +28,11 @@ define([
 	}
 
 	class AuthorizedRoute extends Route {
+		constructor(props) {
+			super(props);
+			this.isSecured = true;
+		}
+
 		checkPermission() {
 			if (appConfig.userAuthenticationEnabled && authApi.subject() === undefined) {
 				return this.waitForSubject();

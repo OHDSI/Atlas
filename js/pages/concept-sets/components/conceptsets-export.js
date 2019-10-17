@@ -6,9 +6,10 @@ define([
 	'utils/CommonUtils',
 	'appConfig',
 	'services/file',
-  'components/tabs',
-  'circe',
-  'less!./conceptsets-export.less'
+	'atlas-state',
+	'components/tabs',
+	'circe',
+	'less!./conceptsets-export.less'
 ], function (
 	ko,
 	view,
@@ -16,16 +17,17 @@ define([
 	AutoBind,
 	commonUtils,
 	config,
-	fileService
+	fileService,
+	sharedState,
 ) {
 	class ConceptsetExport extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
 			this.exportTable = null;
 			this.exportRowCount = ko.observable(0);
 			this.exportConceptSets = [];
 			this.isInProgress = ko.observable(false);
+			this.criteriaContext = sharedState.criteriaContext;
 		}
 
 		onExportAction (result) {

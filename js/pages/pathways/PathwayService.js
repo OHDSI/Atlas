@@ -1,9 +1,11 @@
 define([
     'services/http',
     'appConfig',
+    'utils/ExecutionUtils'
 ], function (
 	httpService,
 	config,
+    executionUtils,
 ) {
 	const servicePath = config.webAPIRoot + 'pathway-analysis';
 
@@ -40,7 +42,7 @@ define([
 	function listExecutions(id) {
 		return httpService
 			.doGet(`${servicePath}/${id}/generation`)
-			.then(res => res.data);
+			.then(res => executionUtils.generateVersionTags(res.data));
 	}
 
 	function getExecution(id) {
@@ -83,7 +85,13 @@ define([
 		return httpService
 			.doPost(`${servicePath}/import`, design)
 			.then(res => res.data);
-	}	
+	}
+
+	function exists(name, id) {
+		return httpService
+			.doGet(`${servicePath}/${id}/exists?name=${name}`)
+			.then(res => res.data);
+	}
 
 	return {
 		list,
@@ -99,6 +107,7 @@ define([
 		cancelGeneration,
 		loadExportDesign,
 		loadExportDesignByGeneration,
-		importPathwayDesign
+		importPathwayDesign,
+		exists,
 	};
 });

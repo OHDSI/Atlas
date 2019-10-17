@@ -3,23 +3,29 @@ define([
 	'text!./included-sourcecodes.html',
 	'components/Component',
 	'utils/CommonUtils',
+	'services/ConceptSet',
+	'atlas-state',
+	'const',
 ], function (
 	ko,
 	view,
 	Component,
-  commonUtils,
+	commonUtils,
+	conceptSetService,
+	sharedState,
+	globalConstants,
 ) {
 	class IncludedSourcecodes extends Component {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
 			this.loading = ko.pureComputed(() => {
-				return this.model.loadingSourcecodes() || this.model.loadingIncluded();
+				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded();
 			});
-
-      		// data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
-      		// or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
-		}		
+			this.includedSourcecodes = sharedState.includedSourcecodes;
+			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
+			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, this);
+			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
+		}
 
 	}
 

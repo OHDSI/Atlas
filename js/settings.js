@@ -1,5 +1,6 @@
 const settingsObject = {
 	baseUrl: 'js',
+	waitSeconds: 0, // this will be overridden in the compiled file
 	config: {
 		text: {
 			useXhr: function (url, protocol, hostname, port) {
@@ -135,13 +136,14 @@ const settingsObject = {
 		"lz-string": "../node_modules/lz-string/libs/lz-string",
 		"colorbrewer": "../node_modules/colorbrewer/index",
 		"ohdsi-api": "../node_modules/@ohdsi/ui-toolbox/lib/umd/api/index",
-		"bootstrap-datetimepicker": "../node_modules/bootstrap-datetimepicker/src/js/bootstrap-datetimepicker",
+		"bootstrap-datetimepicker": "../node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min",
 		"visibilityjs": "../node_modules/@ohdsi/visibilityjs/lib/visibility.core",
-		"ajv": "../node_modules/ajv/dist/ajv.bundle"
+		"ajv": "../node_modules/ajv/dist/ajv.bundle",
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",
 		"bootstrap.min.css": "css!styles/bootstrap.min.css",
+		"bootstrap-datetimepicker.min.css": "css!../node_modules/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
 		"bootstrap-theme.min.css": "css!styles/bootstrap-theme.min.css",
 		"jquery.dataTables.min.css": "css!styles/jquery.dataTables.min.css",
 		"tabs.css": "css!styles/tabs.css",
@@ -150,7 +152,7 @@ const settingsObject = {
 		"atlas.css": "css!styles/atlas.css",
 		"chart.css": "css!styles/chart.css",
 		"achilles.css": "css!styles/achilles.css",
-		"bootstrap-select.min.css": "css!https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css",
+		"bootstrap-select.min.css": "css!../node_modules/bootstrap-select/dist/css/bootstrap-select.css",
 		"buttons.css": "css!styles/buttons.css",
 		"cartoon.css": "css!styles/cartoon.css",
 		"d3.slider.css": "css!styles/d3.slider.css",

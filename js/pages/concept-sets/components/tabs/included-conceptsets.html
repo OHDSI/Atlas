@@ -13,18 +13,18 @@
     <th>Ancestors</th>
   </tr>
 </script>
-<!-- ko if: $root.loadingIncluded -->
+<!-- ko if: loading -->
   <loading></loading>
 <!-- /ko -->
-<!-- ko if: !$root.loadingIncluded() -->
+<!-- ko ifnot: loading -->
 <faceted-datatable params="{
   columns: $component.searchConceptsColumns,
   options: $component.searchConceptsOptions,
-  reference: $root.includedConcepts,
+  reference: $component.includedConcepts,
   drawCallback: $component.includedDrawCallback,
-  rowCallback: $root.contextSensitiveLinkColor,
+  rowCallback: $component.commonUtils.contextSensitiveLinkColor,
   headersTemplateId: 'included-conceptsets-headers',
-}"> 
+}">
 </faceted-datatable>
 <div class="linkLegend">
   <div class="linkLegendItem">
@@ -47,6 +47,5 @@
 <conceptset-list-modal params="{
   isShown: $component.ancestorsModalIsShown,
   conceptSetList: $component.ancestors,
-  model: model,
   title: 'Common Ancestors'
 }"></conceptset-list-modal>

@@ -11,6 +11,15 @@ define(function (require, exports) {
 	const httpService = require('services/http');
 	const constants = require('const');
 
+	const DAIMON_TYPE = {
+	  CDM: 'CDM',
+	  Vocabulary: 'Vocabulary',
+	  Results: 'Results',
+	  CEM: 'CEM',
+	  CEMResults: 'CEMResults',
+	  Temp: 'Temp'
+    };
+
 	var sources;
 
 	function getSources() {
@@ -25,11 +34,11 @@ define(function (require, exports) {
 
   function saveSource(sourceKey, source) {
       var formData = new FormData();
-      formData.append("keytab", source.keytab);
+      formData.append("keyfile", source.keyfile);
       formData.append("source", new Blob([JSON.stringify(source)],{type: "application/json"}));
 
       lscache.remove(getCacheKey());
-      if (sourceKey) {
+      if (sourceKey && parseInt(sourceKey) !== 0) {
         return httpService.doPut(config.api.url + 'source/' + (sourceKey), formData);
       } else {
         return httpService.doPost(config.api.url + 'source/' + (''), formData);
@@ -46,57 +55,42 @@ define(function (require, exports) {
   }
 
   function deleteSource(sourceKey) {
-	  lscache.remove(getCacheKey());
-	  return $.ajax({
-      url: config.webAPIRoot + 'source/' + sourceKey,
-      method: 'DELETE',
-      error: authApi.handleAccessDenied,
-    });
+    lscache.remove(getCacheKey());
+    return httpService.doDelete(`${config.webAPIRoot}source/${sourceKey}`);
   }
 
-  const connectionCheckState = {
+  const buttonCheckState = {
     unknown: 'unknown',
     success: 'success',
     checking: 'checking',
     failed: 'failed',
   };
-  
-  function initSourcesConfig() {
-    var servicePromise = $.Deferred();
-    $.ajax({
-      url: config.api.url + 'source/sources',
-      method: 'GET',
-      contentType: 'application/json',
-      success: (sources) => {
-        config.api.available = true;
+
+  async function initSourcesConfig() {
+    try {
+		const [{data: sources}, {data: priorityDaimons}] = await Promise.all([
+			httpService.doGet(config.api.url + 'source/sources'),
+			httpService.doGet(config.api.url + 'source/daimon/priority'),
+		]);
+		config.api.available = true;
         if (sources.length === 0) {
-            servicePromise.resolve(constants.applicationStatuses.noSourcesAvailable);
+            return constants.applicationStatuses.noSourcesAvailable;
         }
-        setSharedStateSources(sources);
-        servicePromise.resolve(constants.applicationStatuses.running);
-      },
-      error: function (xhr, ajaxOptions, thrownError) {
-        if (xhr.status !== 403) {
+        setSharedStateSources(sources, priorityDaimons);
+        return constants.applicationStatuses.running;
+	} catch (e) {
+        if (e.status !== 403) {
           config.api.available = false;
-          config.api.xhr = xhr;
-          config.api.thrownError = thrownError;
           document.location = '#/configure';
         }
-
-        servicePromise.resolve(constants.applicationStatuses.failed);
-      }
-    });
-
-    return servicePromise;
+        return constants.applicationStatuses.failed;
+	}
   }
 
-  function setSharedStateSources(sources) {
+  function setSharedStateSources(sources, priorityDaimons) {
     sharedState.sources([]);
     var serviceCacheKey = getCacheKey();
     var sourceList = [];
-    var evidencePriority = 0;
-    var vocabularyPriority = 0;
-    var densityPriority = 0;
 
     $.each(sources, function (sourceIndex, source) {
       source.hasVocabulary = false;
@@ -108,56 +102,49 @@ define(function (require, exports) {
       source.evidenceUrl = '';
       source.resultsUrl = '';
       source.error = '';
-      source.version = ko.observable('unknown');
+      source.version = ko.observable();
       source.dialect = ko.observable();
-      source.connectionCheck = ko.observable(connectionCheckState.unknown);
+      source.connectionCheck = ko.observable(buttonCheckState.unknown);
+      source.refreshState = ko.observable(buttonCheckState.unknown);
       source.initialized = true;
       for (var d = 0; d < source.daimons.length; d++) {
         var daimon = source.daimons[d];
 
         // evaluate vocabulary daimons
-        if (daimon.daimonType == 'Vocabulary') {
+        if (daimon.daimonType === DAIMON_TYPE.Vocabulary) {
           source.hasVocabulary = true;
-          source.vocabularyUrl = config.api.url + 'vocabulary/' + source.sourceKey + '/';
-          if (daimon.priority >= vocabularyPriority && authApi.hasSourceAccess(source.sourceKey)) {
-            vocabularyPriority = daimon.priority;
-            sharedState.vocabularyUrl(source.vocabularyUrl);
-          }
+          source.vocabularyUrl = getVocabularyUrl(source.sourceKey);
         }
 
         // evaluate cem daimons
-        if (daimon.daimonType == 'CEM') {
+        if (daimon.daimonType === DAIMON_TYPE.CEM) {
           source.hasEvidence = true;
-          source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
-          if (daimon.priority >= evidencePriority && authApi.hasSourceAccess(source.sourceKey)) {
-            evidencePriority = daimon.priority;
-            sharedState.evidenceUrl(source.evidenceUrl);
-          }
+          source.evidenceUrl = getEvidenceUrl(source.sourceKey);
         }
 
         // evaluate cem daimons
-        if (daimon.daimonType == 'CEMResults') {
+        if (daimon.daimonType === DAIMON_TYPE.CEMResults) {
           source.hasCEMResults = true;
           source.evidenceUrl = config.api.url + 'evidence/' + source.sourceKey + '/';
         }
 
         // evaluate results daimons
-        if (daimon.daimonType == 'Results') {
+        if (daimon.daimonType === DAIMON_TYPE.Results) {
           source.hasResults = true;
-          source.resultsUrl = config.api.url + 'cdmresults/' + source.sourceKey + '/';
-          if (daimon.priority >= densityPriority && authApi.hasSourceAccess(source.sourceKey)) {
-            densityPriority = daimon.priority;
-            sharedState.resultsUrl(source.resultsUrl);
-          }
+          source.resultsUrl = getResultsUrl(source.sourceKey);
         }
 
         // evaluate cdm daimons
-        if (daimon.daimonType == 'CDM') {
+        if (daimon.daimonType === DAIMON_TYPE.CDM) {
           source.hasCDM = true;
         }
       }
 
       sourceList.push(source);
+
+      priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.vocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey));
+      priorityDaimons[DAIMON_TYPE.CEM] && sharedState.evidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
+      priorityDaimons[DAIMON_TYPE.Results] && sharedState.resultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
 
       if (source.hasVocabulary && authApi.hasSourceAccess(source.sourceKey)) {
         $.ajax({
@@ -193,8 +180,24 @@ define(function (require, exports) {
     return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
   }
 
+  function refreshSourceCache(sourceKey) {
+    return httpService.doGet(config.webAPIRoot + 'cdmresults/' + sourceKey + '/refreshCache');
+  }
+
   function updateSourceDaimonPriority(sourceKey, daimonType) {
     return httpService.doPost(config.api.url + 'source/' + sourceKey + '/daimons/' + daimonType + '/set-priority');
+  }
+
+  function getVocabularyUrl(sourceKey) {
+      return config.api.url + 'vocabulary/' + sourceKey + '/';
+  }
+
+  function getEvidenceUrl(sourceKey) {
+      return config.api.url + 'evidence/' + sourceKey + '/';
+  }
+
+  function getResultsUrl(sourceKey) {
+      return config.api.url + 'cdmresults/' + sourceKey + '/';
   }
 
   var api = {
@@ -205,7 +208,8 @@ define(function (require, exports) {
     initSourcesConfig: initSourcesConfig,
     deleteSource: deleteSource,
     checkSourceConnection: checkSourceConnection,
-    connectionCheckState: connectionCheckState,
+    refreshSourceCache: refreshSourceCache,
+    buttonCheckState: buttonCheckState,
     setSharedStateSources: setSharedStateSources,
     updateSourceDaimonPriority,
 	};

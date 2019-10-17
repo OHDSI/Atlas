@@ -38,6 +38,10 @@ define([
 
             this.gridColumns = [
                 {
+                    title: 'Id',
+                    data: 'id'
+                },
+                {
                     title: 'Name',
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
@@ -49,14 +53,12 @@ define([
                 {
                     title: 'Created',
                     className: this.classes('tbl-col', 'created'),
-                    type: 'datetime-formatted',
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
                     title: 'Updated',
                     className: this.classes('tbl-col', 'updated'),
-                    type: 'datetime-formatted',
-                    render: datatableUtils.getDateFieldFormatter(),
+                    render: datatableUtils.getDateFieldFormatter('updatedAt'),
                 },
                 {
                     title: 'Author',
@@ -90,6 +92,7 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
+                    datatableUtils.coalesceField(res.content, 'updatedAt', 'createdAt');
                     this.data(res.content);
                     this.loading(false);
                 });

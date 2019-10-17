@@ -75,20 +75,30 @@ define([
 
 			// observable subscriptions
 
-			this.targetSub = this.selectedTarget.subscribe((newVal) => {
+			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
-
-			this.outcomeSub = this.selectedOutcome.subscribe((newVal) => {
+			}));
+			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
+			}));
 
-			this.isExecutionDisabled = ko.computed(() => {
-				return this.dirtyFlag().isDirty();
+			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
+
+			this.disableExportAnalysis = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
 			});
-			this.executionDisabledReason = () => 'Save changes to generate';
+		}
+
+		reportDisabledReason(source) {
+			return ko.computed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+		}
+
+		isExecutionDisabled(source) {
+			return ko.computed(() => {
+				return !this.hasSourceAccess(source.sourceKey) || this.dirtyFlag().isDirty();
+			});
 		}
 
 		isInProgress(sourceItem) {
@@ -154,12 +164,22 @@ define([
 			this.selectedSource(source);
 			this.isLoading(true);
 
-			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome()).then((report) => {
+			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome())
+			.then((response) => {
+				if (response.status && response.status !== 200) {
+					throw new Error(response);
+				}
+				const report = response;
 				// ensure report results are sorted in correct order (by id)
 				report.stratifyStats.sort(function (a, b) {
 					return a.id - b.id;
 				});
 				this.selectedReport(report);
+				this.isLoading(false);
+			})
+			.catch(er => {
+				console.error(er);
+				alert('There was an error while loading generation result reports');
 				this.isLoading(false);
 			});
 		};
@@ -179,11 +199,6 @@ define([
 
 		msToTime(s) {
 			return momentApi.formatDuration(s);
-		};
-
-		dispose() {
-			this.targetSub.dispose();
-			this.outcomeSub.dispose();
 		};
 	}
 

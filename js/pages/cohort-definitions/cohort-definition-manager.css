@@ -53,3 +53,7 @@
      width: 100%;
      height: 600px;
 }
+
+.cohort-conceptset-button-pane .btn-success.disabled {
+    color: #f3f3f3;
+}

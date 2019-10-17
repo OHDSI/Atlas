@@ -23,7 +23,7 @@ define([
 			this.conceptSetSubscriptionRateLimit = params.conceptSetSubscriptionRateLimit || 1000;
 
 			this.getInclusionCount = this.getInclusionCount.bind(this);
-			this.conceptSetExpressionSub = ko.pureComputed(() => ko.toJSON(this.conceptSetExpression)).extend({rateLimit: this.conceptSetSubscriptionRateLimit}).subscribe(this.getInclusionCount);
+			this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.conceptSetExpression)).extend({rateLimit: this.conceptSetSubscriptionRateLimit}).subscribe(this.getInclusionCount));
 			this.getInclusionCount();
 		}
 
@@ -32,10 +32,6 @@ define([
 			conceptSetApi.getInclusionCount(this.conceptSetExpression())
 				.then(({data}) => this.inclusionCount(Number.isInteger(data) ? data : 0))
 				.finally(() => this.countLoading(false));
-		}
-
-		dispose() {
-			this.conceptSetExpressionSub.dispose();
 		}
 
 	}

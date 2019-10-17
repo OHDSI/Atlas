@@ -1,9 +1,10 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'services/MomentAPI', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, momentApi) {
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'utils/DatatableUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
 		function defaultRepositoryConceptSetSelected(conceptSet) {
 			// Default functionality
+			self.isProcessing(true);
 			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
 					.url)
 				.then((result) => {
@@ -26,6 +27,10 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 						action: 'load',
 						status: 'Success'
 					});
+					// Waiting for modal's amination to end
+					setTimeout(() => {
+						self.isProcessing(false);
+					}, 1000);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -41,10 +46,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 			}
 		}
 
-    self.formatDate = function(data, type, row) {
-    	return momentApi.formatDateTimeUTC(data);
-		};
-
+		self.datatableUtils = datatableUtils;
 		self.criteriaContext = params.criteriaContext;
 		self.cohortConceptSets = params.cohortConceptSets;
 		self.onActionComplete = params.onActionComplete;
@@ -56,6 +58,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 
 		self.loading = ko.observable(false);
 		self.repositoryConceptSets = ko.observableArray();
+		self.isProcessing = ko.observable(false);
 
 		self.sources = [];
 		self.sources.push(appConfig.api);
@@ -74,6 +77,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
+					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
 					self.repositoryConceptSets(results);
 					self.loading(false);
 				})
@@ -85,7 +89,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 		// datatable callbacks:
 
 		self.selectRepositoryConceptSet = function (data, context, event) {
-			self.onRespositoryConceptSetSelected(data, self.selectedSource(), event);
+			!self.isProcessing() && self.onRespositoryConceptSetSelected(data, self.selectedSource(), event);
 		}
 
 		self.addConceptSet = function () {

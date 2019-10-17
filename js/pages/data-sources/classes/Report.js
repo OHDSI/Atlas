@@ -16,6 +16,7 @@ define([
 			this.chartFormats = {};
 
 			this.context = params.context;
+			this.sourceName = ko.observable(this.context.currentSource().sourceName);
 			this.title = ko.computed(() => {
 				const title = this.context.currentReport() ?
 					`${this.context.currentSource() ? (this.context.currentSource().sourceName) : ''} ${this.context.currentReport().name} Report` :
@@ -25,18 +26,13 @@ define([
 			this.sourceKey = ko.computed(() => this.context.currentSource() ? this.context.currentSource().sourceKey : null);
 			this.path = this.context.currentReport().path;
 			this.conceptId = null;
-
-			this.sourceKeySubscription = this.sourceKey.subscribe(newSource => {
+			this.subscriptions.push(this.sourceKey.subscribe(newSource => {
 				if (!newSource) {
 					this.context.currentReport(null);
 				} else {
 					this.loadData();
 				}
-			});
-		}
-
-		dispose() {
-			this.sourceKeySubscription.dispose();
+			}));
 		}
 
 		getData() {

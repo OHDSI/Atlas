@@ -1,30 +1,34 @@
-<div data-bind="if: $root.currentCohortDefinition() && $root.currentView() == 'cohort-definition-manager'" class="flexed">
+<loading data-bind="visible: $component.isLoading()"></loading>
+<div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
 
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 	<!-- ko if: hasAccess -->
-	<div data-bind="$root.currentCohortDefinition() != null">
+	<div data-bind="currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
-				<input class="form-control" type="text" data-bind="enabled: canEdit(), textInput: $root.currentCohortDefinition().name, css: { emptyInput: !isNameCorrect() }"/>
+				<input class="form-control" type="text" placeholder="New Cohort Definition" data-bind="enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
 				<div class="input-group-btn">
 					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
-					<!-- ko if: $root.currentCohortDefinition().id() != null && $root.currentCohortDefinition().id() != 0 -->
+					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+						<i class="fa fa-lock"></i>
+					</button>
 					<!-- ko if: !isRunning() -->
 					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
 				</div>
 			</div>
-				<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+				<div data-bind="visible: !isNameFilled()" class="empty-name-error">
 					<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 					<label>Cohort Definition name is empty.</label>
 				</div>
-			
+
 		</div>
 
 		<ul class="nav nav-tabs">
@@ -55,7 +59,7 @@
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
-				<atlas.cohort-editor params="model: model"></atlas.cohort-editor>
+				<atlas.cohort-editor params="canEditCurrentCohortDefinition: canEdit, loadConceptSet: loadConceptSet"></atlas.cohort-editor>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: onConceptSetTabRespositoryConceptSetSelected}]" class="tab-pane">
 				<loading params="status: 'Exporting All Concept Sets To CSV'" data-bind="visible: exporting()"></loading>
@@ -63,10 +67,10 @@
 				<div class="cohort-conceptset-button-pane pull-right">
 					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
 					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
-					<button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
+					<span data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null" data-placement="bottom"><button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': disableConceptSetExport}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button></span>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
-											data: $root.currentCohortDefinition() && $root.currentCohortDefinition().expression().ConceptSets,
+											data: currentCohortDefinition() && currentCohortDefinition().expression().ConceptSets,
 											options: {
 													deferRender: true,
 													orderClasses: false,
@@ -79,7 +83,7 @@
 													stripeClasses : [ 'repositoryConceptSetItem' ],
 													columns: [
 															{ data: 'id', title: 'Id', width: '25px'},
-															{ data: 'name', title: 'Title', width: '100%' },
+															$component.getDataboundColumn('name', 'Title', '100%')
 													],
 													language: {
 															search: 'Filter Cohort Concept Sets:'
@@ -87,7 +91,7 @@
 											}
 									 }">
 				</table>
-				<!-- ko if: $root.currentConceptSet() && $root.currentConceptSetSource() == 'cohort' -->
+				<!-- ko if: currentConceptSet() && currentConceptSetSource() == 'cohort' -->
 				<hr/>
 				<ul class="nav nav-pills">
 					<li role="presentation" data-bind="css: {active: $component.conceptSetTabMode() == cohortConst.conceptSetTabModes.details}, click: function() {$component.conceptSetTabMode(cohortConst.conceptSetTabModes.details)};">
@@ -107,13 +111,13 @@
 					</li>
 				</ul>
 
-				<div data-bind="if: $root.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
+				<div data-bind="if: $root.router.currentView() != 'loading' && $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.details">
 					<div class="paddedWrapper">
 						<div class="heading">
 							Name:
 						</div>
-						<div class="divtext" data-bind="attr: { contenteditable:canEdit() }, htmlValue:$root.currentConceptSet().name"></div>
-						<conceptset-editor params="model: model, conceptSets:selectedConcepts"></conceptset-editor>
+						<div class="divtext" placeholder="Concept Set Name" data-bind="attr: { contenteditable:canEdit() }, htmlValue:currentConceptSet().name"></div>
+						<conceptset-editor params="conceptSets:selectedConcepts, canEditCurrentConceptSet: canEdit"></conceptset-editor>
 
 						<div class="clear"></div>
 						<div class="cohort-conceptset-button-pane pull-right">
@@ -124,29 +128,32 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:$root.currentView() === 'loading' || $root.loadingSourcecodes() || $root.loadingIncluded">loading</div>
+				<div class="loading" data-bind="if:$root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()">loading</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !$root.loadingIncluded()">
-					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $root.includedConcepts, drawCallback: $component.includedDrawCallback, rowCallback: $root.contextSensitiveLinkColor}"></faceted-datatable>
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !loadingIncluded()">
+					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $component.includedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
 				</div>
 
-				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !$root.loadingSourcecodes() && !$root.loadingIncluded()">
-					<faceted-datatable params="{columns: $root.relatedSourcecodesColumns, options: $root.relatedSourcecodesOptions, reference: $root.includedSourcecodes}"></faceted-datatable>
+				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.sourcecodes && !loadingSourcecodes() && !loadingIncluded()">
+					<faceted-datatable params="{columns: $component.relatedSourcecodesColumns, options: $component.relatedSourcecodesOptions, reference: $component.includedSourcecodes}"></faceted-datatable>
 				</div>
 
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">
-					<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
-						<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+					<loading data-bind="visible: resolvingConceptSetExpression()" params="status: 'Loading for export...'"></loading>
+					<div data-bind="visible: !resolvingConceptSetExpression()">
+						<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+							<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+						</div>
+						<pre id="conceptSetExpression" data-bind="html: currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+						<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+							<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+						</div>
+						<pre id="conceptIdentifierList" data-bind="html: currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+						<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+							<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+						</div>
+						<pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 					</div>
-					<pre id="conceptSetExpression" data-bind="html: $root.currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
-					<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
-						<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
-					</div>
-					<pre id="conceptIdentifierList" data-bind="html: $root.currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-					<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
-						<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
-					</div>
-					<pre id="includedConceptIdentifierList" data-bind="html: $root.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 				</div>
 
 				<div id="wrapperConceptSetImport" data-bind="if:$component.conceptSetTabMode() === cohortConst.conceptSetTabModes.import">
@@ -179,7 +186,7 @@
 					<div class="paddedWrapper form-group" data-bind="if:$component.importTabMode() === cohortConst.importTabModes.conceptset">
 						<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { $component.clearImportConceptSetJson(); }">click to clear</a>)</div>
 						<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
-						<div type="button" data-bind="css: {disabled: !$root.currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
+						<div type="button" data-bind="css: {disabled: !currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
 					<atlas-modal params="
@@ -188,8 +195,8 @@
 						title: 'Import Concept Set From Repository...',
 						data: {
 							onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
-							criteriaContext: $root.criteriaContext,
-							cohortConceptSets: $root.currentCohortDefinition().expression().ConceptSets,
+							criteriaContext: criteriaContext,
+							cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
 						}
 					"
 					></atlas-modal>
@@ -231,20 +238,20 @@
 							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
 							<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 							<div id="cohortTextView" class="pad-10">
-								<div class="heading" data-bind="text:$root.currentCohortDefinition().name"></div>
-								<div data-bind="text:$root.currentCohortDefinition().description"></div>
-								<cohort-expression-viewer params="expression: $root.currentCohortDefinition().expression"></cohort-expression-viewer>
+								<div class="heading" data-bind="text:currentCohortDefinition().name"></div>
+								<div data-bind="text:currentCohortDefinition().description"></div>
+								<cohort-expression-viewer params="expression: currentCohortDefinition().expression"></cohort-expression-viewer>
 								<br/>
 								<div class="heading">Appendix 1: Concept Set Definitions</div>
 								<br/>
-								<!-- ko foreach: sortedConceptSets -->
-								<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
-								<div style="padding-left:20px">
-									<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
-									<br/>
-								</div>
-								<!-- /ko -->
 							</div>
+							<!-- ko foreach: sortedConceptSets -->
+							<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
+							<div style="padding-left:20px">
+							    <conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+							    <br/>
+							</div>
+							<!-- /ko -->
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'cartoon'}" class="tab-pane">
@@ -255,7 +262,7 @@
 									<!-- ko ifnot: $data.Criteria -->
 									<div data-bind='component: {
 													name: $component.getCriteriaIndexComponent($data),
-													params: {expression: $root.currentCohortDefinition().expression(),
+													params: {expression: currentCohortDefinition().expression(),
 																		criteria: $data} }'></div>
 									<!-- /ko -->
 									<!-- ko if: $data.Criteria -->
@@ -263,7 +270,7 @@
 									<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
 									<span data-bind="component: {
 																				name: $component.getCriteriaIndexComponent($data.Criteria),
-																				params: {expression: $root.currentCohortDefinition().expression(),
+																				params: {expression: currentCohortDefinition().expression(),
 																				criteria: $data.Criteria }
 																			}"></span> occurring between
 									<window-input-viewer params="Window: StartWindow"></window-input-viewer> index
@@ -271,7 +278,7 @@
 								</div>
 							</div>
 							<!-- /ko -->
-							<div data-bind="cohortExpressionCartoon:{expression:$root.currentCohortDefinition().expression,
+							<div data-bind="cohortExpressionCartoon:{expression:currentCohortDefinition().expression,
 														selectedCriteria: $component.selectedCriteria,
 														tabPath: $component.tabPath,
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
@@ -377,10 +384,10 @@
 						<th class="text-right nowrap">Generation Duration</th>
 						<th></th>
 					</thead>
-					<tbody data-bind="foreach:$root.cohortDefinitionSourceInfo, css: {overflow: $root.cohortDefinitionSourceInfo().length > 3, 'max-height': $component.loadingReport() || $component.selectedReport()}">
-						<tr data-bind="css: { 'selected': $component.selectedReport() && $component.selectedReport().sourceKey == $data.sourceKey}">
+					<tbody data-bind="foreach:cohortDefinitionSourceInfo, css: {overflow: cohortDefinitionSourceInfo().length > 3, 'max-height': $component.selectedReportSource()}">
+						<tr data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
 							<td>
-								<span data-bind="tooltip: !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
+								<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
 									<span data-bind="tooltip: !$component.canGenerate() ? 'Initial event is not set or changes not saved' : null" data-placement="right">
 										<button class="btn btn-sm btn-primary"
 												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
@@ -390,7 +397,7 @@
 										</button>
 									</span>
 								</span>
-								<a role="button" class="btn btn-sm btn-danger" 
+								<a role="button" class="btn btn-sm btn-danger"
 									 data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
 															attr: {disabled: $component.isSourceStopping($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
@@ -409,36 +416,16 @@
 							<td class="text-right nowrap" data-bind="text: executionDuration">
 							</td>
 							<td>
-								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.selectViewReport"><i class="fa fa-eye"></i>&nbsp;View Reports</div>
+								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
+									<i class="fa fa-eye"></i>
+									<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey) ? 'Hide Reports' : 'View Reports')"></span>
+								</div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
-				<!-- ko if: (loadingReport() || selectedReport())   -->
-				<div data-bind="visible:$component.loadingReport" class="loading">loading inclusion report</div>
-				<div data-bind="visible:!$component.loadingReport()">
-					<div class="tab-content nospace">
-						<div role="tabpanel" data-bind="css: {active: $component.generationTabMode() == 'inclusion'}" class="tab-pane">
-							<ul class="nav nav-tabs nospace right-to-left">
-								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'person' }, click: function() { $component.inclusionTabMode('person'); }">
-									<a>By Person</a>
-								</li>
-								<li class="pull-right" role="presentation" data-bind="css: { active: $component.inclusionTabMode() == 'event' }, click: function() { $component.inclusionTabMode('event'); }">
-									<a>By Events</a>
-								</li>
-							</ul>
-							<div class="tab-content">
-								<div class="heading">Inclusion Report for <span data-bind="text:selectedReportCaption"></span></div>
-								<div role="tabpanel" data-bind="css: {active: $component.inclusionTabMode() == 'person'}" class="tab-pane">
-									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byPerson"></feasibility-report-viewer>
-								</div>
-								<div role="tabpanel" data-bind="css: {active: $component.inclusionTabMode() == 'event'}" class="tab-pane">
-									<feasibility-report-viewer params="report: selectedReport() && selectedReport().byEvent"></feasibility-report-viewer>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<!-- ko if: selectedReportSource() -->
+					<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
@@ -459,118 +446,121 @@
 
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="css : { invalid: $root.reportSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value:$root.reportSourceKey, optionsCaption:'Select a Source'"></select>
+									<select class="form-control" data-bind="css : { invalid: $component.reportSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.reportSourceKey, optionsCaption:'Select a Source'"></select>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $root.loadingReport, attr:{disabled: $root.loadingReport}, css : {invalid: $root.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$root.reportReportName"></select>
+									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.loadingReport, attr:{disabled: $component.loadingReport}, css : {invalid: $component.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$component.reportReportName"></select>
 								</div>
 							</div>
 						</div>
 					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
-						<div class="panel-heading">
-							Cohort Not Generated
+					<loading data-bind="visible: $component.isReportGenerating()"></loading>
+					<div data-bind="visible: !$component.isReportGenerating()">
+						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
+							<div class="panel-heading">
+								Cohort Not Generated
+							</div>
+							<div class="panel-body">
+								This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.
+							</div>
 						</div>
-						<div class="panel-body">
-							This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.
+						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='reports_not_generated'">
+							<div class="panel-heading ">
+								Reports Not Generated
+							</div>
+							<div class="panel-body">
+								Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='reports_not_generated'">
-						<div class="panel-heading ">
-							Reports Not Generated
+						<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
+							<div class="panel-heading ">
+								Make a Selection
+							</div>
+							<div class="panel-body">
+								Please make a selection in the Report Selections panel.
+							</div>
 						</div>
-						<div class="panel-body">
-							Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.
-						</div>
-					</div>
-					<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
-						<div class="panel-heading ">
-							Make a Selection
-						</div>
-						<div class="panel-body">
-							Please make a selection in the Report Selections panel.
-						</div>
-					</div>
-					<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
-						<div class="panel-heading ">
-							Generating Reports
-						</div>
-						<div class="panel-body">
-							<table class="pad-5" style="width:100%;">
-								<thead>
-									<th>Job Name</th>
-									<th>Progress</th>
-									<th>Status</th>
-								</thead>
-								<tbody>
-									<tr data-bind="with:$component.currentJob">
-										<td class="pad-5"><i class="fa fa-tasks"></i> <span data-bind="html: name"></span></td>
-										<td class="pad-5">
-											<div data-bind="if:$data.progress">
-												<div class="progress">
-													<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>
+						<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
+							<div class="panel-heading ">
+								Generating Reports
+							</div>
+							<div class="panel-body">
+								<table class="pad-5" style="width:100%;">
+									<thead>
+										<th>Job Name</th>
+										<th>Progress</th>
+										<th>Status</th>
+									</thead>
+									<tbody>
+										<tr data-bind="with:$component.currentJob">
+											<td class="pad-5"><i class="fa fa-tasks"></i> <span data-bind="html: name"></span></td>
+											<td class="pad-5">
+												<div data-bind="if:$data.progress">
+													<div class="progress">
+														<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>
+													</div>
 												</div>
-											</div>
-										</td>
-										<td class="pad-5" data-bind="html: status"></td>
-									</tr>
-								</tbody>
-							</table>
+											</td>
+											<td class="pad-5" data-bind="html: status"></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
-						<div class="panel-heading ">
-							Report Unavailable
+						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
+							<div class="panel-heading ">
+								Report Unavailable
+							</div>
+							<div class="panel-body">
+								The report you requested is not available. Please click the generate button to generate cohort reports for this data source.
+							</div>
 						</div>
-						<div class="panel-body">
-							The report you requested is not available. Please click the generate button to generate cohort reports for this data source.
+						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
+							<div class="panel-heading ">
+								Whoops
+							</div>
+							<div class="panel-body">
+								The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
+							</div>
+							<div class="panel-footer">
+								<div data-bind="html:$component.reportingError"></div>
+							</div>
 						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
-						<div class="panel-heading ">
-							Whoops
+						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
+							<div class="panel-heading ">
+								Create Reporting Job Failed
+							</div>
+							<div class="panel-body">
+								The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
+							</div>
+							<div class="panel-footer">
+								<div data-bind="html:$component.createReportJobError"></div>
+							</div>
 						</div>
-						<div class="panel-body">
-							The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
-						</div>
-						<div class="panel-footer">
-							<div data-bind="html:$component.reportingError"></div>
-						</div>
-					</div>
-					<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
-						<div class="panel-heading ">
-							Create Reporting Job Failed
-						</div>
-						<div class="panel-body">
-							The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
-						</div>
-						<div class="panel-footer">
-							<div data-bind="html:$component.createReportJobError"></div>
-						</div>
-					</div>
-					<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
-						<div class="panel-heading ">
-							Please Wait
-						</div>
-						<div class="panel-body">
-							Please wait while for the report status to be loaded.
+						<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
+							<div class="panel-heading ">
+								Please Wait
+							</div>
+							<div class="panel-body">
+								Please wait while for the report status to be loaded.
+							</div>
 						</div>
 					</div>
 				</div>
-				<loading params="status:'loading'" data-bind="visible:$root.currentView() == 'loading' || $root.loadingReport()">
+				<loading params="status:'loading'" data-bind="visible:$root.router.currentView() == 'loading' || $component.loadingReport()">
 				</loading>
-				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{model: model, showSelectionArea: false} "></report-manager>
+				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{reportSourceKey: reportSourceKey, loadingReport: loadingReport, reportReportName: reportReportName, reportCohortDefinitionId: reportCohortDefinitionId, reportTriggerRun: reportTriggerRun, showSelectionArea: false} "></report-manager>
 			</div>
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
-					<explore-cohort params="{model: model, showSelectionArea: false } "></explore-cohort>
+					<explore-cohort params="{showSelectionArea: false } "></explore-cohort>
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">
 				<div class="paddedWrapper">
-					<conceptset-warnings params="{model: $component.model, count: warningsTotals, infoCount: infoCount,
+					<conceptset-warnings params="{count: warningsTotals, infoCount: infoCount,
 						warningCount: warningCount, crititcalCount: criticalCount,
 						canDiagnose: canSave, onFixCallback: fixConceptSet}"></conceptset-warnings>
 				</div>
@@ -634,7 +624,16 @@
 	}"></modal-exit-message>
 </div>
 
-<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, model: model, title: 'Common Ancestors'}"></conceptset-list-modal>
+<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, title: 'Common Ancestors'}"></conceptset-list-modal>
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>
 
 <script type="text/html" id="success-status-tmpl">
 	<span data-bind="text: $data.status"></span>

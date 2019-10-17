@@ -34,6 +34,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.currentSearch = ko.observable('');
+			this.commonUtils = commonUtils;
 			this.loading = ko.observable(false);
 			this.domainsLoading = ko.observable(true);
 			this.vocabulariesLoading = ko.observable(true);
@@ -172,12 +173,12 @@ define([
 				}, {
 					'caption': 'Has Records',
 					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.RECORD_COUNT) > 0;
 					}
 				}, {
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 					}
 				}]
 			};
@@ -191,8 +192,16 @@ define([
 			}
 		}
 
+		replaceSpecialCharacters(str) {
+			return str.replace("/", " ");
+		}
+
+		encodeSearchString(searchTerm) {
+			return encodeURIComponent(this.replaceSpecialCharacters(searchTerm));
+		}
+
 		searchClick() {
-			const redirectUrl = '#/search/' + escape(this.currentSearch());
+			const redirectUrl = '#/search/' + this.encodeSearchString(this.currentSearch());
 			if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0 || document.location.hash === redirectUrl) {
 				this.executeSearch();
 			} else if (this.currentSearch().length > 2) {
@@ -246,7 +255,7 @@ define([
 		}
 
 		executeSearch() {
-			if (!this.currentSearch()) {
+			if (!this.currentSearch() && !this.showAdvanced()) {
                 this.data([]);
                 return;
 			}
@@ -264,7 +273,11 @@ define([
 				return;
 			}
 
-			const query = this.currentSearch() === undefined ? '' : this.currentSearch();
+			let query = '';
+			if (this.currentSearch() !== undefined) {
+				query = this.encodeSearchString(this.currentSearch());
+				this.currentSearch(this.replaceSpecialCharacters(this.currentSearch()));
+			}
 			this.loading(true);
 			this.data([]);
 

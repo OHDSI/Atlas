@@ -2,7 +2,7 @@
     <div data-bind="css: classes({ extra: ['form-group'] })">
         <label>Search group:</label>
         <div data-bind="css: classes({ element: 'row', extra: ['input-group'] })">
-            <input type="text" data-bind="textInput: searchText, css: classes({ extra: ['form-control'] }), event: { 'keyup': onSubmitSearch }, keyupBubble: false" />
+            <input type="text" placeholder="Search..." data-bind="textInput: searchText, css: classes({ extra: ['form-control'] }), event: { 'keyup': onSubmitSearch }, keyupBubble: false" />
             <button data-bind="click: searchGroups, css: classes({ extra: ['btn', 'btn-sm', 'btn-primary'] })"><i class="fa fa-search"></i> Search</button>
         </div>
     </div>

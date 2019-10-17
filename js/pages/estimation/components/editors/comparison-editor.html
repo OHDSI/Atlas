@@ -26,7 +26,7 @@
         <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes}"></linked-cohort-list>
     </div>
     <div>
-        <label>Choose your negative control outcomes:</label>
+        <label>Negative control concept set:</label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.negativeControlOutcomesConceptSet().name" />
             <span class="input-group-btn">
@@ -40,12 +40,8 @@
           <i class="fa fa-cog"></i> Covariate selection
         </div>
         <div class="panel-body">
-            <div data-bind="css:classes('info-message')">
-                <b>Please note:</b> If you would like to include/exclude covariates based on descendant concepts, it is most efficient to specify this as part of the analysis settings. If you plan to include/exclude descendants, define your concept sets utilizing <b>the ancestor concepts only</b>.
-            </div>
-            <hr/>
             <div>
-                <label>What concepts do you want to include in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                <label>Concepts to <b>include</b> when constructing the covariates to be used in this study. (Leave blank if you want to include every concept).*</label>
                 <div class="input-group">
                     <input class="form-control" type="text" disabled data-bind="value: comparison.includedCovariateConceptSet().name" />
                     <span class="input-group-btn">
@@ -53,9 +49,11 @@
                         <button class="btn btn-danger" data-bind="disable: comparison.includedCovariateConceptSet().id == 0, click:clearIncludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
+                <label><i>* Concepts defined here are combined with those defined in the Analysis settings section.</i></label>
             </div>
+            <hr/>
             <div>
-                <label>What concepts do you want to exclude from baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                <label>Concepts to <b>exclude</b> when constructing the covariates to be used in this study.*</label>
                 <div class="input-group">
                     <input class="form-control" type="text" disabled data-bind="value: comparison.excludedCovariateConceptSet().name" />
                     <span class="input-group-btn">
@@ -63,6 +61,7 @@
                         <button class="btn btn-danger" data-bind="disable: comparison.excludedCovariateConceptSet().id == 0, click:clearExcludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
+                <label><i>* Concepts defined here are combined with those defined in the Analysis settings section.</i></label>
             </div>
         </div>
     </div>

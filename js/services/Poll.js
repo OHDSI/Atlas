@@ -12,18 +12,30 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
   });
 
   class PollService {
-    add(callback, interval = 1000, ...args) {
+    add(opts = {}, ...args) {
+      const { callback = () => {}, interval = 1000, isSilentAfterFirstCall = false } = opts;
       const id = new Date().valueOf();
-      callbacks.set(id, { callback, interval, args });
+      callbacks.set(id, {
+        callback,
+        interval,
+        isSilentAfterFirstCall,
+        totalFnCalls: 0,
+        args
+      });
       this.start(id);
       return id;
     }
 
     async start(id) {
       if (callbacks.has(id)) {
-        const { callback, interval, args } = callbacks.get(id);
+        const cb = callbacks.get(id);
+        const { callback, interval, isSilentAfterFirstCall, totalFnCalls, args } = cb;
         try {
-          isPageForeground() && await callback();
+          if (isPageForeground()) {
+            const silently = isSilentAfterFirstCall && totalFnCalls > 0;
+            await callback(silently);
+            callbacks.set(id, { ...cb, totalFnCalls: totalFnCalls + 1 });
+          }
         } catch(e) {
           console.log(e);
         } finally {

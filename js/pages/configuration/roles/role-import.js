@@ -25,6 +25,7 @@ define([
   RoleService
 ) {
   const ajv = new Ajv({ allErrors: true });
+  const PERMISSION_ID_REGEX = /:[0-9]+:/;
 
   class RolesImport extends AutoBind(Component) {
 
@@ -34,7 +35,8 @@ define([
         this.roles = ko.observable();
         this.existingRoles = [];
         this.existingPermissions = [];
-        this.users = [];
+        this.users = {};
+        this.permissions = {};
 
         this.isProcessing = ko.observable(false);
         this.processed = ko.observable(0);
@@ -58,7 +60,7 @@ define([
                   "required": ["id"],
                   "properties": {
                     "id": {
-                      "type": "number",
+                      "type": "string",
                     },
                   },
                 },
@@ -70,7 +72,7 @@ define([
                   "required": ["id"],
                   "properties": {
                     "id": {
-                      "type": "number",
+                      "type": "string",
                     },
                   },
                 },
@@ -84,14 +86,15 @@ define([
 
         this.updateExisting();
         this.json.subscribe(this.parseJSON);
+        this.warnings = ko.observable({});
       }
-      
+
       async updateExisting() {
         const users = await UserService.getUsers();
         const usersMap = {};
         users.forEach(user => {
-          usersMap[user.id] = user;
-        });  
+          usersMap[user.login] = user;
+        });
         this.users = usersMap;
 
         const roles = await RoleService.getList();
@@ -100,8 +103,9 @@ define([
         const permissions = await RoleService.getPermissions();
         const permissionsMap = {};
         permissions.forEach(p => {
-          permissionsMap[p.id] = p;
+          permissionsMap[p.permission] = p;
         });
+        this.permissions = permissionsMap;
         this.existingPermissions = permissions;
       }
 
@@ -114,37 +118,77 @@ define([
           roles = JSON.parse(json);
           isValid = ajv.validate(this.rolesJSONSchema, roles);
           if (!isValid) {
-            roles = [];
             throw new Error(ajv.errorsText(ajv.errors));
           }
           roles = roles.map(role => {
             if (this.existingRoles.find(erole => erole.role === role.role)) {
               throw new Error(`Role "${role.role}" already exists`);
             }
-            const users = role.users
-              ? role.users.map(user => this.users[user.id]).filter(user => user)
-              : [];
-            const permissions = role.permissions
-              ? role.permissions.map(p => this.existingPermissions[p.id]).filter(p => p)
-              : [];
+
+            const users = this.reduceArray(role.users, 'id', this.users);
+            const permissions = this.reduceArray(role.permissions, 'id', this.permissions);
             return {
               ...role,
               users,
               permissions,
-              usersList: users.map(user => user.login).join(', '),
-              permissionsList: permissions.map(p => p.permission).join(', '),
+              roleUsers: role.users,
+              rolePermissions: role.permissions,
+              usersList: role.users.map(u => u.id).join(', '),
+              permissionsList: role.permissions.map(p => p.id).join(', '),
             };
           })
         } catch(er) {
+          roles = [];
           isValid = false;
           error = er;
         } finally {
           this.isJSONValid(isValid);
           this.validationErrors(error);
           this.roles(roles);
+          this.setWarnings();
         }
-
       }
+
+      setWarnings() {
+        const jsonIssues = this.roles().some(role => role.permissions.unavailable.length || role.users.unavailable.length);
+        const permissionSpecificIdsIssues = this.roles().some(role => role.rolePermissions.some(p => PERMISSION_ID_REGEX.test(p.id)));
+        this.warnings({ jsonIssues, permissionSpecificIdsIssues });
+      }
+
+      reduceArray(inputArray = [], key = '', existingPermissionsMap = []) {
+        const defaultObject = { available: [], unavailable: [] };
+        return inputArray
+        ? inputArray.reduce((prev, curr) => {
+            const permission = existingPermissionsMap[curr[key]];
+            const availabilityKey = permission ? 'available' : 'unavailable';
+            return {
+              ...prev,
+              [availabilityKey]: [ ...prev[availabilityKey], (permission || curr) ],
+            }
+          }, defaultObject)
+        : defaultObject;
+      }
+
+      fixJSON(type = 'jsonIssues') {
+        const newJson = JSON.stringify(JSON.parse(this.json()).map(role => {
+          const r = this.roles().find(r => r.role === role.role);
+          const newRole = { role: r.role };
+          if (type === 'jsonIssues') {
+            Object.assign(newRole, {
+              users: r.users.available.map(u => ({ id: u.login })),
+              permissions: r.permissions.available.map(p => ({ id: p.permission })),
+            })
+          } else if (type === 'permissionSpecificIdsIssues') {
+            Object.assign(newRole, {
+              users: r.roleUsers,
+              permissions: r.rolePermissions.filter(p => !PERMISSION_ID_REGEX.test(p.id)),
+            })
+          }
+          return newRole;
+         }));
+         this.json(newJson);
+      }
+
 
       async createRole(role) {
         const { id } = await RoleService.create(role);
@@ -157,7 +201,7 @@ define([
       }
 
       async * createRoles() {
-        const roles = this.roles();
+        const roles = this.roles().map(role => ({ ...role, permissions: role.permissions.available, users: role.users.available }));
         for(let i=0; i<roles.length; i++) {
           try  {
             yield await this.createRole(roles[i]);
@@ -177,7 +221,7 @@ define([
         }
 
         this.updateExisting();
-      }      
+      }
   }
 
   return commonUtils.build('role-import', RolesImport, view);

@@ -1,10 +1,11 @@
 define([
     'knockout',
     'text!./roles.html',
-    'components/Component',
+    'pages/Page',
     'utils/AutoBind',
     'utils/CommonUtils',
     'services/AuthAPI',
+    'services/role',
     'atlas-state',
     'databindings',
     'components/ac-access-denied',
@@ -12,29 +13,34 @@ define([
 ], function (
     ko,
     view,
-    Component,
+    Page,
     AutoBind,
     commonUtils,
     authApi,
+    roleService,
     sharedState
 ) {
-    class Roles extends AutoBind(Component) {
+    class Roles extends AutoBind(Page) {
         constructor(params) {
             super(params);
-            this.roles = sharedState.roles;
-            this.updateRoles = params.model.updateRoles;
+            this.roles = ko.observable([]);
             this.loading = ko.observable();
-    
+
             this.isAuthenticated = authApi.isAuthenticated;
             this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
             this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedCreateRole(); });
-    
+        }
+
+        onPageCreated() {
             if (this.canRead()) {
                 this.loading(true);
-                this.updateRoles().then(() => { this.loading(false); });
-            }            
+                roleService.updateRoles().then(() => {
+                    this.loading(false);
+                    this.roles(sharedState.roles());
+                });
+            }
         }
-        
+
         selectRole(data) {
             commonUtils.routeTo('/role/' + data.id);
         }

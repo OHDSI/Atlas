@@ -19,7 +19,7 @@ define(function (require, exports) {
 			expression: JSON.parse(data.expression),
 		});
 	}
-	
+
 	function getAnalysisList() {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir`);
 		promise.catch(response => {
@@ -30,7 +30,7 @@ define(function (require, exports) {
 
 		return promise;
 	}
-	
+
 	function getAnalysis(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id}`)
 			.then(parse)
@@ -41,13 +41,13 @@ define(function (require, exports) {
 
 		return promise;
 	}
-		
+
 	function saveAnalysis(definition) {
-		var definitionCopy = JSON.parse(ko.toJSON(definition))
-		
+		var definitionCopy = JSON.parse(ko.toJSON(definition));
+
 		if (typeof definitionCopy.expression != 'string')
 			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
-		
+
 		const url = `${config.webAPIRoot}ir/${definitionCopy.id || ""}`;
 		let promise = new Promise(r => r());
 		if (definitionCopy.id) {
@@ -63,31 +63,31 @@ define(function (require, exports) {
 				return response;
 			});
 	}
-	
+
 	function copyAnalysis(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/copy`);
-		
+
 		return promise
 			.then(parse)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}	
-	
+	}
+
 	function deleteAnalysis(id) {
 		const promise = httpService.doDelete(`${config.webAPIRoot}ir/${id || ""}`);
-		
+
 		return promise
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}		
-	
+	}
+
 	function execute(id, sourceKey) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/execute/${sourceKey}`);
-		
+
 		return promise
 			.catch(response => {
 				authApi.handleAccessDenied(response);
@@ -105,20 +105,20 @@ define(function (require, exports) {
 			});
 	}
 
-	const errroHandler = response => {
+	const errorHandler = response => {
 		if (response.status === 404) {
 			throw new Error("Not found entity");
 		}
 		authApi.handleAccessDenied(response);
 		return response;
 	};
-	
+
 	function getInfo(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/info`);
-		
+
 		return promise
 			.then(({ data }) => data)
-			.catch(errroHandler);
+			.catch(errorHandler);
 	}
 
 	function loadResultsSummary(id, sourceKey) {
@@ -126,22 +126,22 @@ define(function (require, exports) {
 
 		return promise
 			.then(({data}) => data)
-			.catch(errroHandler);
+			.catch(errorHandler);
 	}
-	
+
 	function deleteInfo(id, sourceKey) {
 		const promise = httpService.doDelete(`${config.webAPIRoot}ir/${id || ""}/info/${sourceKey}`);
-		
+
 		return promise
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}		
-	
+	}
+
 	function getReport(id, sourceKey, targetId, outcomeId) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/report/${sourceKey}?targetId=${targetId}&outcomeId=${outcomeId}`);
-		
+
 		return promise
 			.then(({ data }) => data)
 			.catch(response => {
@@ -175,7 +175,36 @@ define(function (require, exports) {
 		}))
 		.catch(error => console.log("Error: " + error));
 	}
-	
+	function exists(name, id) {
+		return httpService
+			.doGet(`${config.webAPIRoot}ir/${id}/exists?name=${name}`)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+	}
+
+	function importAnalysis(definition) {
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/design`, definition)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
+
+	function exportAnalysis(id) {
+		return httpService
+			.doGet(config.webAPIRoot + `ir/${id}/design`)
+			.then(res => res.data)
+			.catch(response => {
+				authApi.handleAccessDenied(response);
+				return response;
+			});
+    }
+
 	var api = {
 		getAnalysisList: getAnalysisList,
 		getAnalysis: getAnalysis,
@@ -190,7 +219,10 @@ define(function (require, exports) {
 		getSql: getSql,
 		translateSql: translateSql,
 		loadResultsSummary,
-	}
+		exists,
+		importAnalysis: importAnalysis,
+		exportAnalysis: exportAnalysis,
+	};
 
 	return api;
 });

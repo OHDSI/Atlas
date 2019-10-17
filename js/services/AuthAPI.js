@@ -14,6 +14,10 @@ define(function(require, exports) {
 
     const signInOpened = ko.observable(false);
 
+    function getBearerToken() {
+        return localStorage.bearerToken && localStorage.bearerToken !== 'null' && localStorage.bearerToken !== 'undefined' ? localStorage.bearerToken : null;
+	}
+
     var authProviders = config.authProviders.reduce(function(result, current) {
         result[config.api.url + current.url] = current;
         return result;
@@ -23,12 +27,7 @@ define(function(require, exports) {
         return config.webAPIRoot;
     };
 
-    var token = ko.observable();
-    if (localStorage.bearerToken && localStorage.bearerToken != 'null') {
-        token(localStorage.bearerToken);
-    } else {
-        token(null);
-    }
+    var token = ko.observable(getBearerToken());
 
     var getAuthorizationHeader = function () {
         if (!token()) {
@@ -47,6 +46,7 @@ define(function(require, exports) {
 
     var subject = ko.observable();
     var permissions = ko.observable();
+    var fullName = ko.observable();
     const authProvider = ko.observable();
 
     authProvider.subscribe(provider => {
@@ -66,6 +66,7 @@ define(function(require, exports) {
                 permissions(info.permissions.map(p => p.permission));
                 subject(info.login);
                 authProvider(jqXHR.getResponseHeader('x-auth-provider'));
+                fullName(info.name ? info.name : info.login);
                 resolve();
             },
             error: function (err) {
@@ -125,9 +126,12 @@ define(function(require, exports) {
     tokenExpirationDate.subscribe(askLoginOnTokenExpire);
 
     window.addEventListener('storage', function(event) {
-        if (event.storageArea === localStorage && localStorage.bearerToken !== token()) {
-            token(localStorage.bearerToken);
-        };
+        if (event.storageArea === localStorage) {
+            let bearerToken = getBearerToken();
+            if (bearerToken !== token()) {
+                token(bearerToken);
+            }
+        }
     }, false);
 
     token.subscribe(function(newValue) {
@@ -235,7 +239,7 @@ define(function(require, exports) {
         if (!isPromisePending(refreshTokenPromise)) {
           refreshTokenPromise = httpService.doGet(getServiceUrl() + "user/refresh");
           refreshTokenPromise.then(({ data, headers }) => {
-            setAuthParams(headers.get(TOKEN_HEADER));
+            setAuthParams(headers.get(TOKEN_HEADER), data.permissions);
           });
           refreshTokenPromise.catch(() => {
             resetAuthParams();
@@ -444,11 +448,13 @@ define(function(require, exports) {
 
     const hasSourceAccess = function (sourceKey) {
         return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
-	}
+    }
 
-	var setAuthParams = function (tokenHeader) {
-        token(tokenHeader);
-        return loadUserInfo();
+	const isPermittedRunAs = () => isPermitted('user:runas:post');
+
+	const setAuthParams = (tokenHeader, permissionsStr = '') => {
+        !!tokenHeader && token(tokenHeader);
+        !!permissionsStr && permissions(permissionsStr.split('|'));
     };
 
     var resetAuthParams = function () {
@@ -457,11 +463,24 @@ define(function(require, exports) {
         permissions(null);
     };
 
+    const runAs = function(login, success, error) {
+        return $.ajax({
+					method: 'POST',
+					url: config.webAPIRoot + 'user/runas',
+					data: {
+						login,
+					},
+          success,
+          error,
+        });
+    };
+
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
 
         token: token,
         subject: subject,
+        fullName,
         tokenExpirationDate: tokenExpirationDate,
         tokenExpired: tokenExpired,
         authProvider: authProvider,
@@ -536,9 +555,11 @@ define(function(require, exports) {
 
         isPermittedImportUsers,
         hasSourceAccess,
+        isPermittedRunAs,
 
         loadUserInfo,
         TOKEN_HEADER,
+        runAs,
     };
 
     return api;

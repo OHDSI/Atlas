@@ -32,6 +32,18 @@ table.cohort-generate-sources thead {
   width: calc(100%-1em)
 }
 
+td.date-column {
+	width: 125px;
+}
+
+td.author-column {
+	width: 125px;
+}
+
+td.id-column {
+	width: 45px;
+}
+
 .breadcrumb-container {
   background-color: #333;
   color: #fff;
@@ -449,6 +461,10 @@ table.datatable thead th {
   padding: 4px 5px !important;
 }
 
+div.dt-button-collection {
+  width: max-content !important;
+}
+
 .asset-heading .fa-shopping-cart, td .fa-shopping-cart {
   color: #ccc;
   cursor: pointer;
@@ -684,7 +700,6 @@ ul.ColVis_collection li {
 
 #wrapperParents {
   padding-left: 5px;
-  padding-bottom: 10px;
 }
 
 #wrapperSelf {
@@ -694,7 +709,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperChildren {
-  padding-left: 90px;
+  padding-left: 5px;
 }
 
 .configureSourceTable i.fa {
@@ -718,11 +733,7 @@ ul.ColVis_collection li {
 }
 
 #wrapperHierarchyAnchor {
-  margin-left: 30px;
-  padding-bottom: 10px;
-  padding-top: 10px;
-  /* font-size: 14px; */
-  padding-left: 10px;
+  padding-left: 5px;
   margin-bottom: 10px;
 }
 
@@ -1648,6 +1659,11 @@ table.inclusionRules td div.description {
   font-size: 75%;
   font-style: italic;
   white-space: pre-wrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 table.inclusionRules td {
@@ -2177,4 +2193,16 @@ div#wrapper_ohdsi a {
 	background-image: url(images/arrow_down.png);
 	background-position: center right;
 	background-repeat: no-repeat;
+}
+
+.thresholdLevel {
+	width: 30%
+}
+
+.thresholdLevel div {
+	display: flex
+}
+
+.thresholdLevel div input {
+	margin-right: 10px
 }

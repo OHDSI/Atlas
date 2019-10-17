@@ -12,7 +12,7 @@
 		<!-- /ko -->
 		<div data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
 			<div title="Sign In" data-bind="if: !isLoggedIn() || tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i>Sign In</a></div>
-			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: authLogin"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
+			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: fullName"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
 		</div>
 	</div>
 	<!-- /ko -->
@@ -24,11 +24,8 @@
 		modifiers: ['sm'],
 		iconClass: 'fa fa-sign-in',
 		title: 'Sign In',
-		data: {
-			model: model
-		}
 }">
-	<welcome params="{model: model}"></welcome>
+	<welcome></welcome>
 </atlas-modal>
 
 <atlas-modal params="{

@@ -1,0 +1,49 @@
+<div class="criteriaSection" data-bind="with: Criteria">
+	<div style="position: relative">
+		<table class="criteriaTable">
+			<colgroup>
+				<col style="width:100%"/>
+				<col />
+			</colgroup>
+			<tr>
+				<td> a location region of
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any region'"></conceptset-selector>
+				</td>
+				<td>
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+						</ul>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<table class="criteriaTable">
+			<colgroup>
+				<col style="width:20px"/>
+				<col />
+			</colgroup>
+			<tr data-bind="if: StartDate() != null, visible: StartDate() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('StartDate') }" class="fa fa-times" /></td>
+				<td>
+					start is:
+					<date-range params="Range: StartDate"></date-range>
+				</td>
+			</tr>
+			<tr data-bind="if: EndDate() != null, visible: EndDate() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('EndDate') }" class="fa fa-times" /></td>
+				<td>
+					end is:
+					<date-range params="Range: EndDate"></date-range>
+				</td>
+			</tr>
+			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
+				<td style="background-color: white">
+					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

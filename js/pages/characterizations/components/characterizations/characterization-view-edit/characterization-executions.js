@@ -61,21 +61,25 @@ define([
 			this.exitMessage = ko.observable();
 			this.pollId = null;
 
+			this.design = params.design;
+
 			this.execColumns = [{
 					title: 'Date',
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
-					type: 'datetime-formatted'
 				},
 				{
 					title: 'Design',
 					className: this.classes('col-exec-checksum'),
-					render: (s, p, d) => {
-						return (
-							PermissionService.isPermittedExportGenerationDesign(d.id) ?
-							`<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${this.currentHash() === d.hashCode ? ' (same as now)' : ''}` :
-							(d.hashCode || '-')
-						);
+					render: (s, p, data) => {
+						let html = '';
+						if (PermissionService.isPermittedExportGenerationDesign(data.id)) {
+							html = `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a>`;
+						} else {
+							html = data.tag || '-';
+						}
+						html += this.currentHash() === data.hashCode ? ' (same as now)' : '';
+						return html;
 					}
 				},
 				{
@@ -112,13 +116,15 @@ define([
 
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
+			this.isViewGenerationsPermitted() && this.startPolling();
+		}
 
-			if (this.isViewGenerationsPermitted()) {
-				this.loadData();
-				this.pollId = PollService.add(() => this.loadData({
-					silently: true
-				}), 10000);
-			}
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.loadData({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		dispose() {
@@ -132,7 +138,8 @@ define([
 		}
 
 		isExecutionPermitted(sourceKey) {
-			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty();
+			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty() &&
+				this.design().cohorts().length;
 		}
 
 		isResultsViewPermitted(sourceKey) {
@@ -190,10 +197,19 @@ define([
 			}
 		}
 
-		generate(source, lastestDesign) {
-			if(lastestDesign === this.currentHash()) {
-				if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
-					return false;
+		generate(source, latestDesign) {
+			if(latestDesign === this.currentHash()) {
+				const sg = this.executionGroups().find(g => g.sourceKey === source);
+				if (sg) {
+					const submissions = [...sg.submissions()];
+					if (submissions.length > 0) {
+						submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+						if (submissions[0].status !== this.ccGenerationStatusOptions.FAILED) {
+							if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
+								return false;
+							}
+						}
+					}
 				}
 			}
 

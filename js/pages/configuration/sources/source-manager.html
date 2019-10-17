@@ -6,7 +6,7 @@
 			<div data-bind="if:$component.canReadSource">
 					<div class="asset-heading">
 						<div class="input-group">
-							<input type="text" class="form-control" data-bind="textInput: selectedSource().name, enable: canEdit(), css: { emptyInput: !isNameCorrect() }"/>
+							<input type="text" placeholder="New Source" class="form-control" data-bind="textInput: selectedSource().name, enable: canEdit(), css: { emptyInput: !isNameCorrect() }"/>
 							<div class="input-group-btn" role="group">
 									<button class="btn btn-success" title="Save"
 													data-bind="click: save, enable: dirtyFlag().isDirty() && canSave(), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty}">
@@ -29,7 +29,7 @@
 															<div class="control-group" style="width: 50%">
 																	<label for="sourceKey">Source Key:</label>
 																	<div class="form-group">
-																			<input title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit() && canEditKey()" class="form-control" type="text" id="sourceKey"/>
+																			<input placeholder="Source key" title="Source key" data-bind="textInput: selectedSource().key, enable: canEdit() && canEditKey()" class="form-control" type="text" id="sourceKey"/>
 																	</div>
 															</div>
 															<div class="control-group" style="width: 50%">
@@ -42,7 +42,7 @@
 													<div class="source-row">
 														<div class="control-group" style="flex-grow: 1">
 																<label for="connectionString">Connection string:</label>
-																<input title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
+																<input placeholder="Connection string" title="Connection string" data-bind="textInput: selectedSource().connectionString, enable: canEdit()" class="form-control" type="text" id="connectionString"/>
 														</div>
 													</div>
                                                 <div data-bind="visible: fieldsVisibility.realmWarning" class="source-manager__error">
@@ -57,7 +57,7 @@
 													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.username">
 														<label>Username:</label>
 														<div class="form-group">
-															<input title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
+															<input placeholder="Username" title="Username" data-bind="textInput: selectedSource().username, enable: canEdit()" class="form-control" type="text"/>
 														</div>
                                                         <div data-bind="visible: fieldsVisibility.userWarning" class="source-manager__error">
 															<i class="source-manager__error-ico fa fa-exclamation-circle" aria-hidden="true"></i>
@@ -67,13 +67,13 @@
 													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.password">
 														<label>Password:</label>
 														<div class="form-group">
-															<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
+															<input placeholder="Password" title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
 														</div>
 													</div>
 													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.krbAuthSettings">
 														<label>KrbAdminServer:</label>
 														<div class="form-group">
-															<input title="KrbAdminServer" data-bind="textInput: selectedSource().krbAdminServer, enable: canEdit()" class="form-control" type="text"/>
+															<input placeholder="KrbAdminServer" title="KrbAdminServer" data-bind="textInput: selectedSource().krbAdminServer, enable: canEdit()" class="form-control" type="text"/>
 														</div>
 													</div>
 												</div>
@@ -82,13 +82,13 @@
                                                     <div class="source-manager__control-group control-group">
                                                         <label>KrbRealm:</label>
                                                         <div class="form-group">
-                                                            <input title="KrbRealm was parsed from jdbc link" data-bind="textInput: krbRealm, disable: true" class="form-control" type="text"/>
+                                                            <input placeholder="KrbRealm" title="KrbRealm was parsed from jdbc link" data-bind="textInput: krbRealm, disable: true" class="form-control" type="text"/>
                                                         </div>
                                                     </div>
 													<div class="source-manager__control-group control-group">
 														<label>KrbHostFQDN:</label>
 														<div class="form-group">
-															<input title="KrbHostFQDN was parsed from jdbc link" data-bind="textInput: krbHostFQDN, disable: true" class="form-control" type="text"/>
+															<input placeholder="KrbHostFQDN" title="KrbHostFQDN was parsed from jdbc link" data-bind="textInput: krbHostFQDN, disable: true" class="form-control" type="text"/>
 														</div>
 													</div>
 												</div>
@@ -99,21 +99,33 @@
 													<input type="radio" value="keytab" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
 													<span class="source-manager__radio-btn-label">Keytab</span>
 												</label>
-												<div data-bind="visible: fieldsVisibility.showKeytab" class="source-manager__keytab">
-													<input type="file" id="keytabFile" name="keytabFile" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.krbFileInput()"/>
-													<span data-bind="text: selectedSource().keytabName, visible: !fieldsVisibility.krbFileInput()"></span>
-													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !fieldsVisibility.krbFileInput(), click: removeKeytab">Remove</button>
+												<div data-bind="visible: fieldsVisibility.showKrbKeyfile()" class="source-manager__keytab">
+													<input type="file" id="keyfile" name="keytab" accept=".keytab" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.krbFileInput()"/>
+													<span data-bind="text: selectedSource().keyfileName, visible: !fieldsVisibility.krbFileInput()"></span>
+													<button type="button" class="btn btn-sm btn-danger source-manager__remove-btn" data-bind="visible: !fieldsVisibility.krbFileInput(), click: removeKeyfile">Remove</button>
 												 </div>
 												<label class="source-manager__pwd-label">
 													<input type="radio" value="password" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
 													<span class="source-manager__radio-btn-label">User name and password</span>
 												</label>
-												<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKeytab()">
+												<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKrbKeyfile()">
 													<label>Password:</label>
 													<div class="form-group">
-														<input title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
+														<input placeholder="Password" title="Password" data-bind="textInput: selectedSource().password, enable: canEdit()" class="form-control" type="password"/>
 													</div>
 												</div>
+												</div>
+											</div>
+											<div data-bind="visible: fieldsVisibility.bigQueryAuthSettings">
+												<div class="source-row">
+													<div data-bind="css: classes({element: 'auth-title', extra: 'control-group'})">
+														<label>Service account key file (OAuthPvtKeyPath)</label>
+													</div>
+													<div data-bind="css: classes('keytab')">
+														<input type="file" name="keyfileFile" id="keyfile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
+														<span data-bind="text: selectedSource().keyfileName, hidden: fieldsVisibility.bqFileInput()"></span>
+														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeyfile">Remove</button>
+													</div>
 												</div>
 											</div>
 											<div class="panel panel-primary">
