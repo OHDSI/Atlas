@@ -82,9 +82,9 @@
 		</div>
 	</div>
 	<!-- ko if: isImportEnabled -->
-	<div title="Import Concept Set...." style="padding: 0px; padding-top: 5px; padding-right: 5px" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: ''}">
+	<div title="Import Concept Set" style="padding: 0px; padding-top: 5px; padding-right: 5px" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: ''}">
 		<div style="height:100%; overflow: none; padding-top: 5px; padding-bottom: 40px;">
-			<textarea style="width: 100%; height: 100%; resize: none" data-bind="textInput: importValues"></textarea>
+			<textarea placeholder="Import Concept Set" style="width: 100%; height: 100%; resize: none" data-bind="textInput: importValues"></textarea>
 		</div>
 		<div style="position: relative; margin-top: -30px; height: 30px; clear: both;">
 			<button class="btn btn-sm btn-primary" data-bind="click: doImport">Import</button>

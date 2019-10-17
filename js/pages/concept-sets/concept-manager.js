@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'text!./concept-manager.html', 
+	'text!./concept-manager.html',
 	'pages/Page',
 	'utils/AutoBind',
 	'services/Vocabulary',
@@ -12,6 +12,7 @@ define([
 	'./PermissionService',
 	'faceted-datatable',
 	'components/heading',
+	'less!./concept-manager.less',
 ], function (
 	ko,
 	view,
@@ -28,22 +29,24 @@ define([
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
-			this.subscriptions = [];
 			this.currentConceptId = ko.observable();
-
+			this.currentConcept = ko.observable();
+			this.currentConceptMode = ko.observable('details');
+			this.hierarchyPillMode = ko.observable('all');
+			this.relatedConcepts = ko.observableArray([]);
 			this.commonUtils = commonUtils;
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
-
+			this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
+			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
 
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
 
 			this.subscriptions.push(
-				this.model.currentConceptMode.subscribe((mode) => {
+				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
 						case 'recordcounts':
 							this.loadRecordCounts();
@@ -89,12 +92,12 @@ define([
 				}, {
 					'caption': 'Has Records',
 					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.RECORD_COUNT) > 0;
 					}
 				}, {
 					'caption': 'Has Descendant Records',
 					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 					}
 				}, {
 					'caption': 'Distance',
@@ -157,203 +160,50 @@ define([
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
 			}];
-			
-			this.metatrix = {
-				'ICD9CM.5-dig billing code': {
-					childRelationships: [{
-						name: 'Subsumes',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Is a',
-						range: [0, 1]
-					}]
-				},
-				'ICD9CM.4-dig nonbill code': {
-					childRelationships: [{
-						name: 'Subsumes',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Is a',
-						range: [0, 1]
-					}, {
-						name: 'Non-standard to Standard map (OMOP)',
-						range: [0, 1]
-					}]
-				},
-				'ICD9CM.3-dig nonbill code': {
-					childRelationships: [{
-						name: 'Subsumes',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Non-standard to Standard map (OMOP)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Ingredient': {
-					childRelationships: [{
-						name: 'Ingredient of (RxNorm)',
-						range: [0, 999]
-					}],
-					parentRelationships: [{
-						name: 'Has inferred drug class (OMOP)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Brand Name': {
-					childRelationships: [{
-						name: 'Ingredient of (RxNorm)',
-						range: [0, 999]
-					}],
-					parentRelationships: [{
-						name: 'Tradename of (RxNorm)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Branded Drug': {
-					childRelationships: [{
-						name: 'Consists of (RxNorm)',
-						range: [0, 999]
-					}],
-					parentRelationships: [{
-						name: 'Has ingredient (RxNorm)',
-						range: [0, 999]
-					}, {
-						name: 'RxNorm to ATC (RxNorm)',
-						range: [0, 999]
-					}, {
-						name: 'RxNorm to ETC (FDB)',
-						range: [0, 999]
-					}]
-				},
-				'RxNorm.Clinical Drug Comp': {
-					childRelationships: [],
-					parentRelationships: [{
-						name: 'Has precise ingredient (RxNorm)',
-						range: [0, 999]
-					}, {
-						name: 'Has ingredient (RxNorm)',
-						range: [0, 999]
-					}]
-				},
-				'CPT4.CPT4': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'CPT4.CPT4 Hierarchy': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'ETC.ETC': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.LLT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.PT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.HLT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.SOC': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'MedDRA.HLGT': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'SNOMED.Clinical Finding': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				},
-				'SNOMED.Procedure': {
-					childRelationships: [{
-						name: 'Has descendant of',
-						range: [0, 1]
-					}],
-					parentRelationships: [{
-						name: 'Has ancestor of',
-						range: [0, 1]
-					}]
-				}
+
+			this.hierarchyConceptsOptions = {
+				Facets: [{
+					'caption': 'Vocabulary',
+					'binding': function (o) {
+						return o.VOCABULARY_ID;
+					}
+				}, {
+					'caption': 'Class',
+					'binding': function (o) {
+						return o.CONCEPT_CLASS_ID;
+					}
+				}, {
+					'caption': 'Has Records',
+					'binding': function (o) {
+						return parseInt(o.RECORD_COUNT.toString()
+							.replace(',', '')) > 0;
+					}
+				}, {
+					'caption': 'Has Descendant Records',
+					'binding': function (o) {
+						return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
+							.replace(',', '')) > 0;
+					}
+				}]
 			};
 
 			this.currentConceptArray = ko.observableArray();
 		}
-		
+
 		async onPageCreated() {
-			this.model.currentConceptMode('details');
 			this.currentConceptId(this.routerParams.conceptId);
 			this.loadConcept(this.currentConceptId());
 			super.onPageCreated();
 		}
 
-		onRouterParamsChanged({ conceptId }) {			
+		renderCurrentConceptSelector() {
+			return this.renderConceptSelector(null, null, this.currentConcept());
+		}
+
+		onRouterParamsChanged({ conceptId }) {
 			if (conceptId !== this.currentConceptId() && conceptId !== undefined) {
 				this.currentConceptId(conceptId);
-				if (this.model.currentConceptMode() == 'recordcounts') {
+				if (this.currentConceptMode() == 'recordcounts') {
 					this.loadRecordCounts();
 				}
 				this.loadConcept(this.currentConceptId());
@@ -406,36 +256,24 @@ define([
 		}
 
 		metagorize(metarchy, related) {
-			var concept = this.model.currentConcept();
-			var key = concept.VOCABULARY_ID + '.' + concept.CONCEPT_CLASS_ID;
-			var meta = this.metatrix[key] || constants.defaultConceptHierarchyRelationships;
-			if (this.hasRelationship(related, meta.childRelationships)) {
+			if (this.hasRelationship(related, constants.defaultConceptHierarchyRelationships.childRelationships)) {
 				metarchy.children.push(related);
 			}
-			if (this.hasRelationship(related, meta.parentRelationships)) {
+			if (this.hasRelationship(related, constants.defaultConceptHierarchyRelationships.parentRelationships)) {
 				metarchy.parents.push(related);
 			}
 		}
 
 		async loadConcept(conceptId) {
+			this.isLoading(true);
 			if (!this.hasInfoAccess()) {
 				this.loadingRelated(false);
 				return;
 			}
 
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
-			var exists = false;
-			for (var i = 0; i < this.model.recentConcept().length; i++) {
-				if (this.model.recentConcept()[i].CONCEPT_ID == data.CONCEPT_ID)
-					exists = true;
-			}
-			if (!exists) {
-				this.model.recentConcept.unshift(data);
-			}
-			if (this.model.recentConcept().length > 7) {
-				this.model.recentConcept.pop();
-			}
-			this.model.currentConcept(data);
+			this.currentConcept(data);
+			this.isLoading(false);
 			// load related concepts once the concept is loaded
 			this.loadingRelated(true);
 			this.metarchy = {
@@ -444,11 +282,11 @@ define([
 				synonyms: ko.observableArray()
 			};
 
-			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');			
+			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');
 			for (var i = 0; i < related.length; i++) {
 				this.metagorize(this.metarchy, related[i]);
 			}
-			
+
 			await vocabularyProvider.loadDensity(related);
 			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
 			if (currentConceptObject !== undefined){
@@ -456,15 +294,9 @@ define([
 			} else {
 				this.currentConceptArray([]);
 			}
-			this.model.relatedConcepts(related);
+			this.relatedConcepts(related);
 
 			this.loadingRelated(false);
-		}
-
-		dispose() {
-			this.subscriptions.forEach(function (subscription) {
-				subscription.dispose();
-			});
 		}
 	}
 

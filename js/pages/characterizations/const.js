@@ -25,12 +25,12 @@ define(
         const ccGenerationStatus = consts.generationStatuses;
 
         const feAnalysisTypes = {
-            PRESET: 'Preset',
-            CRITERIA_SET: 'Criteria set',
-            CUSTOM_FE: 'Custom'
+            PRESET: 'PRESET',
+            CRITERIA: 'CRITERIA',
+            CUSTOM_FE: 'CUSTOM_FE'
         };
 
-        const demoCustomSqlAnalysisDesign = `-- Custom analysis producing same results as Feature Extraction's "One covariate per drug in the drug_era table overlapping with any time prior to index." 
+        const demoCustomSqlAnalysisDesign = `-- Custom analysis producing same results as Feature Extraction's "One covariate per drug in the drug_era table overlapping with any time prior to index."
 SELECT
   CAST(drug_concept_id AS BIGINT) * 1000 + @analysis_id AS covariate_id,
   c.concept_name                                                                  AS covariate_name,

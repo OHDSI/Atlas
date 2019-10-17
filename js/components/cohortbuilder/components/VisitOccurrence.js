@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
+define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, config, options, Range, CriteriaGroup, template) {
 
 	function VisitOccurrenceViewModel(params) {
 		var self = this;
@@ -101,6 +101,16 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 				}
 			},
 			{
+				text: "Add Place of Service Location Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences based on where Place of Service is located.",
+				action: function () {
+					if (self.Criteria.PlaceOfServiceLocation() === undefined) {
+						self.Criteria.PlaceOfServiceLocation(null);
+					}
+				}
+			},
+			{
 				text: "Add Nested Criteria...",
 				selected: false,
 				description: "Apply criteria using the condition occurrence as the index date",
@@ -111,12 +121,25 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 			}
 		];
 
+		if (config.features.locationDistance) {
+			self.addActions.splice(self.addActions.length - 1, 0, {
+				text: "Add Place of Service Distance Criteria",
+				selected: false,
+				description: "Filter Visit Occurrences based on distance from Place of Service to Patient.",
+				action: function () {
+					if (self.Criteria.PlaceOfServiceDistance() === undefined) {
+						self.Criteria.PlaceOfServiceDistance(new Range());
+					}
+				}
+			});
+		}
+
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.VisitOccurrence;
 		self.options = options;
 
 		self.removeCriterion = function (propertyName) {
-			self.Criteria[propertyName](null);
+			self.Criteria[propertyName](undefined);
 		}
 
 

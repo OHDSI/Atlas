@@ -1,10 +1,11 @@
+<!-- ko if: strategy()-->
 <div>
 	<b>Continuous Exposure Persistence:</b><br/>
-	Specify a concept set that contains one or more drugs.  A drug era will be derived from all drug exposure events for any of the 
-	drugs within the concept set, using the specified persistence window as a maximum allowable gap in days between successive 
-	exposure events and adding a specified surveillance window to the final exposure event.  If no exposure event end date is 
-	provided, then an exposure event end date is inferred to be event start date + days supply in cases when days supply is 
-	available or event start date + 1 day otherwise. This event persistence assures that the cohort end date will be no greater 
+	Specify a concept set that contains one or more drugs.  A drug era will be derived from all drug exposure events for any of the
+	drugs within the concept set, using the specified persistence window as a maximum allowable gap in days between successive
+	exposure events and adding a specified surveillance window to the final exposure event.  If no exposure event end date is
+	provided, then an exposure event end date is inferred to be event start date + days supply in cases when days supply is
+	available or event start date + 1 day otherwise. This event persistence assures that the cohort end date will be no greater
 	than the drug era end date.
 </div>
 <div style="padding: 5px 0px">
@@ -14,3 +15,4 @@
 		<li>Surveillance window:  add <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: strategy().Offset.numeric(), eventType:'blur', ko_autocomplete: { value: strategy().Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days to the end of the era of persistence exposure as an additional period of surveillance prior to cohort exit.</li>
 	</ul>
 </div>
+<!-- /ko -->

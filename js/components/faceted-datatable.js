@@ -2,6 +2,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 
 	function facetedDatatable(params) {
 		var self = this;
+		var subscriptions = [];
+
 		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
@@ -26,7 +28,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.drawCallback = params.drawCallback;
 
 		// Set some defaults for the data table
-		self.autoWidth = params.autoWidth || true;
+		self.autoWidth = params.autoWidth !== 'undefined' ? params.autoWidth : true;
 		self.buttons = params.buttons || [
 			'colvis',  'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'
 		];
@@ -61,6 +63,9 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.scrollOptions = params.scrollOptions || null;
 		self.createdRow = params.createdRow || null;
 
+		self.scrollY = params.scrollY || null;
+		self.scrollCollapse = params.scrollCollapse || false;
+
 		self.updateFilters = function (data, event) {
 			var facet = data.facet;
 			data.selected(!data.selected());
@@ -91,63 +96,65 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			return ret;
 		}
 
-		self.reference.subscribe(function (newValue) {
-			if (self.reference() != null) {
-				self.componentLoading(true);
-				self.data(new crossfilter(self.reference()));
-				self.facets.removeAll();
-				if (self.options && self.options.Facets) {
-					// Iterate over the facets and set the dimensions
-					$.each(self.options.Facets, function (i, facetConfig) {
-						var isArray = facetConfig.isArray || false;
-						var dimension = self.data().dimension(function (d) {
-							return self.facetDimensionHelper(facetConfig.binding(d));
-						}, isArray);
-						var facet = {
-							'caption': facetConfig.caption,
-							'binding': facetConfig.binding,
-							'dimension': dimension,
-							'facetItems': [],
-							'selectedItems': new Object(),
-						};
-						// Add a selected observable to each dimension
-						$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
-							facetItem.dimension = dimension;
-							facetItem.selected = ko.observable(false);
-							facetItem.facet = facet;
-							facet.facetItems.push(facetItem);
+		subscriptions.push(
+			self.reference.subscribe(function (newValue) {
+				if (self.reference() != null) {
+					self.componentLoading(true);
+					self.data(new crossfilter(newValue));
+					self.facets.removeAll();
+					if (self.options && self.options.Facets) {
+						// Iterate over the facets and set the dimensions
+						$.each(self.options.Facets, function (i, facetConfig) {
+							var isArray = facetConfig.isArray || false;
+							var dimension = self.data().dimension(function (d) {
+								return self.facetDimensionHelper(facetConfig.binding(d));
+							}, isArray);
+							var facet = {
+								'caption': facetConfig.caption,
+								'binding': facetConfig.binding,
+								'dimension': dimension,
+								'facetItems': [],
+								'selectedItems': new Object(),
+							};
+							// Add a selected observable to each dimension
+							$.each(dimension.group().top(Number.POSITIVE_INFINITY), function (i, facetItem) {
+								facetItem.dimension = dimension;
+								facetItem.selected = ko.observable(false);
+								facetItem.facet = facet;
+								facet.facetItems.push(facetItem);
+							});
+							self.facets.push(facet);
 						});
-						self.facets.push(facet);
-					});
-					// Iterate over the facets and set any defaults
-					$.each(self.options.Facets, function (i, facetConfig) {
-						if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
-							$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
-								var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
-									return f.key == defaultFacet;
-								});
-								if (facetItem.length > 0) {
-									self.updateFilters(facetItem[0], null);
-								}
-							})
-						}
-					});
+						// Iterate over the facets and set any defaults
+						$.each(self.options.Facets, function (i, facetConfig) {
+							if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
+								$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
+									var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
+										return f.key == defaultFacet;
+									});
+									if (facetItem.length > 0) {
+										self.updateFilters(facetItem[0], null);
+									}
+								})
+							}
+						});
+					}
+					self.componentLoading(false);
 				}
-				self.componentLoading(false);
-			}
-		});
+			})
+		);
 
 		// init component
 		if (ko.isComputed(self.reference)) {
 			// valueHasMutated doesn't work for computed
-			self.reference.notifySubscribers();
+			self.reference.notifySubscribers(self.reference.peek());
 		} else {
-			self.reference.valueHasMutated(); 
+			self.reference.valueHasMutated();
 		}
-		
+
 		self.stateSaveCallback = params.stateSaveCallback;
 		self.stateLoadCallback = params.stateLoadCallback;
-		
+
 		self.options = {
 			...self.options,
 			dom: self.dom,
@@ -164,13 +171,21 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			deferRender: self.deferRender,
 			pageLength: self.pageLength,
 			drawCallback: self.drawCallback,
-            createdRow: self.createdRow,
+			createdRow: self.createdRow,
+			scrollCollapse: self.scrollCollapse,
 		};
 		if (self.stateSaveCallback !== undefined) {
 			self.options = {...self.options, stateSaveCallback: self.stateSaveCallback, stateSave: true}
 		}
 		if (self.stateLoadCallback !== undefined) {
 			self.options = {...self.options, stateLoadCallback: self.stateLoadCallback}
+		}
+		if (self.scrollY) {
+			self.options = { ...self.options, scrollY: self.scrollY };
+		}
+
+		self.dispose = () => {
+			subscriptions.forEach(sub => sub.dispose());
 		}
 	};
 

@@ -1,4 +1,6 @@
 define(function (require, exports) {
+	
+	var numeral = require('numeral');
 
 	function FormattingOptions() {
 		var self = this;
@@ -8,7 +10,7 @@ define(function (require, exports) {
 		}
 
 		self.numberWithCommas = function (d) {
-			return d.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			return numeral(d).format('0,0');
 		}
 	}
 

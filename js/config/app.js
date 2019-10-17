@@ -75,10 +75,13 @@ define(function () {
       "isUseCredentialsForm": true
     }
   ];
+  appConfig.strictXSSOptions = {
+    whiteList: [],
+  };
   appConfig.xssOptions = {
     "whiteList": {
-      "a": ["href", "class", "data-bind"],
-			"button": ["class", "type"],
+      "a": ["href", "class", "data-bind", "data-toggle", "aria-expanded"],
+			"button": ["class", "type", "data-toggle", "aria-expanded"],
       "span": ["class", "data-bind"],
       "i": ["class", "id", "aria-hidden"],
       "div": ["class", "style", "id"],
@@ -87,6 +90,8 @@ define(function () {
       "ui": ["class"],
       "path": ["d", "class"],
       "br": "",
+      "li": ["class", "title"],
+      "ul": ["class"]
     },
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],
@@ -103,6 +108,12 @@ define(function () {
   };
   appConfig.enableTermsAndConditions = true;
 	appConfig.webAPIRoot = appConfig.api.url;
-	
+	// todo: move "userAuthenticationEnabled", "plpResultsEnabled", etc into the object
+	appConfig.features = {
+	  locationDistance: false,
+	};
+
+   appConfig.externalLibraries = [];
+
 	return appConfig;
 });

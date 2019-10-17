@@ -2,6 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
+	'services/Permission',
+	'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
@@ -13,6 +15,8 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'assets/ohdsi.util',
+    'const',
+    'lodash',
     'less!./characterization-view-edit.less',
     'components/tabs',
     'faceted-datatable',
@@ -20,10 +24,13 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
+	'components/security/access/configure-access-modal',
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
+	GlobalPermissionService,
+	{ entityType },
     CriteriaGroup,
     ConceptSet,
     CharacterizationAnalysis,
@@ -34,20 +41,27 @@ define([
     Page,
     AutoBind,
     commonUtils,
-    ohdsiUtil
+    ohdsiUtil,
+    constants,
+    lodash
 ) {
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
             super(params);
-
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
             this.executionId = ko.observable();
+            this.areStratasNamesEmpty = ko.observable();
+            this.duplicatedStrataNames = ko.observable([]);
             this.design = sharedState.CohortCharacterization.current;
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.isNameCorrect = ko.computed(() => {
+            this.defaultName = constants.newEntityNames.characterization;
+            this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
+            });
+            this.isNameCorrect = ko.computed(() => {
+                return this.isNameFilled() && this.design().name() !== this.defaultName;
             });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -62,9 +76,8 @@ define([
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
-            this.areStratasNamesEmpty = ko.observable();
-            this.duplicatedStrataNames = ko.observable([]);
             this.componentParams = ko.observable({
+                ...params,
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
@@ -75,12 +88,18 @@ define([
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
                     if (this.characterizationId() === 0) {
-                        return 'New Characterization';
+                        return this.defaultName;
                     } else {
                         return 'Characterization #' + this.characterizationId();
                     }
                 }
             });
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
+				entityIdGetter: () => this.characterizationId(),
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+			});
         }
 
         onRouterParamsChanged({ characterizationId, section, subId }) {
@@ -154,26 +173,31 @@ define([
             commonUtils.routeTo('/cc/characterizations/' + this.componentParams().characterizationId() + '/' + key);
         }
 
-        save() {
+        async save() {
             this.isSaving(true);
             const ccId = this.componentParams().characterizationId();
 
-            if (ccId < 1) {
-                CharacterizationService
-                    .createCharacterization(this.design())
-                    .then(res => {
-                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));
-                        this.isSaving(false);
-                        commonUtils.routeTo(`/cc/characterizations/${res.id}/${this.selectedTabKey()}`);
-                    });
-            } else {
-                CharacterizationService
-                    .updateCharacterization(ccId, this.design())
-                    .then(res => {
-                        this.setupDesign(new CharacterizationAnalysis(res));
-                        this.isSaving(false);
-                        this.loading(false);
-                    });
+            // Next check to see that a characterization with this name does not already exist
+            // in the database. Also pass the id so we can make sure that the current characterization is excluded in this check.
+            try {
+                const results = await CharacterizationService.exists(this.design().name(), ccId);
+                if (results > 0) {
+                    alert('A characterization with this name already exists. Please choose a different name.');
+                } else {
+                    if (ccId < 1) {
+                        const newCharacterization = await CharacterizationService.createCharacterization(this.design());
+                        this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design));                        
+                        commonUtils.routeTo(`/cc/characterizations/${newCharacterization.id}/${this.selectedTabKey()}`);
+                    } else {
+                        const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
+                        this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
+                    }
+                }
+            } catch (e) {
+                alert('An error occurred while attempting to save a characterization.');
+            } finally {
+                this.isSaving(false);
+                this.loading(false);
             }
         }
 

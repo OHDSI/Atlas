@@ -46,7 +46,7 @@ define([
 
 	var htmlTipText = d => {
 		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
-		if (authApi.isPermittedViewProfileDates() && d.startDate != null) {
+		if (canViewProfileDates() && d.startDate != null) {
 			tipText += '<p>Start Date: ' + momentApi.formatDate(new Date(d.startDate)) + '</p>'
 		}
 		return tipText;

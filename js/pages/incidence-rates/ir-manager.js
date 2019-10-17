@@ -15,22 +15,29 @@ define([
 	'services/AuthAPI',
 	'services/file',
 	'services/Poll',
+	'services/Permission',
+	'components/security/access/const',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'./const',
+	'const',
+	'./components/iranalysis/main',
+	'databindings',
+	'conceptsetbuilder/components',
+	'circe',
+	'components/heading',
+	'utilities/import',
+	'utilities/export',
+	'components/security/access/configure-access-modal',
 	'components/tabs',
 	'./tabs/ir-definition',
 	'./tabs/ir-conceptsets',
 	'./tabs/ir-export',
 	'./tabs/ir-generation',
 	'./tabs/ir-utilities',
-	'databindings',
-	'conceptsetbuilder/components',
-	'circe',
-	'components/heading',
 ], function (
 	ko,
 	view,
@@ -48,26 +55,31 @@ define([
 	authAPI,
 	FileService,
 	PollService,
+	GlobalPermissionService,
+	{ entityType },
 	Page,
 	AutoBind,
 	Clipboard,
 	commonUtils,
 	exceptionUtils,
-	constants
+	constants,
+	globalConstants,
 ) {
 	class IRAnalysisManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
 			// polling support
-			this.pollTimeout = null;
-			this.model = params.model;
+			this.pollId = null;
 			this.loading = ko.observable(false);
 			this.loadingInfo = ko.observable();
 			this.loadingSummary = ko.observableArray();
+			this.constants = constants;
+			this.tabs = constants.tabs;
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
+			this.defaultName = globalConstants.newEntityNames.incidenceRate;
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -103,13 +115,15 @@ define([
 					)
 			});
 			this.selectedAnalysisId.subscribe((id) => {
-				authAPI.loadUserInfo();
+				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
+					authAPI.loadUserInfo();
+				}
 			});
 
 			this.isRunning = ko.observable(false);
-			this.activeTab = ko.observable(params.activeTab || 'definition');
       this.exportTabMode = ko.observable('sql');
       this.exportSqlMode = ko.observable('ohdsisql');
+			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
@@ -143,25 +157,9 @@ define([
 				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
 					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
 				}
-				return 'New Incidence Rate Analysis';
+				return this.defaultName;
 			});
 
-			this.modifiedJSON = "";
-			this.importJSON = ko.observable();
-			this.expressionJSON = ko.pureComputed({
-				read: () => {
-					return ko.toJSON(this.selectedAnalysis().expression(), function (key, value) {
-						if (value === 0 || value) {
-							return value;
-						} else {
-							return
-						}
-					}, 2);
-				},
-				write: (value) => {
-					this.modifiedJSON = value;
-				}
-			});
 			this.expressionMode = ko.observable('import');
 
 			this.generatedSql = {};
@@ -175,14 +173,11 @@ define([
 			this.generatedSql.bigquery = ko.observable('');
 			this.templateSql = ko.observable('');
 
-			// subscriptions
-			this.selectedAnalysisIdSub = this.selectedAnalysisId.subscribe((newVal) => {
-				if (newVal) {
-					this.onAnalysisSelected();
-				}
+			this.isNameFilled = ko.computed(() => {
+				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.selectedAnalysis() && this.selectedAnalysis().name();
+				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
 			});
 			this.canSave = ko.computed(() => {
 				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
@@ -196,9 +191,27 @@ define([
 			});
 			this.isLoadingSql = ko.observable(false);
 
+			this.exportService = IRAnalysisService.exportAnalysis;
+			this.importService = IRAnalysisService.importAnalysis;
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.INCIDENCE_RATE,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
+			});
+
 			// startup actions
 			this.init();
 		}
+
+		isPermittedImport() {
+			return authAPI.isPermitted(`ir:design:post`);
+		}
+
+		isPermittedExport(id) {
+			return authAPI.isPermitted(`ir:${id}:design:get`);
+		}
+
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {
@@ -246,6 +259,9 @@ define([
 							}
 						}
 					}
+
+					const statuses = data.map(item => item.executionInfo.status)
+					this.isRunning(statuses.some(status => constants.isInProgress(status)));
 				}
 			} catch(e) {
 				this.close();
@@ -295,16 +311,34 @@ define([
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.loading(false);
-				this.pollForInfo();
-				this.pollTimeout = PollService.add(() => this.pollForInfo({ silently: true }), 10000);
+				this.startPolling();
 			});
 		}
 
+		selectTab(tab) {
+			commonUtils.routeTo(`${this.constants.apiPaths.analysis(this.selectedAnalysisId())}/${tab}`);
+		}
+
 		onRouterParamsChanged(params = {}) {
-			const { analysisId } = params;
+			const { analysisId, activeTab } = params;
+			if (activeTab) {
+				if (Object.values(this.constants.tabs).includes(activeTab)) {
+					this.activeTab(activeTab);
+				}
+			}
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id() && !this.pollId) {
+				this.startPolling();
 			}
+		}
+
+		startPolling() {
+			this.pollId = PollService.add({
+				callback: silently => this.pollForInfo({ silently }),
+				interval: 10000,
+				isSilentAfterFirstCall: true,
+			});
 		}
 
 		handleConceptSetImport(item) {
@@ -318,7 +352,7 @@ define([
 			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab('conceptsets');
+				this.activeTab(this.tabs.CONCEPT_SETS);
 			}
 			this.criteriaContext(null);
 		}
@@ -328,8 +362,9 @@ define([
 			this.loading(true);
 			const analysis = await IRAnalysisService.copyAnalysis(this.selectedAnalysisId());
 			this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-			this.selectedAnalysisId(analysis.id)
+			this.selectedAnalysisId(analysis.id);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.clearResults();
 			this.isCopying(false);
 			this.loading(false);
 			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
@@ -349,20 +384,32 @@ define([
 			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
 				return;
 			}
-			this.close()
+			this.close();
 			commonUtils.routeTo(constants.apiPaths.analysis());
 		}
 
-		save() {
+		async save() {
 			this.isSaving(true);
 			this.loading(true);
-			IRAnalysisService.saveAnalysis(this.selectedAnalysis()).then((analysis) => {
-				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
-				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-				commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));
+
+			// Next check to see that an incidence rate with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
+			try{
+				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
+				if (results > 0) {
+					alert('An incidence rate with this name already exists. Please choose a different name.');
+				} else {
+					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
+					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
+					this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to save an incidence rate.');
+			} finally {
 				this.isSaving(false);
 				this.loading(false);
-			});
+			}
 		}
 
 		delete() {
@@ -427,12 +474,19 @@ define([
 				.cancelExecution(this.selectedAnalysisId(), sourceItem.source.sourceKey);
 		}
 
-		import() {
-			if (this.importJSON() && this.importJSON().length > 0) {
-				var updatedExpression = JSON.parse(this.importJSON());
-				this.selectedAnalysis().expression(new IRAnalysisExpression(updatedExpression));
-				this.importJSON("");
-				this.activeTab('definition');
+		async afterImportSuccess(res) {
+			this.isSaving(true);
+			this.loading(true);
+			try {
+				this.refreshDefs();
+				this.activeTab(this.tabs.DEFINITION);
+				this.close();
+				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
+			} catch (e) {
+				alert('An error occurred while attempting to import an incidence rate.');
+			} finally {
+				this.isSaving(false);
+				this.loading(false);
 			}
 		};
 
@@ -513,9 +567,9 @@ define([
 			}
 		}
 
-		async init() {
+		init() {
 			this.refreshDefs();
-			const sources = await sourceAPI.getSources();
+			const sources = sharedState.sources();
 			const sourceList = [];
 			sources.forEach(source => {
 				if (source.daimons.filter(function (daimon) {
@@ -538,7 +592,7 @@ define([
 		dispose() {
 			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
-			PollService.stop(this.pollTimeout);
+			PollService.stop(this.pollId);
 		}
 	}
 

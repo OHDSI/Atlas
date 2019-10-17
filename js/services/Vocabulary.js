@@ -20,16 +20,20 @@ define(function (require, exports) {
 	function getDomains() {
 		// if domains haven't yet been requested, create the promise
 		if (!domainsPromise) {
-			domainsPromise = new Promise((resolve, reject) => {
-				$.ajax({
-					url: sharedState.vocabularyUrl() + 'domains',
-				}).then(function (results) {
-					$.each(results, function (i, v) {
-						domains.push(v.DOMAIN_ID);
+			if (sharedState.vocabularyUrl()) {
+				domainsPromise = new Promise((resolve, reject) => {
+					$.ajax({
+						url: sharedState.vocabularyUrl() + 'domains',
+					}).then(function (results) {
+						$.each(results, function (i, v) {
+							domains.push(v.DOMAIN_ID);
+						});
+						resolve(domains);
 					});
-					resolve(domains);
 				});
-			});
+			} else {
+				return new Promise((resolve, reject) => resolve([]));
+			}
 		}
 		return domainsPromise;
 	}
@@ -44,13 +48,10 @@ define(function (require, exports) {
 		var searchResultIdentifiers = [];
 		var resultsIndex = [];
 		for (c = 0; c < results.length; c++) {
-			// optimization - only lookup standard concepts as non standard concepts will not have records
 			results[c].RECORD_COUNT = 0;
 			results[c].DESCENDANT_RECORD_COUNT = 0;
-			if (results[c].STANDARD_CONCEPT_CAPTION == 'Standard' || results[c].STANDARD_CONCEPT_CAPTION == 'Classification') {
-				searchResultIdentifiers.push(results[c].CONCEPT_ID);
-				resultsIndex.push(c);
-			}
+			searchResultIdentifiers.push(results[c].CONCEPT_ID);
+			resultsIndex.push(c);
 		}
 		return CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false);
 	}

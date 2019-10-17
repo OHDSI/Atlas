@@ -1,0 +1,14 @@
+<!-- ko with: Criteria -->
+a location area of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Location region'}"></conceptset-reference>
+<ul>
+<!-- ko if: ko.utils.unwrapObservable(StartDate) != null -->
+	<li>start is <date-range-viewer params="Range: StartDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(EndDate) != null -->
+	<li>end is <date-range-viewer params="Range: EndDate"></date-range-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+<!-- /ko -->
+</ul>
+<!-- /ko -->
