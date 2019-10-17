@@ -4,16 +4,23 @@
         <li role="presentation" data-bind="css: {active: parent.expressionMode() == 'export' }, click: function() {parent.expressionMode('export') };"><a>Export</a></li>
     </ul>
     <div role="tabpanel" data-bind="visible: parent.expressionMode() == 'import'" class="tab-pane">
-        <div class="paddedWrapper">
-            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: parent.importJSON"></textarea>
-            <div style="text-align: right">
-                <button class="btn btn-sm btn-primary" data-bind="click: parent.import">Import</button>
-            </div>
-        </div>
-    </div>                
+        <import params="{
+            entityId: parent.selectedAnalysisId,
+            routeToUrl: parent.constants.apiPaths.root,
+            isPermittedImport: parent.isPermittedImport,
+            importService: parent.importService,
+            afterImportSuccess: parent.afterImportSuccess
+        }"></import>
+    </div>
     <div role="tabpanel" data-bind="visible: parent.expressionMode() == 'export'" class="tab-pane">
         <div class="paddedWrapper">
-            <textarea class="code" style="width: 100%; height: 300px" data-bind="textInput: parent.expressionJSON"></textarea>
+            <export params="{
+                entityId: parent.selectedAnalysisId,
+                isPermittedExport: parent.isPermittedExport,
+                exportService: parent.exportService,
+                dirtyFlag: parent.dirtyFlag,
+                message: { entityName: 'analysis' }
+            }"></export>
         </div>
     </div>
 </div>

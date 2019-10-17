@@ -3,6 +3,8 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utilities/import',
+	'utilities/export',
 ], function (
 	view,
 	Component,

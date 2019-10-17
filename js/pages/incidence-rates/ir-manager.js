@@ -29,8 +29,6 @@ define([
 	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
-	'utilities/import',
-	'utilities/export',
 	'components/security/access/configure-access-modal',
 	'components/tabs',
 	'./tabs/ir-definition',
