@@ -1,5 +1,5 @@
 define([
-	'text!./netezza.html',
+	'text!./export-sql.html',
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -9,12 +9,13 @@ define([
 	AutoBind,
 	commonUtils,
 ) {
-	class IRexportnetezzaTab extends AutoBind(Component) {
+	class SQLExportTab extends AutoBind(Component) {
 		constructor(params) {
       super(params);
       this.parent = params.parent;
+	  this.dialect = params.dialect;
     }
 	}
 
-	return commonUtils.build('ir-export-netezza', IRexportnetezzaTab, view);
+	return commonUtils.build('export-sql', SQLExportTab, view);
 });

@@ -57,3 +57,22 @@
 .cohort-conceptset-button-pane .btn-success.disabled {
     color: #f3f3f3;
 }
+
+.export-btn {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.export-sql .tabs__header {
+    background: #fff;
+}
+
+.export-sql .tabs__header-title {
+    color: #ccc;
+    background-color: #888;
+}
+
+.export-sql .tabs__header-title--selected {
+    color: #fff;
+    background-color: #337ab7;
+}

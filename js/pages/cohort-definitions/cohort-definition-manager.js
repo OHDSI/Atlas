@@ -47,7 +47,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	'components/export/export-sql',
 ], function (
 	$,
 	ko,
@@ -236,16 +237,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
-			this.generatedSql = {};
-			this.generatedSql.mssql = ko.observable('');
-			this.generatedSql.oracle = ko.observable('');
-			this.generatedSql.postgresql = ko.observable('');
-			this.generatedSql.redshift = ko.observable('');
-			this.generatedSql.msaps = ko.observable('');
-			this.generatedSql.impala = ko.observable('');
-			this.generatedSql.netezza = ko.observable('');
-			this.generatedSql.bigquery = ko.observable('');
-			this.templateSql = ko.observable('');
 			this.cohortConst = cohortConst;
 			this.generationTabMode = ko.observable("inclusion");
 			this.inclusionTabMode = ko.observable("person");
@@ -677,6 +668,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				reportSourceKey: this.reportSourceKey,
 
 			}
+			this.translateParams = [];
+			globalConstants.dialects.forEach(d => {
+				let param = {};
+				param.title = d.title;
+				param.dialect = d;
+				param.translate = ko.observable('');
+				param.componentName = 'export-sql';
+				param.componentParams = {'parent': this, 'dialect': d};
+				this.translateParams.push(param);
+			});
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),
@@ -806,63 +807,25 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			showSql () {
 				this.isLoadingSql(true);
-
-				this.templateSql('');
-				this.generatedSql.mssql('');
-				this.generatedSql.oracle('');
-				this.generatedSql.postgresql('');
-				this.generatedSql.redshift('');
-				this.generatedSql.msaps('');
-				this.generatedSql.impala('');
-				this.generatedSql.netezza('');
-				this.generatedSql.bigquery('');
-
+	
 				var templateSqlPromise = this.service.getSql(ko.toJS(this.currentCohortDefinition().expression, pruneJSON));
-
+	
 				templateSqlPromise.then((result) => {
-					this.templateSql(result.templateSql);
-					var mssqlTranslatePromise = this.service.translateSql(result.templateSql, 'sql server');
-						mssqlTranslatePromise.then(({data}) => {
-							this.generatedSql.mssql(data.targetSQL);
-					});
-
-					var msapsTranslatePromise = this.service.translateSql(result.templateSql, 'pdw');
-						msapsTranslatePromise.then(({data}) => {
-							this.generatedSql.msaps(data.targetSQL);
-					});
-
-					var oracleTranslatePromise = this.service.translateSql(result.templateSql, 'oracle');
-						oracleTranslatePromise.then(({data}) => {
-							this.generatedSql.oracle(data.targetSQL);
-					});
-
-					var postgresTranslatePromise = this.service.translateSql(result.templateSql, 'postgresql');
-						postgresTranslatePromise.then(({data}) => {
-							this.generatedSql.postgresql(data.targetSQL);
-					});
-
-					var redshiftTranslatePromise = this.service.translateSql(result.templateSql, 'redshift');
-						redshiftTranslatePromise.then(({data}) => {
-							this.generatedSql.redshift(data.targetSQL);
-					});
-
-					var impalaTranslatePromise = this.service.translateSql(result.templateSql, 'impala');
-						impalaTranslatePromise.then(({data}) => {
-							this.generatedSql.impala(data.targetSQL);
-					});
-
-					var netezzaTranslatePromise = this.service.translateSql(result.templateSql, 'netezza');
-					netezzaTranslatePromise.then(({data})=> {
-							this.generatedSql.netezza(data.targetSQL);
-					});
-
-					const bigqueryTranslatePromise = this.service.translateSql(result.templateSql, 'bigquery');
-					bigqueryTranslatePromise.then(({data}) => this.generatedSql.bigquery(data.targetSQL));
-
-					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
-							this.isLoadingSql(false);
+					const sql = result.templateSql;
+					this.translateParams.filter(p => p.dialect.template).forEach(p => p.translate(sql));
+	
+					const promises = this.translateParams.filter(p => !p.dialect.template).map(p => {
+						return this.service.translateSql(sql, p.dialect.value).then(({data}) => p.translate(data.targetSQL));
+					  })
+	
+					Promise.all(promises).then(() => {
+						this.isLoadingSql(false);
 					});
 				});
+			}
+
+			getGeneratedSql(dialect) {
+				return this.translateParams.find(p => p.dialect === dialect).translate();
 			}
 
 			getSourceKeyInfo (sourceKey) {
@@ -1555,8 +1518,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyCohortExpressionJSONMessage');
 			}
 
-			copyCohortSQLToClipboard () {
-				this.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');
+			copySQLToClipboard () {
+				this.copyToClipboard('#btnCopySQLClipboard', '#copyCopySQLMessage');
 			}
 
 			getExpressionJson() {

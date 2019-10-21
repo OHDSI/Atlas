@@ -130,6 +130,46 @@ define([
 			PROFILE_WIDGET: 'atlas-profile-widget',
 		};
 
+		const dialects = [
+			{
+				title: 'Template OHDSI.SQL',
+				value: 'templateSql',
+				template: true,
+			},
+			{
+				title: 'MSSQL Server',
+				value: 'sql server',
+			},
+			{
+				title: 'MS APS',
+				value: 'pdw',
+			},
+			{
+				title: 'Oracle',
+				value: 'oracle',
+			},
+			{
+				title: 'PostgreSQL',
+				value: 'postgresql',
+			},
+			{
+				title: 'Amazon Red Shift',
+				value: 'redshift',
+			},
+			{
+				title: 'Impala',
+				value: 'impala',
+			},
+			{
+				title: 'Netezza',
+				value: 'netezza',
+			},
+			{
+				title: 'BigQuery',
+				value: 'bigquery',
+			},
+		];
+
 		return {
 			minChartHeight,
 			treemapGradient,
@@ -142,6 +182,7 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
+			dialects
     };
   }
 );

@@ -151,19 +151,15 @@ define(function (require, exports) {
 	}
 
 	function getSql(expression, analysisId, options) {
-		var getSqlPromise = $.ajax({
-			url: config.webAPIRoot + 'ir/sql',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				expression: expression,
-				analysisId: analysisId,
-				options: options
-			}),
-			error: function (error) {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			}
+		const data = {
+			expression: expression,
+			analysisId: analysisId,
+			options: options,
+		  };
+		const getSqlPromise = httpService.doPost(config.webAPIRoot + 'ir/sql', data);
+		getSqlPromise.catch((error) => {
+			console.log("Error: " + error);
+			authApi.handleAccessDenied(error);
 		});
 		return getSqlPromise;
 	}

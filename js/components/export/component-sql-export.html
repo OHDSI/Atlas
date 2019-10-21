@@ -1,0 +1,13 @@
+<div data-bind="tab-pane" class="component-sql-export">
+  <div class="export-btn">
+    <span id="copyCopySQLMessage" style="display:none" class="alert alert-success" role="alert"><i
+        class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong>
+    </span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary" itle="Copy to clipboard" id="btnCopySQLClipboard"
+      data-bind="click: parent.copySQLToClipboard" data-clipboard-target="#sqlTranslate">
+      <i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
+  </div>
+  <div id='sqlTranslate'>
+    <tabs params="tabs: parent.translateParams" />
+    </tabs>
+  </div>
+</div>

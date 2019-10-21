@@ -1,0 +1,22 @@
+.component-sql-export {
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+.component-sql-export .export-btn {
+    margin-bottom: 1rem;
+}
+
+.component-sql-export .tabs__header {
+    background: #fff;
+}
+
+.component-sql-export .tabs__header-title {
+    color: #ccc;
+    background-color: #888;
+}
+
+.component-sql-export .tabs__header-title--selected {
+    color: #fff;
+    background-color: #337ab7;
+}
