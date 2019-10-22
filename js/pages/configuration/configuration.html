@@ -115,6 +115,9 @@
 					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
 						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">Import Users from LDAP/AD</a>
 					</div>
+					<div class="configuration__padded" data-bind="if: $component.canClearServerCache()">
+						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearServerCache">Clear Server Cache</a>
+					</div>
 				</div>
 			</div>
 		</div>

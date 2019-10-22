@@ -11,6 +11,7 @@ define([
   'const',
   'services/JobDetailsService',
   'services/Poll',
+  'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -25,7 +26,8 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService
+  PollService,
+  cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -129,6 +131,20 @@ define([
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
+
+		clearServerCache() {
+      cacheApi.clearCache().then(() => {
+        alert("Server cache has been cleared.");
+      });
+    };
+    
+    canClearServerCache() {
+      if (!config.userAuthenticationEnabled) {
+        return false;
+      } else {
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache());
+      }
+    }
 
 		newSource() {
       commonUtils.routeTo('/source/0');
