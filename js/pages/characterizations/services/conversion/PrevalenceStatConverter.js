@@ -1,11 +1,13 @@
 define([
     './BaseStatConverter',
 	'./PrevalenceStat',
-	'../../utils'
+	'../../utils',
+	'utils/CommonUtils'
 ], function (
     BaseStatConverter,
 	PrevalenceStat,
-	utils
+	utils,
+	commonUtils
 ) {
 
     class PrevalenceStatConverter extends BaseStatConverter {
@@ -39,7 +41,7 @@ define([
                         if (r.conceptId === null || r.conceptId === undefined) {
                             return 'N/A';
                         } else {
-                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace(/'/g, "\\'").replace(/"/g, '&quot;') : null}'">${r.conceptId}</a>`
+                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? commonUtils.escapeTooltip(r.conceptName) : null}'">${r.conceptId}</a>`
                         }
                     }
                 }
