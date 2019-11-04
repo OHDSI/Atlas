@@ -484,6 +484,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 										source.personCount(commaFormatted(info.personCount));
 										source.recordCount(commaFormatted(info.recordCount));
 										source.failMessage(info.failMessage);
+										sharedState.newJobState(true);
 									}
 								}
 							}

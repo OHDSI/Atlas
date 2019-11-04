@@ -40,6 +40,12 @@ define([
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
 			this.permissionCheckWarningShown = false;
+			this.updateJobs = ko.computed(() => {
+				if (state.newJobState()) {
+					state.newJobState(false);
+					this.updateJobStatus();
+				}
+			});
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {

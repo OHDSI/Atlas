@@ -126,6 +126,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
+	state.newJobState = ko.observable();
 
 
 	return state;
