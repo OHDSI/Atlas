@@ -59,17 +59,19 @@ define([
     sharedState
 ) {
 
+	const TYPE_PREVALENCE = 'prevalence';
+
     class CharacterizationViewEditResults extends AutoBind(Component) {
 
         constructor(params) {
             super();
 
-            this.model = params.model;
 
             this.prevalenceStatConverter = new PrevalenceStatConverter(this.classes);
             this.distributionStatConverter = new DistributionStatConverter(this.classes);
             this.comparativeDistributionStatConverter = new ComparativeDistributionStatConverter(this.classes);
-
+            this.currentConceptSet = sharedState.ConceptSet.current;
+            this.currentConceptSetSource = sharedState.ConceptSet.source;
             this.loading = ko.observable(false);
             this.characterizationId = params.characterizationId;
 
@@ -92,6 +94,10 @@ define([
             this.explorePrevalence = ko.observable();
             this.explorePrevalenceTitle = ko.observable();
             this.prevalenceStatData = ko.observableArray();
+            this.thresholdValuePct = ko.observable();
+            this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$', allowEmpty: false } });
+            this.totalResultsCount = ko.observable();
+            this.resultsCountFiltered = ko.observable();
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
@@ -137,6 +143,14 @@ define([
             return momentAPI.formatDateTimeUTC(date);
         }
 
+        updateThreshold() {
+            this.loadData();
+        }
+
+        resultCountText() {
+            return `Viewing most prevalent ${this.resultsCountFiltered()} of total ${this.totalResultsCount()} records`;
+        }
+
         showExecutionDesign() {
           this.executionDesign(null);
           this.isExecutionDesignShown(true);
@@ -173,7 +187,7 @@ define([
                                 'Covariate short name': pageUtils.extractMeaningfulCovName(stat.covariateName),
                                 'Count': stat.count[strataId][cohort.cohortId],
                                 ...(
-                                    type === 'prevalence'
+                                    type === TYPE_PREVALENCE
                                     ? { 'Percent': stat.pct[strataId][cohort.cohortId] }
                                     : {
                                         'Avg': stat.avg[strataId][cohort.cohortId],
@@ -219,15 +233,15 @@ define([
         }
 
         async initConceptSet(conceptSetItems) {
-            this.model.currentConceptSet({
-                name: ko.observable("New Concept Set"),
-                id: 0
+            this.currentConceptSet({
+                name: ko.observable('New Concept Set'),
+                id: 0,
             });
-            this.model.currentConceptSetSource('repository');
+            this.currentConceptSetSource('repository');
             for (let i = 0; i < conceptSetItems.length; i++) {
                 if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
                     sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-                    let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
+                    let conceptSetItem = commonUtils.createConceptSetItem(conceptSetItems[i]);
                     sharedState.selectedConcepts.push(conceptSetItem);
                 }
             }
@@ -268,18 +282,25 @@ define([
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
                 CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
-                CharacterizationService.loadCharacterizationResults(this.executionId())
+                CharacterizationService.loadCharacterizationResults(this.executionId(), this.newThresholdValuePct() / 100)
             ]).then(([
                  sourceList,
                  domains,
                  design,
                  execution,
-                 resultsList
+                 generationResults
             ]) => {
+
+                const resultsList = generationResults.results;
 
                 this.design(design);
 
                 this.domains(domains);
+
+                this.totalResultsCount(generationResults.totalCount);
+                this.thresholdValuePct(generationResults.prevalenceThreshold * 100);
+                this.newThresholdValuePct(this.thresholdValuePct());
+                this.resultsCountFiltered(resultsList.length);
 
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
 
@@ -293,7 +314,7 @@ define([
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
                             domainId: design.featureAnalyses ? design.featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
-                            analysisName: r.analysisName,
+                            analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             type: r.resultType.toLowerCase(),
                         })),
                         'analysisId'
@@ -345,6 +366,11 @@ define([
                 this.data(result);
                 this.loading(false);
             });
+        }
+
+        getAnalysisName(rawName, { faType, statType }) {
+
+            return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.thresholdValuePct()}%)` : '');
         }
 
         findDomainById(domainId) {
@@ -403,13 +429,13 @@ define([
         }
 
         getPrevalenceReports(reports) {
-            return reports.filter(analysis => analysis.type === 'prevalence');
+            return reports.filter(analysis => analysis.type === TYPE_PREVALENCE);
         }
 
         getCovariatesSummaryAnalysis(analyses) {
             if (analyses.length > 1 && analyses[0].reports.length === 2) {
 
-                const prevalenceAnalyses = analyses.filter(a => a.type === "prevalence");
+                const prevalenceAnalyses = analyses.filter(a => a.type === TYPE_PREVALENCE);
                 if (prevalenceAnalyses.length > 0) {
                   const getAllCohortStats = (cohortId) => {
                     return lodash.flatten(prevalenceAnalyses.map(a => {
@@ -426,7 +452,7 @@ define([
 
                   return {
                     analysisName: 'All prevalence covariates',
-                    type: 'prevalence',
+                    type: TYPE_PREVALENCE,
                     reports: [
                       {...firstCohort, stats: getAllCohortStats(firstCohort.cohortId)},
                       {...secondCohort, stats: getAllCohortStats(secondCohort.cohortId)}
@@ -447,7 +473,7 @@ define([
             const convertedData = filteredData.map(analysis => {
                 let convertedAnalysis;
 
-                if (analysis.type === 'prevalence') {
+                if (analysis.type === TYPE_PREVALENCE) {
                     convertedAnalysis = this.prevalenceStatConverter.convertAnalysisToTabularData(analysis);
                 } else {
                     if (this.isComparatativeMode(filters)) {

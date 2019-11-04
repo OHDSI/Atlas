@@ -332,7 +332,7 @@ define([
 					console.error(er);
 				})
 				.finally(() => {
-					this.context.model.loadingReportDrilldown(false);
+					this.context.loadingReportDrilldown(false);
 					this.scrollTo("#datasourceReportDrilldownTitle");
 				});
 		}

@@ -55,9 +55,10 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationResults(generationId) {
+    function loadCharacterizationResults(generationId, thresholdLevel) {
         return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result')
+            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result'
+                + (thresholdLevel ? ('?thresholdLevel=' + thresholdLevel) : ''))
             .then(res => res.data);
     }
 

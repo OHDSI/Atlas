@@ -76,6 +76,13 @@ define([
 			// initialise the dataTable with those options.
 			if (binding.options) {
 
+				// Set default placeholder for datatables search input
+				const defaultPlaceholder = { searchPlaceholder: 'Search...' };
+				const language = binding.options.language
+					? { ...defaultPlaceholder, ...binding.options.language  }
+					: defaultPlaceholder;
+				binding.options.language = language;
+
 				// allow row level binding context
 				const createdRow = binding.options.createdRow;
 				binding.options.createdRow = (row, data, index) => {

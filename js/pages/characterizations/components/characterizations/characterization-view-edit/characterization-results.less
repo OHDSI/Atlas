@@ -1,5 +1,10 @@
 .characterization-view-edit-results {
 
+  &__header {
+    align-items: center;
+    display: flex;
+  }
+
   &__title {
     align-items: center;
     display: flex;
@@ -44,6 +49,39 @@
     a&-value {
       cursor: pointer;
     }
+  }
+
+  &__threshold {
+    margin-left: auto;
+  }
+
+  &__threshold-setter {
+    align-items: center;
+    display: flex;
+  }
+
+  &__threshold-label {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+    white-space: nowrap;
+  }
+
+  &__threshold-input {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+    width: 7rem;
+  }
+
+  &__threshold-submit {
+    margin-left: 0.75rem;
+  }
+
+  &__threshold-result-descr {
+    font-size: 1.1rem;
+    float: right;
+    margin-top: 0.75rem;
   }
 
   &__display-options-list {

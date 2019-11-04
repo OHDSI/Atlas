@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'text!./cohort-definition-browser.html',
 	'appConfig',
+	'atlas-state',
 	'services/AuthAPI',
 	'services/MomentAPI',
 	'components/Component',
@@ -13,6 +14,7 @@ define([
 	ko,
 	view,
 	config,
+	sharedState,
 	authApi,
 	momentApi,
 	Component,
@@ -27,22 +29,15 @@ define([
 			this.selected = params.cohortDefinitionSelected;
 			this.loading = ko.observable(false);
 			this.config = config;
+			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
 
 			this.loading(true);
 
 			httpService.doGet(`${config.api.url}cohortdefinition`)
 				.then(({ data }) => {
-					let defList = data.map(d => {
-						return {
-							...d,
-							...{
-								createdTimestamp: d.createdDate && new Date(d.createdDate).getTime(),
-								modifiedTimestamp: d.modifiedDate && new Date(d.modifiedDate || d.createdDate).getTime()
-							}
-						};
-					});
-					datatableUtils.coalesceField(defList, 'modifiedTimestamp', 'createdTimestamp');
-					this.reference(defList);
+					datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
+					this.reference(data);
 				})
 				.finally(() => { this.loading(false) });
 
@@ -88,12 +83,12 @@ define([
 				{
 					title: 'Created',
 					className: 'date-column',
-					render: datatableUtils.getDateFieldFormatter('createdTimestamp'),
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Updated',
 					className: 'date-column',
-					render: datatableUtils.getDateFieldFormatter('modifiedTimestamp'),
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
@@ -106,7 +101,18 @@ define([
 		}
 
 		rowClick(data) {
-			this.selected(data);
+			this.action(() => this.selected(data));
+		}
+
+		action(callback) {
+			const isConceptSetDirty = this.currentConceptSet() && this.currentConceptSetDirtyFlag().isDirty();
+			if (isConceptSetDirty) {
+				if (confirm('Concept set changes are not saved. Would you like to continue?')) {
+					callback();
+				}
+			} else {
+				callback();
+			}
 		}
 	}
 

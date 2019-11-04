@@ -2,9 +2,8 @@ define(
 	(require, factory) => {
     const atlasState = require('atlas-state');
     const { AuthorizedRoute } = require('pages/Route');
-    function routes(appModel, router) {
+    function routes(router) {
       const JobViewEdit = new AuthorizedRoute((id, section) => {
-				appModel.activePage(this.title);
 				require(['./users-import/job-view-edit'], function () {
 					router.setCurrentView('import-job-view-edit', {
 						jobId: id,
@@ -14,28 +13,22 @@ define(
 			});
       return {
         '/configure': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require(['./configuration', './sources/source-manager'], function () {
             router.setCurrentView('ohdsi-configuration');
           });
         }),
         '/roles': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require(['./roles/roles'], function () {
             router.setCurrentView('roles');
           });
         }),
         '/role/:id': new AuthorizedRoute((id) => {
-          appModel.activePage(this.title);
           require(['./roles/role-details'], function () {
-            appModel.currentRoleId(id);
-            router.setCurrentView('role-details', {
-              roleId: id,
-            });
+            const roleId = parseInt(id);
+            router.setCurrentView('role-details', { roleId });
           });
         }),
         'import' : new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require(['./users-import/browser'], function () {
             router.setCurrentView('user-import-browser');
 					});
@@ -43,19 +36,17 @@ define(
         'import/job/:id:' : JobViewEdit,
         'import/job/:id:/:section:': JobViewEdit,
         'import/wizard': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require(['./users-import/users-import'], function() {
             router.setCurrentView('users-import');
           });
         }),
         'import/roles': new AuthorizedRoute(() => {
-          appModel.activePage(this.title);
           require(['./roles/role-import'], function() {
             router.setCurrentView('role-import');
           });
         }),
-        '/source/:id': new AuthorizedRoute((sourceId) => {
-          appModel.activePage(this.title);
+        '/source/:id': new AuthorizedRoute((id) => {
+          const sourceId = parseInt(id);
           require(['./sources/source-manager'], function () {
             atlasState.ConfigurationSource.selectedId(sourceId);
             router.setCurrentView('source-manager', { sourceId });

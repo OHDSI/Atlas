@@ -25,7 +25,7 @@ define([
 			this.tableData = ko.observable();
 			this.currentConcept = ko.observable();
 			this.currentConceptSubscription = this.currentConcept.subscribe(c => {
-				c && this.context.model.loadingReportDrilldown(true);
+				c && this.context.loadingReportDrilldown(true);
 			});
 
 			this.byFrequency = false;
@@ -152,7 +152,7 @@ define([
 						});
 					}
 				});
-				this.tableData(tableData); 
+				this.tableData(tableData);
 				this.treeData(normalizedData);
 
 				return {
