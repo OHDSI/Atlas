@@ -72,12 +72,12 @@ define([
 					{
 						title: 'Last executed',
 						className: this.classes('tbl-col', 'last-executed'),
-						render: datatableUtils.getDateFieldFormatter('lastExecuted', '-'),
+						render: datatableUtils.getDateFieldFormatter('lastExecuted'),
 					},
 					{
 						title: 'Next execution',
 						className: this.classes('tbl0col', 'next-execution'),
-						render: datatableUtils.getDateFieldFormatter('nextExecution', '-'),
+						render: datatableUtils.getDateFieldFormatter('nextExecution'),
 					},
 				];
 				this.gridOptions = {
