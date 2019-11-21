@@ -6,7 +6,7 @@
 
 ## Resources
 
-* [Atlas (ohdsi.org)](http://www.ohdsi.org/web/atlas) **Please note: Google Chrome is the recommended browser for ATLAS.**
+* [Atlas (ohdsi.org)](http://atlas-demo.ohdsi.org/) **Please note: Google Chrome is the recommended browser for ATLAS.**
 * [Documentation](https://github.com/OHDSI/Atlas/wiki)
 * [Releases](https://github.com/OHDSI/Atlas/releases "Atlas releases")
 
