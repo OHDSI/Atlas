@@ -533,7 +533,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.reportingAvailableReports = ko.observableArray();
 
 			this.pollId = null;
-
+			this.shouldUpdateJobs = ko.computed(() => {
+				if (this.generateReportsEnabled() == true) {
+					jobDetailsService.setJobListMutated();
+				}
+			});
 
 			this.reportingState = ko.computed(() => {
 				// require a data source selection
