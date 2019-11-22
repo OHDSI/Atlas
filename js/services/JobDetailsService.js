@@ -27,6 +27,10 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 			}
 		}
 	}
+	
+	function setJobListMutated() {
+		sharedState.jobListing.valueHasMutated();
+	}
 
 	function getJobURL(n) {
 		switch (n.jobInstance.name) {
@@ -89,6 +93,7 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		list: list,
 		getJobURL: getJobURL,
 		setLastViewedTime: setLastViewedTime,
-		getLastViewedTime: getLastViewedTime
+		getLastViewedTime: getLastViewedTime,
+		setJobListMutated: setJobListMutated,
 	}
 });

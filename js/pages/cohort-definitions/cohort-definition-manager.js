@@ -465,6 +465,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							if (source) {
 								// only bother updating those sources that we know are running
 									if (this.isSourceRunning(source)) {
+										if(source.status() !== info.status) {
+											jobDetailsService.setJobListMutated();
+										}
 									source.status(info.status);
 									source.includeFeatures(info.includeFeatures);
 									source.isValid(info.isValid);
@@ -484,7 +487,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 										source.personCount(commaFormatted(info.personCount));
 										source.recordCount(commaFormatted(info.recordCount));
 										source.failMessage(info.failMessage);
-										sharedState.newJobState(true);
 									}
 								}
 							}

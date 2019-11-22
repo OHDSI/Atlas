@@ -194,6 +194,7 @@ define([
 				console.error(e);
 			} finally {
 				this.loading(false);
+				jobDetailsService.setJobListMutated();
 			}
 		}
 

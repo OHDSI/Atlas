@@ -40,12 +40,7 @@ define([
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
 			this.permissionCheckWarningShown = false;
-			this.updateJobs = ko.computed(() => {
-				if (state.newJobState()) {
-					state.newJobState(false);
-					this.updateJobStatus();
-				}
-			});
+			this.jobListing.subscribe(() => this.updateJobStatus());
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {
@@ -55,7 +50,7 @@ define([
 						this.jobListing().forEach(j => {
 							j.viewed(true);
 						});
-						this.jobListing.valueHasMutated();
+						jobDetailsService.setJobListMutated();
 					} else {
 						this.lastViewedTime = Date.now()
 					}
@@ -134,7 +129,7 @@ define([
 								job.duration(duration);
 								job.endDate(displayedEndDate);
 								job.url = jobDetailsService.getJobURL(n);
-								this.jobListing.valueHasMutated();
+								jobDetailsService.setJobListMutated();
 							}
 						} else {
 							job = {
@@ -151,7 +146,7 @@ define([
 								endDate: displayedEndDate,
 							};
 							this.jobListing.push(job);
-							this.jobListing.valueHasMutated();
+							jobDetailsService.setJobListMutated();
 						}
 					});
 				} catch (e) {

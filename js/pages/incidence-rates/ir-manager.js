@@ -243,6 +243,7 @@ define([
 				this.close();
 			} finally {
 				this.loadingInfo(false);
+				jobDetailsService.setJobListMutated();
 			}
 
 			await Promise.all(promises);
