@@ -70,7 +70,10 @@ define([
         }
       });
 
-		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canClearServerCache = ko.pureComputed(() => {
+        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache();
+      });
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
@@ -133,16 +136,12 @@ define([
 		};
 
 		clearServerCache() {
-      if (confirm('Are you sure you want to clear server cache?')) {
+      if (confirm('Are you sure you want to clear the server cache?')) {
         cacheApi.clearCache().then(() => {
           alert("Server cache has been cleared.");
         });
       }
     };
-    
-    canClearServerCache() {
-      return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache());
-    }
 
 		newSource() {
       commonUtils.routeTo('/source/0');
