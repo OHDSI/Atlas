@@ -133,17 +133,15 @@ define([
 		};
 
 		clearServerCache() {
-      cacheApi.clearCache().then(() => {
-        alert("Server cache has been cleared.");
-      });
+      if (confirm('Are you sure you want to clear server cache?')) {
+        cacheApi.clearCache().then(() => {
+          alert("Server cache has been cleared.");
+        });
+      }
     };
     
     canClearServerCache() {
-      if (!config.userAuthenticationEnabled) {
-        return false;
-      } else {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache());
-      }
+      return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache());
     }
 
 		newSource() {
