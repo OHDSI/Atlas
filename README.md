@@ -6,13 +6,13 @@
 
 ## Resources
 
-* [Atlas (ohdsi.org)](http://www.ohdsi.org/web/atlas) **Please note: Google Chrome is the recommended browser for ATLAS.**
-* [Documentation](http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas)
+* [Atlas (ohdsi.org)](http://atlas-demo.ohdsi.org/) **Please note: Google Chrome is the recommended browser for ATLAS.**
+* [Documentation](https://github.com/OHDSI/Atlas/wiki)
 * [Releases](https://github.com/OHDSI/Atlas/releases "Atlas releases")
 
 ## Technology
 
-ATLAS is built using HTML, CSS and [Knockout JavaScript](http://knockoutjs.com/ "Knockout JavaScript"). For more information on using Atlas, please refer to the [setup guide](http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas:setup "setup guide").
+ATLAS is built using HTML, CSS and [Knockout JavaScript](http://knockoutjs.com/ "Knockout JavaScript"). For more information on using Atlas, please refer to the [setup guide](https://github.com/OHDSI/Atlas/wiki/Atlas-Setup-Guide "setup guide").
 
 ## Dependencies
 - [WebAPI](https://github.com/OHDSI/WebAPI "WebAPI")

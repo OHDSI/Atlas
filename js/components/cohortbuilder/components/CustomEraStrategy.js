@@ -8,7 +8,15 @@ define(['knockout', 'text!./CustomEraStrategyTemplate.html', '../options'], func
 			return ko.utils.unwrapObservable(params.strategy).CustomEra;
 		});
 		
-		self.conceptSets = params.conceptSets
+		self.addDaysSupplyOverride = function() {
+			self.strategy().DaysSupplyOverride(1);
+		}
+		
+		self.removeDaysSupplyOverride = function() {
+			self.strategy().DaysSupplyOverride(null);
+		}
+		
+		self.conceptSets = params.conceptSets;
 	}
 
 	// return compoonent definition
