@@ -177,7 +177,7 @@ define(['knockout',
 					this.loading(false);
 					userService.getUsers().then(data => sharedState.users(data));
 					this.stopPolling();
-                    this.stepMessage('User import from directory has finished...');
+					this.stepMessage('User import from directory has finished...');
 				}
 			}
 
@@ -192,7 +192,7 @@ define(['knockout',
 							login: u.login, roles: u.roles(),
 					}));
 				userService.importUsers(users, this.importProvider()).then(job => {
-                    this.startPolling(job.id);
+					this.startPolling(job.id);
 				});
 				return true;
 			}
