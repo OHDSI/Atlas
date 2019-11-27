@@ -175,7 +175,7 @@ define(['knockout',
 				const data = await jobService.getJob(jobId);
 				if (data.closed) {
 					this.loading(false);
-                    userService.getUsers().then(data => sharedState.users(data));
+					userService.getUsers().then(data => sharedState.users(data));
 					this.stopPolling();
                     this.stepMessage('User import from directory has finished...');
 				}
