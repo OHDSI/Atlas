@@ -10,6 +10,7 @@ define(['knockout',
 		'utils/Renderers',
 		'./const',
 		'./services/JobService',
+		'services/Poll',
 		'./components/step-header',
 		'./components/ldap-groups',
 		'./components/atlas-roles',
@@ -20,11 +21,11 @@ define(['knockout',
 		'components/heading'
 	],
 	function (
-		ko, 
-		view, 
+		ko,
+		view,
 		config,
 		sharedState,
-		authApi, 
+		authApi,
 		userService,
 		AutoBind,
 		Component,
@@ -32,6 +33,7 @@ define(['knockout',
 		renderers,
 		Const,
 		jobService,
+		PollService,
 	) {
 
 		class UsersImport extends AutoBind(Component) {
@@ -62,6 +64,7 @@ define(['knockout',
 				this.wizardStep = ko.observable();
 				this.hasPrevious = ko.computed(() => !!this.getStep('prev'));
 				this.hasNext = ko.computed(() => !!this.getStep());
+				this.stepMessage = ko.observable('User import from directory has started...');
 				this.isLastStep = () => this.getStep() === Const.WIZARD_STEPS.FINISH;
 				this.getNextClasses = () => ['btn', 'btn-sm', this.isLastStep() ? 'btn-success' : 'btn-primary'];
 				this.nextTitle = ko.computed(() => this.isLastStep() ? 'Start import' : 'Next' );
@@ -105,6 +108,7 @@ define(['knockout',
 
 				this.isSearchGroupDialog = ko.observable();
 				this.isAtlasRolesDialog = ko.observable();
+				this.pollId = null;
 
 				this.init();
 			}
@@ -154,6 +158,29 @@ define(['knockout',
 				this.showConnectionDetails(!this.showConnectionDetails());
 			}
 
+			startPolling(jobId) {
+				this.pollId = PollService.add({
+					callback: () => this.updateJobStatus(jobId),
+					interval: config.pollInterval,
+				});
+			};	
+
+			stopPolling() {
+				if (this.pollId != null) {
+					PollService.stop(this.pollId);
+				}
+			};
+
+			async updateJobStatus(jobId) {
+				const data = await jobService.getJob(jobId);
+				if (data.closed) {
+					this.loading(false);
+					userService.getUsers().then(data => this.model.users(data));
+					this.stopPolling();
+					this.stepMessage('User import from directory has finished...');
+				}
+			}
+
 			startImport() {
 				if (!this.isImportEnabled()) {
 					return false;
@@ -164,9 +191,8 @@ define(['knockout',
 					.map(u => ({
 							login: u.login, roles: u.roles(),
 					}));
-				userService.importUsers(users, this.importProvider()).finally(() => {
-						this.loading(false);
-						userService.getUsers().then(data => this.model.users(data));
+				userService.importUsers(users, this.importProvider()).then(job => {
+					this.startPolling(job.id);
 				});
 				return true;
 			}
