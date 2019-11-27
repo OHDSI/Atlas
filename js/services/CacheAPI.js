@@ -2,20 +2,18 @@ define(function(require, exports) {
 
 	const config = require('appConfig');
 	const authApi = require('services/AuthAPI');
-    const httpService = require('services/http');
+	const httpService = require('services/http');
 
-    function clearCache() {
-        return httpService.doGet(config.webAPIRoot + 'cache/clear')
-            .then(res => res.data)
+	function clearCache() {
+		return httpService.doGet(config.webAPIRoot + 'cache/clear')
+			.then(res => res.data)
 			.catch((error) => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			});
 	}
 
-    var api = {
+	return {
 		clearCache,
 	};
-
-	return api;
 });

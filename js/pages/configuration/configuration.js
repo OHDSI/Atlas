@@ -72,7 +72,7 @@ define([
 
       this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
       this.canClearServerCache = ko.pureComputed(() => {
-        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache();
+        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
       });
 
       this.intervalId = PollService.add({
