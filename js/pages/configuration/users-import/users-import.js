@@ -64,6 +64,7 @@ define(['knockout',
 				this.wizardStep = ko.observable();
 				this.hasPrevious = ko.computed(() => !!this.getStep('prev'));
 				this.hasNext = ko.computed(() => !!this.getStep());
+				this.stepMessage = ko.observable('User import from directory has started...');
 				this.isLastStep = () => this.getStep() === Const.WIZARD_STEPS.FINISH;
 				this.getNextClasses = () => ['btn', 'btn-sm', this.isLastStep() ? 'btn-success' : 'btn-primary'];
 				this.nextTitle = ko.computed(() => this.isLastStep() ? 'Start import' : 'Next' );
@@ -176,6 +177,7 @@ define(['knockout',
 					this.loading(false);
 					userService.getUsers().then(data => this.model.users(data));
 					this.stopPolling();
+                    this.stepMessage('User import from directory has finished...');
 				}
 			}
 
