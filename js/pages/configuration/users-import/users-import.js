@@ -174,7 +174,7 @@ define(['knockout',
 				const data = await jobService.getJob(jobId);
 				if (data.closed) {
 					this.loading(false);
-                    userService.getUsers().then(data => this.model.users(data));
+					userService.getUsers().then(data => this.model.users(data));
 					this.stopPolling();
 				}
 			}
