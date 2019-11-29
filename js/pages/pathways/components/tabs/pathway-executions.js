@@ -14,7 +14,7 @@ define([
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
-	'services/MomentApi',
+	'services/MomentAPI',
 	'services/Poll',
 	'less!./pathway-executions.less',
 	'components/modal-exit-message',

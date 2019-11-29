@@ -11,7 +11,7 @@ define([
 	'services/Source',
 	'services/Poll',
 	'services/file',
-	'services/MomentApi',
+	'services/MomentAPI',
 	'utils/ExecutionUtils',
 	'../const',
 	'lodash',

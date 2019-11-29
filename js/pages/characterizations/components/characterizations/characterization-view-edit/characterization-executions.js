@@ -16,7 +16,7 @@ define([
 	'lodash',
 	'services/JobDetailsService',
 	'services/Poll',
-	'services/MomentApi',
+	'services/MomentAPI',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding',
