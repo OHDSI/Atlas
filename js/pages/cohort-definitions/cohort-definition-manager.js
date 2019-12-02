@@ -905,7 +905,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			fixConceptSet(warning) {
-				if (warning.type === 'ConceptSetWarning' && warning.conceptSetId) {
+				if (warning.type === 'ConceptSetWarning' && warning.conceptSetId >= 0) {
 					this.removeConceptSet(warning.conceptSetId);
 				} else if (warning.type === 'IncompleteRuleWarning' && warning.ruleName) {
 					this.removeInclusionRule(warning.ruleName);

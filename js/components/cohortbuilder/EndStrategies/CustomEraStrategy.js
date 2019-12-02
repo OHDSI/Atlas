@@ -7,6 +7,7 @@ define(['knockout'], function (ko) {
 		self.DrugCodesetId = ko.observable(data.DrugCodesetId);
 		self.GapDays = ko.observable(data.GapDays || 0);
 		self.Offset = ko.observable(data.Offset || 0);
+		self.DaysSupplyOverride = ko.observable(data.DaysSupplyOverride);
 		
 		// set up subscription to update DrugCodesetId if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
