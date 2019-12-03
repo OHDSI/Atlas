@@ -668,16 +668,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				reportSourceKey: this.reportSourceKey,
 
 			}
-			this.translateParams = [];
-			globalConstants.dialects.forEach(d => {
+			this.translateParams = globalConstants.dialects.map(function(dialect) {
 				let param = {};
-				param.title = d.title;
-				param.dialect = d;
+				param.title = dialect.title;
+				param.dialect = dialect;
 				param.translate = ko.observable('');
 				param.componentName = 'export-sql';
-				param.componentParams = {'parent': this, 'dialect': d};
-				this.translateParams.push(param);
-			});
+				param.componentParams = {'parent': this, 'dialect': dialect};
+				return param;
+			}, this);
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),

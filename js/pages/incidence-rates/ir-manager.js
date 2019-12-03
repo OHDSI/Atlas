@@ -119,8 +119,8 @@ define([
 			});
 
 			this.isRunning = ko.observable(false);
-      this.exportTabMode = ko.observable('sql');
-      this.exportSqlMode = ko.observable('ohdsisql');
+			this.exportTabMode = ko.observable('sql');
+			this.exportSqlMode = ko.observable('ohdsisql');
 			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
@@ -187,16 +187,15 @@ define([
 				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
 			});
 
-			this.translateParams = [];
-			globalConstants.dialects.forEach(d => {
+			this.translateParams = globalConstants.dialects.map(function(dialect) {
 				let param = {};
-				param.title = d.title;
-				param.dialect = d;
+				param.title = dialect.title;
+				param.dialect = dialect;
 				param.translate = ko.observable('');
 				param.componentName = 'export-sql';
-				param.componentParams = {'parent': this, 'dialect': d};
-				this.translateParams.push(param);
-			});
+				param.componentParams = {'parent': this, 'dialect': dialect};
+				return param;
+			}, this);
 
 			// startup actions
 			this.init();

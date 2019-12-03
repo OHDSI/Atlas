@@ -13,9 +13,9 @@ define([
 ) {
 	class IRutilitiesTab extends AutoBind(Component) {
 		constructor(params) {
-      super(params);
-      this.parent = params.parent;
-    }
+			super(params);
+			this.parent = params.parent;
+		}
 	}
 
 	return commonUtils.build('ir-utilities', IRutilitiesTab, view);
