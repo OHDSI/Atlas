@@ -187,15 +187,13 @@ define([
 				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
 			});
 
-			this.translateParams = globalConstants.dialects.map(function(dialect) {
-				let param = {};
-				param.title = dialect.title;
-				param.dialect = dialect;
-				param.translate = ko.observable('');
-				param.componentName = 'export-sql';
-				param.componentParams = {'parent': this, 'dialect': dialect};
-				return param;
-			}, this);
+			this.translateParams = globalConstants.dialects.map(dialect => ({
+				title: dialect.title,
+				dialect: dialect,
+				translate: ko.observable(''),
+				componentName: 'export-sql',
+				componentParams: {'parent': this, 'dialect': dialect},
+			}));
 
 			// startup actions
 			this.init();
