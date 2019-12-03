@@ -69,5 +69,9 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	}
 	state.predictionAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current()));
 
+	state.availableLocales = ko.observableArray();
+	state.locale = ko.observable();
+	state.translations = ko.observable();
+
 	return state;
 });

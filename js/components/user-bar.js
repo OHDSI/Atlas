@@ -41,6 +41,8 @@ define([
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
 			this.permissionCheckWarningShown = false;
+			this.availableLocales = state.availableLocales;
+			this.locale = state.locale;
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {

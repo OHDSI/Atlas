@@ -9,6 +9,7 @@ define(
 		'jquery',
 		'services/Execution',
 		'services/SourceAPI',
+		'services/I18nService',
 		'Model',
 		'const',
 		'databindings',
@@ -23,6 +24,7 @@ define(
 		$, // TODO: get rid of jquery
 		executionService,
 		sourceApi,
+		i18nService,
 		GlobalModel,
 		constants,
 	) => {
@@ -52,6 +54,13 @@ define(
 					}, document.getElementsByTagName('html')[0]);
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
+
+					try{
+						await i18nService.getAvailableLocales();
+					} catch (e) {
+						reject(e.message);
+					}
+
 					if (config.userAuthenticationEnabled) {
 						try {
 							await authApi.loadUserInfo();
