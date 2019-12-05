@@ -36,8 +36,12 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.1.5",
+    "eslint": "^6.4.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "esprima": "^4.0.1",
     "html-document": "^0.8.1",
+    "prettier": "1.18.2",
     "requirejs": "^2.3.4",
     "rimraf": "^2.6.2",
     "terser": "3.17.0"
@@ -80,6 +84,7 @@
     "prismjs": "^1.15.0",
     "qs": "^6.5.2",
     "querystring": "^0.2.0",
+    "timelines-chart": "^2.8.2",
     "urijs": "^1.19.1",
     "xss": "^1.0.3"
   }
