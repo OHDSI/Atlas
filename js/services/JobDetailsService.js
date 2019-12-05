@@ -109,6 +109,6 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		setLastViewedTime: setLastViewedTime,
 		getLastViewedTime: getLastViewedTime,
 		setJobListMutated: setJobListMutated,
-		addPoll:addPoll,
+		addPoll: addPoll,
 	}
 });
