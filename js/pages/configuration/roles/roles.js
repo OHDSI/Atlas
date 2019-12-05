@@ -5,6 +5,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'services/AuthAPI',
+    'services/role',
     'atlas-state',
     'databindings',
     'components/ac-access-denied',
@@ -16,15 +17,15 @@ define([
     AutoBind,
     commonUtils,
     authApi,
+    roleService,
     sharedState
 ) {
     class Roles extends AutoBind(Page) {
         constructor(params) {
             super(params);
-            this.model = params.model;
             this.roles = ko.observable([]);
             this.loading = ko.observable();
-    
+
             this.isAuthenticated = authApi.isAuthenticated;
             this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
             this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedCreateRole(); });
@@ -33,13 +34,13 @@ define([
         onPageCreated() {
             if (this.canRead()) {
                 this.loading(true);
-                this.model.updateRoles().then(() => {
+                roleService.updateRoles().then(() => {
                     this.loading(false);
-                    this.roles(this.model.roles());
+                    this.roles(sharedState.roles());
                 });
-            }            
+            }
         }
-        
+
         selectRole(data) {
             commonUtils.routeTo('/role/' + data.id);
         }

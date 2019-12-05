@@ -31,7 +31,6 @@ define([
   class EstimationBrowser extends Page {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
 			this.reference = ko.observableArray();
 			this.loading = ko.observable(false);
 			this.config = config;
@@ -58,11 +57,11 @@ define([
                     },
 				]
 			};
-			
+
 			this.columns = [
 				{
 					title: 'Id',
-					data: 'estimationId'
+					data: 'id'
 				},
 				{
 					title: 'Type',
@@ -72,27 +71,21 @@ define([
 				{
 					title: 'Name',
 					render: datatableUtils.getLinkFormatter(d => ({
-						link: constants.paths.ccaAnalysis(d.estimationId),
+						link: constants.paths.ccaAnalysisDash(d.id),
 						label: d['name']
 					})),
 				},
 				{
 					title: 'Created',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.createdDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
 					title: 'Modified',
-					type: 'datetime-formatted',
-					render: function (s, p, d) {
-						return momentApi.formatDateTimeUTC(d.modifiedDate);
-					}
+					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
 					title: 'Author',
-					data: 'createdBy'
+					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
 		}
@@ -102,6 +95,7 @@ define([
 				this.loading(true);
 				EstimationService.getEstimationList()
 					.then(({data}) => {
+						datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
 						this.loading(false);
 						this.reference(data);
 					});

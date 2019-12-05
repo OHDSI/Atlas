@@ -33,6 +33,7 @@ define([
 			this.editorComponentParams = ko.observable({});
 			this.editorDescription = ko.observable();
 			this.editorHeading = ko.observable();
+			this.editorArray = ko.observableArray();
 			this.options = constants.options;
 			this.managerMode = ko.observable('summary');
 			this.patientLevelPredictionAnalysis = params.patientLevelPredictionAnalysis;
@@ -146,6 +147,7 @@ define([
 		}
 
 		editCovariateSettings(settings) {
+			this.editorArray = this.covariateSettings;
 			this.editorHeading('Covariate Settings');
 			this.editorDescription('Add or update the covariate settings');
 			this.editorComponentName('prediction-covar-settings-editor');
@@ -167,6 +169,7 @@ define([
 			if (editor === undefined) {
 				editor = option.editor;
 			}
+			this.editorArray = this.modelSettings;
 			this.editorHeading(option.name + ' Model Settings');
 			this.editorDescription('Use the options below to edit the model settings');
 			this.editorComponentName('model-settings-editor');
@@ -187,6 +190,7 @@ define([
 		}
 
 		editPopulationSettings(settings) {
+			this.editorArray = this.populationSettings;
 			this.editorHeading('Population Settings');
 			this.editorDescription('Add or update the population settings');
 			this.editorComponentName('population-settings-editor');
@@ -198,6 +202,7 @@ define([
 		}		
 
 		closeEditor() {
+			this.editorArray.valueHasMutated();
 			this.managerMode('summary');
 		}
 

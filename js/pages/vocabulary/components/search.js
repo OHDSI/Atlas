@@ -30,27 +30,27 @@ define([
 	commonUtils,
 	vocabularyProvider
 ) {
-		class Search extends AutoBind(Component) {
-			constructor(params) {
-				super(params);
-				console.log(params);
-				this.currentSearch = ko.observable('');
-				this.loading = ko.observable(false);
-				this.domainsLoading = ko.observable(true);
-				this.vocabulariesLoading = ko.observable(true);
-				this.canSearch = ko.observable(true);
-				this.showAdvanced = ko.observable(false);
-				this.domains = ko.observableArray();
-				this.vocabularies = ko.observableArray();
-				this.selected = {
-					domains: new Set(),
-					vocabularies: new Set(),
-				};
-				this.data = ko.observableArray([]);
-				this.searchExecuted = ko.observable(false);
-				this.searchColumns = ko.observableArray([]);
-				this.searchOptions = ko.observable();
-				this.params = params;
+	class Search extends AutoBind(Component) {
+		constructor(params) {
+			super(params);
+			this.currentSearch = ko.observable('');
+			this.commonUtils = commonUtils;
+			this.loading = ko.observable(false);
+			this.domainsLoading = ko.observable(true);
+			this.vocabulariesLoading = ko.observable(true);
+			this.canSearch = ko.observable(true);
+			this.showAdvanced = ko.observable(false);
+			this.domains = ko.observableArray();
+			this.vocabularies = ko.observableArray();
+			this.selected = {
+				domains: new Set(),
+				vocabularies: new Set(),
+			};
+			this.data = ko.observableArray([]);
+			this.searchExecuted = ko.observable(false);
+			this.searchColumns = ko.observableArray([]);
+			this.searchOptions = ko.observable();
+			this.params = params;
 
 				this.isInProgress = ko.computed(() => {
 					return this.domainsLoading() === true && this.vocabulariesLoading() === true;
@@ -128,24 +128,17 @@ define([
 					title: 'Class',
 					data: 'CONCEPT_CLASS_ID'
 				}, {
-					title: 'Standard Concept Caption',
-					data: 'STANDARD_CONCEPT_CAPTION',
-					visible: false
+					'caption': 'Has Records',
+					'binding': function (o) {
+						return parseInt(o.RECORD_COUNT) > 0;
+					}
 				}, {
-					title: 'RC',
-					data: 'RECORD_COUNT',
-					className: 'numeric'
-				}, {
-					title: 'DRC',
-					data: 'DESCENDANT_RECORD_COUNT',
-					className: 'numeric'
-				}, {
-					title: 'Domain',
-					data: 'DOMAIN_ID'
-				}, {
-					title: 'Vocabulary',
-					data: 'VOCABULARY_ID'
-				}];
+					'caption': 'Has Descendant Records',
+					'binding': function (o) {
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
+					}
+				}]
+			};
 
 				this.searchOptions = {
 					Facets: [{
@@ -264,14 +257,13 @@ define([
 				const vocabElements = this.selected.vocabularies;
 				const domainElements = this.selected.domains;
 
-				// if we don't have a search and aren't looking up domain or vocabulary details, abort.
-				if (
-					this.currentSearch() === undefined
-					&& vocabElements.size == 0
-					&& domainElements.size == 0
-				) {
-					return;
-				}
+			let query = '';
+			if (this.currentSearch() !== undefined) {
+				query = this.encodeSearchString(this.currentSearch());
+				this.currentSearch(this.replaceSpecialCharacters(this.currentSearch()));
+			}
+			this.loading(true);
+			this.data([]);
 
 				let query = '';
 				if (this.currentSearch() !== undefined) {

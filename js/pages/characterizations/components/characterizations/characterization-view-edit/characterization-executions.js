@@ -16,6 +16,7 @@ define([
 	'lodash',
 	'services/JobDetailsService',
 	'services/Poll',
+	'services/MomentAPI',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding',
@@ -38,6 +39,7 @@ define([
 	lodash,
 	jobDetailsService,
 	PollService,
+	momentApi,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -67,17 +69,19 @@ define([
 					title: 'Date',
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
-					type: 'datetime-formatted'
 				},
 				{
 					title: 'Design',
 					className: this.classes('col-exec-checksum'),
-					render: (s, p, d) => {
-						return (
-							PermissionService.isPermittedExportGenerationDesign(d.id) ?
-							`<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.hashCode || '-')}</a>${this.currentHash() === d.hashCode ? ' (same as now)' : ''}` :
-							(d.hashCode || '-')
-						);
+					render: (s, p, data) => {
+						let html = '';
+						if (PermissionService.isPermittedExportGenerationDesign(data.id)) {
+							html = `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a>`;
+						} else {
+							html = data.tag || '-';
+						}
+						html += this.currentHash() === data.hashCode ? ' (same as now)' : '';
+						return html;
 					}
 				},
 				{
@@ -98,8 +102,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{

@@ -1,6 +1,7 @@
+<!-- ko if: strategy() -->
 <div class="heading">Custom Drug Era Exit Criteria</div>
 <div>
-	This strategy creates a drug era from the codes found in the specified concept set. If the index event is found within an era, the cohort end date will use the era's end date. 
+	This strategy creates a drug era from the codes found in the specified concept set. If the index event is found within an era, the cohort end date will use the era's end date.
 	Otherwise, it will use the observation period end date that contains the index event.
 </div>
 <div style="padding: 5px 0px">
@@ -8,5 +9,12 @@
 	<ul>
 		<li>allowing <span data-bind="text: strategy().GapDays" ></span> days between exposures</li>
 		<li>adding <span data-bind="text: strategy().Offset"></span> days after exposure end</li>
+		<!-- ko if: strategy().DaysSupplyOverride() == null -->
+		<li>using days supply and exposure end date for exposure duration.</li>
+    <!-- /ko -->
+		<!-- ko ifnot: strategy().DaysSupplyOverride() == null  -->
+		<li>forcing drug exposure days suply to: <span data-bind="text: strategy().DaysSupplyOverride"/> days.</li>
+    <!-- /ko -->		
 	</ul>
 </div>
+<!-- /ko -->

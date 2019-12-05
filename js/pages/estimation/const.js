@@ -8,17 +8,18 @@ define(
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
-			downloadResults: id => `estimation/generation/${id}/result`,
+      downloadResults: id => `estimation/generation/${id}/result`,
     };
 
     const paths = {
         root: '/estimation/cca/',
-        ccaAnalysis: id => `#/estimation/cca/${id}`,
+        ccaAnalysis: id => `/estimation/cca/${id}`,
+        ccaAnalysisDash: id => `#${paths.ccaAnalysis(id)}`,
         createCcaAnalysis: () => '#/estimation/cca/0',
         browser: () => '#/estimation',
     };
 
-		const estimationGenerationStatus = consts.generationStatuses;
+    const estimationGenerationStatus = consts.generationStatuses;
 
     const conceptSetCrossReference = {
       targetComparatorOutcome: {
@@ -47,6 +48,20 @@ define(
         },
       }
     };
+
+    const isUsingRegularization = (prior) => {
+      return !(prior.priorType() === "none" && prior.useCrossValidation() === false);
+    }
+
+    const setRegularization = (enable, prior) => {
+      if (enable === true) {
+        prior.priorType("laplace");
+        prior.useCrossValidation(true);
+      } else {
+        prior.priorType("none");
+        prior.useCrossValidation(false);
+      }
+    }
 
     const getTimeAtRisk = (createStudyPopArgs) => {
         return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + "d<br/>(min: " + createStudyPopArgs.minDaysAtRisk() + "d)");
@@ -168,7 +183,7 @@ define(
           minOutcomeCountForInjectionOptions: ['100', '75', '50', '25', '10'],
           washoutPeriodOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '183', '365', '548', '730', '1095'],
           dayOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'],
-          maxSubjectsForModelOptions: ['0', '1000', '5000', '10000', '50000', '100000', , '150000', '200000', '250000'],
+          maxSubjectsForModelOptions: ['0', '1000', '5000', '10000', '50000', '100000', '150000', '200000', '250000'],
           yesNoOptions: [{
               name: "Yes",
               id: true,
@@ -423,6 +438,8 @@ define(
       estimationGenerationStatus,
       paths: paths,
       conceptSetCrossReference,
+      isUsingRegularization,
+      setRegularization,
       options,
     };
   }

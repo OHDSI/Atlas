@@ -228,23 +228,29 @@ define([
 
 
 			const cohortPathways = selectedCohortIds.map(id => {
+				let result = null;
 				const pathwayGroup = results.data.pathwayGroups.find(g => id == g.targetCohortId);
-				const pathway = this.buildHierarchy(pathwayGroup.pathways);
-				const targetCohort = results.design.targetCohorts.find(c => id == c.id);
-				const summary = {...this.summarizeHierarchy(pathway), cohortPersons: pathwayGroup.targetCohortCount, pathwayPersons: pathwayGroup.totalPathwaysCount};
-				return {
-					pathway,
-					targetCohortName: targetCohort.name,
-					targetCohortCount: this.formatNumber(summary.cohortPersons),
-					personsReported: this.formatNumber(summary.pathwayPersons),
-					personsReportedPct: this.formatPct(summary.pathwayPersons/summary.cohortPersons),
-					summary,
-					pathDetails: ko.observable()
-				};
-			});
+				if (pathwayGroup) {
+					const pathway = this.buildHierarchy(pathwayGroup.pathways);
+					const targetCohort = results.design.targetCohorts.find(c => id == c.id);
+					const summary = {...this.summarizeHierarchy(pathway), cohortPersons: pathwayGroup.targetCohortCount, pathwayPersons: pathwayGroup.totalPathwaysCount};
+					result = {
+						pathway,
+						targetCohortName: targetCohort.name,
+						targetCohortCount: this.formatNumber(summary.cohortPersons),
+						personsReported: this.formatNumber(summary.pathwayPersons),
+						personsReportedPct: this.formatPct(summary.pathwayPersons/summary.cohortPersons),
+						summary,
+						pathDetails: ko.observable()
+					};
+				}
+				return result;
+			}).filter(cp => cp);
 
 			const eventCohorts = results.data.eventCodes.filter(ec => !ec.isCombo)
 			const colorScheme = d3.scaleOrdinal(eventCohorts.length > 10 ? d3.schemeCategory20 : d3.schemeCategory10);
+			// initialize colors based on design
+			this.results().design.eventCohorts.forEach((d, i) => colorScheme(Math.pow(2,i)));
 			const fixedColors = {"end": "rgba(185, 184, 184, 0.23)"};
 			const colors = (d) => (fixedColors[d] || colorScheme(d));
 

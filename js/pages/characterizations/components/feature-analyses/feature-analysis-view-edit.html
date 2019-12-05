@@ -7,18 +7,21 @@
     <heading-title params="name: featureCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
     <div class="asset-heading">
         <div class="input-group">
-            <input type="text" class="form-control" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: $component.data().name, css: { emptyInput: !isNameCorrect() }" />
+            <input type="text" placeholder="New Feature Analysis" class="form-control" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: $component.data().name, css: { emptyInput: !isNameFilled() }" />
             <div class="input-group-btn" role="group">
                 <div class="fe-save-btn" data-bind="tooltip: saveTooltipText">
                     <button class="btn btn-success" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
                 </div>
                 <button class="btn btn-primary" title="Close" data-bind="click: closeAnalysis, enable: !isProcessing()"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity -->
+                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                    <i class="fa fa-lock"></i>
+                </button>
                 <button class="btn btn-danger" title="Delete" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
                 <!-- /ko -->
             </div>
         </div>
-        <div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+        <div data-bind="visible: !isNameFilled()" class="empty-name-error">
             <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
             <label>Feature Analysis name is empty.</label>
         </div>
@@ -57,6 +60,7 @@
             <div data-bind="css: classes({ element: 'design-panel-body' })">
                 <div data-bind="css: classes('type-selector')">
                     <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
+                        <!-- ko if: $component.isPresetFeatureTypeAvailable-->
                         <li role="presentation"
                             data-bind="
                             if: $component.canEdit() || $component.data().type() === $component.featureTypes.PRESET,
@@ -65,6 +69,7 @@
                         ">
                             <a>Preset</a>
                         </li>
+                        <!-- /ko -->
                         <li role="presentation"
                             data-bind="
                             if: $component.canEdit() || $component.data().type() === $component.featureTypes.CRITERIA_SET,
@@ -83,7 +88,7 @@
                         </li>
                     </ul>
                 </div>
-
+                <!-- ko if: $component.isPresetFeatureTypeAvailable-->
                 <div data-bind="if: $component.data().type() === $component.featureTypes.PRESET, css: classes('design')">
                     <span data-bind="css: classes('criteria-descr')">FeatureExtraction preset name:</span>
                     <input data-bind="
@@ -92,6 +97,7 @@
                         textInput: $component.data().design
                     " />
                 </div>
+                <!-- /ko -->
                 <div data-bind="
                     if: $component.data().type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
                 ">
@@ -192,3 +198,12 @@
     </div>
 </div>
 <!-- /ko -->
+
+<configure-access-modal params="
+	isModalShown: $component.isAccessModalShown,
+	isOwnerFn: $component.isOwnerFn,
+	loadAccessListFn: $component.loadAccessList,
+	grantAccessFn: $component.grantAccess,
+	revokeAccessFn: $component.revokeAccess,
+	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+"></configure-access-modal>

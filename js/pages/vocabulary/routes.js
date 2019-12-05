@@ -3,10 +3,9 @@ define(
         const ko = require('knockout');
         const { AuthorizedRoute } = require('pages/Route');
 
-        function routes(appModel, router) {
+		function routes(router) {
 
             const search = new AuthorizedRoute(() => {
-                appModel.activePage(this.title);
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
                     let params = {

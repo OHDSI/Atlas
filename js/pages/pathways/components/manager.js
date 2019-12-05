@@ -3,6 +3,8 @@ define([
 	'text!./manager.html',
 	'../PathwayService',
 	'../PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'../PathwayAnalysis',
 	'atlas-state',
 	'appConfig',
@@ -11,18 +13,23 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
+	'const',
+	'lodash',
 	'less!./manager.less',
 	'components/tabs',
 	'./tabs/pathway-design',
 	'./tabs/pathway-exec-wrapper',
 	'./tabs/pathway-results',
 	'./tabs/pathway-utils',
-	'faceted-datatable'
+	'faceted-datatable',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
 	PathwayService,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	PathwayAnalysis,
 	sharedState,
 	config,
@@ -30,7 +37,9 @@ define([
 	Page,
 	AutoBind,
 	commonUtils,
-	ohdsiUtil
+	ohdsiUtil,
+	constants,
+	lodash
 ) {
 	class PathwaysManager extends AutoBind(Page) {
 		constructor(params) {
@@ -41,9 +50,13 @@ define([
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
+			this.defaultName = constants.newEntityNames.pathway;
 
-			this.isNameCorrect = ko.computed(() => {
+			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name();
+			});
+			this.isNameCorrect = ko.computed(() => {
+				return this.isNameFilled() && this.design().name() !== this.defaultName;
 			});
 
 			this.canEdit = this.isEditPermittedResolver();
@@ -57,18 +70,25 @@ define([
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
+				dirtyFlag: this.dirtyFlag,
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
 					return 'Cohort Pathway #' + this.design().id;
 				}
-				return 'New Cohort Pathway';
+				return this.defaultName;
 			});
 			this.isSaving = ko.observable(false);
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
+			});
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
+				entityIdGetter: () => this.analysisId(),
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
 			});
 		}
 
@@ -136,14 +156,26 @@ define([
 
 		async save() {
 			this.isSaving(true);
-			if (!this.design().id) {
-				const newAnalysis = await PathwayService.create(this.design());
-				this.dirtyFlag().reset();
-				this.isSaving(false);
-				commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
-			} else {
-				const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
-				this.setupDesign(new PathwayAnalysis(updatedAnalysis));
+
+			// Next check to see that a cohort pathway with this name does not already exist
+			// in the database. Also pass the id so we can make sure that the current cohort pathway is excluded in this check.
+			try {
+				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
+				if (results > 0) {
+					alert('A cohort pathway with this name already exists. Please choose a different name.');
+				} else {
+					if (!this.design().id) {
+						const newAnalysis = await PathwayService.create(this.design());
+						this.dirtyFlag().reset();
+						commonUtils.routeTo(commonUtils.getPathwaysUrl(newAnalysis.id, 'design'));
+					} else {
+						const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
+						this.setupDesign(new PathwayAnalysis(updatedAnalysis));
+					}
+				}
+			} catch (e) {
+				alert('An error occurred while attempting to save a cohort pathway.');
+			} finally {
 				this.isSaving(false);
 				this.loading(false);
 			}

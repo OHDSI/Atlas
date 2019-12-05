@@ -10,11 +10,23 @@
 				<select data-bind="options:$component.authProviders, optionsText:'name', value:$component.currentAuthProvider"></select> credentials
 				-->
 
-				<p class="text-danger" data-bind="if: isLoggedIn() && tokenExpired()">
+				<p class="text-danger" data-bind="if: isLoggedIn() && tokenExpired() && !$component.isGoogleIapAuth()">
 					Your session has expired. Please login again.
 				</p>
+				<div data-bind="if: isLoggedIn() && tokenExpired() && $component.isGoogleIapAuth()">
+					<p class="text-danger">
+						Your session has expired. Please refresh a page to continue.
+					</p>
 
-				<div>
+					<div class="form-group">
+						<button type="button" class="btn btn-sm btn-default pull-right" data-bind="click: $component.refreshPage">
+							Close
+						</button>
+					</div>
+				</div>
+
+
+				<div data-bind="visible: !!$component.authProviders.length">
 					Sign In with:
 				</div>
 				<div data-bind="foreach:$component.authProviders" class="text-centered">
@@ -43,6 +55,12 @@
                 <div data-bind="text: $component.status"></div>
 				<span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signout, visible: $component.token()"><i class="fa fa-sign-out"></i> Sign Out</span>
 				<span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signoutIap, visible: $component.isGoogleIapAuth()"><i class="fa fa-sign-out"></i> Sign Out</span>
+				<div data-bind="if: isPermittedRunAs() && $component.token()">
+					<div data-bind="css: classes({element: 'runas-container', extra: 'input-group'})">
+						<input type="text" data-bind="css: classes({ element: 'runas-text', extra: 'form-control' }), value: runAsLogin" placeholder="Username">
+						<span data-bind="css: classes({ element: 'runas-btn', extra: ['btn btn-sm btn-danger'] }), click: runAs"><i class="fa fa-users"></i> Run as</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

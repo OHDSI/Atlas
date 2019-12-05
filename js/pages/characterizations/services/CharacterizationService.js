@@ -1,9 +1,11 @@
 define([
     'services/http',
     'appConfig',
+    'utils/ExecutionUtils'
 ], function (
     httpService,
     config,
+    executionUtils,
 ) {
     function loadCharacterizationList() {
         return httpService
@@ -30,7 +32,7 @@ define([
     }
 
     function createCharacterization(design) {
-        return request = httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
+        return httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
     }
 
     function copyCharacterization(id) {
@@ -44,7 +46,7 @@ define([
     function loadCharacterizationExecutionList(id) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/generation')
-            .then(res => res.data);
+            .then(res => executionUtils.generateVersionTags(res.data));
     }
 
     function loadCharacterizationExecution(id) {
@@ -53,9 +55,10 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationResults(generationId) {
+    function loadCharacterizationResults(generationId, thresholdLevel) {
         return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result')
+            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result'
+                + (thresholdLevel ? ('?thresholdLevel=' + thresholdLevel) : ''))
             .then(res => res.data);
     }
 
@@ -89,6 +92,12 @@ define([
           .then(res => res.data);
     }
 
+    function exists(name, id) {
+        return httpService
+            .doGet(`${config.webAPIRoot}cohort-characterization/${id}/exists?name=${name}`)
+            .then(res => res.data);
+    }
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -104,6 +113,7 @@ define([
         loadCharacterizationExportDesignByGeneration,
         runGeneration,
         getPrevalenceStatsByGeneration,
-        cancelGeneration
+        cancelGeneration,
+        exists,
     };
 });
