@@ -70,7 +70,7 @@ define([
 
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
 
-      this.intervalId = PollService.add({
+      this.intervalId = jobDetailsService.addPoll({
         callback: () => this.checkJobs(),
         interval: 5000,
       });
@@ -90,7 +90,6 @@ define([
         if (source && (job.isComplete() || job.isFailed())) {
           this.sourceJobs.delete(job.executionId);
           source.refreshState(job.isComplete() ? sourceApi.buttonCheckState.success : sourceApi.buttonCheckState.failed);
-          jobDetailsService.setJobListMutated();
         }
       });
     }

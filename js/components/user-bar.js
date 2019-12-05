@@ -142,7 +142,7 @@ define([
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;
 								}),
-								duration: duration,
+								duration,
 								endDate: displayedEndDate,
 							};
 							this.jobListing.push(job);

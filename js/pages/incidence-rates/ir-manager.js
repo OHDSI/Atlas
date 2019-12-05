@@ -243,7 +243,6 @@ define([
 				this.close();
 			} finally {
 				this.loadingInfo(false);
-				jobDetailsService.setJobListMutated();
 			}
 
 			await Promise.all(promises);
@@ -311,7 +310,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = jobDetailsService.addPoll({
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,

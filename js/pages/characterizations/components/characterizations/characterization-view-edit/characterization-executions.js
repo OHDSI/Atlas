@@ -120,7 +120,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = jobDetailsService.addPoll({
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -194,7 +194,6 @@ define([
 				console.error(e);
 			} finally {
 				this.loading(false);
-				jobDetailsService.setJobListMutated();
 			}
 		}
 

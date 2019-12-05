@@ -534,7 +534,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.pollId = null;
 			this.shouldUpdateJobs = ko.computed(() => {
-				if (this.generateReportsEnabled() == true) {
+				if (this.generateReportsEnabled()) {
 					jobDetailsService.setJobListMutated();
 				}
 			});

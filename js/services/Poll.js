@@ -6,7 +6,7 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
     isPageForeground(isForeground);
 
     if (isForeground) {
-      // when a user focuses tab, we shound immediately sync
+      // when a user focuses tab, we should immediately sync
       PollService.pollImmediately();
     }
   });

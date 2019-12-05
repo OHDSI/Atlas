@@ -1,4 +1,4 @@
-define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (ko, appConfig, jobDetail, sharedState, httpService) {
+define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http','services/Poll'], function (ko, appConfig, jobDetail, sharedState, httpService, PollService) {
 
 	function list() {
 		return httpService.doGet(appConfig.api.url + 'notifications');
@@ -30,6 +30,20 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 	
 	function setJobListMutated() {
 		sharedState.jobListing.valueHasMutated();
+	}
+
+	function addPoll(opts) {
+		var callback = opts.callback;
+		var newCallback = function () {
+			callback.apply(this, arguments);
+			setJobListMutated();
+		};
+		return PollService.add({
+			callback: newCallback,
+			interval: opts.interval,
+			isSilentAfterFirstCall: opts.isSilentAfterFirstCall,
+			args: opts.args
+		});
 	}
 
 	function getJobURL(n) {
@@ -95,5 +109,6 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		setLastViewedTime: setLastViewedTime,
 		getLastViewedTime: getLastViewedTime,
 		setJobListMutated: setJobListMutated,
+		addPoll:addPoll,
 	}
 });
