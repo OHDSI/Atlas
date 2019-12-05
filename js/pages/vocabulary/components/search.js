@@ -128,17 +128,24 @@ define([
 					title: 'Class',
 					data: 'CONCEPT_CLASS_ID'
 				}, {
-					'caption': 'Has Records',
-					'binding': function (o) {
-						return parseInt(o.RECORD_COUNT) > 0;
-					}
+					title: 'Standard Concept Caption',
+					data: 'STANDARD_CONCEPT_CAPTION',
+					visible: false
 				}, {
-					'caption': 'Has Descendant Records',
-					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
-					}
-				}]
-			};
+					title: 'RC',
+					data: 'RECORD_COUNT',
+					className: 'numeric'
+				}, {
+					title: 'DRC',
+					data: 'DESCENDANT_RECORD_COUNT',
+					className: 'numeric'
+				}, {
+					title: 'Domain',
+					data: 'DOMAIN_ID'
+				}, {
+					title: 'Vocabulary',
+					data: 'VOCABULARY_ID'
+				}];
 
 				this.searchOptions = {
 					Facets: [{
@@ -169,12 +176,12 @@ define([
 					}, {
 						'caption': 'Has Records',
 						'binding': function (o) {
-							return parseInt(o.RECORD_COUNT.toString().replace(',', '')) > 0;
+							return parseInt(o.RECORD_COUNT) > 0;
 						}
 					}, {
 						'caption': 'Has Descendant Records',
 						'binding': function (o) {
-							return parseInt(o.DESCENDANT_RECORD_COUNT.toString().replace(',', '')) > 0;
+							return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 						}
 					}]
 				};
@@ -256,14 +263,6 @@ define([
 				this.searchExecuted(false);
 				const vocabElements = this.selected.vocabularies;
 				const domainElements = this.selected.domains;
-
-			let query = '';
-			if (this.currentSearch() !== undefined) {
-				query = this.encodeSearchString(this.currentSearch());
-				this.currentSearch(this.replaceSpecialCharacters(this.currentSearch()));
-			}
-			this.loading(true);
-			this.data([]);
 
 				let query = '';
 				if (this.currentSearch() !== undefined) {
