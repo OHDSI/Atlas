@@ -68,15 +68,15 @@ define(function (require, exports) {
 
   async function initSourcesConfig() {
     try {
-		const [{data: sources}, {data: priorityDaimons}] = await Promise.all([
+		const [{data: sources}] = await Promise.all([
 			httpService.doGet(config.api.url + 'source/sources'),
-			httpService.doGet(config.api.url + 'source/daimon/priority'),
+			// httpService.doGet(config.api.url + 'source/daimon/priority'),
 		]);
 		config.api.available = true;
         if (sources.length === 0) {
             return constants.applicationStatuses.noSourcesAvailable;
         }
-        setSharedStateSources(sources, priorityDaimons);
+        setSharedStateSources(sources, );
         return constants.applicationStatuses.running;
 	} catch (e) {
         if (e.status !== 403) {
@@ -87,7 +87,7 @@ define(function (require, exports) {
 	}
   }
 
-  function setSharedStateSources(sources, priorityDaimons) {
+  function setSharedStateSources(sources, priorityDaimons={}) {
     sharedState.sources([]);
     var serviceCacheKey = getCacheKey();
     var sourceList = [];
