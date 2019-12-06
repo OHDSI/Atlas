@@ -21,4 +21,5 @@ define(function (require) {
 	var numericExtender = require('./numericExtender');
 	var childChangesExtender = require('./childChangesExtender');
 	var alphaNumericExtender = require('./alphaNumericExtender');
+	var i18nBinding = require('./i18nBinding');
 });

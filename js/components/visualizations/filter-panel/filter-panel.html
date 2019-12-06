@@ -1,5 +1,5 @@
 <div data-bind="css: classes({ extra: ['panel', 'panel-primary'] })">
-    <div class="panel-heading">
+    <div class="panel-heading" data-bind="text: ko.i18n('components.filter-panel.title')">
         Filter panel
     </div>
     <div data-bind="css: classes({ element: 'body', extra: ['panel-body'] })">
@@ -28,12 +28,12 @@
         <!-- ko if: !live -->
             <div data-bind="css: classes('btn-group')">
                 <button
-                        data-bind="{ css: classes({ element: 'btn', extra: ['btn', 'btn-sm', 'btn-success'] }), click: apply }"
+                        data-bind="{ css: classes({ element: 'btn', extra: ['btn', 'btn-sm', 'btn-success'] }), click: apply , text: ko.i18n('components.filter-panel.buttons.apply')}"
                 >
                     Apply
                 </button>
                 <button
-                        data-bind="{ css: classes({ element: 'btn', modifiers: ['cancel'], extra: ['btn', 'btn-sm', 'btn-default'] }), click: clear }"
+                        data-bind="{ css: classes({ element: 'btn', modifiers: ['cancel'], extra: ['btn', 'btn-sm', 'btn-default'] }), click: clear, text: ko.i18n('components.filter-panel.buttons.clear') }"
                 >
                     Clear
                 </button>

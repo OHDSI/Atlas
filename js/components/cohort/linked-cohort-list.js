@@ -28,7 +28,7 @@ define([
 			this.removeCohort = this.removeCohort.bind(this);
 
 			const nameCol = {
-				title: 'Name'
+				title: ko.i18n('components.linked-cohort-list.table.columns.name', 'Name')
 			};
 
 			if (params.canEditName) {
@@ -47,14 +47,14 @@ define([
 			}
 
 			// Linked entity list props
-			this.title = params.title || 'Cohort definitions';
+			this.title = params.title || ko.i18n('components.linked-cohort-list.defaultTitle', 'Cohort definition');
 			this.descr = params.descr;
-			this.newItemLabel = params.newItemLabel || 'Import';
+			this.newItemLabel = params.newItemLabel || ko.i18n('components.linked-cohort-list.defaultNewItemLabel', 'Import');
 			this.newItemAction = params.newItemAction || this.showCohortModal;
 			this.data = params.data || ko.observable([]);
 			this.columns = params.columns || [
 				{
-					title: 'ID',
+					title: ko.i18n('components.linked-cohort-list.table.columns.id', 'ID'),
 					data: 'id',
 					className: this.classes('col-cohort-id'),
 				},
@@ -86,13 +86,13 @@ define([
 
 		getRemoveCell(action, identifierField = 'id') {
 			return (s, p, d) => {
-				return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
+				return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">${ko.i18n('components.linked-cohort-list.table.actions.remove', 'Remove')()}</a>`;
 			}
 		}
 
 		getEditCell(action, identifierField = 'id') {
 			return (s, p, d) => {
-				return `<a href="#/cohortdefinition/${d[identifierField]}">Edit cohort</a>`;
+				return `<a href="#/cohortdefinition/${d[identifierField]}">${ko.i18n('components.linked-cohort-list.table.actions.edit', 'Edit cohort')()}</a>`;
 			}
 		}
 

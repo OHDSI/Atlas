@@ -53,6 +53,7 @@ define([
 			this.pathwaysObserver = ko.computed(() => this.prepareResultData(this.results(), this.filterList()));
 
 			this.executionId.subscribe(id => id && this.loadData());
+			this.title = ko.computed(() => ko.unwrap(ko.i18n('pathways.manager.executions.results.title')) + ' ' + (this.results() && this.results().sourceName));
 
 			this.loadData();
 		}
@@ -146,7 +147,7 @@ define([
 			return [
 				{
 					type: 'multiselect',
-					label: 'Cohorts',
+					label: ko.i18n('pathways.manager.executions.results.filters.cohorts', 'Cohorts'),
 					name: 'cohorts',
 					options: ko.observable(cohorts),
 					selectedValues: ko.observable(cohorts.map(c => c.value)),

@@ -1,4 +1,4 @@
-<heading-title params="name: 'Cohort Pathways', icon: 'sitemap', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('pathways.title'), icon: 'sitemap', theme: 'dark'"></heading-title>
 
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Pathway Analysis list...'"></loading>
 
@@ -6,7 +6,7 @@
 	<div data-bind="css: classes('toolbar')">
 		<button
 				type="button"
-				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis"
+				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis, text: ko.i18n('pathways.newanalysis')"
 		>
 			New Pathway Analysis
 		</button>
@@ -17,7 +17,8 @@
 				order: [[3, 'desc']],
 				columns: $component.gridColumns,
 				options: $component.gridOptions,
-				reference: $component.analysisList
+				reference: $component.analysisList,
+				language: $component.datatableLanguage
 		}"></faceted-datatable>
 	</div>
 </div>

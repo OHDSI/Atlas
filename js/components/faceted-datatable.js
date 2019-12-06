@@ -22,6 +22,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
 		self.options = params.options;
+		self.oOptions = ko.unwrap(params.options);
 		self.columns = params.columns;
 		self.rowCallback = params.rowCallback || function () {};
 		self.rowClick = params.rowClick;
@@ -102,9 +103,9 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 					self.componentLoading(true);
 					self.data(new crossfilter(newValue));
 					self.facets.removeAll();
-					if (self.options && self.options.Facets) {
+					if (self.oOptions && self.oOptions.Facets) {
 						// Iterate over the facets and set the dimensions
-						$.each(self.options.Facets, function (i, facetConfig) {
+						$.each(self.oOptions.Facets, function (i, facetConfig) {
 							var isArray = facetConfig.isArray || false;
 							var dimension = self.data().dimension(function (d) {
 								return self.facetDimensionHelper(facetConfig.binding(d));
@@ -126,7 +127,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 							self.facets.push(facet);
 						});
 						// Iterate over the facets and set any defaults
-						$.each(self.options.Facets, function (i, facetConfig) {
+						$.each(self.oOptions.Facets, function (i, facetConfig) {
 							if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
 								$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
 									var facetItem = $.grep(self.facets()[i].facetItems, function (f) {

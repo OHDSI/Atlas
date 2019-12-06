@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
 	<div data-bind="css: classes('header')">
 		<!-- ko foreach: $component.tabs -->
-			<!-- ko if: $data.title && $data.title.length > 0 -->
+			<!-- ko if: ko.unwrap($data.title) && ko.unwrap($data.title).length > 0 -->
 				<span
 					data-bind="css: $component.classes({
 						element: 'header-title',

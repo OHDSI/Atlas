@@ -35,6 +35,10 @@ define([
   jobDetailsService,
 	PollService
 ) {
+	const tableStatusColumn = "pathways.manager.executions.table.columns.status.values";
+	const tableResultsColumn = "pathways.manager.executions.table.columns.results.values";
+	const tableDesignColumn = "pathways.manager.executions.table.columns.design";
+
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
@@ -57,12 +61,12 @@ define([
 			this.pollId = null;
 
 			this.execColumns = [{
-					title: 'Date',
+					title: ko.i18n('pathways.manager.executions.table.columns.date', 'Date'),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 				{
-					title: 'Design',
+					title: ko.i18n(tableDesignColumn + '.title', 'Design'),
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, d) => {
 						let html = '';
@@ -71,26 +75,27 @@ define([
 						} else {
 							html = d.tag || '-';
 						}
-						html += currentHash() === d.hashCode ? ' (same as now)' : '';
+						html += currentHash() === d.hashCode ? ' ' + ko.i18n(tableDesignColumn + '.value', '(same as now)')() : '';
 						return html;
 					}
 				},
 				{
-					title: 'Status',
+					title: ko.i18n('pathways.manager.executions.table.columns.status.title', 'Status'),
 					data: 'status',
 					className: this.classes('col-exec-status'),
 					render: (s, p, d) => {
+						const status = ko.i18n(`${tableStatusColumn}.${s}`, s)();
 						if (s === 'FAILED') {
-							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
+							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
 						} else if (s === 'STOPPED') {
-							return 'CANCELED';
+							return ko.i18n(tableStatusColumn + '.CANCELED', 'CANCELED')();
 						} else {
-							return s;
+							return status;
 						}
 					},
 				},
 				{
-					title: 'Duration',
+					title: ko.i18n('pathways.manager.executions.table.columns.duration', 'Duration'),
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
 						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
@@ -98,11 +103,11 @@ define([
 					}
 				},
 				{
-					title: 'Results',
+					title: ko.i18n('pathways.manager.executions.table.columns.results.title', 'Results'),
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-';
+						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(tableResultsColumn + '.text', 'View reports')()}</a>` : ko.i18n(tableResultsColumn + '.empty', '-')();
 					}
 				}
 			];

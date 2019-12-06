@@ -8,20 +8,27 @@ define(function(require, exports){
 		return localStorage.locale && localStorage.locale !== 'null' ? localStorage.locale : config.defaultLocale;
 	}
 
+	function getLocale(locale) {
+
+		return http.doGet(`${config.webAPIRoot}i18n?lang=${locale}`)
+			.then(({data}) => sharedState.localeSettings(data));
+	}
+
+	async function changeLocale(locale) {
+		localStorage.locale = locale;
+		await getLocale(locale);
+	}
+
 	function getAvailableLocales() {
 
 		return http.doGet(`${config.webAPIRoot}i18n/locales`)
 			.then(({data}) => {
 				sharedState.availableLocales(data);
 				const locale = getCurrentLocale();
-				sharedState.locale.subscribe(l => localStorage.locale = l);
 				sharedState.locale(locale);
+				changeLocale(locale);
+				sharedState.locale.subscribe(l => changeLocale(l));
 			});
-	}
-
-	function getLocale(locale) {
-
-		return http.doGet(`${config.webAPIRoot}i18n?lang=${locale}`);
 	}
 
 	return {

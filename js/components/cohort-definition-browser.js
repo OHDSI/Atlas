@@ -39,55 +39,49 @@ define([
 
 			this.options = {
 				Facets: [{
-						'caption': 'Last Modified',
+						'caption': ko.i18n('components.cohort-definition-browser.facets.lastModified', 'Last Modified'),
 						'binding': function (o) {
 							var createDate = new Date(o.createdDate);
 							var modDate = new Date(o.modifiedDate);
 							var dateForCompare = (createDate > modDate) ? createDate : modDate;
-							var daysSinceModification = (new Date()
-								.getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							} else {
-								return '2+ Weeks Ago';
-							}
+							return datatableUtils.getFacetForDate(dateForCompare);
 						}
 					},
 					{
-						'caption': 'Author',
+						'caption': ko.i18n('components.cohort-definition-browser.facets.author', 'Author'),
 						'binding': function (o) {
 							return o.createdBy;
 						}
 					}
-				]
+				],
 			};
 
+			this.language = ko.i18n('datatable.language');
+
 			this.columns = [{
-					title: 'Id',
+					title: ko.i18n('components.cohort-definition-browser.table.columns.id', 'Id'),
 					className: 'id-column',
 					data: 'id'
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('components.cohort-definition-browser.table.columns.name', 'Name'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['name'],
 						linkish: true,
 					})),
 				},
 				{
-					title: 'Created',
+					title: ko.i18n('components.cohort-definition-browser.table.columns.created', 'Created'),
 					className: 'date-column',
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
-					title: 'Updated',
+					title: ko.i18n('components.cohort-definition-browser.table.columns.updated', 'Updated'),
 					className: 'date-column',
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
-					title: 'Author',
+					title: ko.i18n('components.cohort-definition-browser.table.columns.author', 'Author'),
 					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
 				}

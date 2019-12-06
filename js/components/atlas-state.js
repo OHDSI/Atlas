@@ -71,7 +71,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 
 	state.availableLocales = ko.observableArray();
 	state.locale = ko.observable();
-	state.translations = ko.observable();
+	state.localeSettings = ko.observable();
 
 	return state;
 });

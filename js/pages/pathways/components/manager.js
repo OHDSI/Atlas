@@ -67,7 +67,7 @@ define([
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return 'Cohort Pathway #' + this.design().id;
+					return ko.i18n('pathways.manager.caption')() + this.design().id;
 				}
 				return this.defaultName;
 			});

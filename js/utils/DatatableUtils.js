@@ -1,5 +1,5 @@
-define(['services/MomentAPI', 'xss', 'appConfig'],
-    (momentApi, filterXSS, appConfig) => {
+define(['knockout', 'services/MomentAPI', 'xss', 'appConfig'],
+    (ko, momentApi, filterXSS, appConfig) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
@@ -28,15 +28,15 @@ define(['services/MomentAPI', 'xss', 'appConfig'],
         const getFacetForDate = function(date) {
             const daysSinceCreated = (new Date().getTime() - new Date(date).getTime()) / 1000 / 60 / 60 / 24;
             if (daysSinceCreated < .01) {
-                return 'Just Now';
+                return ko.i18n("facets.date.justNow", 'Just Now');
             } else if (daysSinceCreated < 1) {
-                return 'Within 24 Hours';
+                return ko.i18n('facets.date.within24Hours', 'Within 24 Hours');
             } else if (daysSinceCreated < 7) {
-                return 'This Week';
+                return ko.i18n('facets.date.thisWeek', 'This Week');
             } else if (daysSinceCreated < 14) {
-                return 'Last Week';
+                return ko.i18n('facets.date.lastWeek', 'Last Week');
             } else {
-                return '2+ Weeks Ago';
+                return ko.i18n("facets.date.others", '2+ Weeks Ago');
             }
         };
 

@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
 	<div class="loading" data-bind="visible: loading()">loading</div>
 	<div data-bind="visible: !loading()">
-		<h2 data-bind="css: classes('title')">
+		<h2 data-bind="css: classes('title'), text: ko.i18n('pathways.manager.executions.title')">
 			Executions
 		</h2>
 		<div data-bind="css: classes('content')">
@@ -22,7 +22,7 @@
 </div>
 
 <atlas-modal params="showModal: $component.isExecutionDesignShown,
-										 title: 'Design',
+										 title: ko.i18n('pathways.manager.executions.dialogs.design.title', 'Design'),
 										 data: {
 										 	executionDesign: $component.executionDesign,
 										 	classes: $component.classes
@@ -35,7 +35,7 @@
 
 <modal-exit-message params="{
         showModal: $component.isExitMessageShown,
-        title: 'Execution Exit Message',
+        title: ko.i18n('pathways.manager.executions.dialogs.exitMessage.title', 'Execution Exit Message'),
         exitMessage: $component.exitMessage,
     }">
 </modal-exit-message>
@@ -47,7 +47,7 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isGenerationPermitted(sourceKey) ? 'Not enough permissions to generate' : null,
+                    tooltip: !$component.isGenerationPermitted(sourceKey) ? ko.i18n('pathways.manager.executions.tooltips.generatePermissions', 'Not enough permissions to generate')() : null,
                 ">
                     <!-- ko if: $component.pathwayGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
@@ -55,28 +55,28 @@
 																			 attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) },
 																			 click: () => $component.generate(sourceKey)">
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-                            <span data-bind="css: classes('action-text')">Generate</span>
+                            <span data-bind="css: classes('action-text'), text: ko.i18n('pathways.manager.executions.buttons.generate')">Generate</span>
                     </button>
                     <!-- /ko -->
                     <!-- ko if: $component.pathwayGenerationStatusOptions.STARTED === status() -->
                     <a role="button" class="btn btn-sm btn-danger"
                        data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
-                        <i class="fa fa-spinner fa-spin"></i> Cancel
+                        <i class="fa fa-spinner fa-spin"></i> <span data-bind="css: classes('action-text'), text: ko.i18n('pathways.manager.executions.buttons.cancel')">Cancel</span>
                     </a>
                     <!-- /ko -->
                     <!-- ko if:  $component.pathwayGenerationStatusOptions.PENDING === status() -->
                     <a role="button" class="btn btn-sm btn-warning" data-bind="attr: {disabled: true}">
-                        <i class="fa fa-spinner fa-spin"></i> Pending
+                        <i class="fa fa-spinner fa-spin"></i> <span data-bind="css: classes('action-text'), text: ko.i18n('pathways.manager.executions.buttons.pending')">Pending</span>
                     </a>
                     <!-- /ko -->
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
-															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null">
+															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('pathways.manager.executions.tooltips.viewPermissions', 'Not enough permissions to view results')() : null">
                     <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 																			 attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
 																			 click: () => $component.goToLatestResults(sourceKey)">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
-                        View latest result
+                        <span data-bind="css: classes('action-text'), text: ko.i18n('pathways.manager.executions.buttons.viewLatestResult')">View latest result</span>
                     </button>
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
@@ -85,7 +85,7 @@
 																			 attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
 																			 click: toggleSection">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="text: `All executions (${submissions().length})`"></span>
+                        <span data-bind="css: classes('action-text'), text: `${ko.i18n('pathways.manager.executions.buttons.allExecutions', 'All executions')()} (${submissions().length})`"></span>
                     </button>
                 </li>
             </ul>
@@ -96,7 +96,7 @@
                     css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                     dataTable:{
                         data: submissions,
-                        options: {columns: execColumns, order: [[ 0, 'desc' ]]}
+                        options: {columns: execColumns, language: ko.i18n('datatable.language'), order: [[ 0, 'desc' ]]}
                     }
                 "/>
             </li>

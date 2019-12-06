@@ -1,13 +1,13 @@
-<loading data-bind="visible:loading()" params="status: 'import in progress'"></loading>
+<loading data-bind="visible:loading()" params="status: ko.i18n('components.import.progress', 'import in progress')"></loading>
 
 <div data-bind="css: classes(), visible: !loading()">
     <div data-bind="css: classes('content')">
         <!-- ko if: isImportPermitted() -->
-            <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-default btn-sm' }), click: doImport">Import</button>
+            <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-default btn-sm' }), click: doImport, text: ko.i18n('components.import.button')">Import</button>
             <textarea data-bind="css: classes('json-box'), textInput: $component.importJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !isImportPermitted() -->
-            Import is not permitted
+            <span data-bind="text: ko.i18n('components.import.denied')">Import is not permitted</span>
         <!-- /ko -->
     </div>
 </div>

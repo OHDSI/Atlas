@@ -49,14 +49,18 @@ define([
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(0, 'design'));
 		}
 
+		get datatableLanguage() {
+			return ko.i18n('datatable.language');
+		}
+
 		get gridColumns() {
-			return [
+			return ko.computed(() => [
 				{
-					title: 'Id',
+					title: ko.i18n('pathways.browser.table.columns.id','Id'),
 					data: 'id'
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('pathways.browser.table.columns.name','Name'),
 					data: 'name',
 					className: this.classes('tbl-col', 'name'),
 					render: datatableUtils.getLinkFormatter(d => ({
@@ -65,39 +69,39 @@ define([
 					}))
 				},
 				{
-					title: 'Created',
+					title: ko.i18n('pathways.browser.table.columns.created','Created'),
 					className: this.classes('tbl-col', 'created'),
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
-					title: 'Updated',
+					title: ko.i18n('pathways.browser.table.columns.updated','Updated'),
 					className: this.classes('tbl-col', 'updated'),
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
-					title: 'Author',
+					title: ko.i18n('pathways.browser.table.columns.author','Author'),
                     render: datatableUtils.getCreatedByFormatter(),
 					className: this.classes('tbl-col', 'author'),
 				}
-			];
+			]);
 		}
 
 		get gridOptions() {
-			return {
+			return ko.observable({
 				Facets: [{
-					'caption': 'Created',
+					'caption': ko.i18n('pathways.browser.grid.facets.created', 'Created'),
 					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
 				},
 					{
-						'caption': 'Updated',
+						'caption': ko.i18n('pathways.browser.grid.facets.updated', 'Updated'),
 						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
 					},
 					{
-						'caption': 'Author',
+						'caption': ko.i18n('pathways.browser.grid.facets.author', 'Author'),
 						'binding': (o) => (o.createdBy && o.createdBy.login) || "",
 					},
 				]
-			};
+			});
 		}
 	}
 
