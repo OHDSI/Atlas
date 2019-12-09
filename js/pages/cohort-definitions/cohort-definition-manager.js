@@ -141,6 +141,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.service = cohortDefinitionService;
 			this.defaultName = globalConstants.newEntityNames.cohortDefinition;
 			this.isReportGenerating = ko.observable(false);
+			// sample states
+			this.sampleSourceKey = ko.observable()
+			this.isSampleGenerating = ko.observable(false)
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
@@ -682,6 +685,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				entityIdGetter: () => this.currentCohortDefinition().id(),
 				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
 			});
+
+			//remove mode on url if it is not samples tab
+			this.tabMode.subscribe(mode => {
+				if(mode&&this.currentCohortDefinition()&&mode!=='samples') {
+					const cohortId = this.currentCohortDefinition().id()
+					window.location = `#/cohortdefinition/${cohortId}`
+				}
+			})
 		}
 
 			// METHODS
@@ -1115,8 +1126,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			onRouterParamsChanged(params) {
 				const { cohortDefinitionId, conceptSetId, mode = 'definition', sourceKey } = params;
+				console.log('params change', cohortDefinitionId, conceptSetId, mode , sourceKey)
 				this.clearConceptSet();
 				this.tabMode(mode);
+				if(sourceKey) {
+					this.sampleSourceKey(sourceKey)
+				}
 				if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
 					this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, sourceKey);
 				}
@@ -1587,6 +1602,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 																				: ko.utils.unwrapObservable(data)
 					}
 				}
+			}
+
+			clickSampleTab() {
+				console.log('click on sample tab');
+				this.tabMode('samples')
+				const cohortId = this.currentCohortDefinition().id()
+				console.log('cohortId', cohortId);
+				window.location = `#/cohortdefinition/${cohortId}/samples`
 			}
 	}
 
