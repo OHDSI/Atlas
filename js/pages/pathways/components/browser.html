@@ -1,6 +1,6 @@
 <heading-title params="name: ko.i18n('pathways.title'), icon: 'sitemap', theme: 'dark'"></heading-title>
 
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Pathway Analysis list...'"></loading>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('pathways.loading', 'Loading Pathway Analysis list...')"></loading>
 
 <div data-bind="css: classes('grid'), if: $component.canList(), visible: !$component.loading()">
 	<div data-bind="css: classes('toolbar')">
