@@ -38,6 +38,8 @@ define([
 	PollService
 ) {
 
+	const COLUMNS = 'pathways.manager.executions.table.columns';
+
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
@@ -59,55 +61,54 @@ define([
 			this.exitMessage = ko.observable();
 			this.pollId = null;
 
-			const columns = ko.i18n('pathways.manager.executions.table.columns');
 			this.execColumns = [{
-					title: ko.i18n('date', 'Date', columns),
+					title: ko.i18n(`${COLUMNS}.date`, 'Date'),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
-				{
-					title: ko.i18n('design.title', 'Design', columns),
-					className: this.classes('col-exec-checksum'),
-					render: (s, p, d) => {
-						let html = '';
-						if (PermissionService.isPermittedExportByGeneration(d.id)) {
-							html = `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.tag || '-')}</a>`
-						} else {
-							html = d.tag || '-';
-						}
-						html += currentHash() === d.hashCode ? ' ' + ko.i18n('design.value', '(same as now)', columns)() : '';
-						return html;
-					}
-				},
-				{
-					title: ko.i18n('status.title', 'Status', columns),
-					data: 'status',
-					className: this.classes('col-exec-status'),
-					render: (s, p, d) => {
-						const status = ko.i18n(`status.${s}`, s, columns)();
-						if (s === 'FAILED') {
-							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
-						} else if (s === 'STOPPED') {
-							return ko.i18n('status.CANCELED', 'CANCELED', columns)();
-						} else {
-							return status;
+					{
+						title: ko.i18n(`${COLUMNS}.design.title`, 'Design'),
+						className: this.classes('col-exec-checksum'),
+						render: (s, p, d) => {
+							let html = '';
+							if (PermissionService.isPermittedExportByGeneration(d.id)) {
+								html = `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.tag || '-')}</a>`
+							} else {
+								html = d.tag || '-';
+							}
+							html += currentHash() === d.hashCode ? ' ' + ko.i18n(`${COLUMNS}.design.value`, '(same as now)')() : '';
+							return html;
 						}
 					},
-				},
-				{
-					title: ko.i18n('duration', 'Duration', columns),
-					className: this.classes('col-exec-duration'),
-					render: (s, p, d) => momentAPI.formatInterval((d.endTime || (new Date()).getTime()) - d.startTime),
-				},
-				{
-					title: ko.i18n('results.title', 'Results', columns),
-					data: 'results',
-					className: this.classes('col-exec-results'),
-					render: (s, p, d) => {
-						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('results.text', 'View reports', columns)()}</a>` : ko.i18n('results.empty', '-', columns)();
+					{
+						title: ko.i18n(`${COLUMNS}.status.title`, 'Status'),
+						data: 'status',
+						className: this.classes('col-exec-status'),
+						render: (s, p, d) => {
+							const status = ko.i18n(`${COLUMNS}.status.${s}`, s)();
+							if (s === 'FAILED') {
+								return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
+							} else if (s === 'STOPPED') {
+								return ko.i18n(`${COLUMNS}.status.CANCELED`, 'CANCELED')();
+							} else {
+								return status;
+							}
+						},
+					},
+					{
+						title: ko.i18n(`${COLUMNS}.duration`, 'Duration'),
+						className: this.classes('col-exec-duration'),
+						render: (s, p, d) => momentAPI.formatInterval((d.endTime || (new Date()).getTime()) - d.startTime),
+					},
+					{
+						title: ko.i18n(`${COLUMNS}.results.title`, 'Results'),
+						data: 'results',
+						className: this.classes('col-exec-results'),
+						render: (s, p, d) => {
+							return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(`${COLUMNS}.results.values.text`, 'View reports')()}</a>` : ko.i18n(`${COLUMNS}.results.empty`, '-')();
+						}
 					}
-				}
-			];
+				];
 
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
