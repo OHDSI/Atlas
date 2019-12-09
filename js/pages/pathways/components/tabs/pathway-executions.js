@@ -85,11 +85,11 @@ define([
 						data: 'status',
 						className: this.classes('col-exec-status'),
 						render: (s, p, d) => {
-							const status = ko.i18n(`${COLUMNS}.status.${s}`, s)();
+							const status = ko.i18n(`${COLUMNS}.status.values.${s}`, s)();
 							if (s === 'FAILED') {
 								return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
 							} else if (s === 'STOPPED') {
-								return ko.i18n(`${COLUMNS}.status.CANCELED`, 'CANCELED')();
+								return ko.i18n(`${COLUMNS}.status.values.CANCELED`, 'CANCELED')();
 							} else {
 								return status;
 							}
