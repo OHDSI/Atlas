@@ -1,0 +1,7 @@
+# ignore everything except directory js/pages/profiles
+/*
+!/js
+/js/*
+!/js/pages
+/js/pages/*
+!/js/pages/profiles
