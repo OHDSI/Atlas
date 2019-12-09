@@ -239,6 +239,9 @@ define([
       }
       this.searchHighlight = ko.observable()
       this.highlightData = ko.observableArray()
+      this.patientSelectionData = ko.computed(() => {
+        return []
+      })
       this.defaultColor = '#888'
       this.words = ko.computed(() => {
         if (!this.xfObservable()) {
