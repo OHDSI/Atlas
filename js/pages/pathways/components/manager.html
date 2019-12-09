@@ -3,21 +3,21 @@
 <!-- ko if: design -->
 <div data-bind="css: classes(), visible: !$component.loading()">
 	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
-	<div class="asset-heading">
+	<div class="asset-heading" data-bind="let: {messages: ko.unwrap(ko.i18n('pathways.manager.messages'))}">
 		<div class="input-group">
 			<input type="text" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}"><i class="fa fa-save"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="click: $component.close, css: {disabled: isProcessing()}"><i class="fa fa-times"></i></button>
 				<!-- ko ifnot: isNewEntity -->
-				<button type="button" class="btn btn-primary" data-bind="click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}, attr: {title: ko.i18n('pathways.manager.messages.createACopy')}" title="Create a copy of this Pathway Analysis"><i class="fa fa-copy"></i></button>
+				<button type="button" class="btn btn-primary" data-bind="click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}, attr: {title: ko.i18n('createACopy', '', messages)}" title="Create a copy of this Pathway Analysis"><i class="fa fa-copy"></i></button>
 				<button type="button" class="btn btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete() || isProcessing()}"><i class="fa fa-trash-o"></i></button>
 				<!-- /ko -->
 			</div>
 		</div>
 		<div data-bind="visible: !isNameFilled()" class="empty-name-error">
 			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-			<label data-bind="text: ko.i18n('pathways.manager.messages.nameIsEmpty')">Cohort Pathway name is empty.</label>
+			<label data-bind="text: ko.i18n('nameIsEmpty', '', messages)">Cohort Pathway name is empty.</label>
 		</div>
 	</div>
 

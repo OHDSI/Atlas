@@ -11,6 +11,7 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
+	'services/MomentAPI',
 	'services/Source',
 	'lodash',
   'services/JobDetailsService',
@@ -30,14 +31,12 @@ define([
 	AutoBind,
 	commonUtils,
 	datatableUtils,
+	momentAPI,
 	SourceService,
 	lodash,
   jobDetailsService,
 	PollService
 ) {
-	const tableStatusColumn = "pathways.manager.executions.table.columns.status.values";
-	const tableResultsColumn = "pathways.manager.executions.table.columns.results.values";
-	const tableDesignColumn = "pathways.manager.executions.table.columns.design";
 
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -60,13 +59,14 @@ define([
 			this.exitMessage = ko.observable();
 			this.pollId = null;
 
+			const columns = ko.i18n('pathways.manager.executions.table.columns');
 			this.execColumns = [{
-					title: ko.i18n('pathways.manager.executions.table.columns.date', 'Date'),
+					title: ko.i18n('date', 'Date', columns),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 				{
-					title: ko.i18n(tableDesignColumn + '.title', 'Design'),
+					title: ko.i18n('design.title', 'Design', columns),
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, d) => {
 						let html = '';
@@ -75,39 +75,36 @@ define([
 						} else {
 							html = d.tag || '-';
 						}
-						html += currentHash() === d.hashCode ? ' ' + ko.i18n(tableDesignColumn + '.value', '(same as now)')() : '';
+						html += currentHash() === d.hashCode ? ' ' + ko.i18n('design.value', '(same as now)', columns)() : '';
 						return html;
 					}
 				},
 				{
-					title: ko.i18n('pathways.manager.executions.table.columns.status.title', 'Status'),
+					title: ko.i18n('status.title', 'Status', columns),
 					data: 'status',
 					className: this.classes('col-exec-status'),
 					render: (s, p, d) => {
-						const status = ko.i18n(`${tableStatusColumn}.${s}`, s)();
+						const status = ko.i18n(`status.${s}`, s, columns)();
 						if (s === 'FAILED') {
 							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
 						} else if (s === 'STOPPED') {
-							return ko.i18n(tableStatusColumn + '.CANCELED', 'CANCELED')();
+							return ko.i18n('status.CANCELED', 'CANCELED', columns)();
 						} else {
 							return status;
 						}
 					},
 				},
 				{
-					title: ko.i18n('pathways.manager.executions.table.columns.duration', 'Duration'),
+					title: ko.i18n('duration', 'Duration', columns),
 					className: this.classes('col-exec-duration'),
-					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
-					}
+					render: (s, p, d) => momentAPI.formatInterval((d.endTime || (new Date()).getTime()) - d.startTime),
 				},
 				{
-					title: ko.i18n('pathways.manager.executions.table.columns.results.title', 'Results'),
+					title: ko.i18n('results.title', 'Results', columns),
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(tableResultsColumn + '.text', 'View reports')()}</a>` : ko.i18n(tableResultsColumn + '.empty', '-')();
+						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('results.text', 'View reports', columns)()}</a>` : ko.i18n('results.empty', '-', columns)();
 					}
 				}
 			];
@@ -115,6 +112,7 @@ define([
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
 			this.isViewGenerationsPermitted() && this.startPolling();
+			this.executionsPage = ko.i18n('pathways.manager.executions');
 		}
 
 		startPolling() {

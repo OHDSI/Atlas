@@ -43,7 +43,7 @@ define([
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
-			this.defaultName = constants.newEntityNames.pathway;
+			this.defaultName = ko.unwrap(ko.i18n('pathways.defaultName', constants.newEntityNames.pathway));
 
 			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name();
@@ -77,6 +77,7 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+			this.messages = ko.i18n('pathways.manager.messages');
 		}
 
 		onRouterParamsChanged({analysisId, section, subId}) {
@@ -127,9 +128,9 @@ define([
 		}
 
 		async load(id) {
-			if (this.design() && (this.design().id === id || 0 == id)) return; // this design is already loaded.
+			if (this.design() && (this.design().id === id || 0 === id)) return; // this design is already loaded.
 
-			if(this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?"))
+			if(this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n("beforeClose", "Your changes are not saved. Would you like to continue?", this.messages))))
 				return;
 
 			if (id < 1) {
@@ -149,7 +150,7 @@ define([
 			try {
 				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
 				if (results > 0) {
-					alert('A cohort pathway with this name already exists. Please choose a different name.');
+					alert(ko.unwrap(ko.i18n('alreadyExists', 'A cohort pathway with this name already exists. Please choose a different name.', this.messages)));
 				} else {
 					if (!this.design().id) {
 						const newAnalysis = await PathwayService.create(this.design());
@@ -161,7 +162,7 @@ define([
 					}
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save a cohort pathway.');
+				alert(ko.unwrap(ko.i18n('saveFailed', 'An error occurred while attempting to save a cohort pathway.', this.messages)));
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -177,7 +178,7 @@ define([
 		}
 
 		async del() {
-			if (confirm('Are you sure?')) {
+			if (confirm(ko.unwrap(ko.i18n('deleteConfirmation', 'Are you sure?', this.messages)))) {
 				this.isDeleting(true);
 				this.loading(true);
 				await PathwayService.del(this.design().id);
@@ -188,7 +189,7 @@ define([
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n("beforeClose", "Your changes are not saved. Would you like to continue?", this.messages))) {
 				return;
 			}
 			this.design(null);

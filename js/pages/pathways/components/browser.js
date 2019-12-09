@@ -54,13 +54,14 @@ define([
 		}
 
 		get gridColumns() {
+			const columns = ko.i18n('pathways.browser.table.columns');
 			return ko.computed(() => [
 				{
-					title: ko.i18n('pathways.browser.table.columns.id','Id'),
+					title: ko.i18n('id', 'Id', columns),
 					data: 'id'
 				},
 				{
-					title: ko.i18n('pathways.browser.table.columns.name','Name'),
+					title: ko.i18n('name', 'Name', columns),
 					data: 'name',
 					className: this.classes('tbl-col', 'name'),
 					render: datatableUtils.getLinkFormatter(d => ({
@@ -69,17 +70,17 @@ define([
 					}))
 				},
 				{
-					title: ko.i18n('pathways.browser.table.columns.created','Created'),
+					title: ko.i18n('created', 'Created', columns),
 					className: this.classes('tbl-col', 'created'),
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
-					title: ko.i18n('pathways.browser.table.columns.updated','Updated'),
+					title: ko.i18n('updated', 'Updated', columns),
 					className: this.classes('tbl-col', 'updated'),
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
-					title: ko.i18n('pathways.browser.table.columns.author','Author'),
+					title: ko.i18n('author', 'Author', columns),
                     render: datatableUtils.getCreatedByFormatter(),
 					className: this.classes('tbl-col', 'author'),
 				}
@@ -87,17 +88,18 @@ define([
 		}
 
 		get gridOptions() {
+			const facets = ko.i18n('pathways.browser.grid.facets');
 			return ko.observable({
 				Facets: [{
-					'caption': ko.i18n('pathways.browser.grid.facets.created', 'Created'),
+					'caption': ko.i18n('created', 'Created', facets),
 					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
 				},
 					{
-						'caption': ko.i18n('pathways.browser.grid.facets.updated', 'Updated'),
+						'caption': ko.i18n('updated', 'Updated', facets),
 						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
 					},
 					{
-						'caption': ko.i18n('pathways.browser.grid.facets.author', 'Author'),
+						'caption': ko.i18n('author', 'Author', facets),
 						'binding': (o) => (o.createdBy && o.createdBy.login) || "",
 					},
 				]

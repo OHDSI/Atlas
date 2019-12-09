@@ -1,15 +1,22 @@
 define(function (require, exports) {
 
   const moment = require('moment');
+  const ko = require('knockout');
+  const sharedState = require('atlas-state');
+  const {get} = require("lodash");
   const PARSE_FORMAT = 'YYYY-MM-DD, H:mm';
   const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm A';
   const DATE_FORMAT = 'MM/DD/YYYY';
   const DURATION_FORMAT = 'HH:mm:ss';
   const EMPTY_DATE = '';
 
+  const dateTimeFormat = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.datetime", DATE_TIME_FORMAT));
+  const seconds = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.seconds", "sec"));
+  const minutes = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.minutes", "min"));
+
   function formatDateTime(date) {
     var m = moment(date, PARSE_FORMAT);
-    return m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
+    return m.isValid() ? m.format(dateTimeFormat()) : EMPTY_DATE;
   }
 
   function formatDate(date, outFormat) {
@@ -22,6 +29,11 @@ define(function (require, exports) {
     return m.isValid() ? m.format(DURATION_FORMAT) : EMPTY_DATE;
   }
 
+  function formatInterval(ms) {
+    const durationSec = ms / 1000;
+    return `${Math.floor(durationSec / 60)} ${minutes()} ${Math.round(durationSec % 60)} ${seconds()}`;
+  }
+
   function formatDateTimeWithFormat(timestamp, outFormat) {
     var m = moment(timestamp);
     return m.isValid() ? m.format(outFormat) : EMPTY_DATE;
@@ -29,7 +41,7 @@ define(function (require, exports) {
 
   function formatDateTimeUTC(timestamp) {
     const m = moment(typeof timestamp === 'string' ? moment.utc(timestamp).valueOf() : timestamp);
-    return m.isValid() ? m.format(DATE_TIME_FORMAT) : EMPTY_DATE;
+    return m.isValid() ? m.format(dateTimeFormat()) : EMPTY_DATE;
   }
 
   function diffInDays(fromDate, toDate) {
@@ -45,6 +57,7 @@ define(function (require, exports) {
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
+    formatInterval,
     diffInDays,
     PARSE_FORMAT,
     DATE_TIME_FORMAT,

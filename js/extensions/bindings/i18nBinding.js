@@ -1,11 +1,12 @@
 define(['knockout', 'atlas-state', 'lodash'],
 	function(ko, sharedState, {get}){
 
-		ko.i18n = function(key, defaultValue) {
+		ko.i18n = function(key, defaultValue, subtree) {
 			return ko.pureComputed({
 				read: () => {
-					const tr = sharedState.localeSettings() && get(sharedState.localeSettings(), key, defaultValue);
-					return tr ? tr : key;
+					const translations = ko.unwrap(subtree || sharedState.localeSettings);
+					const tr = translations && get(translations, key, defaultValue);
+					return tr || key;
 				},
 				write: (value) => value,
 			});

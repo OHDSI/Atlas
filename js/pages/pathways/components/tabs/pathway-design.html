@@ -1,10 +1,10 @@
 <div data-bind="css: classes()">
-	<p data-bind="css: classes('descr'), html: ko.i18n('pathways.manager.design.description')">
+	<p data-bind="css: classes('descr'), html: ko.i18n('description', '', designPage)">
 		<b>Cohort Pathway</b> is defined as the process of generating an aggregated sequence of transitions between the Event Cohorts among those people in the Target Cohorts.
 	</p>
 	<div data-bind="css: classes('linked-entities')">
-		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.targetCohorts.title'),
-																descr: ko.i18n('pathways.manager.design.targetCohorts.description'),
+		<linked-cohort-list params="title: ko.i18n('targetCohorts.title', '', designPage),
+																descr: ko.i18n('targetCohorts.description', '', designPage),
 																canEditName: true,
 																data: design().targetCohorts">
 
@@ -12,19 +12,19 @@
 	</div>
 	<div data-bind="css: classes('linked-entities')">
 		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.eventCohorts.title'),
-																descr: ko.i18n('pathways.manager.design.eventCohorts.description'),
+																descr: ko.i18n('eventCohorts.description', '', designPage),
 																canEditName: true,
 																data: design().eventCohorts">
 		</linked-cohort-list>
 	</div>
 
 	<div data-bind="css: classes('analysis-settings-block')">
-		<h2 data-bind="css: classes('title'), text: ko.i18n('pathways.manager.design.analysisSettings.title')">Analysis Settings</h2>
-		<p data-bind="css: classes('descr'), text: ko.i18n('pathways.manager.design.analysisSettings.description')">The following set of parameters will be used when performing the pathway analysis.</p>
+		<h2 data-bind="css: classes('title'), text: ko.i18n('analysisSettings.title', '', designPage)">Analysis Settings</h2>
+		<p data-bind="css: classes('descr'), text: ko.i18n('analysisSettings.description', '', designPage)">The following set of parameters will be used when performing the pathway analysis.</p>
 		<div data-bind="css: classes('settings')">
 			<table>
 				<tr data-bind="css: classes('setting-line')">
-						<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.combinationWindow.title')">Combination Window:</td>
+						<td data-bind="css: classes('setting-title'), text: ko.i18n('analysisSettings.combinationWindow.title', '', designPage)">Combination Window:</td>
 						<td>
 							<input
 									class="form-control"
@@ -35,10 +35,10 @@
 										ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }"
 							/>
 						</td>
-						<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.combinationWindow.description')">Window of time when two event cohorts need to overlap to be considered a combination.</td>
+						<td data-bind="css: classes('setting-description'), text: ko.i18n('analysisSettings.combinationWindow.description', '', designPage)">Window of time when two event cohorts need to overlap to be considered a combination.</td>
 				</tr>
 				<tr data-bind="css: classes('setting-line')">
-					<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.minimumCellCount.title')">Minimum cell count:</td>
+					<td data-bind="css: classes('setting-title'), text: ko.i18n('analysisSettings.minimumCellCount.title', '', designPage)">Minimum cell count:</td>
 					<td>
 						<input
 								class="form-control"
@@ -49,10 +49,10 @@
 										ko_autocomplete: { value: design().minCellCount, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }"
 						/>
 					</td>
-					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.minimumCellCount.description')">Minimum number of subjects in the target cohort for a given event in order to be counted in the pathway.</td>
+					<td data-bind="css: classes('setting-description'), text: ko.i18n('analysisSettings.minimumCellCount.description', '', designPage)">Minimum number of subjects in the target cohort for a given event in order to be counted in the pathway.</td>
 				</tr>
 				<tr data-bind="css: classes('setting-line')">
-					<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.maximumPathLength.title')">Maximum path length:</td>
+					<td data-bind="css: classes('setting-title'), text: ko.i18n('analysisSettings.maximumPathLength.title', '', designPage)">Maximum path length:</td>
 					<td>
 						<input
 								class="form-control"
@@ -63,10 +63,11 @@
 										ko_autocomplete: { value: design().maxDepth, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }"
 						/>
 					</td>
-					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.maximumPathLength.description')">Maximum number of steps in a given pathway to be included in the sunburst plot.</td>
+					<td data-bind="css: classes('setting-description'), text: ko.i18n('analysisSettings.maximumPathLength.description', '', designPage)">Maximum number of steps in a given pathway to be included in the sunburst plot.</td>
 				</tr>
 			</table>
 		</div>
 	</div>
 	<div data-bind="css:classes('bottom-padding')"></div>
 </div>
+<!--/ko -->

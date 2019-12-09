@@ -33,6 +33,10 @@ define([
 		get maxDepthOptions() {
 			return constants.maxDepthOptions;
 		}
+
+		get designPage() {
+			return ko.i18n('pathways.manager.design');
+		}
 		
 	}
 

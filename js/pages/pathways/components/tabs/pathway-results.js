@@ -53,7 +53,9 @@ define([
 			this.pathwaysObserver = ko.computed(() => this.prepareResultData(this.results(), this.filterList()));
 
 			this.executionId.subscribe(id => id && this.loadData());
-			this.title = ko.computed(() => ko.unwrap(ko.i18n('pathways.manager.executions.results.title')) + ' ' + (this.results() && this.results().sourceName));
+			this.resultsPage = ko.i18n('pathways.manager.executions.results');
+			this.columns = ko.i18n('pathways.manager.executions.results.details.table.columns');
+			this.title = ko.computed(() => ko.unwrap(ko.i18n('title', '', this.resultsPage)) + ' ' + (this.results() && this.results().sourceName));
 
 			this.loadData();
 		}
