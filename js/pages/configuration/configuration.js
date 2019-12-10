@@ -11,6 +11,7 @@ define([
   'const',
   'services/JobDetailsService',
   'services/Poll',
+  'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -25,13 +26,15 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService
+  PollService,
+  cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
       super(params);
       this.config = config;
       this.api = config.api;
+      this.loading = ko.observable(false);
       this.sharedState = sharedState;
       this.isInProgress = ko.observable(false);
       this.jobListing = sharedState.jobListing;
@@ -41,9 +44,9 @@ define([
         {name: 'Current Session', id: 'session'},
         {name: 'Whole Application', id: 'application'},
       ];
-  
+
       this.isAuthenticated = authApi.isAuthenticated;
-      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running || 
+      this.initializationCompleted = ko.pureComputed(() => sharedState.appInitializationStatus() === constants.applicationStatuses.running ||
           sharedState.appInitializationStatus() === constants.applicationStatuses.noSourcesAvailable);
       this.hasSourceAccess = authApi.hasSourceAccess;
       this.hasPageAccess = ko.pureComputed(() => {
@@ -66,8 +69,11 @@ define([
           return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedEditSourcePriority())
         }
       });
-      
-		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+
+      this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canClearServerCache = ko.pureComputed(() => {
+        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
+      });
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
@@ -94,8 +100,10 @@ define([
     }
 
     async onPageCreated() {
-      sourceApi.initSourcesConfig();
+      this.loading(true);
+      await sourceApi.initSourcesConfig();
       super.onPageCreated();
+      this.loading(false);
     }
 
     canReadSource(source) {
@@ -121,14 +129,22 @@ define([
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey));
       }
     }
-    
+
 		clearLocalStorageCache() {
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
 
+		clearServerCache() {
+      if (confirm('Are you sure you want to clear the server cache?')) {
+        cacheApi.clearCache().then(() => {
+          alert("Server cache has been cleared.");
+        });
+      }
+    };
+
 		newSource() {
-			document.location = "#/source/new";
+      commonUtils.routeTo('/source/0');
     };
 
 		selectSource(source) {
@@ -145,7 +161,7 @@ define([
         await sourceApi.initSourcesConfig();
       } catch(err) {
         alert('Failed to update priority source daimon');
-      }        
+      }
       this.isInProgress(false);
     }
 
