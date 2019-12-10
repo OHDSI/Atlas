@@ -22,12 +22,12 @@
 </div>
 
 <atlas-modal params="showModal: $component.isExecutionDesignShown,
-										 title: ko.i18n('dialogs.design.title', 'Design', executionsPage),
+										 title: ko.i18n('dialogs.design.title', 'Design', $component.executionsPage),
 										 data: {
 										 	executionDesign: $component.executionDesign,
 										 	classes: $component.classes
 										 }">
-	<div class="loading" data-bind="visible: executionDesign() == null, text: ko.i18n('loading', 'loading', executionsPage)">loading</div>
+	<div class="loading" data-bind="visible: executionDesign() == null, text: ko.i18n('loading', 'loading', $component.executionsPage)">loading</div>
 	<div data-bind="if: executionDesign() != null">
 		<textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
 	</div>
@@ -35,7 +35,7 @@
 
 <modal-exit-message params="{
         showModal: $component.isExitMessageShown,
-        title: ko.i18n('dialogs.exitMessage.title', 'Execution Exit Message', executionsPage),
+        title: ko.i18n('dialogs.exitMessage.title', 'Execution Exit Message', $component.executionsPage),
         exitMessage: $component.exitMessage,
     }">
 </modal-exit-message>
