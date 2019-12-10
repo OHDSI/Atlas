@@ -16,8 +16,8 @@ define(
         '/welcome/:token': new Route((token) => {
           require(['welcome'], function () {
             authApi.token(token);
-            // application must be reloaded to call bootstrap function again
-            document.location.replace("/");
+            authApi.loadUserInfo();
+            document.location = "#/welcome";
           });
         }),
       };
