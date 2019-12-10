@@ -47,7 +47,7 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isGenerationPermitted(sourceKey) ? ko.i18n('tooltips.generatePermissions', 'Not enough permissions to generate', executionsPage)() : null,
+                    tooltip: !$component.isGenerationPermitted(sourceKey) ? ko.i18n('pathways.manager.executions.tooltips.generatePermissions', 'Not enough permissions to generate')() : null,
                 ">
                     <!-- ko if: $component.pathwayGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
@@ -71,7 +71,7 @@
                     <!-- /ko -->
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
-															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('tooltips.viewPermissions', 'Not enough permissions to view results', $component.executionsPage)() : null">
+															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('pathways.manager.executions.tooltips.viewPermissions', 'Not enough permissions to view results')() : null">
                     <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 																			 attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
 																			 click: () => $component.goToLatestResults(sourceKey)">
@@ -80,7 +80,7 @@
                     </button>
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
-															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('tooltips.viewPermissions', 'Not enough permissions to view results', $component.executionsPage)() : null">
+															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('pathways.manager.executions.tooltips.viewPermissions', 'Not enough permissions to view results')() : null">
                     <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
 																			 attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
 																			 click: toggleSection">

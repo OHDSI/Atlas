@@ -316,7 +316,7 @@ define(
 							pageTitle = pageTitle + ": Loading";
 							break;
 						default:
-							pageTitle = `${pageTitle}: ${this.activePage()}`;
+							pageTitle = `${pageTitle}: ${ko.unwrap(this.activePage())}`;
 							break;
 					}
 

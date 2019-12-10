@@ -24,7 +24,7 @@ define(
     });
  
     return {
-      title: 'Estimation',
+      title: ko.i18n('navigation.estimation', 'Estimation'),
       buildRoutes,
       navUrl: navUrl,
       icon: 'balance-scale', 

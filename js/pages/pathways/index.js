@@ -20,7 +20,7 @@ define((require, exports) => {
 	});
 
 	return {
-		title: constants.pageTitle,
+		title: ko.i18n('navigation.pathways', constants.pageTitle),
 		buildRoutes,
 		icon: 'sitemap',
 		navUrl: () => '#/pathways',
