@@ -9,14 +9,20 @@ define(
                 require(['./vocabulary'], function (search) {
                     const view = 'vocabulary';
                     let params = {
-                        qs: router.qs()
+                        query: router.qs().query ? unescape(router.qs().query) : null,
                     };
                     router.setCurrentView(view, params);
                 });
             });
 
+            const legacySearch = new AuthorizedRoute((query) => {
+                window.location = '#/search?query=' + query;
+            });
+
             return {
-                '/search': search
+                'search/:query:': legacySearch,
+                '/search': search, 
+                'search':search,
             };
         }
 

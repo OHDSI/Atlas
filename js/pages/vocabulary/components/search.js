@@ -55,7 +55,6 @@ define([
 				this.isInProgress = ko.computed(() => {
 					return this.domainsLoading() === true && this.vocabulariesLoading() === true;
 				});
-				/*
 				this.isInProgress.subscribe((isInProgress) => {
 					if (!isInProgress) {
 						if (params.query()) {
@@ -70,7 +69,6 @@ define([
 						this.executeSearch();
 					}
 				});
-				*/
 				this.currentSearch.subscribe(() => this.searchExecuted(false));
 				this.loadingMessage = ko.computed(() => {
 					const entities = [];

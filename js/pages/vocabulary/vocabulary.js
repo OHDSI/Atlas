@@ -21,8 +21,14 @@ define([
 
 				this.model = params.model;
 				this.searchParams = {
-					model: this.model
+					query: ko.observable(),
 				};
+			}
+
+			onRouterParamsChanged({ query }) {
+				if (query !== undefined) {
+					this.searchParams.query(query);
+				}
 			}
 		}
 
