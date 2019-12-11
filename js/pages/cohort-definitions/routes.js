@@ -27,12 +27,6 @@ define((require, factory) => {
             'conceptset-list-modal',
           ], function() {
             // not re-render component if it was rendered already
-            if (sharedState.CohortDefinition.current()) {
-              const currentCohortId = sharedState.CohortDefinition.current().id()
-              if (currentCohortId == cohortDefinitionId) {
-                return
-              }
-            }
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
               mode: 'samples',

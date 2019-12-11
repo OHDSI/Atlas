@@ -57,3 +57,23 @@
 .cohort-conceptset-button-pane .btn-success.disabled {
     color: #f3f3f3;
 }
+
+.sampleCreatingForm label {
+    font-weight: bold !important;
+}
+
+.myCustomInputError {
+    border-color: #a94442
+}
+
+.myCustomInputSuccess {
+    border-color: #3c763d
+}
+
+.myCustomTextError {
+    color: #a94442 !important
+}
+
+.myCustomTextSuccess {
+    color: #3c763d !important
+}
