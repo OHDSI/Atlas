@@ -3,7 +3,7 @@ define(
     const { Route } = require('pages/Route');
     const authApi = require('services/AuthAPI');
 
-    function routes(appModel, router) {
+    function routes(router) {
       return {
         '/': new Route(() => {
           document.location = "#/home";
@@ -16,6 +16,7 @@ define(
         '/welcome/:token': new Route((token) => {
           require(['welcome'], function () {
             authApi.token(token);
+            authApi.loadUserInfo();
             document.location = "#/welcome";
           });
         }),

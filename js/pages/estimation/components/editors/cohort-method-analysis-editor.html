@@ -39,9 +39,21 @@
                     </div>
                 </div>
                 <div>
+                    <label>Restrict the study to the period when both exposures are present in the data? (E.g. when both drugs are on the market)</label>
+                    <div class="input-group">
+                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.getDbCohortMethodDataArgs.restrictToCommonPeriod"></select>
+                    </div>
+                </div>
+                <div>
                     <label>Should only the first exposure per subject be included?</label>
                     <div class="input-group">
                         <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.getDbCohortMethodDataArgs.firstExposureOnly"></select>
+                    </div>
+                </div>
+                <div>
+                    <label>The minimum required continuous observation time (in days) prior to index date for a person to be included in the cohort.</label>
+                    <div class="input-group">
+                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.getDbCohortMethodDataArgs.washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.analysis.getDbCohortMethodDataArgs.washoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
                     </div>
                 </div>
                 <div>
@@ -51,21 +63,9 @@
                     </div>
                 </div>
                 <div>
-                    <label>Restrict the analysis to the period when both exposures are observed?</label>
+                    <label>If a subject is in multiple cohorts, should time-at-risk be censored when the new time-at-risk start to prevent overlap?</label>
                     <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.getDbCohortMethodDataArgs.restrictToCommonPeriod"></select>
-                    </div>
-                </div>
-                <div>
-                    <label>The mininum required continuous observation time prior to index date for a person to be included in the cohort.</label>
-                    <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.getDbCohortMethodDataArgs.washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.analysis.getDbCohortMethodDataArgs.washoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-                    </div>
-                </div>
-                <div>
-                    <label>If either the target or the comparator cohort is larger than this number it will be sampled to this size. (0 for this value indicates no maximum size)</label>
-                    <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.getDbCohortMethodDataArgs.maxCohortSize, eventType:'blur', ko_autocomplete: { value: $component.analysis.getDbCohortMethodDataArgs.maxCohortSize, source: $component.options.maxCohortSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createStudyPopArgs.censorAtNewRiskWindow"></select>
                     </div>
                 </div>
                 <div>
@@ -81,9 +81,9 @@
                     </div>
                 </div>
                 <div>
-                    <label>If a subject is in multiple cohorts, should time-at-risk be censored when the new time-at-risk start to prevent overlap?</label>
+                    <label>If either the target or the comparator cohort is larger than this number it will be sampled to this size. (0 for this value indicates no maximum size)</label>
                     <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createStudyPopArgs.censorAtNewRiskWindow"></select>
+                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.getDbCohortMethodDataArgs.maxCohortSize, eventType:'blur', ko_autocomplete: { value: $component.analysis.getDbCohortMethodDataArgs.maxCohortSize, source: $component.options.maxCohortSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
                     </div>
                 </div>
             </div>
@@ -99,7 +99,7 @@
                     <label>Using OHDSI covariates for propensity score model. (<span class="linkish" data-bind="click: () => { showCovariateSelector(true) }">Click to view details</span>)</label>
                 </div>
                 <div>
-                    <label>What concepts do you want to <b>include</b> in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                    <label>Concepts to <b>include</b> when constructing the covariates to be used in this study. (Leave blank if you want to include every concept).*</label>
                     <div class="input-group">
                         <input class="form-control" type="text" disabled data-bind="value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().name" />
                         <span class="input-group-btn">
@@ -107,15 +107,11 @@
                             <button class="btn btn-danger" data-bind="disable:$component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().id == 0,click:clearIncludedCovariates" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                         </span>
                     </div>
+                    <label><i>* Concepts defined here are combined with those defined in the Comparisons section.</i></label>
                 </div>
+                <hr/>
                 <div>
-                    <label>Should descendant concepts be added to the list of included concepts?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.addDescendantsToInclude"></select>
-                    </div>
-                </div>
-                <div>
-                    <label>What concepts do you want to <b>exclude</b> in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+                    <label>Concepts to <b>exclude</b> when constructing the covariates to be used in this study.*</label>
                     <div class="input-group">
                         <input class="form-control" type="text" disabled data-bind="value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().name" />
                         <span class="input-group-btn">
@@ -123,18 +119,7 @@
                             <button class="btn btn-danger" data-bind="disable:$component.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().id == 0,click:clearExcludedCovariates" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                         </span>
                     </div>
-                </div>
-                <div>
-                    <label>Should descendant concepts be added to the list of excluded concepts?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.addDescendantsToExclude"></select>
-                    </div>
-                </div>
-                <div>
-                    <label>A comma delimited list of covariate IDs that should be restricted to:</label>
-                    <div class="input-group">
-                        <input class="form-control" type="text" data-bind="value: $component.cvIncludeCovariateIds" />
-                    </div>
+                    <label><i>* Concepts defined here are combined with those defined in the Comparisons section.</i></label>
                 </div>
             </div>
         </div>
@@ -221,31 +206,12 @@
                     </div>
                 </div>
                 <div>
-                    <label>If an error occurs, should the function stop? Else, the two cohorts will be assumed to be perfectly separable.</label>
+                    <label>Use regularization when fitting the propensity model?</label>
                     <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createPsArgs.stopOnError"></select>
+                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.useRegularization"></select>
                     </div>
                 </div>
-                <div class="panel panel-primary" data-bind="css: classes('panel-buffer', 'panel-buffer-left'), collapsable: showPsCovariateDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
-                    <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePsCovariateDisplay">
-                        <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Additional Covariate Settings</span>
-                    </div>
-                    <div class="panel-body collapse">
-                        <div>
-                            <label>A comma-delimited list of covariate IDs to <b>exclude</b>:</label>
-                            <div class="input-group">
-                                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.excludeCovariateIds"></textarea>
-                            </div>
-                        </div>
-                        <div>
-                            <label>A comma-delimited list of covariate IDs to <b>include</b>:</label>
-                            <div class="input-group">
-                                <textarea class="form-control" rows="1" cols="80" data-bind="value: $component.includeCovariateIds"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" data-bind="css: classes('subsection')">
+                <div class="row" data-bind="css: classes('subsection'), visible: $component.useRegularization">
                     <div class="col-md-6">
                         <div class="panel panel-primary" data-bind="collapsable: showControlDisplay, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
                             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">

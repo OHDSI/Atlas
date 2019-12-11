@@ -25,7 +25,6 @@ define(
         this.activeRoute = ko.observable({});
         this.currentView = ko.observable('loading');
         this.onLoginSubscription;
-        this.getModel = () => { throw new Exception('Model getter is not set'); };
         this.pages = Object.values(pages);
         this.routerParams = ko.observable();
         this.currentViewAccessible = ko.pureComputed(() => {
@@ -60,7 +59,7 @@ define(
 
       aggregateRoutes() {
         const routes = this.pages.reduce((routes, page) => {
-          const pageRoutes = page.buildRoutes(this.getModel(), this);
+          const pageRoutes = page.buildRoutes(this);
           for (let key in pageRoutes) {
             pageRoutes[key].title = page.title;
           }
@@ -128,14 +127,6 @@ define(
 					this.routerParams(routerParams);
 				}
 				this.currentView(view);
-      }
-
-      /**
-       * Provides a way to get the reference to the global app model
-       * @param {function} getter
-       */
-      setModelGetter(getter) {
-        this.getModel = getter;
       }
     }
     return new AtlasRouter();

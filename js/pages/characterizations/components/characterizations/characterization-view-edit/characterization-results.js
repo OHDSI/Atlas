@@ -70,12 +70,12 @@ define([
         constructor(params) {
             super();
 
-            this.model = params.model;
 
             this.prevalenceStatConverter = new PrevalenceStatConverter(this.classes);
             this.distributionStatConverter = new DistributionStatConverter(this.classes);
             this.comparativeDistributionStatConverter = new ComparativeDistributionStatConverter(this.classes);
-
+            this.currentConceptSet = sharedState.ConceptSet.current;
+            this.currentConceptSetSource = sharedState.ConceptSet.source;
             this.loading = ko.observable(false);
             this.characterizationId = params.characterizationId;
 
@@ -202,15 +202,15 @@ define([
         }
 
         async initConceptSet(conceptSetItems) {
-            this.model.currentConceptSet({
-                name: ko.observable("New Concept Set"),
-                id: 0
+            this.currentConceptSet({
+                name: ko.observable('New Concept Set'),
+                id: 0,
             });
-            this.model.currentConceptSetSource('repository');
+            this.currentConceptSetSource('repository');
             for (let i = 0; i < conceptSetItems.length; i++) {
                 if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
                     sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-                    let conceptSetItem = this.model.createConceptSetItem(conceptSetItems[i]);
+                    let conceptSetItem = commonUtils.createConceptSetItem(conceptSetItems[i]);
                     sharedState.selectedConcepts.push(conceptSetItem);
                 }
             }

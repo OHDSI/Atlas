@@ -5,7 +5,7 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var authApi = require('services/AuthAPI');
 	const httpService = require('services/http');
-	
+
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
 			return value;
@@ -13,7 +13,7 @@ define(function (require, exports) {
 			return
 		}
 	}
-	
+
 	function getCohortDefinitionList() {
 		var promise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/',
@@ -21,7 +21,7 @@ define(function (require, exports) {
 		});
 		return promise;
 	}
-	
+
 	function saveCohortDefinition(definition) {
 		var savePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (definition.id || ""),
@@ -35,7 +35,7 @@ define(function (require, exports) {
 	    });
 		return savePromise;
 	}
-	
+
 	function copyCohortDefinition(id) {
 		var copyPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (id || "") +"/copy",
@@ -47,16 +47,16 @@ define(function (require, exports) {
 			}
 		});
 		return copyPromise;
-	}	
-	
+	}
+
 	function deleteCohortDefinition(id) {
 		var deletePromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (id || ""),
 			method: 'DELETE'
 		});
 		return deletePromise;
-	}	
-	
+	}
+
 	function getCohortDefinition(id) {
 		var loadPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + id,
@@ -64,7 +64,7 @@ define(function (require, exports) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			}
-		}).then(cohortDef => { 
+		}).then(cohortDef => {
 			cohortDef.expression = JSON.parse(cohortDef.expression)
 			return cohortDef;
 		});
@@ -76,7 +76,7 @@ define(function (require, exports) {
 			.doGet(`${config.webAPIRoot}cohortdefinition/${id}/exists?name=${name}`)
 			.then(res => res.data);
 	}
-	
+
 	function getSql(expression, options) {
 		var getSqlPromise = $.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/sql',
@@ -90,7 +90,7 @@ define(function (require, exports) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			}
-		});	
+		});
 		return getSqlPromise;
 	}
 
@@ -129,7 +129,7 @@ define(function (require, exports) {
 		});
 		return infoPromise;
 	}
-	
+
 	function getReport(cohortDefinitionId, sourceKey, modeId) {
 		var reportPromise = $.ajax({
 			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}`,

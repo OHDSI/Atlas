@@ -3,7 +3,7 @@ define(
         const ko = require('knockout');
         const { AuthorizedRoute } = require('pages/Route');
 
-		function routes(appModel, router) {
+		function routes(router) {
 
             const search = new AuthorizedRoute((query) => {
                 require(['./vocabulary'], function (search) {

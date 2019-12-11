@@ -11,6 +11,7 @@ define([
   'const',
   'services/JobDetailsService',
   'services/Poll',
+  'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -25,7 +26,8 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService
+  PollService,
+  cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -68,7 +70,10 @@ define([
         }
       });
 
-		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canClearServerCache = ko.pureComputed(() => {
+        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
+      });
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
@@ -130,6 +135,14 @@ define([
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
 
+		clearServerCache() {
+      if (confirm('Are you sure you want to clear the server cache?')) {
+        cacheApi.clearCache().then(() => {
+          alert("Server cache has been cleared.");
+        });
+      }
+    };
+
 		newSource() {
       commonUtils.routeTo('/source/0');
     };
@@ -145,7 +158,7 @@ define([
       this.isInProgress(true);
       try {
         await sourceApi.updateSourceDaimonPriority(sourceKey, daimonType);
-        sourceApi.initSourcesConfig();
+        await sourceApi.initSourcesConfig();
       } catch(err) {
         alert('Failed to update priority source daimon');
       }

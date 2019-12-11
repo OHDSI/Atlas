@@ -23,7 +23,6 @@ define([
     class Roles extends AutoBind(Page) {
         constructor(params) {
             super(params);
-            this.model = params.model;
             this.roles = ko.observable([]);
             this.loading = ko.observable();
 

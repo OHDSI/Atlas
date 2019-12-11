@@ -23,7 +23,6 @@ require(["./settings"], (settings) => {
 		require([
 			'knockout',
 			'Application',
-			'Model',
 			'appConfig',
 			'const',
 			'pages/Router',
@@ -37,13 +36,12 @@ require(["./settings"], (settings) => {
 			(
 				ko,
 				Application,
-				Model,
 				appConfig,
 				constants,
 				router,
 				sharedState,
 			) => {
-				const app = new Application(new Model(), router);
+				const app = new Application(router);
 
 				app.bootstrap()
 					.then(() => app.checkOAuthError())
