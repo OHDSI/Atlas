@@ -6,7 +6,6 @@ define(function(require, exports) {
   const icons = {
     open: 'M11.9994 1.72559L1.16058 13.1063C0.894011 13.3862 0.466495 13.3862 0.199926 13.1063C-0.0666428 12.8264 -0.0666428 12.3775 0.199926 12.0976L11.5216 0.209923C11.7881 -0.0699738 12.2156 -0.0699738 12.4822 0.209924L23.7988 12.0976C23.9296 12.2349 24 12.4198 24 12.5993C24 12.7789 23.9346 12.9637 23.7988 13.101C23.5322 13.3809 23.1047 13.3809 22.8382 13.101L11.9994 1.72559Z',
     close: 'M12.0006 11.5906L22.8394 0.20984C23.106 -0.0700579 23.5335 -0.0700579 23.8001 0.20984C24.0666 0.489738 24.0666 0.938628 23.8001 1.21852L12.4784 13.1062C12.2119 13.3861 11.7844 13.3861 11.5178 13.1062L0.201183 1.21852C0.0704137 1.08122 1.48104e-07 0.896379 1.50246e-07 0.716822C1.52387e-07 0.537265 0.0653841 0.352427 0.201183 0.215119C0.467753 -0.0647777 0.895268 -0.0647776 1.16184 0.215119L12.0006 11.5906Z',
-    unPinned: 'M52.963,21.297c-0.068-0.329-0.297-0.603-0.609-0.727c-8.574-3.416-16.173-0.665-18.361,0.288L19.114,8.2  c0.52-4.568-1.944-7.692-2.054-7.828C16.881,0.151,16.618,0.016,16.335,0c-0.282-0.006-0.561,0.091-0.761,0.292L0.32,15.546  c-0.202,0.201-0.308,0.479-0.291,0.765c0.016,0.284,0.153,0.549,0.376,0.726c2.775,2.202,6.349,2.167,7.726,2.055l12.721,14.953  c-0.868,2.23-3.52,10.27-0.307,18.337c0.124,0.313,0.397,0.541,0.727,0.609c0.067,0.014,0.135,0.021,0.202,0.021  c0.263,0,0.518-0.104,0.707-0.293l14.57-14.57l13.57,13.57c0.195,0.195,0.451,0.293,0.707,0.293s0.512-0.098,0.707-0.293  c0.391-0.391,0.391-1.023,0-1.414l-13.57-13.57l14.527-14.528C52.929,21.969,53.031,21.627,52.963,21.297z M35.314,36.755  L21.89,50.18c-2.437-8.005,0.993-15.827,1.03-15.909c0.158-0.353,0.1-0.765-0.15-1.059L9.31,17.39  c-0.191-0.225-0.473-0.352-0.764-0.352c-0.051,0-0.103,0.004-0.154,0.013c-0.036,0.006-3.173,0.472-5.794-0.955l13.5-13.5  c0.604,1.156,1.391,3.26,0.964,5.848C17.004,8.79,17.133,9.141,17.4,9.368l15.785,13.43c0.309,0.262,0.748,0.309,1.105,0.128  c0.077-0.04,7.378-3.695,15.869-1.017L35.314,36.755z',
     pinned: 'M52.963,21.297c-0.068-0.329-0.297-0.603-0.609-0.727c-2.752-1.097-5.67-1.653-8.673-1.653  c-4.681,0-8.293,1.338-9.688,1.942L19.114,8.2c0.52-4.568-1.944-7.692-2.054-7.828C16.881,0.151,16.618,0.016,16.335,0  c-0.282-0.006-0.561,0.091-0.761,0.292L0.32,15.546c-0.202,0.201-0.308,0.479-0.291,0.765c0.016,0.284,0.153,0.549,0.376,0.726  c2.181,1.73,4.843,2.094,6.691,2.094c0.412,0,0.764-0.019,1.033-0.04l12.722,14.954c-0.868,2.23-3.52,10.27-0.307,18.337  c0.124,0.313,0.397,0.541,0.727,0.609c0.067,0.014,0.135,0.021,0.202,0.021c0.263,0,0.518-0.104,0.707-0.293l14.57-14.57  l13.57,13.57c0.195,0.195,0.451,0.293,0.707,0.293s0.512-0.098,0.707-0.293c0.391-0.391,0.391-1.023,0-1.414l-13.57-13.57  l14.527-14.528C52.929,21.969,53.031,21.627,52.963,21.297z'
   }
   class Timeline {
@@ -508,6 +507,10 @@ define(function(require, exports) {
         })
 
       labelContainers
+        .append('title')
+        .text(d=> d.belongTo?'Pin important events in the timeline':'')
+
+      labelContainers
         .append('path')
         .attr('class', 'icon')
       
@@ -538,41 +541,43 @@ define(function(require, exports) {
         })
         .attr('fill',this.textFill)
 
-      timelineParent
+      const iconPath  = timelineParent
         .select('g.labelContainers')
         .select('path.icon')
+        iconPath
         .attr('d', d => {
           if(d.belongTo) {
-            return d.isPinned? icons.pinned : icons.unPinned
+            return icons.pinned 
           }
           return d.expanded ? icons.open : icons.close
         })
         .attr('fill', d=> {
           if(d.belongTo) {
-           return d.isPinned? this.pinnedFill: this.unPinnednedFill
+           return d.isPinned? this.pinnedFill: 'white'
           } else {
-            'black'
+           return this.textFill
           }
+        })
+        .attr('stroke', d=> {
+          if(d.belongTo) {
+            return this.unPinnednedFill
+           }
         })
         .attr('transform', d=>{
           if(d.belongTo) {
-            return 'scale(0.3) rotate(90) translate(-40,-30)'
+            return 'scale(0.25) rotate(90) translate(-45,-40)'
           } else {
             return 'scale(0.5) translate(-10,-15)'
           }
         })
-        .attr('title', 'Pin important events in the timeline')
-        // .text(d => {
-        //   if (d.belongTo) {
-        //     return '\uf08d'
-        //   }
-        //   return d.expanded ? `\uf106` : '\uf107'
+        
+        // .on('mouseover', () => {this.showTooltip('', '', 'Pin important events in the timeline')})
+        // .on('mouseout', () => {
+        //   this.hideTooltip()
         // })
-        // .attr('fill', d => (d.isPinned ? this.pinFill : this.textFill))
-
+        
       // draw circles and lines
       const timelineChildren = timelineParent.select('.timelineChildren')
-      // timelineChildren.attr('transform', `translate(${0},${this.r * 2})`)
       timelineChildren.attr('clip-path', 'url(#clip)')
 
       // draw lines
@@ -648,19 +653,24 @@ define(function(require, exports) {
       this.drawTimeline(this.originalData)
     }
 
-    showTooltip(timeLineData, d) {
-      const tooltipContent = this.getTooltipContent(
+    showTooltip(timeLineData, d, content) {
+      const tooltip = d3.select(`#${this.chartContainer} .tooltip`)
+      let tooltipContent;
+      if(!content) {
+        tooltipContent = this.getTooltipContent(
         timeLineData.observationData,
         d
       )
-
-      const tooltip = d3.select(`#${this.chartContainer} .tooltip`)
+      } else {
+        tooltipContent = `<div>${content}</div>`
+      }
       tooltip
-        .transition()
-        .duration(100)
-        .style('opacity', 1)
+      .transition()
+      .duration(100)
+      .style('opacity', 1)
 
       tooltip.html(tooltipContent)
+      
       const tooltipSize = tooltip.node().getBoundingClientRect()
       var coordinates = d3.mouse(this.svg.node())
       tooltip.style(
