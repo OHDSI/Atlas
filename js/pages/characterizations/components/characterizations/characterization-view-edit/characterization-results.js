@@ -84,11 +84,7 @@ define([
             this.data = ko.observable([]);
             this.domains = ko.observableArray();
             this.filterList = ko.observableArray([]);
-            this.selectedItems = ko.computed(() => {
-                filterUtils.getSelectedFilterValues(this.filterList());
-            }).extend({
-                notify: 'always'
-            });
+            this.selectedItems = ko.computed(() => filterUtils.getSelectedFilterValues(this.filterList()));
             this.analysisList = ko.observableArray([]);
 
             this.stratifiedByTitle = ko.pureComputed(() => this.design().stratifiedBy || '');
@@ -107,6 +103,7 @@ define([
             this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$', allowEmpty: false } });
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
+            this.isResultsDownloading = ko.observable();
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
@@ -324,6 +321,7 @@ define([
 
         async exportAllCSV() {
             try {
+                this.isResultsDownloading(true);
                 let {cohorts, analyses, domains} = filterUtils.getSelectedFilterValues(this.filterList());
                 let params = {
                     cohortIds: cohorts,
@@ -336,11 +334,14 @@ define([
 
             }catch (e) {
                 alert(exceptionUtils.translateException(e));
+            } finally {
+                this.isResultsDownloading(false);
             }
         }
 
         async exportCSV(analysis, isComparative) {
             try {
+                this.isResultsDownloading(true);
                 let filterParams = filterUtils.getSelectedFilterValues(this.filterList());
                 let params = {
                     cohortIds: analysis.cohorts.map(c => c.cohortId),
@@ -355,6 +356,8 @@ define([
 
             }catch (e) {
                 alert(exceptionUtils.translateException(e));
+            } finally {
+                this.isResultsDownloading(false);
             }
         }
 

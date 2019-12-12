@@ -6,7 +6,8 @@
             <h2 data-bind="css: classes('title')">
                 <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
                 <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
-                <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
+                <span data-bind="text: 'Reports for ' + $component.data().sourceName "></span>
+                <i data-bind="visible: isResultsDownloading, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
             </h2>
             <div data-bind="css: classes('toolbar')">
                 <ul data-bind="css: classes('detail-list')">
