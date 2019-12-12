@@ -6,8 +6,7 @@
             <h2 data-bind="css: classes('title')">
                 <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
                 <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
-                <span data-bind="text: 'Reports for ' + $component.data().sourceName "></span>
-                <i data-bind="visible: isResultsDownloading, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+                <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
             </h2>
             <div data-bind="css: classes('toolbar')">
                 <ul data-bind="css: classes('detail-list')">
@@ -48,10 +47,12 @@
     <div data-bind="css: classes('report-section')">
         <div>
             <button class="btn btn-sm btn-primary" type="button" data-bind="enable: $component.canExportAll(), click: $component.exportAllCSV">Export all</button>
+            <i data-bind="visible: isResultDownloading('__ALL__'), css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
         </div>
         <!-- ko foreach: analysisList -->
             <div data-bind="css: $component.classes('report-group')">
                 <h3 data-bind="css: $component.classes('analysis-name'), text: $component.analysisTitle($data) "></h3>
+                <i data-bind="visible: $component.isResultDownloading($data.analysisName), css: $component.classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
                 <div data-bind="css: $component.classes('analysis-results')">
                     <div data-bind="css: $component.classes('table-wrapper')">
                         <table style="width:100%" data-bind="

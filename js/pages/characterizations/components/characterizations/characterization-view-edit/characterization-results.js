@@ -103,10 +103,14 @@ define([
             this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$', allowEmpty: false } });
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
-            this.isResultsDownloading = ko.observable();
+            this.downloading = ko.observableArray();
 
             this.executionId.subscribe(id => id && this.loadData());
             this.loadData();
+        }
+
+        isResultDownloading(analysisName) {
+            return ko.computed(() => this.downloading().indexOf(analysisName) >= 0);
         }
 
         isRowGreyed(element, stat) {
@@ -321,7 +325,7 @@ define([
 
         async exportAllCSV() {
             try {
-                this.isResultsDownloading(true);
+                this.downloading.push('__ALL__');
                 let {cohorts, analyses, domains} = filterUtils.getSelectedFilterValues(this.filterList());
                 let params = {
                     cohortIds: cohorts,
@@ -335,13 +339,13 @@ define([
             }catch (e) {
                 alert(exceptionUtils.translateException(e));
             } finally {
-                this.isResultsDownloading(false);
+                this.downloading.remove('__ALL__');
             }
         }
 
         async exportCSV(analysis, isComparative) {
             try {
-                this.isResultsDownloading(true);
+                this.downloading.push(analysis.analysisName);
                 let filterParams = filterUtils.getSelectedFilterValues(this.filterList());
                 let params = {
                     cohortIds: analysis.cohorts.map(c => c.cohortId),
@@ -357,7 +361,7 @@ define([
             }catch (e) {
                 alert(exceptionUtils.translateException(e));
             } finally {
-                this.isResultsDownloading(false);
+                this.downloading.remove(analysis.analysisName);
             }
         }
 
