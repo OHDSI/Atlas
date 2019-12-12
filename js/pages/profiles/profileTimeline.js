@@ -177,8 +177,11 @@ define(function(require, exports) {
         .append('div')
         .style('text-align', 'left')
         .attr('class', 'timelineFilter')
+        .append('div')
+        .style('width', '168px')
         .append('input')
         .attr('placeholder', 'Filter timeline')
+        .attr('class', 'form-control input-sm')
       d3.select(`#${this.chartContainer} .timelineFilter`).style(
         'padding',
         `${this.margin.top / 2}px 0 0 ${this.margin.left}px`
@@ -249,11 +252,20 @@ define(function(require, exports) {
         .style('padding', `${this.margin.top / 3}px 0 0 ${this.margin.left}px`)
 
       const expandText = div
-        .append('text')
-        .text('Expand all domains')
+        .append('button')
+        .attr('class', 'btn btn-primary btn-sm')
+        .text('Expand all')
         .style('font-size', `${this.fontSize}px`)
-        .style('cursor', 'pointer')
+        .style('margin-right', `10px`)
+
+      const collapseAll = div
+        .append('button')
+        .attr('class', 'btn btn-default btn-sm')
+        .text('Collapse all')
+        .style('font-size', `${this.fontSize}px`)
+
       expandText.on('click', () => this.handleExpandingAll())
+      collapseAll.on('click', () => this.handleCollapseAll())
     }
 
     handleExpandingAll() {
@@ -571,11 +583,6 @@ define(function(require, exports) {
           }
         })
         
-        // .on('mouseover', () => {this.showTooltip('', '', 'Pin important events in the timeline')})
-        // .on('mouseout', () => {
-        //   this.hideTooltip()
-        // })
-        
       // draw circles and lines
       const timelineChildren = timelineParent.select('.timelineChildren')
       timelineChildren.attr('clip-path', 'url(#clip)')
@@ -817,7 +824,7 @@ define(function(require, exports) {
       this.changeAxisView()
 
       document.querySelector(
-        `#${this.chartContainer} .timelineFilter>input`
+        `#${this.chartContainer} .timelineFilter input`
       ).value = ''
       this.filteredData.splice(0, this.filteredData.length)
       this.filterText = null
