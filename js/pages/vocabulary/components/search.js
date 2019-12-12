@@ -205,8 +205,13 @@ define([
 
 			searchClick() {
 				const redirectUrl = '#/search?query=' + this.encodeSearchString(this.currentSearch());
-				document.location = redirectUrl;
-				this.executeSearch();
+				if (this.selected.vocabularies.size > 0 || this.selected.domains.size > 0 || document.location.hash === redirectUrl) {
+					this.executeSearch();
+				} else if (this.currentSearch().length > 2) {
+					document.location = redirectUrl;
+				} else {
+					alert('invalid search');
+				}
 			}
 
 			clearAllAdvanced() {
@@ -262,9 +267,19 @@ define([
 				const vocabElements = this.selected.vocabularies;
 				const domainElements = this.selected.domains;
 
+				// if we don't have a search and aren't looking up domain or vocabulary details, abort.
+				if (
+					this.currentSearch() === undefined
+					&& vocabElements.size == 0
+					&& domainElements.size == 0
+				) {
+					return;
+				}
+
 				let query = '';
 				if (this.currentSearch() !== undefined) {
 					query = this.encodeSearchString(this.currentSearch());
+					this.currentSearch(this.encodeSpecialCharacters(this.currentSearch()));
 				}
 				this.loading(true);
 				this.data([]);
