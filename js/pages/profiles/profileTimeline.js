@@ -792,10 +792,13 @@ define(function(require, exports) {
       document.querySelector(
         `#${this.chartContainer} .switch>input`
       ).checked = false
+      this.changeAxisView()
 
       document.querySelector(
         `#${this.chartContainer} .timelineFilter>input`
       ).value = ''
+      this.filteredData.splice(0, this.filteredData.length)
+      this.filterText = null
     }
   }
 
