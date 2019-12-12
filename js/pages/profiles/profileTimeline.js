@@ -216,7 +216,10 @@ define(function(require, exports) {
         .style('text-align', 'right')
         .style('margin-right', `${this.margin.right / 2}px`)
 
-      container.append('text').text('axis type: ')
+      container
+      .append('text')
+      .text('Effective date: ')
+      .attr('title', 'Turn effective date on to see the events’ effective date instead of the index day.')
       const switcher = container.append('label').attr('class', 'switch')
       const checkbox = switcher.append('input').attr('type', 'checkbox')
       switcher.append('span').attr('class', 'slider round')
