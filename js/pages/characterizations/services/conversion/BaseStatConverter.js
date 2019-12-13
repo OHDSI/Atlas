@@ -1,9 +1,11 @@
 define([
     'numeral',
     '../../utils',
+    'lodash',
 ], function (
 	numeral,
-  utils,
+    utils,
+    lodash,
 ) {
 
     class BaseStatConverter {
@@ -12,17 +14,22 @@ define([
             this.classes = classes;
         }
 
-		convertAnalysisToTabularData(analysis) {
+        convertAnalysisToTabularData(analysis) {
             let columns = this.getDefaultColumns(analysis);
 
             const data = new Map();
-            const cohorts = analysis.reports.map(report => ({ cohortId: report.cohortId, cohortName: report.cohortName }));
+            const cohorts = lodash.uniqBy(
+                lodash.flatten(
+                    analysis.cohorts.map(c => Object.entries(c).map(([key, value]) => ({cohortId: parseInt(key), cohortName: value})))
+                ),
+                'cohortId'
+            );
             const strataNames = new Map();
 
-            const mapCovariate = (report) => (stat) => {
+            let mapCovariate;
+            mapCovariate = (stat) => {
                 let row;
                 const rowId = this.getRowId(stat);
-
                 if (!data.has(rowId)) {
                     row = this.getResultObject({
                         analysisId: analysis.analysisId,
@@ -30,48 +37,65 @@ define([
                         domainId: analysis.domainId,
                         ...stat
                     });
+
                     data.set(rowId, row);
                 } else {
                     row = data.get(rowId);
                 }
 
-                // Required for displaying "Explore" link properly
-                if (row.cohorts.filter(c => c.cohortId === report.cohortId).length === 0) {
-                  row.cohorts.push({cohortId: report.cohortId, cohortName: report.cohortName});
-                }
-
                 const { strataId, strataName } = this.extractStrata(stat);
-
-                this.convertFields(row, strataId, report.cohortId, stat);
-
+                
                 if (!strataNames.has(strataId)) {
                     strataNames.set(strataId, strataName);
                 }
+
+                if (analysis.isComparative) {    
+                    if (stat.strataId === 0) {
+                        row.stdDiff = this.formatStdDiff(stat.diff);
+                    }
+                    // Required for displaying "Explore" link properly
+                    if (stat.hasFirstItem) {
+                        row.cohorts.push({cohortId: stat.targetCohortId, cohortName: stat.targetCohortName});
+                    }
+                    if (stat.hasSecondItem) {
+                        row.cohorts.push({cohortId: stat.comparatorCohortId, cohortName: stat.comparatorCohortName});
+                    }
+                
+                    this.convertCompareFields(row, strataId, stat);
+                } else {        
+                    // Required for displaying "Explore" link properly
+                    if (row.cohorts.filter(c => c.cohortId === analysis.cohortId).length === 0) {
+                        row.cohorts.push({cohortId: analysis.cohortId, cohortName: analysis.cohortName});
+                    }
+
+                    this.convertFields(row, strataId, stat.cohortId, stat);
+                }
             };
 
-            analysis.reports.forEach((r, i) => r.stats.forEach(mapCovariate(r)));
+            analysis.items.forEach((c, i) => mapCovariate(c));
 
             cohorts.forEach((c, i) => {
-              for (let strataId of utils.sortedStrataNames(strataNames).map(s => s.id)) {
-                columns = columns.concat(this.getReportColumns(strataId, c.cohortId));
-              }
-            });
-
+                for (let strataId of utils.sortedStrataNames(strataNames).map(s => s.id)) {
+                  columns = columns.concat(this.getReportColumns(strataId, c.cohortId));
+                }
+              });
+  
             const strataOnly = !strataNames.has(0) && data.size > 0;
             const stratified = !(strataNames.has(0) && strataNames.size === 1) && data.size > 0;
 
-            if (!strataOnly && cohorts.length === 2) {
+            if (!strataOnly && analysis.isComparative) {  
                 columns.push(this.getStdDiffColumn());
-                data.forEach(d => d.stdDiff = this.formatStdDiff(this.calcStdDiff(cohorts, d)));
             }
 
             return {
                 type: analysis.type,
-                domainId: analysis.domainId,
+                domainIds: analysis.domainIds,
                 analysisName: analysis.analysisName,
+                analysisId: analysis.analysisId,
                 strataOnly,
                 stratified,
-                cohorts,
+                cohorts: cohorts,
+                isSummary: analysis.isSummary,
                 strataNames: strataNames,
                 defaultColNames: this.getDefaultColumns().map(col => col.title),
                 perStrataColNames: this.getReportColumns(0,0).map(col => col.title),
