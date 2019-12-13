@@ -51,8 +51,10 @@
         </div>
         <!-- ko foreach: analysisList -->
             <div data-bind="css: $component.classes('report-group')">
-                <h3 data-bind="css: $component.classes('analysis-name'), text: $component.analysisTitle($data) "></h3>
-                <i data-bind="visible: $component.isResultDownloading($data.analysisName), css: $component.classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+                <h3 data-bind="css: $component.classes('analysis-name')">
+                    <span data-bind="text: $component.analysisTitle($data)"></span>
+                    <i data-bind="visible: $component.isResultDownloading($data.analysisName), css: $component.classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+                </h3>
                 <div data-bind="css: $component.classes('analysis-results')">
                     <div data-bind="css: $component.classes('table-wrapper')">
                         <table style="width:100%" data-bind="
