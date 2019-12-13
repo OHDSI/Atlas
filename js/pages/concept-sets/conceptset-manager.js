@@ -200,23 +200,23 @@ define([
 				entityIdGetter: () => this.currentConceptSet() && this.currentConceptSet().id,
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
+
+			this.onConceptSetModeChanged = sharedState.currentConceptSetMode.subscribe(() => conceptSetService.onCurrentConceptSetModeChanged(sharedState.currentConceptSetMode()));
 		}
 
-		onRouterParamsChanged(params) {
-			const { conceptSetId, mode } = params;
-			if (conceptSetId !== undefined) {
-				this.loadConceptSet(conceptSetId, mode);
-			} else {
-				this.setConceptSetMode(mode);
-			}
+		onRouterParamsChanged(params, newParams) {
+			const { conceptSetId, mode } = Object.assign({}, params, newParams);
+			this.changeMode(conceptSetId, mode);
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByComponentName(mode));
 			}
 		}
 
-		setConceptSetMode(mode) {
+		async changeMode(conceptSetId, mode) {
+			if (conceptSetId !== undefined) {
+				await this.loadConceptSet(conceptSetId, mode);
+			}
 			this.currentConceptSetMode(mode);
-			conceptSetService.onCurrentConceptSetModeChanged(mode);
 		}
 
 		renderCheckbox(field) {
@@ -227,9 +227,9 @@ define([
 			}
 		}
 
-		async loadConceptSet(conceptSetId, mode) {
+		async loadConceptSet(conceptSetId) {
 			this.loading(true);
-			if (conceptSetId == 0 && !this.currentConceptSet()) {
+			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				// Create a new concept set
 				this.currentConceptSet({
 					name: ko.observable('New Concept Set'),
@@ -239,7 +239,7 @@ define([
 			}
 			if (
 				this.currentConceptSet()
-				&& this.currentConceptSet().id == conceptSetId
+				&& this.currentConceptSet().id === conceptSetId
 			) {
 				this.currentConceptSetSource('repository');
 				this.loading(false);
@@ -251,7 +251,6 @@ define([
 				const expression = _.isEmpty(data) ? { items: [] } : data;
 				conceptSetService.setConceptSet(conceptset, expression.items);
 				await conceptSetService.resolveConceptSetExpression();
-				this.setConceptSetMode(mode);
 				this.currentConceptSetSource('repository');
 			} catch(err) {
 				console.error(err)
@@ -261,6 +260,7 @@ define([
 		}
 
 		dispose() {
+			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
