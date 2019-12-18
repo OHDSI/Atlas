@@ -22,10 +22,16 @@ define([
             return { strataId: stat.strataId, strataName: stat.strataName};
         }
 
-        convertFields(result, strataId, cohortId, stat) {
+        convertFields(result, strataId, cohortId, stat, prefix) {
             ['count', 'pct'].forEach(field => {
-			    this.setNestedValue(result, field, strataId, cohortId, stat[field]);
+                const statName = prefix ? prefix + field.charAt(0).toUpperCase() + field.slice(1) : field;
+			    this.setNestedValue(result, field, strataId, cohortId, stat[statName]);
             });
+		}
+
+        convertCompareFields(result, strataId, stat) {
+            this.convertFields(result, strataId, stat.targetCohortId, stat, "target");
+            this.convertFields(result, strataId, stat.comparatorCohortId, stat, "comparator");
 		}
 
         getDefaultColumns(analysis) {
