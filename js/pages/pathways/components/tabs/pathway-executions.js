@@ -44,7 +44,7 @@ define([
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
-			const currentHash = ko.pureComputed(() => params.design().hashCode);
+			const currentHash = ko.pureComputed(() => params.design() && params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 

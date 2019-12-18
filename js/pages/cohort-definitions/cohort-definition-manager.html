@@ -128,7 +128,7 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:$root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()">loading</div>
+					<loading data-bind="visible: $root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()"></loading>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $component.includedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>

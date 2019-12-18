@@ -49,7 +49,7 @@ define([
 	conceptSet,
 	sharedState,
 	conceptSetService,
-	authApi
+	authApi,
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -73,7 +73,7 @@ define([
 				}
 
 				if (this.currentConceptSet() && (this.currentConceptSet()
-						.id != 0)) {
+						.id !== 0)) {
 					return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
 						.id) || !config.userAuthenticationEnabled;
 				} else {
@@ -113,7 +113,7 @@ define([
 					return true;
 
 				if (this.currentConceptSetSource() == 'repository') {
-					return authApi.isPermittedDeleteConceptset(sharedState.ConceptSet.current().id);
+					return sharedState.ConceptSet.current() && authApi.isPermittedDeleteConceptset(sharedState.ConceptSet.current().id);
 				} else {
 					return false;
 				}
@@ -201,11 +201,11 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			this.onConceptSetModeChanged = sharedState.currentConceptSetMode.subscribe(() => conceptSetService.onCurrentConceptSetModeChanged(sharedState.currentConceptSetMode()));
+			this.onConceptSetModeChanged = sharedState.currentConceptSetMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged);
 		}
 
 		onRouterParamsChanged(params, newParams) {
-			const { conceptSetId, mode } = Object.assign({}, params, newParams);
+			const {conceptSetId, mode} = Object.assign({}, params, newParams);
 			this.changeMode(conceptSetId, mode);
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByComponentName(mode));
@@ -253,7 +253,7 @@ define([
 				await conceptSetService.resolveConceptSetExpression();
 				this.currentConceptSetSource('repository');
 			} catch(err) {
-				console.error(err)
+				console.error(err);
 				sharedState.resolvingConceptSetExpression(false);
 			}
 			this.loading(false);
@@ -261,9 +261,11 @@ define([
 
 		dispose() {
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
+			this.onSelectedConceptsChanged && this.onSelectedConceptsChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
+			sharedState.includedHash(null);
 		}
 
 		saveClick() {

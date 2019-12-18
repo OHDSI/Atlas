@@ -110,7 +110,7 @@ define([
       });
 
       this.isDeletePermitted = ko.pureComputed(() => {
-        return authApi.isPermittedDeleteSource(this.selectedSource().key());
+        return authApi.isPermittedDeleteSource(this.selectedSource() && this.selectedSource().key());
       });
 
       this.canEdit = ko.pureComputed(() => {
