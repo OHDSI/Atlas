@@ -299,7 +299,8 @@ define([
                     lodash.uniqBy(
                         resultsList.map(r => ({
                             analysisId: r.analysisId,
-                            domainId: this.design().featureAnalyses && !r.isSummary ? this.design().featureAnalyses.find(fa => fa.name === r.analysisName).domain : null,
+                            domainId: this.design() && this.design().featureAnalyses && !r.isSummary ?
+															(this.design().featureAnalyses.find(fa => fa.id === r.id) || { })[ 'domain' ] : null,
                             analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             cohorts: r.cohorts,
                             domainIds: r.domainIds,   
@@ -374,7 +375,7 @@ define([
             const cohorts = lodash.uniqBy(
                 lodash.flatten(
                     lodash.flatten(
-                        data.map(a => a.cohorts.map(c => Object.entries(c).map(([key, value]) => ({label: value, value: parseInt(key)}))))
+                       data.map(a => a.cohorts.map(c => ({label: c.cohortName, value: parseInt(c.cohortId)})))
                     )
                 ),
                 'value'
@@ -422,7 +423,7 @@ define([
         }
 
         prepareTabularData() {
-            if (!this.data().analyses || this.data().analyses.length == 0) {
+            if (!this.data().analyses || this.data().analyses.length === 0) {
                 this.analysisList([]);
                 return;
             }
