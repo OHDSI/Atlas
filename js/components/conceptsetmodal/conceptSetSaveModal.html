@@ -2,13 +2,9 @@
         showModal: $component.show,
         iconClass: 'fa fa-save',
         title: 'Save New Concept Set',
-        template: 'conceptSetSaveTmpl',
         fade: $component.fade,
         data: $component
     }">
-</atlas-modal>
-
-<script type="text/html" id="conceptSetSaveTmpl">
     <div class="concept-set-dialog modal-body">
         <span class="help-block" data-bind="hidden: isNameUnique"><i class="fa fa-warning"></i> Concept Set already exists</span>
         <div class="concept-set-form">
@@ -21,4 +17,4 @@
            <button type="button" data-bind="click: onSave, enable: canSave" class="btn btn-success">Save</button>
         </span>
     </div>
-</script>
+</atlas-modal>
