@@ -18,12 +18,7 @@ define([
             let columns = this.getDefaultColumns(analysis);
 
             const data = new Map();
-            const cohorts = lodash.uniqBy(
-                lodash.flatten(
-                    analysis.cohorts.map(c => Object.entries(c).map(([key, value]) => ({cohortId: parseInt(key), cohortName: value})))
-                ),
-                'cohortId'
-            );
+            const cohorts = Array.from(analysis.cohorts);
             const strataNames = new Map();
 
             let mapCovariate;
@@ -35,6 +30,7 @@ define([
                         analysisId: analysis.analysisId,
                         analysisName: analysis.analysisName,
                         domainId: analysis.domainId,
+                        cohorts: cohorts || [],
                         ...stat
                     });
 
@@ -53,20 +49,9 @@ define([
                     if (stat.strataId === 0) {
                         row.stdDiff = this.formatStdDiff(stat.diff);
                     }
-                    // Required for displaying "Explore" link properly
-                    if (stat.hasFirstItem) {
-                        row.cohorts.push({cohortId: stat.targetCohortId, cohortName: stat.targetCohortName});
-                    }
-                    if (stat.hasSecondItem) {
-                        row.cohorts.push({cohortId: stat.comparatorCohortId, cohortName: stat.comparatorCohortName});
-                    }
-                
+
                     this.convertCompareFields(row, strataId, stat);
                 } else {        
-                    // Required for displaying "Explore" link properly
-                    if (row.cohorts.filter(c => c.cohortId === analysis.cohortId).length === 0) {
-                        row.cohorts.push({cohortId: analysis.cohortId, cohortName: analysis.cohortName});
-                    }
 
                     this.convertFields(row, strataId, stat.cohortId, stat);
                 }
@@ -146,7 +131,7 @@ define([
                 title: label,
                 render: (s, p, d) => {
                     let res = d[field][strata] && d[field][strata][cohortId] || 0;
-                    if (formatter) {
+                    if (p === "display" && formatter) {
                         res = formatter(res);
                     }
                     return res;

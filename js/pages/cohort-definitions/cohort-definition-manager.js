@@ -778,13 +778,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.reportSourceKey(null);
 				}
 			}
-			copy () {
+
+			async copy () {
 				this.isCopying(true);
 				clearTimeout(this.pollTimeout);
 				// reset view after save
-				cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id()).then((result) => {
+				try {
+					const result = await cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id());
 					document.location = "#/cohortdefinition/" + result.id;
-				});
+				} finally {
+					this.isCopying(false);
+				}
 			}
 
 			isSourceRunning(source) {
