@@ -23,6 +23,17 @@
 			</span>
 			<!-- /ko -->
 		<!-- /ko -->
+		<!-- ko if: controlsComponent -->
+			<div data-bind="css: classes('controls'),
+				component: {
+					name: controlsComponent.componentName,
+					params: {
+						selectedTab: () => $component.tabs()[$component.selectedTab()],
+						...controlsComponent.componentParams
+					},
+				}
+			"></div>
+		<!-- /ko -->
 	</div>
 	<div data-bind="css: classes('tab')">
 		<!-- ko foreach: $component.previouslyLoadedTabs -->
