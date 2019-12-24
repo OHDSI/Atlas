@@ -110,7 +110,8 @@ define([
 					const hasOriginalRender = typeof originalRender === 'function';
 					const hasDataAccessor = typeof originalDataAccessor === 'function';
 
-					if (binding.options.xssSafe || column.xssSafe) return column; // disable XSS filtering if column is marked 'safe'
+					// do not apply xss filtering if the table is marked safe, and the column is not marked not safe
+					if (binding.options.xssSafe && column.xssSafe != false) return column; // disable XSS filtering if column is marked 'safe'
 
 					return Object.assign({}, column, {
 						data: hasDataAccessor

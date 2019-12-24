@@ -131,7 +131,7 @@ define([
                 title: label,
                 render: (s, p, d) => {
                     let res = d[field][strata] && d[field][strata][cohortId] || 0;
-                    if (formatter) {
+                    if (p === "display" && formatter) {
                         res = formatter(res);
                     }
                     return res;
