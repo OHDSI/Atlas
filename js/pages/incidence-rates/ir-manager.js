@@ -14,6 +14,7 @@ define([
 	'services/AuthAPI',
 	'services/file',
 	'services/Poll',
+	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
 	'pages/Page',
@@ -29,6 +30,7 @@ define([
 	'components/heading',
 	'utilities/import',
 	'utilities/export',
+	'utilities/sql',
 	'components/security/access/configure-access-modal',
 ], function (
 	ko,
@@ -46,6 +48,7 @@ define([
 	authAPI,
 	FileService,
 	PollService,
+	{ isPermittedExportSQL },
 	GlobalPermissionService,
 	{ entityType },
 	Page,
@@ -104,6 +107,7 @@ define([
 						&& !this.dirtyFlag().isDirty()
 					)
 			});
+			this.isPermittedExportSQL = isPermittedExportSQL;
 			this.selectedAnalysisId.subscribe((id) => {
 				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
 					authAPI.loadUserInfo();
@@ -169,6 +173,7 @@ define([
 
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
+			this.exportSqlService = this.exportSql;
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
@@ -497,6 +502,14 @@ define([
 			});
 			this.sources(sourceList);
 			!this.selectedAnalysis() && this.newAnalysis();
+		}
+
+		async exportSql({ analysisId = 0, expression = {} } = {}) {
+			const sql = await IRAnalysisService.exportSql({
+				analysisId,
+				expression,
+			});
+			return sql;
 		}
 
 		// cleanup

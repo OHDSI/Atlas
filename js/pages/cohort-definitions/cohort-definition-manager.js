@@ -47,7 +47,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	'utilities/sql',
 ], function (
 	$,
 	ko,
@@ -236,27 +237,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
-			this.generatedSql = {};
-			this.generatedSql.mssql = ko.observable('');
-			this.generatedSql.oracle = ko.observable('');
-			this.generatedSql.postgresql = ko.observable('');
-			this.generatedSql.redshift = ko.observable('');
-			this.generatedSql.msaps = ko.observable('');
-			this.generatedSql.impala = ko.observable('');
-			this.generatedSql.netezza = ko.observable('');
-			this.generatedSql.bigquery = ko.observable('');
-			this.templateSql = ko.observable('');
+			this.exportSqlService = this.exportSql;
+
 			this.cohortConst = cohortConst;
 			this.generationTabMode = ko.observable("inclusion");
 			this.inclusionTabMode = ko.observable("person");
 			this.exportTabMode = ko.observable('printfriendly');
 			this.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
-			this.exportSqlMode = ko.observable('ohdsisql');
 			this.importConceptSetJson = ko.observable();
 			this.conceptSetTabMode = sharedState.currentConceptSetMode;
 			this.conceptSetTabMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged)
 			this.showImportConceptSetModal = ko.observable(false);
-			this.isLoadingSql = ko.observable(false);
 			this.sharedState = sharedState;
 			this.identifiers = ko.observable();
 			this.sourcecodes = ko.observable();
@@ -778,13 +769,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.reportSourceKey(null);
 				}
 			}
-			copy () {
+
+			async copy () {
 				this.isCopying(true);
 				clearTimeout(this.pollTimeout);
 				// reset view after save
-				cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id()).then((result) => {
+				try {
+					const result = await cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id());
 					document.location = "#/cohortdefinition/" + result.id;
-				});
+				} finally {
+					this.isCopying(false);
+				}
 			}
 
 			isSourceRunning(source) {
@@ -804,65 +799,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			showSql () {
-				this.isLoadingSql(true);
+			async exportSql({ expression = {} } = {}) {
 
-				this.templateSql('');
-				this.generatedSql.mssql('');
-				this.generatedSql.oracle('');
-				this.generatedSql.postgresql('');
-				this.generatedSql.redshift('');
-				this.generatedSql.msaps('');
-				this.generatedSql.impala('');
-				this.generatedSql.netezza('');
-				this.generatedSql.bigquery('');
-
-				var templateSqlPromise = this.service.getSql(ko.toJS(this.currentCohortDefinition().expression, pruneJSON));
-
-				templateSqlPromise.then((result) => {
-					this.templateSql(result.templateSql);
-					var mssqlTranslatePromise = this.service.translateSql(result.templateSql, 'sql server');
-						mssqlTranslatePromise.then(({data}) => {
-							this.generatedSql.mssql(data.targetSQL);
-					});
-
-					var msapsTranslatePromise = this.service.translateSql(result.templateSql, 'pdw');
-						msapsTranslatePromise.then(({data}) => {
-							this.generatedSql.msaps(data.targetSQL);
-					});
-
-					var oracleTranslatePromise = this.service.translateSql(result.templateSql, 'oracle');
-						oracleTranslatePromise.then(({data}) => {
-							this.generatedSql.oracle(data.targetSQL);
-					});
-
-					var postgresTranslatePromise = this.service.translateSql(result.templateSql, 'postgresql');
-						postgresTranslatePromise.then(({data}) => {
-							this.generatedSql.postgresql(data.targetSQL);
-					});
-
-					var redshiftTranslatePromise = this.service.translateSql(result.templateSql, 'redshift');
-						redshiftTranslatePromise.then(({data}) => {
-							this.generatedSql.redshift(data.targetSQL);
-					});
-
-					var impalaTranslatePromise = this.service.translateSql(result.templateSql, 'impala');
-						impalaTranslatePromise.then(({data}) => {
-							this.generatedSql.impala(data.targetSQL);
-					});
-
-					var netezzaTranslatePromise = this.service.translateSql(result.templateSql, 'netezza');
-					netezzaTranslatePromise.then(({data})=> {
-							this.generatedSql.netezza(data.targetSQL);
-					});
-
-					const bigqueryTranslatePromise = this.service.translateSql(result.templateSql, 'bigquery');
-					bigqueryTranslatePromise.then(({data}) => this.generatedSql.bigquery(data.targetSQL));
-
-					$.when(mssqlTranslatePromise, msapsTranslatePromise, oracleTranslatePromise, postgresTranslatePromise, redshiftTranslatePromise, impalaTranslatePromise, netezzaTranslatePromise).then(() => {
-							this.isLoadingSql(false);
-					});
-				});
+				return await this.service.getSql(ko.toJS(expression, pruneJSON));
 			}
 
 			getSourceKeyInfo (sourceKey) {
@@ -942,7 +881,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			fixConceptSet(warning) {
-				if (warning.type === 'ConceptSetWarning' && warning.conceptSetId) {
+				if (warning.type === 'ConceptSetWarning' && warning.conceptSetId >= 0) {
 					this.removeConceptSet(warning.conceptSetId);
 				} else if (warning.type === 'IncompleteRuleWarning' && warning.ruleName) {
 					this.removeInclusionRule(warning.ruleName);
@@ -1553,10 +1492,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			copyCohortExpressionJSONToClipboard () {
 				this.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyCohortExpressionJSONMessage');
-			}
-
-			copyCohortSQLToClipboard () {
-				this.copyToClipboard('#btnCopyCohortSQLClipboard', '#copyCopyCohortSQLMessage');
 			}
 
 			getExpressionJson() {

@@ -12,6 +12,7 @@ define([
 	'services/Poll',
 	'services/file',
 	'services/JobDetailsService',
+	'services/MomentAPI',
 	'../const',
 	'utils/ExecutionUtils',
 	'lodash',
@@ -32,6 +33,7 @@ define([
 	PollService,
 	FileService,
 	jobDetailsService,
+	momentApi,
 	consts,
 	ExecutionUtils,
 	lodash,
@@ -76,8 +78,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{

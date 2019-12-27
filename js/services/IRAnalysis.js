@@ -179,6 +179,16 @@ define(function (require, exports) {
 				return response;
 			});
     }
+
+   function exportSql({ analysisId, expression } = {}) {
+			return httpService
+				.doPost(`${config.webAPIRoot}ir/sql`, { analysisId, expression })
+				.then(res => res.data)
+				.catch(response => {
+					authApi.handleAccessDenied(response);
+					return response;
+				});
+	 }
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -195,6 +205,7 @@ define(function (require, exports) {
 		exists,
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
+		exportSql,
 	};
 
 	return api;

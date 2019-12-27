@@ -16,6 +16,7 @@ define(
         '/welcome/:token': new Route((token) => {
           require(['welcome'], function () {
             authApi.token(token);
+            authApi.loadUserInfo();
             document.location = "#/welcome";
           });
         }),

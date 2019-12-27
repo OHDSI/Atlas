@@ -147,10 +147,25 @@ table.data td {
 	font-size: 1.2em;
 }
 .trellisLegend {
-	font-size: 1em;
+	font-size: 1.1em;
 	font-family: arial;
 	/* margin: 10px; */
 }
+
+.g-label-trellis {
+	font-size: 1.2rem;
+}
+
+.g-trellis .g-label-value, .g-trellis .g-label-year {
+	font-size: 1.3rem;
+}
+
+@media only screen and (max-width: 1280px) {
+	.g-label-value.g-start, .g-label-value.g-end {
+		font-size: 1rem;
+	}
+  }
+
 .grouper {
 	fill: none;
 	stroke: white;
@@ -179,7 +194,7 @@ table.data td {
 	border-radius: 0px;
 	pointer-events: none !important;
 	max-width: 400px;
-	z-index: 999 !important;	
+	z-index: 999 !important;
 }
 /* Creates a small triangle extender for the tooltip */
 
