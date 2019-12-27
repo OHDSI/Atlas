@@ -33,7 +33,10 @@ define([
     authApi,
     fileService,
 ) {
-    const defaultRoleName = "New Role";
+    const defaultRoleName = "New Role",
+        clipboardButtonId = '#btnCopyExpressionJSONClipboard',
+        clipboardButtonMessageId = '#copyRoleExpressionJSONMessage';
+
     class RoleDetails extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
@@ -129,7 +132,7 @@ define([
 
 
         reload () {
-            if (this.modifiedJSON().length > 0 && this.isJSONValid) {
+            if (this.modifiedJSON().length > 0 && this.isJSONValid()) {
                 let object = JSON.parse(this.modifiedJSON());
                 let role = Array.isArray(object) ? object[0] : object;
 
@@ -257,8 +260,8 @@ define([
         }
 
 
-        copyRoleExpressionJSONToClipboard () {
-            this.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyRoleExpressionJSONMessage');
+        copyRoleExpressionJSONToClipboard() {
+            this.copyToClipboard(clipboardButtonId, clipboardButtonMessageId);
         }
 
         close() {
