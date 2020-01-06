@@ -250,6 +250,9 @@
           target="_new"
         ></a
       ></span>
+
+      <span style="float: right; padding-right:20px; text-decoration: underline;">See next patient in sample <i class="fa fa-angle-right"></i></span>
+      <span style="float: right; padding-right:20px; text-decoration: underline;"><i class="fa fa-angle-left" style="padding-right: 5px"></i>Previous patient in sample</span>
     </div>
   </div>
 
@@ -320,3 +323,30 @@
 <access-denied
   params="isAuthenticated: isAuthenticated, isPermitted: canViewProfiles"
 ></access-denied>
+
+<div class="asset-heading">
+  <div
+      style="margin-top:5px;"
+      data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person"
+    >
+    <i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
+    <span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <span data-bind="text: recordCount + ' events'"></span
+    >&nbsp;&nbsp;|&nbsp;&nbsp;
+    <span data-bind="text: `Age ${ageAtIndex} `"></span>
+    <span data-bind="if: $component.currentCohortDefinition() != null"
+      >at index</span
+    >
+    <span data-bind="if: $component.currentCohortDefinition() == null"
+      >at start of observation</span
+    >
+    <span data-bind="if: $component.currentCohortDefinition() != null"
+      >|&nbsp;&nbsp;Cohort:
+      <a
+        class="asset-heading-link"
+        data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}"
+        target="_new"
+      ></a
+    ></span>
+  </div>
+</div>
