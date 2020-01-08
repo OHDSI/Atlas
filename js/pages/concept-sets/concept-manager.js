@@ -275,7 +275,7 @@ define([
 			this.currentConcept(data);
 			this.isLoading(false);
 			// load related concepts once the concept is loaded
-			this.loadingRelated(true);
+			/*this.loadingRelated(true);
 			this.metarchy = {
 				parents: ko.observableArray(),
 				children: ko.observableArray(),
@@ -296,7 +296,7 @@ define([
 			}
 			this.relatedConcepts(related);
 
-			this.loadingRelated(false);
+			this.loadingRelated(false);*/
 		}
 	}
 
