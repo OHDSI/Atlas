@@ -127,7 +127,6 @@ define(['knockout',
 				conceptSetService.getGenerationInfo(id)
 					.then((infoList) => {
 						var hasPending = false;
-						console.log("poll for evidence....")
 
 						infoList.forEach(info => {
 							// obtain source reference
