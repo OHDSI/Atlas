@@ -466,7 +466,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 								// only bother updating those sources that we know are running
 									if (this.isSourceRunning(source)) {
 										if(source.status() !== info.status) {
-											jobDetailsService.setJobListMutated();
+										  PollService.isJobListMutated(true);
 										}
 									source.status(info.status);
 									source.includeFeatures(info.includeFeatures);
@@ -535,7 +535,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.pollId = null;
 			this.shouldUpdateJobs = ko.computed(() => {
 				if (this.generateReportsEnabled()) {
-					jobDetailsService.setJobListMutated();
+          PollService.isJobListMutated(true);
 				}
 			});
 

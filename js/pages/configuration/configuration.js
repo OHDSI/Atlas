@@ -70,9 +70,10 @@ define([
 
 		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
 
-      this.intervalId = jobDetailsService.addPoll({
+      this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
         interval: 5000,
+        isJobListMutated: true,
       });
     }
 

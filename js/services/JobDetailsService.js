@@ -1,5 +1,4 @@
-define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http','services/Poll'], function (ko, appConfig, jobDetail, sharedState, httpService, PollService) {
-
+define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http','services/Poll'], function (ko, appConfig, jobDetail, sharedState, httpService, pollService) {
 	function list() {
 		return httpService.doGet(appConfig.api.url + 'notifications');
 	}
@@ -10,7 +9,7 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		job.status(updated.status);
 		job.name = updated.jobParameters.jobName;
 		job.executionId = updated.executionId;
-		job.url = getJobURL(updated);
+		job.url(getJobURL(updated));
 		job.duration = ko.observable('');
 		job.endDate = ko.observable('');
 		queue(job);
@@ -32,19 +31,11 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		sharedState.jobListing.valueHasMutated();
 	}
 
-	function addPoll(opts) {
-		var callback = opts.callback;
-		var newCallback = function () {
-			callback.apply(this, arguments);
+	pollService.isJobListMutated.subscribe((shouldSetMutated) => {
+		if (shouldSetMutated) {
 			setJobListMutated();
-		};
-		return PollService.add({
-			callback: newCallback,
-			interval: opts.interval,
-			isSilentAfterFirstCall: opts.isSilentAfterFirstCall,
-			args: opts.args
-		});
-	}
+		}
+	});
 
 	function getJobURL(n) {
 		switch (n.jobInstance.name) {
@@ -103,12 +94,11 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 
 
 	return {
-		createJob: createJob,
-		list: list,
-		getJobURL: getJobURL,
-		setLastViewedTime: setLastViewedTime,
-		getLastViewedTime: getLastViewedTime,
-		setJobListMutated: setJobListMutated,
-		addPoll: addPoll,
-	}
+		createJob,
+		list,
+		getJobURL,
+		setLastViewedTime,
+		getLastViewedTime,
+		setJobListMutated,
+	};
 });

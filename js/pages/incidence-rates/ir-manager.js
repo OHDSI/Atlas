@@ -310,10 +310,11 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = jobDetailsService.addPoll({
+			this.pollId = PollService.add({
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
+				isJobListMutated: true,
 			});
 		}
 
