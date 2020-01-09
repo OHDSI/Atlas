@@ -15,21 +15,22 @@ define([
 	importTab,
 	commonUtils
 ) {
-	class Vocabulary extends Page {
-		constructor(params) {
-			super(params);
+		class Vocabulary extends Page {
+			constructor(params) {
+				super(params);
 
-			this.searchParams = {
-				query: ko.observable(),
-			};
+				this.model = params.model;
+				this.searchParams = {
+					query: ko.observable(),
+				};
+			}
+
+			onRouterParamsChanged({ query }) {
+				if (query !== undefined) {
+					this.searchParams.query(query);
+				}
+			}
 		}
 
-        onRouterParamsChanged({ query }) {
-			if (query !== undefined) {
-                this.searchParams.query(query);
-			}
-        }
-	}
-
-	return commonUtils.build('vocabulary', Vocabulary, view);
-});
+		return commonUtils.build('vocabulary', Vocabulary, view);
+	});
