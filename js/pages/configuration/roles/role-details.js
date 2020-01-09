@@ -133,16 +133,16 @@ define([
 
         reload () {
             if (this.modifiedJSON().length > 0 && this.isJSONValid()) {
-                let object = JSON.parse(this.modifiedJSON());
-                let role = Array.isArray(object) ? object[0] : object;
+                const object = JSON.parse(this.modifiedJSON());
+                const role = Array.isArray(object) ? object[0] : object;
 
                 this.roleName(role.role);
                 this.userItems().forEach(userItem => {
-                    let isUserPartOfTheRole = role.users.some(user => user.id === userItem.login);
+                    const isUserPartOfTheRole = role.users.some(user => user.id === userItem.login);
                     userItem.isRoleUser(isUserPartOfTheRole);
                 });
                 this.permissionItems().forEach(permissionItem => {
-                    let isPermissionPartOfTheRole = role.permissions.some(permission => permission.id === permissionItem.permission())
+                    const isPermissionPartOfTheRole = role.permissions.some(permission => permission.id === permissionItem.permission())
                     permissionItem.isRolePermission(isPermissionPartOfTheRole);
                 });
 
