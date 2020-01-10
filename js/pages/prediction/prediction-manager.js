@@ -1,7 +1,8 @@
 define([
-	'knockout', 
-	'text!./prediction-manager.html',	
+	'knockout',
+	'text!./prediction-manager.html',
 	'pages/Page',
+	'pages/Router',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
     'appConfig',
@@ -9,6 +10,8 @@ define([
 	'const',
 	'atlas-state',
 	'./PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'services/Prediction',
 	'services/analysis/Cohort',
 	'./inputTypes/PatientLevelPredictionAnalysis',
@@ -17,6 +20,7 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
+	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
 	'featureextraction/components/temporal-covariate-settings-editor',
@@ -27,11 +31,13 @@ define([
 	'./components/prediction-utilities',
 	'./components/prediction-executions',
 	'less!./prediction-manager.less',
+	'components/security/access/configure-access-modal',
 	'databindings',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Page,
+	router,
 	commonUtils,
 	ohdsiUtil,
 	config,
@@ -39,6 +45,8 @@ define([
 	globalConstants,
 	sharedState,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	PredictionService,
 	Cohort,
 	PatientLevelPredictionAnalysis,
@@ -46,7 +54,8 @@ define([
 	TemporalCovariateSettings,
 	ConceptSet,
 	ConceptSetCrossReference,
-	authAPI
+	authAPI,
+	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
 
@@ -56,7 +65,7 @@ define([
 			sharedState.predictionAnalysis.analysisPath = constants.paths.analysis;
 
 			this.selectTab = this.selectTab.bind(this);
-			this.selectedTabKey = ko.observable(params.routerParams().section);
+			this.selectedTabKey = ko.observable(router.routerParams().section);
 
 			this.isAuthenticated = authAPI.isAuthenticated;
 			this.hasAccess = authAPI.isPermittedReadPlps;
@@ -127,6 +136,12 @@ define([
 			this.canSave = ko.computed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.PREDICTION,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.login')
+			});
 		}
 
 		onPageCreated() {
@@ -140,7 +155,7 @@ define([
 				this.loading(false);
 			}
 		}
-		
+
         onRouterParamsChanged({ id, section }) {
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
@@ -301,7 +316,7 @@ define([
 		onAnalysisSelected() {
 			this.loading(true);
 			PredictionService.getPrediction(this.selectedAnalysisId()).then((analysis) => {
-				this.loadAnalysisFromServer(analysis);				
+				this.loadAnalysisFromServer(analysis);
 				this.loading(false);
 			});
 		}
@@ -313,13 +328,10 @@ define([
 		loadAnalysisFromServer(analysis) {
 			var header = analysis.json;
 			var specification = JSON.parse(analysis.data.specification);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis(specification));
-			this.patientLevelPredictionAnalysis().id(header.id);
-			this.patientLevelPredictionAnalysis().name(header.name);
-			this.patientLevelPredictionAnalysis().description(header.description);
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...header }));
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
-			this.setAnalysisSettingsLists();	
+			this.setAnalysisSettingsLists();
 			this.fullSpecification(null);
 			this.resetDirtyFlag();
 		}
@@ -358,7 +370,7 @@ define([
 					if (xref.propertyName === constants.conceptSetCrossReference.covariateSettings.propertyName.excludedCovariateConcepts) {
 						this.patientLevelPredictionAnalysis().covariateSettings()[xref.targetIndex].excludedCovariateConceptSet(selectedConceptSet);
 					}
-				}				
+				}
 			});
 		}
 

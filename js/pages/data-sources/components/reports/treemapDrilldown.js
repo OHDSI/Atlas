@@ -154,12 +154,8 @@ define([
 			this.byOperator = params.byOperator;
 			this.byQualifier = params.byQualifier;
 			this.context = params.context;
-			this.currentConceptSubscription = params.currentConcept.subscribe(this.loadData.bind(this));
+			this.subscriptions.push(params.currentConcept.subscribe(this.loadData.bind(this)));
 			this.loadData(params.currentConcept());
-		}
-
-		dispose() {
-			this.currentConceptSubscription.dispose();
 		}
 
 		parseAgeData(rawAgeData) {
@@ -336,7 +332,7 @@ define([
 					console.error(er);
 				})
 				.finally(() => {
-					this.context.model.loadingReportDrilldown(false);
+					this.context.loadingReportDrilldown(false);
 					this.scrollTo("#datasourceReportDrilldownTitle");
 				});
 		}

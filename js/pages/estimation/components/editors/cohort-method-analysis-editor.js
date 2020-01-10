@@ -1,6 +1,6 @@
 define([
-	'knockout', 
-	'text!./cohort-method-analysis-editor.html',	
+	'knockout',
+	'text!./cohort-method-analysis-editor.html',
 	'components/Component',
 	'utils/CommonUtils',
 	'const',
@@ -15,8 +15,8 @@ define([
 	'featureextraction/components/covariate-settings-editor',
 	'components/cohort-definition-browser',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	Component,
 	commonUtils,
 	constants,
@@ -37,7 +37,6 @@ define([
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);
 			this.showConceptSetSelector = ko.observable(false);
-			this.showPsCovariateDisplay = ko.observable(false);
 			this.currentConceptSet = ko.observable(null);
 			this.trimSelection = ko.observable();
 			this.matchStratifySelection = ko.observable();
@@ -48,6 +47,7 @@ define([
 			this.bounds = ko.observable(this.analysis.trimByPsToEquipoiseArgs.bounds() && this.analysis.trimByPsToEquipoiseArgs.bounds().length > 0 ? dataTypeConverterUtils.percentArrayToCommaDelimitedList(this.analysis.trimByPsToEquipoiseArgs.bounds()) : '');
 			this.studyStartDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyStartDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyStartDate()) : null);
 			this.studyEndDate = ko.observable(this.analysis.getDbCohortMethodDataArgs.studyEndDate() !== null ? dataTypeConverterUtils.convertFromRDateToDate(this.analysis.getDbCohortMethodDataArgs.studyEndDate()) : null);
+			this.useRegularization = ko.observable(estimationConstants.isUsingRegularization(this.analysis.createPsArgs.prior) ? true : false);
 
 			this.subscriptions.push(this.includeCovariateIds.subscribe(newValue => {
 				this.analysis.createPsArgs.includeCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
@@ -76,11 +76,15 @@ define([
 			this.subscriptions.push(this.studyEndDate.subscribe(newValue => {
 				this.analysis.getDbCohortMethodDataArgs.studyEndDate(dataTypeConverterUtils.convertToDateForR(newValue));
 			}));
-			
+
 			this.subscriptions.push(this.trimSelection.subscribe(newValue => {
 				this.analysis.trimByPs(this.trimSelection() === "byPercent");
 				this.analysis.trimByPsToEquipoise(this.trimSelection() === "toEquipoise");
 				this.setCreatePs();
+			}));
+
+			this.subscriptions.push(this.useRegularization.subscribe(newValue => {
+				estimationConstants.setRegularization(newValue, this.analysis.createPsArgs.prior);
 			}));
 
 			// Initialize trimSelection
@@ -118,7 +122,7 @@ define([
 		toggleControlDisplay() {
 			this.showControlDisplay(!this.showControlDisplay());
 		}
-	
+
 		togglePriorDisplay() {
 			this.showPriorDisplay(!this.showPriorDisplay());
 		}
@@ -132,7 +136,7 @@ define([
 			this.showConceptSetSelector(true);
 			this.currentConceptSet(this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet);
 		}
-		
+
 		clearIncludedCovariates () {
 			this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet(new ConceptSet());
 		}
@@ -141,23 +145,19 @@ define([
 			this.showConceptSetSelector(true);
 			this.currentConceptSet(this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet);
 		}
-		
+
 		clearExcludedCovariates () {
 			this.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet(new ConceptSet());
 		}
 
-		togglePsCovariateDisplay() {
-			this.showPsCovariateDisplay(!this.showPsCovariateDisplay());
-		}
-		
 		setCreatePs() {
-			if (this.matchStratifySelection() && this.trimSelection()) {				
+			if (this.matchStratifySelection() && this.trimSelection()) {
 				this.analysis.createPs(
 					!(this.matchStratifySelection() === "none" && this.trimSelection() === "none")
 				);
 			}
 		}
-	
+
 	}
 
 	return commonUtils.build('cohort-method-analysis-editor', CohortMethodAnalysisEditor, view);

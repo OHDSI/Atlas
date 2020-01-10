@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'text!./concept-manager.html', 
+	'text!./concept-manager.html',
 	'pages/Page',
 	'utils/AutoBind',
 	'services/Vocabulary',
@@ -29,23 +29,24 @@ define([
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-			this.model = params.model;
-			this.subscriptions = [];
 			this.currentConceptId = ko.observable();
+			this.currentConcept = ko.observable();
+			this.currentConceptMode = ko.observable('details');
 			this.hierarchyPillMode = ko.observable('all');
-
+			this.relatedConcepts = ko.observableArray([]);
 			this.commonUtils = commonUtils;
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
-
+			this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
+			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
 
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
 
 			this.subscriptions.push(
-				this.model.currentConceptMode.subscribe((mode) => {
+				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
 						case 'recordcounts':
 							this.loadRecordCounts();
@@ -188,18 +189,21 @@ define([
 
 			this.currentConceptArray = ko.observableArray();
 		}
-		
+
 		async onPageCreated() {
-			this.model.currentConceptMode('details');
 			this.currentConceptId(this.routerParams.conceptId);
 			this.loadConcept(this.currentConceptId());
 			super.onPageCreated();
 		}
 
-		onRouterParamsChanged({ conceptId }) {			
+		renderCurrentConceptSelector() {
+			return this.renderConceptSelector(null, null, this.currentConcept());
+		}
+
+		onRouterParamsChanged({ conceptId }) {
 			if (conceptId !== this.currentConceptId() && conceptId !== undefined) {
 				this.currentConceptId(conceptId);
-				if (this.model.currentConceptMode() == 'recordcounts') {
+				if (this.currentConceptMode() == 'recordcounts') {
 					this.loadRecordCounts();
 				}
 				this.loadConcept(this.currentConceptId());
@@ -261,24 +265,15 @@ define([
 		}
 
 		async loadConcept(conceptId) {
+			this.isLoading(true);
 			if (!this.hasInfoAccess()) {
 				this.loadingRelated(false);
 				return;
 			}
 
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
-			var exists = false;
-			for (var i = 0; i < this.model.recentConcept().length; i++) {
-				if (this.model.recentConcept()[i].CONCEPT_ID == data.CONCEPT_ID)
-					exists = true;
-			}
-			if (!exists) {
-				this.model.recentConcept.unshift(data);
-			}
-			if (this.model.recentConcept().length > 7) {
-				this.model.recentConcept.pop();
-			}
-			this.model.currentConcept(data);
+			this.currentConcept(data);
+			this.isLoading(false);
 			// load related concepts once the concept is loaded
 			this.loadingRelated(true);
 			this.metarchy = {
@@ -287,11 +282,11 @@ define([
 				synonyms: ko.observableArray()
 			};
 
-			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');			
+			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');
 			for (var i = 0; i < related.length; i++) {
 				this.metagorize(this.metarchy, related[i]);
 			}
-			
+
 			await vocabularyProvider.loadDensity(related);
 			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
 			if (currentConceptObject !== undefined){
@@ -299,15 +294,9 @@ define([
 			} else {
 				this.currentConceptArray([]);
 			}
-			this.model.relatedConcepts(related);
+			this.relatedConcepts(related);
 
 			this.loadingRelated(false);
-		}
-
-		dispose() {
-			this.subscriptions.forEach(function (subscription) {
-				subscription.dispose();
-			});
 		}
 	}
 

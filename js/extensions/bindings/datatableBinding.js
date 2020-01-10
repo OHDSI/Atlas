@@ -76,6 +76,13 @@ define([
 			// initialise the dataTable with those options.
 			if (binding.options) {
 
+				// Set default placeholder for datatables search input
+				const defaultPlaceholder = { searchPlaceholder: 'Search...' };
+				const language = binding.options.language
+					? { ...defaultPlaceholder, ...binding.options.language  }
+					: defaultPlaceholder;
+				binding.options.language = language;
+
 				// allow row level binding context
 				const createdRow = binding.options.createdRow;
 				binding.options.createdRow = (row, data, index) => {
@@ -136,7 +143,6 @@ define([
 				if (!!binding.options.scrollY) {
 					setTimeout(() => 	$(element).DataTable().columns.adjust().draw('page'), 0);
 				}
-
 				// setup dispose callback:
 				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 					// This will be called when the element is removed by Knockout or

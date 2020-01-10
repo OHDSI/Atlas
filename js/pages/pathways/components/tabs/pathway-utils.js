@@ -24,8 +24,6 @@ define([
 		constructor(params) {
 			super();
 
-			this.subscriptions = [];
-
 			this.loading = ko.observable(false);
 
 			this.MODE_JSON = 0;
