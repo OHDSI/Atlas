@@ -13,7 +13,8 @@ define([
 	'utils/DatatableUtils',
 	'services/Source',
 	'lodash',
-  'services/JobDetailsService',
+	'services/JobDetailsService',
+	'services/MomentAPI',
 	'services/Poll',
 	'less!./pathway-executions.less',
 	'components/modal-exit-message',
@@ -32,7 +33,8 @@ define([
 	datatableUtils,
 	SourceService,
 	lodash,
-  jobDetailsService,
+	jobDetailsService,
+	momentApi,
 	PollService
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
@@ -93,8 +95,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{

@@ -45,7 +45,7 @@ define(function (require, exports) {
 
 	function getAncestorsRenderFunction() {
 		return (s,p,d) => {
-			const tooltip = d.ANCESTORS.map(d => d.CONCEPT_NAME).join('\n');
+			const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('\n');
 			return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: '${tooltip}'">${d.ANCESTORS.length}</a>`
 		};
 	}

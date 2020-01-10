@@ -10,8 +10,8 @@
 			<div class="input-group">
 				<input class="form-control" type="text" placeholder="New Cohort Definition" data-bind="enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success" title="Save cohort definition" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" title="Close cohort definition" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
 					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
@@ -50,7 +50,7 @@
 			<!--
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }"><a>Explore</a></li>
 			-->
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); $component.showSql(); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
 				<a>Export</a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
@@ -297,83 +297,12 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'sql'}" class="tab-pane">
-						<div class="row">
-							<div class="col-md-9" style="text-align: left">
-								<ul class="nav nav-pills">
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'ohdsisql' }, click: function() { $component.exportSqlMode('ohdsisql') };">
-										<a>Template OHDSI.SQL </a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'mssql' }, click: function() { $component.exportSqlMode('mssql') };">
-										<a>MSSQL Server</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'msaps' }, click: function() { $component.exportSqlMode('msaps') };">
-										<a>MS APS</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'oracle' }, click: function() { $component.exportSqlMode('oracle') };">
-										<a>Oracle</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'postgresql' }, click: function() { $component.exportSqlMode('postgresql') };">
-										<a>PostgreSQL</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'redshift' }, click: function() { $component.exportSqlMode('redshift') };">
-										<a>Amazon Red Shift</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'impala' }, click: function() { $component.exportSqlMode('impala') };">
-										<a>Impala</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'netezza' }, click: function() { $component.exportSqlMode('netezza') };">
-										<a>Netezza</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'bigquery' }, click: function() { $component.exportSqlMode('bigquery') };">
-										<a>BigQuery</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'hive' }, click: function() { $component.exportSqlMode('hive') };">
-										<a>Hive</a>
-									</li>
-								</ul>
-							</div>
-							<div class="col-md-3" style="text-align: right">
-								<span id="copyCopyCohortSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary"
-								  title="Copy to clipboard" id="btnCopyCohortSQLClipboard" data-bind="click: copyCohortSQLToClipboard" data-clipboard-target="#cohortSQL"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
-							</div>
-						</div>
-						<div class="tab-content">
-							<div role="tabpanel" data-bind="visible: $component.isLoadingSql()">
-								<div class="loading">Loading</div>
-							</div>
-							<div id="cohortSQL">
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'ohdsisql' && !$component.isLoadingSql()">
-									<pre data-bind="html: $component.templateSql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
-									<pre data-bind="html: $component.generatedSql.mssql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.msaps"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'oracle' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.oracle"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'postgresql' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.postgresql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'redshift' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.redshift"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'impala' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.impala"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'netezza' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.netezza"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'bigquery' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.bigquery"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'hive' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.hive"></pre>
-								</div>
-							</div>
-						</div>
+						<export-sql params="
+							analysisId: $component.currentCohortDefinition() && $component.currentCohortDefinition().id(),
+							expression: $component.currentCohortDefinition() && $component.currentCohortDefinition().expression,
+							isPermittedExport: hasAccess,
+							exportSqlService: $component.exportSqlService,
+						"></export-sql>
 					</div>
 				</div>
 			</div>

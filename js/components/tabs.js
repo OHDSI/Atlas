@@ -16,7 +16,7 @@ define([
 
 			this.componentModifiers = params.modifiers;
 
-			this.componentModifiers = params.modifiers;
+			this.controlsComponent = params.controlsComponent;
 
 			this.selectedTab = params.selectedTab ? params.selectedTab : ko.observable(0);
 			this.tabs = ko.observableArray(params.tabs || []);

@@ -249,6 +249,8 @@ define([
 
 			const eventCohorts = results.data.eventCodes.filter(ec => !ec.isCombo)
 			const colorScheme = d3.scaleOrdinal(eventCohorts.length > 10 ? d3.schemeCategory20 : d3.schemeCategory10);
+			// initialize colors based on design
+			this.results().design.eventCohorts.forEach((d, i) => colorScheme(Math.pow(2,i)));
 			const fixedColors = {"end": "rgba(185, 184, 184, 0.23)"};
 			const colors = (d) => (fixedColors[d] || colorScheme(d));
 
