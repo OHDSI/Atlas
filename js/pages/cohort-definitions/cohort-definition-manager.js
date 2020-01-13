@@ -1115,11 +1115,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			onRouterParamsChanged(params) {
 				let { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey } = params;
-                // cohortDefinitionId can be undefined in case of following links fron notifications
-                // when another tab of the same cohort definition is selected
-                if (!cohortDefinitionId && this.currentCohortDefinition()) {
-                    cohortDefinitionId = this.currentCohortDefinition().id();
-                }
+				// cohortDefinitionId can be undefined in case of following links fron notifications
+				// when another tab of the same cohort definition is selected
+				if (!cohortDefinitionId && this.currentCohortDefinition()) {
+					cohortDefinitionId = this.currentCohortDefinition().id();
+				}
 				this.clearConceptSet();
 				this.tabMode(mode);
 				if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
