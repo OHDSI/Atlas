@@ -5,7 +5,7 @@ define(
       const detailsRoute = new AuthorizedRoute((conceptSetId, mode = 'conceptset-expression') => {
         require(['./conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {
           router.setCurrentView('conceptset-manager', {
-            conceptSetId,
+            conceptSetId: conceptSetId && parseInt(conceptSetId),
             mode,
           })
         });

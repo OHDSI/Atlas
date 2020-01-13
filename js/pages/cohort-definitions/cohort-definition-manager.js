@@ -246,7 +246,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
 			this.importConceptSetJson = ko.observable();
 			this.conceptSetTabMode = sharedState.currentConceptSetMode;
-			this.conceptSetTabMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged)
+			this.onConceptSetTabMode = this.conceptSetTabMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged)
 			this.showImportConceptSetModal = ko.observable(false);
 			this.sharedState = sharedState;
 			this.identifiers = ko.observable();
@@ -270,17 +270,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.disableConceptSetExport = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() || this.currentCohortDefinition().expression().ConceptSets().length === 0;
+				return this.dirtyFlag().isDirty() || (this.currentCohortDefinition() && this.currentCohortDefinition().expression()	&&
+					this.currentCohortDefinition().expression().ConceptSets().length === 0);
 			});
 
 			this.disableConceptSetExportMessage = ko.pureComputed(() => {
-				if (this.currentCohortDefinition().expression().ConceptSets().length === 0) {
+				if (this.currentCohortDefinition() && this.currentCohortDefinition().expression().ConceptSets().length === 0) {
 					return "No concept sets to export.";
 				}
 				if (this.dirtyFlag().isDirty()) {
 					return "You must save the definition before you can export.";
 				}
-			})
+			});
 
 			this.delayedCartoonUpdate = ko.observable(null);
 
@@ -289,8 +290,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
-				var isNew = this.currentCohortDefinition() && (this.currentCohortDefinition().id() == 0);
-				const hasInitialEvent = this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
+				var isNew = this.currentCohortDefinition() && (this.currentCohortDefinition() && this.currentCohortDefinition().id() == 0);
+				const hasInitialEvent = this.currentCohortDefinition() && this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
 				var canGenerate = !(isDirty || isNew) && hasInitialEvent;
 				return (canGenerate);
 			});
@@ -1392,6 +1393,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 			dispose () {
+				this.onConceptSetTabMode && this.onConceptSetTabMode.dispose();
 				this.cohortDefinitionLink.dispose();
 				this.cohortDefinitionCaption.dispose();
 				this.tabPath.dispose();
@@ -1399,6 +1401,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingState.dispose();
 				this.showReportNameDropdown.dispose();
 				this.reportSourceKeySub.dispose();
+				sharedState.includedHash(null);
 				this.ancestorsModalIsShown(false);
 				PollService.stop(this.pollId);
 			}
