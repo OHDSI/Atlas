@@ -4,7 +4,6 @@ define([
     'components/Component',
 	'utils/Renderers',
     'faceted-datatable',
-    'less!./cohort-definition-browser.less',
 ], function(ko, view, Component, renderers) {
     class EntityBrowser extends Component {
         constructor(params) {

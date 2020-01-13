@@ -8,7 +8,6 @@ define([
 	'services/CohortDefinition',
 	'utils/DatatableUtils',
 	'faceted-datatable',
-	'less!./cohort-definition-browser.less',
 ], function (
 	ko,
 	view,

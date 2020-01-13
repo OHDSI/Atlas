@@ -2206,3 +2206,16 @@ div#wrapper_ohdsi a {
 .thresholdLevel div input {
 	margin-right: 10px
 }
+
+.import-modal-footer {
+  display: flex;
+  flex-direction: row-reverse;
+  padding: 1rem 0;
+}
+
+.import-modal_list-container {
+  max-height: calc(80vh - 5rem);
+  overflow-y: auto;
+  padding: 1rem;
+  padding-bottom: 0;
+}
