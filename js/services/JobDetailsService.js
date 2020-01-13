@@ -61,7 +61,7 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 			case 'generateEstimationAnalysis':
 				return `estimation/cca/${n.jobParameters.estimation_analysis_id}/executions/${n.jobParameters.source_id}/${n.executionId}`;
 			case 'generatePredictionAnalysis':
-				return `prediction/${n.jobParameters.prediction_analysis_id}/executions/${n.jobParameters.source_id}/${n.executionId}`
+				return `prediction/${n.jobParameters.prediction_analysis_id}/executions/${n.jobParameters.source_id}/${n.executionId}`;
 			case 'warmCacheByUser':
 				return 'configure';
 		}

@@ -59,6 +59,25 @@ define(['services/MomentAPI', 'xss', 'appConfig'],
 
         const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
 
+        const highlightGeneration = ({ isSourceListLoaded, notificationSourceId, notificationExecutionId, expandedSection, executionGroups, notificationRowId }) => {
+            if (isSourceListLoaded() && notificationSourceId() && notificationExecutionId()) {
+				const sourceId = notificationSourceId();
+				const executionId = notificationExecutionId();
+				const groupIdx = executionGroups().findIndex(item => item.sourceId == sourceId);
+				if (groupIdx >= 0) {
+					expandedSection() !== groupIdx && expandedSection(groupIdx);
+					const row = $(`#${notificationRowId()}`);
+					setTimeout(() => {
+						const $row = $(`#${notificationRowId()}`);
+						if ($row && $row[0]) {
+							$row.addClass('alert alert-warning');
+							$row[0].scrollIntoView({ behavior: 'smooth' });
+						}
+					}, 0);
+				}
+			}
+        }
+
         return {
             getDateFieldFormatter,
             getFacetForDate,
@@ -68,6 +87,7 @@ define(['services/MomentAPI', 'xss', 'appConfig'],
             renderCountColumn,
             getFacetForDomain,
             coalesceField,
+            highlightGeneration,
         };
     }
 );

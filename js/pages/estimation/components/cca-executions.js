@@ -60,7 +60,7 @@ define([
 			this.notificationSourceId = params.notificationSourceId;
 			this.isSourceListLoaded = ko.observable(false);
 			this.notificationRowId = ko.pureComputed(() => `${this.notificationSourceId()}_${this.notificationExecutionId()}`);
-			this.subscriptions.push(this.notificationRowId.subscribe(this.highlightGeneration));
+			this.subscriptions.push(this.notificationRowId.subscribe(datatableUtils.highlightGeneration(this)));
 
 			this.execColumns = [
 				{
@@ -112,25 +112,6 @@ define([
 			PollService.stop(this.pollId);
 		}
 
-		highlightGeneration() {
-			if (this.isSourceListLoaded() && this.notificationSourceId() && this.notificationExecutionId()) {
-				const sourceId = this.notificationSourceId();
-				const executionId = this.notificationExecutionId();
-				const groupIdx = this.executionGroups().findIndex(item => item.sourceId == sourceId);
-				if (groupIdx >= 0) {
-					this.expandedSection() !== groupIdx && this.expandedSection(groupIdx);
-					const row = $(`#${this.notificationRowId()}`);
-					setTimeout(() => {
-						const $row = $(`#${this.notificationRowId()}`);
-						if ($row && $row[0]) {
-							$row.addClass('alert alert-warning');
-							$row[0].scrollIntoView({ behavior: 'smooth' });
-						}
-					}, 0);
-				}
-			}
-		}
-
 		isDownloadInProgress(id) {
 			return ko.computed(() => this.downloading.indexOf(id) > -1);
 		}
@@ -179,7 +160,7 @@ define([
 						this.estimationStatusGenerationOptions.STARTED :
 						this.estimationStatusGenerationOptions.COMPLETED);
 				});
-				!silently && this.highlightGeneration();
+				!silently && datatableUtils.highlightGeneration(this);
 			} catch (e) {
 				console.error(e);
 			} finally {
