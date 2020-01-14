@@ -6,3 +6,4 @@
 /js/assets/images
 js/config-local.js
 package-lock.json
+.vscode

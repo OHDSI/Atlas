@@ -15,6 +15,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'atlas-state',
 	'clipboard',
 	'd3',
+	'services/Sample',
 	'services/Jobs',
 	'services/job/jobDetail',
 	'services/JobDetailsService',
@@ -47,7 +48,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	
 ], function (
 	$,
 	ko,
@@ -68,6 +70,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	sharedState,
 	clipboard,
 	d3,
+	sampleService,
 	jobService,
 	jobDetail,
 	jobDetailsService,
@@ -83,7 +86,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	httpService,
 	globalConstants,
 	constants,
-	{ entityType }
+	{ entityType },
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -147,13 +150,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.sampleSourceKey = ko.observable()
 			this.isSampleGenerating = ko.observable(false)
 			this.isLoadingSampleData = ko.observable(false)
+			this.selectedSampleId = ko.observable('')
+			this.selectedSampleName = ko.observable('')
 			// new sample form
 			this.sampleName=ko.observable('')
 			this.patientCount=ko.observable()
 			this.sampleAgeType = ko.observable('')
 			this.isAgeRange =ko.observable(false)
-			this.firstAge = ko.observable(0)
-			this.secondAge = ko.observable(1)
+			this.firstAge = ko.observable()
+			this.secondAge = ko.observable()
 			this.isMaleSample=ko.observable(false)
 			this.isFeMaleSample=ko.observable(false)
 			this.isOtherGenderSample=ko.observable(false)
@@ -167,30 +172,40 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if(!val) this.resetSampleForm()
 			})
 			
+			//sampleSourceKey changes => get list of samples
+			this.sampleSourceKey.subscribe(val => {
+				if(!val) return;
+				this.getSampleList()
+			})
+
 			//validation input value
 			this.sampleAgeType.subscribe(val => {
-				this.isAgeRange(val=='between')
+				this.isAgeRange(val=='between'||val=='notBetween')
 			})
 			this.isAgeRange.subscribe(val => {
 				if(!val) {
-					this.isAgeRangeError(undefined) 
+					this.isAgeRangeError(undefined)
+					this.firstAge(null)
+					this.secondAge(null) 
 				} else {
 					this.firstAgeError(undefined)
-					this.firstAge(0)
+					this.firstAge(null)
+					this.secondAge(null)
 				}
 			})
 			this.secondAge.subscribe(val => {
-				if(this.isAgeRange()&&(Number(val)<0||Number(this.firstAge())>=Number(val)|| !Number.isInteger(Number(val)))) {
-					this.isAgeRangeError(true)
-				} else if (this.isAgeRange()){
-					this.isAgeRangeError(false)
+				let secondAge;
+				if(val!=null) {
+					secondAge = Number(val)
+			 } else {
+				secondAge == val
+			 }
+				if(secondAge==null&&this.firstAge()==null) {
+					this.isAgeRangeError(undefined)
+					return
 				}
-			})
-
-			this.firstAge.subscribe(val => {
-				console.log(this.isAgeRange(), val)
-				if(this.isAgeRange()) {
-					if((Number(val)<0||Number(val)>Number(this.secondAge())|| !Number.isInteger(Number(val)))) {
+				if (this.isAgeRange()) {
+					if(!Number.isInteger(secondAge)||secondAge<0||!this.firstAge()||!secondAge||secondAge==this.firstAge()) {
 						this.isAgeRangeError(true)
 					} else {
 						this.isAgeRangeError(false)
@@ -198,16 +213,35 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				} else {
 					this.isAgeRangeError(undefined)
 				}
+			})
+
+			this.firstAge.subscribe(val => {
+				let firstAge;
+				if(val!=null) {
+					 firstAge = Number(val)
+				} else {
+					firstAge == val
+				}
+				if(firstAge==null&&this.secondAge()==null) {
+					this.isAgeRangeError(undefined)
+					return
+				}
+				
+				if(this.isAgeRange()) {
+					if(!Number.isInteger(firstAge)||!this.secondAge()||!secondAge||firstAge<0||firstAge==this.secondAge()) {
+						this.isAgeRangeError(true)
+					} else {
+						this.isAgeRangeError(false)
+					}
+				} 
+
 				if(!this.isAgeRange()) {
-					if(!Number.isInteger(Number(val))||Number(val)<0) {
+					if(!Number.isInteger(firstAge)||firstAge<0) {
 						this.firstAgeError(true)
 					} else {
 						this.firstAgeError(false)
 					}
-				} else {
-					this.firstAgeError(undefined)
-				}
-				console.log(this.firstAgeError())
+				} 
 			})
 			
 			this.sampleName.subscribe(val =>{ 
@@ -217,6 +251,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.sampleNameError(false)
 				}
 			})
+
 			this.patientCount.subscribe(val =>{
 				if(!val||!Number.isInteger(Number(val))||Number(val)<=0) {
 					this.patientCountError(true)
@@ -224,7 +259,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.patientCountError(false)
 				}
 			})
-			this.sampleCols = [
+			//sample list
+			this.sampleListCols = [
         {
           title: 'Sample name',
           data: 'sampleName',
@@ -244,9 +280,41 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				{
 					title: 'Created on',
 					data: 'createdOn'
+				},
+				{
+					title: 'Delete sample',
+					data: 'delete'
 				}
 			]
-			this.sampleData = ko.observableArray()
+			this.sampleList = ko.observableArray()
+			// a sample data
+			this.sampleCols =  [
+				{
+					render: 'x',
+					data: 'selectedSample',
+					sortable: false,
+				},
+        {
+					title: 'Person ID',
+					data: 'personId',
+				},
+				{
+					title: 'Gender',
+					data: 'gender',
+				},
+				{
+					title: 'Age at index',
+					data: 'ageIndex',
+				},
+				{
+					title: 'Number of events',
+					data: 'eventCounts',
+				}
+			]
+
+
+			this.sampleData =ko.observableArray()
+			
 			this.isCohortGenerated = ko.computed(() => {
 				const sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.sampleSourceKey());
 				if (sourceInfo&&this.getStatusMessage(sourceInfo) == 'COMPLETE') {
@@ -1732,33 +1800,28 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if(this.sampleNameError()==undefined) this.sampleNameError(true)
 				if(this.patientCountError()==undefined) this.patientCountError(true)
 				if(!this.isAgeRange()) {
-					// not madatory field is not an error
+					// not-madatory field
 					if(this.firstAgeError()==undefined) this.firstAgeError(false);
 					if(!this.firstAgeError()&&!this.sampleNameError()&&!this.patientCountError()) {
 						return true
 					}
 					return false
 				} else {
-					// not madatory field is not an error
+					// not madatory field
 					if(this.isAgeRangeError()==undefined) this.isAgeRangeError(false)
 					if(!this.isAgeRangeError()&&!this.sampleNameError()&&!this.patientCountError()) {
 						return true
 					} 
 					return false
 				}
-
-				this.isAgeRangeError = ko.observable()
-				this.firstAgeError = ko.observable()
-				this.sampleNameError=ko.observable()
-				this.patientCountError=ko.observable()
 			}
 
 			resetSampleForm() {
 				this.sampleName('')
 				this.patientCount('')
 				this.sampleAgeType('lessThan')
-				this.firstAge(0)
-				this.secondAge(1)
+				this.firstAge(null)
+				this.secondAge(null)
 				this.isMaleSample(false)
 				this.isFeMaleSample(false)
 				this.isOtherGenderSample(false)
@@ -1773,10 +1836,80 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			createNewSample() {
 				const allValidated = this.validateSampleForm()
 				if(!allValidated) return
-				console.log(this.patientCountError(), this.sampleNameError())
-				if(this.patientCountError()||this.sampleNameError()) {
-					return
+				// create Sample
+				const cohortDefinitionId =this.currentCohortDefinition().id();
+				const sourceKey=this.sampleSourceKey()
+				const name = this.sampleName();
+				const size = Number(this.patientCount());
+				const ageMode = this.sampleAgeType();
+				let genderConceptId;
+				if(this.isMaleSample()) {
+					genderConceptId = 8532
 				}
+				if(this.isFeMaleSample()) {
+					genderConceptId = 8532	
+				}
+				if(this.isOtherGenderSample()) {
+					genderConceptId = -1
+				}
+
+				const firstAge = Number(this.firstAge());
+				const secondAge = Number(this.secondAge());
+				const age = firstAge;
+				let ageMin;
+				let ageMax;
+				let payload;
+				if(this.isAgeRange()) {
+					if (firstAge>secondAge) {
+						ageMin = secondAge;
+						ageMax = firstAge
+					} else {
+						ageMin=firstAge;
+						ageMax = secondAge
+					}
+					payload = {
+						name,
+						size,
+						ageMode,
+						ageMin,
+						ageMax,
+						genderConceptId
+					}
+				} else {
+					payload = {
+						name,
+						size,
+						ageMode,
+						age,
+						genderConceptId
+					}
+				}
+
+				sampleService.createSample(payload, {cohortDefinitionId, sourceKey})
+				.then(res => {
+					console.log(res)
+				})
+		
+			}
+
+			getSampleList() {
+				console.log(sampleService)
+				this.isLoadingSampleData(true)
+				const cohortDefinitionId= this.currentCohortDefinition().id();
+				// if (cohortDefinitionId==0) return
+				const sourceKey=this.sampleSourceKey()
+				console.log(cohortDefinitionId)
+				sampleService.getSampleList({cohortDefinitionId, sourceKey})
+				.then(data => {
+					console.log('sample list', data)
+				})
+				.catch(error=>{
+					console.error(error)
+					alert('Error when fetching sample list...')
+				})
+				.finally(() => {
+					this.isLoadingSampleData(false)
+				})
 			}
 	}
 

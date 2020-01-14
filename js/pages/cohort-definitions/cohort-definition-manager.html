@@ -591,16 +591,48 @@
 								</div>
 							</div>
 						</div>
-						<div class="pull-right">
+						<div class="pull-right"
+							data-bind="visible: !$component.isLoadingSampleData()&&$component.sampleSourceKey()"
+						>
 							<button 
-								type="button" 
+								type="button"
 								class="btn btn-sm btn-primary" 
-								data-bind="click:addNewSample">
+								data-bind="click:addNewSample"
+							>
 								Add new sample
 							</button>
 						</div>
+						<!--  samples list table -->
+						<div data-bind="visible: !$component.isLoadingSampleData()&&$component.sampleSourceKey()">
+							<faceted-datatable 
+							params="{
+								reference: sampleList,
+								columns: sampleListCols,
+								order: [[4,'desc']],
+								pageLength: 5,
+								rowClick: () =>{},
+							}"
+							/>
+						</div>
+						<!-- A sample data table -->
 						<div 
-							data-bind="visible: !$component.isLoadingSampleData()">
+						class="row" 
+						style="margin-top: 40px;"
+						data-bind="visible: $component.sampleSourceKey()&&$component.selectedSampleId">
+							<div class="col-sm-3">
+								<h4>Sample name</h4>
+							</div>
+							<div  class="col-sm-9 text-right">
+								<button 
+								type="button"
+								class="btn btn-sm btn-primary" 
+								data-bind="click:addNewSample">
+								View patient(s)
+								</button >
+							</div>
+						</div>
+						
+						<div data-bind="visible: $component.sampleSourceKey()&&$component.selectedSampleId()">
 							<faceted-datatable 
 							params="{
 								reference: sampleData,
@@ -611,6 +643,7 @@
 							}"
 							/>
 						</div>
+
 						<loading data-bind="visible: $component.isLoadingSampleData()"></loading>
 						<!-- notifications -->
 						<div data-bind="visible: sampleData().length==0">
@@ -676,11 +709,12 @@
 								id="sampleCreatingAge" 
 								class="form-control">
 									<option value="lessThan">Less than</option>
-									<option value="lessOrEqual">Less or equal to</option>
-									<option value="equal">Equal to</option>
+									<option value="lessThanOrEqual ">Less or equal to</option>
+									<option value="equalTo">Equal to</option>
 									<option value="greaterThan">Greater than</option>
-									<option value="greaterOrEqual">Greater or equal to</option>
+									<option value="greaterThanOrEqual">Greater or equal to</option>
 									<option value="between">Between</option>
+									<option value="notBetween">Not between</option>
 							</select>
 						</div>
 						<div data-bind="css: {'col-md-2':isAgeRange(), 'col-md-5':!isAgeRange()}">
@@ -701,7 +735,7 @@
 							class="form-control" 
 							placeholder="Enter a number">
 						</div>
-						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError()==true, myCustomTextSuccess: isAgeRangeError()==false}">The first number must be smaller than the second one and both must be non-negative integers</span>
+						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError()==true, myCustomTextSuccess: isAgeRangeError()==false}">First and second age must be non-negative integers and not equal</span>
 					</div>
 				</div>
 

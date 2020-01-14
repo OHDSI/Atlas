@@ -1,18 +1,10 @@
 {
   "eslint.alwaysShowStatus": true,
-  "eslint.autoFixOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "eslint.quiet": true,
   "prettier.singleQuote": true,
   "editor.tabSize": 2,
-  "editor.formatOnSave": false,
-  "eslint.validate": [
-    {
-      "language": "html",
-      "autoFix": true
-    },
-    {
-      "language": "javascript",
-      "autoFix": true
-    }
-  ]
+  "editor.formatOnSave": true,
 }
