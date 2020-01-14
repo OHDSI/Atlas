@@ -4,9 +4,12 @@ define(function(require, exports) {
   const d3 = require('d3')
   const { schemeCategory10 } = require('d3-scale-chromatic')
   const icons = {
-    open: 'M11.9994 1.72559L1.16058 13.1063C0.894011 13.3862 0.466495 13.3862 0.199926 13.1063C-0.0666428 12.8264 -0.0666428 12.3775 0.199926 12.0976L11.5216 0.209923C11.7881 -0.0699738 12.2156 -0.0699738 12.4822 0.209924L23.7988 12.0976C23.9296 12.2349 24 12.4198 24 12.5993C24 12.7789 23.9346 12.9637 23.7988 13.101C23.5322 13.3809 23.1047 13.3809 22.8382 13.101L11.9994 1.72559Z',
-    close: 'M12.0006 11.5906L22.8394 0.20984C23.106 -0.0700579 23.5335 -0.0700579 23.8001 0.20984C24.0666 0.489738 24.0666 0.938628 23.8001 1.21852L12.4784 13.1062C12.2119 13.3861 11.7844 13.3861 11.5178 13.1062L0.201183 1.21852C0.0704137 1.08122 1.48104e-07 0.896379 1.50246e-07 0.716822C1.52387e-07 0.537265 0.0653841 0.352427 0.201183 0.215119C0.467753 -0.0647777 0.895268 -0.0647776 1.16184 0.215119L12.0006 11.5906Z',
-    pinned: 'M52.963,21.297c-0.068-0.329-0.297-0.603-0.609-0.727c-2.752-1.097-5.67-1.653-8.673-1.653  c-4.681,0-8.293,1.338-9.688,1.942L19.114,8.2c0.52-4.568-1.944-7.692-2.054-7.828C16.881,0.151,16.618,0.016,16.335,0  c-0.282-0.006-0.561,0.091-0.761,0.292L0.32,15.546c-0.202,0.201-0.308,0.479-0.291,0.765c0.016,0.284,0.153,0.549,0.376,0.726  c2.181,1.73,4.843,2.094,6.691,2.094c0.412,0,0.764-0.019,1.033-0.04l12.722,14.954c-0.868,2.23-3.52,10.27-0.307,18.337  c0.124,0.313,0.397,0.541,0.727,0.609c0.067,0.014,0.135,0.021,0.202,0.021c0.263,0,0.518-0.104,0.707-0.293l14.57-14.57  l13.57,13.57c0.195,0.195,0.451,0.293,0.707,0.293s0.512-0.098,0.707-0.293c0.391-0.391,0.391-1.023,0-1.414l-13.57-13.57  l14.527-14.528C52.929,21.969,53.031,21.627,52.963,21.297z'
+    open:
+      'M11.9994 1.72559L1.16058 13.1063C0.894011 13.3862 0.466495 13.3862 0.199926 13.1063C-0.0666428 12.8264 -0.0666428 12.3775 0.199926 12.0976L11.5216 0.209923C11.7881 -0.0699738 12.2156 -0.0699738 12.4822 0.209924L23.7988 12.0976C23.9296 12.2349 24 12.4198 24 12.5993C24 12.7789 23.9346 12.9637 23.7988 13.101C23.5322 13.3809 23.1047 13.3809 22.8382 13.101L11.9994 1.72559Z',
+    close:
+      'M12.0006 11.5906L22.8394 0.20984C23.106 -0.0700579 23.5335 -0.0700579 23.8001 0.20984C24.0666 0.489738 24.0666 0.938628 23.8001 1.21852L12.4784 13.1062C12.2119 13.3861 11.7844 13.3861 11.5178 13.1062L0.201183 1.21852C0.0704137 1.08122 1.48104e-07 0.896379 1.50246e-07 0.716822C1.52387e-07 0.537265 0.0653841 0.352427 0.201183 0.215119C0.467753 -0.0647777 0.895268 -0.0647776 1.16184 0.215119L12.0006 11.5906Z',
+    pinned:
+      'M52.963,21.297c-0.068-0.329-0.297-0.603-0.609-0.727c-2.752-1.097-5.67-1.653-8.673-1.653  c-4.681,0-8.293,1.338-9.688,1.942L19.114,8.2c0.52-4.568-1.944-7.692-2.054-7.828C16.881,0.151,16.618,0.016,16.335,0  c-0.282-0.006-0.561,0.091-0.761,0.292L0.32,15.546c-0.202,0.201-0.308,0.479-0.291,0.765c0.016,0.284,0.153,0.549,0.376,0.726  c2.181,1.73,4.843,2.094,6.691,2.094c0.412,0,0.764-0.019,1.033-0.04l12.722,14.954c-0.868,2.23-3.52,10.27-0.307,18.337  c0.124,0.313,0.397,0.541,0.727,0.609c0.067,0.014,0.135,0.021,0.202,0.021c0.263,0,0.518-0.104,0.707-0.293l14.57-14.57  l13.57,13.57c0.195,0.195,0.451,0.293,0.707,0.293s0.512-0.098,0.707-0.293c0.391-0.391,0.391-1.023,0-1.414l-13.57-13.57  l14.527-14.528C52.929,21.969,53.031,21.627,52.963,21.297z',
   }
   class Timeline {
     constructor(chartContainer) {
@@ -52,7 +55,7 @@ define(function(require, exports) {
       this.circleFill = '#CDCDCD'
 
       this.expandAllColor = '#467AB2'
-      
+
       this.textFill = 'black'
 
       this.unPinnednedFill = '#8D8D8D'
@@ -224,9 +227,12 @@ define(function(require, exports) {
         .style('margin-right', `${this.margin.right / 2}px`)
 
       container
-      .append('text')
-      .text('Effective date: ')
-      .attr('title', 'Turn effective date on to see the events’ effective date instead of the index day.')
+        .append('text')
+        .text('Effective date: ')
+        .attr(
+          'title',
+          'Turn effective date on to see the events’ effective date instead of the index day.'
+        )
       const switcher = container.append('label').attr('class', 'switch')
       const checkbox = switcher.append('input').attr('type', 'checkbox')
       switcher.append('span').attr('class', 'slider round')
@@ -269,8 +275,6 @@ define(function(require, exports) {
     }
 
     handleExpandingAll() {
-      // prevent multi expanding
-      // if (this.allExpanded) return;
       let expandedData
       if (this.filterText) {
         expandedData = this.allData
@@ -481,7 +485,6 @@ define(function(require, exports) {
       timelineParent
         .exit()
         .select('.timelineChildren')
-        .exit()
         .remove()
 
       timelineParent.exit().remove()
@@ -520,12 +523,10 @@ define(function(require, exports) {
 
       labelContainers
         .append('title')
-        .text(d=> d.belongTo?'Pin important events in the timeline':'')
+        .text(d => (d.belongTo ? 'Pin important events in the timeline' : ''))
 
-      labelContainers
-        .append('path')
-        .attr('class', 'icon')
-      
+      labelContainers.append('path').attr('class', 'icon')
+
       labelContainers
         .append('text')
         .attr('class', 'label')
@@ -551,38 +552,38 @@ define(function(require, exports) {
           const label = _.truncate(d.label, { length: this.truncateLength })
           return label
         })
-        .attr('fill',this.textFill)
+        .attr('fill', this.textFill)
 
-      const iconPath  = timelineParent
+      const iconPath = timelineParent
         .select('g.labelContainers')
         .select('path.icon')
-        iconPath
+      iconPath
         .attr('d', d => {
-          if(d.belongTo) {
-            return icons.pinned 
+          if (d.belongTo) {
+            return icons.pinned
           }
           return d.expanded ? icons.open : icons.close
         })
-        .attr('fill', d=> {
-          if(d.belongTo) {
-           return d.isPinned? this.pinnedFill: 'white'
+        .attr('fill', d => {
+          if (d.belongTo) {
+            return d.isPinned ? this.pinnedFill : 'white'
           } else {
-           return this.textFill
+            return this.textFill
           }
         })
-        .attr('stroke', d=> {
-          if(d.belongTo) {
+        .attr('stroke', d => {
+          if (d.belongTo) {
             return this.unPinnednedFill
-           }
+          }
         })
-        .attr('transform', d=>{
-          if(d.belongTo) {
+        .attr('transform', d => {
+          if (d.belongTo) {
             return 'scale(0.25) rotate(90) translate(-45,-40)'
           } else {
             return 'scale(0.5) translate(-10,-15)'
           }
         })
-        
+
       // draw circles and lines
       const timelineChildren = timelineParent.select('.timelineChildren')
       timelineChildren.attr('clip-path', 'url(#clip)')
@@ -662,22 +663,19 @@ define(function(require, exports) {
 
     showTooltip(timeLineData, d, content) {
       const tooltip = d3.select(`#${this.chartContainer} .tooltip`)
-      let tooltipContent;
-      if(!content) {
-        tooltipContent = this.getTooltipContent(
-        timeLineData.observationData,
-        d
-      )
+      let tooltipContent
+      if (!content) {
+        tooltipContent = this.getTooltipContent(timeLineData.observationData, d)
       } else {
         tooltipContent = `<div>${content}</div>`
       }
       tooltip
-      .transition()
-      .duration(100)
-      .style('opacity', 1)
+        .transition()
+        .duration(100)
+        .style('opacity', 1)
 
       tooltip.html(tooltipContent)
-      
+
       const tooltipSize = tooltip.node().getBoundingClientRect()
       var coordinates = d3.mouse(this.svg.node())
       tooltip.style(
@@ -738,9 +736,17 @@ define(function(require, exports) {
     }
 
     transformedData(data) {
-      // const format = d3.timeFormat('%m/%d/%Y');
+      const sortedData = data.sort((a, b) => {
+        if (a.domain < b.domain) {
+          return -1
+        }
+        if (a.domain > b.domain) {
+          return 1
+        }
+        return 0
+      })
       const tData = _.transform(
-        data,
+        sortedData,
         // eslint-disable-next-line no-unused-vars
         (accumulator, item, index, originalArr) => {
           const { conceptId, conceptName, domain } = item
