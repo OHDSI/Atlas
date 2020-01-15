@@ -7,5 +7,4 @@
 js/config-local.js
 package-lock.json
 .vscode
-docker-compose.yaml
 .env

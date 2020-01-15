@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+  traefik:
+    image: traefik:2.1
+    networks:
+      - default
+      - api
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--accessLog=true"
+      - "--accessLog.fields.headers.defaultMode=keep"
+      - "--accessLog.format=json"
+    ports:
+      - "8080:80"
+
+  webapi:
+    image: 500695312976.dkr.ecr.eu-central-1.amazonaws.com/ucb-webapi
+    volumes:
+      - ./lib/webapi/drivers:/var/lib/ohdsi/webapi/drivers:ro
+    networks:
+      - api
+      - default
+    labels:
+      - "traefik.http.routers.webapi.rule=PathPrefix(`/WebAPI`)"
+      - "traefik.http.services.webapi.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.webapi.headers.accesscontrolallowmethods=GET,OPTIONS,PUT"
+      - "traefik.http.middlewares.webapi.headers.accesscontrolalloworigin=*"
+      - "traefik.http.middlewares.webapi.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.webapi.headers.addvaryheader=true"
+    environment:
+      - JAVA_OPTS=-Xmx4g
+      - CLASSPATH=":/var/lib/ohdsi/webapi/drivers/*"
+      - WEBAPI_URL=http://localhost:8080
+      - env=webapi-postgresql
+      - datasource_driverClassName=org.postgresql.Driver
+      - datasource_url=jdbc:postgresql://ucb-atlas-dev.thehyve.net:5432/ohdsi
+      - datasource_cdm_schema=cdm
+      - datasource_ohdsi_schema=ohdsi
+      - datasource_username=postgres
+      - datasource_password=e!swsbDpttmukzpLi19KOwgzvn0.iY
+      - spring_jpa_properties_hibernate_default__schema=ohdsi
+      - spring_jpa_properties_hibernate_dialect=org.hibernate.dialect.PostgreSQLDialect
+      - spring_batch_repository_tableprefix=ohdsi.BATCH_
+      - flyway_datasource_driverClassName=org.postgresql.Driver
+      - flyway_datasource_url=jdbc:postgresql://ucb-atlas-dev.thehyve.net:5432/ohdsi
+      - flyway_schemas=ohdsi
+      - flyway_placeholders_ohdsiSchema=ohdsi
+      - flyway_datasource_username=postgres
+      - flyway_datasource_password=e!swsbDpttmukzpLi19KOwgzvn0.iY
+      - flyway_locations=classpath:db/migration/postgresql
+      - security_cors_enabled=true
+      - security_origin=*
+
+networks:
+  api:
+    driver: bridge
+    internal: true
