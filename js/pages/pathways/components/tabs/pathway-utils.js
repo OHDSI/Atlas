@@ -40,6 +40,7 @@ define([
 			this.exportService = PathwayService.loadExportDesign;
 			this.importService = PathwayService.importPathwayDesign;
 
+			this.subscriptions = [];
 			// subscriptions
 			this.subscriptions.push(this.analysisId.subscribe((newVal) => {
 				this.loadExportJSON();
