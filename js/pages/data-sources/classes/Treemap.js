@@ -152,7 +152,7 @@ define([
 						});
 					}
 				});
-				this.tableData(tableData); 
+				this.tableData(tableData);
 				this.treeData(normalizedData);
 
 				return {
