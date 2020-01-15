@@ -183,15 +183,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.isAgeRange(val=='between'||val=='notBetween')
 			})
 			this.isAgeRange.subscribe(val => {
-				if(!val) {
+					this.firstAgeError(undefined)
 					this.isAgeRangeError(undefined)
 					this.firstAge(null)
-					this.secondAge(null) 
-				} else {
-					this.firstAgeError(undefined)
-					this.firstAge(null)
 					this.secondAge(null)
-				}
 			})
 			this.secondAge.subscribe(val => {
 				let secondAge;
@@ -202,6 +197,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			 }
 				if(secondAge==null&&this.firstAge()==null) {
 					this.isAgeRangeError(undefined)
+					this.firstAgeError(undefined)
 					return
 				}
 				if (this.isAgeRange()) {
@@ -224,6 +220,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				if(firstAge==null&&this.secondAge()==null) {
 					this.isAgeRangeError(undefined)
+					this.firstAgeError(undefined)
 					return
 				}
 				
@@ -1855,41 +1852,29 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				const firstAge = Number(this.firstAge());
 				const secondAge = Number(this.secondAge());
-				const age = firstAge;
-				let ageMin;
-				let ageMax;
-				let payload;
-				if(this.isAgeRange()) {
-					if (firstAge>secondAge) {
-						ageMin = secondAge;
-						ageMax = firstAge
-					} else {
-						ageMin=firstAge;
-						ageMax = secondAge
-					}
-					payload = {
-						name,
-						size,
-						ageMode,
-						ageMin,
-						ageMax,
-						genderConceptId
-					}
+				let age;
+				if(this.firstAge()==null&&this.secondAge()==null) {
+					age = null
 				} else {
-					payload = {
-						name,
-						size,
-						ageMode,
-						age,
-						genderConceptId
+					age = {
+						value: this.isAgeRange()?null:firstAge,
+						mode: ageMode,
+						min:this.isAgeRange()? firstAge<secondAge?firstAge:secondAge : null,
+						max:this.isAgeRange()? firstAge<secondAge?secondAge:firstAge : null
 					}
 				}
 
+				const	payload = {
+						name,
+						size,
+						age,
+						genderConceptId
+					}
+
 				sampleService.createSample(payload, {cohortDefinitionId, sourceKey})
 				.then(res => {
-					console.log(res)
+					console.log('res', res)
 				})
-		
 			}
 
 			getSampleList() {

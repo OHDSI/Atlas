@@ -1,19 +1,21 @@
 define(['services/http', 'appConfig'], function(httpService, config) {
   function createSample(payload, { cohortDefinitionId, sourceKey }) {
-    return fetch(`${config.webAPIRoot}cohortsample/${2}/${sourceKey}`, {
-      body: JSON.stringify(payload),
-      method: 'POST',
-    })
-      .then(res => res.json())
+    return httpService
+      .doPost(
+        `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}`,
+        {
+          ...payload,
+        }
+      )
       .catch(error => {
         console.log(error)
       })
   }
 
   function getSampleList({ cohortDefinitionId, sourceKey }) {
-    return fetch(
+    return httpService.doGet(
       `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}`
-    ).then(res => res.json())
+    )
   }
 
   function getSample({ cohortDefinitionId, sourceKey, sampleId }) {
