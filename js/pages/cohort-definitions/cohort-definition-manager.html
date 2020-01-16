@@ -610,7 +610,7 @@
 								columns: sampleListCols,
 								order: [[4,'desc']],
 								pageLength: 5,
-								rowClick: () =>{},
+								rowClick: onSampleListRowClick,
 							}"
 							/>
 						</div>
@@ -709,7 +709,7 @@
 								id="sampleCreatingAge" 
 								class="form-control">
 									<option value="lessThan">Less than</option>
-									<option value="lessThanOrEqual ">Less or equal to</option>
+									<option value="lessThanOrEqual">Less or equal to</option>
 									<option value="equalTo">Equal to</option>
 									<option value="greaterThan">Greater than</option>
 									<option value="greaterThanOrEqual">Greater or equal to</option>

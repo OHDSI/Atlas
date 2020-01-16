@@ -37,8 +37,32 @@ define((require, factory) => {
         }
       ),
 
-      '/cohortdefinition/:cohortDefinitionId/samples/:sampleId/:sourceKey': new AuthorizedRoute(
-        (cohortDefinitionId, sampleId, sourceKey) => {
+      '/cohortdefinition/:cohortDefinitionId/samples/:sourceKey': new AuthorizedRoute(
+        (cohortDefinitionId, sourceKey) => {
+          require([
+            'components/cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definition-browser',
+            'conceptset-editor',
+            './components/reporting/cost-utilization/report-manager',
+            'explore-cohort',
+            'conceptset-list-modal',
+          ], function() {
+            router.setCurrentView('cohort-definition-manager', {
+              cohortDefinitionId,
+              sourceKey,
+              mode: 'samples',
+            })
+            sharedState.ConceptSet.source('cohort')
+            sharedState.CohortDefinition.mode('samples')
+          })
+        }
+      ),
+
+      '/cohortdefinition/:cohortDefinitionId/samples/:sourceKey/:sampleId': new AuthorizedRoute(
+        (cohortDefinitionId, sourceKey, sampleId) => {
           require([
             'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',

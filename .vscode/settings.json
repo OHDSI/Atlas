@@ -6,5 +6,5 @@
   "eslint.quiet": true,
   "prettier.singleQuote": true,
   "editor.tabSize": 2,
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": true
 }

@@ -13,22 +13,35 @@ define(['services/http', 'appConfig'], function(httpService, config) {
   }
 
   function getSampleList({ cohortDefinitionId, sourceKey }) {
-    return httpService.doGet(
-      `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}`
-    )
+    return httpService
+      .doGet(
+        `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}`
+      )
+      .then(res => res.data)
   }
 
   function getSample({ cohortDefinitionId, sourceKey, sampleId }) {
-    return fetch(
-      `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`
-    ).then(res => res.json())
+    return httpService
+      .doGet(
+        `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`
+      )
+      .then(res => res.data)
   }
 
   function deleteSample({ cohortDefinitionId, sourceKey, sampleId }) {
-    return doDelete(
-      `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`,
-      { method: 'DELETE' }
-    ).then(res => res.json())
+    // return fetch(
+    //   `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`,
+    //   { method: 'DELETE' }
+    // ).catch(error => {
+    //   console.log(error)
+    // })
+
+    var deletePromise = $.ajax({
+      url: `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`,
+      method: 'DELETE',
+    })
+    console.log(deletePromise)
+    return deletePromise
   }
 
   return {
