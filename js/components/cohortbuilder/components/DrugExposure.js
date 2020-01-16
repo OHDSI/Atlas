@@ -127,7 +127,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the drug exposure as the index event",
 			}
 		];
 
