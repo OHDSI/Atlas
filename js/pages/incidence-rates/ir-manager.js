@@ -154,14 +154,24 @@ define([
 
 			this.expressionMode = ko.observable('import');
 
-			this.isNameFilled = ko.computed(() => {
+			this.isNameFilled = ko.pureComputed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
-			this.isNameCorrect = ko.computed(() => {
+			
+			this.isNameCorrect = ko.pureComputed(() => {
 				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
 			});
-			this.canSave = ko.computed(() => {
-				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
+			
+			this.isTarValid = ko.pureComputed(() => {
+				const analysis = this.selectedAnalysis() && this.selectedAnalysis().expression();
+				if (analysis == null) return;
+				return !(analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField() && analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset());			});
+			
+			this.canSave = ko.pureComputed(() => {
+				return this.isEditable() 
+					&& this.isNameCorrect() 
+					&& this.dirtyFlag().isDirty() 
+					&& !this.isRunning();
 			});
 			this.error = ko.observable();
 			this.isSaving = ko.observable(false);
