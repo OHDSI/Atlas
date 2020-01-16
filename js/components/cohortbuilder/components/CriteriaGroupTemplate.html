@@ -66,12 +66,16 @@
 				<tbody>
 					<tr>
 						<td>
-							<div class="criteria-content">
+							<div class="criteria-content ui-front">
 								<div class="occurrenceSection">
 									<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
 									with
 									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
-									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" />
+<!--									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" /> -->
+									<span contenteditable="true" class="numericInputField dropdown" 
+												data-bind="htmlValue: Occurrence.Count.numeric(), 
+																	 eventType: 'blur', 
+																	 ko_autocomplete: { value: Occurrence.Count, source: $component.options.occurrenceCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" />									
 									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> occurrences of:
 								</div>
 								<div data-bind="component: {
