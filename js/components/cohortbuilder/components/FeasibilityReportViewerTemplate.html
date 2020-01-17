@@ -1,9 +1,39 @@
 
 <!-- ko if: report -->
+<table style="border-collapse: collapse; width:500px; margin-left:0px; margin-right:auto" class="indexSummary">
+	<thead>
+		<th style="width: 15px;"></th>
+		<th></th>
+		<th>Match Rate</th>
+		<th>Matches</th>
+		<!-- ko if: report().summary.lostCount != 0 -->
+		<th>Lost from censoring</th>
+		<!-- /ko -->
+		<th>Total Events</th>
+	</thead>
+	<tbody>
+		<td></td>
+		<td class="header">Summary Statistics:</td>
+		<td data-bind="text:report().summary.percentMatched"></td>
+		<td data-bind="text:report().summary.finalCount.toLocaleString()"></td>
+		<!-- ko if: report().summary.lostCount != 0 -->
+		<td data-bind="text:report().summary.lostCount.toLocaleString()"></td>
+		<!-- /ko -->
+		<td data-bind="text:report().summary.baseCount.toLocaleString()"></td>
+	</tbody>
+</table>
+
+<!-- ko if: report().inclusionRuleStats.length > 0 -->
 <div style="position: relative">
 <!-- ko if: selectedView() == 'intersect' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to attrition view', click: function() { selectedView('attrition'); }"></span> <!-- /ko -->
 <!-- ko if: selectedView() == 'attrition' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to intersect view', click: function() { selectedView('intersect'); }"></span> <!-- /ko -->			
 </div>
 <div data-bind="visible: selectedView() == 'intersect'"><feasibility-intersect-report params="report: report"></feasibility-intersect-report></div>
 <div data-bind="visible: selectedView() == 'attrition'"><feasibility-attrition-report params="report: report"></feasibility-attrition-report></div>
+<!-- /ko -->
+<!-- ko if: report().inclusionRuleStats.length == 0 -->
+<div class="no-inclusion-message__container">
+	<div>No inclusion rules specified for this cohort definition.</div>
+</div>
+<!-- /ko -->
 <!-- /ko -->

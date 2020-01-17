@@ -213,3 +213,14 @@ div.criteria-group-container {
 .btn.btn-cycle {
 	vertical-align:baseline;
 }
+
+div.no-inclusion-message__container {
+	padding-top: 20px;
+	text-align: center;
+}
+
+div.no-inclusion-message__container > div {
+	display: inline-block;
+	font-size:2em;
+	font-weight:bold;
+}
