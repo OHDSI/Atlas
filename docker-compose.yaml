@@ -55,6 +55,14 @@ services:
       - security_cors_enabled=true
       - security_origin=*
 
+  postgresql:
+    image: tecnativa/tcp-proxy
+    networks:
+      - default
+    environment:
+      LISTEN: ":5432"
+      TALK: "ucb-atlas-dev.thehyve.net:5432"
+
 networks:
   api:
     driver: bridge

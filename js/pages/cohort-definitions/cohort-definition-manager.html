@@ -608,7 +608,7 @@
 							params="{
 								reference: sampleList,
 								columns: sampleListCols,
-								order: [[4,'desc']],
+								order: [[0,'asc']],
 								pageLength: 5,
 								rowClick: onSampleListRowClick,
 							}"
@@ -618,33 +618,33 @@
 						<div 
 						class="row" 
 						style="margin-top: 40px;"
-						data-bind="visible: $component.sampleSourceKey()&&$component.selectedSampleId">
+						data-bind="visible: $component.sampleSourceKey()&&$component.selectedSampleId&&!$component.sampleDataLoading()">
 							<div class="col-sm-3">
-								<h4>Sample name</h4>
+								<h4 data-bind="text: selectedSampleName"></h4>
 							</div>
 							<div  class="col-sm-9 text-right">
 								<button 
 								type="button"
 								class="btn btn-sm btn-primary" 
-								data-bind="click:addNewSample">
+								data-bind="click:viewSamplePatient">
 								View patient(s)
 								</button >
 							</div>
 						</div>
 						
-						<div data-bind="visible: $component.sampleSourceKey()&&$component.selectedSampleId()">
+						<div data-bind="visible: $component.sampleSourceKey()&&$component.selectedSampleId()&&!$component.sampleDataLoading()">
 							<faceted-datatable 
 							params="{
 								reference: sampleData,
 								columns: sampleCols,
-								order: [[4,'desc']],
-								pageLength: 5,
-								rowClick: () =>{},
+								order: [[0,'asc']],
+								pageLength: -1,
+								rowClick: onSampleDataClick,
 							}"
 							/>
 						</div>
 
-						<loading data-bind="visible: $component.isLoadingSampleData()"></loading>
+						<loading data-bind="visible: $component.sampleDataLoading()"></loading>
 						<!-- notifications -->
 						<div data-bind="visible: sampleData().length==0">
 							<div class="panel panel-danger" data-bind="visible: !$component.isCohortGenerated">
@@ -677,7 +677,8 @@
 				isMaleSample: isMaleSample,
 				isFeMaleSample: isFeMaleSample,
 				isOtherGenderSample: isOtherGenderSample,
-				createNewSample: createNewSample
+				createNewSample: createNewSample,
+				newSampleCreatingLoader: newSampleCreatingLoader
 			}
 			id='sampleCreatingModal'
 			}"
@@ -757,7 +758,15 @@
 							</label>
 						</div>
 				</div>
+				 <!-- ko if: !newSampleCreatingLoader() -->
 				<button type="submit" class="btn btn-primary">Submit</button>
+				 <!-- /ko -->
+				 <!-- ko if: newSampleCreatingLoader() -->
+				<button class="btn btn-primary" type="button" disabled>
+					<i class="fa fa-spinner fa-spin"></i>
+					Creating sample...
+				</button>
+				 <!-- /ko -->
 			</form>
 	</atlas-modal>
 

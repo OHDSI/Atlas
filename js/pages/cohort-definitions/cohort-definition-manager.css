@@ -77,3 +77,9 @@
 .myCustomTextSuccess {
     color: #3c763d !important
 }
+
+.sample-list.fa-trash {
+    color: red;
+    cursor: pointer;
+}
+  

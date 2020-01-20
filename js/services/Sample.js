@@ -29,19 +29,9 @@ define(['services/http', 'appConfig'], function(httpService, config) {
   }
 
   function deleteSample({ cohortDefinitionId, sourceKey, sampleId }) {
-    // return fetch(
-    //   `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`,
-    //   { method: 'DELETE' }
-    // ).catch(error => {
-    //   console.log(error)
-    // })
-
-    var deletePromise = $.ajax({
-      url: `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`,
-      method: 'DELETE',
-    })
-    console.log(deletePromise)
-    return deletePromise
+    return httpService.doDelete(
+      `${config.webAPIRoot}cohortsample/${cohortDefinitionId}/${sourceKey}/${sampleId}`
+    )
   }
 
   return {
