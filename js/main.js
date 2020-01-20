@@ -43,6 +43,11 @@ require(["./settings"], (settings) => {
 			) => {
 				const app = new Application(router);
 
+				// This was added to avoid multiple UI updates,
+				// but this can break code that depends on synchronous updates
+				// More details about deferred updates available at https://knockoutjs.com/documentation/deferred-updates.html
+				ko.options.deferUpdates = true;
+
 				app.bootstrap()
 					.then(() => app.checkOAuthError())
 					.then(() => app.synchronize())

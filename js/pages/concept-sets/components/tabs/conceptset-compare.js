@@ -33,7 +33,7 @@ define([
       this.compareCS1Caption = ko.observable(this.currentConceptSet().name());
       this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());
       this.compareCS1ConceptSetExpression = ko.pureComputed(() => {
-        if (this.compareCS1Id === this.currentConceptSet().id) {
+        if (this.currentConceptSet() && this.compareCS1Id === this.currentConceptSet().id) {
           return ko.toJS(sharedState.selectedConcepts());
         } else {
           return ko.toJS(this.compareCS1ConceptSet);
@@ -43,12 +43,12 @@ define([
       this.compareCS2Caption = ko.observable();
       this.compareCS2ConceptSet = ko.observable(null);
       this.compareCS2ConceptSetExpression = ko.pureComputed(() => {
-        if (this.compareCS2Id === this.currentConceptSet().id) {
+        if (this.currentConceptSet() && this.compareCS2Id === this.currentConceptSet().id) {
           return ko.toJS(sharedState.selectedConcepts());
         } else {
           return ko.toJS(this.compareCS2ConceptSet);
         }
-      })
+      });
       this.compareResults = ko.observable();
       this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
@@ -104,7 +104,7 @@ define([
       this.compareLoading = ko.observable(false);
       this.compareLoadingClass = ko.pureComputed(() => {
         return this.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
-      })
+      });
       this.compareNewConceptSetName = ko.observable(this.currentConceptSet().name() + " - From Comparison");
       this.compareResultsColumns = [{
         data: d => {
@@ -230,6 +230,7 @@ define([
       this.recordCountClass = ko.pureComputed(() => {
         return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
       });
+      this.conceptSetLoading = ko.observable(false);
     }
 
     chooseCS1() {
@@ -306,27 +307,30 @@ define([
 					STANDARD_CONCEPT: null,
 					STANDARD_CONCEPT_CAPTION: null,
 					VOCABULARY_ID: null,
-				}
+				};
 				const newItem = {
 					concept: concept,
 					isExcluded: ko.observable(false),
 					includeDescendants: ko.observable(false),
 					includeMapped: ko.observable(false),
-				}
+				};
 				selectedConcepts.push(newItem);
-			})
+			});
 			this.saveConceptSetFn("#txtNewConceptSetName", conceptSet, selectedConcepts);
 			this.saveConceptSetShow(false);
     }
 
-    conceptsetSelected(d) {
+    async conceptsetSelected(d) {
 			this.isModalShown(false);
-			vocabularyProvider.getConceptSetExpression(d.id)
-				.then((csExpression) => {
-					this.targetId(d.id);
-					this.targetCaption(d.name);
-					this.targetExpression(csExpression.items);
-				});
+			this.conceptSetLoading(true);
+			try {
+				const csExpression = await vocabularyProvider.getConceptSetExpression(d.id);
+				this.targetId(d.id);
+				this.targetCaption(d.name);
+				this.targetExpression(csExpression.items);
+			}finally {
+				this.conceptSetLoading(false);
+			}
     }
 
     showSaveNewModal() {
