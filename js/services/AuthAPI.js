@@ -454,7 +454,11 @@ define(function(require, exports) {
         return isPermitted(`cache:clear:get`);
     };
 
-	const isPermittedRunAs = () => isPermitted('user:runas:post');
+    const isPermittedRunAs = () => isPermitted('user:runas:post');
+
+    const isPermittedViewDataSourceReport = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:get`);
+
+    const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`);
 
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
         !!tokenHeader && token(tokenHeader);
@@ -561,6 +565,8 @@ define(function(require, exports) {
         hasSourceAccess,
         isPermittedRunAs,
         isPermittedClearServerCache,
+        isPermittedViewDataSourceReport,
+        isPermittedViewDataSourceReportDetails,
 
         loadUserInfo,
         TOKEN_HEADER,
