@@ -749,6 +749,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							commonUtils.routeTo(constants.paths.details(definition.id()));
 						}
 					}
+					sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
 				} catch (e) {
 					alert('An error occurred while attempting to save a cohort definition.');
 				} finally {
