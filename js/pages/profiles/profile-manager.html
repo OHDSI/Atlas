@@ -128,18 +128,19 @@
         <i class="fa fa-lightbulb"></i>Sample name
       </div>
       <div class="modal-body">
-        <div class="row highlight-pane">
-          <div class="btn-group" role="group">
-         
-          </div>
+        <div class="row" style="float: right;">
+          <button class="btn btn-primary" data-bind="click: comparePatient">
+            View patient(s)
+          </button>
         </div>
         <faceted-datatable
           id="patientSelection-table"
           params="{
 								reference: patientSelectionData,
 								columns: patientSelectionColumn,
-								order: [[4,'desc']],
-								pageLength: 5,
+								order: [[1,'asc']],
+                pageLength: 10,
+                rowClick: onSampleDataClick,
 							}"
         ></faceted-datatable>
       </div>
@@ -165,6 +166,7 @@
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
+            data-bind="enable: !sampleId()"
           >
             <span data-bind="text:$component.sourceKeyCaption"></span
             >&nbsp;&nbsp;<span class="caret"></span>
@@ -185,10 +187,17 @@
           type="text"
           class="form-control"
           placeholder="Person Id"
-          data-bind="enable: sourceKey(),value: personId"
+          data-bind="enable: sourceKey()&&!sampleId(),value: personId(), visible: !sampleId()"
         />
-        <div class="input-group-btn" role="group">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Person Id"
+          data-bind="enable: sourceKey()&&!sampleId(),value: combinedPersonIds(), visible: sampleId()"
+        />
+        <div class="input-group-btn" role="group" >
           <button
+            data-bind="visible: sampleId()"
             type="button"
             class="btn btn-primary"
             title="Select a patient to compare"
@@ -251,8 +260,17 @@
         ></a
       ></span>
 
-      <span style="float: right; padding-right:20px; text-decoration: underline;">See next patient in sample <i class="fa fa-angle-right"></i></span>
-      <span style="float: right; padding-right:20px; text-decoration: underline;"><i class="fa fa-angle-left" style="padding-right: 5px"></i>Previous patient in sample</span>
+      <span data-bind="if: $component.currentCohortDefinition() != null && $component.sampleId()"
+        >|&nbsp;&nbsp;Sample:
+        <a
+          class="asset-heading-link"
+          data-bind="text: $component.sampleName(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId() + '/samples/' + $component.sourceKey() +'/' + $component.sampleId()}"
+          target="_new"
+        ></a
+      ></span>
+
+      <span data-bind="enable: !$component.isLoadingSampleData()" style="float: right; padding-right:20px; text-decoration: underline;">See next patient in sample <i class="fa fa-angle-right"></i></span>
+      <span data-bind="enable: !$component.isLoadingSampleData()" style="float: right; padding-right:20px; text-decoration: underline;"><i class="fa fa-angle-left" style="padding-right: 5px"></i>Previous patient in sample</span>
     </div>
   </div>
 

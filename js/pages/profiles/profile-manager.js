@@ -6,6 +6,8 @@ define([
   'services/PluginRegistry',
   'text!./profile-manager.html',
   'd3',
+  'utils/DatatableUtils',
+  'services/Sample',
   'appConfig',
   'services/AuthAPI',
   'services/Profile',
@@ -37,6 +39,8 @@ define([
   pluginRegistry,
   view,
   d3,
+  datatableUtils,
+  sampleService,
   config,
   authApi,
   profileService,
@@ -63,6 +67,12 @@ define([
   ]
   const Timeline = require('./profileTimeline')
 
+  function gender(code) {
+    if (code == 8507) return 'Male'
+    if (code == 8532) return 'Female'
+    else return 'Other'
+  }
+
   class ProfileManager extends AutoBind(Page) {
     constructor(params) {
       super(params)
@@ -78,6 +88,36 @@ define([
       this.cohortDefinitionId = ko.observable(
         router.routerParams().cohortDefinitionId
       )
+      // sample redirect state
+      this.isLoadingSampleData = ko.observable(false)
+      this.patientSelectionData = ko.observableArray([])
+      this.selectedPatients = ko.computed(() =>
+        this.patientSelectionData().filter(el => el.selected)
+      )
+      this.sampleName = ko.observable()
+      this.sampleId = ko.observable(router.routerParams().sampleId) // it shoule equa 'sample'
+      this.fetchSampleData({
+        sampleId: this.sampleId(),
+        sourceKey: this.sourceKey(),
+        cohortDefinitionId: this.cohortDefinitionId(),
+      })
+      this.sampleId.subscribe(val => {
+        this.fetchSampleData({
+          sampleId: val,
+          sourceKey: this.sourceKey(),
+          cohortDefinitionId: this.cohortDefinitionId(),
+        })
+      })
+
+      this.secondPersonId = ko.observable(router.routerParams().secondPersonId)
+      this.combinedPersonIds = ko.computed(() => {
+        if (!this.secondPersonId()) {
+          return this.personId()
+        } else {
+          return `${this.personId()}; ${this.secondPersonId()}`
+        }
+      })
+
       this.currentCohortDefinition = ko.observable(null)
       this.cohortDefinition = sharedState.CohortDefinition.current
       // if a cohort definition id has been specified, see if it is
@@ -239,9 +279,6 @@ define([
       }
       this.searchHighlight = ko.observable()
       this.highlightData = ko.observableArray()
-      this.patientSelectionData = ko.computed(() => {
-        return []
-      })
       this.defaultColor = '#888'
       this.words = ko.computed(() => {
         if (!this.xfObservable()) {
@@ -319,25 +356,31 @@ define([
 
       this.patientSelectionColumn = [
         {
-          render: this.swatch,
-          data: 'selectedPatient',
+          title: '',
           sortable: false,
+          data: 'selected',
+          render: function(d) {
+            return `<span data-bind="css: { selected: ${d}}" class="sample-select fa fa-check"></span>`
+          },
         },
         {
-          title: 'Patient ID',
-          data: 'patientId',
+          title: 'Person ID',
+          render: datatableUtils.getLinkFormatter(d => ({
+            label: d['personId'],
+            linkish: true,
+          })),
         },
         {
           title: 'Gender',
           data: 'gender',
         },
         {
-          title: 'Age',
-          data: 'age',
+          title: 'Age at index',
+          data: 'ageIndex',
         },
         {
           title: 'Number of events',
-          data: 'eventsCount',
+          data: 'eventCounts',
         },
       ]
 
@@ -565,6 +608,44 @@ define([
           (config.userAuthenticationEnabled &&
             authApi.isPermittedViewProfileDates()))
       )
+    }
+
+    //sample related methods
+    fetchSampleData({ sampleId, sourceKey, cohortDefinitionId }) {
+      this.isLoadingSampleData(true)
+      sampleService
+        .getSample({ cohortDefinitionId, sourceKey, sampleId })
+        .then(res => {
+          console.log(res)
+          this.sampleName(res.name)
+          const transformedSampleData = res.elements.map(el => ({
+            personId: el.personId,
+            gender: gender(el.genderConceptId),
+            ageIndex: el.age,
+            eventCounts: el.recordCount || '',
+            selected: false,
+          }))
+
+          this.patientSelectionData(transformedSampleData)
+        })
+        .catch(error => {
+          console.error(error)
+          alert('Error when fetching sample data, please try again later')
+        })
+        .finally(() => {
+          this.isLoadingSampleData(false)
+        })
+    }
+    onSampleDataClick(d) {
+      //change checkbox state
+      this.patientSelectionData.replace(d, { ...d, selected: !d.selected })
+    }
+
+    comparePatient() {
+      if (this.selectedPatients().length > 2) {
+        alert('You can select maximum 2 patients only')
+        return
+      }
     }
   }
 
