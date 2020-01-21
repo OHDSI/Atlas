@@ -88,19 +88,25 @@ define([
       this.cohortDefinitionId = ko.observable(
         router.routerParams().cohortDefinitionId
       )
+      this.person = ko.observable()
+      this.loadingPerson = ko.observable(false)
+      this.cantFindPerson = ko.observable(false)
       // sample redirect state
       this.isLoadingSampleData = ko.observable(false)
       this.patientSelectionData = ko.observableArray([])
       this.selectedPatients = ko.computed(() =>
         this.patientSelectionData().filter(el => el.selected)
       )
+
       this.sampleName = ko.observable()
       this.sampleId = ko.observable(router.routerParams().sampleId) // it shoule equa 'sample'
-      this.fetchSampleData({
-        sampleId: this.sampleId(),
-        sourceKey: this.sourceKey(),
-        cohortDefinitionId: this.cohortDefinitionId(),
-      })
+      if (this.sampleId()) {
+        this.fetchSampleData({
+          sampleId: this.sampleId(),
+          sourceKey: this.sourceKey(),
+          cohortDefinitionId: this.cohortDefinitionId(),
+        })
+      }
       this.sampleId.subscribe(val => {
         this.fetchSampleData({
           sampleId: val,
@@ -108,8 +114,37 @@ define([
           cohortDefinitionId: this.cohortDefinitionId(),
         })
       })
-
+      // sample second person state
       this.secondPersonId = ko.observable(router.routerParams().secondPersonId)
+      this.secondPersonRecords = ko.observableArray()
+      this.cantFindSecondPerson = ko.observable(false)
+      this.loadingSecondPerson = ko.observable(false)
+      this.secondPersonGender = ko.observable()
+      this.xfObservableSecond = ko.observable()
+      this.secondPersonGenderClass = ko.computed(() => {
+        if (this.secondPersonGender() === 'FEMALE') {
+          return 'fa fa-female'
+        } else if (this.secondPersonGender() === 'MALE') {
+          return 'fa fa-male'
+        } else {
+          return 'fa fa-question'
+        }
+      })
+      this.secondPersonRecordCount = ko.observable()
+      this.secondPersonAgeAtIndex = ko.observable()
+
+      this.personId.subscribe(val => {
+        if (val && this.sampleId()) this.loadComparingPerson()
+      })
+      this.secondPersonId.subscribe(val => {
+        if (val && this.sampleId()) this.loadComparingPerson(val)
+      })
+      if (this.sampleId() && this.personId()) {
+        this.loadComparingPerson()
+      }
+      if (this.sampleId && this.secondPersonId()) {
+        this.loadComparingPerson(this.secondPersonId())
+      }
       this.combinedPersonIds = ko.computed(() => {
         if (!this.secondPersonId()) {
           return this.personId()
@@ -153,9 +188,6 @@ define([
       })
 
       this.cohortSource = ko.observable()
-      this.person = ko.observable()
-      this.loadingPerson = ko.observable(false)
-      this.cantFindPerson = ko.observable(false)
       this.shadedRegions = ko.observable([])
 
       this.setSourceKey = d => {
@@ -360,7 +392,8 @@ define([
           sortable: false,
           data: 'selected',
           render: function(d) {
-            return `<span data-bind="css: { selected: ${d}}" class="sample-select fa fa-check"></span>`
+            return `<span data-bind="css: { selected: ${d}}, enable: ${d !=
+              null}" class="sample-select fa fa-check"></span>`
           },
         },
         {
@@ -446,7 +479,7 @@ define([
       $('#modalHighlights').draggable()
       $('#modalPatientSelection').draggable()
 
-      if (this.personId()) {
+      if (this.personId() && !this.sampleId()) {
         this.loadPerson()
       }
 
@@ -460,7 +493,6 @@ define([
       this.loadingPerson(true)
 
       let url = constants.paths.person(this.sourceKey(), this.personId())
-
       this.loadingStatus('loading profile data from database')
       this.personRequest = this.personRequests[url] = profileService
         .getProfile(
@@ -491,10 +523,10 @@ define([
                 .value(),
             }
           }
-          person.records.forEach(rec => {
-            rec.highlight = this.defaultColor
-            rec.stroke = this.defaultColor
-          })
+          // person.records.forEach(rec => {
+          //   rec.highlight = this.defaultColor
+          //   rec.stroke = this.defaultColor
+          // })
           this.personRecords(person.records)
           this.person(person)
           if (!this.timeline1) {
@@ -616,15 +648,22 @@ define([
       sampleService
         .getSample({ cohortDefinitionId, sourceKey, sampleId })
         .then(res => {
-          console.log(res)
           this.sampleName(res.name)
-          const transformedSampleData = res.elements.map(el => ({
-            personId: el.personId,
-            gender: gender(el.genderConceptId),
-            ageIndex: el.age,
-            eventCounts: el.recordCount || '',
-            selected: false,
-          }))
+          const transformedSampleData = res.elements.map(el => {
+            let selected
+            if (el.personId == this.personId()) {
+              selected = true
+            } else {
+              selected = false
+            }
+            return {
+              personId: el.personId,
+              gender: gender(el.genderConceptId),
+              ageIndex: el.age,
+              eventCounts: el.recordCount || '',
+              selected,
+            }
+          })
 
           this.patientSelectionData(transformedSampleData)
         })
@@ -643,9 +682,98 @@ define([
 
     comparePatient() {
       if (this.selectedPatients().length > 2) {
-        alert('You can select maximum 2 patients only')
+        alert('You can select maximum 2 patients')
+        return
+      } else if (this.selectedPatients() == 0) {
+        alert('Please select no more than 2 patients')
         return
       }
+      const sourceKey = this.sourceKey()
+      const sampleId = this.sampleId()
+      const cohortDefinitionId = this.cohortDefinitionId()
+      const [person1, person2] = this.selectedPatients()
+      console.log(person1, person2, sampleId, cohortDefinitionId)
+      if (person1 && person2) {
+        document.location = constants.paths.twoPersonSample(
+          sourceKey,
+          person1.personId,
+          cohortDefinitionId,
+          sampleId,
+          person2.personId
+        )
+        this.secondPersonId(person2.personId)
+      } else if (person1) {
+        document.location = constants.paths.onePersonSample(
+          sourceKey,
+          person1.personId,
+          cohortDefinitionId,
+          sampleId
+        )
+      }
+      this.personId(person1.personId)
+    }
+
+    loadComparingPerson(secondPerson) {
+      if (!secondPerson) {
+        this.cantFindPerson(false)
+        this.loadingPerson(true)
+      } else {
+        this.cantFindSecondPerson(false)
+        this.loadingSecondPerson(true)
+      }
+      profileService
+        .getProfile(
+          this.sourceKey(),
+          secondPerson || this.personId(),
+          this.cohortDefinitionId()
+        )
+        .then(person => {
+          console.log(person)
+          // const records = person.records.filter(el => el.conceptId)
+          const records = person.records
+          if (!secondPerson) {
+            this.loadingPerson(false)
+            this.personRecords(records)
+            this.person(person)
+            if (!this.timeline1) {
+              this.timeline1 = new Timeline('profileTimeline1')
+              this.timeline1.updateData(records)
+            } else {
+              // get new timeline
+              this.timeline1.removeInput()
+              this.timeline1.updateData(records)
+            }
+          } else {
+            this.loadingSecondPerson(false)
+            this.secondPersonRecords(records)
+            this.secondPersonGender(person.gender)
+            this.secondPersonRecordCount(person.recordCount)
+            this.secondPersonAgeAtIndex(person.ageAtIndex)
+            if (!this.timeline2) {
+              this.timeline2 = new Timeline('profileTimeline2')
+              this.timeline2.updateData(records)
+            } else {
+              this.timeline2.removeInput()
+              this.timeline2.updateData(records)
+            }
+          }
+        })
+        .catch(err => {
+          console.error(err)
+          // remove if error
+          if (this.timeline1 && !secondPerson) {
+            this.timeline1.remove()
+            this.timeline1 = null
+            this.cantFindPerson(true)
+            this.loadingPerson(false)
+          }
+          if (this.timeline2 && secondPerson) {
+            this.timeline2.remove()
+            this.timeline2 = null
+            this.cantFindSecondPerson(true)
+            this.loadingSecondPerson(false)
+          }
+        })
     }
   }
 

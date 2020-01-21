@@ -285,28 +285,11 @@
 
   <div data-bind="visible: !cantFindPerson() && !loadingPerson()">
     <div data-bind="css: classes()">
-      <div
-        data-bind="css: classes({ element: 'profile-control', extra: 'row' })"
-      >
         <div data-bind="if: person, attr: { class: 'col-xs-12'}">
-          <!-- <div data-bind="
-					css: classes('chart')
-					attr: {
-							style:`padding-bottom:${aspectRatio()*100}%`
-						},
-					visible:showSection.profileChart,
-					profileChart:{
-							xfObservable:xfObservable,
-							highlightRecs:highlightRecs,
-							aspectRatio: aspectRatio,
-							short: showSection.datatable(),
-							shadedRegions: shadedRegions,
-							xfDimensions: xfDimensions
-						}">
-					</div> -->
 					<div id="profileTimeline1" 
 						data-bind="visible:showSection.profileChart"
-					></div>
+          ></div>
+          
           <div data-bind="css: classes('profile-manager-table')">
             <faceted-datatable
               data-bind="visible:showSection.datatable"
@@ -316,16 +299,15 @@
 								columns: columns,
 								options: options,
 								order: [[3,'asc']],
-								searchFilter: searchHighlight
 							}"
             ></faceted-datatable>
 					</div>
-  				<div id="profileTimeline2"></div>
-					
-        </div>
       </div>
     </div>
+    
   </div>
+
+
 </div>
 
 <div>
@@ -342,29 +324,56 @@
   params="isAuthenticated: isAuthenticated, isPermitted: canViewProfiles"
 ></access-denied>
 
-<div class="asset-heading">
+<div class="asset-heading" data-bind="visible: sampleId()&&secondPersonId()">
   <div
       style="margin-top:5px;"
       data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person"
     >
-    <i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
-    <span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
-    <span data-bind="text: recordCount + ' events'"></span
+    <i data-bind="attr: {class : $component.secondPersonGenderClass()}"></i>&nbsp;
+    <span data-bind="text: $component.secondPersonGender()"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <span data-bind="text: $component.secondPersonRecordCount() + ' events'"></span
     >&nbsp;&nbsp;|&nbsp;&nbsp;
-    <span data-bind="text: `Age ${ageAtIndex} `"></span>
+    <span data-bind="text: `Age ${$component.secondPersonAgeAtIndex()} `"></span>
     <span data-bind="if: $component.currentCohortDefinition() != null"
       >at index</span
     >
+
+    <span data-bind="if: $component.currentCohortDefinition() != null"
+    >|&nbsp;&nbsp;Cohort:
+    <a
+      class="asset-heading-link"
+      data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}"
+      target="_new"
+    ></a
+    ></span>
+
     <span data-bind="if: $component.currentCohortDefinition() == null"
       >at start of observation</span
     >
-    <span data-bind="if: $component.currentCohortDefinition() != null"
-      >|&nbsp;&nbsp;Cohort:
-      <a
-        class="asset-heading-link"
-        data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}"
-        target="_new"
-      ></a
-    ></span>
+    <span data-bind="if: $component.currentCohortDefinition() != null && $component.sampleId()"
+        >|&nbsp;&nbsp;Sample:
+        <a
+          class="asset-heading-link"
+          data-bind="text: $component.sampleName(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId() + '/samples/' + $component.sourceKey() +'/' + $component.sampleId()}"
+          target="_new"
+        ></a
+      ></span>
   </div>
 </div>
+
+<div data-bind="css: classes()" style="margin-bottom: 20px;">
+  <div  id="profileTimeline2"  data-bind="visible:showSection.profileChart"></div>
+  <faceted-datatable
+  data-bind="visible:showSection.datatable"
+  params="{
+    reference: secondPersonRecords,
+    xfObservable: xfObservableSecond,
+    columns: columns,
+    options: options,
+    order: [[3,'asc']],
+  }"
+></faceted-datatable>
+
+</div>
+
+

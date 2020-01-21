@@ -14,7 +14,7 @@ define((require, factory) => {
           params.cohortDefinitionId = path[2] || null
           params.sampleId = path[3] || null
           params.secondPersonId = path[4] || null
-          console.log(params.sampleId)
+
           router.setCurrentView('profile-manager', params)
         })
       }),
