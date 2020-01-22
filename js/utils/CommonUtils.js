@@ -208,6 +208,36 @@ define([
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
 
+	const getPathTo = function(element) {
+		if (element.id!=='')
+			return 'id("'+element.id+'")';
+		if (element===document.body)
+			return element.tagName;
+
+		let ix = 0;
+		const siblings = element.parentNode.childNodes;
+		for (let i= 0; i<siblings.length; i++) {
+			const sibling = siblings[i];
+			if (sibling===element)
+				return getPathTo(element.parentNode)+'/'+element.tagName+'['+(ix+1)+']';
+			if (sibling.nodeType===1 && sibling.tagName===element.tagName)
+				ix++;
+		}
+	};
+
+	const calculateStringHash = function(string) {
+		let hash = 0;
+		if (string.length == 0) {
+			return hash;
+		}
+		for (var i = 0; i < string.length; i++) {
+			var char = string.charCodeAt(i);
+			hash = ((hash<<5)-hash)+char;
+			hash = hash & hash; // Convert to 32bit integer
+		}
+		return hash;
+	};
+
 	return {
 		build,
 		confirmAndDelete,
@@ -229,5 +259,7 @@ define([
 		normalizeUrl,
 		toggleConceptSetCheckbox,
 		escapeTooltip,
+		getPathTo,
+		calculateStringHash,
 	};
 });

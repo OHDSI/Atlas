@@ -6,6 +6,8 @@ define([
 	'xss',
 	'moment',
 	'services/MomentAPI',
+	'utils/CommonUtils',
+	'urijs',
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
@@ -16,7 +18,9 @@ define([
 	config,
 	filterXSS,
 	moment,
-	momentApi
+	momentApi,
+	CommonUtils,
+	URI
 	) {
 
 	function renderSelected(s, p, d) {
@@ -57,6 +61,94 @@ define([
         const abxX = Math.abs(x);
         const absY = Math.abs(y);
         return abxX < absY ? -1 : abxX>absY ? 1 : 0;
+	}
+
+	function redrawTable(table, mode) {
+		// drawing may access observables, which updating we do not want to trigger a redraw to the table
+		// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
+		const func = mode ? table.draw.bind(null, mode) : table.draw;
+		ko.ignoreDependencies(func);
+	}
+
+	const PAGE_PARAM = 'dtPage';
+	const SEARCH_PARAM = 'dtSearch';
+	const ORDER_PARAM = 'dtOrder';
+	const PARAM_SEPARATOR = '_';
+
+	function buildDtParamName(datatable, param) {
+		const elPath = CommonUtils.getPathTo(datatable.table().container());
+		const elId = CommonUtils.calculateStringHash(elPath);
+		return param + PARAM_SEPARATOR + elId;
+	}
+
+	function getDtParamValue(param) {
+		const currentUrl = URI(document.location.href);
+		const fragment = URI(currentUrl.fragment());
+		const params = fragment.search(true);
+		return params[param];
+	}
+
+	function setUrlParams(obj) {
+		const currentUrl = URI(document.location.href);
+		const fragment = URI(currentUrl.fragment());
+		Object.keys(obj).forEach(k => {
+			fragment.removeSearch(k).addSearch(k, obj[k]);
+		});
+		const updatedUrl = currentUrl.fragment(fragment.toString()).toString();
+		document.location = updatedUrl;
+	}
+
+	function getPageParamName(datatable) {
+		return buildDtParamName(datatable, PAGE_PARAM);
+	}
+
+	function getPageNumFromUrl(datatable) {
+		return +getDtParamValue(getPageParamName(datatable));
+	}
+
+	function setPageNumToUrl(datatable, num) {
+		setUrlParams({
+			[getPageParamName(datatable)]: num
+		});
+	}
+
+	function getSearchParamName(datatable) {
+		return buildDtParamName(datatable, SEARCH_PARAM);
+	}
+
+	function getSearchFromUrl(datatable) {
+		return getDtParamValue(getSearchParamName(datatable));
+	}
+
+	function setSearchToUrl(datatable, searchStr) {
+		setUrlParams({
+			[getSearchParamName(datatable)]: searchStr,
+			[getPageParamName(datatable)]: 0
+		});
+	}
+
+	function getOrderParamName(datatable) {
+		return buildDtParamName(datatable, ORDER_PARAM);
+	}
+
+	function getOrderFromUrl(datatable) {
+		const rawValue = getDtParamValue(getOrderParamName(datatable));
+		if (!rawValue) {
+			return null;
+		}
+		const parts = rawValue.split(',');
+		return {
+			column: +parts[0],
+			direction: parts[1]
+		};
+	}
+
+	function setOrderToUrl(datatable, column, direction) {
+
+		setUrlParams({
+			[getOrderParamName(datatable)]: column + ',' + direction,
+			[getPageParamName(datatable)]: 0
+		});
 	}
 
 	ko.bindingHandlers.dataTable = {
@@ -130,7 +222,30 @@ define([
 					ko.applyBindings(bindingContext, $(element).find('thead')[0]);
 				}
 
-				$(element).DataTable(binding.options);
+				const datatable = $(element).DataTable(binding.options);
+
+				$(element).on('page.dt', function () {
+					const info = datatable.page.info();
+					setPageNumToUrl(datatable, info.page);
+				});
+
+				$(element).on('search.dt', function () {
+					const currentSearchStr = getSearchFromUrl(datatable) || '';
+					const newSearchStr = datatable.search();
+					if (currentSearchStr !== newSearchStr) {
+						setSearchToUrl(datatable, newSearchStr);
+					}
+				});
+
+				$(element).on('order.dt', function () {
+					const currentOrder = getOrderFromUrl(datatable);
+					const newOrder = datatable.order();
+					const columnIdx = newOrder[0][0];
+					const orderDir = newOrder[0][1];
+					if (!currentOrder || currentOrder.column !== columnIdx || currentOrder.direction !== orderDir) {
+						setOrderToUrl(datatable, columnIdx, orderDir);
+					}
+				});
 
 				if (binding.api != null)
 				{
@@ -185,9 +300,23 @@ define([
 			if (data.length > 0)
 				table.rows.add(data);
 
-			// drawing may access observables, which updating we do not want to trigger a redraw to the table
-			// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
-			ko.ignoreDependencies(table.draw);
+			const currentSearchStr = getSearchFromUrl(table);
+			if (currentSearchStr) {
+				table.search(currentSearchStr);
+			}
+
+			const currentOrder = getOrderFromUrl(table);
+			if (currentOrder && currentOrder.column && currentOrder.direction) {
+				table.order([[currentOrder.column, currentOrder.direction]]);
+			}
+
+			redrawTable(table);
+
+			const currentPage = getPageNumFromUrl(table);
+			if (currentPage) {
+				table.page(currentPage);
+				redrawTable(table, 'page');
+			}
 		}
 
 
