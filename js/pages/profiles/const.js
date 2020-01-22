@@ -3,15 +3,15 @@ define((require, exports) => {
   const paths = {
     source: sourceKey => `#/profiles/${sourceKey}`,
     person: (sourceKey, personId) => `#/profiles/${sourceKey}/${personId}`,
-    onePersonSample: (sourceKey, personId, cohortDefinitionId, sampleId) =>
+    onePersonSample: ({ sourceKey, personId, cohortDefinitionId, sampleId }) =>
       `#/profiles/${sourceKey}/${personId}/${cohortDefinitionId}/${sampleId}`,
-    twoPersonSample: (
+    twoPersonSample: ({
       sourceKey,
       personId,
       cohortDefinitionId,
       sampleId,
-      secondPersonId
-    ) =>
+      secondPersonId,
+    }) =>
       `#/profiles/${sourceKey}/${personId}/${cohortDefinitionId}/${sampleId}/${secondPersonId}`,
   }
 

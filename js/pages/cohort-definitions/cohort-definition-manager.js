@@ -1014,6 +1014,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			async save () {
+				const result = window.confirm('Modify cohort definition will delete all created samples, do you still want to proceed?')
+				if(!result) return
+				
 				this.isSaving(true);
 				clearTimeout(this.pollTimeout);
 
@@ -2015,7 +2018,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			onSampleListRowClick(d, e) {
-				console.log(d, e)
 				// find index of click
 				const {sampleId} = d;
 				const rowIndex = this.sampleList().findIndex(el=>el.sampleId == sampleId)
@@ -2043,7 +2045,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.sampleDataLoading(true)
 				sampleService.getSample({ cohortDefinitionId, sourceKey, sampleId })
 				.then(res=>{
-					console.log(res)
 					this.selectedSampleId(sampleId)
 					this.selectedSampleName(res.name)
 					this.showSampleDataTable(res.elements)
@@ -2058,9 +2059,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				})
 			}
 
-			onSampleDataClick(d,e) {
+			onSampleDataClick(d) {
+				const selectedPatients = this.sampleData().filter(el=>el.selected).map(el=>el.personId);
 				//change checkbox state
-				this.sampleData.replace(d, {...d, selected: !d.selected})
+				// this.sampleData.replace(d, {...d, selected: !d.selected})
+
+				if (selectedPatients.includes(d.personId)) {
+					this.sampleData.replace(d, { ...d, selected: !d.selected })
+				} else {
+					if (selectedPatients.length == 2) {
+						alert('You can only select maximum 2 patients')
+						return
+					}
+					this.sampleData.replace(d, { ...d, selected: !d.selected })
+				}
 			}
 
 			showSampleDataTable(sample) {
@@ -2076,10 +2088,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			viewSamplePatient() { 
+				const sampleId = this.selectedSampleId()
 				const cohortDefinitionId= this.currentCohortDefinition().id();
 				const sourceKey=this.sampleSourceKey();
-				const selectedId = this.sampleData().find(el=>el.selected).personId
-				window.open(`#/profiles/${sourceKey}/${selectedId}/${cohortDefinitionId}`)
+				const selectedPatients = this.sampleData().filter(el=>el.selected).map(el=>el.personId);
+				if(selectedPatients.length==0) {
+					alert('You must select one or two patients to proceed')
+				}
+				if(selectedPatients[1]) {
+					window.open(`#/profiles/${sourceKey}/${selectedPatients[0]}/${cohortDefinitionId}/${sampleId}/${selectedPatients[1]}`)
+				}
+				window.open(`#/profiles/${sourceKey}/${selectedPatients[0]}/${cohortDefinitionId}/${sampleId}`)
 			}
 	}
 

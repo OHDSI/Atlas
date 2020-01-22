@@ -119,7 +119,7 @@
       <div class="modal-header">
         <button
           type="button"
-          class="close"
+          class="selectionPatient close"
           data-dismiss="modal"
           aria-label="Close"
         >
@@ -129,7 +129,7 @@
       </div>
       <div class="modal-body">
         <div class="row" style="float: right;">
-          <button class="btn btn-primary" data-bind="click: comparePatient">
+          <button  class="btn btn-primary" data-bind="click: comparePatient">
             View patient(s)
           </button>
         </div>
@@ -139,7 +139,7 @@
 								reference: patientSelectionData,
 								columns: patientSelectionColumn,
 								order: [[1,'asc']],
-                pageLength: 10,
+                pageLength: -1,
                 rowClick: onSampleDataClick,
 							}"
         ></faceted-datatable>
@@ -223,7 +223,7 @@
             <i class="fa fa-table" data-bind="value:'datatable'" />
           </div> 
         </div>
-        <div class="input-group-btn" role="group">
+        <!-- <div class="input-group-btn" role="group">
           <button
             type="button"
             class="btn btn-primary"
@@ -233,13 +233,17 @@
           >
             <span><i class="fa fa-paint-brush"></i></span>
           </button>
-        </div>
+        </div> -->
       </div>
     </form>
     <div
       style="margin-top:5px;"
       data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person"
     >
+      <!-- ko if:$component.sampleId() -->
+      <span data-bind="text:'Patient ID: ' + $component.personId()"></span
+      >&nbsp;&nbsp;|&nbsp;&nbsp;
+      <!-- /ko -->
       <i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
       <span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
       <span data-bind="text: recordCount + ' events'"></span
@@ -268,9 +272,28 @@
           target="_new"
         ></a
       ></span>
+      <!-- ko if: !$component.showPerson2()-->
+      <span data-bind="visible: $component.sampleName(),
+        click: $component.loadNextPerson" 
+        style="float: right; padding-right:20px; text-decoration: underline; cursor: pointer;">
+        Next patient <i class="fa fa-angle-right"></i>
+      </span>
 
-      <span data-bind="enable: !$component.isLoadingSampleData()" style="float: right; padding-right:20px; text-decoration: underline;">See next patient in sample <i class="fa fa-angle-right"></i></span>
-      <span data-bind="enable: !$component.isLoadingSampleData()" style="float: right; padding-right:20px; text-decoration: underline;"><i class="fa fa-angle-left" style="padding-right: 5px"></i>Previous patient in sample</span>
+      <span data-bind="visible: $component.sampleName(),
+      click: $component.loadPreviousPerson" 
+      style="float: right; padding-right:20px; text-decoration: underline; cursor: pointer;">
+        <i class="fa fa-angle-left" style="padding-right: 5px"></i>
+        Previous patient 
+      </span>
+      <!-- /ko -->
+
+      <!-- ko if: $component.showPerson2() -->
+      <span style="float: right; padding-right:20px; cursor: pointer;"
+        data-bind="click: $component.removePerson"
+      >
+        <i class="fa fa-times" ></i>
+      </span>
+      <!-- /ko -->
     </div>
   </div>
 
@@ -324,11 +347,11 @@
   params="isAuthenticated: isAuthenticated, isPermitted: canViewProfiles"
 ></access-denied>
 
+
+<!-- ko if: $component.showPerson2()-->
 <div class="asset-heading" data-bind="visible: sampleId()&&secondPersonId()">
-  <div
-      style="margin-top:5px;"
-      data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person"
-    >
+  <div style="margin-top:5px;">
+    <span data-bind="text:'Patient ID: ' + $component.secondPersonId()"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
     <i data-bind="attr: {class : $component.secondPersonGenderClass()}"></i>&nbsp;
     <span data-bind="text: $component.secondPersonGender()"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
     <span data-bind="text: $component.secondPersonRecordCount() + ' events'"></span
@@ -358,13 +381,26 @@
           target="_new"
         ></a
       ></span>
+    <span style="float: right; padding-right:20px; cursor: pointer;"
+      data-bind="click: $component.removePerson2"
+    >
+      <i class="fa fa-times" ></i>
+    </span>
   </div>
 </div>
 
 <div data-bind="css: classes()" style="margin-bottom: 20px;">
-  <div  id="profileTimeline2"  data-bind="visible:showSection.profileChart"></div>
+  <!-- ko if: $component.loadingSecondPerson() -->
+  <loading params="status: loadingStatus"></loading>
+  <!-- /ko -->
+  <div data-bind="visible: $component.cantFindSecondPerson()" class="loading">
+    Can't find
+    <span data-bind="text:$component.secondPersonId()" />
+  </div>
+
+  <div  id="profileTimeline2" data-bind="visible:showSection.profileChart&&!$component.cantFindSecondPerson()&&!$component.loadingSecondPerson()&&secondPersonId()"></div>
   <faceted-datatable
-  data-bind="visible:showSection.datatable"
+  data-bind="visible:showSection.datatable&&!$component.cantFindSecondPerson()&&!$component.loadingSecondPerson()&&secondPersonId()"
   params="{
     reference: secondPersonRecords,
     xfObservable: xfObservableSecond,
@@ -373,7 +409,7 @@
     order: [[3,'asc']],
   }"
 ></faceted-datatable>
-
 </div>
 
+  <!-- /ko -->
 

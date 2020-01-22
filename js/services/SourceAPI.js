@@ -70,7 +70,7 @@ define(function (require, exports) {
     try {
 		const [{data: sources}] = await Promise.all([
 			httpService.doGet(config.api.url + 'source/sources'),
-			// httpService.doGet(config.api.url + 'source/daimon/priority'),
+			httpService.doGet(config.api.url + 'source/daimon/priority'),
 		]);
 		config.api.available = true;
         if (sources.length === 0) {

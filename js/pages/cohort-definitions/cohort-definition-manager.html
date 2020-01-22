@@ -626,7 +626,7 @@
 								<button 
 								type="button"
 								class="btn btn-sm btn-primary" 
-								data-bind="click:viewSamplePatient">
+								data-bind="click:viewSamplePatient, visible: $component.sampleSourceKey()&&$component.selectedSampleId()&&!$component.sampleDataLoading()">
 								View patient(s)
 								</button >
 							</div>

@@ -15,6 +15,9 @@ define((require, factory) => {
           params.sampleId = path[3] || null
           params.secondPersonId = path[4] || null
 
+          if (params.secondPersonId)
+            params.secondPersonId = Number(params.secondPersonId)
+          if (params.personId) params.personId = Number(params.personId)
           router.setCurrentView('profile-manager', params)
         })
       }),

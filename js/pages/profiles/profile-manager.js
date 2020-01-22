@@ -94,9 +94,7 @@ define([
       // sample redirect state
       this.isLoadingSampleData = ko.observable(false)
       this.patientSelectionData = ko.observableArray([])
-      this.selectedPatients = ko.computed(() =>
-        this.patientSelectionData().filter(el => el.selected)
-      )
+      this.selectedPatients = ko.observableArray([])
 
       this.sampleName = ko.observable()
       this.sampleId = ko.observable(router.routerParams().sampleId) // it shoule equa 'sample'
@@ -105,6 +103,70 @@ define([
           sampleId: this.sampleId(),
           sourceKey: this.sourceKey(),
           cohortDefinitionId: this.cohortDefinitionId(),
+        })
+        $('#modalPatientSelection').on('hidden.bs.modal', () => {
+          // overridde selected patients to original ones if it's data not fetched
+          const currentPersonId = this.personId()
+          const currentSecondPersonId = this.secondPersonId()
+          if (
+            this.selectedPatients().includes(currentSecondPersonId) &&
+            this.selectedPatients().includes(currentPersonId)
+          ) {
+            // nothing changes => do nothing
+            return
+          }
+
+          const currentPersonIndex = this.patientSelectionData().findIndex(
+            el => el.personId == currentPersonId
+          )
+          const currentSecondPersonIndex = this.patientSelectionData().findIndex(
+            el => el.personId == currentSecondPersonId
+          )
+
+          if (this.selectedPatients().length >= 1) {
+            const index = this.patientSelectionData().findIndex(
+              el => el.personId == this.selectedPatients()[0]
+            )
+            this.patientSelectionData.replace(
+              this.patientSelectionData()[index],
+              {
+                ...this.patientSelectionData()[index],
+                selected: false,
+              }
+            )
+          }
+          if (this.selectedPatients().length == 2) {
+            const index = this.patientSelectionData().findIndex(
+              el => el.personId == this.selectedPatients()[1]
+            )
+            this.patientSelectionData.replace(
+              this.patientSelectionData()[index],
+              {
+                ...this.patientSelectionData()[index],
+                selected: false,
+              }
+            )
+          }
+          this.selectedPatients.removeAll()
+          this.selectedPatients.push(currentPersonId)
+          if (currentSecondPersonId) {
+            this.selectedPatients.push(currentSecondPersonId)
+          }
+          this.patientSelectionData.replace(
+            this.patientSelectionData()[currentPersonIndex],
+            {
+              ...this.patientSelectionData()[currentPersonIndex],
+              selected: true,
+            }
+          )
+
+          this.patientSelectionData.replace(
+            this.patientSelectionData()[currentSecondPersonIndex],
+            {
+              ...this.patientSelectionData()[currentSecondPersonIndex],
+              selected: true,
+            }
+          )
         })
       }
       this.sampleId.subscribe(val => {
@@ -115,6 +177,7 @@ define([
         })
       })
       // sample second person state
+      this.showPerson2 = ko.observable(false)
       this.secondPersonId = ko.observable(router.routerParams().secondPersonId)
       this.secondPersonRecords = ko.observableArray()
       this.cantFindSecondPerson = ko.observable(false)
@@ -133,16 +196,17 @@ define([
       this.secondPersonRecordCount = ko.observable()
       this.secondPersonAgeAtIndex = ko.observable()
 
-      this.personId.subscribe(val => {
-        if (val && this.sampleId()) this.loadComparingPerson()
-      })
       this.secondPersonId.subscribe(val => {
-        if (val && this.sampleId()) this.loadComparingPerson(val)
+        if (val && this.sampleId()) {
+          this.loadComparingPerson(val)
+        }
       })
       if (this.sampleId() && this.personId()) {
+        this.selectedPatients.push(this.personId())
         this.loadComparingPerson()
       }
       if (this.sampleId && this.secondPersonId()) {
+        this.selectedPatients.push(this.secondPersonId())
         this.loadComparingPerson(this.secondPersonId())
       }
       this.combinedPersonIds = ko.computed(() => {
@@ -459,7 +523,12 @@ define([
         document.location = constants.paths.source(sourceKey)
       })
       this.personId.subscribe(personId => {
-        document.location = constants.paths.person(this.sourceKey(), personId)
+        if (!this.sampleId()) {
+          document.location = constants.paths.person(this.sourceKey(), personId)
+        }
+        if (this.sampleId() && personId) {
+          this.loadComparingPerson()
+        }
       })
 
       $('.highlight-filter').on('click', function(evt) {
@@ -523,10 +592,7 @@ define([
                 .value(),
             }
           }
-          // person.records.forEach(rec => {
-          //   rec.highlight = this.defaultColor
-          //   rec.stroke = this.defaultColor
-          // })
+
           this.personRecords(person.records)
           this.person(person)
           if (!this.timeline1) {
@@ -648,10 +714,12 @@ define([
       sampleService
         .getSample({ cohortDefinitionId, sourceKey, sampleId })
         .then(res => {
-          this.sampleName(res.name)
           const transformedSampleData = res.elements.map(el => {
             let selected
-            if (el.personId == this.personId()) {
+            if (
+              el.personId == this.personId() ||
+              el.personId == this.secondPersonId()
+            ) {
               selected = true
             } else {
               selected = false
@@ -664,12 +732,11 @@ define([
               selected,
             }
           })
-
           this.patientSelectionData(transformedSampleData)
+          this.sampleName(res.name)
         })
         .catch(error => {
           console.error(error)
-          alert('Error when fetching sample data, please try again later')
         })
         .finally(() => {
           this.isLoadingSampleData(false)
@@ -677,40 +744,59 @@ define([
     }
     onSampleDataClick(d) {
       //change checkbox state
-      this.patientSelectionData.replace(d, { ...d, selected: !d.selected })
+      //if user does not fetch new data, these state will be overridden
+      // on listening to close button (see this event handler in the constructors )
+      if (this.selectedPatients().includes(d.personId)) {
+        this.selectedPatients.remove(d.personId)
+        this.patientSelectionData.replace(d, { ...d, selected: !d.selected })
+      } else {
+        if (this.selectedPatients().length == 2) {
+          alert('You can only select maximum 2 patients')
+          return
+        }
+        this.selectedPatients.push(d.personId)
+        this.patientSelectionData.replace(d, { ...d, selected: !d.selected })
+      }
     }
 
     comparePatient() {
-      if (this.selectedPatients().length > 2) {
-        alert('You can select maximum 2 patients')
-        return
-      } else if (this.selectedPatients() == 0) {
-        alert('Please select no more than 2 patients')
+      if (this.selectedPatients() == 0) {
+        alert('Please select one or two patients')
         return
       }
       const sourceKey = this.sourceKey()
       const sampleId = this.sampleId()
       const cohortDefinitionId = this.cohortDefinitionId()
       const [person1, person2] = this.selectedPatients()
-      console.log(person1, person2, sampleId, cohortDefinitionId)
       if (person1 && person2) {
-        document.location = constants.paths.twoPersonSample(
+        const url = constants.paths.twoPersonSample({
           sourceKey,
-          person1.personId,
+          personId: person1,
           cohortDefinitionId,
           sampleId,
-          person2.personId
-        )
-        this.secondPersonId(person2.personId)
-      } else if (person1) {
-        document.location = constants.paths.onePersonSample(
+          secondPersonId: person2,
+        })
+        history.pushState(null, '', url)
+        this.personId(person1)
+        this.secondPersonId(person2)
+        this.showPerson2(true)
+      } else if (!person2) {
+        if (this.timeline2) {
+          this.timeline2.remove()
+          this.timeline2 = null
+        }
+        const url = constants.paths.onePersonSample({
           sourceKey,
-          person1.personId,
+          personId: person1,
           cohortDefinitionId,
-          sampleId
-        )
+          sampleId,
+        })
+        history.pushState(null, '', url)
+        this.personId(person1)
+        this.secondPersonId(null)
+        this.showPerson2(false)
       }
-      this.personId(person1.personId)
+      $('.selectionPatient.close').trigger('click')
     }
 
     loadComparingPerson(secondPerson) {
@@ -720,6 +806,7 @@ define([
       } else {
         this.cantFindSecondPerson(false)
         this.loadingSecondPerson(true)
+        this.showPerson2(true)
       }
       profileService
         .getProfile(
@@ -728,7 +815,6 @@ define([
           this.cohortDefinitionId()
         )
         .then(person => {
-          console.log(person)
           // const records = person.records.filter(el => el.conceptId)
           const records = person.records
           if (!secondPerson) {
@@ -774,6 +860,77 @@ define([
             this.loadingSecondPerson(false)
           }
         })
+    }
+
+    loadNextPerson() {
+      const currentPersonIndex = this.patientSelectionData().findIndex(
+        el => el.personId == this.personId()
+      )
+      let nextIndex
+      if (currentPersonIndex == this.patientSelectionData().length - 1) {
+        nextIndex = 0
+      } else {
+        nextIndex = currentPersonIndex + 1
+      }
+      const nextPersonId = this.patientSelectionData()[nextIndex].personId
+      this.selectedPatients().splice(0, 1, nextPersonId)
+      this.personId(nextPersonId)
+      this.patientSelectionData.replace(
+        this.patientSelectionData()[currentPersonIndex],
+        { ...this.patientSelectionData()[currentPersonIndex], selected: false }
+      )
+      this.patientSelectionData.replace(
+        this.patientSelectionData()[nextIndex],
+        { ...this.patientSelectionData()[nextIndex], selected: true }
+      )
+    }
+
+    loadPreviousPerson() {
+      const currentPersonIndex = this.patientSelectionData().findIndex(
+        el => el.personId == this.personId()
+      )
+      let previousIndex
+      if (currentPersonIndex == 0) {
+        previousIndex = this.patientSelectionData().length - 1
+      } else {
+        previousIndex = currentPersonIndex - 1
+      }
+      const perviousPeronId = this.patientSelectionData()[previousIndex]
+        .personId
+      this.selectedPatients().splice(0, 1, perviousPeronId)
+      this.personId(perviousPeronId)
+      this.patientSelectionData.replace(
+        this.patientSelectionData()[currentPersonIndex],
+        { ...this.patientSelectionData()[currentPersonIndex], selected: false }
+      )
+      this.patientSelectionData.replace(
+        this.patientSelectionData()[previousIndex],
+        { ...this.patientSelectionData()[previousIndex], selected: true }
+      )
+    }
+
+    removePerson() {
+      const [person1, person2] = this.selectedPatients()
+      this.selectedPatients([person2])
+      this.comparePatient()
+    }
+
+    removePerson2() {
+      const [person1, person2] = this.selectedPatients()
+      this.selectedPatients.remove([person2])
+      this.secondPersonId(null)
+      this.timeline2.remove()
+      this.timeline2 = null
+      this.showPerson2(false)
+
+      const secondPersonIndex = this.patientSelectionData().findIndex(
+        el => el.personId == person2
+      )
+
+      this.patientSelectionData.replace(
+        this.patientSelectionData()[secondPersonIndex],
+        { ...this.patientSelectionData()[secondPersonIndex], selected: false }
+      )
     }
   }
 
