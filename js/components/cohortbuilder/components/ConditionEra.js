@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html'], function (ko, options, utils, Range, CriteriaGroup, template) {
 
 	function ConditionEraViewModel(params) {
 
@@ -102,6 +102,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
+
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Condition');
+			return `The index date refers to the condition era of ${conceptSetName}.`;
+		});
+		
 	}
 
 	// return compoonent definition

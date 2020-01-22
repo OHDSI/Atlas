@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./LocationRegionTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./LocationRegionTemplate.html'], function (ko, options, utils, Range, CriteriaGroup, template) {
 
 	function LocationRegionViewModel(params) {
 
@@ -49,6 +49,11 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
+		
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Region');
+			return `The index date refers to the location region of ${conceptSetName}.`;
+		});		
 	}
 
 	// return compoonent definition

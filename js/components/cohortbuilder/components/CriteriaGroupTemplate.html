@@ -95,6 +95,7 @@
 									<!-- ko ifnot: EndWindow -->
 									<span class="linkish" data-bind="click: $component.addEndWindow"><i>add additional constraint</i></span>
 									<!-- /ko -->
+									<div class="indexMessage"><span class="indexMessage" data-bind="text: $component.indexMessage"></span></div>
 								</div>
 
 								<div class="restrictVisitSection" data-bind="if: $component.hasVO($data.Criteria)">
@@ -114,7 +115,7 @@
 
 	<!-- ko foreach: group().Groups -->
 	<div class="critera-group-container" style="position:relative">
-		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group()}"></criteria-group>
+		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group(), indexMessage: $component.indexMessage}"></criteria-group>
 		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
 	</div>
 	<!-- /ko -->

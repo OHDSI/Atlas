@@ -1,4 +1,4 @@
-define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, config, options, Range, CriteriaGroup, template) {
+define(['knockout', 'appConfig', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, config, options, utils, Range, CriteriaGroup, template) {
 
 	function VisitOccurrenceViewModel(params) {
 		var self = this;
@@ -142,7 +142,10 @@ define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../Criter
 			self.Criteria[propertyName](undefined);
 		}
 
-
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Visit');
+			return `The index date refers to the visit of ${conceptSetName}.`;
+		});			
 	}
 
 	// return compoonent definition

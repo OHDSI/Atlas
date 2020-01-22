@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./SpecimenTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./SpecimenTemplate.html'], function (ko, options, utils, Range, Text, CriteriaGroup, template) {
 
 	function SpecimenViewModel(params) {
 		var self = this;
@@ -119,6 +119,11 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
+		
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Specimen');
+			return `The index date refers to the specimen of ${conceptSetName}.`;
+		});
 	}
 
 	// return compoonent definition

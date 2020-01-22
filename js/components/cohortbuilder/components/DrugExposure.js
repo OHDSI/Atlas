@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DrugExposureTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DrugExposureTemplate.html'], function (ko, options, utils, Range, Text, CriteriaGroup, template) {
 
 	function DrugExposureViewModel(params) {
 		var self = this;
@@ -242,7 +242,11 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
-
+		
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Drug');
+			return `The index date refers to the drug exposure of ${conceptSetName}.`;
+		});
 
 	}
 

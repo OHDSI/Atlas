@@ -45,9 +45,15 @@ function(
 			'<div class="optionDescription">' + option.description + '</div>';
 	}
 
+	function getConceptSetName (conceptSetId, conceptSetList, defaultName) {
+		var selectedConceptSet = conceptSetList().find(function (item) { return item.id == ko.utils.unwrapObservable(conceptSetId)});
+		return 	ko.utils.unwrapObservable(selectedConceptSet && selectedConceptSet.name) || defaultName;
+	}
+	
 	return {
 		getCriteriaComponent,
 		formatDropDownOption,
+		getConceptSetName
 	};
 
 });

@@ -173,6 +173,9 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period',
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
+		
+		self.indexMessage = "The index date refers to the payer plan period.";
+
 	}
 
 	return {
