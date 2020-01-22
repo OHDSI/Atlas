@@ -78,6 +78,25 @@ define([
 			if (this.isLoggedIn() || !appConfig.userAuthenticationEnabled) {
 				this.start()
 			}
+
+			this.hideCompleted = ko.computed({
+				owner: ko.observable(localStorage.getItem("hide-completed-jobs")),
+				read: function() { 
+					return this(); 
+				},
+				write: function( newValue ) {
+					localStorage.setItem("hide-completed-jobs", newValue);
+					this( newValue );
+				}
+			});
+
+			this.changeCompletedFilter = () => {
+				var value = this.hideCompleted();
+				this.hideCompleted(!value);
+				
+				this.stopPolling();
+				this.startPolling(true);
+			}
 		}
 
 		start() {
@@ -95,9 +114,9 @@ define([
 			}
 		}
 
-		startPolling() {
+		startPolling(clearPreviousValues) {
 			this.pollId = PollService.add({
-				callback: () => this.updateJobStatus(),
+				callback: () => this.updateJobStatus(clearPreviousValues),
 				interval: appConfig.pollInterval,
 			});
 		};
@@ -110,10 +129,13 @@ define([
 			return this.jobListing().find(j => j.executionId === n.executionId);
 		}
 
-		async updateJobStatus() {
+		async updateJobStatus(clearPreviousValues) {
 			if (authApi.isPermittedGetAllNotifications()) {
 				try {
-					const notifications = await jobDetailsService.list();
+					const notifications = await jobDetailsService.list(this.hideCompleted())
+					if (clearPreviousValues) {
+						this.jobListing([]);
+					}
 					notifications.data.forEach(n => {
 						let job = this.getExisting(n);
 
