@@ -94,10 +94,13 @@ define([
                     }
                 }
             });
-            this.onCohortDefinitionChanged = sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
-              if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
-                this.loadDesignData(this.characterizationId(), true);
-              }
+
+            const onCohortDefinitionChanged = sharedState.CohortCharacterization.onCohortDefinitionChanged;
+
+            sharedState.CohortCharacterization.onCohortDefinitionChanged = onCohortDefinitionChanged || sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
+                if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
+                    this.loadDesignData(this.characterizationId(), true);
+                }
             });
 
 			GlobalPermissionService.decorateComponent(this, {
