@@ -1,7 +1,7 @@
 define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
 
-	function list(hideCompleted) {
-		return httpService.doGet(appConfig.api.url + 'notifications', { hideCompleted });
+	function list(hideStatuses) {
+		return httpService.doGet(appConfig.api.url + 'notifications?hide_statuses=' + hideStatuses.join());
 	}
 
 	function createJob(updated) {

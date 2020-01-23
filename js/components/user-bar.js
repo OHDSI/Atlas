@@ -11,6 +11,7 @@ define([
 	'services/MomentAPI',
 	'lodash',
 	'services/Poll',
+	'const',
 	'less!./user-bar.less'
 ], function (ko,
 			view,
@@ -24,6 +25,7 @@ define([
 			momentApi,
 			lodash,
 			PollService,
+			constants
 		) {
 	class UserBar extends Component {
 		constructor(params) {
@@ -80,12 +82,12 @@ define([
 			}
 
 			this.hideCompleted = ko.computed({
-				owner: ko.observable(localStorage.getItem("hide-completed-jobs")),
+				owner: ko.observable(localStorage.getItem("jobs-hide-statuses")),
 				read: function() { 
 					return this(); 
 				},
 				write: function( newValue ) {
-					localStorage.setItem("hide-completed-jobs", newValue);
+					localStorage.setItem("jobs-hide-statuses", newValue);
 					this( newValue );
 				}
 			});
@@ -96,7 +98,7 @@ define([
 				
 				this.stopPolling();
 				this.startPolling(true);
-			}
+			};
 		}
 
 		start() {
@@ -132,7 +134,11 @@ define([
 		async updateJobStatus(clearPreviousValues) {
 			if (authApi.isPermittedGetAllNotifications()) {
 				try {
-					const notifications = await jobDetailsService.list(this.hideCompleted())
+					var hideStatuses = [];
+					if (this.hideCompleted()) {
+						hideStatuses.push(constants.generationStatuses.COMPLETED);
+					}
+					const notifications = await jobDetailsService.list(hideStatuses);
 					if (clearPreviousValues) {
 						this.jobListing([]);
 					}
