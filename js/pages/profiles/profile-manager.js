@@ -76,6 +76,10 @@ define([
   class ProfileManager extends AutoBind(Page) {
     constructor(params) {
       super(params)
+      this.showSection = {
+        profileChart: ko.observable(true),
+        datatable: ko.observable(true),
+      }
       this.sharedState = sharedState
       this.config = config
       this.filterHighlightsText = ko.observable()
@@ -178,6 +182,7 @@ define([
       })
       // sample second person state
       this.showPerson2 = ko.observable(false)
+
       this.secondPersonId = ko.observable(router.routerParams().secondPersonId)
       this.secondPersonRecords = ko.observableArray()
       this.cantFindSecondPerson = ko.observable(false)
@@ -423,10 +428,6 @@ define([
         'Click Here to Select a Cohort'
       )
 
-      this.showSection = {
-        profileChart: ko.observable(true),
-        datatable: ko.observable(true),
-      }
       this.highlightDom =
         '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>'
       this.highlightColumns = [
@@ -525,10 +526,12 @@ define([
       this.personId.subscribe(personId => {
         if (!this.sampleId()) {
           document.location = constants.paths.person(this.sourceKey(), personId)
+          this.loadPerson()
         }
         if (this.sampleId() && personId) {
           this.loadComparingPerson()
         }
+        console.log(personId)
       })
 
       $('.highlight-filter').on('click', function(evt) {
@@ -560,7 +563,7 @@ define([
     loadPerson() {
       this.cantFindPerson(false)
       this.loadingPerson(true)
-
+      console.log('zz')
       let url = constants.paths.person(this.sourceKey(), this.personId())
       this.loadingStatus('loading profile data from database')
       this.personRequest = this.personRequests[url] = profileService
@@ -780,6 +783,7 @@ define([
         this.personId(person1)
         this.secondPersonId(person2)
         this.showPerson2(true)
+        this.showSection['datatable'](false)
       } else if (!person2) {
         if (this.timeline2) {
           this.timeline2.remove()
@@ -807,6 +811,7 @@ define([
         this.cantFindSecondPerson(false)
         this.loadingSecondPerson(true)
         this.showPerson2(true)
+        this.showSection['datatable'](false)
       }
       profileService
         .getProfile(
@@ -911,13 +916,13 @@ define([
 
     removePerson() {
       const [person1, person2] = this.selectedPatients()
-      this.selectedPatients([person2])
+      this.selectedPatients(person2)
       this.comparePatient()
     }
 
     removePerson2() {
       const [person1, person2] = this.selectedPatients()
-      this.selectedPatients.remove([person2])
+      this.selectedPatients.remove(person2)
       this.secondPersonId(null)
       this.timeline2.remove()
       this.timeline2 = null
