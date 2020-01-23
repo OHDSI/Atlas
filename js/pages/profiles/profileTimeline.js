@@ -82,6 +82,7 @@ define(function(require, exports) {
       this.implementAxisSelection()
       this.implementExpandingAll()
       this.implementTooltip()
+      this.implementColorPicker()
 
       this.svg = d3
         .select(`#${this.chartContainer} .profileTimeline`)
@@ -110,6 +111,23 @@ define(function(require, exports) {
       this.xDateScale = d3.scaleTime().range([0, this.width])
       // create brush
       this.brush = this.svg.append('g').attr('class', 'brush')
+      // hide color picker if click outsite
+
+      d3.select(`#${this.chartContainer} .profileTimeline`).on('click', () => {
+        const tagName = d3.event.target.tagName.toLowerCase()
+        const clickOnCircle = typeof tagName == 'string' && tagName == 'circle'
+        const colorPicker = d3
+          .select(`#${this.chartContainer}`)
+          .select(`.colorPicker`)
+
+        if (!clickOnCircle) {
+          colorPicker
+            .transition()
+            .duration(400)
+            .style('opacity', 0)
+            .style('z-index', -1)
+        }
+      })
     }
 
     updateData(rawData) {
@@ -149,7 +167,6 @@ define(function(require, exports) {
           .flat()
           .map(el => el.startDate)
       )
-
       this.updateScale()
       this.drawTimeline(this.originalData)
     }
@@ -317,6 +334,53 @@ define(function(require, exports) {
         .append('div')
         .attr('class', 'tooltip')
         .style('opacity', 0)
+    }
+
+    implementColorPicker() {
+      const container = d3
+        .select(`#${this.chartContainer} .profileTimeline`)
+        .append('div')
+        .attr('class', 'colorPicker selected-color')
+        .style('opacity', 0)
+        .style('z-index', -1)
+
+      const palette = [
+        '#1f78b4',
+        '#33a02c',
+        '#e31a1c',
+        '#ff7f00',
+        '#6a3d9a',
+        '#b15928',
+      ]
+
+      const iconColors = [
+        '#a6cee3',
+        '#b2df8a',
+        '#fb9a99',
+        '#fdbf6f',
+        '#cab2d6',
+        '#ff9',
+      ]
+      const colorButtons = container
+        .selectAll('button')
+        .data(palette)
+        .enter()
+        .append('button')
+
+      colorButtons
+        .attr('title', 'Set selected events color')
+        .attr('class', 'btn selected-color')
+        .attr(
+          'style',
+          (d, i) => `background: ${d}; borderColor: ${iconColors[i]}`
+        )
+
+      colorButtons
+        .append('span')
+        .attr('class', 'fa fa-paint-brush selected-color')
+        .attr('style', (d, i) => `color: ${iconColors[i]}`)
+
+      this.colorButtons = colorButtons
     }
 
     expandDomain(domain) {
@@ -589,12 +653,18 @@ define(function(require, exports) {
       timelineChildren.attr('clip-path', 'url(#clip)')
 
       // draw lines
-      const lines = timelineChildren
-        .selectAll('line')
-        .data(
-          d => d.observationData.filter(el => el.endDay !== el.startDay),
-          d => d.startDay + d.endDay + d.conceptId
-        )
+      const lines = timelineChildren.selectAll('line').data(
+        d => {
+          const observationData = d.observationData.filter(
+            el => el.endDay !== el.startDay
+          )
+          return observationData.map(el => ({
+            ...el,
+            selectedColor: d.selectedColor,
+          }))
+        },
+        d => d.startDay + d.endDay + d.conceptId + d.selectedColor
+      )
 
       lines.exit().remove()
 
@@ -614,9 +684,16 @@ define(function(require, exports) {
         .attr('stroke-width', this.lineStrokeWidth)
 
       // cicles
-      const circles = timelineChildren
-        .selectAll('circle')
-        .data(d => d.observationData, d => d.startDay + d.endDay + d.conceptId)
+      const circles = timelineChildren.selectAll('circle').data(
+        d => {
+          const observationData = d.observationData
+          return observationData.map(el => ({
+            ...el,
+            selectedColor: d.selectedColor,
+          }))
+        },
+        d => d.startDay + d.endDay + d.conceptId + d.selectedColor
+      )
       circles.exit().remove()
 
       circles
@@ -625,13 +702,17 @@ define(function(require, exports) {
         .attr('cx', d => {
           return this.xDayScale(d.startDay)
         })
-        .attr(
-          'style',
-          d =>
-            `fill: ${
-              d.inDomainLine ? this.circleFill : this.colorScheme(d.conceptId)
-            }`
-        )
+        .attr('style', d => {
+          if (d.inDomainLine) {
+            return `fill: ${this.circleFill}`
+          } else {
+            if (d.selectedColor) {
+              return `fill: ${d.selectedColor}`
+            } else {
+              return `fill: ${this.colorScheme(d.conceptId)}`
+            }
+          }
+        })
         .attr('r', this.r)
         .attr('width', 100)
         .attr('height', 100)
@@ -646,6 +727,12 @@ define(function(require, exports) {
         })
         .on('mouseout', () => {
           this.hideTooltip()
+        })
+        .on('click', d => {
+          if (d.inDomainLine) return
+          // return click event if any
+          this.colorButtons.on('click', null)
+          this.selectColor(d)
         })
     }
 
@@ -763,6 +850,7 @@ define(function(require, exports) {
             conceptId,
             conceptName,
             domain,
+            selectedColor: null,
           }
 
           const timeLineDomain = {
@@ -783,6 +871,7 @@ define(function(require, exports) {
             expanded: false,
             observationData: [{ ...observationData }],
             belongTo: domain,
+            selectedColor: null,
           }
 
           // push timeline for domain
@@ -812,6 +901,51 @@ define(function(require, exports) {
         []
       )
       return tData
+    }
+
+    selectColor(d) {
+      const colorPicker = d3.select(`#${this.chartContainer} .colorPicker`)
+      const colorPickerSize = colorPicker.node().getBoundingClientRect()
+      var coordinates = d3.mouse(this.svg.node())
+
+      colorPicker.style(
+        'left',
+        coordinates[0] + this.margin.left - colorPickerSize.width / 2 + 'px'
+      )
+      colorPicker.style(
+        'top',
+        coordinates[1] + this.margin.top + colorPickerSize.height * 1.5 + 'px'
+      )
+
+      colorPicker
+        .transition()
+        .duration(400)
+        .style('opacity', 1)
+        .style('z-index', 10)
+
+      this.colorButtons.on('click', color => {
+        colorPicker
+          .transition()
+          .duration(400)
+          .style('opacity', 0)
+          .style('z-index', -1)
+        this.fillColor(d, color)
+        //remove event listener after click
+        //if not removed, each time click on circle, this will be invoked 1 more time -> not good
+        this.colorButtons.on('click', null)
+      })
+    }
+
+    fillColor(d, selectedColor) {
+      const originalDataIndex = this.originalData.findIndex(
+        el => el.belongTo === d.domain && d.conceptId === el.id
+      )
+      const allDataIndex = this.allData.findIndex(
+        el => el.belongTo === d.domain && d.conceptId === el.id
+      )
+      this.allData[allDataIndex].selectedColor = selectedColor
+      this.originalData[originalDataIndex].selectedColor = selectedColor
+      this.drawTimeline(this.originalData)
     }
 
     remove() {
