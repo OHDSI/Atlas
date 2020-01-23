@@ -40,8 +40,7 @@ define([
 
 				this.conceptSets = params.conceptSets.extend({sorted: conceptSetSorter});;
 				this.selectedConceptSet = ko.observable();
-				this.tabWidget = ko.observable();
-				this.nameHasFocus = ko.observable();
+				this.tabWidget = ko.observable();		
 				this.isImportEnabled = ko.observable(false);
 				this.isModalOpened = ko.observable(false);
 				this.isExportEnabled = ko.observable(false);
@@ -57,7 +56,6 @@ define([
 				newConceptSet.id = this.conceptSets().length > 0 ? Math.max(this.conceptSets().map(d => d.id)) + 1 : 0;
 				this.rawConceptSets().push(newConceptSet);
 				this.selectedConceptSet(newConceptSet);
-				this.nameHasFocus(true);
 				return newConceptSet;
 			}
 

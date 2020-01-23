@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', './utils', 'text!./DemographicCriteriaTemplate.html', './ConceptSetSelector'],
+define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./DemographicCriteriaTemplate.html', './ConceptSetSelector'],
 	function (ko, options, Range, utils, template) {
 
 	function DemographicCriteriaViewModel(params) {

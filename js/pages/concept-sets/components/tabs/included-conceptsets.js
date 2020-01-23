@@ -111,7 +111,7 @@ define([
             return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
               .replace(',', '')) > 0;
           }
-        }]
+        }],
       };
 
       // Triggers parallel load of subset of Ancestors only for current page - to display data ASAP

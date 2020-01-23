@@ -1,7 +1,9 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-
+	<!-- ko if: currentCohortDefinition().id() != 0 -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+	<!-- /ko -->
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 	<!-- ko if: hasAccess -->
@@ -10,8 +12,8 @@
 			<div class="input-group">
 				<input class="form-control" type="text" placeholder="New Cohort Definition" data-bind="enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" title="Close cohort definition" title="Close" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success" title="Save cohort definition" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" title="Close cohort definition" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
 					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
@@ -50,7 +52,7 @@
 			<!--
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }"><a>Explore</a></li>
 			-->
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: function() { $component.tabMode('export'); $component.showSql(); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
 				<a>Export</a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
@@ -128,7 +130,7 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:$root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()">loading</div>
+					<loading data-bind="visible: $root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()"></loading>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $component.includedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
@@ -189,25 +191,6 @@
 						<div type="button" data-bind="css: {disabled: !currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
-					<atlas-modal params="
-						showModal: $component.showImportConceptSetModal,
-						template: 'import-conceptset-template',
-						title: 'Import Concept Set From Repository...',
-						data: {
-							onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
-							criteriaContext: criteriaContext,
-							cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
-						}
-					"
-					></atlas-modal>
-					<script type='text/html' id="import-conceptset-template">
-						<cohort-concept-set-browser params="
-							criteriaContext: criteriaContext,
-							cohortConceptSets: cohortConceptSets,
-							onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
-							buttonActionEnabled: false
-						"></cohort-concept-set-browser>
-					</script>
 				</div>
                 <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->
@@ -297,77 +280,12 @@
 						</div>
 					</div>
 					<div role="tabpanel" data-bind="css: { active: $component.exportTabMode() == 'sql'}" class="tab-pane">
-						<div class="row">
-							<div class="col-md-9" style="text-align: left">
-								<ul class="nav nav-pills">
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'ohdsisql' }, click: function() { $component.exportSqlMode('ohdsisql') };">
-										<a>Template OHDSI.SQL </a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'mssql' }, click: function() { $component.exportSqlMode('mssql') };">
-										<a>MSSQL Server</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'msaps' }, click: function() { $component.exportSqlMode('msaps') };">
-										<a>MS APS</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'oracle' }, click: function() { $component.exportSqlMode('oracle') };">
-										<a>Oracle</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'postgresql' }, click: function() { $component.exportSqlMode('postgresql') };">
-										<a>PostgreSQL</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'redshift' }, click: function() { $component.exportSqlMode('redshift') };">
-										<a>Amazon Red Shift</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'impala' }, click: function() { $component.exportSqlMode('impala') };">
-										<a>Impala</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'netezza' }, click: function() { $component.exportSqlMode('netezza') };">
-										<a>Netezza</a>
-									</li>
-									<li role="presentation" data-bind="css: { active: $component.exportSqlMode() == 'bigquery' }, click: function() { $component.exportSqlMode('bigquery') };">
-										<a>BigQuery</a>
-									</li>
-								</ul>
-							</div>
-							<div class="col-md-3" style="text-align: right">
-								<span id="copyCopyCohortSQLMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>&nbsp;&nbsp;<button class="btn btn-sm btn-primary"
-								  title="Copy to clipboard" id="btnCopyCohortSQLClipboard" data-bind="click: copyCohortSQLToClipboard" data-clipboard-target="#cohortSQL"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
-							</div>
-						</div>
-						<div class="tab-content">
-							<div role="tabpanel" data-bind="visible: $component.isLoadingSql()">
-								<div class="loading">Loading</div>
-							</div>
-							<div id="cohortSQL">
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'ohdsisql' && !$component.isLoadingSql()">
-									<pre data-bind="html: $component.templateSql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'mssql' && !$component.isLoadingSql()">
-									<pre data-bind="html: $component.generatedSql.mssql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'msaps' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.msaps"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'oracle' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.oracle"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'postgresql' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.postgresql"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'redshift' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.redshift"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'impala' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.impala"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'netezza' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.netezza"></pre>
-								</div>
-								<div role="tabpanel" data-bind="visible: $component.exportSqlMode() == 'bigquery' && !$component.isLoadingSql()">
-									<pre data-bind="text: $component.generatedSql.bigquery"></pre>
-								</div>
-							</div>
-						</div>
+						<export-sql params="
+							analysisId: $component.currentCohortDefinition() && $component.currentCohortDefinition().id(),
+							expression: $component.currentCohortDefinition() && $component.currentCohortDefinition().expression,
+							isPermittedExport: hasAccess,
+							exportSqlService: $component.exportSqlService,
+						"></export-sql>
 					</div>
 				</div>
 			</div>
@@ -607,6 +525,25 @@
 		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
 		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
 	</atlas-modal>
+	<atlas-modal params="
+		showModal: $component.showImportConceptSetModal,
+		template: 'import-conceptset-template',
+		title: 'Import Concept Set From Repository...',
+		data: {
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
+			criteriaContext: criteriaContext,
+			cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
+		}
+	"
+	></atlas-modal>
+	<script type='text/html' id="import-conceptset-template">
+		<cohort-concept-set-browser params="
+			criteriaContext: criteriaContext,
+			cohortConceptSets: cohortConceptSets,
+			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+			buttonActionEnabled: false
+		"></cohort-concept-set-browser>
+	</script>
 
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,

@@ -18,7 +18,7 @@ define([
 			super(params);
       this.selectedConcepts = sharedState.selectedConcepts;
       this.currentConceptSet = sharedState.ConceptSet.current;
-      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.currentConceptSetDirtyFlag;
+      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
       this.currentConceptSetNegativeControls = sharedState.ConceptSet.negativeControls;
       this.conceptSetInclusionIdentifiers = sharedState.conceptSetInclusionIdentifiers;
       this.resultsUrl = sharedState.resultsUrl;

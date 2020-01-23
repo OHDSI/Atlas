@@ -59,7 +59,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			]
 		}
 		self.orderClasses = params.orderClasses || false;
-		self.ordering = params.ordering || true;
+		self.ordering = params.ordering !== undefined ? params.ordering : true;
 		self.scrollOptions = params.scrollOptions || null;
 		self.createdRow = params.createdRow || null;
 

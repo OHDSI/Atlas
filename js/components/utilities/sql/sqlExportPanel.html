@@ -1,0 +1,6 @@
+<div>
+    <loading data-bind="visible: loading"></loading>
+    <!-- ko ifnot: loading -->
+    <pre data-bind="html: sqlText, attr:{ id: clipboardTarget }"></pre>
+    <!-- /ko -->
+</div>
