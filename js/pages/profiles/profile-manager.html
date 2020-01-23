@@ -400,7 +400,7 @@
 
   <div  id="profileTimeline2" data-bind="visible:showSection.profileChart&&!$component.cantFindSecondPerson()&&!$component.loadingSecondPerson()&&secondPersonId()"></div>
   <faceted-datatable
-  data-bind="visible:showSection.datatable&&!$component.cantFindSecondPerson()&&!$component.loadingSecondPerson()&&secondPersonId()"
+  data-bind="visible:$component.showSection.datatable()&&!$component.cantFindSecondPerson()&&!$component.loadingSecondPerson()&&secondPersonId()"
   params="{
     reference: secondPersonRecords,
     xfObservable: xfObservableSecond,
