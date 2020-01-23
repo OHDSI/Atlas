@@ -33,8 +33,8 @@ define([
 		}
 
 		async onPageCreated() {
-			const atlasIssues = await this.getIssuesFromAllPages('OHDSI/Atlas', 29);
-			const webapiIssues = await this.getIssuesFromAllPages('OHDSI/WebAPI', 31);
+			const atlasIssues = await this.getIssuesFromAllPages('OHDSI/Atlas', 30);
+			const webapiIssues = await this.getIssuesFromAllPages('OHDSI/WebAPI', 32);
 			let issues = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
 			// The API returns both issues and PRs and PRs in most cases would duplicate issues, therefore just leave issues
 			issues = issues.filter(item => item.html_url.includes('/issues/'));
