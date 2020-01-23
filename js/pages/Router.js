@@ -8,6 +8,7 @@ define(
     'knockout',
     'const',
     'services/EventBus',
+	'datatables.net',
     'director',
 	],
 	(
@@ -19,6 +20,7 @@ define(
     ko,
     constants,
     EventBus,
+    dataTables
 	) => {
     class AtlasRouter {
       constructor() {
@@ -122,6 +124,7 @@ define(
       setCurrentView(view, routerParams = false) {
         if (view !== this.currentView()) {
 					this.currentView('loading');
+					dataTables.ext._unique = 0;
 				}
 				if (routerParams !== false) {
 					this.routerParams(routerParams);
