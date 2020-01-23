@@ -5,11 +5,13 @@ define([
 	'../StratifyRule',
 	'components/cohortbuilder/options',
 	'components/Component',
+	'utils/AutoBind',	
 	'utils/CommonUtils',
 	'conceptsetbuilder/components',
 	'components/cohort-definition-browser',				
 	'databindings',
-	'components/cohortbuilder/components'
+	'components/cohortbuilder/components',
+	'less!./editor.less',
 ], function (
 	ko,
 	view,
@@ -17,9 +19,10 @@ define([
 	StratifyRule,
 	options,
 	Component,
-	commonUtils
+	AutoBind,
+	commonUtils,
 ) {
-	class IRAnalysisEditorModel extends Component {
+	class IRAnalysisEditorModel extends AutoBind(Component) {
 		constructor(params) {
 			super(params);					
 			this.options = options;
@@ -39,18 +42,13 @@ define([
 				console.log("New analysis set.");
 				this.selectedStrataRule(params.analysis().strata()[this.selectedStrataRuleIndex]);
 			}));
-
-			this.addStudyWindow = this.addStudyWindow.bind(this);
-			this.addTargetCohort = this.addTargetCohort.bind(this);
-			this.addOutcomeCohort = this.addOutcomeCohort.bind(this);			
-			this.deleteTargetCohort = this.deleteTargetCohort.bind(this);
-			this.deleteOutcomeCohort = this.deleteOutcomeCohort.bind(this);
-			this.cohortSelected = this.cohortSelected.bind(this);
-			this.copyStrataRule = this.copyStrataRule.bind(this);
-			this.deleteStrataRule = this.deleteStrataRule.bind(this);
-			this.selectStrataRule = this.selectedStrataRule.bind(this);
-			this.addStrataRule = this.addStrataRule.bind(this);
-			this.dispose = this.dispose.bind(this);
+			
+			this.tarMessage = ko.pureComputed( () => {
+				const analysis = this.analysis();
+				if (analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField()) {
+					if (analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset()) return "Error: Time at risk starts on or after time at risk end, resulting in zero time at risk.  Please ensure the start offset is greater than the end offset."
+				}
+			})
 		}
 			
 		addStudyWindow() {
