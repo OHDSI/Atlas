@@ -5,8 +5,8 @@ define([
 		'../InputTypes/Window',
 		'../AdditionalCriteria',
 		'../options',
-		'./utils',
-		'./const',
+		'../utils',
+		'../const',
 		'text!./CriteriaGroupTemplate.html',
 		'components/DropDownMenu'],
 	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
@@ -19,6 +19,7 @@ define([
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
+		self.indexMessage = params.indexMessage;
 		self.groupCountOptions = ko.pureComputed(function () {
 			var optionsArray = ['0'];
 			for (var i = 0; i < (self.group().CriteriaList().length + self.group().Groups().length); i++) {

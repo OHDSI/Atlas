@@ -162,7 +162,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period',
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date.",
+				description: "Apply criteria using the payer plan period as the index event.",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
@@ -173,6 +173,9 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period',
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
+		
+		self.indexMessage = "The index date refers to the payer plan period.";
+
 	}
 
 	return {
