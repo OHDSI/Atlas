@@ -81,6 +81,8 @@ define([
 				this.start()
 			}
 
+			this.isRefreshing = ko.observable(false);
+
 			this.hideCompleted = ko.computed({
 				owner: ko.observable(localStorage.getItem("jobs-hide-statuses")),
 				read: function() { 
@@ -92,8 +94,8 @@ define([
 				}
 			});
 
-			this.changeCompletedFilter = () => {
-				var value = this.hideCompleted();
+			this.toggleCompletedFilter = () => {
+				const value = this.hideCompleted();
 				this.hideCompleted(!value);
 				
 				this.stopPolling();
@@ -116,9 +118,9 @@ define([
 			}
 		}
 
-		startPolling(clearPreviousValues) {
+		startPolling(needsRefresh) {
 			this.pollId = PollService.add({
-				callback: () => this.updateJobStatus(clearPreviousValues),
+				callback: () => this.updateJobStatus(needsRefresh),
 				interval: appConfig.pollInterval,
 			});
 		};
@@ -131,19 +133,24 @@ define([
 			return this.jobListing().find(j => j.executionId === n.executionId);
 		}
 
-		async updateJobStatus(clearPreviousValues) {
+		async updateJobStatus(needsRefresh) {
 			if (authApi.isPermittedGetAllNotifications()) {
 				try {
+					if (needsRefresh) {
+						this.isRefreshing(true);
+					}
 					var hideStatuses = [];
 					if (this.hideCompleted()) {
 						hideStatuses.push(constants.generationStatuses.COMPLETED);
 					}
+					const previousJobListing = this.jobListing();
 					const notifications = await jobDetailsService.list(hideStatuses);
-					if (clearPreviousValues) {
+					if (needsRefresh) {
 						this.jobListing([]);
 					}
 					notifications.data.forEach(n => {
 						let job = this.getExisting(n);
+						const previousJob = previousJobListing.find(j => j.executionId === n.executionId);
 
 						const endDate = (n.endDate ? n.endDate : Date.now());
 						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
@@ -159,12 +166,16 @@ define([
 								this.jobListing.valueHasMutated();
 							}
 						} else {
+							let viewed = ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime);
+							if (previousJob && previousJob.viewed()) {
+								viewed(true);
+							} 
 							job = {
 								type: n.jobInstance.name,
 								name: n.jobParameters.jobName,
 								status: ko.observable(n.status),
 								executionId: n.executionId,
-								viewed: ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime),
+								viewed: viewed,
 								url: jobDetailsService.getJobURL(n),
 								executionUniqueId: ko.pureComputed(function () {
 									return job.type + "-" + job.executionId;
@@ -179,6 +190,10 @@ define([
 					});
 				} catch (e) {
 					console.warn('The server error occurred while getting all notifications');
+				} finally {
+					if (needsRefresh) {
+						this.isRefreshing(false);
+					}
 				}
 			} else if (!this.permissionCheckWarningShown) {
 				console.warn('There isn\'t permission to get all notifications');
