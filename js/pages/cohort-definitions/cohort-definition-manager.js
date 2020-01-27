@@ -1408,7 +1408,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			onRouterParamsChanged(params) {
 				const { cohortDefinitionId, conceptSetId, mode = 'definition', sourceKey, sampleId } = params;
-				console.log('params change', cohortDefinitionId, conceptSetId, mode , sourceKey)
 				this.cohortDefinitionIdOnRoute(cohortDefinitionId)
 				this.clearConceptSet();
 				this.tabMode(mode);
@@ -2007,8 +2006,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				const sourceKey=this.sampleSourceKey()
 				sampleService.getSampleList({cohortDefinitionId, sourceKey})
 				.then(res => {
-					const sampleListData = mapSampleListData(res)
-					console.log(sampleListData)
+					if(res.generationStatus!="COMPLETE") {
+						this.sampleSourceKey(null)
+						alert('Cohort should be generated before creating samples')
+						return
+					}
+					const sampleListData = mapSampleListData(res.samples)
 					this.sampleList(sampleListData)
 				})
 				.catch(error=>{
