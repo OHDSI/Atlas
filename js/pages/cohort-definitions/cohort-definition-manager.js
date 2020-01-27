@@ -1019,7 +1019,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			async save () {
 				const result = window.confirm('Modify cohort definition will delete all created samples, do you still want to proceed?')
 				if(!result) return
-				
+				this.sampleSourceKey(null)
 				this.isSaving(true);
 				clearTimeout(this.pollTimeout);
 
