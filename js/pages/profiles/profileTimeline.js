@@ -674,13 +674,17 @@ define(function(require, exports) {
         .attr('class', 'observationLine')
         .attr('x1', d => this.xDayScale(d.startDay))
         .attr('x2', d => this.xDayScale(d.endDay))
-        .attr(
-          'style',
-          d =>
-            `fill: ${
-              d.inDomainLine ? this.circleFill : this.colorScheme(d.conceptId)
-            }`
-        )
+        .attr('stroke', d => {
+          if (d.inDomainLine) {
+            return ` ${this.circleFill}`
+          } else {
+            if (d.selectedColor) {
+              return `${d.selectedColor}`
+            } else {
+              return `${this.colorScheme(d.conceptId)}`
+            }
+          }
+        })
         .attr('stroke-width', this.lineStrokeWidth)
 
       // cicles
