@@ -418,6 +418,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				return false
 			})
+			this.enableViewPatients = ko.computed(() => {
+				return this.sampleData().filter(el=>el.selected).length>0;
+			})
 			//end of sample states
 
 			this.cdmSources = ko.computed(() => {
@@ -2062,7 +2065,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			onSampleDataClick(d) {
 				const selectedPatients = this.sampleData().filter(el=>el.selected).map(el=>el.personId);
 				//change checkbox state
-				// this.sampleData.replace(d, {...d, selected: !d.selected})
 
 				if (selectedPatients.includes(d.personId)) {
 					this.sampleData.replace(d, { ...d, selected: !d.selected })
@@ -2094,6 +2096,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				const selectedPatients = this.sampleData().filter(el=>el.selected).map(el=>el.personId);
 				if(selectedPatients.length==0) {
 					alert('You must select one or two patients to proceed')
+					return
 				}
 				if(selectedPatients[1]) {
 					window.open(`#/profiles/${sourceKey}/${selectedPatients[0]}/${cohortDefinitionId}/${sampleId}/${selectedPatients[1]}`)
