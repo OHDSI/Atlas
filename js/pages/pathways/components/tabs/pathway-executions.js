@@ -117,7 +117,7 @@ define([
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
-				isJobListMutated: true,
+				shouldMutateJobList: true,
 			});
 		}
 

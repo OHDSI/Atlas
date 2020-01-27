@@ -314,7 +314,7 @@ define([
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
-				isJobListMutated: true,
+				shouldMutateJobList: true,
 			});
 		}
 
