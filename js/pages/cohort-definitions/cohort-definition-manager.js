@@ -165,7 +165,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			const sampleId = el.id;
 			const sampleName = el.name || ''
 			const patientCounts = el.size
-			const createdBy = el.createdBy || ''
+			const createdBy = el.createdBy && el.createdBy.name || ''
 			const createdOn = new Date(el.createdDate).toLocaleString()
 			return {
 				sampleId,
