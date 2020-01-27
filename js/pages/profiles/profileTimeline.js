@@ -128,6 +128,18 @@ define(function(require, exports) {
             .style('z-index', -1)
         }
       })
+
+      window.addEventListener(
+        'resize',
+        _.throttle(() => {
+          this.width =
+            document.getElementById(this.chartContainer).offsetWidth -
+            this.margin.left -
+            this.margin.right
+          this.updateScale()
+          this.drawTimeline(this.originalData)
+        }, 200)
+      )
     }
 
     updateData(rawData) {
@@ -172,6 +184,10 @@ define(function(require, exports) {
     }
 
     updateScale() {
+      // dayAxis Scale
+      this.xDayScale = d3.scaleLinear().range([0, this.width])
+      // dateAxis Scale
+      this.xDateScale = d3.scaleTime().range([0, this.width])
       this.xDayScale.domain([this.minMoment, this.maxMoment])
       // dateAxis Scale
       this.xDateScale.domain([this.minDate, this.maxDate])
