@@ -82,7 +82,6 @@ define([
       }
       this.sharedState = sharedState
       this.config = config
-      this.filterHighlightsText = ko.observable()
       this.loadingStatus = ko.observable('loading')
 
       this.sourceKey = ko.observable(router.routerParams().sourceKey)
@@ -299,11 +298,9 @@ define([
       this.personRequest
       this.xfObservable = ko.observable()
       this.crossfilter = ko.observable()
-      this.highlightEnabled = ko.observable(false)
       this.filteredRecs = ko.observableArray([])
       this.filtersChanged = ko.observable()
       this.facetsObs = ko.observableArray([])
-      this.highlightRecs = ko.observableArray([])
       this.getGenderClass = ko.computed(() => {
         if (this.person()) {
           if (this.person().gender === 'FEMALE') {
@@ -378,78 +375,9 @@ define([
           filter: ko.observable(null),
         },
       }
-      this.searchHighlight = ko.observable()
-      this.highlightData = ko.observableArray()
-      this.defaultColor = '#888'
-      this.words = ko.computed(() => {
-        if (!this.xfObservable()) {
-          return
-        }
-        this.dimensionSetup(this.dimensions.concepts, this.xfObservable())
-        const stopWords = ['Outpatient Visit', 'No matching concept']
-        let words = this.dimensions.concepts.group.all().filter(d => {
-          let filtered = true
-          if (
-            this.filterHighlightsText() &&
-            this.filterHighlightsText().length > 0
-          ) {
-            if (
-              d.key
-                .toLowerCase()
-                .indexOf(this.filterHighlightsText().toLowerCase()) == -1
-            ) {
-              filtered = false
-            }
-          }
-          return d.value.length && stopWords.indexOf(d.key) === -1 && filtered
-        })
-        words = words.map(d => {
-          return {
-            caption: d.key,
-            domain: d.value[0].domain,
-            text: d.key,
-            recs: d.value,
-            count: d.value.length,
-            highlight: ko.observable(this.defaultColor),
-          }
-        })
-        words = _.sortBy(words, d => -d.recs.length)
-        // profile chart will render all data in case when no data is captured by filter
-        if (words.length !== 0) {
-          this.highlightData(words)
-        }
-      })
-
-      this.searchHighlight.subscribe(func => {
-        if (func) this.highlight(this.filteredRecs().filter(func))
-        else this.highlight([])
-      })
       this.cohortDefinitionButtonText = ko.observable(
         'Click Here to Select a Cohort'
       )
-
-      this.highlightDom =
-        '<<"row vertical-align"<"col-xs-6"><"col-xs-6 search"f>><t><"row vertical-align"<"col-xs-6"i><"col-xs-6"p>>>'
-      this.highlightColumns = [
-        'select',
-        {
-          render: this.swatch,
-          data: 'highlight()',
-          sortable: false,
-        },
-        {
-          title: 'Concept Name',
-          data: 'caption',
-        },
-        {
-          title: 'Domain',
-          data: 'domain',
-        },
-        {
-          title: 'Total Records',
-          data: 'count',
-        },
-      ]
 
       this.patientSelectionColumn = [
         {
@@ -531,14 +459,8 @@ define([
         if (this.sampleId() && personId) {
           this.loadComparingPerson()
         }
-        console.log(personId)
       })
 
-      $('.highlight-filter').on('click', function(evt) {
-        return false
-      })
-
-      this.highlightOptions = {}
       this.options = {
         Facets: [
           {
@@ -548,7 +470,6 @@ define([
         ],
       }
 
-      $('#modalHighlights').draggable()
       $('#modalPatientSelection').draggable()
 
       if (this.personId() && !this.sampleId()) {
@@ -563,7 +484,6 @@ define([
     loadPerson() {
       this.cantFindPerson(false)
       this.loadingPerson(true)
-      console.log('zz')
       let url = constants.paths.person(this.sourceKey(), this.personId())
       this.loadingStatus('loading profile data from database')
       this.personRequest = this.personRequests[url] = profileService
@@ -608,7 +528,6 @@ define([
           }
         })
         .catch(err => {
-          console.error(err)
           // remove if error
           if (this.timeline1) {
             this.timeline1.remove()
@@ -617,26 +536,6 @@ define([
           this.cantFindPerson(true)
           this.loadingPerson(false)
         })
-    }
-
-    removeHighlight() {
-      this.highlight([])
-    }
-
-    highlight(recs, evt) {
-      if (recs && recs.length > 0) {
-        this.highlightEnabled(true)
-      } else {
-        this.highlightEnabled(false)
-      }
-      this.highlightRecs(
-        [
-          {
-            color: '#f00',
-            recs: recs,
-          },
-        ] || []
-      )
     }
 
     dimensionSetup(dim, cf) {
@@ -656,50 +555,6 @@ define([
 
     swatch(d) {
       return '<div class="swatch" style="background-color:' + d + '"></div>'
-    }
-
-    setHighlights(colorIndex) {
-      const dt = $('#highlight-table table').DataTable()
-      const rows = dt.rows('.selected')
-      var selectedData = rows.data()
-      for (let i = 0; i < selectedData.length; i++) {
-        //get color here
-        selectedData[i].highlight(this.getHighlightBackground(colorIndex)) // set the swatch color
-        selectedData[i].recs.forEach(r => {
-          r.highlight = this.getHighlightBackground(colorIndex)
-          r.stroke = this.getHighlightColor(colorIndex)
-        }) // set the record colors
-      }
-      rows && rows[0] && rows[0].forEach(r => dt.row(r).invalidate())
-      this.highlightRecs.valueHasMutated()
-    }
-
-    getHighlightColor(i) {
-      return this.palette[i * 2]
-    }
-
-    getHighlightBackground(i) {
-      return this.palette[i * 2 + 1]
-    }
-
-    clearHighlights() {
-      const dt = $('#highlight-table table').DataTable()
-      const rows = dt.rows('.selected')
-      var selectedData = rows.data()
-      for (let i = 0; i < selectedData.length; i++) {
-        selectedData[i].highlight(this.defaultColor) // set the swatch color
-        selectedData[i].recs.forEach(r => {
-          r.highlight = this.defaultColor // set the record colors
-          r.stroke = this.defaultColor // set the record colors
-        })
-      }
-      rows && rows[0] && rows[0].forEach(r => dt.row(r).invalidate())
-      this.highlightRecs.valueHasMutated()
-    }
-
-    highlightRowClick(data, evt, row) {
-      evt.stopPropagation()
-      $(row).toggleClass('selected')
     }
 
     canViewProfileDates() {
