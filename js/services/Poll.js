@@ -17,7 +17,7 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
       this.isJobListMutated.extend({ notify: 'always' });
     }
     add(opts = {}, ...args) {
-      const { callback = () => {}, interval = 1000, isSilentAfterFirstCall = false, isJobListMutated = false } = opts;
+      const { callback = () => {}, interval = 1000, isSilentAfterFirstCall = false, shouldMutateJobList = false } = opts;
       const id = new Date().valueOf();
       callbacks.set(id, {
         callback,
@@ -26,11 +26,11 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
         totalFnCalls: 0,
         args
       });
-      this.start(id, isJobListMutated);
+      this.start(id, shouldMutateJobList);
       return id;
     }
 
-    async start(id, isJobListMutated) {
+    async start(id, shouldMutateJobList) {
       if (callbacks.has(id)) {
         const cb = callbacks.get(id);
         const { callback, interval, isSilentAfterFirstCall, totalFnCalls, args } = cb;
@@ -38,13 +38,13 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
           if (isPageForeground()) {
             const silently = isSilentAfterFirstCall && totalFnCalls > 0;
             await callback(silently);
-            this.isJobListMutated(isJobListMutated);            
+            this.isJobListMutated(shouldMutateJobList);            
             callbacks.set(id, { ...cb, totalFnCalls: totalFnCalls + 1 });
           }
         } catch(e) {
           console.log(e);
         } finally {
-          setTimeout(() => this.start(id, isJobListMutated), interval);
+          setTimeout(() => this.start(id, shouldMutateJobList), interval);
         }
       }
     }
