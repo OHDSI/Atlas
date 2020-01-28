@@ -36,6 +36,9 @@
 			jobListing: $component.sortedJobListing,
 			jobNameClick: $component.jobNameClick,
 			jobModalOpened: $component.jobModalOpened,
+			toggleCompletedFilter: $component.toggleCompletedFilter,
+			hideCompleted: $component.hideCompleted(),
+			isRefreshing: $component.isRefreshing(),
 			classes: $component.classes
 		}
 }">
@@ -63,6 +66,14 @@
 					<td data-bind="css: $parent.classes('job-status'), html: status"></td>
 				</tr>
 				<!-- /ko -->
+				<td colspan="4">
+					<div class="btn-group pull-right">
+						<button type="button" class="btn btn-sm btn-primary" data-bind="click: toggleCompletedFilter">
+							<span data-bind="text: (hideCompleted ? 'Show' : 'Hide') + ' completed jobs'"></span>
+							<i data-bind="visible: isRefreshing, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+						</button>
+					</div>
+				</td>
 				</tbody>
 			</table>
 		</div>
