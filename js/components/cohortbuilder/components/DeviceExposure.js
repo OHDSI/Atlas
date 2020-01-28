@@ -29,19 +29,19 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add Start Date Criteria",
 				value: 0,
 				selected: false,
-				description: "Filter Procedure Occurrences by the Procedure Start Date."
+				description: "Filter Device Exposures by the Exposure Start Date."
 			},
 			{
 				text: "Add End Date Criteria",
 				value: 1,
 				selected: false,
-				description: "Filter Device Exposure by the Procedure Start Date."
+				description: "Filter Device Exposures by the Exposure End Date."
 			},
 			{
 				text: "Add Device Type Criteria",
 				value: 2,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Type."
+				description: "Filter Device Exposures by the Exposure Type."
 			},
 			{
 				text: "Add Visit Criteria",
