@@ -53,23 +53,16 @@ define([
 						});
 						this.jobListing.valueHasMutated();
 					} else {
-						this.lastViewedTime = Date.now()
+						this.lastViewedTime = Date.now();
 					}
 				} else {
 					console.warn('There isn\'t permission to post viewed notification');
 				}
 			});
 
-			this.jobNotificationsPending = ko.computed(() => {
-				var unviewedNotificationCount = this.jobListing().filter(j => {
-					return !j.viewed();
-				}).length;
-				return unviewedNotificationCount;
-			});
+			this.jobNotificationsPending = ko.computed(() => this.jobListing().filter(j => !j.viewed()).length);
 
-			this.isLoggedIn = ko.computed(() => {
-				return authApi.isAuthenticated();
-			});
+			this.isLoggedIn = ko.computed(() => authApi.isAuthenticated());
 			this.isLoggedIn.subscribe((isLoggedIn) => {
 				if (isLoggedIn) {
 					this.start();
@@ -78,7 +71,7 @@ define([
 				}
 			});
 			if (this.isLoggedIn() || !appConfig.userAuthenticationEnabled) {
-				this.start()
+				this.start();
 			}
 
 			this.isRefreshing = ko.observable(false);
@@ -99,7 +92,7 @@ define([
 				this.hideCompleted(!value);
 				
 				this.stopPolling();
-				this.startPolling(true);
+				this.startPolling();
 			};
 		}
 
@@ -118,88 +111,63 @@ define([
 			}
 		}
 
-		startPolling(needsRefresh) {
+		startPolling() {
 			this.pollId = PollService.add({
-				callback: () => this.updateJobStatus(needsRefresh),
+				callback: () => this.updateJobStatus(),
 				interval: appConfig.pollInterval,
 			});
-		};
+		}
 
 		stopPolling() {
 			PollService.stop(this.pollId);
-		};
+		}
 
 		getExisting(n) {
 			return this.jobListing().find(j => j.executionId === n.executionId);
 		}
 
-		async updateJobStatus(needsRefresh) {
+		async updateJobStatus() {
 			if (authApi.isPermittedGetAllNotifications()) {
 				try {
-					if (needsRefresh) {
-						this.isRefreshing(true);
-					}
-					var hideStatuses = [];
+					this.isRefreshing(true);
+					const hideStatuses = [];
 					if (this.hideCompleted()) {
 						hideStatuses.push(constants.generationStatuses.COMPLETED);
 					}
-					const previousJobListing = this.jobListing();
 					const notifications = await jobDetailsService.list(hideStatuses);
-					if (needsRefresh) {
-						this.jobListing([]);
-					}
-					notifications.data.forEach(n => {
-						let job = this.getExisting(n);
-						const previousJob = previousJobListing.find(j => j.executionId === n.executionId);
+					const jobs = notifications.data.map(n => {
+						const previousJob = this.jobListing().find(j => j.executionId === n.executionId);
 
 						const endDate = (n.endDate ? n.endDate : Date.now());
 						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
 						const displayedEndDate = n.endDate ? momentApi.formatDateTime(new Date(n.endDate)) : '';
 
-						if (job) {
-							if (job.status() !== n.status) {
-								job.status(n.status);
-								job.viewed(false);
-								job.duration = duration;
-								job.endDate = displayedEndDate;
-								job.url = jobDetailsService.getJobURL(n);
-								this.jobListing.valueHasMutated();
-							}
-						} else {
-							let viewed = ko.observable(n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime);
-							if (previousJob && previousJob.viewed()) {
-								viewed(true);
-							} 
-							job = {
-								type: n.jobInstance.name,
-								name: n.jobParameters.jobName,
-								status: ko.observable(n.status),
-								executionId: n.executionId,
-								viewed: viewed,
-								url: jobDetailsService.getJobURL(n),
-								executionUniqueId: ko.pureComputed(function () {
-									return job.type + "-" + job.executionId;
-								}),
-								duration,
-								endDate: displayedEndDate,
-							};
-							this.jobListing.push(job);
-							this.jobListing.valueHasMutated();
-
-						}
+						const job = {
+							type: n.jobInstance.name,
+							name: n.jobParameters.jobName,
+							status: n.status,
+							executionId: n.executionId,
+							viewed: ko.observable((previousJob && previousJob.viewed()) || (n.startDate && this.lastViewedTime && (n.endDate || n.startDate) < this.lastViewedTime)),
+							url: jobDetailsService.getJobURL(n),
+							executionUniqueId: ko.pureComputed(function () {
+								return job.type + "-" + job.executionId;
+							}),
+							duration,
+							endDate: displayedEndDate,
+						};
+						return job;
 					});
+					this.jobListing(jobs);
 				} catch (e) {
 					console.warn('The server error occurred while getting all notifications');
 				} finally {
-					if (needsRefresh) {
-						this.isRefreshing(false);
-					}
+					this.isRefreshing(false);
 				}
 			} else if (!this.permissionCheckWarningShown) {
 				console.warn('There isn\'t permission to get all notifications');
 				this.permissionCheckWarningShown = true;
 			}
-		};
+		}
 
 		jobNameClick(j) {
 			this.jobModalOpened(false);
