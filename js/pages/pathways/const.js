@@ -4,6 +4,7 @@ define((require, exports) => {
 	const pathwayGenerationStatus = {
 		STARTED: 'STARTED',
 		COMPLETED: 'COMPLETED',
+		PENDING: 'STARTING',
 	};
 
 	const combinationWindowOptions = ['1', '3', '5', '7', '10', '14', '30'];

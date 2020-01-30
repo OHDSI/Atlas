@@ -82,12 +82,15 @@ define([
 					data: 'status',
 					className: this.classes('col-exec-status'),
 					render: (s, p, d) => {
-						if (s === 'FAILED') {
-							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
-						} else if (s === 'STOPPED') {
-							return 'CANCELED';
-						} else {
-							return s;
+						switch (s) {
+							case 'FAILED':
+								return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
+							case 'STOPPED':
+								return 'CANCELED';
+							case 'STARTING':
+								return 'PENDING';
+							default:
+								return s;
 						}
 					},
 				},
@@ -141,9 +144,13 @@ define([
 		}
 
 		getExecutionGroupStatus(submissions) {
-			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
-				this.pathwayGenerationStatusOptions.STARTED :
-				this.pathwayGenerationStatusOptions.COMPLETED;
+			const submissionStatuses = submissions().map(s => s.status);
+			if (submissionStatuses.includes(this.pathwayGenerationStatusOptions.PENDING)) {
+				return this.pathwayGenerationStatusOptions.PENDING;
+			} else if (submissionStatuses.includes(this.pathwayGenerationStatusOptions.STARTED)) {
+				return this.pathwayGenerationStatusOptions.STARTED;
+			}
+			return this.pathwayGenerationStatusOptions.COMPLETED;
 		}
 
 		async loadData({silently = false} = {}) {
