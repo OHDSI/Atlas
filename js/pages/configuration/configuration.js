@@ -10,6 +10,7 @@ define([
   'atlas-state',
   'const',
   'services/JobDetailsService',
+  'services/job/jobDetail',
   'services/Poll',
   'services/CacheAPI',
   'less!./configuration.less',
@@ -26,6 +27,7 @@ define([
   sharedState,
   constants,
   jobDetailsService,
+  jobDetail,
   PollService,
   cacheApi,
 ) {
@@ -89,8 +91,16 @@ define([
       return this.sourceJobs.get(job.executionId);
     }
 
-    checkJobs() {
-      this.jobListing().forEach(job => {
+    async checkJobs() {
+      const notifications = await jobDetailsService.list([]);
+      const jobs = notifications.data.map(n => {
+          const job = new jobDetail();
+          job.status(n.status);
+          job.executionId = n.executionId;
+          return job;
+      });
+
+      jobs.forEach(job => {
         let source = this.getSource(job);
         if (source && (job.isComplete() || job.isFailed())) {
           this.sourceJobs.delete(job.executionId);
