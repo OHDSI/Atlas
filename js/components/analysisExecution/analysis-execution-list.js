@@ -15,7 +15,7 @@ define([
   'less!./analysis-execution-list.less',
   'components/modal-exit-message',
 ], function (
-	ko,
+  ko,
   Component,
   config,
   CommonUtils,
@@ -29,8 +29,8 @@ define([
   consts,
 	view
 ) {
-	class AnalysisExecutionList extends Component {
-		constructor({
+  class AnalysisExecutionList extends Component {
+    constructor({
       analysisId,
       design,
       ExecutionService,
@@ -184,13 +184,13 @@ define([
     }
 
     showExitMessage(sourceKey, id) {
-			const group = this.getExecutionGroup(sourceKey) || { submissions: ko.observableArray() };
-			const submission = group.submissions().find(({ id: submissionId }) => submissionId === id);
-			if (submission && submission.exitMessage) {
-				this.exitMessage(submission.exitMessage);
-				this.isExitMessageShown(true);
-			}
-		}
+      const group = this.getExecutionGroup(sourceKey) || { submissions: ko.observableArray() };
+      const submission = group.submissions().find(({ id: submissionId }) => submissionId === id);
+      if (submission && submission.exitMessage) {
+        this.exitMessage(submission.exitMessage);
+        this.isExitMessageShown(true);
+      }
+    }
 
     toggleSection(idx) {
       this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);

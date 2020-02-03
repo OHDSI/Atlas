@@ -95,13 +95,14 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
         }
 
         const renderExecutionDesign = (isPermittedFn, currentHash) => (s, p, d) => {
+            const { id, tag = '-', hashCode } = d;
             let html = '';
-            if (isPermittedFn(d.id) || true) {
-              html = `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${d.id})">${(d.tag || '-')}</a>`;
+            if (isPermittedFn(id)) {
+              html = `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${id})">${(tag)}</a>`;
             } else {
-              html = d.tag || '-';
+              html = tag;
             }
-            html += currentHash() === d.hashCode ? ' (same as now)' : '';
+            html += currentHash() === hashCode ? ' (same as now)' : '';
             return html;
         };
 
