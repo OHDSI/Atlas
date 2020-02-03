@@ -43,7 +43,7 @@ define([
         return httpService.doPut(config.webAPIRoot + 'cohort-characterization/' + id, design).then(res => res.data);
     }
 
-    function loadCharacterizationExecutionList(id) {
+    function listExecutions(id) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/generation')
             .then(res => executionUtils.generateVersionTags(res.data));
@@ -67,7 +67,7 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationExportDesignByGeneration(generationId) {
+    function loadExportDesignByGeneration(generationId) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/design')
             .then(res => res.data);
@@ -112,11 +112,11 @@ define([
         copyCharacterization,
         updateCharacterization,
         deleteCharacterization,
-        loadCharacterizationExecutionList,
+        listExecutions,
         loadCharacterizationExecution,
         loadCharacterizationResults,
         loadCharacterizationResultsCount,
-        loadCharacterizationExportDesignByGeneration,
+        loadExportDesignByGeneration,
         runGeneration,
         getPrevalenceStatsByGeneration,
         cancelGeneration,

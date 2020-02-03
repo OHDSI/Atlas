@@ -29,7 +29,6 @@ define([
     'components/tabs',
 	'./components/prediction-specification-view-edit',
 	'./components/prediction-utilities',
-	'./components/prediction-executions',
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
@@ -93,6 +92,7 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable());
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -104,6 +104,15 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
+				analysisId: sharedState.estimationAnalysis.selectedId,
+				PermissionService,
+				ExecutionService: PredictionService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'prediction-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
 			});
 
 			this.canDelete = ko.pureComputed(() => {

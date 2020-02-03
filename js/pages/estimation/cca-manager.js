@@ -25,7 +25,6 @@ define([
     'components/tabs',
 	'./components/cca-specification-view-edit',
 	'./components/cca-utilities',
-	'./components/cca-executions',
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
@@ -85,6 +84,8 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable());
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
@@ -97,6 +98,15 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
+				analysisId: sharedState.estimationAnalysis.selectedId,
+				PermissionService,
+				ExecutionService: EstimationService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'estimation-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
 			});
 
 			this.isNameFilled = ko.computed(() => {

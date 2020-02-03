@@ -114,6 +114,21 @@ define([
 			PENDING: 'PENDING',
 		};
 
+		const executionStatuses = {
+			STARTED: 'STARTED',
+			COMPLETED: 'COMPLETED',
+			PENDING: 'STARTING',
+			FAILED: 'FAILED',
+			CANCELED: 'STOPPED',
+			STOPPING: 'STOPPING',
+			RUNNING: 'RUNNING',
+		};
+
+		const executionResultModes = {
+			DOWNLOAD: 'DOWNLOAD',
+			VIEW: 'VIEW',
+		}
+
 		const newEntityNames = {
 			characterization: 'New Characterization',
 			featureAnalysis: 'New Feature Analysis',
@@ -178,6 +193,8 @@ define([
 			newEntityNames,
 			pluginTypes,
 			sqlDialects,
+			executionStatuses,
+			executionResultModes,
     };
   }
 );
