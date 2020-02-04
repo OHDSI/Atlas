@@ -35,6 +35,10 @@ define([
             .then(res => res.data);
     }
 
+    function loadAggregates() {
+        return httpService.doGet(`${config.webAPIRoot}feature-analysis/aggregates`).then(res => res.data);
+    }
+
     return {
         loadFeatureAnalysisList,
         loadFeatureAnalysis,
@@ -43,5 +47,6 @@ define([
         updateFeatureAnalysis,
         deleteFeatureAnalysis,
         exists,
+        loadAggregates,
     };
 });

@@ -14,7 +14,7 @@ define([
 
         getRowId(stat) {
             // Transform stratas into rows
-            return stat.strataId;
+            return stat.strataId * 100000 + stat.covariateId;
         }
 
         getResultObject(stat) {
@@ -32,6 +32,12 @@ define([
               data: 'strataName',
               className: this.classes('col-distr-title'),
 							xssSafe:false,
+            },
+            {
+              title: 'Covariate',
+              data: 'covariateName',
+              className: this.classes('col-distr-cov'),
+              xssSafe: false,
             }];
         }
 

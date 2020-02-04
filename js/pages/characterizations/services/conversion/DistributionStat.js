@@ -8,6 +8,8 @@ define([
 			super(stat);
 			this.strataId = stat.strataId;
 			this.strataName = stat.strataName;
+			this.covariateId = stat.covariateId;
+			this.covariateName = stat.covariateName;
 			this.avg = [];
 			this.stdDev = [];
 			this.median = [];

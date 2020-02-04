@@ -25,6 +25,7 @@ define([
     'assets/ohdsi.util',
     '../../utils',
     'const',
+    'lodash',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
@@ -58,6 +59,7 @@ define([
     ohdsiUtil,
     utils,
     globalConstants,
+    lodash,
 ) {
 
     const featureTypes = {
@@ -71,6 +73,8 @@ define([
       { label: 'Distribution', value: 'DISTRIBUTION' },
     ];
 
+    const defaultDomain = { label: 'Any', value: 'ALL' };
+
     class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
@@ -78,8 +82,11 @@ define([
             this.featureId = sharedState.FeatureAnalysis.selectedId;
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
+            this.aggregates = ko.observable({});
+            this.currentAggregate = ko.computed(() => this.data() && this.data().aggregate() && this.data().aggregate().name);
             this.previousDesign = {};
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
+            this.defaultAggregate = ko.observable();
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
@@ -140,6 +147,7 @@ define([
 
         async onPageCreated() {
             await this.loadDomains();
+            await this.loadAggregates();
             super.onPageCreated();
         }
 
@@ -198,6 +206,34 @@ define([
             });
         }
 
+        selectAggregate(item) {
+            this.data().aggregate(item);
+        }
+
+        async loadAggregates() {
+            const aggregates = await FeatureAnalysisService.loadAggregates();
+            const aggregateMap = lodash.sortBy(aggregates.reduce((map, ag) => {
+                ag.isDefault && this.defaultAggregate(ag);
+                const domainId = ag.domain || "ALL";
+                let domain = map.find(d => d.value === domainId);
+                if (!domain) {
+                    domain = {
+                      ...this.domains().find(d => d.value === domainId) || defaultDomain,
+                      aggregates: [],
+                    };
+                    map.push(domain);
+                }
+                domain.aggregates.push(ag);
+                return map;
+            }, []), a => a.label)
+              .map(d => ({
+                ...d,
+                aggregates: lodash.sortBy(d.aggregates, a => a.name),
+              }));
+
+            this.aggregates(aggregateMap);
+        }
+
         async loadDomains() {
             const domains = await FeatureAnalysisService.loadFeatureAnalysisDomains();
             this.domains(domains.map(d => ({ label: d.name, value: d.id })));
@@ -216,7 +252,7 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
+        setupAnalysisData({ id = 0, name = '', descr = '', aggregate = null, domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
             const anaylysisDomain = domain || defaultDomain;
@@ -224,6 +260,7 @@ define([
             let parsedDesign;
             const data = {
               id: id,
+              aggregate: ko.observable(),
               name: ko.observable(),
               domain: ko.observable(),
               descr: ko.observable(),
@@ -265,11 +302,15 @@ define([
 
             data.name(name || this.defaultName);
             data.descr(descr);
+            data.aggregate(aggregate);
             data.domain(anaylysisDomain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
-            data.statType.subscribe(() => this.data().design([]));
+            data.statType.subscribe(() => {
+                this.data().design([]);
+                this.data().aggregate(this.data().statType() === 'DISTRIBUTION' && this.defaultAggregate());
+						});
             data.createdBy(createdBy);
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
