@@ -1,0 +1,40 @@
+<div role="tabpanel">
+
+    <div data-bind="css: classes('result')" role="alert"  >
+        <div data-bind="css: classes('validation-errors'), text: validationErrors"></div>
+    </div>
+
+    <!-- ko if: warnings().jsonIssues -->
+    <div class="alert alert-danger" role="alert">
+        Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.
+        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('jsonIssues')">Fix JSON</a>
+    </div>
+    <!-- /ko -->
+
+    <!-- ko if: $component.dirtyFlag.isDirty() -->
+    <div class="alert alert-danger" role="alert">
+        You must save the role before you can reload.
+    </div>
+    <!-- /ko -->
+
+    <!-- ko if: warnings().permissionSpecificIdsIssues -->
+    <div class="alert alert-warning" role="alert">
+        Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.
+        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('permissionSpecificIdsIssues')">Remove the permissions</a>
+    </div>
+    <!-- /ko -->
+
+    <textarea id="cohortExpressionJSON" class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+
+    <div class="row">
+        <div class="col-md-6" style="float: left">
+            <button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionJSONClipboard"
+                    data-bind="click: copyRoleExpressionJSONToClipboard" data-clipboard-target="#cohortExpressionJSON"> <i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
+            <span id="copyRoleExpressionJSONMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+        </div>
+        <div class="col-md-6" style="text-align: right">
+            <button class="btn btn-sm btn-primary" data-bind="click: $component.reload, enable: isJSONValid && !$component.dirtyFlag.isDirty()">Reload</button>
+        </div>
+
+    </div>
+</div>
