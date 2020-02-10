@@ -87,9 +87,9 @@ define([
 	}
 
 	function applyPaginationListeners(element, datatable, binding) {
-		const {defaultColumnIdx, defaultOrderDir} = binding.options && Array.isArray(binding.options.order[0])
+		const {defaultColumnIdx, defaultOrderDir} = binding.options && binding.options.order && Array.isArray(binding.options.order[0])
 			? {defaultColumnIdx: binding.options.order[0][0], defaultOrderDir: binding.options.order[0][1]}
-			: {};
+			: {defaultColumnIdx: 0, defaultOrderDir: 'asc'};
 
 		$(element).on('page.dt', function () {
 			const info = datatable.page.info();
