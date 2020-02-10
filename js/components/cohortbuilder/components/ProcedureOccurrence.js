@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./ProcedureOccurrenceTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./ProcedureOccurrenceTemplate.html'], function (ko, options, utils, Range, Text, CriteriaGroup, template) {
 
 	function ProcedureOccurrenceViewModel(params) {
 		var self = this;
@@ -83,7 +83,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the procedure occurrence as the index event",
 			}
 		];
 		self.actionHandler = function (data) {
@@ -158,6 +158,10 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			self.Criteria[propertyName](null);
 		}
 
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Procedure');
+			return `The index date refers to the procedure of ${conceptSetName}.`;
+		});		
 
 	}
 
