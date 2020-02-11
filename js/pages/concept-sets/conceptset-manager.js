@@ -222,9 +222,8 @@ define([
 
 		renderCheckbox(field, readonly = false) {
 			return this.canEdit() && !readonly
-		  ? `<span data-bind="click: d => $parent.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
-		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
-			// return commonUtils.renderConceptSetCheckbox(this.canEdit, field, readonly);
+				? `<span data-bind="click: d => $parent.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
+				: `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
 		}
 
 		toggleCheckbox(d, field) {
