@@ -164,6 +164,10 @@ define([
 				title: "Big Query",
 				dialect: "bigquery",
 			},
+			HIVE: {
+				title: "Apache Hive",
+				dialect: "hive",
+			},
 		};
 
 		return {
