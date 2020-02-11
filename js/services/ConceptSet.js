@@ -153,7 +153,7 @@ define(function (require, exports) {
 		switch (newMode) {
 			case 'included-conceptsets':
 			case 'included':
-				loadIncludedWithHash();
+				await loadIncludedWithHash();
 				break;
 			case 'included-sourcecodes':
 				await loadIncludedWithHash();
@@ -247,11 +247,14 @@ define(function (require, exports) {
 	// update the export panel
 	// resolve the included concepts and update the include concept set identifier list
 	function resolveConceptSetExpression(resolveAgainstServer = true) {
-		sharedState.includedConcepts.removeAll();
-		sharedState.includedSourcecodes.removeAll();
-		sharedState.conceptSetInclusionIdentifiers.removeAll();
-		sharedState.currentConceptIdentifierList(null);
-		sharedState.currentIncludedConceptIdentifierList(null);
+		let hashCode = hash(sharedState.conceptSetInclusionIdentifiers());
+		if (hashCode !== sharedState.includedHash()) {
+			sharedState.includedConcepts.removeAll();
+			sharedState.includedSourcecodes.removeAll();
+			sharedState.conceptSetInclusionIdentifiers.removeAll();
+			sharedState.currentConceptIdentifierList(null);
+			sharedState.currentIncludedConceptIdentifierList(null);
+		}
 		setConceptSetExpressionExportItems(sharedState.conceptSetExpression());
 		return resolveAgainstServer ? resolveConceptSetExpressionSimple(sharedState.conceptSetExpression()) : null;
 	}
