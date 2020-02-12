@@ -86,9 +86,23 @@ define([
 		});
 	}
 
+	function getOrderCol(order) {
+
+		return !!order[0]
+			? Array.isArray(order[0]) ? order[0][0] : order[0]
+			: undefined;
+	}
+
+	function getOrderDir(order) {
+
+		return !!order[0]
+			? Array.isArray(order[0]) ? order[0][1] : order[1]
+			: undefined;
+	}
+
 	function applyPaginationListeners(element, datatable, binding) {
-		const {defaultColumnIdx, defaultOrderDir} = binding.options && binding.options.order && Array.isArray(binding.options.order[0])
-			? {defaultColumnIdx: binding.options.order[0][0], defaultOrderDir: binding.options.order[0][1]}
+		const {defaultColumnIdx, defaultOrderDir} = binding.options && binding.options.order && (getOrderCol(binding.options.order) || getOrderDir(binding.options.order))
+			? {defaultColumnIdx: getOrderCol(binding.options.order), defaultOrderDir: getOrderDir(binding.options.order)}
 			: {defaultColumnIdx: 0, defaultOrderDir: 'asc'};
 
 		$(element).on('page.dt', function () {
@@ -111,8 +125,8 @@ define([
 			if (!Array.isArray(newOrder) || !newOrder.length) {
 				return;
 			}
-			const newColumnIdx = newOrder[0][0];
-			const newOrderDir = newOrder[0][1];
+			const newColumnIdx = getOrderCol(newOrder);
+			const newOrderDir = getOrderDir(newOrder);
 
 			const isOrderChanged = !currentOrder || currentOrder.column !== newColumnIdx || currentOrder.direction !== newOrderDir;
 			const isOrderChangedFromDefault = !(!currentOrder && newColumnIdx === defaultColumnIdx && newOrderDir === defaultOrderDir);

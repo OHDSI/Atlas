@@ -1063,6 +1063,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
+			selectTab(key) {
+				commonUtils.routeTo(`/cohortdefinition/${this.currentCohortDefinition().id()}/${key}`);
+			}
+
 			getSourceInfo(source) {
 				const info = this.currentCohortDefinitionInfo();
 				for (var i = 0; i < info.length; i++) {
