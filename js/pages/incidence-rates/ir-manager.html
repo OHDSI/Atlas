@@ -66,7 +66,13 @@
 				<loading data-bind="visible: exporting()" params="status: 'Exporting Analysis To CSV'"></loading>
 				<loading data-bind="visible: loadingInfo()" params="status: 'Loading Analysis Generations'"></loading>
 				<div data-bind="hidden: exporting() || loadingInfo()">
-					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources, loadingSummary: loadingSummary"></ir-analysis-results>
+					<ir-analysis-results params="sources: $component.sources, 
+																			 analysisCohorts: analysisCohorts, 
+																			 execute: execute, cancelExecution: 
+																			 cancelExecution, 
+																			 stoppingSources: stoppingSources, 
+																			 loadingSummary: loadingSummary,
+																			 isTarValid: isTarValid"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
@@ -74,6 +80,7 @@
                     <ul class="nav nav-pills">
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+						<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'sql'}, click: () => $component.expressionMode('sql')"><a>SQL</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
 						<import params="{
@@ -95,6 +102,12 @@
 							}"></export>
 						</div>
                     </div>
+					<div role="tabpanel" data-bind="visible: $component.expressionMode() === 'sql'" class="tab-pane">
+						<export-sql params="analysisId: $component.selectedAnalysisId,
+							expression: $component.selectedAnalysis() && $component.selectedAnalysis().expression,
+							isPermittedExport: isPermittedExportSQL,
+						 	exportSqlService: $component.exportSql"></export-sql>
+					</div>
                 </div>
             </div>
         </div>

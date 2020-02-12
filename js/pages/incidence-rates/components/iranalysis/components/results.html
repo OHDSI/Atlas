@@ -15,7 +15,7 @@
 	<div>
 		<select-sources-btn
 			data-bind="css: classes('generate-btn')"
-			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: dirtyFlag().isDirty, disabledReason: $component.executionDisabledReason"
+			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: $component.executionDisabled, disabledReason: $component.executionDisabledReason"
 		></select-sources-btn>
 		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': disableExportAnalysis, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
 	</div>

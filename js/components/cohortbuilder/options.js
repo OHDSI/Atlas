@@ -45,7 +45,7 @@ define([], function () {
         name: 'After'
 }];
 
-    options.occurrenceCountOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		options.occurrenceCountOptions = ['0','1','2','3','4','5','6','7','8','9','10','20','50','100'];
     options.groupTypeOptions = [{
         id: 'ALL',
         name: 'all'

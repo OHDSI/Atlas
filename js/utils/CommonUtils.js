@@ -203,6 +203,10 @@ define([
 			  }
 		}
 	}
+	
+	const escapeTooltip = function(tooltipText) {
+		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+	}
 
 	return {
 		build,
@@ -224,5 +228,6 @@ define([
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
+		escapeTooltip,
 	};
 });

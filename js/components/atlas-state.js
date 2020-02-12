@@ -90,6 +90,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	state.includedConceptsMap = ko.observable({});
 	state.includedSourcecodes = ko.observableArray();
 	state.currentConceptSetMode = ko.observable('details');
+	state.includedHash = ko.observable();
 
 	state.ConceptSet = {
 		current: ko.observable(),

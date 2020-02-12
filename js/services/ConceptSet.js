@@ -6,6 +6,7 @@ define(function (require, exports) {
 	const authApi = require('services/AuthAPI');
 	const vocabularyService = require('services/Vocabulary');
 	const commonUtils = require('utils/CommonUtils');
+	const hash = require('hash-it').default;
 	function getIncludedConceptSetDrawCallback({ searchConceptsColumns }) {
 		return async function (settings) {
 			if (settings.aoData) {
@@ -45,7 +46,7 @@ define(function (require, exports) {
 
 	function getAncestorsRenderFunction() {
 		return (s,p,d) => {
-			const tooltip = d.ANCESTORS.map(d => d.CONCEPT_NAME).join('\n');
+			const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('\n');
 			return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: '${tooltip}'">${d.ANCESTORS.length}</a>`
 		};
 	}
@@ -141,13 +142,21 @@ define(function (require, exports) {
 	}
 
 	async function onCurrentConceptSetModeChanged(newMode) {
+		let hashcode;
+		const loadIncludedWithHash = async function() {
+			hashcode = hash(sharedState.conceptSetInclusionIdentifiers());
+			if (hashcode !== sharedState.includedHash()) {
+				await loadIncluded();
+				sharedState.includedHash(hashcode);
+			}
+		};
 		switch (newMode) {
 			case 'included-conceptsets':
 			case 'included':
-				await loadIncluded();
+				loadIncludedWithHash();
 				break;
 			case 'included-sourcecodes':
-				await loadIncluded();
+				await loadIncludedWithHash();
 				if (sharedState.includedSourcecodes().length === 0) {
 					await loadSourcecodes();
 				}
@@ -158,7 +167,7 @@ define(function (require, exports) {
 	async function loadAncestors(ancestors, descendants) {
 		const data = { ancestors, descendants };
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors', data);
-	};
+	}
 
 	function loadAndApplyAncestors(data) {
 		const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
@@ -201,7 +210,6 @@ define(function (require, exports) {
 			}, {});
 			sharedState.includedConceptsMap(map);
 			await loadAndApplyAncestors(sharedState.includedConcepts());
-
 		} catch (err) {
 			console.error(err);
 		} finally {
