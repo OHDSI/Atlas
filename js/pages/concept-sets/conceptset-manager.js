@@ -378,12 +378,7 @@ define([
 				.then((optimizationResults) => {
 					var optimizedConcepts = [];
 					optimizationResults.optimizedConceptSet.items.forEach((item) => {
-						optimizedConcepts.push({
-							concept: item.concept,
-							isExcluded: ko.observable(item.isExcluded),
-							includeDescendants: ko.observable(item.includeDescendants),
-							includeMapped: ko.observable(item.includeMapped),
-						});
+						optimizedConcepts.push(conceptSetService.enhanceConceptSet(item));
 					});
 					var removedConcepts = [];
 					optimizationResults.removedConceptSet.items.forEach((item) => {
@@ -437,7 +432,7 @@ define([
 			sharedState.clearSelectedConcepts();
 			const newConceptSet = this.optimalConceptSet().map((item) => {
 				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
-				return conceptSetService.enhanceConceptSet(item);
+				return item;
 			});
 			sharedState.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
