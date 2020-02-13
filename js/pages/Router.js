@@ -9,6 +9,7 @@ define(
     'const',
     'services/EventBus',
 	'datatables.net',
+	'utils/DatatablePaginationUtils',
     'director',
 	],
 	(
@@ -20,7 +21,8 @@ define(
     ko,
     constants,
     EventBus,
-    dataTables
+    dataTables,
+    DatatablePaginationUtils
 	) => {
     class AtlasRouter {
       constructor() {
@@ -130,6 +132,9 @@ define(
 					this.routerParams(routerParams);
 				}
 				this.currentView(view);
+				$.fn.dataTable.tables().forEach(dt => {
+					DatatablePaginationUtils.refreshTable($(dt).dataTable().DataTable());
+				});
       }
     }
     return new AtlasRouter();

@@ -1,7 +1,9 @@
 define([
+	'knockout',
 	'utils/CommonUtils',
 	'urijs',
 ], (
+	ko,
 	CommonUtils,
 	URI
 ) => {
@@ -10,10 +12,32 @@ define([
 	const ORDER_PARAM = 'dtOrder';
 	const PARAM_SEPARATOR = '_';
 
-	function buildDtParamName(datatable, param) {
+	const DEFAULT_DT_PARAMS = {};
+	const IGNORE_LISTENERS_FOR_DT = [];
+
+	function getPageNumFromDt(datatable) {
+		const info = datatable.page.info();
+		return info.page;
+	}
+
+	function redrawTable(table, mode) {
+		IGNORE_LISTENERS_FOR_DT.push(getDtId(table));
+
+		// drawing may access observables, which updating we do not want to trigger a redraw to the table
+		// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
+		const func = mode ? table.draw.bind(null, mode) : table.draw;
+		ko.ignoreDependencies(func);
+
+		IGNORE_LISTENERS_FOR_DT.splice(IGNORE_LISTENERS_FOR_DT.indexOf(getDtId(table)), 1);
+	}
+
+	function getDtId(datatable) {
 		const elPath = CommonUtils.getPathTo(datatable.table().container());
-		const elId = CommonUtils.calculateStringHash(elPath);
-		return param + PARAM_SEPARATOR + elId;
+		return CommonUtils.calculateStringHash(elPath);
+	}
+
+	function buildDtParamName(datatable, param) {
+		return param + PARAM_SEPARATOR + getDtId(datatable);
 	}
 
 	function getDtParamValue(param) {
@@ -29,6 +53,14 @@ define([
 		Object.keys(obj).forEach(k => {
 			fragment.removeSearch(k).addSearch(k, obj[k]);
 		});
+		const updatedUrl = currentUrl.fragment(fragment.toString()).toString();
+		document.location = updatedUrl;
+	}
+
+	function removeUrlParams(paramKeys) {
+		const currentUrl = URI(document.location.href);
+		const fragment = URI(currentUrl.fragment());
+		paramKeys.forEach(k => fragment.removeSearch(k));
 		const updatedUrl = currentUrl.fragment(fragment.toString()).toString();
 		document.location = updatedUrl;
 	}
@@ -100,25 +132,64 @@ define([
 			: undefined;
 	}
 
+	function shouldIgnoreEvent(datatable) {
+		return IGNORE_LISTENERS_FOR_DT.includes(getDtId(datatable));
+	}
+
+	function removeOrderFromUrl(datatable) {
+		const paramsToRemove = [ getOrderParamName(datatable) ];
+		if (getPageNumFromDt(datatable) === 0) {
+			paramsToRemove.push(getPageParamName(datatable));
+		}
+		removeUrlParams(paramsToRemove);
+	}
+
+	function removeSearchFromUrl(datatable) {
+		removeUrlParams([ getSearchParamName(datatable) ]);
+	}
+
+	function removePageNumFromUrl(datatable) {
+		removeUrlParams([ getPageParamName(datatable) ]);
+	}
+
 	function applyPaginationListeners(element, datatable, binding) {
 		const {defaultColumnIdx, defaultOrderDir} = binding.options && binding.options.order && (getOrderCol(binding.options.order) || getOrderDir(binding.options.order))
 			? {defaultColumnIdx: getOrderCol(binding.options.order), defaultOrderDir: getOrderDir(binding.options.order)}
 			: {defaultColumnIdx: 0, defaultOrderDir: 'asc'};
 
+		DEFAULT_DT_PARAMS[getDtId(datatable)] = {
+			column: defaultColumnIdx,
+			direction: defaultOrderDir,
+		};
+
 		$(element).on('page.dt', function () {
-			const info = datatable.page.info();
-			setPageNumToUrl(datatable, info.page);
+			if (shouldIgnoreEvent(datatable)) return;
+			const pageNum = getPageNumFromDt(datatable);
+			if (getPageNumFromUrl(datatable) !== pageNum) {
+				if (pageNum !== 0) {
+					setPageNumToUrl(datatable, pageNum);
+				} else {
+					removePageNumFromUrl(datatable);
+				}
+			}
 		});
 
 		$(element).on('search.dt', function () {
+			if (shouldIgnoreEvent(datatable)) return;
 			const currentSearchStr = getSearchFromUrl(datatable) || '';
 			const newSearchStr = datatable.search();
 			if (currentSearchStr !== newSearchStr) {
-				setSearchToUrl(datatable, newSearchStr);
+				if (newSearchStr !== '') {
+					setSearchToUrl(datatable, newSearchStr);
+				} else {
+					removeSearchFromUrl(datatable);
+				}
 			}
 		});
 
 		$(element).on('order.dt', function () {
+			if (shouldIgnoreEvent(datatable)) return;
+
 			const currentOrder = getOrderFromUrl(datatable);
 
 			const newOrder = datatable.order();
@@ -129,39 +200,45 @@ define([
 			const newOrderDir = getOrderDir(newOrder);
 
 			const isOrderChanged = !currentOrder || currentOrder.column !== newColumnIdx || currentOrder.direction !== newOrderDir;
-			const isOrderChangedFromDefault = !(!currentOrder && newColumnIdx === defaultColumnIdx && newOrderDir === defaultOrderDir);
-			if (isOrderChanged && isOrderChangedFromDefault) {
-				setOrderToUrl(datatable, newColumnIdx, newOrderDir);
+			if (isOrderChanged) {
+				if (newColumnIdx !== defaultColumnIdx || newOrderDir !== defaultOrderDir) {
+					setOrderToUrl(datatable, newColumnIdx, newOrderDir);
+				} else {
+					removeOrderFromUrl(datatable);
+				}
 			}
 		});
 	}
 
 	function applyDtSearch(table) {
-		const currentSearchStr = getSearchFromUrl(table);
-		if (currentSearchStr) {
-			table.search(currentSearchStr);
+		const searchStrFromUrl = getSearchFromUrl(table) || '';
+		const searchStrFromDom = table.search();
+		if (searchStrFromDom !== searchStrFromUrl) {
+			document.activeElement.blur(); // Otherwise text in search input is not updated
+			table.search(searchStrFromUrl);
 		}
 	}
 
 	function applyDtSorting(table) {
-		const currentOrder = getOrderFromUrl(table);
-		if (currentOrder && currentOrder.column && currentOrder.direction) {
-			table.order([[currentOrder.column, currentOrder.direction]]);
-		}
+		const currentOrder = getOrderFromUrl(table) || DEFAULT_DT_PARAMS[getDtId(table)];
+		table.order([[currentOrder.column, currentOrder.direction]]);
 	}
 
-	function applyDtPage(table, redrawTable) {
-		const currentPage = getPageNumFromUrl(table);
-		if (currentPage) {
-			table.page(currentPage);
-			redrawTable(table, 'page');
-		}
+	function applyDtPage(table) {
+		const currentPage = getPageNumFromUrl(table) || 0;
+		table.page(currentPage);
+		redrawTable(table, 'page');
+	}
+
+	function refreshTable(table) {
+		applyDtSearch(table);
+		applyDtSorting(table);
+		redrawTable(table);
+		applyDtPage(table);
 	}
 
 	return {
 		applyPaginationListeners,
-		applyDtSearch,
-		applyDtSorting,
-		applyDtPage,
+		refreshTable,
 	}
 });

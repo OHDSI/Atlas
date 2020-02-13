@@ -61,13 +61,6 @@ define([
         return abxX < absY ? -1 : abxX>absY ? 1 : 0;
 	}
 
-	function redrawTable(table, mode) {
-		// drawing may access observables, which updating we do not want to trigger a redraw to the table
-		// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
-		const func = mode ? table.draw.bind(null, mode) : table.draw;
-		ko.ignoreDependencies(func);
-	}
-
 	ko.bindingHandlers.dataTable = {
 
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -195,10 +188,7 @@ define([
 			if (data.length > 0)
 				table.rows.add(data);
 
-			paginationUtils.applyDtSearch(table);
-			paginationUtils.applyDtSorting(table);
-			redrawTable(table);
-			paginationUtils.applyDtPage(table, redrawTable);
+			paginationUtils.refreshTable(table);
 		}
 
 
