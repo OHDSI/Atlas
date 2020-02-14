@@ -204,6 +204,11 @@ define([
 		}
 	}
 
+	const selectAllFilteredItems = (data, filteredData, value) => {
+		const fData = (ko.utils.unwrapObservable(filteredData) || []).map(i => i.id);
+		data().forEach(i => fData.length === 0 ? i.selected(value) : (fData.includes(i.id) && i.selected(value)));
+	}
+
 	return {
 		build,
 		confirmAndDelete,
@@ -224,5 +229,6 @@ define([
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
+		selectAllFilteredItems,
 	};
 });

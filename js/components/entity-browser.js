@@ -2,9 +2,10 @@ define([
     'knockout',
     'text!./cohort-definition-browser.html',
     'components/Component',
-	'utils/Renderers',
+    'utils/Renderers',
+    'utils/CommonUtils',
     'faceted-datatable',
-], function(ko, view, Component, renderers) {
+], function(ko, view, Component, renderers, commonUtils) {
     class EntityBrowser extends Component {
         constructor(params) {
             super(params);
@@ -49,14 +50,14 @@ define([
                     },
                 ] : [];
 
-			this.tableDom = "Bfiprt<'page-size'l>ip";
-			this.rowClick = this.rowClick.bind(this);
+            this.tableDom = "Bfiprt<'page-size'l>ip";
+            this.rowClick = this.rowClick.bind(this);
             this.loadData();
-		}
+        }
 
-		rowClick(data) {
-			this.action(() => this.onSelect(data));
-		}
+        rowClick(data) {
+            this.action(() => this.onSelect(data));
+        }
 
         removeClass(className) {
             return (dt, node, cfg) => node.removeClass(className);
@@ -76,8 +77,7 @@ define([
         }
 
         toggleSelected(selected) {
-            const filteredData = (ko.utils.unwrapObservable(this.filteredData) || []).map(i => i.id);
-            this.data().forEach(i => filteredData.length === 0 ? i.selected(selected) : (filteredData.includes(i.id) && i.selected(selected)));
+            commonUtils.selectAllFilteredItems(this.data, this.filteredData, selected);
         }
     }
 
