@@ -20,7 +20,7 @@ define([
             this.data = ko.observableArray([]);
             this.isLoading = ko.observable(false);
             this.importEnabled = ko.pureComputed(() => this.data().some(i => i.selected()));
-
+            this.filteredData = ko.observableArray([]);
             this.buttons = !!this.multiChoice
                 ? [
                       {
@@ -76,7 +76,8 @@ define([
         }
 
         toggleSelected(selected) {
-            this.data().forEach(i => i.selected(selected));
+            const filteredData = (ko.utils.unwrapObservable(this.filteredData) || []).map(i => i.id);
+            this.data().forEach(i => filteredData.length === 0 ? i.selected(selected) : (filteredData.includes(i.id) && i.selected(selected)));
         }
     }
 

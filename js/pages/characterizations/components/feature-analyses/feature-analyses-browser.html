@@ -1,6 +1,6 @@
 <div class="import-modal_list-container" data-bind="visible: !isLoading()">
     <faceted-datatable
-        params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY, scrollCollapse: scrollCollapse"
+        params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY, scrollCollapse: scrollCollapse, selectedData: filteredData"
     >
     </faceted-datatable>
     <div class="import-modal-footer btn-toolbar" data-bind="visible: multiChoice">
