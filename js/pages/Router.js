@@ -135,6 +135,7 @@ define(
 				$.fn.dataTable.tables().forEach(dt => {
 					DatatablePaginationUtils.refreshTable($(dt).dataTable().DataTable());
 				});
+				$('faceted-datatable').trigger('refresh.faceted-dt');
       }
     }
     return new AtlasRouter();

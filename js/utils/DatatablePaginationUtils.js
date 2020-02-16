@@ -10,6 +10,7 @@ define([
 	const PAGE_PARAM = 'dtPage';
 	const SEARCH_PARAM = 'dtSearch';
 	const ORDER_PARAM = 'dtOrder';
+	const FACET_PARAM = 'dtFacet';
 	const PARAM_SEPARATOR = '_';
 
 	const DEFAULT_DT_PARAMS = {};
@@ -37,13 +38,17 @@ define([
 	}
 
 	function buildDtParamName(datatable, param) {
-		return param + PARAM_SEPARATOR + getDtId(datatable);
+		return getDtId(datatable) + PARAM_SEPARATOR + encodeURIComponent(param);
+	}
+
+	function getDtParams() {
+		const currentUrl = URI(document.location.href);
+		const fragment = URI(currentUrl.fragment());
+		return fragment.search(true);
 	}
 
 	function getDtParamValue(param) {
-		const currentUrl = URI(document.location.href);
-		const fragment = URI(currentUrl.fragment());
-		const params = fragment.search(true);
+		const params = getDtParams();
 		return params[param];
 	}
 
@@ -132,6 +137,37 @@ define([
 			: undefined;
 	}
 
+	function getFacetParamName(datatable, facetName) {
+		return buildDtParamName(datatable, FACET_PARAM + PARAM_SEPARATOR + facetName);
+	}
+
+	function setFacetToUrl(datatable, facetName, facetValue, selected) {
+		let values = getFacets(datatable)[facetName] || [];
+		if (selected) {
+			values = [...new Set(values.concat([facetValue]))];
+		} else {
+			values.splice(values.indexOf(facetValue), 1);
+		}
+		if (values.length > 0) {
+			setUrlParams({
+				[getFacetParamName(datatable, facetName)]: values.join(','),
+			});
+		} else {
+			removeUrlParams([ getFacetParamName(datatable, facetName) ]);
+		}
+	}
+
+	function getFacets(datatable) {
+		const params = getDtParams();
+		const prefix = getDtId(datatable) + PARAM_SEPARATOR + FACET_PARAM + PARAM_SEPARATOR;
+		const facetKeys = Object.keys(params)
+			.filter(k => k.startsWith(prefix))
+			.map(f => f.substring(prefix.length));
+		const facets = {};
+		facetKeys.forEach(k => facets[decodeURIComponent(k)] = params[prefix + k] ? params[prefix + k].split(',') : []);
+		return facets;
+	}
+
 	function shouldIgnoreEvent(datatable) {
 		return IGNORE_LISTENERS_FOR_DT.includes(getDtId(datatable));
 	}
@@ -208,6 +244,10 @@ define([
 				}
 			}
 		});
+
+		$(element).on('facet.dt', function (event, data) {
+			setFacetToUrl(datatable, data.facet.caption, data.key, data.selected());
+		});
 	}
 
 	function applyDtSearch(table) {
@@ -240,5 +280,6 @@ define([
 	return {
 		applyPaginationListeners,
 		refreshTable,
+		getFacets,
 	}
 });

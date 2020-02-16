@@ -1,7 +1,7 @@
 <div class="text-center" data-bind="if: $component.componentLoading(), css: {visible:componentLoading(), hidden: !componentLoading()}">
 	<h3><i class="fa fa-spinner fa-spin"></i> Loading ...</h3>
 </div>
-<div data-bind="ifnot: $component.componentLoading(), css: {visible: !componentLoading(), hidden: componentLoading()}">
+<div data-bind="css: {visible: !componentLoading(), hidden: componentLoading()}">
 	<div class="row">
 		<div class="feFilter" data-bind="visible:$component.facets().length > 0, css: {'col-xs-2': $component.facets().length > 0}">
 			<div data-bind="with: $component.facets">
