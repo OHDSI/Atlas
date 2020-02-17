@@ -437,6 +437,7 @@ define([
 			sharedState.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
 			sharedState.includedConcepts.valueHasMutated();
+			sharedState.includedSourcecodes.valueHasMutated();
 			await conceptSetService.resolveConceptSetExpression();
 			await conceptSetService.onCurrentConceptSetModeChanged(sharedState.currentConceptSetMode());
 		}
