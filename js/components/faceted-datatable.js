@@ -81,7 +81,7 @@ define(
 		self.selectFacetItems = function(targetCaption, selectedFacetValues) {
 			const facetItems = self.facets().find(f => f.caption === targetCaption).facetItems;
 			if (facetItems) {
-				facetItems.forEach(fi => self.updateFilters(fi, null, selectedFacetValues.includes(fi.key)), false);
+				facetItems.forEach(fi => self.updateFilters(fi, null, selectedFacetValues.includes(fi.key), false));
 			}
 		};
 
@@ -108,7 +108,7 @@ define(
 			}
 			self.data.valueHasMutated();
 
-			emitEvent && event && getDtElement($(event.target.closest('faceted-datatable'))).trigger('facet.dt', data);
+			emitEvent && getDtElement(self.element).trigger('facet.dt', data);
 		}
 
 		// additional helper function to help with crossfilter-ing dimensions that contain nulls
@@ -159,7 +159,7 @@ define(
 											return f.key == defaultFacet;
 										});
 										if (facetItem.length > 0) {
-											self.updateFilters(facetItem[0], null);
+											self.updateFilters(facetItem[0], null, true, false);
 										}
 									})
 								}
@@ -175,7 +175,7 @@ define(
 			if (Array.isArray(self.options.Facets)) {
 				const savedSearch = getSavedSearch(self.element);
 				self.options.Facets.forEach(facetConfig => {
-					const savedFacetValues = savedSearch[facetConfig.caption] || [];
+					const savedFacetValues = savedSearch[facetConfig.caption] || facetConfig.defaultFacets || [];
 					self.selectFacetItems(facetConfig.caption, savedFacetValues);
 				});
 			}

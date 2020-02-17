@@ -1054,8 +1054,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			onRouterParamsChanged(params) {
-				const { cohortDefinitionId, conceptSetId, mode = 'definition', sourceKey } = params;
+			onRouterParamsChanged(changedParamsMap, newParams) {
+				const { cohortDefinitionId, conceptSetId, mode = 'definition', sourceKey } = newParams || changedParamsMap;
 				this.clearConceptSet();
 				this.tabMode(mode);
 				if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {

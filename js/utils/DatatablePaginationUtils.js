@@ -143,14 +143,20 @@ define([
 		return buildDtParamName(datatable, FACET_PARAM + PARAM_SEPARATOR + facetName);
 	}
 
-	function setFacetToUrl(datatable, facetName, facetValue, selected) {
-		let values = getFacets(datatable)[facetName] || [];
+	function setFacetToUrl(datatable, facetOptions, facetName, facetValue, selected) {
+		const defaultValues = facetOptions.find(o => o.caption === facetName).defaultFacets;
+		let values = [].concat(getFacets(datatable)[facetName] || defaultValues || []);
 		if (selected) {
 			values = [...new Set(values.concat([facetValue]))];
 		} else {
-			values.splice(values.indexOf(facetValue), 1);
+			if (values.indexOf(facetValue) !== -1) {
+				values.splice(values.indexOf(facetValue), 1);
+			}
 		}
-		if (values.length > 0) {
+
+		const defaultValuesDefined = Array.isArray(defaultValues) && defaultValues.length > 0;
+		const selectedSameAsDefault = defaultValuesDefined && defaultValues.length === values.length && defaultValues.length === new Set([...defaultValues, ...values]).size;
+		if ((!defaultValuesDefined && values.length > 0) || (defaultValuesDefined && !selectedSameAsDefault)) {
 			setUrlParams({
 				[getFacetParamName(datatable, facetName)]: values.join(','),
 			});
@@ -254,7 +260,7 @@ define([
 		});
 
 		$(element).on('facet.dt', function (event, data) {
-			setFacetToUrl(datatable, data.facet.caption, data.key, data.selected());
+			setFacetToUrl(datatable, binding.options.Facets, data.facet.caption, data.key, data.selected());
 		});
 	}
 

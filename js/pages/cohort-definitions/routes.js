@@ -56,7 +56,7 @@ define(
             var sourceKey = qs.sourceKey || null;
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
-              mode: 'definition',
+              mode: view,
               sourceKey,
             });
             sharedState.ConceptSet.source('cohort');
