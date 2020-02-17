@@ -209,8 +209,6 @@ define([
 	}
 
 	const getPathTo = function(element) {
-		if (element.id!=='')
-			return 'id("'+element.id+'")';
 		if (element===document.body)
 			return element.tagName;
 

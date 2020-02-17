@@ -172,11 +172,13 @@ define(
 		);
 
 		$(self.element).on('refresh.faceted-dt', () => {
-			const savedSearch = getSavedSearch(self.element);
-			self.options.Facets.forEach(facetConfig => {
-				const savedFacetValues = savedSearch[facetConfig.caption] || [];
-				self.selectFacetItems(facetConfig.caption, savedFacetValues);
-			});
+			if (Array.isArray(self.options.Facets)) {
+				const savedSearch = getSavedSearch(self.element);
+				self.options.Facets.forEach(facetConfig => {
+					const savedFacetValues = savedSearch[facetConfig.caption] || [];
+					self.selectFacetItems(facetConfig.caption, savedFacetValues);
+				});
+			}
 		});
 
 		// init component

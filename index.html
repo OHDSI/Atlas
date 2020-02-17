@@ -84,24 +84,26 @@
 						<p data-bind="html: appInitializationErrorMessage"></p>
 					</div>
 				</div>
-				<!-- ko if: $data.currentCohortDefinition() || $data.currentConceptSet() -->
-				<!-- ko if: $data.currentCohortDefinition() != null && $data.router.currentView() !='cohort-definition-manager' && $data.router.currentView() != 'loading' -->
-				<div class="breadcrumb-container">
-					<i class="fa fa-arrow-left"></i>
-					<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id()}, text: $data.currentCohortDefinition().name"></a>
-					<!-- ko if: $data.currentConceptSet() != null && $data.currentConceptSetSource() == 'cohort' -->
-					<i class="fa fa-chevron-right"></i>
-					<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id() + '/conceptsets/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name()"></a>
+				<div>
+					<!-- ko if: $data.currentCohortDefinition() || $data.currentConceptSet() -->
+					<!-- ko if: $data.currentCohortDefinition() != null && $data.router.currentView() !='cohort-definition-manager' && $data.router.currentView() != 'loading' -->
+					<div class="breadcrumb-container">
+						<i class="fa fa-arrow-left"></i>
+						<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id()}, text: $data.currentCohortDefinition().name"></a>
+						<!-- ko if: $data.currentConceptSet() != null && $data.currentConceptSetSource() == 'cohort' -->
+						<i class="fa fa-chevron-right"></i>
+						<a data-bind="attr: { href: '#/cohortdefinition/' + $data.currentCohortDefinition().id() + '/conceptsets/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name()"></a>
+						<!-- /ko -->
+					</div>
+					<!-- /ko -->
+					<!-- ko if: $data.currentConceptSet() && $data.currentConceptSetSource() == 'repository' && $data.router.currentView() != 'conceptset-manager' -->
+					<div class="breadcrumb-container">
+						<i class="fa fa-arrow-left"></i>
+						<a data-bind="attr: { href: '#/conceptset/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name"></a>
+					</div>
+					<!-- /ko -->
 					<!-- /ko -->
 				</div>
-				<!-- /ko -->
-				<!-- ko if: $data.currentConceptSet() && $data.currentConceptSetSource() == 'repository' && $data.router.currentView() != 'conceptset-manager' -->
-				<div class="breadcrumb-container">
-					<i class="fa fa-arrow-left"></i>
-					<a data-bind="attr: { href: '#/conceptset/' + $data.currentConceptSet().id + '/details'}, text:$data.currentConceptSet().name"></a>
-				</div>
-				<!-- /ko -->
-				<!-- /ko -->
 
 				<!-- ko ifnot: EventBus.errorMsg() -->
 				<div data-bind="if: $data.router.currentViewAccessible" class="flexed">

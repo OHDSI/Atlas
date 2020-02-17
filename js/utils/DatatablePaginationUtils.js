@@ -2,10 +2,12 @@ define([
 	'knockout',
 	'utils/CommonUtils',
 	'urijs',
+    'lodash',
 ], (
 	ko,
 	CommonUtils,
-	URI
+	URI,
+	lodash
 ) => {
 	const PAGE_PARAM = 'dtPage';
 	const SEARCH_PARAM = 'dtSearch';
@@ -210,17 +212,23 @@ define([
 			}
 		});
 
+		const onSearchEvent = lodash.debounce(
+		function() {
+				const currentSearchStr = getSearchFromUrl(datatable) || '';
+				const newSearchStr = datatable.search();
+				if (currentSearchStr !== newSearchStr) {
+					if (newSearchStr !== '') {
+						setSearchToUrl(datatable, newSearchStr);
+					} else {
+						removeSearchFromUrl(datatable);
+					}
+				}
+			},
+			1000
+		);
 		$(element).on('search.dt', function () {
 			if (shouldIgnoreEvent(datatable)) return;
-			const currentSearchStr = getSearchFromUrl(datatable) || '';
-			const newSearchStr = datatable.search();
-			if (currentSearchStr !== newSearchStr) {
-				if (newSearchStr !== '') {
-					setSearchToUrl(datatable, newSearchStr);
-				} else {
-					removeSearchFromUrl(datatable);
-				}
-			}
+			onSearchEvent();
 		});
 
 		$(element).on('order.dt', function () {

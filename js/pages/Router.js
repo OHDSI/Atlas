@@ -126,16 +126,17 @@ define(
       setCurrentView(view, routerParams = false) {
         if (view !== this.currentView()) {
 					this.currentView('loading');
-					dataTables.ext._unique = 0;
 				}
 				if (routerParams !== false) {
 					this.routerParams(routerParams);
 				}
 				this.currentView(view);
-				$.fn.dataTable.tables().forEach(dt => {
-					DatatablePaginationUtils.refreshTable($(dt).dataTable().DataTable());
+				setTimeout(() => {
+					$.fn.dataTable.tables().forEach(dt => {
+						DatatablePaginationUtils.refreshTable($(dt).dataTable().DataTable());
+					});
+					$('faceted-datatable').trigger('refresh.faceted-dt');
 				});
-				$('faceted-datatable').trigger('refresh.faceted-dt');
       }
     }
     return new AtlasRouter();
