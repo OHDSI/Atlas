@@ -28,7 +28,7 @@ define([
       this.includedConcepts = sharedState.includedConcepts;
       this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.loading = ko.pureComputed(() => {
-				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded();
+				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded() || sharedState.resolvingConceptSetExpression();
       });
       this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
         sharedState: sharedState,
