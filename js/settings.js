@@ -109,6 +109,7 @@ const settingsObject = {
 		"datatables.net": "../node_modules/datatables.net/js/jquery.dataTables",
 		"datatables.net-buttons": "../node_modules/datatables.net-buttons/js/dataTables.buttons",
 		"datatables.net-buttons-html5": "../node_modules/ouanalyse-datatables.net-buttons-html5/js/buttons.html5",
+		"datatables.net-select": "../node_modules/datatables.net-select/js/dataTables.select",
 		"colvis": "../node_modules/datatables.net-buttons/js/buttons.colVis.min",
 		"crossfilter": "../node_modules/crossfilter2/crossfilter",
 		"director": "../node_modules/director/build/director",

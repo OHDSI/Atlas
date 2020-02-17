@@ -1,9 +1,11 @@
 define([
     'services/http',
+    'services/file',
     'appConfig',
-    'utils/ExecutionUtils'
+    'utils/ExecutionUtils',
 ], function (
     httpService,
+    fileService,
     config,
     executionUtils,
 ) {
@@ -103,6 +105,10 @@ define([
             .then(res => res.data);
     }
 
+    function exportConceptSets(id) {
+        return fileService.loadZip(`${config.webAPIRoot}cohort-characterization/${id}/export/conceptset`);
+    }
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -121,5 +127,6 @@ define([
         getPrevalenceStatsByGeneration,
         cancelGeneration,
         exists,
+        exportConceptSets,
     };
 });

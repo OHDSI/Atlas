@@ -26,11 +26,14 @@ define([
     '../../utils',
     'const',
     'less!./feature-analysis-view-edit.less',
+    './fa-view-edit/fa-design',
+    './fa-view-edit/fa-conceptset',
     'components/cohortbuilder/components',
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
 	'components/security/access/configure-access-modal',
+	'components/tabs',
 ], function (
     ko,
     clipboard,
@@ -102,16 +105,12 @@ define([
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
-            // Concept set import for criteria
-            this.criteriaContext = ko.observable();
-            this.showConceptSetBrowser = ko.observable();
-
             this.featureTypes = featureTypes;
             this.statTypeOptions = ko.observableArray(statTypeOptions);
             this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
 
             this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
-            this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
+
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
                     if (this.featureId() !== 0) {
@@ -131,6 +130,21 @@ define([
                 return !this.isNewEntity() && this.initialFeatureType() === featureTypes.PRESET;
             });
 
+            this.selectedTabKey = ko.observable();
+            this.componentParams = ko.observable({
+              ...params,
+              featureId: this.featureId,
+              data: this.data,
+              dataDirtyFlag: this.dataDirtyFlag,
+              canEdit: this.canEdit,
+              domains: this.domains,
+              featureTypes: this.featureTypes,
+              statTypeOptions: this.statTypeOptions,
+              setType: this.setType,
+							getEmptyCriteriaFeatureDesign: this.getEmptyCriteriaFeatureDesign,
+							getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
+            });
+
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.FE_ANALYSIS,
 				entityIdGetter: () => this.featureId(),
@@ -143,7 +157,7 @@ define([
             super.onPageCreated();
         }
 
-        onRouterParamsChanged({ id }) {
+        onRouterParamsChanged({ id, section }) {
             if (id !== undefined) {
                 this.featureId(parseInt(id));
                 if (this.featureId() === 0) {
@@ -152,6 +166,9 @@ define([
                     this.loadDesign(this.featureId());
                 }
             }
+            if (section !== undefined) {
+							this.selectedTabKey(section);
+						}
         }
 
         buildAddCriteriaAction(type) {
@@ -172,6 +189,10 @@ define([
 
         isNewEntityResolver() {
             return ko.computed(() => this.featureId() === 0);
+        }
+
+        selectTab(index, { key }) {
+            commonUtils.routeTo('/cc/feature-analyses/' + this.componentParams().featureId() + '/' + key);
         }
 
         areRequiredFieldsFilled() {
@@ -233,7 +254,8 @@ define([
               conceptSets: ko.observableArray(),
               createdBy: ko.observable(),
             };
-            data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
+            data.conceptSets(conceptSets.map(s => new ConceptSet(s)));
+//            data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
@@ -309,39 +331,6 @@ define([
                 criteriaType: 'WindowedCriteria',
                 expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
             };
-        }
-
-        getEmptyDemographicCriteria() {
-            return {
-              name: ko.observable(''),
-              criteriaType: 'DemographicCriteria',
-              expression: ko.observable(new DemographicGriteria()),
-            };
-        }
-
-        addCriteria() {
-            this.data().design([...this.data().design(), this.getEmptyCriteriaFeatureDesign()]);
-        }
-
-        addWindowedCriteria(type) {
-            const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
-            this.data().design([...this.data().design(), criteria]);
-        }
-
-        removeCriteria(index) {
-            const criteriaList = this.data().design();
-            criteriaList.splice(index, 1);
-            this.data().design(criteriaList);
-        }
-
-        handleConceptSetImport(criteriaIdx, item) {
-            this.criteriaContext({...item, criteriaIdx});
-            this.showConceptSetBrowser(true);
-        }
-
-        onRespositoryConceptSetSelected(conceptSet, source) {
-            utils.conceptSetSelectionHandler(this.data().conceptSets, this.criteriaContext(), conceptSet, source)
-              .done(() => this.showConceptSetBrowser(false));
         }
 
         handleEditConceptSet() {

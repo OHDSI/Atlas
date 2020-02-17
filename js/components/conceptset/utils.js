@@ -1,15 +1,15 @@
 define(['knockout'], function(ko){
 
   function toConceptSetItems(selectedConcepts){
-    var conceptSetItems = [];
+    const conceptSetItems = [];
 
-    for (var i = 0; i < selectedConcepts.length; i++) {
-      var item = selectedConcepts[i];
+    for (let i = 0; i < selectedConcepts.length; i++) {
+      const item = selectedConcepts[i];
       conceptSetItems.push({
         conceptId: item.concept.CONCEPT_ID,
-        isExcluded: +item.isExcluded(),
-        includeDescendants: +item.includeDescendants(),
-        includeMapped: +item.includeMapped()
+        isExcluded: +ko.unwrap(item.isExcluded),
+        includeDescendants: +ko.unwrap(item.includeDescendants),
+        includeMapped: +ko.unwrap(item.includeMapped)
       });
     }
     return conceptSetItems;

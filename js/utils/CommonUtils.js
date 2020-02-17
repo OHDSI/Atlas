@@ -81,6 +81,10 @@ define([
 			.addClass(getConceptLinkClass(data));
 	}
 
+	function highlightRow(row, cssClass) {
+		$(row).addClass(cssClass);
+	}
+
 	function hasCDM(source) {
 		return source.daimons.find(daimon => daimon.daimonType == 'CDM') !== undefined;
 	}
@@ -229,5 +233,6 @@ define([
 		normalizeUrl,
 		toggleConceptSetCheckbox,
 		escapeTooltip,
+		highlightRow,
 	};
 });

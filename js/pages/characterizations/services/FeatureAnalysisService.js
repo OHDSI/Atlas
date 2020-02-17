@@ -1,11 +1,13 @@
 define([
     'services/http',
-    'appConfig'
+    'services/file',
+    'appConfig',
 ], function (
     httpService,
+    fileService,
     config
 ) {
-	
+
     function loadFeatureAnalysisList() {
         return httpService.doGet(config.webAPIRoot + 'feature-analysis?size=100000').then(res => res.data);
     }
@@ -35,6 +37,10 @@ define([
             .then(res => res.data);
     }
 
+    function exportConceptSets(id) {
+        return fileService.loadZip(`${config.webAPIRoot}feature-analysis/${id}/export/conceptset`);
+    }
+
     return {
         loadFeatureAnalysisList,
         loadFeatureAnalysis,
@@ -43,5 +49,6 @@ define([
         updateFeatureAnalysis,
         deleteFeatureAnalysis,
         exists,
+        exportConceptSets,
     };
 });

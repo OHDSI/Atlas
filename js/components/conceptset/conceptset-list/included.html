@@ -1,0 +1,4 @@
+<loading params="status: 'Loading Included Concepts'" data-bind="visible: loading()"></loading>
+<div data-bind="hidden: loading">
+    <faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $component.includedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
+</div>

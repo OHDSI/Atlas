@@ -8,6 +8,7 @@ define([
 	'services/ConceptSet',
 	'atlas-state',
 	'../const',
+  'appConfig',
   'components/tabs',
   'circe'
 ], function (
@@ -20,6 +21,7 @@ define([
 	conceptSetService,
 	sharedState,
 	constants,
+	config,
 ) {
 	class ConceptsetList extends AutoBind(Component) {
 		constructor(params) {
@@ -31,7 +33,7 @@ define([
 			this.currentCohortDefinitionDirtyFlag = sharedState.CohortDefinition.dirtyFlag;
 			this.criteriaContext = sharedState.criteriaContext;
 			this.canCreateConceptSet = ko.pureComputed(function () {
-				return authApi.isPermittedCreateConceptset();
+				return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
 		}
 

@@ -9,6 +9,7 @@ define([
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
+	'datatables.net-select',
 ], function (
 	$,
 	ko,
@@ -35,6 +36,11 @@ define([
 		});
 
 		return selectedData;
+	}
+
+	function _getRows(element, predicate) {
+
+		return $(element).DataTable().rows(predicate);
 	}
 
   function isUrlAbsolute(url) {
@@ -136,7 +142,10 @@ define([
 				{
 					// expose datatable API to context's api binding.
 					binding.api({
-						getSelectedData: function() { return _getSelectedData(element);}
+						getSelectedData: function() { return _getSelectedData(element);},
+						getRows: function (predicate) {
+							return _getRows(element, predicate);
+						}
 					});
 				}
 				// Workaround for bug when datatable header column width is not adjusted to column values when using scrollY datatable option

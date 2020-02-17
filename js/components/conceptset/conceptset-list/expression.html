@@ -1,0 +1,16 @@
+<loading params="status: 'Loading Concept Set Expression'" data-bind="visible: loading()"></loading>
+<div class="paddedWrapper" data-bind="hidden: loading">
+    <div class="heading">
+        Name:
+    </div>
+    <div class="divtext" placeholder="Concept Set Name" data-bind="attr: { contenteditable:canEdit() }, htmlValue:currentConceptSet().name"></div>
+    <conceptset-editor params="conceptSets:selectedConcepts, canEditCurrentConceptSet: canEdit"></conceptset-editor>
+
+    <div class="clear"></div>
+    <div data-bind="css: classes({element: 'button-pane', extra: 'pull-right'})">
+        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.deleteConceptSet(); }">Delete Concept Set</button>
+        <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet">Copy To Concept Set Repository</button>
+        <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.closeConceptSet(); }">Close Concept Set</button>
+    </div>
+</div>
+<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>

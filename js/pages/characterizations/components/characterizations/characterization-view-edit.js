@@ -23,6 +23,7 @@ define([
     './characterization-view-edit/characterization-design',
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
+    './characterization-view-edit/characterization-conceptsets',
     'components/ac-access-denied',
 	'components/security/access/configure-access-modal',
 ], function (
@@ -78,12 +79,14 @@ define([
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
                 ...params,
+								canEdit: this.isEditPermitted,
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                conceptSets: ko.computed(() => this.design() && this.design().strataConceptSets),
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {

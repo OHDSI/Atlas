@@ -153,7 +153,7 @@ define(function (require, exports) {
 		switch (newMode) {
 			case 'included-conceptsets':
 			case 'included':
-				loadIncludedWithHash();
+				await loadIncludedWithHash();
 				break;
 			case 'included-sourcecodes':
 				await loadIncludedWithHash();
@@ -170,7 +170,7 @@ define(function (require, exports) {
 	}
 
 	function loadAndApplyAncestors(data) {
-		const selectedConceptIds = sharedState.selectedConcepts().filter(v => !v.isExcluded()).map(v => v.concept.CONCEPT_ID);
+		const selectedConceptIds = sharedState.selectedConcepts().filter(v => !ko.unwrap(v.isExcluded)).map(v => v.concept.CONCEPT_ID);
 		const ids = [];
 		$.each(data, idx => {
 			const element = data[idx];
