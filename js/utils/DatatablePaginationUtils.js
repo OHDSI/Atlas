@@ -218,8 +218,7 @@ define([
 			}
 		});
 
-		const onSearchEvent = lodash.debounce(
-		function() {
+		const onSearchEvent = function() {
 				const currentSearchStr = getSearchFromUrl(datatable) || '';
 				const newSearchStr = datatable.search();
 				if (currentSearchStr !== newSearchStr) {
@@ -229,9 +228,8 @@ define([
 						removeSearchFromUrl(datatable);
 					}
 				}
-			},
-			1000
-		);
+			};
+
 		$(element).on('search.dt', function () {
 			if (shouldIgnoreEvent(datatable)) return;
 			onSearchEvent();
