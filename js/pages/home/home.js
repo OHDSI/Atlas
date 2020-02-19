@@ -9,6 +9,7 @@ define([
 	'services/BuildInfoService',
 	'atlas-state',
 	'lodash',
+	'version',
 	'components/heading',
 ], function (
 	ko,
@@ -20,7 +21,8 @@ define([
 	authApi,
 	buildInfoService,
 	sharedState,
-	lodash
+	lodash,
+	version,
 ) {
 	class Home extends Page {
 		constructor(params) {
@@ -34,7 +36,8 @@ define([
 			this.canSearch = ko.computed(() => {
 				return authApi.isAuthenticated();
 			});
-			this.version = ko.observable();
+			this.atlasVersion = ko.observable(this.formatVersion(version));
+			this.webapiVersion = ko.observable();
 			this.atlasReleaseTag = ko.observable();
 			this.webapiReleaseTag = ko.observable();
 			this.atlasReleaseUrl = ko.computed(() => consts.releaseNotesUrl('Atlas', this.atlasReleaseTag()));
@@ -49,7 +52,7 @@ define([
 			const webapiReleaseTag = lodash.get(info, 'buildInfo.webapiRepositoryInfo.releaseTag');
 			this.atlasReleaseTag(atlasReleaseTag);
 			this.webapiReleaseTag(webapiReleaseTag);
-			this.version(this.getVersion(info));
+			this.webapiVersion(this.getWebapiVersion(info));
 			const atlasIssues = await this.getIssuesFromAllPages('OHDSI/Atlas', atlasMilestoneId);
 			const webapiIssues = await this.getIssuesFromAllPages('OHDSI/WebAPI', webapiMilestoneId);
 			let issues = lodash.orderBy([...atlasIssues, ...webapiIssues], ['closed_at'], ['desc']);
@@ -68,7 +71,11 @@ define([
 			}
 		}
 
-		getVersion(info) {
+		formatVersion(ver) {
+			return ver.replace(/(\d+\.\d+\.\d+)-(.*)/, "$1 $2");
+		}
+
+		getWebapiVersion(info) {
 			let qualifier = false;
 			const artifactVersion = (info.buildInfo && info.buildInfo.artifactVersion) || '';
 			if (artifactVersion.match(/.*-SNAPSHOT/)) {
