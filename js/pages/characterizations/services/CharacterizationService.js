@@ -55,9 +55,15 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationResults(generationId) {
+    function loadCharacterizationResults(generationId, params) {
         return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result')
+            .doPost(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result', params)
+            .then(res => res.data);
+    }
+
+    function loadCharacterizationResultsCount(generationId) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result/count')
             .then(res => res.data);
     }
 
@@ -109,6 +115,7 @@ define([
         loadCharacterizationExecutionList,
         loadCharacterizationExecution,
         loadCharacterizationResults,
+        loadCharacterizationResultsCount,
         loadCharacterizationExportDesignByGeneration,
         runGeneration,
         getPrevalenceStatsByGeneration,

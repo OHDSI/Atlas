@@ -1,6 +1,7 @@
 <heading-title params="name: 'Configuration', icon: 'cogs', theme: 'dark'"></heading-title>
 <div data-bind="if: $component.hasPageAccess(), css: classes({ extra: 'paddedWrapper' })">
-		<div data-bind="if: $component.initializationCompleted()">
+		<loading data-bind="visible:loading()"></loading>
+		<div data-bind="if: $component.initializationCompleted() && !loading()">
 			<div data-bind="with:config.api">
 				<div class="configureHeader">
 					<div class="left">
@@ -113,6 +114,9 @@
 					</div>
 					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
 						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">Import Users from LDAP/AD</a>
+					</div>
+					<div class="configuration__padded" data-bind="if: $component.canClearServerCache">
+						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearServerCache">Clear Server Cache</a>
 					</div>
 				</div>
 			</div>

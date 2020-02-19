@@ -14,6 +14,9 @@ define([
 	'services/AuthAPI',
 	'services/file',
 	'services/Poll',
+	'./PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -27,6 +30,8 @@ define([
 	'components/heading',
 	'utilities/import',
 	'utilities/export',
+	'utilities/sql',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
@@ -43,6 +48,9 @@ define([
 	authAPI,
 	FileService,
 	PollService,
+	{ isPermittedExportSQL },
+	GlobalPermissionService,
+	{ entityType },
 	Page,
 	AutoBind,
 	commonUtils,
@@ -55,10 +63,11 @@ define([
 			super(params);
 			// polling support
 			this.pollId = null;
-			this.model = params.model;
 			this.loading = ko.observable(false);
 			this.loadingInfo = ko.observable();
 			this.loadingSummary = ko.observableArray();
+			this.constants = constants;
+			this.tabs = constants.tabs;
 			this.selectedAnalysis = sharedState.IRAnalysis.current;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
@@ -99,6 +108,7 @@ define([
 						&& !this.dirtyFlag().isDirty()
 					)
 			});
+			this.isPermittedExportSQL = isPermittedExportSQL;
 			this.selectedAnalysisId.subscribe((id) => {
 				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
 					authAPI.loadUserInfo();
@@ -106,7 +116,7 @@ define([
 			});
 
 			this.isRunning = ko.observable(false);
-			this.activeTab = ko.observable(params.activeTab || 'definition');
+			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
 			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
@@ -145,14 +155,24 @@ define([
 
 			this.expressionMode = ko.observable('import');
 
-			this.isNameFilled = ko.computed(() => {
+			this.isNameFilled = ko.pureComputed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
-			this.isNameCorrect = ko.computed(() => {
+
+			this.isNameCorrect = ko.pureComputed(() => {
 				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
 			});
-			this.canSave = ko.computed(() => {
-				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
+
+			this.isTarValid = ko.pureComputed(() => {
+				const analysis = this.selectedAnalysis() && this.selectedAnalysis().expression();
+				if (analysis == null) return;
+				return !(analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField() && analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset());			});
+
+			this.canSave = ko.pureComputed(() => {
+				return this.isEditable()
+					&& this.isNameCorrect()
+					&& this.dirtyFlag().isDirty()
+					&& !this.isRunning();
 			});
 			this.error = ko.observable();
 			this.isSaving = ko.observable(false);
@@ -164,6 +184,13 @@ define([
 
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
+			this.exportSqlService = this.exportSql;
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.INCIDENCE_RATE,
+				entityIdGetter: () => this.selectedAnalysisId(),
+				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
+			});
 
 			// startup actions
 			this.init();
@@ -280,11 +307,20 @@ define([
 			});
 		}
 
+		selectTab(tab) {
+			commonUtils.routeTo(`${this.constants.apiPaths.analysis(this.selectedAnalysisId())}/${tab}`);
+		}
+
 		onRouterParamsChanged(params = {}) {
-			const { analysisId } = params;
+			const { analysisId, activeTab } = params;
+			if (activeTab) {
+				if (Object.values(this.constants.tabs).includes(activeTab)) {
+					this.activeTab(activeTab);
+				}
+			}
 			if (analysisId && parseInt(analysisId) !== (this.selectedAnalysis() && this.selectedAnalysis().id())) {
 				this.onAnalysisSelected();
-			} else if (this.selectedAnalysis() && this.selectedAnalysis().id()) {
+			} else if (this.selectedAnalysis() && this.selectedAnalysis().id() && !this.pollId) {
 				this.startPolling();
 			}
 		}
@@ -308,7 +344,7 @@ define([
 			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
 				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab('conceptsets');
+				this.activeTab(this.tabs.CONCEPT_SETS);
 			}
 			this.criteriaContext(null);
 		}
@@ -435,7 +471,7 @@ define([
 			this.loading(true);
 			try {
 				this.refreshDefs();
-				this.activeTab('definition');
+				this.activeTab(this.tabs.DEFINITION);
 				this.close();
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
@@ -477,6 +513,14 @@ define([
 			});
 			this.sources(sourceList);
 			!this.selectedAnalysis() && this.newAnalysis();
+		}
+
+		async exportSql({ analysisId = 0, expression = {} } = {}) {
+			const sql = await IRAnalysisService.exportSql({
+				analysisId,
+				expression,
+			});
+			return sql;
 		}
 
 		// cleanup

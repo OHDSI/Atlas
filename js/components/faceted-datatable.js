@@ -40,7 +40,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			showAll: 'Show All Columns',
 			restore: 'Reset Columns'
 		};
-		self.deferRender = params.deferRender || true;
+		self.deferRender = typeof params.deferRender != 'undefined' ? params.deferRender : true;
 		self.dom = params.dom || '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
 		self.language = params.language || {
 			search: 'Filter: '
@@ -60,7 +60,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			]
 		}
 		self.orderClasses = params.orderClasses || false;
-		self.ordering = params.ordering || true;
+		self.ordering = params.ordering !== undefined ? params.ordering : true;
 		self.scrollOptions = params.scrollOptions || null;
 		self.createdRow = params.createdRow || null;
 

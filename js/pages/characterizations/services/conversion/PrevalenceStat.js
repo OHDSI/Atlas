@@ -12,7 +12,7 @@ define([
 			this.conceptName = stat.conceptName;
 			this.domainId = stat.domainId;
 			this.faType = stat.faType;
-			this.cohorts = [];
+			this.cohorts = stat.cohorts || [];
 			this.count = {};
 			this.pct = {};
 		}

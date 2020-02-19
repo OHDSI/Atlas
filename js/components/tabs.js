@@ -13,7 +13,10 @@ define([
 	class Tabs extends Component {
 		constructor(params) {
 			super(params);
-			this.subscriptions = [];
+
+			this.componentModifiers = params.modifiers;
+
+			this.controlsComponent = params.controlsComponent;
 
 			this.selectedTab = params.selectedTab ? params.selectedTab : ko.observable(0);
 			this.tabs = ko.observableArray(params.tabs || []);
@@ -38,10 +41,6 @@ define([
 		onSelectedTabKeyUpdate(newVal) {
             let tabIdx = this.tabs().indexOf(this.tabs().find(t => t.key === newVal));
             this.selectedTab(tabIdx);
-		}
-
-		dispose() {
-            this.subscriptions.forEach(s => s.dispose());
 		}
 	}
 

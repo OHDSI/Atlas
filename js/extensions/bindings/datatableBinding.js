@@ -166,7 +166,10 @@ define([
 				if (!!binding.options.scrollY) {
 					setTimeout(() => 	$(element).DataTable().columns.adjust().draw('page'), 0);
 				}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 22f88caf186ae3b99b1c95d6f7d3222d72d680d0
 				// setup dispose callback:
 				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 					// This will be called when the element is removed by Knockout or

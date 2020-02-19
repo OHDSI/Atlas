@@ -2011,7 +2011,6 @@ ul.nav-tabs a i.fa.fa-question-circle-o {
 }
 
 .criteriaTable tr {
-  line-height: 32px;
   height: 32px;
   vertical-align: middle;
 }
@@ -2176,7 +2175,7 @@ div#wrapper_ohdsi a {
 	padding-left: 3px;
 	padding-right: 3px;
 	margin-right: 3px;
-	line-height: 17px;
+	line-height: 18px;
 	min-width: 18px;
 	min-height:19px;
 	border: solid 1px;
@@ -2193,4 +2192,16 @@ div#wrapper_ohdsi a {
 	background-image: url(images/arrow_down.png);
 	background-position: center right;
 	background-repeat: no-repeat;
+}
+
+.thresholdLevel {
+	width: 30%
+}
+
+.thresholdLevel div {
+	display: flex
+}
+
+.thresholdLevel div input {
+	margin-right: 10px
 }

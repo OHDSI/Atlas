@@ -14,7 +14,8 @@ define([
 	'services/MomentAPI',
 	'services/Source',
 	'lodash',
-  'services/JobDetailsService',
+	'services/JobDetailsService',
+	'services/MomentAPI',
 	'services/Poll',
 	'less!./pathway-executions.less',
 	'components/modal-exit-message',
@@ -34,7 +35,8 @@ define([
 	momentAPI,
 	SourceService,
 	lodash,
-  jobDetailsService,
+	jobDetailsService,
+	momentApi,
 	PollService
 ) {
 
@@ -47,7 +49,7 @@ define([
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
-			const currentHash = ko.pureComputed(() => params.design().hashCode);
+			const currentHash = ko.pureComputed(() => params.design() && params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 
@@ -95,19 +97,22 @@ define([
 							}
 						},
 					},
-					{
-						title: ko.i18n(`${COLUMNS}.duration`, 'Duration'),
-						className: this.classes('col-exec-duration'),
-						render: (s, p, d) => momentAPI.formatInterval((d.endTime || (new Date()).getTime()) - d.startTime),
-					},
-					{
-						title: ko.i18n(`${COLUMNS}.results.title`, 'Results'),
-						data: 'results',
-						className: this.classes('col-exec-results'),
-						render: (s, p, d) => {
-							return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(`${COLUMNS}.results.values.text`, 'View reports')()}</a>` : ko.i18n(`${COLUMNS}.results.empty`, '-')();
-						}
+				{
+					title: ko.i18n(`${COLUMNS}.duration`, 'Duration'),
+					className: this.classes('col-exec-duration'),
+					render: (s, p, d) => {
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
+				},
+				{
+					title: ko.i18n(`${COLUMNS}.results.title`, 'Results'),
+					data: 'results',
+					className: this.classes('col-exec-results'),
+					render: (s, p, d) => {
+						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(`${COLUMNS}.results.values.text`, 'View reports')()}</a>` : ko.i18n(`${COLUMNS}.results.empty`, '-')();
+					}
+				}
 				];
 
 			this.executionGroups = ko.observableArray([]);

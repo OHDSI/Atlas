@@ -3,6 +3,8 @@ define([
 	'text!./manager.html',
 	'../PathwayService',
 	'../PermissionService',
+	'services/Permission',
+	'components/security/access/const',
 	'../PathwayAnalysis',
 	'atlas-state',
 	'appConfig',
@@ -12,18 +14,22 @@ define([
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
 	'const',
+	'lodash',
 	'less!./manager.less',
 	'components/tabs',
 	'./tabs/pathway-design',
 	'./tabs/pathway-exec-wrapper',
 	'./tabs/pathway-results',
 	'./tabs/pathway-utils',
-	'faceted-datatable'
+	'faceted-datatable',
+	'components/security/access/configure-access-modal',
 ], function (
 	ko,
 	view,
 	PathwayService,
 	PermissionService,
+	GlobalPermissionService,
+	{ entityType },
 	PathwayAnalysis,
 	sharedState,
 	config,
@@ -33,6 +39,7 @@ define([
 	commonUtils,
 	ohdsiUtil,
 	constants,
+	lodash
 ) {
 	class PathwaysManager extends AutoBind(Page) {
 		constructor(params) {
@@ -78,6 +85,12 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.messages = ko.i18n('pathways.manager.messages');
+
+			GlobalPermissionService.decorateComponent(this, {
+				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
+				entityIdGetter: () => this.analysisId(),
+				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+			});
 		}
 
 		onRouterParamsChanged({analysisId, section, subId}) {

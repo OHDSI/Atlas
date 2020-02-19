@@ -5,6 +5,7 @@ define([
   'utils/CommonUtils',
   'atlas-state',
   'services/ConceptSet',
+  'const',
   'lodash',
   './included-conceptsets-badge',
   'components/empty-state',
@@ -15,19 +16,22 @@ define([
   commonUtils,
   sharedState,
   conceptSetService,
+  globalConstants,
   lodash,
 ) {
 	class IncludedConceptsets extends Component {
 		constructor(params) {
 			super(params);
-      this.model = params.model;
+      this.commonUtils = commonUtils;
       this.ancestorsModalIsShown = ko.observable(false);
       this.ancestors = ko.observableArray([]);
+      this.includedConcepts = sharedState.includedConcepts;
+      this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.loading = ko.pureComputed(() => {
-				return this.model.loadingSourcecodes() || this.model.loadingIncluded();
-			});
+				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded() || sharedState.resolvingConceptSetExpression();
+      });
       this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
-        model: params.model,
+        sharedState: sharedState,
         ancestors: this.ancestors,
         ancestorsModalIsShown: this.ancestorsModalIsShown,
       });
@@ -107,17 +111,17 @@ define([
             return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
               .replace(',', '')) > 0;
           }
-        }]
+        }],
       };
 
       // Triggers parallel load of subset of Ancestors only for current page - to display data ASAP
       // while the query for full ancestors list is being executed in background
       // Per: https://github.com/OHDSI/Atlas/pull/614#issuecomment-383050990
-      this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback(this);
+      this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ searchConceptsColumns: this.searchConceptsColumns });
+    }
 
-      // data load takes place in "Model.loadConceptSet" which is triggered by "router.js"
-      // or in "Model.onCurrentConceptSetModeChanged" which is triggered by tab switch
-      this.model.resolveConceptSetExpression().then(() => this.model.onCurrentConceptSetModeChanged(this.model.currentConceptSetMode()));
+    dispose() {
+      this.ancestorsModalIsShown(false)
     }
 
     dispose() {

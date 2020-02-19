@@ -103,7 +103,6 @@ define([
 				},
 			];
 
-			this.model = params.model;
 			this.sources = ko.computed(() => sharedState.sources().filter(function (s) {
                 return s.hasResults && s.hasVocabulary;
             }));
@@ -111,9 +110,9 @@ define([
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
 			this.errorMessage = ko.observable();
-
+			this.loadingReportDrilldown = ko.observable(false);
 			this.isReportLoading = ko.pureComputed(function () {
-				return this.loadingReport() && !this.hasError() && !this.model.loadingReportDrilldown();
+				return this.loadingReport() && !this.hasError() && !this.loadingReportDrilldown();
 			}, this);
 
 			this.isAuthenticated = authApi.isAuthenticated;
@@ -129,20 +128,10 @@ define([
 			this.currentSource.subscribe((source) => source && this.hasError(false));
 			this.currentReport.subscribe((report) => report && this.hasError(false));
 
-			this.selectedReportSubscription = this.selectedReport.subscribe(r => {
-				this.updateLocation();
-			});
-
-			this.selectedSourceSubscription = this.currentSource.subscribe(r => {
-				this.updateLocation();
-			})
+			this.subscriptions.push(this.selectedReport.subscribe(r => this.updateLocation()));
+			this.subscriptions.push(this.currentSource.subscribe(r => this.updateLocation()));
 
 			this.currentConcept = ko.observable();
-		}
-
-		dispose() {
-			this.selectedReportSubscription.dispose();
-			this.selectedSourceSubscription.dispose();
 		}
 
 		updateLocation() {

@@ -12,17 +12,18 @@ require(["./settings"], (settings) => {
 			...settings.localRefs,
 		},
 //		urlArgs: bustCache,
-	});	
+	});
 	require([
 		'bootstrap',
 		'ko.sortable',
+		'services/PluginRegistry',
 		...Object.values(settings.cssPaths),
 	], function () { // bootstrap must come first
     $.fn.bstooltip = $.fn.tooltip;
 		require([
 			'knockout',
 			'Application',
-			'Model',
+			'appConfig',
 			'const',
 			'pages/Router',
 			'atlas-state',
@@ -35,16 +36,22 @@ require(["./settings"], (settings) => {
 			(
 				ko,
 				Application,
-				Model,
+				appConfig,
 				constants,
-				Router,
+				router,
 				sharedState,
 			) => {
-				const app = new Application(new Model(), new Router());
+				const app = new Application(router);
+
+				// This was added to avoid multiple UI updates,
+				// but this can break code that depends on synchronous updates
+				// More details about deferred updates available at https://knockoutjs.com/documentation/deferred-updates.html
+				ko.options.deferUpdates = true;
 
 				app.bootstrap()
 					.then(() => app.checkOAuthError())
 					.then(() => app.synchronize())
+					.then(() => require(appConfig.externalLibraries, () => console.log('Loaded external plugins')))
 					.catch(er => {
 						sharedState.appInitializationStatus(constants.applicationStatuses.failed);
 						console.error('App initialization failed', er);

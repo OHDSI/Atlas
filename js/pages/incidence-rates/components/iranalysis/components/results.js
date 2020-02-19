@@ -46,6 +46,7 @@ define([
 			this.analysisCohorts = params.analysisCohorts;
 			this.loadingSummary = params.loadingSummary;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
+			this.isTarValid = params.isTarValid;
 			this.selectedSource = ko.observable();
 			this.selectedReport = ko.observable();
 			this.rateMultiplier = ko.observable(1000);
@@ -75,17 +76,26 @@ define([
 
 			// observable subscriptions
 
-			this.targetSub = this.selectedTarget.subscribe((newVal) => {
+			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
-			});
+			}));
 
-			this.outcomeSub = this.selectedOutcome.subscribe((newVal) => {
+			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
 				if (this.selectedSource()) // this will cause a report refresh
 					this.selectSource(this.selectedSource());
+			}));
+
+			this.executionDisabled = ko.pureComputed(() => {
+				return (this.dirtyFlag().isDirty() || !this.isTarValid());
 			});
 
-			this.executionDisabledReason = ko.computed(() => this.dirtyFlag().isDirty() ? constants.disabledReasons.DIRTY : constants.disabledReasons.ACCESS_DENIED);
+			this.executionDisabledReason = ko.pureComputed(() => {
+				if (!this.executionDisabled()) return null;
+				if (this.dirtyFlag().isDirty()) return constants.disabledReasons.DIRTY;
+				if (!this.isTarValid()) return constants.disabledReasons.INVALID_TAR;
+				return constants.disabledReasons.ACCESS_DENIED;
+			});
 
 			this.disableExportAnalysis = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
@@ -93,12 +103,12 @@ define([
 		}
 
 		reportDisabledReason(source) {
-			return ko.computed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
 		}
 
 		isExecutionDisabled(source) {
-			return ko.computed(() => {
-				return !this.hasSourceAccess(source.sourceKey) || this.dirtyFlag().isDirty();
+			return ko.pureComputed(() => {
+				return !this.hasSourceAccess(source.sourceKey) || this.dirtyFlag().isDirty()|| !this.isTarValid();
 			});
 		}
 
@@ -200,11 +210,6 @@ define([
 
 		msToTime(s) {
 			return momentApi.formatDuration(s);
-		};
-
-		dispose() {
-			this.targetSub.dispose();
-			this.outcomeSub.dispose();
 		};
 	}
 

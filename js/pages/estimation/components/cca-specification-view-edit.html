@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis().description" maxlength="1000"></textarea>
+            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis() && $component.estimationAnalysis().description" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
                 <div class="row">
@@ -20,7 +20,7 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <i class="fa fa-balance-scale"></i> Comparative Cohort Settings
+                        <i class="fa fa-balance-scale"></i> Comparisons
                     </div>
                     <div class="panel-body">
                         <div class="paddedWrapper">
@@ -50,7 +50,7 @@
                     <div class="paddedWrapper">
                         <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <i class="fa fa-cogs"></i> Effect Estimation Analysis Settings
+                        <i class="fa fa-cogs"></i> Analysis Settings
                     </div>
                     <div class="panel-body">
                         <div class="paddedWrapper">
@@ -90,7 +90,7 @@
                             </div>
                             <div class="panel-body">
                                 This expression will define the criteria for inclusion and duration of time for cohorts intended for use as negative control outcomes. 
-                                <nc-outcome-cohort-settings-editor params="negativeControlCohortSettings: $component.estimationAnalysis().negativeControlOutcomeCohortDefinition"></nc-outcome-cohort-settings-editor>
+                                <nc-outcome-cohort-settings-editor params="negativeControlCohortSettings: $component.estimationAnalysis() && $component.estimationAnalysis().negativeControlOutcomeCohortDefinition"></nc-outcome-cohort-settings-editor>
                             </div>
                             </div>
                             <div class="panel panel-default">
@@ -99,13 +99,13 @@
                             </div>
                             <div class="panel-body">
                                 <div>
-                                    <label>Should we perform positive control synthesis to calibrate confidence intervals?</label>
+                                    <label>Should we perform positive control synthesis? (to calibrate confidence intervals)</label>
                                     <div class="input-group">
-                                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.estimationAnalysis().doPositiveControlSynthesis"></select>
+                                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.estimationAnalysis() && $component.estimationAnalysis().doPositiveControlSynthesis"></select>
                                     </div>
                                 </div>
-                                <div data-bind="visible: $component.estimationAnalysis().doPositiveControlSynthesis">
-                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis().positiveControlSynthesisArgs, subscriptions: $component.subscriptions"></positive-control-synthesis-settings-editor>
+                                <div data-bind="visible: $component.estimationAnalysis() && $component.estimationAnalysis().doPositiveControlSynthesis">
+                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis() && $component.estimationAnalysis().positiveControlSynthesisArgs, subscriptions: $component.subscriptions"></positive-control-synthesis-settings-editor>
                                 </div>
                             </div>
                             </div>

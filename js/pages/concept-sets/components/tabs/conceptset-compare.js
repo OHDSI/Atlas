@@ -23,15 +23,17 @@ define([
 	class ConceptsetCompare extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-      this.model = params.model;
       this.isModalShown = ko.observable(false);
       this.saveConceptSetFn = params.saveConceptSetFn;
       this.saveConceptSetShow = params.saveConceptSetShow;
-      this.compareCS1Id = ko.observable(this.model.currentConceptSet().id); // Init to the currently loaded cs
-      this.compareCS1Caption = ko.observable(this.model.currentConceptSet().name());
+      this.currentConceptSet = sharedState.ConceptSet.current;
+      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
+      this.criteriaContext = sharedState.criteriaContext;
+      this.compareCS1Id = ko.observable(this.currentConceptSet().id); // Init to the currently loaded cs
+      this.compareCS1Caption = ko.observable(this.currentConceptSet().name());
       this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());
       this.compareCS1ConceptSetExpression = ko.pureComputed(() => {
-        if (this.compareCS1Id === this.model.currentConceptSet().id) {
+        if (this.currentConceptSet() && this.compareCS1Id === this.currentConceptSet().id) {
           return ko.toJS(sharedState.selectedConcepts());
         } else {
           return ko.toJS(this.compareCS1ConceptSet);
@@ -41,12 +43,12 @@ define([
       this.compareCS2Caption = ko.observable();
       this.compareCS2ConceptSet = ko.observable(null);
       this.compareCS2ConceptSetExpression = ko.pureComputed(() => {
-        if (this.compareCS2Id === this.model.currentConceptSet().id) {
+        if (this.currentConceptSet() && this.compareCS2Id === this.currentConceptSet().id) {
           return ko.toJS(sharedState.selectedConcepts());
         } else {
           return ko.toJS(this.compareCS2ConceptSet);
         }
-      })
+      });
       this.compareResults = ko.observable();
       this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
@@ -67,14 +69,14 @@ define([
         // that is currently open. If so, check to see if it is
         // "dirty" and if so, we are not ready to compare.
         let currentConceptSetClean = true;
-        if (conceptSetsSpecifiedAndDifferent && this.model.currentConceptSet()) {
+        if (conceptSetsSpecifiedAndDifferent && this.currentConceptSet()) {
           // If we passed the check above, then we'll enforce this condition
           // which also ensures that we have 2 valid concept sets specified
-          if (this.compareCS1Id() == this.model.currentConceptSet().id ||
-              this.compareCS2Id() == this.model.currentConceptSet().id) {
+          if (this.compareCS1Id() == this.currentConceptSet().id ||
+              this.compareCS2Id() == this.currentConceptSet().id) {
             // One of the concept sets that is involved in the comparison
             // is the one that is currently loaded; check to see if it is dirty
-            currentConceptSetClean = !this.model.currentConceptSetDirtyFlag().isDirty();
+            currentConceptSetClean = !this.currentConceptSetDirtyFlag().isDirty();
           }
         }
 
@@ -102,8 +104,8 @@ define([
       this.compareLoading = ko.observable(false);
       this.compareLoadingClass = ko.pureComputed(() => {
         return this.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
-      })
-      this.compareNewConceptSetName = ko.observable(this.model.currentConceptSet().name() + " - From Comparison");
+      });
+      this.compareNewConceptSetName = ko.observable(this.currentConceptSet().name() + " - From Comparison");
       this.compareResultsColumns = [{
         data: d => {
             if (d.conceptIn1Only == 1) {
@@ -228,6 +230,7 @@ define([
       this.recordCountClass = ko.pureComputed(() => {
         return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
       });
+      this.conceptSetLoading = ko.observable(false);
     }
 
     chooseCS1() {
@@ -304,27 +307,30 @@ define([
 					STANDARD_CONCEPT: null,
 					STANDARD_CONCEPT_CAPTION: null,
 					VOCABULARY_ID: null,
-				}
+				};
 				const newItem = {
 					concept: concept,
 					isExcluded: ko.observable(false),
 					includeDescendants: ko.observable(false),
 					includeMapped: ko.observable(false),
-				}
+				};
 				selectedConcepts.push(newItem);
-			})
+			});
 			this.saveConceptSetFn("#txtNewConceptSetName", conceptSet, selectedConcepts);
 			this.saveConceptSetShow(false);
     }
 
-    conceptsetSelected(d) {
+    async conceptsetSelected(d) {
 			this.isModalShown(false);
-			vocabularyProvider.getConceptSetExpression(d.id)
-				.then((csExpression) => {
-					this.targetId(d.id);
-					this.targetCaption(d.name);
-					this.targetExpression(csExpression.items);
-				});
+			this.conceptSetLoading(true);
+			try {
+				const csExpression = await vocabularyProvider.getConceptSetExpression(d.id);
+				this.targetId(d.id);
+				this.targetCaption(d.name);
+				this.targetExpression(csExpression.items);
+			}finally {
+				this.conceptSetLoading(false);
+			}
     }
 
     showSaveNewModal() {

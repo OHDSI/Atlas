@@ -9,32 +9,32 @@ define(['knockout',
 	'services/ConceptSet',
 	'atlas-state',
 	'services/JobDetailsService',
-  	'services/MomentAPI',
+	'services/MomentAPI',
+	'services/AuthAPI',
 	'assets/ohdsi.util',
 	'databindings',
 	'evidence',
 	'conceptset-modal',
 ], function (
-	ko, 
+	ko,
 	view,
 	Component,
-	config, 
+	config,
 	options,
 	utils,
-	evidenceAPI, 
-	cdmResultsAPI, 
-	conceptSetService, 
-	sharedState, 
-	jobDetailsService, 
-	momentApi
+	evidenceAPI,
+	cdmResultsAPI,
+	conceptSetService,
+	sharedState,
+	jobDetailsService,
+	momentApi,
+	authApi
 ) {
 	class NegativeControls extends Component {
 		constructor(params) {
 			super(params);
-			
+
 			var pollTimeout = null;
-			var authApi = params.model.authApi;
-			this.model = params.model;
 			this.selectedConcepts = params.selectedConcepts;
 			this.conceptSet = params.conceptSet;
 			this.conceptIds = params.conceptIds;
@@ -42,6 +42,7 @@ define(['knockout',
 			this.negativeControls = params.negativeControls;
 			this.dirtyFlag = params.dirtyFlag;
 			this.saveConceptSet = params.saveConceptSet;
+			this.currentConceptSet = sharedState.ConceptSet.current;
 			this.conceptSetValid = ko.observable(false);
 			this.conceptSetValidText = ko.observable("");
 			this.conceptDomainId = ko.observable(null);
@@ -80,7 +81,7 @@ define(['knockout',
 						this.linkoutDrugConceptIds = this.conceptIds();
 						this.linkoutConditionConceptIds.push(s.conceptId);
 					}
-					this.showEvidencePairs(true);	
+					this.showEvidencePairs(true);
 				}
 			}
 
@@ -112,7 +113,7 @@ define(['knockout',
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag()
 					.isDirty();
-				var isNew = this.model.currentConceptSet() && (this.model.currentConceptSet()
+				var isNew = this.currentConceptSet() && (this.currentConceptSet()
 					.id == 0);
 				var canGenerate = !(isDirty || isNew);
 				return (canGenerate);
@@ -126,7 +127,6 @@ define(['knockout',
 				conceptSetService.getGenerationInfo(id)
 					.then((infoList) => {
 						var hasPending = false;
-						console.log("poll for evidence....")
 
 						infoList.forEach(info => {
 							// obtain source reference
@@ -280,7 +280,7 @@ define(['knockout',
 								var giParams = JSON.parse(gi[0].params);
 								evidenceSources[i].csToInclude = ko.observable(giParams.csToInclude != null ? giParams.csToInclude : 0);
 								evidenceSources[i].csToExclude = ko.observable(giParams.csToExclude != null ? giParams.csToExclude : 0);
-								
+
 								var csToIncludePromise = $.Deferred();
 								if (evidenceSources[i].csToInclude() > 0) {
 									csToIncludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToInclude());
@@ -295,7 +295,7 @@ define(['knockout',
 									csToExcludePromise.resolve();
 									evidenceSources[i].csToExcludeLoading(false);
 								}
-								
+
 								$.when(csToIncludePromise, csToExcludePromise)
 									.done(function (csInclude, csExclude) {
 										if (csInclude != null && csInclude.length > 0) {
@@ -307,7 +307,7 @@ define(['knockout',
 											evidenceSources[i].csToExcludeLoading(false);
 										}
 								});
-								
+
 
 								if (gi[0].status == "RUNNING") {
 									this.pollForInfo();
@@ -385,14 +385,14 @@ define(['knockout',
 									conceptIdsForLabels = conceptIdsForNegativeControls;
 								} else {
 									// Take the list of drugs from the concept set
-									conceptIdsForLabels = this.conceptIds(); 
+									conceptIdsForLabels = this.conceptIds();
 								}
 								evidenceAPI.getDrugLabelExists(service.sourceKey(), conceptIdsForLabels).then(results => {
 									var negativeControls = this.addDrugLabelToResults(results, this.negativeControls(), this.targetDomainId());
 									this.negativeControls(negativeControls);
-									this.drugLabelExists(results);								
+									this.drugLabelExists(results);
 									this.loadingResults(false);
-								});				
+								});
 							});
 					});
 			}
@@ -407,7 +407,7 @@ define(['knockout',
 					for (var e = 0; e < drugLabelExists.length; e++) {
 						drugLabelExistsIndex[Object.values(drugLabelExists[e])[0]] = Object.values(drugLabelExists[e])[2];
 					}
-		
+
 					for (var c = 0; c < negativeControls.length; c++) {
 						var concept = negativeControls[c];
 						if (drugLabelExistsIndex[concept.conceptId] != undefined) {
@@ -424,8 +424,8 @@ define(['knockout',
 					.filter(function (elem) {
 						return elem.usaProductLabelExists == filter;
 					})
-					.sort(function (left, right) { 
-						return left.conceptName.toLowerCase() == right.conceptName.toLowerCase() ? 0 : (left.conceptName.toLowerCase() < right.conceptName.toLowerCase() ? -1 : 1) 
+					.sort(function (left, right) {
+						return left.conceptName.toLowerCase() == right.conceptName.toLowerCase() ? 0 : (left.conceptName.toLowerCase() < right.conceptName.toLowerCase() ? -1 : 1)
 					});
 			}
 
@@ -510,29 +510,29 @@ define(['knockout',
 				this.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
 				this.showNegControlsSaveNewModal(false);
 			}
-			
+
 			this.chooseIncludeConceptSet = (source) => {
 				$('#ncModalConceptSetSelect').modal('show');
 				this.csTarget = source.csToInclude;
 				this.csTargetCaption = source.csToIncludeCaption;
 			}
-			
+
 			this.clearIncludeConceptSet = (source) => {
 				source.csToInclude(0);
 				source.csToIncludeCaption(null);
 			}
-			
+
 			this.chooseExcludeConceptSet = (source) => {
 				$('#ncModalConceptSetSelect').modal('show');
 				this.csTarget = source.csToExclude;
 				this.csTargetCaption = source.csToExcludeCaption;
 			}
-			
+
 			this.clearExcludeConceptSet = (source) => {
 				source.csToExclude(0);
 				source.csToExcludeCaption(null);
 			}
-			
+
 			this.conceptsetSelected = (d) => {
 				$('#ncModalConceptSetSelect').modal('hide');
 				conceptSetService.getConceptSet(d.id).then((csInfo) => {
@@ -540,7 +540,7 @@ define(['knockout',
 					this.csTargetCaption(csInfo.name);
 				});
 			}
-			
+
 			this.disableNewConceptSetButton = () => {
 				return true;
 			}

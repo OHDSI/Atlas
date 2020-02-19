@@ -2,23 +2,35 @@ define(
   [
     'knockout',
     'text!./multi-select.html',
+		'lodash',
     'less!./multi-select.less',
     'extensions/bindings/multiSelect',
+    'databindings/eventListenerBinding',
   ],
-  function (ko, view) {
-
+  function (ko, view, _) {
+		
     function multiSelectFilter(params) {
-      this.multiple = params.multiple;
-      this.options = params.options;
-      this.selectedValues = params.selectedValues;
-      this.selectedValue = params.selectedValue;
-      this.selectedTextFormat = params.selectedTextFormat || 'count > 2';
+			var self = this;
 
-      this.optionVals = ko.computed(() => {
+      self.multiple = params.multiple;
+      self.options = params.options;
+      self.selectedValues = ko.observableArray(params.selectedValues && params.selectedValues());
+      self.selectedValue = params.selectedValue;
+      self.selectedTextFormat = params.selectedTextFormat || 'count > 2';
+
+      self.optionVals = ko.computed(() => {
         return params.options().map(opt => opt.value);
       });
 
-      this.optionsText = (val) => params.options().find(opt => opt.value === val).label;
+      self.optionsText = (val) => params.options().find(opt => opt.value === val).label;
+			
+			self.onSelectionComplete = function (data, context, event) {
+				// only reset the param's selectedValues if the current selections are different
+				if (params.multiple && !_.xor(params.selectedValues(), self.selectedValues()).length == 0) {
+					params.selectedValues(self.selectedValues());
+				}
+			};
+			
     }
 
     const component = {

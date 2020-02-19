@@ -1,23 +1,27 @@
 define([
-	'knockout', 
-	'text!./conceptset-editor.html', 
+	'knockout',
+	'text!./conceptset-editor.html',
 	'atlas-state',
 	'utils/CommonUtils',
-	'databindings', 
+	'services/ConceptSet',
+	'databindings',
 	'bootstrap',
 	'faceted-datatable'
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	sharedState,
 	commonUtils,
+	conceptSetService,
 ) {
 	function conceptsetEditor(params) {
 		var self = this;
-		self.model = params.model;
 		self.conceptSetName = ko.observable();
 		self.conceptSets = params.$raw.conceptSets();
-        self.conceptSetId = params.$raw.conceptSetId;
+		self.conceptSetId = params.$raw.conceptSetId;
+		self.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
+		self.commonUtils = commonUtils;
+		self.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
 
 		self.renderLink = function (s, p, d) {
 			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
@@ -25,16 +29,16 @@ define([
 
 		self.toggleCheckbox = function(d, field) {
 			commonUtils.toggleConceptSetCheckbox(
-				self.model.canEditCurrentConceptSet, 
-				sharedState.selectedConcepts, 
-				d, 
+				self.canEditCurrentConceptSet,
+				sharedState.selectedConcepts,
+				d,
 				field,
-				self.model.resolveConceptSetExpression
+				conceptSetService.resolveConceptSetExpression
 			);
 		  }
-	  
+
 		self.renderCheckbox = function(field) {
-			return commonUtils.renderConceptSetCheckbox(self.model.canEditCurrentConceptSet, field);
+			return commonUtils.renderConceptSetCheckbox(self.canEditCurrentConceptSet, field);
 		}
 	}
 

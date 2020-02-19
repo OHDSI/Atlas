@@ -1,11 +1,13 @@
 define([
     './BaseStatConverter',
 	'./PrevalenceStat',
-	'../../utils'
+	'../../utils',
+	'utils/CommonUtils'
 ], function (
     BaseStatConverter,
 	PrevalenceStat,
-	utils
+	utils,
+	commonUtils
 ) {
 
     class PrevalenceStatConverter extends BaseStatConverter {
@@ -22,10 +24,16 @@ define([
             return { strataId: stat.strataId, strataName: stat.strataName};
         }
 
-        convertFields(result, strataId, cohortId, stat) {
+        convertFields(result, strataId, cohortId, stat, prefix) {
             ['count', 'pct'].forEach(field => {
-			    this.setNestedValue(result, field, strataId, cohortId, stat[field]);
+                const statName = prefix ? prefix + field.charAt(0).toUpperCase() + field.slice(1) : field;
+			    this.setNestedValue(result, field, strataId, cohortId, stat[statName]);
             });
+		}
+
+        convertCompareFields(result, strataId, stat) {
+            this.convertFields(result, strataId, stat.targetCohortId, stat, "target");
+            this.convertFields(result, strataId, stat.comparatorCohortId, stat, "comparator");
 		}
 
         getDefaultColumns(analysis) {
@@ -39,7 +47,7 @@ define([
                         if (r.conceptId === null || r.conceptId === undefined) {
                             return 'N/A';
                         } else {
-                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? r.conceptName.replace(/'/g, "\\'").replace(/"/g, '&quot;') : null}'">${r.conceptId}</a>`
+                            return `<a href="#/concept/${r.conceptId}" data-bind="tooltip: '${r.conceptName ? commonUtils.escapeTooltip(r.conceptName) : null}'">${r.conceptId}</a>`
                         }
                     }
                 }
@@ -59,6 +67,7 @@ define([
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
+                xssSafe:false,
             };
         }
 
@@ -89,6 +98,7 @@ define([
                     }
                     return html;
                 },
+                xssSafe:false,
             };
         }
 

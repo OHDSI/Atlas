@@ -24,8 +24,6 @@ define([
 		constructor(params) {
 			super();
 
-			this.subscriptions = [];
-
 			this.loading = ko.observable(false);
 
 			this.MODE_JSON = 0;
@@ -42,6 +40,7 @@ define([
 			this.exportService = PathwayService.loadExportDesign;
 			this.importService = PathwayService.importPathwayDesign;
 
+			this.subscriptions = [];
 			// subscriptions
 			this.subscriptions.push(this.analysisId.subscribe((newVal) => {
 				this.loadExportJSON();
