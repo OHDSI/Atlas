@@ -83,12 +83,13 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
             const { executionStatuses } = consts;
             const { status } = d;
             return status === executionStatuses.COMPLETED
-                ? `<a data-bind="css: $component.classes('reports-link'), click: () => $component.goToResults(id)">View reports</a>`
-                : '-';
+            ? `<a data-bind="css: $component.classes('reports-link'), click: () => $component.goToResults(id)">View reports</a>`
+            : '-';
         };
 
         const renderExexcutionResultsDownload = isPermittedFn => (s, p, d) => {
             const { executionStatuses } = consts;
+            const { status } = d;
             return (status === executionStatuses.COMPLETED || status === executionStatuses.FAILED) && isPermittedFn(d.id) && d.numResultFiles > 0
                 ? `<a href='#' data-bind="ifnot: $component.isDownloadInProgress(id), css: $component.classes('reports-link'), click: () => $component.downloadResults(id)"><i class="comparative-cohort-analysis-executions__action-ico fa fa-download"></i> Download ${d.numResultFiles} files</a><span data-bind="if: $component.isDownloadInProgress(id)"><i class="prediction-generation__action-ico fa fa-spinner fa-spin"></i> Downloading ${d.numResultFiles} files...</span>`
                 : '-';

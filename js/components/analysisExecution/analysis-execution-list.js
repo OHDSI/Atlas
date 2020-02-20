@@ -104,7 +104,7 @@ define([
           className: this.classes('col-exec-results'),
           render: this.executionResultMode === this.executionResultModes.VIEW
             ? DatatableUtils.renderExecutionResultsView()
-            : DatatableUtils.renderExexcutionResultsDownload(this.isResultsViewPermitted),
+            : DatatableUtils.renderExexcutionResultsDownload(this.isResultsViewPermitted.bind(this)),
         }
       };
       this.execColumns = tableColumns.map(col => execColumnsMap[col]);
