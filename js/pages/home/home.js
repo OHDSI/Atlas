@@ -40,6 +40,7 @@ define([
 			this.webapiVersion = ko.observable();
 			this.atlasReleaseTag = ko.observable();
 			this.webapiReleaseTag = ko.observable();
+			this.loading = ko.observable();
 			this.atlasReleaseUrl = ko.computed(() => consts.releaseNotesUrl('Atlas', this.atlasReleaseTag()));
 			this.webapiReleaseUrl = ko.computed(() => consts.releaseNotesUrl('WebAPI', this.webapiReleaseTag()));
 		}
@@ -63,11 +64,16 @@ define([
 
 		async getIssuesFromAllPages(repo, milestone, page = 1, list = []) {
 
-			const { data } = await buildInfoService.getIssues(repo, milestone, page);
-			if (data.length === buildInfoService.ISSUES_PAGE_SIZE) {
-				return this.getIssuesFromAllPages(repo, milestone, page + 1, list.concat(data));
-			} else {
-				return list.concat(data);
+			this.loading(true);
+			try {
+				const {data} = await buildInfoService.getIssues(repo, milestone, page);
+				if (data.length === buildInfoService.ISSUES_PAGE_SIZE) {
+					return this.getIssuesFromAllPages(repo, milestone, page + 1, list.concat(data));
+				} else {
+					return list.concat(data);
+				}
+			} finally {
+				this.loading(false);
 			}
 		}
 
