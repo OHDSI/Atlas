@@ -9,7 +9,7 @@
     "build": "npm run prep && npm run build:dev",
     "build:dev": "node build/optimize.js && npm run compress",
     "compress": "terser ./js/assets/bundle/bundle.js -o ./js/assets/bundle/bundle.js -c --source-map",
-    "genversion": "genversion -s js/version/version.js && r.js -convert js/version js/ && rimraf js/version"
+    "genversion": "genversion -s js/version/version.js && r_js -convert js/version js/ && rimraf js/version"
   },
   "repository": {
     "type": "git",
