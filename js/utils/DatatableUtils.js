@@ -98,7 +98,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
         const renderExecutionDesign = (isPermittedFn, currentHash) => (s, p, d) => {
             const { id, tag = '-', hashCode } = d;
             let html = '';
-            if (isPermittedFn(id)) {
+            if (isPermittedFn(id) && hashCode) {
               html = `<a data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${id})">${(tag)}</a>`;
             } else {
               html = tag;
