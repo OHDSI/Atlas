@@ -25,20 +25,23 @@
 	<div class="heading">Release Notes</div>
 	<div class="release-notes">
 		<div class="paddedWrapper">
-			<a data-bind="attr: { href: atlasReleaseUrl }" target="_new">ATLAS Version <span data-bind="text: version"></span> Release Notes</a>
+			<a data-bind="attr: { href: atlasReleaseUrl }" target="_new">ATLAS Version <span data-bind="text: atlasVersion"></span> Release Notes</a>
 			<br/>
-			<a data-bind="attr: { href: webapiReleaseUrl }" target="_new">WebAPI Version <span data-bind="text: version"></span> Release Notes</a>
+			<a data-bind="attr: { href: webapiReleaseUrl }" target="_new">WebAPI Version <span data-bind="text: webapiVersion"></span> Release Notes</a>
 		</div>
 
-		<div class="paddedWrapper">
-			<br/>This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions:
-		</div>
+		<div data-bind="hidden: loading">
+			<div class="paddedWrapper">
+				<br/>This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions:
+			</div>
 
-		<div class="paddedWrapper github-issue-container" data-bind="foreach:github_status">
-			<div class="github-issue">
-				<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>
-				<img class="github-avatar" data-bind="attr:{src: user.avatar_url}" />
+			<div class="paddedWrapper github-issue-container" data-bind="foreach:github_status">
+				<div class="github-issue">
+					<a target="_blank" data-bind="attr:{href: html_url, title: title}, text:title"></a>
+					<img class="github-avatar" data-bind="attr:{src: user.avatar_url}" />
+				</div>
 			</div>
 		</div>
 	</div>
+	<loading data-bind="visible: loading" params="status: 'Loading release info'"></loading>
 </div>
