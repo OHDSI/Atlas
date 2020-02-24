@@ -14,8 +14,9 @@ define([
 		Ajv
 	) => {
 		const ajv = new Ajv({ allErrors: true });
+		const ROLE_PERMISSION = "role";
+		const PUBLIC_ROLE_ID = 1;
 		const PERMISSION_ID_REGEX = /:[0-9]+:/;
-
 		const roleJSONSchema = {
 			"type": "object",
 			"required": ["role"],
@@ -131,7 +132,7 @@ define([
 			} else if (type === 'permissionSpecificIdsIssues') {
 				Object.assign(newRole, {
 					users: r.roleUsers,
-					permissions: r.rolePermissions.filter(p => !PERMISSION_ID_REGEX.test(p.id)),
+					permissions: r.rolePermissions.filter(p => !this.isPermissionContainExplicitId(p.id)),
 				});
 			}
 			return newRole;
@@ -152,12 +153,17 @@ define([
 				: defaultObject;
 		}
 
+		const isPermissionContainExplicitId = function (permision){
+			return PERMISSION_ID_REGEX.test(permision)
+				&& !permision.startsWith(ROLE_PERMISSION + ":" + PUBLIC_ROLE_ID + ":") //public role is predefine and has id=1
+		}
+
 		return {
 			validateAndParseRoles,
 			parseRole,
 			fixRoles,
 			fixRole,
 			reduceArray,
-			PERMISSION_ID_REGEX
+			isPermissionContainExplicitId
 		};
 	});

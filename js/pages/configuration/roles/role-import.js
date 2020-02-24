@@ -64,7 +64,7 @@ define([
 
       setWarnings() {
         const jsonIssues = this.roles().some(role => role.permissions.unavailable.length || role.users.unavailable.length);
-        const permissionSpecificIdsIssues = this.roles().some(role => role.rolePermissions.some(p => roleJsonParser.PERMISSION_ID_REGEX.test(p.id)));
+        const permissionSpecificIdsIssues = this.roles().some(role => role.rolePermissions.some(p => roleJsonParser.isPermissionContainExplicitId(p.id)));
         this.warnings({ jsonIssues, permissionSpecificIdsIssues });
       }
 

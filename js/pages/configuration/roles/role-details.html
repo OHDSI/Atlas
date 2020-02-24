@@ -12,7 +12,7 @@
             <div class="input-group">
                 <input type="text" placeholder="New Role" class="form-control" data-bind="textInput:$component.roleName, attr: { disabled: canEditRole() ? null : true}, css: { emptyInput: !$component.roleName() }" />
                 <div class="input-group-btn">
-                    <button title="Save" type="button" class="btn btn-success" data-bind="click:$component.save, css: { disabled: !dirtyFlag.isDirty() || !canSave()}"><i class="fa fa-save"></i></button>
+                    <button title="Save" type="button" class="btn btn-success" data-bind="click:$component.save, css: { disabled: !dirtyFlag().isDirty() || !canSave()}"><i class="fa fa-save"></i></button>
                     <button title="Copy" type="button" class="btn btn-primary" data-bind="click:$component.copy, css: { disabled: !canCreate()}"><i class="fa fa-copy"></i></button>
                     <button title="Close" type="button" class="btn btn-primary" data-bind="click:$component.close"><i class="fa fa-times"></i></button>
                     <button title="Export" type="button" class="btn btn-primary" data-bind="click: $component.export"><i class="fa fa-download"></i></button>
@@ -42,9 +42,9 @@
                     componentParams: $component.componentParams,
                 },
                 {
-                    title: 'Export',
-                    key: 'exports',
-                    componentName: 'exports',
+                    title: 'Utilities',
+                    key: 'utilities',
+                    componentName: 'utilities',
                     componentParams: $component.componentParams,
                 }
             ]">
