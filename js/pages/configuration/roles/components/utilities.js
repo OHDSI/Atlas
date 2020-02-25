@@ -40,7 +40,7 @@ define([
             this.importJSON = ko.observable();
 
             this.importJSON.subscribe(function (jsonString) {
-                self.validateJson(jsonString)
+                self.validateJson(jsonString);
             });
             this.exportService = this.exportJson;
             this.importService = this.importJson;
@@ -97,8 +97,8 @@ define([
 
         importJson(jsonObject) {
             const jsonString = JSON.stringify(jsonObject)
-            const isValid = this.validateJson(jsonString);
-            if (!isValid) {
+            this.validateJson(jsonString);
+            if (!this.isJSONValid()) {
                 throw Error();
             }
             return jsonString;
@@ -119,6 +119,46 @@ define([
         }
 
         validateJson(jsonString) {
+            this.validationWarnings(null)
+            this.fixableValidationWarnings(null);
+            this.validationErrors(null);
+            this.fixableValidationErrors(null);
+
+            const parseJsonResult = this.parseAndValidateJson(jsonString);
+            this.validetedRoles = parseJsonResult.roles;
+
+            //errors
+            if (!parseJsonResult.isValid || Boolean(parseJsonResult.error)){
+                this.validationErrors(parseJsonResult.error);
+                this.isJSONValid(false);
+                return;
+            }
+            if (parseJsonResult.roles.length > 1) {
+                this.validationErrors("You cannot import an array of roles.");
+                this.isJSONValid(false);
+                return;
+            }
+            const roleForImport = parseJsonResult.roles[0];
+
+            if (!this.canEditRole() && this.roleName() !== roleForImport.role) {
+                this.validationErrors("You don't have enough privileges to change role name.");
+                this.isJSONValid(false);
+                return;
+            }
+            if (!this.isPermittedToImport(roleForImport)) {
+                this.fixableValidationErrors(true);
+                this.isJSONValid(false);
+                return;
+            }
+
+            //warnings
+            if (roleForImport.rolePermissions.some(p => roleJsonParser.isPermissionContainExplicitId(p.id))) {
+                this.fixableValidationWarnings(true)
+            }
+            this.isJSONValid(true);
+        }
+
+        parseAndValidateJson(jsonString) {
             const usersMap = {};
             this.users().forEach(user => {
                 usersMap[user.login] = user;
@@ -129,42 +169,7 @@ define([
             });
             const existedRolesWithoutCurrent = this.existingRoles().filter(role => role.id !== this.currentRoleId());
             const parseJsonResult = roleJsonParser.validateAndParseRoles(jsonString, usersMap, permissionsMap, existedRolesWithoutCurrent);
-
-            this.validationErrors(null);
-            this.isJSONValid(true);
-            this.validetedRoles = parseJsonResult.roles;
-
-            if (!parseJsonResult.isValid || Boolean(parseJsonResult.error)){
-                this.isJSONValid(false);
-                this.validationErrors(parseJsonResult.error);
-                return false;
-            }
-
-            if (parseJsonResult.roles.length > 1) {
-                this.isJSONValid(false);
-                this.validationErrors("You cannot import an array of roles.");
-                return false;
-            }
-            const roleForImport = parseJsonResult.roles[0];
-
-            if (roleForImport.rolePermissions.some(p => roleJsonParser.isPermissionContainExplicitId(p.id))) {
-                this.fixableValidationWarnings(true)
-            }
-
-            if (!this.canEditRole() && this.roleName() !== roleForImport.role) {
-                this.isJSONValid(false);
-                this.validationErrors("You don't have enough privileges to change role name.");
-                return false;
-            }
-            if (!this.isPermittedToImport(roleForImport)) {
-                this.isJSONValid(false);
-                this.fixableValidationErrors(true);
-                return false;
-            }
-
-
-            return true;
-
+            return parseJsonResult;
         }
 
         setImportJsonToTheVariables (jsonString) {
