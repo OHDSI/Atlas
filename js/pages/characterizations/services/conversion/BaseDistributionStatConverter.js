@@ -31,6 +31,7 @@ define([
               title: 'Strata',
               data: 'strataName',
               className: this.classes('col-distr-title'),
+              // visible: false,
 							xssSafe:false,
             },
             {
@@ -38,6 +39,10 @@ define([
               data: 'covariateName',
               className: this.classes('col-distr-cov'),
               xssSafe: false,
+            },
+            {
+              title: 'Value field',
+              data: (row, type) => (row.faType === 'CRITERIA' && row.aggregateName) || "Events count",
             }];
         }
 

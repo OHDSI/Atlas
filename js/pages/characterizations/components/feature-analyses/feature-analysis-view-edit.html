@@ -110,37 +110,7 @@
                                 selectedValue: $component.data().statType, multiple: false"></multi-select>
                         </div>
                     </div>
-                    <!--<div data-bind="css: classes({extra: 'panel panel-primary'})">-->
-                        <!--<div data-bind="css: classes({extra: 'panel-heading'})">Distribute by field value</div>-->
-                        <div data-bind="css: classes('aggregate-panel'), if: $component.data().statType() === 'DISTRIBUTION'">
-                            <span>Distribute by field value:</span>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                                    <span data-bind="text:currentAggregate"></span>
-                                    <span class="caret"></span>  <!-- caret -->
-                                </button>
-                                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                                    <!-- ko foreach: aggregates -->
-                                    <li class="dropdown-item dropdown-submenu">
-                                        <a>
-                                            <span data-bind="text: label"></span>
-                                            <span data-bind="css: $parent.classes({element: 'submenu-icon', extra: 'fa fa-caret-right'})"></span>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <!-- ko foreach: aggregates -->
-                                            <li class="dropdown-item">
-                                                <a>
-                                                    <div data-bind="css: $parents[1].classes('submenu-item'), text: name, attr:{'title': name}, click: $parents[1].selectAggregate"></div>
-                                                </a>
-                                            </li>
-                                            <!-- /ko -->
-                                        </ul>
-                                    </li>
-                                    <!-- /ko -->
-                                </ul>
-                            </div>
-                        </div>
-                    <!--</div>-->
+
                     <span data-bind="if: data().statType() === 'PREVALENCE'">
                         <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria">
                             Add Criteria feature
@@ -167,6 +137,11 @@
                                         data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeCriteria($index())"
                                 ><i class="fa fa-trash-o"></i></button>
                             </div>
+                            <!-- Aggregate -->
+                            <div>
+                                <aggregate-select params="aggregates: $component.aggregates, currentAggregate: $data.aggregate, domains: $component.domains, criteria: $data"></aggregate-select>
+                            </div>
+
                             <div data-bind="if: $data.criteriaType === 'CriteriaGroup'">
                                 <criteria-group params="{ expression: { ConceptSets: $component.data().conceptSets }, group: $data.expression }"></criteria-group>
                             </div>

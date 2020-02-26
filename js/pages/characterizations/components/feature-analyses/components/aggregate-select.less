@@ -1,0 +1,33 @@
+.aggregate-select {
+
+  &__aggregate-panel {
+    margin: 1rem 0 1rem;
+  }
+
+  &__submenu-icon {
+    float: right;
+    line-height: 1.6rem;
+  }
+
+  &__submenu-item {
+    max-width: 19.5rem;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+}

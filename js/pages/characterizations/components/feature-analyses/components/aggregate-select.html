@@ -1,0 +1,28 @@
+<div data-bind="css: classes('aggregate-panel')">
+    <span>Distribute by field value:</span>
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            <span data-bind="text: aggregate() && aggregate().name"></span>
+            <span class="caret"></span>  <!-- caret -->
+        </button>
+        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+            <!-- ko foreach: aggregates -->
+            <li class="dropdown-item dropdown-submenu">
+                <a>
+                    <span data-bind="text: label"></span>
+                    <span data-bind="css: $parent.classes({element: 'submenu-icon', extra: 'fa fa-caret-right'})"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <!-- ko foreach: aggregates -->
+                    <li class="dropdown-item">
+                        <a>
+                            <div data-bind="css: $parents[1].classes('submenu-item'), text: name, attr:{'title': name}, click: $component.selectAggregate"></div>
+                        </a>
+                    </li>
+                    <!-- /ko -->
+                </ul>
+            </li>
+            <!-- /ko -->
+        </ul>
+    </div>
+</div>

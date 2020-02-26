@@ -10,6 +10,8 @@ define([
 			this.strataName = stat.strataName;
 			this.covariateId = stat.covariateId;
 			this.covariateName = stat.covariateName;
+			this.aggregateId = stat.aggregateId;
+			this.aggregateName = stat.aggregateName;
 			this.avg = [];
 			this.stdDev = [];
 			this.median = [];

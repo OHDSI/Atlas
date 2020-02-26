@@ -25,12 +25,14 @@ define([
     'assets/ohdsi.util',
     '../../utils',
     'const',
+    './const',
     'lodash',
     'less!./feature-analysis-view-edit.less',
     'components/cohortbuilder/components',
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
+    './components/aggregate-select',
 	'components/security/access/configure-access-modal',
 ], function (
     ko,
@@ -59,6 +61,7 @@ define([
     ohdsiUtil,
     utils,
     globalConstants,
+		componentConst,
     lodash,
 ) {
 
@@ -73,7 +76,7 @@ define([
       { label: 'Distribution', value: 'DISTRIBUTION' },
     ];
 
-    const defaultDomain = { label: 'Any', value: 'ALL' };
+    const defaultDomain = { label: 'Any', value: componentConst.ANY_DOMAIN };
 
     class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
@@ -83,7 +86,6 @@ define([
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
             this.aggregates = ko.observable({});
-            this.currentAggregate = ko.computed(() => this.data() && this.data().aggregate() && this.data().aggregate().name);
             this.previousDesign = {};
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
             this.defaultAggregate = ko.observable();
@@ -206,31 +208,31 @@ define([
             });
         }
 
-        selectAggregate(item) {
-            this.data().aggregate(item);
+        selectAggregate(item, data) {
+            console.log('setAggregate', data);
+            data.aggregate(item);
         }
 
         async loadAggregates() {
             const aggregates = await FeatureAnalysisService.loadAggregates();
             const aggregateMap = lodash.sortBy(aggregates.reduce((map, ag) => {
                 ag.isDefault && this.defaultAggregate(ag);
-                const domainId = ag.domain || "ALL";
+                const domainId = ag.domain || componentConst.ANY_DOMAIN;
                 let domain = map.find(d => d.value === domainId);
                 if (!domain) {
                     domain = {
-                      ...this.domains().find(d => d.value === domainId) || defaultDomain,
+                        ...this.domains().find(d => d.value === domainId) || defaultDomain,
                       aggregates: [],
                     };
                     map.push(domain);
                 }
                 domain.aggregates.push(ag);
                 return map;
-            }, []), a => a.label)
+                }, []), a => a.label)
               .map(d => ({
                 ...d,
                 aggregates: lodash.sortBy(d.aggregates, a => a.name),
               }));
-
             this.aggregates(aggregateMap);
         }
 
@@ -252,7 +254,7 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', aggregate = null, domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
+        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
             const anaylysisDomain = domain || defaultDomain;
@@ -260,7 +262,6 @@ define([
             let parsedDesign;
             const data = {
               id: id,
-              aggregate: ko.observable(),
               name: ko.observable(),
               domain: ko.observable(),
               descr: ko.observable(),
@@ -278,6 +279,7 @@ define([
                         id: c.id,
                         name: ko.observable(c.name),
                         criteriaType: c.criteriaType,
+                        aggregate: ko.observable(c.aggregate),
                     };
                     if (c.criteriaType === 'CriteriaGroup') {
                         return {
@@ -302,15 +304,13 @@ define([
 
             data.name(name || this.defaultName);
             data.descr(descr);
-            data.aggregate(aggregate);
             data.domain(anaylysisDomain);
             data.type(type);
             data.design(parsedDesign);
             data.statType(statType);
             data.statType.subscribe(() => {
                 this.data().design([]);
-                this.data().aggregate(this.data().statType() === 'DISTRIBUTION' && this.defaultAggregate());
-						});
+            });
             data.createdBy(createdBy);
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
@@ -337,6 +337,7 @@ define([
             return {
                 name: ko.observable(''),
                 criteriaType: 'CriteriaGroup',
+                aggregate: ko.observable(ko.unwrap(this.defaultAggregate)),
                 conceptSets: this.data().conceptSets,
                 expression: ko.observable(new CriteriaGroup(null, this.data().conceptSets)),
             };
@@ -348,6 +349,7 @@ define([
             return {
                 name: ko.observable(''),
                 criteriaType: 'WindowedCriteria',
+                aggregate: ko.observable(ko.unwrap(this.defaultAggregate)),
                 expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
             };
         }
@@ -356,6 +358,7 @@ define([
             return {
               name: ko.observable(''),
               criteriaType: 'DemographicCriteria',
+              aggregate: ko.observable(ko.unwrap(this.defaultAggregate)),
               expression: ko.observable(new DemographicGriteria()),
             };
         }

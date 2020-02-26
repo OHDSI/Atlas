@@ -46,9 +46,7 @@ define([
                 }
 
                 if (analysis.isComparative) {    
-                    if (stat.strataId === 0) {
-                        row.stdDiff = this.formatStdDiff(stat.diff);
-                    }
+                    row.stdDiff = this.formatStdDiff(stat.diff);
 
                     this.convertCompareFields(row, strataId, stat);
                 } else {        
