@@ -938,21 +938,24 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showImportConceptSetModal(true);
 			};
 
-			onConceptSetRepositoryImport (newConceptSet) {
+			async onConceptSetRepositoryImport (newConceptSet) {
 				this.showImportConceptSetModal(false);
-				vocabularyApi.getConceptSetExpression(newConceptSet.id)
-					.done((result)=> {
-						var conceptSet = this.findConceptSet();
-						conceptSet.name(newConceptSet.name);
-						conceptSet.expression.items().forEach((item)=> {
-							sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
-							sharedState.selectedConcepts.remove((v)=> {
-								return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
-							});
+
+				var conceptSet = this.findConceptSet();
+				if (conceptSet.expression.items().length == 0 ||
+					confirm("Your concept set expression will be replaced with new one. Would you like to continue?")) {
+					conceptSet.name(newConceptSet.name);
+					conceptSet.expression.items().forEach((item)=> {
+						sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
+						sharedState.selectedConcepts.remove((v)=> {
+							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
 						});
-						conceptSet.expression.items().length = 0;
-						this.importConceptSetExpressionItems(result.items);
 					});
+					conceptSet.expression.items().length = 0;
+
+					const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id);
+					this.importConceptSetExpressionItems(expression.items);
+				}
 			};
 
 			clearImportConceptSetJson () {
