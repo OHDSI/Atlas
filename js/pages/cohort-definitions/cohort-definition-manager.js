@@ -941,7 +941,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			async onConceptSetRepositoryImport (newConceptSet) {
 				this.showImportConceptSetModal(false);
 
-				var conceptSet = this.findConceptSet();
+				const conceptSet = this.findConceptSet();
 				if (conceptSet.expression.items().length == 0 ||
 					confirm("Your concept set expression will be replaced with new one. Would you like to continue?")) {
 					conceptSet.name(newConceptSet.name);
