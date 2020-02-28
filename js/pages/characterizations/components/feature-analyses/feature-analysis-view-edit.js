@@ -107,7 +107,6 @@ define([
 
             this.featureTypes = featureTypes;
             this.statTypeOptions = ko.observableArray(statTypeOptions);
-            this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
 
             this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
 
@@ -141,8 +140,27 @@ define([
               featureTypes: this.featureTypes,
               statTypeOptions: this.statTypeOptions,
               setType: this.setType,
-							getEmptyCriteriaFeatureDesign: this.getEmptyCriteriaFeatureDesign,
-							getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
+              getEmptyCriteriaFeatureDesign: this.getEmptyCriteriaFeatureDesign,
+              getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
+            });
+            this.tabs = ko.computed(() => {
+                const tabs = [
+                    {
+                      title: 'Design',
+                      key: 'design',
+                      componentName: 'feature-analysis-design',
+                      componentParams: this.componentParams,
+                    },
+                ];
+                if (this.data() && this.data().type() === this.featureTypes.CRITERIA_SET) {
+                    tabs.push({
+                      title: 'Concept Sets',
+                      key: 'conceptset',
+                      componentName: 'feature-analysis-conceptset',
+                      componentParams: this.componentParams,
+                    });
+                }
+              return tabs;
             });
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -382,10 +400,6 @@ define([
             this.featureId(null);
             this.dataDirtyFlag().reset();
             commonUtils.routeTo('/cc/feature-analyses');
-        }
-
-        copyAnalysisSQLTemplateToClipboard() {
-            this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
         }
     }
 

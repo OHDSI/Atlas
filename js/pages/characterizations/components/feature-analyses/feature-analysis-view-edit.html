@@ -31,20 +31,7 @@
     <tabs data-bind="visible: !$component.loading()" params="
             selectedTabKey: $component.selectedTabKey,
         selectTab: $component.selectTab,
-        tabs: [
-            {
-                title: 'Design',
-                key: 'design',
-                componentName: 'feature-analysis-design',
-                componentParams: $component.componentParams,
-            },
-            {
-                title: 'Concept Sets',
-                key: 'conceptset',
-                componentName: 'feature-analysis-conceptset',
-                componentParams: $component.componentParams,
-            }
-        ],">
+        tabs: $component.tabs,">
     </tabs>
     <!-- /ko -->
 </div>

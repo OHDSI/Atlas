@@ -4,6 +4,7 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/Clipboard',
 	'components/cohortbuilder/CriteriaGroup',
 	'components/cohortbuilder/AdditionalCriteria',
 	'components/cohortbuilder/WindowedCriteria',
@@ -11,6 +12,7 @@ define([
 	'components/cohortbuilder/const',
 	'components/cohortbuilder/utils',
 	'../../../utils',
+	'pages/characterizations/const',
 	'components/multi-select',
 	'less!./fa-design.less',
 ], function (
@@ -19,6 +21,7 @@ define([
 	Component,
 	AutoBind,
 	commonUtils,
+	Clipboard,
 	CriteriaGroup,
 	AdditionalCriteria,
 	WindowedCriteria,
@@ -26,9 +29,10 @@ define([
 	cohortbuilderConsts,
 	cohortbuilderUtils,
 	utils,
+	constants,
 ) {
 
-	class FeatureAnalysisDesign extends AutoBind(Component){
+	class FeatureAnalysisDesign extends AutoBind(Clipboard(Component)){
 
 		constructor(params) {
 			super(params);
@@ -43,6 +47,7 @@ define([
 			this.getEmptyCriteriaFeatureDesign = params.getEmptyCriteriaFeatureDesign;
 			this.getEmptyWindowedCriteria = params.getEmptyWindowedCriteria;
 			this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
+			this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
 
 			// Concept set import for criteria
 			this.criteriaContext = ko.observable();
@@ -80,6 +85,10 @@ define([
 		onRespositoryConceptSetSelected(conceptSet, source) {
 			utils.conceptSetSelectionHandler(this.data().conceptSets, this.criteriaContext(), conceptSet, source)
 				.done(() => this.showConceptSetBrowser(false));
+		}
+
+		copyAnalysisSQLTemplateToClipboard() {
+			this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
 		}
 	}
 
