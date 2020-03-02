@@ -153,6 +153,7 @@ define([
         { name: 'Microsoft PDW', id: 'pdw' },
         { name: 'IBM Netezza', id: 'netezza' },
         { name: 'Hive LLAP', id: 'hive'},
+        { name: 'Spark', id: 'spark'},
       ];
 
       this.sourceCaption = ko.computed(() => {

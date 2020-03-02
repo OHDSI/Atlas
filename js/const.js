@@ -167,6 +167,10 @@ define([
 				title: "Apache Hive",
 				dialect: "hive",
 			},
+			SPARK: {
+				title: "Spark",
+				dialect: "spark"
+			},
 		};
 
 		return {
