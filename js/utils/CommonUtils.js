@@ -128,8 +128,8 @@ define([
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
-    const renderConceptSetCheckbox = function(hasPermissions, field) {
-		return hasPermissions()
+    const renderConceptSetCheckbox = function(hasPermissions, field, readonly = false) {
+		return hasPermissions() && !readonly
 		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
 		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
 	}
@@ -199,11 +199,13 @@ define([
 			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
 			if (!!concept) {
 				concept[field](!concept[field]());
-				successFunction();
-			  }
+				if (successFunction && typeof successFunction === 'function') {
+					successFunction();
+				}
+			}
 		}
 	}
-	
+
 	const escapeTooltip = function(tooltipText) {
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}

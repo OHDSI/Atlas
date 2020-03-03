@@ -100,7 +100,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period',
 				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the observation period as the index event",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));

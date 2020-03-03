@@ -48,6 +48,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
 	'components/security/access/configure-access-modal',
+	'components/authorship',
 	'utilities/sql',
 ], function (
 	$,
@@ -1524,6 +1525,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						return (type == "display")	? `<span data-bind='text: ${field}'></span>`
 																				: ko.utils.unwrapObservable(data)
 					}
+				}
+			}
+			
+			getAuthorship() {
+				const cohortDef = this.currentCohortDefinition();
+				return {
+					createdBy: this.currentCohortDefinition().createdBy(),
+					createdDate: this.currentCohortDefinition().createdDate(),
+					modifiedBy: this.currentCohortDefinition().modifiedBy(),
+					modifiedDate: this.currentCohortDefinition().modifiedDate()
 				}
 			}
 	}

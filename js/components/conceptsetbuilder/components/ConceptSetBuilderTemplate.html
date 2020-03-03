@@ -39,7 +39,7 @@
 		</ul>
 		<div data-bind="attr: { id: 'csExpression' }">
 			<div data-bind="with: selectedConceptSet" style="padding: 5px;">
-				<input style="width: 100%" data-bind="value:name, hasFocus: $component.nameHasFocus, selectOnFocus: true"></input>
+				<input style="width: 100%" data-bind="value:name"></input>
 				<table class="stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable: {
 						data: expression.items,
 						api: $component.dtApi,
@@ -69,13 +69,13 @@
 		</div>
 		<div data-bind="attr: { id: 'csIncluded' }">
 			<div style="padding: 5px;">
-				<input style="width: 100%" data-bind="value:name, hasFocus: $component.nameHasFocus, selectOnFocus: true"></input>
+				<input style="width: 100%" data-bind="value:name"></input>
 				<concept-set-included-concepts params="conceptSet: selectedConceptSet, widget:includedConceptsComponent"></concept-set-included-concepts>
 			</div>
 		</div>
 		<div data-bind="attr: { id: 'csMapped' }">
 			<div style="padding: 5px;">
-				<input style="width: 100%" data-bind="value:name, hasFocus: $component.nameHasFocus, selectOnFocus: true"></input>
+				<input style="width: 100%" data-bind="value:name"></input>
 				<concept-set-mapped-concepts params="conceptSet: selectedConceptSet, widget:mappedConceptsComponent"></concept-set-mapped-concepts>
 			</div>
 
