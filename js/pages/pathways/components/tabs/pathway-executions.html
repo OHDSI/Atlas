@@ -64,11 +64,6 @@
                         <i class="fa fa-spinner fa-spin"></i> Cancel
                     </a>
                     <!-- /ko -->
-                    <!-- ko if:  $component.pathwayGenerationStatusOptions.PENDING === status() -->
-                    <a role="button" class="btn btn-sm btn-warning" data-bind="attr: {disabled: true}">
-                        <i class="fa fa-spinner fa-spin"></i> Pending
-                    </a>
-                    <!-- /ko -->
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
 															 tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null">
