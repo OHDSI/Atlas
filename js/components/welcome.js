@@ -118,7 +118,6 @@ define([
                     error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
                 });
             } else {
-                self.isInProgress(true);
                 document.location = loginUrl;
             }
          }
