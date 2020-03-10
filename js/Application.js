@@ -83,7 +83,7 @@ define(
 							pageTitle = `${pageTitle}: Loading`;
 							break;
 						default:
-							pageTitle = `${pageTitle}: ${this.router.activeRoute().title}`;
+							pageTitle = `${pageTitle}: ${ko.unwrap(this.router.activeRoute().title)}`;
 							break;
 					}
 

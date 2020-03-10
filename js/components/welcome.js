@@ -4,6 +4,7 @@ define([
     'appConfig',
     'services/AuthAPI',
 	'utils/BemHelper',
+    'services/MomentAPI',
     'less!welcome.less'
 ],
     function (
@@ -11,7 +12,8 @@ define([
     view,
     appConfig,
     authApi,
-	BemHelper
+	BemHelper,
+		momentApi,
     ) {
     const componentName = 'welcome';
 
@@ -30,10 +32,11 @@ define([
         self.isDbLoginAtt = ko.observable(false);
         self.authUrl=ko.observable();
         self.isBadCredentials=ko.observable(false);
+        self.messages = ko.i18n('components.welcome.messages');
         self.expiration = ko.computed(function () {
             var expDate = authApi.tokenExpirationDate();
             return expDate
-                ? expDate.toLocaleString()
+                ? momentApi.formatDateTime(expDate)
                 : null;
         });
         self.tokenExpired = authApi.tokenExpired;
@@ -43,14 +46,14 @@ define([
 		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
-                return "Please wait...";
+                return ko.i18n('components.welcome.wait', "Please wait...");
             if (self.errorMsg())
                 return self.errorMsg();
             if (self.isLoggedIn()) {
                 if (self.expiration()) {
-                    return "Logged in as '" + self.login() + "' (exp: " + self.expiration() + ")";
+                    return ko.i18nformat('components.welcome.loggedInExp', {login: self.login(), expiration: self.expiration()})();
                 } else {
-                    return "Logged in as '" + self.login() + "'";
+                    return ko.i18nformat('components.welcome.loggedIn', {login: self.login()});
                 }
             }
             return 'Not logged in';
@@ -94,7 +97,7 @@ define([
                     password: data.elements.lg_password.value
                 },
                 success: self.onLoginSuccessful,
-                error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Bad credentials'),
+                error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.badCredentials', 'Bad credentials')()),
             });
         };
 
@@ -115,7 +118,7 @@ define([
                         withCredentials: true
                     },
                     success: self.onLoginSuccessful,
-                    error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
+                    error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.loginFailed', 'Login failed')()),
                 });
             } else {
                 document.location = loginUrl;
