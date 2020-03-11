@@ -1,9 +1,11 @@
 define([
+  'knockout',
     './BaseStatConverter',
 	'./PrevalenceStat',
 	'../../utils',
 	'utils/CommonUtils'
 ], function (
+  ko,
     BaseStatConverter,
 	PrevalenceStat,
 	utils,
@@ -41,7 +43,7 @@ define([
                 this.getСovNameColumn(),
                 this.getExploreColumn(),
                 {
-                    title: 'Concept ID',
+                    title: ko.i18n(this.columnKey('conceptId'), 'Concept ID'),
                     data: 'conceptId',
                     render: (d, t, r) => {
                         if (r.conceptId === null || r.conceptId === undefined) {
@@ -56,14 +58,14 @@ define([
 
 		getReportColumns(strataId, cohortId) {
             return [
-                this.getCountColumn('Count', 'count', strataId, cohortId),
-                this.getPctColumn('Pct', 'pct', strataId, cohortId)
+                this.getCountColumn(ko.i18n(this.columnKey('count'), 'Count'), 'count', strataId, cohortId),
+                this.getPctColumn(ko.i18n(this.columnKey('pct'), 'Pct'), 'pct', strataId, cohortId)
             ];
 		}
 
         getСovNameColumn() {
             return {
-                title: 'Covariate',
+                title: ko.i18n(columnKey('covariate'), 'Covariate'),
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
@@ -73,7 +75,7 @@ define([
 
         getExploreColumn() {
             return {
-                title: 'Explore',
+                title: ko.i18n(this.columnKey('explore'), 'Explore'),
                 data: 'explore',
                 className: this.classes('col-explore'),
                 render: (d, t, r) => {

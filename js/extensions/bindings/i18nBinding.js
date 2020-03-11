@@ -5,7 +5,7 @@ define(['knockout', 'atlas-state', 'lodash'],
 			return ko.pureComputed({
 				read: () => {
 					const translations = ko.unwrap(subtree || sharedState.localeSettings);
-					const tr = translations && get(translations, key, defaultValue);
+					const tr = (translations && get(translations, key, defaultValue)) || defaultValue;
 					return tr || key;
 				},
 				write: (value) => value,

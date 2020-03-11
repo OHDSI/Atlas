@@ -1,9 +1,9 @@
 <access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewGenerationsPermitted"></access-denied>
 
 <div data-bind="if: $component.isViewGenerationsPermitted(), css: classes()">
-    <loading data-bind="visible: loading()" params="status: 'Loading executions...'"></loading>
+    <loading data-bind="visible: loading()" params="status: ko.i18n('cc.viewEdit.executions.loading', 'Loading executions...')"></loading>
     <div data-bind="visible: !loading()">
-        <h2 data-bind="css: classes('title')">
+        <h2 data-bind="css: classes('title'), text: ko.i18n('cc.viewEdit.executions.title', 'Executions')">
             Executions
         </h2>
         <div data-bind="css: classes('content')">
@@ -15,7 +15,8 @@
                         classes: $parent.classes,
                         execColumns: $parent.execColumns,
                         isExpanded: $parent.expandedSection() === $index(),
-                        toggleSection: $parent.toggleSection.bind(null, $index())
+                        toggleSection: $parent.toggleSection.bind(null, $index()),
+                        datatableLanguage: $parent.datatableLanguage
                     })
                 }
             "></div>
@@ -27,7 +28,7 @@
 <atlas-modal params="
         showModal: $component.isExecutionDesignShown,
         template: 'cc-executions-used-design-template',
-        title: 'Design',
+        title: ko.i18n('cc.viewEdit.executions.designModal.title', 'Design'),
         data: {
             executionDesign: $component.executionDesign,
             classes: $component.classes,
@@ -37,7 +38,7 @@
 
 <modal-exit-message params="{
         showModal: $component.isExitMessageShown,
-        title: 'Execution Exit Message',
+        title: ko.i18n('cc.viewEdit.executions.exitModal.title', 'Execution Exit Message'),
         exitMessage: $component.exitMessage,
     }">
 </modal-exit-message>
@@ -49,7 +50,7 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isExecutionPermitted(sourceKey) ? 'Not enough permissions to generate, changes not saved or no cohorts found' : null,
+                    tooltip: !$component.isExecutionPermitted(sourceKey) ? ko.i18n('cc.viewEdit.executions.messages.permissions', 'Not enough permissions to generate, changes not saved or no cohorts found') : null,
                 ">
                     <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
@@ -58,19 +59,19 @@
                         click: () => $component.generate(sourceKey, submissions()[0] ? submissions()[0].hashCode : null)"
                     >
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-                            <span data-bind="css: classes('action-text')">Generate</span>
+                            <span data-bind="css: classes('action-text'), text: ko.i18n('cc.viewEdit.executions.buttons.generate')">Generate</span>
                     </button>
                     <!-- /ko -->
                     <!-- ko if: $component.ccGenerationStatusOptions.STARTED === status() -->
                     <a role="button" class="btn btn-sm btn-danger"
                        data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
-                        <i class="fa fa-spinner fa-spin"></i> Cancel
+                        <i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('cc.viewEdit.executions.buttons.cancel')">Cancel</span>
                     </a>
                     <!-- /ko -->
                     <!-- ko if:  $component.ccGenerationStatusOptions.PENDING === status() -->
                     <a role="button" class="btn btn-sm btn-warning"
                        data-bind="attr: {disabled: true}">
-                        <i class="fa fa-spinner fa-spin"></i> Pending
+                        <i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('cc.viewEdit.executions.buttons.pending')">Pending</span>
                     </a>
                     <!-- /ko -->
                 </li>
@@ -84,7 +85,7 @@
 						click: () => $component.goToLatestResults(sourceKey)
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
-                        View latest result
+                        <span data-bind="text: ko.i18n('cc.viewEdit.executions.buttons.latestResult')">View latest result</span>
                     </button>
 
                 </li>
@@ -98,7 +99,7 @@
                         click: toggleSection
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="text: 'All executions (' + submissions().length + ')'"></span>
+                        <span data-bind="text: ko.i18nformat('cc.viewEdit.executions.buttons.allExecutions', {submissions: submissions().length})"></span>
                     </button>
                 </li>
             </ul>
@@ -112,6 +113,8 @@
                         options: {
                             columns: execColumns,
                             order: [[ 0, 'desc' ]],
+                            deferRender: false,
+                            language: datatableLanguage
                         }
                     }
                 "/>

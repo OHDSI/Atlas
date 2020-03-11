@@ -36,13 +36,14 @@ define([
             this.isGetCCListPermitted = PermissionService.isPermittedGetCCList;
             this.isCreatePermitted = PermissionService.isPermittedCreateCC;
 
+            const columnTitles = ko.i18n('cc.list.columns');
             this.gridColumns = [
                 {
-                    title: 'Id',
+                    title: ko.i18n('id', 'Id', columnTitles),
                     data: 'id'
                 },
                 {
-                    title: 'Name',
+                    title: ko.i18n('name', 'Name', columnTitles),
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
                     render: datatableUtils.getLinkFormatter(d => ({
@@ -51,34 +52,35 @@ define([
                     })),
                 },
                 {
-                    title: 'Created',
+                    title: ko.i18n('created', 'Created', columnTitles),
                     className: this.classes('tbl-col', 'created'),
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
-                    title: 'Updated',
+                    title: ko.i18n('updated', 'Updated', columnTitles),
                     className: this.classes('tbl-col', 'updated'),
                     render: datatableUtils.getDateFieldFormatter('updatedAt'),
                 },
                 {
-                    title: 'Author',
+                    title: ko.i18n('author', 'Author', columnTitles),
                     className: this.classes('tbl-col', 'author'),
                     render: datatableUtils.getCreatedByFormatter(),
                 },
 
             ];
+            const facetTitles = ko.i18n('cc.list.facets');
             this.gridOptions = {
                 Facets: [
                     {
-                        'caption': 'Created',
+                        'caption': ko.i18n('created', 'Created', facetTitles),
                         'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
                     },
                     {
-                        'caption': 'Updated',
+                        'caption': ko.i18n('updated', 'Updated', facetTitles),
                         'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
                     },
                     {
-                        'caption': 'Author',
+                        'caption': ko.i18n('author', 'Author', facetTitles),
                         'binding': datatableUtils.getFacetForCreatedBy,
                     },
                 ]

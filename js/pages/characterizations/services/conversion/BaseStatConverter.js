@@ -1,17 +1,25 @@
 define([
+    'knockout',
     'numeral',
     '../../utils',
     'lodash',
 ], function (
+  ko,
 	numeral,
     utils,
     lodash,
 ) {
 
+	  const COLUMNS_KEY = 'cc.viewEdit.results.table.columns';
+
     class BaseStatConverter {
 
         constructor(classes) {
             this.classes = classes;
+        }
+
+			  columnKey(key) {
+            return COLUMNS_KEY + '.' + key;
         }
 
         convertAnalysisToTabularData(analysis) {
@@ -84,7 +92,7 @@ define([
                 strataNames: strataNames,
                 defaultColNames: this.getDefaultColumns().map(col => col.title),
                 perStrataColNames: this.getReportColumns(0,0).map(col => col.title),
-                columns: columns,
+                columns: columns.map(col => ({...col, title: ko.unwrap(col.title)})),
                 defaultSort: this.getDefaultSort(columns.length, cohorts.length),
                 data: Array.from(data.values()),
             };

@@ -38,7 +38,12 @@ define([
             this.createNewEnabled = typeof params.createNewEnabled === 'undefined' ? () => true : params.createNewEnabled;
             this.createNewLabel = constants.gridTabs.filter(t => t.value === params.activeTab).newEntityLabel;
         }
-    }
+
+        get datatableLanguage() {
+            return ko.i18n('datatable.language');
+        }
+
+		}
 
     return commonUtils.build('characterizations-tabbed-grid', CharacterizationsTabbedGrid, view);
 });

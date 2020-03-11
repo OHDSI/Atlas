@@ -1,8 +1,8 @@
 <access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: $component.isViewPermitted"></access-denied>
 
 <div data-bind="if: $component.isViewPermitted(), css: classes()">
-    <loading data-bind="visible: loading()" params="status: 'Loading Cohort Characterization design...'">loading</loading>
-    <p data-bind="css: classes('descr')">
+    <loading data-bind="visible: loading()" params="status: ko.i18n('cc.viewEdit.design.loading', 'Loading Cohort Characterization design...')">loading</loading>
+    <p data-bind="css: classes('descr'), html: ko.i18n('cc.viewEdit.design.description')">
         <b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.
     </p>
     <div data-bind="css: classes('linked-entities')">
@@ -10,7 +10,7 @@
     </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
-            title: 'Feature analyses',
+            title: ko.i18n('cc.viewEdit.design.fa.title', 'Feature analyses'),
             columns: $component.featureAnalyses.columns,
             data: $component.featureAnalyses.data,
             newItemAction: $component.featureAnalyses.newItemAction,
@@ -22,32 +22,32 @@
                                 { event: 'click', selector: '.conceptset_import', callback: (item) => $component.handleConceptSetImport($index(), item) },
                                 { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
                             ]">
-        <h2 data-bind="css: classes('strata-title')">Subgroup analyses</h2>
-        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata">New subgroup</button>
+        <h2 data-bind="css: classes('strata-title'),text: ko.i18n('cc.viewEdit.design.subgroups.title', 'Subgroup analyses')">Subgroup analyses</h2>
+        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata, text: ko.i18n('cc.viewEdit.design.subgroups.new', 'New subgroup')">New subgroup</button>
         <div data-bind="css: classes('strata'), visible: stratas().length === 0">
-            <span>No subgroups defined</span>
+            <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.nosubgroups')">No subgroups defined</span>
         </div>
         <!-- ko if: stratas().length > 0 -->
-        <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy" />
+        <input type="text" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy, attr: {placeholder: ko.i18n('cc.viewEdit.design.subgroups.stratifiedByPlaceholder', 'Stratified by')}" />
         <label data-bind="css: classes('strata-checkbox')">
-            <input type="checkbox" data-bind="checked: design().strataOnly" /> Calculate subgroup analyses only
+            <input type="checkbox" data-bind="checked: design().strataOnly" /> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.subgroupOnly')">Calculate subgroup analyses only</span>
         </label>
         <!-- /ko -->
         <div data-bind="foreach: stratas">
             <div data-bind="css: $component.classes('strata')">
                 <div data-bind="css: $component.classes('strata-heading')">
                     <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + (($data.name() == '' || $component.isStrataDuplicated($data.name())) ? ' emptyInput' : '')}),
-                                 textInput: $data.name, event: {'keyup': $component.checkStrataNames}" placeholder="Strata name">
+                                 textInput: $data.name, event: {'keyup': $component.checkStrataNames}, attr: {placeholder: ko.i18n('cc.viewEdit.design.subgroups.namePlaceholder', 'Strata name')}">
                     <button type="button" data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
                     ><i class="fa fa-trash-o"></i></button>
                 </div>
                 <div data-bind="visible: $data.name() === '', css: { 'empty-name-error': !$data.name() }">
                     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <label>Subgroup name is empty.</label>
+                    <label data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.messages.nameIsEmpty')">Subgroup name is empty.</label>
                 </div>
                 <div data-bind="visible: $component.isStrataDuplicated($data.name())" class="empty-name-error">
                     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-                    <label>Subgroup name is duplicated.</label>
+                    <label data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.messages.nameIsNotUnique')">Subgroup name is duplicated.</label>
                 </div>
                 <div>
                     <criteria-group params="{ expression: { ConceptSets: $component.strataConceptSets() }, group: $data.criteria }"></criteria-group>
@@ -57,10 +57,10 @@
     </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
-            title: 'Feature analyses parameters',
+            title: ko.i18n('cc.viewEdit.design.faParams.title', 'Feature analyses parameters'),
             columns: $component.featureAnalysesParams.columns,
             data: $component.featureAnalysesParams.data,
-            newItemLabel: 'New parameter',
+            newItemLabel: ko.i18n('cc.viewEdit.design.faParams.newLabel', 'New parameter'),
             newItemAction: $component.featureAnalysesParams.newItemAction,
 
             removeParam: $component.removeParam,

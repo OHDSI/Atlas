@@ -65,13 +65,15 @@ define([
 
 			this.design = params.design;
 
-			this.execColumns = [{
-					title: 'Date',
+			const execTableCols = ko.i18n('cc.viewEdit.executions.table.columns');
+			this.datatableLanguage = ko.i18n('datatable.language');
+			this.execColumns = ko.computed(() => [{
+					title: ko.i18n('date', 'Date', execTableCols),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 				{
-					title: 'Design',
+					title: ko.i18n('design', 'Design', execTableCols),
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, data) => {
 						let html = '';
@@ -85,21 +87,13 @@ define([
 					}
 				},
 				{
-					title: 'Status',
+					title: ko.i18n('status', 'Status', execTableCols),
 					data: 'status',
 					className: this.classes('col-exec-status'),
-					render: (s, p, d) => {
-						if (s === 'FAILED') {
-							return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
-						} else if (s === 'STOPPED') {
-							return 'CANCELED';
-						} else {
-							return s;
-						}
-					},
+					render: datatableUtils.getExecutionStatus(),
 				},
 				{
-					title: 'Duration',
+					title: ko.i18n('duration', 'Duration', execTableCols),
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
 						const endTime = d.endTime || Date.now();
@@ -107,14 +101,14 @@ define([
 					}
 				},
 				{
-					title: 'Results',
+					title: ko.i18n('results.title', 'Results', execTableCols),
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">View reports</a>` : '-'; // ${d.reportCount}
+						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('results.values.text', 'View reports', execTableCols)()}</a>` : ko.i18n('results.values.empty', '-', execTableCols)(); // ${d.reportCount}
 					}
 				}
-			];
+			]);
 
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
