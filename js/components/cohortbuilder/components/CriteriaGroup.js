@@ -195,6 +195,7 @@ define([
 		self.actions[consts.CriteriaTypes.DEATH] = self.addDeathCriteria;
 		self.actions[consts.CriteriaTypes.DEVICE_EXPOSURE] = self.addDeviceCriteria;
 		self.actions[consts.CriteriaTypes.DRUG_ERA] = self.addDrugEraCriteria;
+		self.actions[consts.CriteriaTypes.DOSE_ERA] = self.addDoseEraCriteria;
 		self.actions[consts.CriteriaTypes.DRUG_EXPOSURE] = self.addDrugExposureCriteria;
 		self.actions[consts.CriteriaTypes.LOCATION_REGION] = self.addLocationRegionCriteria;
 		self.actions[consts.CriteriaTypes.MEASUREMENT] = self.addMeasurementCriteria;
