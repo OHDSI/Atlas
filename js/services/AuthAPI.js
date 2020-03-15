@@ -369,12 +369,12 @@ define(function(require, exports) {
     }
 
     var isPermittedGenerateCohort = function(cohortId, sourceKey) {
-        return isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
-            isPermitted('cohortdefinition:' + cohortId + ':info:get');
+        return isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get')
     }
 
     var isPermittedReadCohortReport = function(cohortId, sourceKey) {
-        return isPermitted('cohortdefinition:' + cohortId + ':report:' + sourceKey + ':get');
+        return isPermitted('cohortdefinition:' + cohortId + ':report:' + sourceKey + ':get')  &&
+           isPermitted('cohortdefinition:' + cohortId + ':info:get');
     }
 
     var isPermittedReadJobs = function() {
