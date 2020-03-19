@@ -108,6 +108,7 @@ define([
 
 		const generationStatuses = {
 			STARTED: 'STARTED',
+			STARTING: 'STARTING',
 			RUNNING: 'RUNNING',
 			COMPLETED: 'COMPLETED',
 			FAILED: 'FAILED',
@@ -130,6 +131,45 @@ define([
 			PROFILE_WIDGET: 'atlas-profile-widget',
 		};
 
+		const sqlDialects = {
+			MSSQL: {
+				title: "MSSQL Server",
+				dialect: "sql server",
+			},
+			MSAPS: {
+				title: "MS APS",
+				dialect: "pdw",
+			},
+			ORACLE: {
+				title: "Oracle",
+				dialect: "oracle",
+			},
+			POSTGRESQL: {
+				title: "PostgreSQL",
+				dialect: "postgresql",
+			},
+			REDSHIFT: {
+				title: "Amazon Red Shift",
+				dialect: "redshift",
+			},
+			IMPALA: {
+				title: "Impala",
+				dialect: "impala",
+			},
+			NETEZZA: {
+				title: "Netezza",
+				dialect: "netezza",
+			},
+			BIGQUERY: {
+				title: "Big Query",
+				dialect: "bigquery",
+			},
+			HIVE: {
+				title: "Apache Hive",
+				dialect: "hive",
+			},
+		};
+
 		return {
 			minChartHeight,
 			treemapGradient,
@@ -142,6 +182,7 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
+			sqlDialects,
     };
   }
 );

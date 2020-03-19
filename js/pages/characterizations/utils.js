@@ -26,7 +26,7 @@ define([
 	}
 
 	function extractMeaningfulCovName(fullName, faType = constants.feAnalysisTypes.CRITERIA) {
-		if ([constants.feAnalysisTypes.CRITERIA, constants.feAnalysisTypes.CUSTOM_FE].includes(faType)) {
+		if ([constants.feAnalysisTypes.CRITERIA_SET, constants.feAnalysisTypes.CUSTOM_FE].includes(faType)) {
 			return fullName;
 		}
 		let nameParts = fullName.split(":");

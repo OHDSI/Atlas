@@ -1,6 +1,6 @@
 define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http','services/Poll'], function (ko, appConfig, jobDetail, sharedState, httpService, pollService) {
-	function list() {
-		return httpService.doGet(appConfig.api.url + 'notifications');
+	function list(hideStatuses) {
+		return httpService.doGet(appConfig.api.url + 'notifications?hide_statuses=' + hideStatuses.join());
 	}
 
 	function createJob(updated) {
@@ -91,7 +91,6 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 			});
 		}
 	}
-
 
 	return {
 		createJob,

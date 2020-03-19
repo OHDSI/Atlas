@@ -56,8 +56,8 @@ define([
             });
 
             this.strataConceptSets = ko.pureComputed({
-                read: () => params.design().strataConceptSets,
-                write: (value) => params.design().strataConceptSets(value)
+                read: () => params.design() && params.design().strataConceptSets || [],
+                write: (value) => params.design() && params.design().strataConceptSets(value)
             });
 
             this.stratas = ko.computed({

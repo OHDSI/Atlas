@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html'], function (ko, options, utils, Range, CriteriaGroup, template) {
 
 	function ConditionEraViewModel(params) {
 
@@ -91,7 +91,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the condition era as the index event",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
@@ -102,6 +102,12 @@ define(['knockout', '../options', '../InputTypes/Range', '../CriteriaGroup', 'te
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
+
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Condition');
+			return `The index date refers to the condition era of ${conceptSetName}.`;
+		});
+		
 	}
 
 	// return compoonent definition

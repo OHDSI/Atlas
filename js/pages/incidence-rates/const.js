@@ -22,6 +22,7 @@ define(
     const disabledReasons = {
       DIRTY: 'Save changes to generate',
       ACCESS_DENIED: 'Access denied',
+			INVALID_TAR: 'Invalid TAR'
     };
 
     function isInProgress(currentStatus) {
