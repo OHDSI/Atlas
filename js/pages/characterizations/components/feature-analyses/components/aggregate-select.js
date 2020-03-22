@@ -35,7 +35,19 @@ define([
 		{
 			type: 'VisitOccurrence',
 			domains: ['VISIT']
-		}
+		},
+        {
+            type: 'ProcedureOccurrence',
+            domains: ['PROCEDURE']
+        },
+        {
+            type: 'Observation',
+            domains: ['OBSERVATION']
+        },
+        {
+            type: 'ConditionEra',
+            domains: ['CONDITION']
+        }
 	];
 
 	class AggregateSelector extends AutoBind(Component) {
