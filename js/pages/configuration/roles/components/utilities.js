@@ -4,7 +4,6 @@ define([
     'text!./utilities.html',
     'components/Component',
     'utils/AutoBind',
-    'components/Component',
     'pages/configuration/roles/roleJsonParser',
     'utils/CommonUtils',
     'utilities/import',
@@ -15,7 +14,6 @@ define([
     view,
     Component,
     AutoBind,
-    Component,
     roleJsonParser,
     commonUtils
 ) {
