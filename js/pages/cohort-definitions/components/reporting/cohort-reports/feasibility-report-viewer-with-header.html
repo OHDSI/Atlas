@@ -1,0 +1,9 @@
+<div>
+    <div data-bind="visible: isLoading" class="loading">loading inclusion report...</div>
+    <!-- ko if: !isLoading() -->
+			<div class="heading">
+				Inclusion Report for <span data-bind="text: source().sourceName"></span>
+			</div>
+			<feasibility-report-viewer params="report: report"></feasibility-report-viewer>
+    <!-- /ko -->
+</div>

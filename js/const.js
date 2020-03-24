@@ -227,6 +227,10 @@ define([
 			plp: 'New Patient Level Prediction Analysis',
 		};
 
+        const pluginTypes = {
+            COHORT_REPORT: 'atlas-cohort-report',
+        };
+
 		return {
 			minChartHeight,
 			treemapGradient,
@@ -240,6 +244,7 @@ define([
 			generationStatuses,
 			timeAtRiskCohortDate,
 			newEntityNames,
+            pluginTypes,
     };
   }
 );
