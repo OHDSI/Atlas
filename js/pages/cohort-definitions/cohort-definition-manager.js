@@ -1077,10 +1077,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			selectViewReport (item) {
-
-			}
-
 			toggleCohortReport(item) {
 				if (this.selectedReport() && this.selectedReport().sourceKey === item.sourceKey) {
 					this.selectedReport(null);
