@@ -1078,18 +1078,26 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			selectViewReport (item) {
-				this.selectedSource(item);
-				this.loadingReport(true);
-				this.selectedReportCaption(item.name);
 
-				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
-				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
+			}
 
-				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
-					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
-					this.selectedReport(report);
-					this.loadingReport(false);
-				});
+			toggleCohortReport(item) {
+				if (this.selectedReport() && this.selectedReport().sourceKey === item.sourceKey) {
+					this.selectedReport(null);
+				} else {
+					this.selectedSource(item);
+					this.loadingReport(true);
+					this.selectedReportCaption(item.name);
+	
+					var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
+					var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
+	
+					$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
+						var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
+						this.selectedReport(report);
+						this.loadingReport(false);
+					});
+				}
 			}
 
 			getStatusMessage (info) {
