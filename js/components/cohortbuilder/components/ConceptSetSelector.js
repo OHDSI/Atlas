@@ -29,7 +29,7 @@ define(['knockout','text!./ConceptSetSelectorTemplate.html', 'databindings/cohor
 		});
 		self.conceptSetName = ko.computed(function() {
 			var selectedConceptSet = self.conceptSets().filter(function(item) { return item.id == self.conceptSetId()});
-			return (selectedConceptSet.length > 0 && selectedConceptSet[0].name()) || self.defaultText;
+			return (selectedConceptSet.length > 0 && selectedConceptSet[0].name()) || ko.unwrap(self.defaultText);
 		});
 		
 		self.itemClicked = function(item) {

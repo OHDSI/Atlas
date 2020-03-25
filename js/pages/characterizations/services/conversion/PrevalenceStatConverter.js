@@ -43,7 +43,7 @@ define([
                 this.getСovNameColumn(),
                 this.getExploreColumn(),
                 {
-                    title: ko.i18n(this.columnKey('conceptId'), 'Concept ID'),
+                    title: ko.i18n('cc.viewEdit.results.table.columns.conceptId', 'Concept ID'),
                     data: 'conceptId',
                     render: (d, t, r) => {
                         if (r.conceptId === null || r.conceptId === undefined) {
@@ -58,14 +58,14 @@ define([
 
 		getReportColumns(strataId, cohortId) {
             return [
-                this.getCountColumn(ko.i18n(this.columnKey('count'), 'Count'), 'count', strataId, cohortId),
-                this.getPctColumn(ko.i18n(this.columnKey('pct'), 'Pct'), 'pct', strataId, cohortId)
+                this.getCountColumn(ko.i18n('cc.viewEdit.results.table.columns.count', 'Count'), 'count', strataId, cohortId),
+                this.getPctColumn(ko.i18n('cc.viewEdit.results.table.columns.pct', 'Pct'), 'pct', strataId, cohortId)
             ];
 		}
 
         getСovNameColumn() {
             return {
-                title: ko.i18n(columnKey('covariate'), 'Covariate'),
+                title: ko.i18n('cc.viewEdit.results.table.columns.covariate', 'Covariate'),
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
@@ -75,7 +75,7 @@ define([
 
         getExploreColumn() {
             return {
-                title: ko.i18n(this.columnKey('explore'), 'Explore'),
+                title: ko.i18n('cc.viewEdit.results.table.columns.explore', 'Explore'),
                 data: 'explore',
                 className: this.classes('col-explore'),
                 render: (d, t, r) => {

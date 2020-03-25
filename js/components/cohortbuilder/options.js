@@ -1,4 +1,8 @@
-define([], function () {
+define((require, exports) => {
+
+    const ko = require('knockout');
+    //todo yar this way we guaranty that i18n is already in ok. think about alternative way to do so...
+    const appConfig = require('appConfig');
 
     var options = {};
 
@@ -15,20 +19,24 @@ define([], function () {
         options.quantityOptions.push(i);
     } // intialize quantity options
 
-    options.occurrenceTypeOptions = [{
-        id: 1,
-        name: 'at most'
-}, {
-        id: 0,
-        name: 'exactly'
-}, {
-        id: 2,
-        name: 'at least'
-}];
+    options.occurrenceTypeOptions = [
+        {
+            id: 1,
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.window-coeff.options.at-most', 'at most')
+        },
+        {
+            id: 0,
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.window-coeff.options.exactly', 'exactly')
+        },
+        {
+            id: 2,
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.window-coeff.options.at-least', 'at least')
+        }
+    ];
 
     options.windowDayOptions = new Array();
     options.windowDayOptions.push({
-        label: "All",
+        label: ko.i18n('cc.viewEdit.design.subgroups.component.window-day.options.all', 'ALL'),
         value: " " // ' ' is used to work around an autocomplete issue: when it's set to null or '', the autocomplete uses the label for the value instead of value (annoying)
     });
     for (i = 0; i < options.dayOptions.length; i++) {
@@ -37,72 +45,96 @@ define([], function () {
             value: options.dayOptions[i]
         });
     }
-    options.windowCoeffOptions = [{
-        value: -1,
-        name: 'Before'
-}, {
-        value: 1,
-        name: 'After'
-}];
+    options.windowCoeffOptions = [
+        {
+            value: -1,
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.window-coeff.options.before', 'Before')
+        },
+        {
+            value: 1,
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.window-coeff.options.after', 'After')
+        }
+    ];
 
-		options.occurrenceCountOptions = ['0','1','2','3','4','5','6','7','8','9','10','20','50','100'];
-    options.groupTypeOptions = [{
-        id: 'ALL',
-        name: 'all'
-	}, {
-        id: 'ANY',
-        name: 'any'
-	}, {
-        id: 'AT_LEAST',
-        name: 'at least'
-	}, {
-        id: 'AT_MOST',
-        name: 'at most'
-	}];
+	options.occurrenceCountOptions = ['0','1','2','3','4','5','6','7','8','9','10','20','50','100'];
+    options.groupTypeOptions = [
+        {
+            id: 'ALL',
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.group-type.options.all', 'all')
+        },
+        {
+            id: 'ANY',
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.group-type.options.any', 'any')
+        },
+        {
+            id: 'AT_LEAST',
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.group-type.options.at-least', 'at least')
+        },
+        {
+            id: 'AT_MOST',
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.group-type.options.all', 'at most')
+        }
+    ];
 
-    options.resultLimitOptions = [{
-        name: "all events",
-        id: "All"
-		}, {
-        name: "earliest event",
-        id: "First"
-		}, {
-        name: "latest event",
-        id: "Last"
-		}];
+    options.resultLimitOptions = [
+        {
+            id: "All",
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.result-limit.options.all-events', 'all events')
+        },
+        {
+            id: "First",
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.result-limit.options.earliest-event', 'earliest event')
+        },
+        {
+            id: "Last",
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.result-limit.options.last-event', 'latest event')
+        }
+    ];
 
-    options.yesNoOptions = [{
-        name: "Yes",
-        id: "1"
-		}, {
-        name: "No",
-        id: "0"
-		}];
-		
+    options.yesNoOptions = [
+        {
+            id: "1",
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.yes-no.options.yes', 'Yes')
+        },
+        {
+            id: "0",
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.yes-no.options.no', 'No')
+        }
+    ];
 
-		options.DomainTypeExcludeOptions = [{
-			name: 'is any of',
-			value: false
-		}, {
-			name: 'is not any of',
-			value: true
-		}];
-	
-		options.IndexDateOptions = [{
-			name: 'index start date',
-			value: false
-		}, {
-			name: 'index end date',
-			value: true
-		}];
 
-		options.EventDateOptions = [{
-			name: 'event starts',
-			value: false
-		}, {
-			name: 'event ends',
-			value: true
-		}]
+    options.DomainTypeExcludeOptions = [
+        {
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.domain-type-exclude.options.is-any-of', 'is any of'),
+            value: false
+        },
+        {
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.domain-type-exclude.options.is-not-any-of', 'is not any of'),
+            value: true
+        }
+    ];
+
+    options.IndexDateOptions = [
+        {
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.index-date.options.index-start-date', 'index start date'),
+            value: false
+        },
+        {
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.index-date.options.index-end-date', 'index end date'),
+            value: true
+        }
+    ];
+
+    options.EventDateOptions = [
+        {
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.index-date.options.event-starts', 'event starts'),
+            value: false
+        },
+        {
+            name: ko.i18n('cc.viewEdit.design.subgroups.component.index-date.options.event-ends', 'event ends'),
+            value: true
+        }
+    ]
 	
 	
     return options;

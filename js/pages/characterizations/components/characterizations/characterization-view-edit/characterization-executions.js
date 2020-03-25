@@ -65,15 +65,13 @@ define([
 
 			this.design = params.design;
 
-			const execTableCols = ko.i18n('cc.viewEdit.executions.table.columns');
-			this.datatableLanguage = ko.i18n('datatable.language');
 			this.execColumns = ko.computed(() => [{
-					title: ko.i18n('date', 'Date', execTableCols),
+					title: ko.i18n('cc.viewEdit.executions.table.columns.date', 'Date'),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 				{
-					title: ko.i18n('design', 'Design', execTableCols),
+					title: ko.i18n('cc.viewEdit.executions.table.columns.design', 'Design'),
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, data) => {
 						let html = '';
@@ -87,13 +85,13 @@ define([
 					}
 				},
 				{
-					title: ko.i18n('status', 'Status', execTableCols),
+					title: ko.i18n('cc.viewEdit.executions.table.columnsstatus', 'Status'),
 					data: 'status',
 					className: this.classes('col-exec-status'),
 					render: datatableUtils.getExecutionStatus(),
 				},
 				{
-					title: ko.i18n('duration', 'Duration', execTableCols),
+					title: ko.i18n('cc.viewEdit.executions.table.columnsduration', 'Duration'),
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
 						const endTime = d.endTime || Date.now();
@@ -101,11 +99,11 @@ define([
 					}
 				},
 				{
-					title: ko.i18n('results.title', 'Results', execTableCols),
+					title: ko.i18n('cc.viewEdit.executions.table.columnsresults.title', 'Results'),
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('results.values.text', 'View reports', execTableCols)()}</a>` : ko.i18n('results.values.empty', '-', execTableCols)(); // ${d.reportCount}
+						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.text', 'View reports')()}</a>` : ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.empty', '-')(); // ${d.reportCount}
 					}
 				}
 			]);

@@ -5,7 +5,9 @@
         }">
     </div>
     <div data-bind="css: classes('indexWindowSection')">
-        where <cycle-toggle-input params="{value: criteria().StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
+
+        <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.windowed-criteria.where', 'where')"></span>
+        <cycle-toggle-input params="{value: criteria().StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
         <window-input params="Window: criteria().StartWindow"></window-input> <cycle-toggle-input params="{value: criteria().StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
         <!-- ko if: criteria().EndWindow -->
         <div>
@@ -14,11 +16,15 @@
         </div>
         <!-- /ko -->
         <!-- ko ifnot: criteria().EndWindow -->
-        <span class="linkish" data-bind="click: $component.addEndWindow"><i>add additional constraint</i></span>
+        <span class="linkish" data-bind="click: $component.addEndWindow"><i>
+            <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.windowed-criteria.add-additional-constraint', 'add additional constraint')"></span>
+        </i></span>
         <!-- /ko -->
     </div>
     <div data-bind="css: classes('restrictVisitSection')">
-        <input type="checkbox" data-bind="checked: criteria().RestrictVisit"> restrict to the same visit occurrence
+        <input type="checkbox" data-bind="checked: criteria().RestrictVisit">
+        <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.windowed-criteria.restrict-to-the-same-visit-occurence', 'restrict to the same visit occurrence')"></span>
+
     </div>
     <div data-bind="css: classes('IgnoreObservationPeriodSection')">
         <input type="checkbox" data-bind="checked: criteria().IgnoreObservationPeriod, disable: disableObservationPeriod"> ignore observation period

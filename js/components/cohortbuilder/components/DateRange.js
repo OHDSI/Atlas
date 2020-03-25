@@ -6,25 +6,25 @@ define(['knockout', 'text!./DateRangeTemplate.html'], function (ko, componentTem
 		
 		self.operationOptions = [{
 			id: 'lt',
-			name: 'Before'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.before', 'Before')
 		}, {
 			id: 'lte',
-			name: 'On or Before'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.on-or-before', 'On or Before')
 		}, {
 			id: 'eq',
-			name: 'On'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.on', 'On')
 		}, {
 			id: 'gt',
-			name: 'After'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.after', 'After')
 		}, {
 			id: 'gte',
-			name: 'On or After'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.on-or-after', 'On or After')
 		}, {
 			id: 'bt',
-			name: 'Between'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.between', 'Between')
 		}, {
 			id: '!bt',
-			name: 'Not Between'
+			name: ko.i18n('cc.viewEdit.design.subgroups.component.date-range.not-between', 'Not Between')
 		}];
 	};
 

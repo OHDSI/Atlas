@@ -1,17 +1,16 @@
 <div class="loading" data-bind="visible: loading()">loading</div>
 
 <div data-bind="css: classes(), visible: !loading()">
-    <h2 data-bind="css: classes('title')">
-        Utilities
+    <h2 data-bind="css: classes('title'), text: ko.i18n('cc.viewEdit.utilities.title', 'Utilities')" >
     </h2>
     <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
         <li role="presentation"
             data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_JSON ? 'active' : null }), click: setMode.bind(null, MODE_JSON)">
-            <a>Export</a>
+            <a data-bind="text: ko.i18n('cc.viewEdit.utilities.buttons.export', 'Export')"></a>
         </li>
         <li role="presentation"
             data-bind="css: classes({ element: 'nav-pill', extra: mode() == MODE_IMPORT ? 'active' : null }), click: setMode.bind(null, MODE_IMPORT)">
-            <a>Import</a>
+            <a data-bind="text: ko.i18n('cc.viewEdit.utilities.buttons.import', 'Import')"></a>
         </li>
     </ul>
     <div data-bind="if: mode() == MODE_JSON, css: classes('content')">

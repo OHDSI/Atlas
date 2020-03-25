@@ -49,10 +49,6 @@ define([
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(0, 'design'));
 		}
 
-		get datatableLanguage() {
-			return ko.i18n('datatable.language');
-		}
-
 		get gridColumns() {
 			const columns = ko.i18n('pathways.browser.table.columns');
 			return ko.computed(() => [

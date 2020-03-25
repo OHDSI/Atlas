@@ -11,16 +11,16 @@ define([
 
 		getReportColumns(strataId, cohortId) {
             return [
-                this.getCountColumn(ko.i18n(this.columnKey('count'), 'Count'), 'count', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('avg'), 'Avg'), 'avg', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('stdev'), 'Std Dev'), 'stdDev', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('min'), 'Min'), 'min', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('p10'), 'P10'), 'p10', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('p25'), 'P25'), 'p25', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('median'), 'Median'), 'median', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('p75'), 'P75'), 'p75', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('p90'), 'P90'), 'p90', strataId, cohortId),
-                this.getDecimal2Column(ko.i18n(this.columnKey('max'), 'Max'), 'max', strataId, cohortId),
+                this.getCountColumn(ko.i18n('cc.viewEdit.results.table.columns.count', 'Count'), 'count', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.avg', 'Avg'), 'avg', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.stdev', 'Std Dev'), 'stdDev', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.min', 'Min'), 'min', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.p10', 'P10'), 'p10', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.p25', 'P25'), 'p25', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.median', 'Median'), 'median', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.p75', 'P75'), 'p75', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.p90', 'P90'), 'p90', strataId, cohortId),
+                this.getDecimal2Column(ko.i18n('cc.viewEdit.results.table.columns.max', 'Max'), 'max', strataId, cohortId),
             ];
         }
         

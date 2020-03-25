@@ -7,16 +7,11 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 		self.Criteria = params.criteria.LocationRegion;
 		self.options = options;
 
-		self.formatOption = function (d) {
-			return '<div class="optionText">' + d.text + '</div>' +
-				'<div class="optionDescription">' + d.description + '</div>';
-		};
-
 		self.addActions = [
 			{
-				text: "Add Start Date Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.option.text', "Add Start Date Criteria"),
 				selected: false,
-				description: "Filter Locations by date when Person started living there",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.option.description', "Filter Locations by date when Person started living there"),
 				action: function () {
 					if (self.Criteria.StartDate() == null)
 						self.Criteria.StartDate(new Range({
@@ -25,9 +20,9 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 				}
 			},
 			{
-				text: "Add End Date Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.option.text', "Add End Date Criteria"),
 				selected: false,
-				description: "Filter Locations by date when Person finished living there",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.option.description', "Filter Locations by date when Person finished living there"),
 				action: function () {
 					if (self.Criteria.EndDate() == null)
 						self.Criteria.EndDate(new Range({
@@ -36,9 +31,9 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 				}
 			},
 			{
-				text: "Add Nested Criteria...",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.correlated-criteria.option.text', "Add Nested Criteria..."),
 				selected: false,
-				description: "Apply criteria using the location region as the index event",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.correlated-criteria.option.description', "Apply criteria using the location region as the index event"),
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
@@ -49,11 +44,15 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);
 		}
-		
-		self.indexMessage = ko.pureComputed(() => {
-			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Region');
-			return `The index date refers to the location region of ${conceptSetName}.`;
-		});		
+
+		self.indexMessage = ko.i18nformat('cc.viewEdit.design.subgroups.add.location-region.criteria.index-data.text', 'The index date refers to the location region of <%= conceptSetName %>.',
+			{
+				conceptSetName: utils.getConceptSetName(
+					self.Criteria.CodesetId,
+					self.expression.ConceptSets,
+					ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.default-concept-name', 'Any Region'))
+			});
+
 	}
 
 	// return compoonent definition

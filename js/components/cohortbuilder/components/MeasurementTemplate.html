@@ -6,14 +6,17 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a measurement of
+				<td> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.of', 'a measurement of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Measurement'"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -27,90 +30,100 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div>for the first time in the person's history</div>
+					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence start is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.occurrence-start.text', 'occurrence start is:')"></span>
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: MeasurementType() != null, visible: MeasurementType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('MeasurementType') }" class="fa fa-times" /></td>
 				<td>
-					Measurement Type <cycle-toggle-input params="{value:  MeasurementTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.measurement-type.text', 'Measurement Type')"></span>
+					<cycle-toggle-input params="{value:  MeasurementTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: MeasurementType()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: Operator() != null, visible: Operator() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Operator') }" class="fa fa-times" /></td>
 				<td>
-					Measurement Value Operator is:
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.operator.text', 'Measurement Value Operator is:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Meas Value Operator', DefaultQuery: ''}, ConceptList: Operator()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: ValueAsNumber() != null, visible: ValueAsNumber() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsNumber') }" class="fa fa-times" /></td>
 				<td>
-					with value as number
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.value-as-number.text', 'with value as number')"></span>
 					<numeric-range params="Range: ValueAsNumber"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: ValueAsConcept() != null, visible: ValueAsConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsConcept') }" class="fa fa-times" /></td>
 				<td>
-					Value as Concept is:
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.value-as-concept.text', 'Value as Concept is:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Meas Value', DefaultQuery: ''}, ConceptList: ValueAsConcept()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: Unit() != null, visible: Unit() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
 				<td>
-					Unit is:
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.unit.text', 'Unit is:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Unit', DefaultQuery: ''}, ConceptList: Unit()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: RangeLow() != null, visible: RangeLow() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('RangeLow') }" class="fa fa-times" /></td>
 				<td>
-					with Range Low
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.range-low.text', 'with Range Low')"></span>
 					<numeric-range params="Range: RangeLow"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: RangeLowRatio() != null, visible: RangeLowRatio() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('RangeLowRatio') }" class="fa fa-times" /></td>
 				<td>
-					with Range Low Ratio
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.range-low-ratio.text', 'with Range Low Ratio')"></span>
 					<numeric-range params="Range: RangeLowRatio"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: RangeHigh() != null, visible: RangeHigh() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('RangeHigh') }" class="fa fa-times" /></td>
 				<td>
-					with Range High
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.range-high.text', 'with Range High')"></span>
 					<numeric-range params="Range: RangeHigh"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: RangeHighRatio() != null, visible: RangeHighRatio() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('RangeHighRatio') }" class="fa fa-times" /></td>
 				<td>
-					with Range High Ratio
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.range-high-ratio.text', 'with Range High Ratio')"></span>
 					<numeric-range params="Range: RangeHighRatio"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Abnormal() != null, visible: Abnormal() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Abnormal') }" class="fa fa-times" /></td>
 				<td>
-					with an abnormal result
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.abnormal.text', 'with an abnormal result')"></span>
 				</td>
 			</tr>
 			<tr data-bind="if: MeasurementSourceConcept() != null, visible: MeasurementSourceConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('MeasurementSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Measurement Source Concept is
+
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.measurement-source-concept.text', 'Measurement Source Concept is')"></span>
 						<conceptset-selector params="conceptSetId: MeasurementSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Measurement'"></conceptset-selector>
 					</div>
 				</td>
@@ -118,7 +131,8 @@
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.age.text', 'with age')"></span>
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -126,7 +140,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.gender.text', 'with a gender of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
@@ -149,7 +164,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a Provider Specialty of:
+
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
 				</td>
@@ -157,7 +173,8 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					with a Visit of:
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.visit-type.text', 'with a Visit of:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>
 			</tr>

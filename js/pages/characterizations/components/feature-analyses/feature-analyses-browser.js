@@ -30,6 +30,7 @@ define([
 		constructor(params) {
 			super();
 
+			this.datatableLanguage = ko.i18n('datatable.language');
 			this.selectedAnalyses = params.selectedAnalyses;
 			this.scrollY = params.scrollY;
 			this.scrollCollapse = params.scrollCollapse;
@@ -53,26 +54,30 @@ define([
 					orderable: false,
 				},
 				{
-					title: 'ID',
+					title: ko.i18n('browser.table.columns.id', 'ID'),
 					data: 'id'
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('browser.table.columns.name', 'Name'),
 					render: datatableUtils.getLinkFormatter(d => ({label: d['name']})),
 				},
 				{
-					title: 'Description',
+					title: ko.i18n('browser.table.columns.description', 'Description'),
 					data: 'description'
 				}
 			];
 
 			this.buttons = [
 				{
-					text: 'Select All', action: () => this.toggleSelected(true), className: this.classes({extra: 'btn btn-sm btn-success'}),
+					text: ko.unwrap(ko.i18n('browser.buttons.select-all', 'Select All')),
+					action: () => this.toggleSelected(true),
+					className: this.classes({extra: 'btn btn-sm btn-success'}),
 					init: this.removeClass('dt-button')
 				},
 				{
-					text: 'Deselect All', action: () => this.toggleSelected(false), className: this.classes({extra: 'btn btn-sm btn-primary'}),
+					text: ko.unwrap(ko.i18n('browser.buttons.deselect-all', 'Deselect All')),
+					action: () => this.toggleSelected(false),
+					className: this.classes({extra: 'btn btn-sm btn-primary'}),
 					init: this.removeClass('dt-button')
 				}
 			];

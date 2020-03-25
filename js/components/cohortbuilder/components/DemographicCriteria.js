@@ -8,27 +8,27 @@ define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./Dem
 		self.options = options;
 		self.formatOption = utils.formatDropDownOption;
 		self.addActions = [{
-				text: "Add Age Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.age.option.text', "Add Age Criteria"),
 				selected: false,
-				description: "Filter events based on age.",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.age.option.description', "Filter events based on age."),
 				action: function () {
 					if (self.Criteria.Age() == null)
 						self.Criteria.Age(new Range());
 				}
 			},
 			{
-				text: "Add Gender Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.gender.option.text', "Add Gender Criteria"),
 				selected: false,
-				description: "Filter events based on Gender.",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.gender.option.description', "Filter events based on Gender."),
 				action: function () {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());
 				}
 			},
 			{
-				text: "Add Event Start Date Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.event-start-date.option.text', "Add Event Start Date Criteria"),
 				selected: false,
-				description: "Filter Events by Start Date.",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.event-start-date.option.description', "Filter Events by Start Date."),
 				action: function () {
 					if (self.Criteria.OccurrenceStartDate() == null)
 						self.Criteria.OccurrenceStartDate(new Range({
@@ -37,9 +37,9 @@ define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./Dem
 				}
 			},
 			{
-				text: "Add Event End Date Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.event-end-date.option.text', "Add Event End Date Criteria"),
 				selected: false,
-				description: "Filter Events by End Date",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.event-end-date.option.description', "Filter Events by End Date"),
 				action: function () {
 					if (self.Criteria.OccurrenceEndDate() == null)
 						self.Criteria.OccurrenceEndDate(new Range({
@@ -48,18 +48,18 @@ define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./Dem
 				}
 			},
 			{
-				text: "Add Race Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.race.option.text', "Add Race Criteria"),
 				selected: false,
-				description: "Filter events based on Gender.",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.race.option.description', "Filter events based on Gender."),
 				action: function () {
 					if (self.Criteria.Race() == null)
 						self.Criteria.Race(ko.observableArray());
 				}
 			},
 			{
-				text: "Add Ethnicity Criteria",
+				text: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.ethnicity.option.text', "Add Ethnicity Criteria"),
 				selected: false,
-				description: "Filter events based on Ethnicity.",
+				description: ko.i18n('cc.viewEdit.design.subgroups.add.demographic.criteria.ethnicity.option.description', "Filter events based on Ethnicity."),
 				action: function () {
 					if (self.Criteria.Ethnicity() == null)
 						self.Criteria.Ethnicity(ko.observableArray());

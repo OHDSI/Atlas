@@ -73,14 +73,16 @@
 							</div>
 						</td>
 						<td style="vertical-align: top;">
-							<button class="btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removePrimaryCriteria(data) }">Delete Criteria</button>
+							<button class="btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removePrimaryCriteria(data) }">
+								Delete Criteria
+							</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
-				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PriorDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />				days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PostDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"
-				/> days after event index date
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PriorDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />				days before and <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PostDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"	/>
+				days after event index date
 			</div>
 			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">Limit initial events to:
 				<select data-bind="options: $component.options.resultLimitOptions,

@@ -160,7 +160,7 @@ define([
 
         resultCountText() {
             const values = { resultsCountFiltered: this.resultsCountFiltered(), totalResultsCount: this.totalResultsCount() };
-            return ko.i18nformat('cc.viewEdit.results.threshold.text', values);
+            return ko.i18nformat('cc.viewEdit.results.threshold.text', 'Viewing most prevalent <%=resultsCountFiltered%> of total <%=totalResultsCount%> records', values);
         }
 
         showExecutionDesign() {
@@ -395,25 +395,24 @@ define([
                 "value"
             );
 
-            const filterLabels = ko.i18n('cc.viewEdit.results.filters');
             return [
                 {
                     type: 'multiselect',
-                    label: ko.i18n('cohorts', 'Cohorts', filterLabels),
+                    label: ko.i18n('cc.viewEdit.results.filters.cohorts', 'Cohorts'),
                     name: 'cohorts',
                     options: ko.observable(cohorts),
                     selectedValues: ko.observable(cohorts.map(c => c.value)),
                 },
                 {
                     type: 'multiselect',
-                    label: ko.i18n('analyses', 'Analyses', filterLabels),
+                    label: ko.i18n('cc.viewEdit.results.filters.analyses', 'Analyses'),
                     name: 'analyses',
                     options: ko.observable(analyses),
                     selectedValues: ko.observable(analyses.map(c => c.value)),
                 },
                 {
                     type: 'multiselect',
-                    label: ko.i18n('domains', 'Domains', filterLabels),
+                    label: ko.i18n('cc.viewEdit.results.filters.domains', 'Domains'),
                     name: 'domains',
                     options: ko.observable(domains),
                     selectedValues: ko.observable(domains.map(c => c.value)),

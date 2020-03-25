@@ -51,9 +51,13 @@ define([
                 return self.errorMsg();
             if (self.isLoggedIn()) {
                 if (self.expiration()) {
-                    return ko.i18nformat('components.welcome.loggedInExp', {login: self.login(), expiration: self.expiration()})();
+                    return ko.i18nformat('components.welcome.loggedInExp', 'Logged in as \'<%=login%>\' (exp: <%=expiration%>)',
+                        {login: self.login(), expiration: self.expiration()}
+                    )();
                 } else {
-                    return ko.i18nformat('components.welcome.loggedIn', {login: self.login()});
+                    return ko.i18nformat('components.welcome.loggedIn', 'Logged in as \'<%=login%>\'',
+                        {login: self.login()}
+                    )();
                 }
             }
             return 'Not logged in';

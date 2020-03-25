@@ -6,14 +6,24 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a procedure occurrence of
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Procedure'"></conceptset-selector>
+				<td>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.of', 'a procedure occurrence of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId,
+												conceptSets: $component.expression.ConceptSets,
+												defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.default-concept-name', 'Any Procedure')">
+					</conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-plus"></i>
+							<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span>
+							<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:$component.actionHandler" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -27,34 +37,37 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div>for the first time in the person's history</div>
+					<div>
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.first.text', 'for the first time in the person\'s history')"></span>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence start is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: ProcedureType() != null, visible: ProcedureType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ProcedureType') }" class="fa fa-times" /></td>
 				<td>
-					Procedure Type <cycle-toggle-input params="{value: ProcedureTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.procedure-type.text', 'Procedure Type')"></span>
+					<cycle-toggle-input params="{value: ProcedureTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ProcedureType()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: Modifier() != null, visible: Modifier() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Modifier') }" class="fa fa-times" /></td>
 				<td>
-					Modifier is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.modifier.text', 'Modifier is:')"> </span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Spec Anatomic Site', DefaultQuery: ''}, ConceptList: Modifier()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: Quantity() != null, visible: Quantity() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Quantity') }" class="fa fa-times" /></td>
 				<td>
-					with quantity
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.quantity.text', 'with quantity')"> </span>
 					<numeric-range params="Range: Quantity"></numeric-range>
 				</td>
 			</tr>
@@ -62,15 +75,16 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProcedureSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Procedure Source Concept is:
-						<conceptset-selector params="conceptSetId: ProcedureSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Procedure'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.procedure-source-concept.text', 'Procedure Source Concept is:')"> </span>
+
+						<conceptset-selector params="conceptSetId: ProcedureSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.default-concept-name', 'Any Procedure')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.age.text', 'with age:')"> </span>
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -78,7 +92,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.gender.text', 'with a gender of:')"> </span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
@@ -101,7 +116,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a Provider Specialty of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.provider-specialty.text', 'with a Provider Specialty of:')"> </span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
 				</td>
@@ -109,7 +125,8 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					with a Visit occurrence of:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.visit-type.text', 'with a Visit occurrence of:')"> </span>
+
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>
 			</tr>

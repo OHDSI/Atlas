@@ -4,30 +4,30 @@
     <div data-bind="css: classes('header')">
         <div>
             <h2 data-bind="css: classes('title')">
-                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }, text: ko.i18n('cc.viewEdit.executions.title')">Executions</a>
+                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }, text: ko.i18n('cc.viewEdit.executions.title','Executions')"></a>
                 <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
-                <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', {sourceName: $component.data().sourceName})"></span>
+                <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', 'text: 'Reports for <%= sourceName %>', {sourceName: $component.data().sourceName})"></span>
             </h2>
             <div data-bind="css: classes('toolbar')">
                 <ul data-bind="css: classes('detail-list')">
                     <li data-bind="css: classes('detail')">
-                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.date', 'Date:')">Date:</label>
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.date', 'Date:')"></label>
                         <span data-bind="css: classes('detail-value'), text: $component.formatDate($component.data().date)"></span>
                     </li>
                     <li data-bind="css: classes('detail')">
-                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.design', 'Design:')">Design:</label>
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.design', 'Design:')">:</label>
                         <a href='#' data-bind="css: classes('detail-value'), click: showExecutionDesign, text: $component.data().designHash">x6t21cda</a>
                     </li>
                     <li data-bind="css: classes('detail')">
-                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.results.label', 'Results:')">Results:</label>
-                        <span data-bind="css: classes('detail-value'), text: ko.i18nformat('cc.viewEdit.results.detail.results.text', { reports: ($component.data().analyses || []).length })"></span>
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.results.label', 'Results:')">:</label>
+                        <span data-bind="css: classes('detail-value'), text: ko.i18nformat('cc.viewEdit.results.detail.results.text', '<%= reports %> reports' { reports: ($component.data().analyses || []).length })"></span>
                     </li>
                 </ul>
             </div>
         </div>
         <div data-bind="css: classes('threshold')">
             <div data-bind="css: classes('threshold-setter')">
-                <label  data-bind="css: classes('threshold-label'), text: ko.i18n('cc.viewEdit.results.threshold.label')">Filter results to covariates with prevalence greater than:</label>
+                <label  data-bind="css: classes('threshold-label'), text: ko.i18n('cc.viewEdit.results.threshold.label', 'Filter results to covariates with prevalence greater than:')"></label>
                 <input type="number" min="1" max="100" class="form-control"
                        data-bind="css: classes('threshold-input'), textInput: $component.newThresholdValuePct,
                        attr: { placeholder: ko.i18n('cc.viewEdit.results.threshold.placeholder', 'Threshold value') }">

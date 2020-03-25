@@ -65,27 +65,26 @@ define([
                 write: (value) => params.design().stratas(value),
             });
 
-            const faColumns = ko.i18n('cc.viewEdit.design.fa.columns');
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
                 columns: [
                     {
-                        title: ko.i18n('id', 'ID', faColumns),
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.id', 'ID'),
                         data: 'id',
                         className: this.classes('col-feature-id'),
                     },
                     {
-                        title: ko.i18n('name', 'Name', faColumns),
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.name', 'Name'),
                         data: 'name',
                         className: this.classes('col-feature-name'),
                     },
                     {
-                        title: ko.i18n('description', 'Description', faColumns),
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.description', 'Description'),
                         data: 'description',
                         className: this.classes('col-feature-descr'),
                     },
                     {
-                        title: ko.i18n('actions', 'Actions', faColumns),
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.actions', 'Actions'),
                         render: this.getRemoveCell('removeFeature'),
                         className: this.classes('col-feature-remove'),
                     }
@@ -93,22 +92,21 @@ define([
                 data: ko.computed(() => params.design() && params.design().featureAnalyses() || [])
             };
 
-            const faParamsColumns = ko.i18n('cc.viewEdit.design.faParams.columns');
             this.featureAnalysesParams = {
                 newItemAction: this.showParameterCreateModal,
                 columns: [
                     {
-                        title: ko.i18n('name', 'Name', faParamsColumns),
+                        title: ko.i18n('cc.viewEdit.design.faParams.columns.name', 'Name'),
                         data: 'name',
                         className: this.classes('col-param-name'),
                     },
                     {
-                        title: ko.i18n('value', 'Value', faParamsColumns),
+                        title: ko.i18n('cc.viewEdit.design.faParams.columns.value', 'Value'),
                         data: 'value',
                         className: this.classes('col-param-value'),
                     },
                     {
-                        title: ko.i18n('actions', 'Actions', faParamsColumns),
+                        title: ko.i18n('cc.viewEdit.design.faParams.columns.actions', 'Actions'),
                         render: this.getRemoveCell('removeParam', 'name'),
                         className: this.classes('col-param-remove'),
                     }
@@ -194,8 +192,9 @@ define([
         }
 
         addStrata() {
+
             const strata = {
-              name: ko.observable('New Subgroup'),
+              name: ko.i18n('cc.viewEdit.design.subgroups.placeholder.new', 'New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
             };
             const ccDesign = this.design();

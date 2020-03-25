@@ -9,13 +9,22 @@ define(['knockout', 'atlas-state', 'lodash'],
 					return tr || key;
 				},
 				write: (value) => value,
+				owner: ko
 			});
 		};
 
-		ko.i18nformat = function(key, options = {}) {
-
+		ko.i18nformat = function (key, arg1, arg2) {
+			let defaultValue;
+			let options;
+			if (arg2 === undefined) {
+				defaultValue = undefined;
+				options = arg1;
+			} else {
+				defaultValue = arg1;
+				options = arg2;
+			}
 			return ko.pureComputed(() => {
-				const tmpl = ko.i18n(key);
+				const tmpl = ko.i18n(key, defaultValue);
 				return template(ko.unwrap(tmpl))(options);
 			});
 		};

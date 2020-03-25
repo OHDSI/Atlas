@@ -30,7 +30,7 @@ define([
 
         getDefaultColumns(analysis) {
             return [{
-              title: ko.i18n(this.columnKey('strata'), 'Strata'),
+              title: ko.i18n('cc.viewEdit.results.table.columns.strata', 'Strata'),
               data: 'strataName',
               className: this.classes('col-distr-title'),
 							xssSafe:false,

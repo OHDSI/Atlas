@@ -10,16 +10,11 @@ define([
     lodash,
 ) {
 
-	  const COLUMNS_KEY = 'cc.viewEdit.results.table.columns';
 
     class BaseStatConverter {
 
         constructor(classes) {
             this.classes = classes;
-        }
-
-			  columnKey(key) {
-            return COLUMNS_KEY + '.' + key;
         }
 
         convertAnalysisToTabularData(analysis) {

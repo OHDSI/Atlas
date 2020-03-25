@@ -6,14 +6,19 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a condition occurrence of
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
+				<td> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.condition-occurrence-of', 'a condition occurrence of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.index-data.default-name', 'Any Condition')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>
+							<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span>
+							<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -27,7 +32,7 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div>for the first time in the person's history</div>
+					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
@@ -35,28 +40,31 @@
 					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" />
 				</td>
 				<td>
-					occurrence start is:
+					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.condition-start-date.text', 'occurrence start is:')"></div>
+
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence end is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.condition-end-date.text', 'occurrence end is:')"></span>
+
 					<date-range params="Range: OccurrenceEndDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: ConditionType() != null, visible: ConditionType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ConditionType') }" class="fa fa-times" /></td>
 				<td>
-					Condition Type <cycle-toggle-input params="{value: ConditionTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input> 
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.condition-type.text', 'Condition Type')"></span>
+					<cycle-toggle-input params="{value: ConditionTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ConditionType()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: StopReason() != null, visible: StopReason() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('StopReason') }" class="fa fa-times" /></td>
 				<td>
-					with a Stop Reason
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.stop-reason.text', 'with a Stop Reason')"></span>
 					<text-filter-input params="Filter: StopReason"></text-filter-input>
 				</td>
 			</tr>
@@ -64,15 +72,16 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ConditionSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Condition Source Concept is
-						<conceptset-selector params="conceptSetId: ConditionSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.condition-source-concept.text', 'Condition Source Concept is')"></span>
+						<conceptset-selector params="conceptSetId: ConditionSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.index-data.default-name', 'Any Condition')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.age-at-occurrence.text', 'with age')"></span>
+
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -80,7 +89,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.gender.text', 'with a gender of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
@@ -103,7 +113,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a Provider Specialty of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty' }, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
 				</td>
@@ -111,7 +121,8 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					with a Visit occurrence of:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.visit.text', 'with a Visit occurrence of:')"></span>
+
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>
 			</tr>
