@@ -414,7 +414,7 @@
 							<td>
 								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
 									<i class="fa fa-eye"></i>
-									<span data-bind="text: (($component.selectedReport() && $component.selectedReport().sourceKey === $data.sourceKey) ? 'Hide Reports' : 'View Reports')"></span>
+									<span data-bind="text: (($component.selectedReportSourceKey() && $component.selectedReportSourceKey() === $data.sourceKey) ? 'Hide Reports' : 'View Reports')"></span>
 								</div>
 							</td>
 						</tr>
