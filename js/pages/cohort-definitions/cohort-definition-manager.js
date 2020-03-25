@@ -270,6 +270,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.selectedSource = ko.observable();
 			this.selectedReport = ko.observable();
+			this.selectedReportSourceKey = ko.observable();
 			this.selectedReportCaption = ko.observable();
 			this.selectedSourceKey = ko.pureComputed(() => this.selectedSource().sourceKey);
 			this.loadingReport = ko.observable(false);
@@ -1077,19 +1078,29 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			selectViewReport (item) {
-				this.selectedSource(item);
-				this.loadingReport(true);
-				this.selectedReportCaption(item.name);
-
-				var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
-				var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
-
-				$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
-					var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
-					this.selectedReport(report);
+			toggleCohortReport(item) {
+				if (this.selectedReportSourceKey() && this.selectedReportSourceKey() === item.sourceKey) {
+					this.selectedReport(null);
+					this.selectedReportSourceKey(null);
 					this.loadingReport(false);
-				});
+				} else {
+					this.selectedReportSourceKey(item.sourceKey);
+					this.selectedSource(item);
+					this.loadingReport(true);
+					this.selectedReportCaption(item.name);
+	
+					var byEventReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 0);
+					var byPersonReport = cohortDefinitionService.getReport(this.model.currentCohortDefinition().id(), item.sourceKey, 1);
+	
+					$.when(byEventReport, byPersonReport).done( (byEvent, byPerson) => {
+						// Report loading can be cancelled
+						if (this.selectedReportSourceKey()) {
+							var report = {sourceKey: item.sourceKey, byEvent: byEvent[0], byPerson: byPerson[0]};
+							this.selectedReport(report);
+							this.loadingReport(false);
+						}
+					});
+				}
 			}
 
 			getStatusMessage (info) {
