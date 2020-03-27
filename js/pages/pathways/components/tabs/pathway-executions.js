@@ -148,7 +148,9 @@ define([
 		}
 
 		getExecutionGroupStatus(submissions) {
-			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
+			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED ||
+				s.status === this.pathwayGenerationStatusOptions.PENDING ||
+				s.status === this.pathwayGenerationStatusOptions.STARTING) ?
 				this.pathwayGenerationStatusOptions.STARTED :
 				this.pathwayGenerationStatusOptions.COMPLETED;
 		}

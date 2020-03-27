@@ -3,7 +3,7 @@
 <div data-bind="css: classes(), visible: !loading()">
     <div data-bind="css: classes('content')">
         <!-- ko if: canExport() -->
-            <textarea data-bind="css: classes('json-box'), text: $component.exportJSON"></textarea>
+            <textarea data-bind="css: classes('json-box'), textInput: $component.exportJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !canExport() -->
             <div data-bind="css: classes('error-message'), text: $component.errorMessage()"></div>

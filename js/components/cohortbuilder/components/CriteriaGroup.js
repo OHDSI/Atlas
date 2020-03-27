@@ -56,15 +56,6 @@ define([
 				}
 			}, unwrappedExpression.ConceptSets));
 		};
-
-		self.addDoseEraCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DoseEra: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
 		
 		self.addDrugExposureCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
