@@ -141,7 +141,9 @@ define([
 		}
 
 		getExecutionGroupStatus(submissions) {
-			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
+			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED ||
+				s.status === this.ccGenerationStatusOptions.PENDING ||
+				s.status === this.ccGenerationStatusOptions.STARTING) ?
 				this.ccGenerationStatusOptions.STARTED :
 				this.ccGenerationStatusOptions.COMPLETED;
 		}
