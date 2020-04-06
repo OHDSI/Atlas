@@ -23,6 +23,7 @@ define([
 	'utils/ExceptionUtils',
 	'./const',
 	'const',
+	'pages/checks/warnings',
 	'./components/iranalysis/main',
 	'databindings',
 	'conceptsetbuilder/components',
@@ -32,6 +33,7 @@ define([
 	'utilities/export',
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'css!./ir-manager.css',
 ], function (
 	ko,
 	view,
@@ -185,6 +187,31 @@ define([
 			this.importService = IRAnalysisService.importAnalysis;
 			this.exportSqlService = this.exportSql;
 
+			this.componentParams = ko.observable({
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: ko.observable(0),
+				current: this.selectedAnalysis,
+				currentId: this.selectedAnalysisId,
+				canDiagnose: this.canSave, 
+				onCheckCallback: this.check,
+				onDiagnoseCallback: this.diagnose,
+			});
+
+			this.warningClass = ko.computed(() => {
+				if (this.componentParams().warningsTotal() > 0){
+					if (this.componentParams().criticalCount() > 0) {
+						return 'badge warning-alarm';
+					} else if (this.componentParams().warningCount() > 0) {
+						return 'badge warning-warn';
+					} else {
+						return 'badge warning-info';
+					}
+				}
+				return 'badge';
+			});
+
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
 				entityIdGetter: () => this.selectedAnalysisId(),
@@ -203,6 +230,13 @@ define([
 			return authAPI.isPermitted(`ir:${id}:design:get`);
 		}
 
+		check(id) {
+			return IRAnalysisService.getWarnings(id);
+		}
+
+		diagnose(id, expression) {
+			return IRAnalysisService.runDiagnostics(id, expression);
+		}
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {

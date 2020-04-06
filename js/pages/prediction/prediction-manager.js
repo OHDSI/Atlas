@@ -33,6 +33,7 @@ define([
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
+	'pages/checks/warnings',
 ], function (
 	ko,
 	view,
@@ -93,18 +94,6 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
-			this.componentParams = ko.observable({
-				analysisId: sharedState.predictionAnalysis.selectedId,
-				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
-				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
-				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
-				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
-				fullAnalysisList: this.fullAnalysisList,
-				packageName: this.packageName,
-				fullSpecification: this.fullSpecification,
-				loading: this.loading,
-				subscriptions: this.subscriptions,
-			});
 
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
@@ -135,6 +124,32 @@ define([
 
 			this.canSave = ko.computed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+			});
+
+			this.componentParams = ko.observable({
+				analysisId: sharedState.predictionAnalysis.selectedId,
+				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
+				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
+				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
+				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
+				fullAnalysisList: this.fullAnalysisList,
+				packageName: this.packageName,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				subscriptions: this.subscriptions,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: ko.observable(0),
+				current: this.patientLevelPredictionAnalysis,
+				currentId: ko.computed(() => {
+					if (this.patientLevelPredictionAnalysis()) {
+						return this.patientLevelPredictionAnalysis().id();
+					}
+				}),
+				canDiagnose: this.canSave, 
+				onCheckCallback: this.check,
+				onDiagnoseCallback: this.diagnose,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -191,6 +206,15 @@ define([
 
 		isNewEntityResolver() {
 			return ko.computed(() => this.patientLevelPredictionAnalysis() && this.selectedAnalysisId() === '0');
+		}
+
+		check(id) {
+			return PredictionService.getWarnings(id);
+		}
+
+		diagnose = (id) => {
+			const payload = this.prepForSave();
+			return PredictionService.runDiagnostics(id, payload);
 		}
 
 		async delete() {
@@ -328,7 +352,9 @@ define([
 		loadAnalysisFromServer(analysis) {
 			var header = analysis.json;
 			var specification = JSON.parse(analysis.data.specification);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...header }));
+			// ignore createdBy and modifiedBy
+			const { createdBy, modifiedBy, ...props } = header;
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...props }));
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
 			this.setAnalysisSettingsLists();

@@ -80,8 +80,20 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
+	function getWarnings(id) {
+		return httpService
+			.doGet(`${config.webAPIRoot}${predictionEndpoint}${id ||'-1'}/check`)
+			.then(res => res.data);
+	}
+ 
+	function runDiagnostics(id, design) {
+		return httpService
+			.doPost(`${config.webAPIRoot}${predictionEndpoint}${id ||'-1'}/check`, design)
+			.then(res => res.data);
+	}
 
-    var api = {
+
+	var api = {
 		getPredictionList: getPredictionList,
 		savePrediction: savePrediction,
 		copyPrediction: copyPrediction,
@@ -92,6 +104,8 @@ define(function (require, exports) {
 		generate,
 		listGenerations,
 		exists,
+		getWarnings,
+		runDiagnostics,
 	};
 
 	return api;

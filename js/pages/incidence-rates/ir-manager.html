@@ -41,7 +41,10 @@
             <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
 				<a>Utilities</a>
             </li>
-
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
+				<a>Messages <span
+					data-bind="attr: { class: warningClass }, text: $component.componentParams().warningsTotal, visible: $component.componentParams().warningsTotal() > 0"></span></a>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
@@ -109,7 +112,12 @@
 						 	exportSqlService: $component.exportSql"></export-sql>
 					</div>
                 </div>
-            </div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }" class="tab-pane">
+				<div class="paddedWrapper">
+					<div data-bind="component: { name: 'warnings', params: $component.componentParams }"></div>
+				</div>
+			</div>
         </div>
 	</div>
 

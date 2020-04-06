@@ -25,6 +25,7 @@ define([
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
 	'components/security/access/configure-access-modal',
+	'pages/checks/warnings',
 ], function (
     ko,
     CharacterizationService,
@@ -84,6 +85,15 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                warningsTotal: ko.observable(0),
+                warningCount: ko.observable(0),
+                infoCount: ko.observable(0),
+                criticalCount: ko.observable(0),
+                current: this.design,
+                currentId: this.characterizationId,
+                canDiagnose: this.isSavePermitted, 
+                onCheckCallback: this.check,
+                onDiagnoseCallback: this.diagnose,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -152,6 +162,14 @@ define([
             this.design(design);
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
+
+		check(id) {
+			return CharacterizationService.getWarnings(id);
+		}
+
+		diagnose(id, expression) {
+			return CharacterizationService.runDiagnostics(id, expression);
+		}
 
         async loadDesignData(id) {
 

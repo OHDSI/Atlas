@@ -29,6 +29,7 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
+	'pages/checks/warnings',
 ], function (
 	ko,
 	view,
@@ -85,19 +86,6 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.componentParams = ko.observable({
-				comparisons: sharedState.estimationAnalysis.comparisons,
-				defaultCovariateSettings: this.defaultCovariateSettings,
-				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
-				estimationAnalysis: sharedState.estimationAnalysis.current,
-				estimationId: sharedState.estimationAnalysis.selectedId,
-				fullAnalysisList: this.fullAnalysisList,
-				fullSpecification: this.fullSpecification,
-				loading: this.loading,
-				loadingMessage: this.loadingMessage,
-				packageName: this.packageName,
-				subscriptions: this.subscriptions,
-			});
 
 			this.isNameFilled = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();
@@ -127,6 +115,29 @@ define([
 						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
 					}
 				}
+			});
+
+			this.componentParams = ko.observable({
+				comparisons: sharedState.estimationAnalysis.comparisons,
+				defaultCovariateSettings: this.defaultCovariateSettings,
+				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
+				estimationAnalysis: sharedState.estimationAnalysis.current,
+				estimationId: sharedState.estimationAnalysis.selectedId,
+				fullAnalysisList: this.fullAnalysisList,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				loadingMessage: this.loadingMessage,
+				packageName: this.packageName,
+				subscriptions: this.subscriptions,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: ko.observable(0),
+				current: this.estimationAnalysis,
+				currentId: this.selectedAnalysisId,
+				canDiagnose: this.canSave, 
+				onCheckCallback: this.check,
+				onDiagnoseCallback: this.diagnose,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -295,6 +306,15 @@ define([
 			});
 		}
 
+		check(id) {
+			return EstimationService.getWarnings(id);
+		}
+
+		diagnose = (id) => {
+			const payload = this.prepForSave();
+			return EstimationService.runDiagnostics(id, payload);
+		}
+
 		loadAnalysisFromServer() {
 			this.loading(true);
 			EstimationService.getEstimation(this.selectedAnalysisId()).then((analysis) => {
@@ -305,8 +325,10 @@ define([
 
 		setAnalysis(analysis) {
 			const header = analysis.json;
-			const specification = JSON.parse(analysis.data.specification);
-			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...analysis.data }, this.estimationType, this.defaultCovariateSettings()));
+			const specification = JSON.parse(analysis.data.specification);			
+			// ignore createdBy and modifiedBy
+			const { createdBy, modifiedBy, ...props } = header;
+			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...props }, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);

@@ -36,7 +36,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'faceted-datatable',
 	'databindings/expressionCartoonBinding',
 	'./components/cohortfeatures/main',
-	'./components/checks/conceptset-warnings',
+	'pages/checks/warnings',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
@@ -133,10 +133,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentConceptIdentifierList = sharedState.currentConceptIdentifierList;
 			this.resolvingConceptSetExpression = sharedState.resolvingConceptSetExpression;
 			this.tabMode = sharedState.CohortDefinition.mode;
-			this.warningsTotals = ko.observable(0);
-			this.warningCount = ko.observable(0);
-			this.infoCount = ko.observable(0);
-			this.criticalCount = ko.observable(0);
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
 			this.exporting = ko.observable();
@@ -145,18 +141,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isReportGenerating = ko.observable(false);
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
-			});
-			this.warningClass = ko.computed(() => {
-				if (this.warningsTotals() > 0){
-					if (this.criticalCount() > 0) {
-						return 'warning-alarm';
-					} else if (this.warningCount() > 0) {
-						return 'warning-warn';
-					} else {
-						return 'warning-info';
-					}
-				}
-				return '';
 			});
 
 			this.cohortDefinitionCaption = ko.computed(() => {
@@ -295,6 +279,36 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				const hasInitialEvent = this.currentCohortDefinition() && this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
 				var canGenerate = !(isDirty || isNew) && hasInitialEvent;
 				return (canGenerate);
+			});
+
+			this.componentParams = ko.observable({
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: ko.observable(0),
+				current: this.currentCohortDefinition,
+				currentId: ko.computed(() => {
+					if (this.currentCohortDefinition()) {
+						return this.currentCohortDefinition().id();
+					}
+				}),
+				canDiagnose: this.canSave, 
+				onFixCallback: this.fixConceptSet,
+				onCheckCallback: this.check,
+				onDiagnoseCallback: this.diagnose,
+			});
+
+			this.warningClass = ko.computed(() => {
+				if (this.componentParams().warningsTotal() > 0){
+					if (this.componentParams().criticalCount() > 0) {
+						return 'badge warning-alarm';
+					} else if (this.componentParams().warningCount() > 0) {
+						return 'badge warning-warn';
+					} else {
+						return 'badge warning-info';
+					}
+				}
+				return 'badge';
 			});
 
 			this.modifiedJSON = "";
@@ -888,6 +902,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				} else if (warning.type === 'IncompleteRuleWarning' && warning.ruleName) {
 					this.removeInclusionRule(warning.ruleName);
 				}
+			}
+
+			check(id) {
+				return cohortDefinitionService.getWarnings(id);
+			}
+
+			diagnose(id, expression) {
+				return cohortDefinitionService.runDiagnostics(id, expression);
 			}
 
 			showSaveConceptSet () {

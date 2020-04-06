@@ -23,6 +23,7 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'pages/checks/warnings',
 ], function (
 	ko,
 	view,
@@ -66,12 +67,21 @@ define([
 			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
-			this.componentParams = {
+			this.componentParams = ko.observable({
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
-			};
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: ko.observable(0),
+				current: this.design,
+				currentId: this.analysisId,
+				canDiagnose: this.canSave, 
+				onCheckCallback: this.check,
+				onDiagnoseCallback: this.diagnose,
+			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
 					return 'Cohort Pathway #' + this.design().id;
@@ -102,7 +112,15 @@ define([
 		}
 
 		selectTab(index, { key }) {
-			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams.analysisId(), key));
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams().analysisId(), key));
+		}
+
+		check(id) {
+			return PathwayService.getWarnings(id);
+		}
+
+		diagnose(id, expression) {
+			return PathwayService.runDiagnostics(id, expression);
 		}
 
 		setupDesign(design) {

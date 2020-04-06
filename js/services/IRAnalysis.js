@@ -189,6 +189,25 @@ define(function (require, exports) {
 					return response;
 				});
 	 }
+
+	function getWarnings(id) {
+		return httpService
+			.doGet(`${config.webAPIRoot}ir/${id ||'-1'}/check`)
+			.then(res => res.data);
+	}
+ 
+	function runDiagnostics(id, design) {
+		var designCopy = JSON.parse(ko.toJSON(design));
+		
+		if (typeof designCopy.expression != 'string') {
+			designCopy.expression = JSON.stringify(designCopy.expression);
+		}
+
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/${id ||'-1'}/check`, designCopy)
+			.then(res => res.data);
+	}
+	 
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -206,6 +225,8 @@ define(function (require, exports) {
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
 		exportSql,
+        getWarnings,
+        runDiagnostics,
 	};
 
 	return api;

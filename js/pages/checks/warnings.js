@@ -1,19 +1,21 @@
-define(['knockout', 'text!./conceptset-warnings.html',
-    'services/CohortDefinition',
+define(['knockout', 'text!./warnings.html',
     './const',
     './utils',
     'atlas-state',
+    './warnings-badge',
     'databindings',
     'faceted-datatable',
     'css!./style.css',
   ],
-  function (ko, view, cohortDefinitionApi, consts, utils, sharedState) {
+  function (ko, view, consts, utils, sharedState) {
 
-    function conceptSetWarnings(params){
-      var self = this;
-      this.currentCohortDefinition = sharedState.CohortDefinition.current;
-      self.cohortDefinitionId = this.currentCohortDefinition().id || ko.observable(-1);
-      self.count = params.count || ko.observable();
+    function warningComponent(params){
+      const self = this;
+      self.current = params.current;
+      self.currentId = params.currentId || ko.observable(-1);
+      self.checkCallback = params.onCheckCallback || function() {};
+      self.diagnoseCallback = params.onDiagnoseCallback || function() {};
+      self.warningsTotal = params.warningsTotal || ko.observable();
       self.infoCount = params.infoCount || ko.observable();
       self.warningCount = params.warningCount || ko.observable();
       self.criticalCount = params.criticalCount || ko.observable();
@@ -21,7 +23,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
       self.canDiagnose = params.canDiagnose || ko.observable(false);
       self.warnings = ko.observableArray();
       self.loading = ko.observable(false);
-      self.isFixConceptSetCalled = false;
+      self.isFixCalled = false;
       self.warningsColumns = [
         { data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
         { data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
@@ -51,7 +53,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       self.stateSaveCallback = function(settings, data){
-        if (!self.isFixConceptSetCalled){
+        if (!self.isFixCalled){
           self.state = data;
         }
       };
@@ -60,12 +62,12 @@ define(['knockout', 'text!./conceptset-warnings.html',
         return self.state;
       };
 
-      self.fixRedundantConceptSet = function(value, parent, event){
-        self.isFixConceptSetCalled = true;
+      self.fixWarning = function(value, parent, event){
+        self.isFixCalled = true;
         event.preventDefault();
         self.onFixCallback(value);
         self.onDiagnose();
-        self.isFixConceptSetCalled = false;
+        self.isFixCalled = false;
       };
 
       function showWarnings(result){
@@ -74,40 +76,37 @@ define(['knockout', 'text!./conceptset-warnings.html',
         self.infoCount(count(consts.WarningSeverity.INFO));
         self.warningCount(count(consts.WarningSeverity.WARNING));
         self.criticalCount(count(consts.WarningSeverity.CRITICAL));
-        self.count(result.warnings.length);
+        self.warningsTotal(result.warnings.length);
         self.loading(false);
       }
 
       function handleError() {
-        self.count(0);
+        self.warningsTotal(0);
         self.warnings.removeAll();
         self.loading(false);
       }
 
       self.runDiagnostics = function(id, expression){
         self.loading(true);
-        cohortDefinitionApi.runDiagnostics(id, expression)
+        self.diagnoseCallback(id, expression)
           .then(showWarnings, handleError);
       };
 
       self.getWarnings = function() {
-        if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
+        if (parseInt(self.currentId(), 10) <= 0 || isNaN(self.currentId())) {
           return false;
         }
         self.loading(true);
-        cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
+        self.checkCallback(self.currentId())
           .then(showWarnings, handleError);
       };
 
       self.onDiagnose = function(){
-        const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
-          return (value === 0 || value) ?  value : undefined;
-        }, 2);
-        self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
+        self.runDiagnostics(self.currentId(), self.current());
       };
 
 
-      self.warningSubscription = this.currentCohortDefinition.subscribe(() => self.getWarnings());
+      self.warningSubscription = self.current.subscribe(() => self.getWarnings());
 
       self.getWarnings();
 
@@ -117,11 +116,12 @@ define(['knockout', 'text!./conceptset-warnings.html',
     }
 
     var component = {
-      viewModel: conceptSetWarnings,
+      viewModel: warningComponent,
       template: view,
+      synchronous: true,
     };
 
-    ko.components.register('conceptset-warnings', component);
+    ko.components.register('warnings', component);
     return component;
   }
 );

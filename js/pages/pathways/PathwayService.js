@@ -93,6 +93,18 @@ define([
 			.then(res => res.data);
 	}
 
+    function getWarnings(id) {
+        return httpService
+            .doGet(`${config.webAPIRoot}pathway-analysis/${id ||'-1'}/check`)
+            .then(res => res.data);
+    }
+
+	function runDiagnostics(id, design) {
+        return httpService
+            .doPost(`${config.webAPIRoot}pathway-analysis/${id ||'-1'}/check`, design)
+            .then(res => res.data);
+	}
+	
 	return {
 		list,
 		create,
@@ -109,5 +121,7 @@ define([
 		loadExportDesignByGeneration,
 		importPathwayDesign,
 		exists,
+        getWarnings,
+        runDiagnostics,
 	};
 });
