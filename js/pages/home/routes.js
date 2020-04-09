@@ -13,9 +13,10 @@ define(
             router.setCurrentView('home');
           });
         }),
-        '/welcome/:token': new Route((token) => {
+        '/welcome/:authClient/:token': new Route((authClient, token) => {
           require(['welcome'], function () {
             authApi.token(token);
+            authApi.authClient(authClient);
             authApi.loadUserInfo();
             document.location = "#/welcome";
           });

@@ -12,6 +12,10 @@ define(function(require, exports) {
         IAP: 'AtlasGoogleSecurity',
     };
 
+    const AUTH_CLIENTS = {
+        SAML: 'AUTH_CLIENT_SAML',
+    };
+
     const signInOpened = ko.observable(false);
 
     function getBearerToken() {
@@ -28,6 +32,16 @@ define(function(require, exports) {
     };
 
     var token = ko.observable(getBearerToken());
+    var authClient = ko.computed({
+        owner: ko.observable(localStorage.getItem("auth-client")),
+        read: function() { 
+            return this(); 
+        },
+        write: function( newValue ) {
+            localStorage.setItem("auth-client", newValue);
+            this( newValue );
+        }
+    });
 
     var getAuthorizationHeader = function () {
         if (!token()) {
@@ -35,7 +49,6 @@ define(function(require, exports) {
         }
         return TOKEN_HEADER + ' ' + token();
     };
-
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
@@ -441,6 +454,12 @@ define(function(require, exports) {
     const isPermittedPostViewedNotifications = function() {
         return isPermitted('notifications:viewed:post');
     };
+    const isPermittedGetExecutionService = function() {
+        return isPermitted('executionservice:*:get');
+    };
+    const isPermittedGetSourceDaimonPriority = function() {
+        return isPermitted('source:daimon:priority:get');
+    };
 
 		const isPermittedImportUsers = function() {
 			return isPermitted('user:import:post') && isPermitted('user:import:*:post');
@@ -481,8 +500,10 @@ define(function(require, exports) {
 
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
+        AUTH_CLIENTS: AUTH_CLIENTS,
 
         token: token,
+        authClient: authClient,
         subject: subject,
         fullName,
         tokenExpirationDate: tokenExpirationDate,
@@ -556,6 +577,9 @@ define(function(require, exports) {
         isPermittedEditSource: isPermittedEditSource,
         isPermittedDeleteSource: isPermittedDeleteSource,
         isPermittedCheckSourceConnection: isPermittedCheckSourceConnection,
+        isPermittedGetSourceDaimonPriority: isPermittedGetSourceDaimonPriority,
+
+        isPermittedGetExecutionService: isPermittedGetExecutionService,
 
         isPermittedImportUsers,
         hasSourceAccess,
