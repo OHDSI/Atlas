@@ -1,0 +1,48 @@
+button {
+    cursor: pointer;
+}
+
+.atlas-cohort-report {
+    display: flex;
+    padding: 1rem;
+}
+
+.atlas-cohort-report__map-container {
+    position: relative;
+}
+
+.atlas-cohort-report__map {
+    height: 600px;
+    width: 800px;
+}
+
+.atlas-cohort-report__btn-group {
+    display: flex;
+    flex-direction: column;
+    margin-left: 2rem;
+}
+
+.atlas-cohort-report__btn {
+    margin-bottom: 1rem;
+    background-color: #337ab7;
+    color: #fff;
+    border: 1px solid transparent;
+    font-weight: 400;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.atlas-cohort-report__btn:disabled {
+    background-color: #7294b1;
+}
+
+.cluster-icon {
+    align-items: center;
+    border-radius: 50%;
+    background: orange;
+    display: flex !important;
+    justify-content: center;
+    font-weight: 600;
+}

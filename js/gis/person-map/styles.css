@@ -1,0 +1,19 @@
+.atlas-person-map {
+    border-top: 1px solid #999;
+    display: none;
+    padding: 1rem;
+    margin-top: 2rem;
+}
+
+.atlas-person-map.ready {
+    display: block;
+}
+
+.atlas-person-map__map-container {
+    position: relative;
+}
+
+.atlas-person-map__map {
+    height: 400px;
+    width: 100%;
+}
