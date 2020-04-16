@@ -16,7 +16,7 @@
           <i class="fa fa-copy"></i>
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
-        <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() || isProcessing() }">Optimize</button>
+        <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() || isProcessing() }, text: ko.i18n('cs.manager.optimize', 'Optimize')">Optimize</button>
         <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
             <i class="fa fa-lock"></i>
         </button>
@@ -26,7 +26,7 @@
     </div>
     <div data-bind="visible: !isNameFilled()" class="empty-name-error">
       <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-      <label>Concept Set name is empty.</label>
+      <label data-bind="text: ko.i18n('cs.manager.nameEmptyWarning', 'Concept Set name is empty.')"></label>
     </div>
   </div>
   <tabs params="
@@ -47,24 +47,27 @@
 >
   <div data-bind="css: classes('optimize-modal-content')">
     <div data-bind="if: optimizeLoading()">
-      <i class="fa fa-circle-o-notch fa-spin fa-lg">
-      </i> Attempting to find an optimal definition for this concept set...
+      <i class="fa fa-circle-o-notch fa-spin fa-lg"></i>
+      <span data-bind="text: ko.i18n('cs.manager.attemptingToFindMessage', 'Attempting to find an optimal definition for this concept set...')"></span>
     </div>
     <div data-bind="if: !optimizeLoading() && !optimizerFoundSomething()">
-      The current concept set definition is fully optimized.
+      <span data-bind="text: ko.i18n('cs.manager.fullyOptimizedMessage', 'The current concept set definition is fully optimized.')"></span>
     </div>
     <div data-bind="if: !optimizeLoading() && optimizerFoundSomething()">
       <div data-bind="if: !optimizerSavingNew()">
         <div class="row heading optimizer-saving-new">
-          <div class="col-md-8">Please review the optimized definition and options for saving. </div>
+          <div class="col-md-8">
+            <span data-bind="text: ko.i18n('cs.manager.pleaseReviewMessage', 'Please review the optimized definition and options for saving.')"></span>
+          </div>
           <div class="col-md-4">
             <div class="btn-group pull-right" role="group">
               <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Save Options <span class="caret"></span>
+                <span data-bind="text: ko.i18n('cs.manager.saveOptions', 'Save Options')"></span>
+                <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu" aria-labelledby="btnGroupDrop1">
-                <li><a class="dropdown-item" href="#" data-bind="click: overwriteConceptSet">Overwrite Current Concept Set</a></li>
-                <li><a class="dropdown-item" href="#" data-bind="click: copyOptimizedConceptSet">Create New Concept Set</a></li>
+                <li><a class="dropdown-item" href="#" data-bind="click: overwriteConceptSet, text: ko.i18n('cs.manager.overwriteOption', 'Overwrite Current Concept Set')"></a></li>
+                <li><a class="dropdown-item" href="#" data-bind="click: copyOptimizedConceptSet, text: ko.i18n('cs.manager.createOption', 'Create New Concept Set')"></a></li>
               </ul>
             </div>
           </div>
@@ -74,28 +77,28 @@
       <div data-bind="if: optimizerSavingNew()">
         <div class="heading">
           <div class="form-group">
-            <label for="txtOptimizerSavingNewName">Please provide a name for your new concept set:</label>
+            <label for="txtOptimizerSavingNewName" data-bind="text: ko.i18n('cs.manager.pleaseProvideNameMessage', 'Please provide a name for your new concept set:')"></label>
             </br>
             <input placeholder="Concept Set Name" id="txtOptimizerSavingNewName" class="form-control optimizer-new-name" type="text" data-bind="textInput: optimizerSavingNewName" />
             <div class="btn-group">
-              <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet">Save</button>
-              <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet">Cancel</button>
+              <button type="button" class="btn btn-sm btn-primary" data-bind="click: saveNewOptimizedConceptSet, text: ko.i18n('cs.manager.saveButton', 'Save')"></button>
+              <button type="button" class="btn btn-sm btn-danger" data-bind="click: cancelSaveNewOptimizedConceptSet, text: ko.i18n('cs.manager.cancelButton', 'Cancel')"></button>
             </div>
           </div>
         </div>
       </div>
-      <div class="heading">Optimized Concept Set</div>
+      <div class="heading" data-bind="text: ko.i18n('cs.manager.optimizedConceptSetHeading', 'Optimized Concept Set')"></div>
       <div class="paddedWrapper">
         <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
                               data: optimalConceptSet(),
                               options: {
                                               dom: 'Clfiprt',
                                               colVis: {
-                                                  buttonText: 'Change Columns',
+                                                  buttonText: ko.i18n('cs.manager.changeColumnsButton', 'Change Columns'),
                                                   align: 'right',
                                                   overlayFade: 0,
-                                                  showAll: 'Show All Columns',
-                                                  restore: 'Reset Columns'
+                                                  showAll: ko.i18n('cs.manager.showAllColumnsButton', 'Show All Columns'),
+                                                  restore: ko.i18n('cs.manager.resetColumnsButton', 'Reset Columns')
                                               },
                                               rowCallback: commonUtils.contextSensitiveLinkColor,
                                               lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
@@ -119,21 +122,19 @@
         </table>
       </div>
       <div data-bind="if: optimizerRemovedConceptSet() && !optimizerSavingNew()">
-        <div class="heading optimizer-header">Concepts Removed</div>
-        <div class="optimizer-message">
-          The following concepts were removed since the optimized version already includes them.
-        </div>
+        <div class="heading optimizer-header" data-bind="text: ko.i18n('cs.manager.conceptsRemovedHeading', 'Concepts Removed')"></div>
+        <div class="optimizer-message" data-bind="text: ko.i18n('cs.manager.conceptsRemovedMessage', 'The following concepts were removed since the optimized version already includes them.')"></div>
         <div class="paddedWrapper">
           <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
                                   data: optimizerRemovedConceptSet(),
                                   options: {
                                                   dom: 'Clfiprt',
                                                   colVis: {
-                                                      buttonText: 'Change Columns',
+                                                      buttonText: ko.i18n('cs.manager.changeColumnsButton', 'Change Columns'),
                                                       align: 'right',
                                                       overlayFade: 0,
-                                                      showAll: 'Show All Columns',
-                                                      restore: 'Reset Columns'
+                                                      showAll: ko.i18n('cs.manager.showAllColumnsButton', 'Show All Columns'),
+                                                      restore: ko.i18n('cs.manager.resetColumnsButton', 'Reset Columns')
                                                   },
                                                   rowCallback: commonUtils.contextSensitiveLinkColor,
                                                   lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
