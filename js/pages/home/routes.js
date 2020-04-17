@@ -19,6 +19,7 @@ define(
           appModel.activePage(this.title);
           require(['welcome'], function () {
             authApi.token(token);
+            authApi.loadUserInfo();
             document.location = "#/welcome";
           });
         }),
