@@ -64,7 +64,7 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 		self.onRespositoryConceptSetSelected = params.onRespositoryConceptSetSelected || defaultRepositoryConceptSetSelected;
 		self.disableConceptSetButton = setDisabledConceptSetButton(params.disableConceptSetButton);
 		self.buttonActionEnabled = params.buttonActionEnabled !== false;
-		self.buttonActionText = params.buttonActionText || "New Concept Set";
+		self.buttonActionText = params.buttonActionText || ko.i18n('cs.browser.newConceptSetButton', 'New Concept Set');
 		self.repositoryConceptSetTableId = params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 
 		self.loading = ko.observable(false);
