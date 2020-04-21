@@ -5,6 +5,7 @@ define([
 	'utils/AutoBind',
 	'services/IRAnalysis',
 	'pages/incidence-rates/const',
+	'const',
 	'services/MomentAPI',
 	'services/AuthAPI',
 	'components/Component',
@@ -21,6 +22,7 @@ define([
 	AutoBind,
 	IRAnalysisService,
 	constants,
+	globalConsts,
 	momentApi,
 	authApi,
 	Component,
@@ -41,6 +43,7 @@ define([
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
 			this.stoppingSources = params.stoppingSources;
+			this.criticalCount = params.criticalCount;
 
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
@@ -87,14 +90,15 @@ define([
 			}));
 
 			this.executionDisabled = ko.pureComputed(() => {
-				return (this.dirtyFlag().isDirty() || !this.isTarValid());
+				return (this.dirtyFlag().isDirty() || !this.isTarValid() || this.criticalCount() > 0);
 			});
 			
 			this.executionDisabledReason = ko.pureComputed(() => { 
 				if (!this.executionDisabled()) return null;
-				if (this.dirtyFlag().isDirty()) return constants.disabledReasons.DIRTY;
-				if (!this.isTarValid()) return constants.disabledReasons.INVALID_TAR;
-				return constants.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+				if (!this.isTarValid()) return globalConsts.disabledReasons.INVALID_TAR;
+				if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+				return globalConsts.disabledReasons.ACCESS_DENIED;
 			});
 
 			this.disableExportAnalysis = ko.pureComputed(() => {

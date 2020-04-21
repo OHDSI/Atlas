@@ -36,10 +36,10 @@ define([
 			this.tabs().filter(t => t.preload).forEach(f => {
 				const idx = this.tabs().indexOf(this.tabs().find(t => t.key === f.key));
 				this.addIdxToLoadedTabs(idx);
-			})
+			});
 		}
 
-		addIdxToLoadedTabs = (idx) => {
+		addIdxToLoadedTabs(idx) {
 			const indexes = this.previouslyLoadedTabs();
 			if (indexes.indexOf(idx) === -1) {
 				this.previouslyLoadedTabs([ ...indexes, idx ]);

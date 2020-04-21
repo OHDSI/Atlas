@@ -103,15 +103,9 @@ define([
             .then(res => res.data);
     }
 
-    function getWarnings(id) {
+	function runDiagnostics(design) {
         return httpService
-            .doGet(`${config.webAPIRoot}cohort-characterization/${id ||'-1'}/check`)
-            .then(res => res.data);
-    }
-
-	function runDiagnostics(id, design) {
-        return httpService
-            .doPost(`${config.webAPIRoot}cohort-characterization/${id ||'-1'}/check`, design)
+            .doPost(`${config.webAPIRoot}cohort-characterization/check`, design)
             .then(res => res.data);
 	}
 
@@ -133,7 +127,6 @@ define([
         getPrevalenceStatsByGeneration,
         cancelGeneration,
         exists,
-        getWarnings,
         runDiagnostics,
     };
 });

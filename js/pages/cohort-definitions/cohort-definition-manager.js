@@ -36,7 +36,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'faceted-datatable',
 	'databindings/expressionCartoonBinding',
 	'./components/cohortfeatures/main',
-	'pages/checks/warnings',
+	'components/checks/warnings',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
@@ -277,32 +277,39 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				var isDirty = this.dirtyFlag() && this.dirtyFlag().isDirty();
 				var isNew = this.currentCohortDefinition() && (this.currentCohortDefinition() && this.currentCohortDefinition().id() == 0);
 				const hasInitialEvent = this.currentCohortDefinition() && this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
-				var canGenerate = !(isDirty || isNew) && hasInitialEvent;
+				const isValid = this.criticalCount() <= 0;
+				var canGenerate = !(isDirty || isNew) && hasInitialEvent && isValid;
 				return (canGenerate);
 			});
 
-			this.componentParams = ko.observable({
+			this.generateDisabledReason = ko.pureComputed(() => {
+				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
+				const hasInitialEvent = this.currentCohortDefinition() && this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
+				if (!hasInitialEvent) return globalConstants.disabledReasons.EMPTY_INITIAL_EVENT;
+				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
+				
+				return null;
+			});
+
+			this.criticalCount = ko.observable(0);
+			this.warningParams = ko.observable({
+				current: sharedState.CohortDefinition.current,
 				warningsTotal: ko.observable(0),
 				warningCount: ko.observable(0),
 				infoCount: ko.observable(0),
-				criticalCount: ko.observable(0),
-				current: this.currentCohortDefinition,
-				currentId: ko.computed(() => {
-					if (this.currentCohortDefinition()) {
-						return this.currentCohortDefinition().id();
-					}
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(()=> {
+					return this.dirtyFlag().isChanged();
 				}),
-				canDiagnose: this.canSave, 
+				onDiagnoseCallback: this.diagnose.bind(this),
 				onFixCallback: this.fixConceptSet,
-				onCheckCallback: this.check,
-				onDiagnoseCallback: this.diagnose,
 			});
 
 			this.warningClass = ko.computed(() => {
-				if (this.componentParams().warningsTotal() > 0){
-					if (this.componentParams().criticalCount() > 0) {
+				if (this.warningParams().warningsTotal() > 0){
+					if (this.warningParams().criticalCount() > 0) {
 						return 'badge warning-alarm';
-					} else if (this.componentParams().warningCount() > 0) {
+					} else if (this.warningParams().warningCount() > 0) {
 						return 'badge warning-warn';
 					} else {
 						return 'badge warning-info';
@@ -904,12 +911,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			check(id) {
-				return cohortDefinitionService.getWarnings(id);
-			}
-
-			diagnose(id, expression) {
-				return cohortDefinitionService.runDiagnostics(id, expression);
+			diagnose() {
+				if (this.currentCohortDefinition()) {
+					const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
+						return (value === 0 || value) ?  value : undefined;
+					}, 2);
+					return cohortDefinitionService.runDiagnostics(expressionJSON);
+				}
 			}
 
 			showSaveConceptSet () {

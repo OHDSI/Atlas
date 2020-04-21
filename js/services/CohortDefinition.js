@@ -141,16 +141,9 @@ define(function (require, exports) {
 		return reportPromise;
 	}
 
-	function getWarnings(cohortDefinitionId) {
+	function runDiagnostics(expression) {
 		return $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/check',
-			error: authApi.handleAccessDenied,
-		});
-	}
-
-	function runDiagnostics(id, expression) {
-		return $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check',
+			url: config.webAPIRoot + 'cohortdefinition/check',
 			contentType: 'application/json',
 			method: 'POST',
 			data: expression,
@@ -178,7 +171,6 @@ define(function (require, exports) {
 		generate: generate,
 		getInfo: getInfo,
 		getReport: getReport,
-		getWarnings: getWarnings,
 		runDiagnostics: runDiagnostics,
 		cancelGenerate,
 		getCohortCount,

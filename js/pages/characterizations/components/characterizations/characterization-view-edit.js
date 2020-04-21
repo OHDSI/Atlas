@@ -25,7 +25,7 @@ define([
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
 	'components/security/access/configure-access-modal',
-	'pages/checks/warnings',
+	'components/checks/warnings',
 ], function (
     ko,
     CharacterizationService,
@@ -77,6 +77,7 @@ define([
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
+            this.criticalCount = ko.observable(0);
             this.componentParams = ko.observable({
                 ...params,
                 characterizationId: this.characterizationId,
@@ -85,15 +86,18 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                criticalCount: this.criticalCount,
+            });
+            this.warningParams = ko.observable({
+				current: sharedState.CohortCharacterization.current,
                 warningsTotal: ko.observable(0),
                 warningCount: ko.observable(0),
                 infoCount: ko.observable(0),
-                criticalCount: ko.observable(0),
-                current: this.design,
-                currentId: this.characterizationId,
-                canDiagnose: this.isSavePermitted, 
-                onCheckCallback: this.check,
-                onDiagnoseCallback: this.diagnose,
+                criticalCount: this.criticalCount,
+                changeFlag: ko.pureComputed(()=> {
+					return this.designDirtyFlag().isChanged();
+				}),
+                onDiagnoseCallback: this.diagnose.bind(this),
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -163,12 +167,10 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
-		check(id) {
-			return CharacterizationService.getWarnings(id);
-		}
-
-		diagnose(id, expression) {
-			return CharacterizationService.runDiagnostics(id, expression);
+		diagnose() {
+            if (this.design()) {
+                return CharacterizationService.runDiagnostics(this.design());
+            }
 		}
 
         async loadDesignData(id) {

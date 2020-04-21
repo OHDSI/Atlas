@@ -79,21 +79,15 @@ define(function (require, exports) {
 			.then(res => res.data)
 			.catch(error => authApi.handleAccessDenied(error));
 	}
-
-	function getWarnings(id) {
-		return httpService
-			.doGet(`${config.webAPIRoot}${predictionEndpoint}${id ||'-1'}/check`)
-			.then(res => res.data);
-	}
  
-	function runDiagnostics(id, design) {
+	function runDiagnostics(design) {
 		return httpService
-			.doPost(`${config.webAPIRoot}${predictionEndpoint}${id ||'-1'}/check`, design)
+			.doPost(`${config.webAPIRoot}${predictionEndpoint}check`, design)
 			.then(res => res.data);
 	}
 
 
-	var api = {
+	return {
 		getPredictionList: getPredictionList,
 		savePrediction: savePrediction,
 		copyPrediction: copyPrediction,
@@ -104,10 +98,7 @@ define(function (require, exports) {
 		generate,
 		listGenerations,
 		exists,
-		getWarnings,
 		runDiagnostics,
 	};
-
-	return api;
 });
 

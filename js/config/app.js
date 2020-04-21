@@ -9,9 +9,9 @@ define(function () {
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
 	appConfig.cohortComparisonResultsEnabled = false;
-	appConfig.userAuthenticationEnabled = false;
+	appConfig.userAuthenticationEnabled = true;
 	appConfig.plpResultsEnabled = false;
-	appConfig.useExecutionEngine = false;
+	appConfig.useExecutionEngine = true;
 	appConfig.viewProfileDates = false;
   appConfig.enableCosts = false;
 	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";

@@ -189,14 +189,8 @@ define(function (require, exports) {
 					return response;
 				});
 	 }
-
-	function getWarnings(id) {
-		return httpService
-			.doGet(`${config.webAPIRoot}ir/${id ||'-1'}/check`)
-			.then(res => res.data);
-	}
  
-	function runDiagnostics(id, design) {
+	function runDiagnostics(design) {
 		var designCopy = JSON.parse(ko.toJSON(design));
 		
 		if (typeof designCopy.expression != 'string') {
@@ -204,7 +198,7 @@ define(function (require, exports) {
 		}
 
 		return httpService
-			.doPost(`${config.webAPIRoot}ir/${id ||'-1'}/check`, designCopy)
+			.doPost(`${config.webAPIRoot}ir/check`, designCopy)
 			.then(res => res.data);
 	}
 	 
@@ -225,7 +219,6 @@ define(function (require, exports) {
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
 		exportSql,
-        getWarnings,
         runDiagnostics,
 	};
 

@@ -29,7 +29,7 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
-	'pages/checks/warnings',
+	'components/checks/warnings',
 ], function (
 	ko,
 	view,
@@ -117,6 +117,8 @@ define([
 				}
 			});
 
+			this.criticalCount = ko.observable(0);
+
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
@@ -129,15 +131,19 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
+				criticalCount: this.criticalCount,
+			});
+
+			this.warningParams = ko.observable({
+				current: sharedState.estimationAnalysis.current,
 				warningsTotal: ko.observable(0),
 				warningCount: ko.observable(0),
 				infoCount: ko.observable(0),
-				criticalCount: ko.observable(0),
-				current: this.estimationAnalysis,
-				currentId: this.selectedAnalysisId,
-				canDiagnose: this.canSave, 
-				onCheckCallback: this.check,
-				onDiagnoseCallback: this.diagnose,
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(()=> {
+					return this.dirtyFlag().isChanged();
+				}),
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -306,13 +312,11 @@ define([
 			});
 		}
 
-		check(id) {
-			return EstimationService.getWarnings(id);
-		}
-
-		diagnose = (id) => {
-			const payload = this.prepForSave();
-			return EstimationService.runDiagnostics(id, payload);
+		diagnose() {
+			if (this.estimationAnalysis()) {
+				const payload = this.prepForSave();
+				return EstimationService.runDiagnostics(payload);
+			}
 		}
 
 		loadAnalysisFromServer() {

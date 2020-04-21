@@ -3,6 +3,7 @@ define([
 	'../../PathwayService',
 	'../../PermissionService',
 	'../../const',
+	'const',
 	'text!./pathway-executions.html',
 	'appConfig',
 	'services/AuthAPI',
@@ -23,6 +24,7 @@ define([
 	PathwayService,
 	PermissionService,
 	consts,
+	globalConsts,
 	view,
 	config,
 	authApi,
@@ -47,6 +49,8 @@ define([
 			const currentHash = ko.pureComputed(() => params.design() && params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
+			this.dirtyFlag = params.dirtyFlag;
+			this.criticalCount = params.criticalCount;
 
 			this.loading = ko.observable(false);
 			this.expandedSection = ko.observable();
@@ -133,7 +137,15 @@ define([
 		}
 
 		isGenerationPermitted(sourceKey) {
-			return PermissionService.isPermittedGenerate(this.analysisId(), sourceKey);
+			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(this.analysisId(), sourceKey) 
+				&& this.criticalCount() <= 0;
+		}
+
+		generateDisabledReason(sourceKey) {
+			if (this.isGenerationPermitted(sourceKey)) return null;
+			if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+			if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+			return globalConsts.disabledReasons.ACCESS_DENIED;
 		}
 
 		isResultsViewPermitted(sourceKey) {

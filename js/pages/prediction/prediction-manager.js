@@ -33,7 +33,7 @@ define([
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
-	'pages/checks/warnings',
+	'components/checks/warnings',
 ], function (
 	ko,
 	view,
@@ -126,6 +126,8 @@ define([
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
 
+			this.criticalCount = ko.observable(0);
+
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -137,19 +139,19 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
+				criticalCount: this.criticalCount,
+			});
+
+			this.warningParams = ko.observable({
+				current: sharedState.predictionAnalysis.current,
 				warningsTotal: ko.observable(0),
 				warningCount: ko.observable(0),
 				infoCount: ko.observable(0),
-				criticalCount: ko.observable(0),
-				current: this.patientLevelPredictionAnalysis,
-				currentId: ko.computed(() => {
-					if (this.patientLevelPredictionAnalysis()) {
-						return this.patientLevelPredictionAnalysis().id();
-					}
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(()=> {
+					return this.dirtyFlag().isChanged();
 				}),
-				canDiagnose: this.canSave, 
-				onCheckCallback: this.check,
-				onDiagnoseCallback: this.diagnose,
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -208,13 +210,11 @@ define([
 			return ko.computed(() => this.patientLevelPredictionAnalysis() && this.selectedAnalysisId() === '0');
 		}
 
-		check(id) {
-			return PredictionService.getWarnings(id);
-		}
-
-		diagnose = (id) => {
-			const payload = this.prepForSave();
-			return PredictionService.runDiagnostics(id, payload);
+		diagnose() {
+			if (this.patientLevelPredictionAnalysis()) {
+				const payload = this.prepForSave();
+				return PredictionService.runDiagnostics(payload);
+			}
 		}
 
 		async delete() {

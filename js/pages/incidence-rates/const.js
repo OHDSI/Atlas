@@ -20,12 +20,6 @@ define(
       WARNINGS: 'warnings',
     };
 
-    const disabledReasons = {
-      DIRTY: 'Save changes to generate',
-      ACCESS_DENIED: 'Access denied',
-			INVALID_TAR: 'Invalid TAR'
-    };
-
     function isInProgress(currentStatus) {
         return [status.PENDING, status.RUNNING].includes(currentStatus);
     }
@@ -34,7 +28,6 @@ define(
       apiPaths,
       status,
       isInProgress,
-      disabledReasons,
       tabs,
     };
   }

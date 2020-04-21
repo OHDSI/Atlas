@@ -93,15 +93,9 @@ define([
 			.then(res => res.data);
 	}
 
-    function getWarnings(id) {
+	function runDiagnostics(design) {
         return httpService
-            .doGet(`${config.webAPIRoot}pathway-analysis/${id ||'-1'}/check`)
-            .then(res => res.data);
-    }
-
-	function runDiagnostics(id, design) {
-        return httpService
-            .doPost(`${config.webAPIRoot}pathway-analysis/${id ||'-1'}/check`, design)
+            .doPost(`${servicePath}/check`, design)
             .then(res => res.data);
 	}
 	
@@ -121,7 +115,6 @@ define([
 		loadExportDesignByGeneration,
 		importPathwayDesign,
 		exists,
-        getWarnings,
         runDiagnostics,
 	};
 });

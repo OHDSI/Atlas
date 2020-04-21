@@ -23,7 +23,7 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
-	'pages/checks/warnings',
+	'components/checks/warnings',
 ], function (
 	ko,
 	view,
@@ -67,20 +67,24 @@ define([
 			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
+			this.criticalCount = ko.observable(0);
 			this.componentParams = ko.observable({
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
+				criticalCount: this.criticalCount,
+			});
+			this.warningParams = ko.observable({
+				current: sharedState.CohortPathways.current,
 				warningsTotal: ko.observable(0),
 				warningCount: ko.observable(0),
 				infoCount: ko.observable(0),
-				criticalCount: ko.observable(0),
-				current: this.design,
-				currentId: this.analysisId,
-				canDiagnose: this.canSave, 
-				onCheckCallback: this.check,
-				onDiagnoseCallback: this.diagnose,
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(()=> {
+					return this.dirtyFlag().isChanged();
+				}),
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
@@ -115,12 +119,10 @@ define([
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams().analysisId(), key));
 		}
 
-		check(id) {
-			return PathwayService.getWarnings(id);
-		}
-
-		diagnose(id, expression) {
-			return PathwayService.runDiagnostics(id, expression);
+		diagnose() {
+			if (this.design()) {
+				return PathwayService.runDiagnostics(this.design());
+			}
 		}
 
 		setupDesign(design) {

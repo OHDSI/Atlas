@@ -80,15 +80,9 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
-	function getWarnings(id) {
+	function runDiagnostics(design) {
 		return httpService
-			.doGet(`${config.webAPIRoot}${estimationEndpoint}${id ||'-1'}/check`)
-			.then(res => res.data);
-	}
- 
-	function runDiagnostics(id, design) {
-		return httpService
-			.doPost(`${config.webAPIRoot}${estimationEndpoint}${id ||'-1'}/check`, design)
+			.doPost(`${config.webAPIRoot}${estimationEndpoint}check`, design)
 			.then(res => res.data);
 	}
 
@@ -103,8 +97,7 @@ define(function (require, exports) {
 		generate,
 		listGenerations,
 		exists,
-        getWarnings,
-        runDiagnostics,
+		runDiagnostics,
 	};
 
 	return api;
