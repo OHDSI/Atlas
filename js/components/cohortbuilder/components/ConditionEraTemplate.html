@@ -6,12 +6,17 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a condition era of
+				<td> 
+					<span data-bind="text: ko.i18n('components.conditionEra.criteriaText_1', 'a condition era of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionEra.addAttribute', 'Add attribute...')"></span> 
+							<span class="caret"></span>
+						</button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>

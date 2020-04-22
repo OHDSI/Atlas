@@ -10,53 +10,55 @@
 	<div data-bind="currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
-				<input class="form-control" type="text" placeholder="New Cohort Definition" data-bind="enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
+				<input class="form-control" type="text" data-bind="attr:{placeholder: ko.i18n('cohortDefinitions.cohort.newCohortPlaceholder', 'New Cohort Definition')}, enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" title="Close cohort definition" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success" data-bind="attr: {title: ko.i18n('cohortDefinitions.cohort.saveCohortTitle', 'Save cohort definition')}, click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" data-bind="attr: {title: ko.i18n('cohortDefinitions.cohort.closeCohortTitle', 'Close cohort definition')}, click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
 					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
-					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
-					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
-					<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+					<button class="btn btn-primary" data-bind="attr: {title: ko.i18n('cohortDefinitions.cohort.createCopyCohortTitle', 'Create a copy of this cohort definition')}, click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
+					<button class="btn btn-primary" data-bind="attr: {title: ko.i18n('cohortDefinitions.cohort.getLinkCohortTitle', 'Get a link to this cohort definition')}, enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
+					<button class="btn btn-primary" data-bind="attr: {title: ko.i18n('cohortDefinitions.cohort.configureAccessTitle', 'Configure access')}, visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
 						<i class="fa fa-lock"></i>
 					</button>
 					<!-- ko if: !isRunning() -->
-					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
+					<button class="btn btn-danger" data-bind="attr: {title: ko.i18n('cohortDefinitions.cohort.deleteTitle', 'Delete')}, click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
 				</div>
 			</div>
 				<div data-bind="visible: !isNameFilled()" class="empty-name-error">
 					<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-					<label>Cohort Definition name is empty.</label>
+					<label data-bind="text: ko.i18n('cohortDefinitions.cohort.emptyName', 'Cohort Definition name is empty')"></label>
 				</div>
 
 		</div>
 
 		<ul class="nav nav-tabs">
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition'); }">
-				<a>Definition <i data-bind="click: function () { $component.cohortDefinitionOpened(true) }" class="fa fa-question-circle-o"></i></a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.definition', 'Definition')"><i data-bind="click: function () { $component.cohortDefinitionOpened(true) }" class="fa fa-question-circle-o"></i></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets'); }">
-				<a>Concept Sets</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.conceptSets', 'Concept Sets')"></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation'); }">
-				<a>Generation</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.generation', 'Generation')"></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting'); }">
-				<a>Reporting</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.reporting', 'Reporting')"></a>
 			</li>
 			<!--
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }"><a>Explore</a></li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.explore', 'Explore')"></a>
+			</li>
 			-->
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
-				<a>Export</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.export', 'Export')"></a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
-				<a data-bind="attr: { class: warningClass }">Messages <span class="badge" data-bind="text: warningsTotals, visible: warningsTotals() > 0"></span></a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohort.tabs.messages', 'Messages'), attr: { class: warningClass }"><span class="badge" data-bind="text: warningsTotals, visible: warningsTotals() > 0"></span></a>
 			</li>
 		</ul>
 		<div class="tab-content">
@@ -67,9 +69,9 @@
 				<loading params="status: 'Exporting All Concept Sets To CSV'" data-bind="visible: exporting()"></loading>
 				<div data-bind="hidden: exporting()">
 				<div class="cohort-conceptset-button-pane pull-right">
-					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
-					<button type="button" class="btn btn-sm btn-primary" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
-					<span data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null" data-placement="bottom"><button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': disableConceptSetExport}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button></span>
+					<button type="button" class="btn btn-sm btn-primary"data-bind="text:ko.i18n('cohortDefinitions.cohort.newConceptSet', 'New Concept Set'), click:function() { newConceptSet(); }, enable: canEdit"></button>
+					<button type="button" class="btn btn-sm btn-primary" data-bind="text:ko.i18n('cohortDefinitions.cohort.import', 'Import'), click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
+					<span data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null" data-placement="bottom"><button type="button" class="btn btn-sm btn-success" data-bind="text: ko.i18n('cohortDefinitions.cohort.exportAllToCSV', 'Export All Concept Sets To CSV'), click:function() { exportConceptSetsCSV(); }, css: {'disabled': disableConceptSetExport}"><i class="fa fa-download" aria-hidden="true"></i> </button></span>
 				</div>
 				<table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
 											data: currentCohortDefinition() && currentCohortDefinition().expression().ConceptSets,
@@ -488,21 +490,21 @@
 	<atlas-modal params="{
 		showModal: analysisTypesOpened,
 		iconClass: 'fa fa-group',
-		title: 'Analysis Types',
+		title: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.title', 'Analysis Types'),
 		data: {}
 	}">
-		<b>Quick Analysis</b>
-		<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
-		<b>Healthcare Utilization</b>
-		<p>Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)</p>
-		<b>Full Analysis</b>
-		<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
+		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_1', 'Quick Analysis')"></b>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_1', 'Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)')"></p>
+		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_2', 'Healthcare Utilization')"></b>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_2', 'Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)')"></p>
+		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_3', 'Full Analysis')"></b>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_3', 'Runs a complete set of characterization reports. (estimated: 60 minutes)')"></p>
 	</atlas-modal>
 	<!-- /ko -->
 	<atlas-modal params="{
 		showModal: cohortLinkModalOpened,
 		iconClass: 'fa fa-group',
-		title: 'Link to Cohort Definition',
+		title: ko.i18n('cohortDefinitions.cohort.modals.linkToCohortDefinition.title', 'Link to Cohort Definition'),
 		templateWrapperClass: {},
 		data: {
 			cohortDefinitionLink: $component.cohortDefinitionLink,
@@ -511,24 +513,24 @@
 		<div data-bind="css: $parent.classes({ element: 'modal-body', extra: 'modal-body' })">
 			<input readonly data-bind="value: cohortDefinitionLink" type="text" class="form-control text-cursor">
 		</div>
-		<div data-bind="css: $parent.classes({ element: 'modal-footer', extra: 'modal-footer' })">
-			This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
+		<div data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_1', 'This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.'), css: $parent.classes({ element: 'modal-footer', extra: 'modal-footer' })">
+
 		</div>
 	</atlas-modal>
 
 	<atlas-modal params="{
 		showModal: cohortDefinitionOpened,
-		title: 'Cohort Definition',
+		title: ko.i18n('cohortDefinitions.cohort.modals.cohortDefinition.title', 'Cohort Definition'),
 		data: {}
 	}">
-		A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort
-		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
-		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
+		<div data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.cohortDefinition.text_1', 'A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events. Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.')">
+
+		</div>
 	</atlas-modal>
 	<atlas-modal params="
 		showModal: $component.showImportConceptSetModal,
 		template: 'import-conceptset-template',
-		title: 'Import Concept Set From Repository...',
+		title: ko.i18n('cohortDefinitions.cohort.modals.importConceptSet.title', 'Import Concept Set From Repository...'),
 		data: {
 			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
 			criteriaContext: criteriaContext,

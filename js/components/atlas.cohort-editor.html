@@ -1,5 +1,8 @@
 <div class="paddedWrapper">
-	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable: $component.currentCohortDefinition().description"></div>
+	<div 
+	placeholder="enter a cohort definition description here" 
+	class="divtext cohort-description" 
+	data-bind="attr:{placeholder:ko.i18n('cohortDefinitions.cohort.panels.definition.enterCohortPlaceholder', 'Enter a cohort definition description here')}, contentEditable: $component.currentCohortDefinition().description"></div>
 	<div data-bind="eventListener: [
 									{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport},
 									{ event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}
@@ -13,7 +16,7 @@
 		<div class="modal fade" data-bind="modal: showModal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
-					<div class="modal-header">Import Concept Set From Repository...</div>
+					<div class="modal-header" data-bind="text:ko.i18n('cohortDefinitions.cohort.panels.definition.importConceptSet', 'Import Concept Set From Repository...')">Import Concept Set From Repository...</div>
 					<div class="paddedWrapper">
 						<cohort-concept-set-browser params="criteriaContext: $component.criteriaContext, cohortConceptSets: $component.currentCohortDefinition().expression().ConceptSets, onActionComplete: $component.onAtlasConceptSetSelectAction, buttonActionEnabled: true"></cohort-concept-set-browser>
 					</div>

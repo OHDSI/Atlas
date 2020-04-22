@@ -1,4 +1,4 @@
-define([], function () {
+define(["knockout"], function (ko) {
 
     var options = {};
 
@@ -61,13 +61,13 @@ define([], function () {
 	}];
 
     options.resultLimitOptions = [{
-        name: "all events",
+        name: ko.i18n('options.allEvents', 'all events'),
         id: "All"
 		}, {
-        name: "earliest event",
+        name: ko.i18n('options.earliestEvents', 'earliest event'),
         id: "First"
 		}, {
-        name: "latest event",
+        name: ko.i18n('options.latestEvents', 'latest event'),
         id: "Last"
 		}];
 

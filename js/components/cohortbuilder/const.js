@@ -1,9 +1,8 @@
-define([
+define(["knockout"
 ],
 function (
-
+	ko
 ) {
-
 	const CriteriaTypes = {
 		DEMOGRAPHIC: "Demographic",
 		CONDITION_ERA: "ConditionEra",
@@ -23,6 +22,173 @@ function (
 		VISIT: "VisitOccurrence",
 		GROUP: "Group",
 	};
+
+	const eventsList = {
+		addFirstDiagnosisCriteria: {
+			title: ko.i18n('const.eventsList.addFirstDiagnosisCriteria.title', 'Add First Diagnosis Criteria'),
+			desc: ko.i18n('const.eventsList.addFirstDiagnosisCriteria.desc', 'Limit Condition Eras to first diagnosis era in history.'),
+		},
+		addAgeAtEraStartCriteria: {
+			title: ko.i18n('const.eventsList.addAgeAtEraStartCriteria.title', 'Add Age at Era Start Criteria'),
+			desc: ko.i18n('const.eventsList.addAgeAtEraStartCriteria.desc', 'Filter Condition Eras by age at era start.'),
+		},
+		addAgeAtEraEndCriteria: {
+			title: ko.i18n('const.eventsList.addAgeAtEraEndCriteria.title', 'Add Age at Era End Criteria'),
+			desc: ko.i18n('const.eventsList.addAgeAtEraEndCriteria.desc', 'Filter Condition Eras by age at era end.'),
+		},
+		addGenderCriteria: {
+			title: ko.i18n('const.eventsList.addGenderCriteria.title', 'Add Gender Criteria'),
+			desc: ko.i18n('const.eventsList.addGenderCriteria.desc', 'Filter Condition Eras based on Gender.'),
+		},
+		addStartDateCriteria: {
+			title: ko.i18n('const.eventsList.addStartDateCriteria.title', 'Add Start Date Criteria'),
+			desc: ko.i18n('const.eventsList.addStartDateCriteria.desc', 'Filter Condition Eras by the Era Start Date.'),
+		},
+		addEndDateCriteria: {
+			title: ko.i18n('const.eventsList.addEndDateCriteria.title', 'Add End Date Criteria'),
+			desc: ko.i18n('const.eventsList.addEndDateCriteria.desc', 'Filter Condition Eras  by the Era End Date'),
+		},
+		addEraConditonCountCriteria: {
+			title: ko.i18n('const.eventsList.addEraConditonCountCriteria.title', 'Add Era Conditon Count Criteria'),
+			desc: ko.i18n('const.eventsList.addEraConditonCountCriteria.desc', 'Filter Condition Eras by the Condition Count.'),
+		},
+		addEraLengthCriteria: {
+			title: ko.i18n('const.eventsList.addEraLengthCriteria.title', 'Add Era Length Criteria'),
+			desc: ko.i18n('const.eventsList.addEraLengthCriteria.desc', 'Filter Condition Eras by the Era duration.'),
+		},
+		addNestedCriteria: {
+			title: ko.i18n('const.eventsList.addNestedCriteria.title', 'Add Nested Criteria...'),
+			desc: ko.i18n('const.eventsList.addNestedCriteria.desc', 'Apply criteria using the condition era as the index event'),
+		},
+		addConditionEra: {
+			title: ko.i18n('const.eventsList.addConditionEra.title', 'Add Condition Era'), //'Add Condition Era',
+			desc: ko.i18n('const.eventsList.addConditionEra.desc', 'Find patients with specific diagosis era.'), //'Find patients with specific diagosis era.'
+			desc_second: ko.i18n('const.eventsList.addConditionEra.desc_second', 'Exit cohort based on diagosis era.')
+		},
+		addConditionOccurrence: {
+			title: ko.i18n('const.eventsList.addConditionOccurrence.title', 'Add Condition Occurrence'),
+			desc: ko.i18n('const.eventsList.addConditionOccurrence.desc', 'Find patients with specific diagnoses.'),
+			desc_second: ko.i18n('const.eventsList.addConditionOccurrence.desc_second', 'Exit cohort based on  diagnoses')
+		},
+		addDeath: {
+			title: ko.i18n('const.eventsList.addDeath.title', 'Add Death'),
+			desc: ko.i18n('const.eventsList.addDeath.desc', 'Find patients based on death.'),
+			desc_second: ko.i18n('const.eventsList.addDeath.desc_second', 'Exit cohort based on  death.')
+		},
+		addDeviceExposure: {
+			title: ko.i18n('const.eventsList.addDeviceExposure.title', 'Add Device Exposure'),
+			desc: ko.i18n('const.eventsList.addDeviceExposure.desc', 'Find patients based on device exposure.'),
+			desc_second: ko.i18n('const.eventsList.addDeviceExposure.desc_second', 'Exit cohort based on  device exposure.')
+		},
+		addDoseEra: {
+			title: ko.i18n('const.eventsList.addDoseEra.title', 'Add Dose Era'),
+			desc: ko.i18n('const.eventsList.addDoseEra.desc', 'Find patients with dose eras.'),
+			desc_second: ko.i18n('const.eventsList.addDoseEra.desc_second', 'Exit cohort based on dose eras.')
+		},
+		addDrugEra: {
+			title: ko.i18n('const.eventsList.addDrugEra.title', 'Add Drug Era'),
+			desc: ko.i18n('const.eventsList.addDrugEra.desc', 'Find patients with with exposure to drugs over time.'),
+			desc_second: ko.i18n('const.eventsList.addDrugEra.desc_second', 'Exit cohort based on drugs over time.')
+		},
+		addDrugExposure: {
+			title: ko.i18n('const.eventsList.addDrugExposure.title', 'Add Drug Exposure'),
+			desc: ko.i18n('const.eventsList.addDrugExposure.desc', 'Find patients with exposure to specific drugs or drug classes.'),
+			desc_second: ko.i18n('const.eventsList.addDrugExposure.desc_second', 'Exit cohort based on exposure to specific drugs or drug classes.')
+		},
+		addMeasurement: {
+			title: ko.i18n('const.eventsList.addMeasurement.title', 'Add Measurement'),
+			desc: ko.i18n('const.eventsList.addMeasurement.desc', 'Find patients based on Measurement.'),
+			desc_second: ko.i18n('const.eventsList.addMeasurement.desc_second', 'Exit cohort based on Measurement.')
+		},
+		addObservation: {
+			title: ko.i18n('const.eventsList.addObservation.title', 'Add Observation'),
+			desc: ko.i18n('const.eventsList.addObservation.desc', 'Find patients based on lab tests or other observations..'),
+			desc_second: ko.i18n('const.eventsList.addObservation.desc_second', 'Exit cohort based on lab tests or other observations.')
+		},
+		addObservationPeriod: {
+			title: ko.i18n('const.eventsList.addObservationPeriod.title', 'Add Observation Period'),
+			desc: ko.i18n('const.eventsList.addObservationPeriod.desc', 'Find patients based on Observation Period.'),
+		},
+		addPayerPlanPeriod: {
+			title: ko.i18n('const.eventsList.addPayerPlanPeriod.title', 'Add Payer Plan Period'),
+			desc: ko.i18n('const.eventsList.addPayerPlanPeriod.desc', 'Find patients based on Payer Plan Period.'),
+			desc_second: ko.i18n('const.eventsList.addPayerPlanPeriod.desc_second', 'Find patients based on Payer Plan Period.')
+		},
+		addProcedureOccurrence: {
+			title: ko.i18n('const.eventsList.addProcedureOccurrence.title', 'Add Procedure Occurrence'),
+			desc: ko.i18n('const.eventsList.addProcedureOccurrence.desc', 'Find patients that experienced a specific procedure.'),
+			desc_second: ko.i18n('const.eventsList.addProcedureOccurrence.desc_second', 'Exit cohort based on procedures.')
+		},
+		addSpecimen: {
+			title: ko.i18n('const.eventsList.addSpecimen.title', 'Add Specimen'),
+			desc: ko.i18n('const.eventsList.addSpecimen.desc', 'Find patients based on Specimen.'),
+			desc_second: ko.i18n('const.eventsList.addSpecimen.desc_second', 'Find patients based on Specimen.')
+		},
+		addVisit: {
+			title: ko.i18n('const.eventsList.addVisit.title', 'Add Visit'),
+			desc: ko.i18n('const.eventsList.addVisit.desc', 'Find patients based on visit information.'),
+			desc_second: ko.i18n('const.eventsList.addVisit.desc_second', 'Exit cohort based on visit information.')
+		},
+	}
+
+	const initialEventList = {
+		addConditionEra: {
+			title: ko.i18n('const.initialEventList.addConditionEra.title', 'Add Condition Era'), //'Add Condition Era',
+			desc: ko.i18n('const.initialEventList.addConditionEra.desc', 'Find patients with specific diagosis era.'), //'Find patients with specific diagosis era.'
+		},
+		addConditionOccurrence: {
+			title: ko.i18n('const.initialEventList.addConditionOccurrence.title', 'Add Condition Occurrence'),
+			desc: ko.i18n('const.initialEventList.addConditionOccurrence.desc', 'Find patients with specific diagnoses.'),
+		},
+		addDeath: {
+			title: ko.i18n('const.initialEventList.addDeath.title', 'Add Death'),
+			desc: ko.i18n('const.initialEventList.addDeath.desc', 'Find patients based on death.'),
+		},
+		addDeviceExposure: {
+			title: ko.i18n('const.initialEventList.addDeviceExposure.title', 'Add Device Exposure'),
+			desc: ko.i18n('const.initialEventList.addDeviceExposure.desc', 'Find patients based on device exposure.'),
+		},
+		addDoseEra: {
+			title: ko.i18n('const.initialEventList.addDoseEra.title', 'Add Dose Era'),
+			desc: ko.i18n('const.initialEventList.addDoseEra.desc', 'Find patients with dose eras.'),
+		},
+		addDrugEra: {
+			title: ko.i18n('const.initialEventList.addDrugEra.title', 'Add Drug Era'),
+			desc: ko.i18n('const.initialEventList.addDrugEra.desc', 'Find patients with with exposure to drugs over time.'),
+		},
+		addDrugExposure: {
+			title: ko.i18n('const.initialEventList.addDrugExposure.title', 'Add Drug Exposure'),
+			desc: ko.i18n('const.initialEventList.addDrugExposure.desc', 'Find patients with exposure to specific drugs or drug classes.'),
+		},
+		addMeasurement: {
+			title: ko.i18n('const.initialEventList.addMeasurement.title', 'Add Measurement'),
+			desc: ko.i18n('const.initialEventList.addMeasurement.desc', 'Find patients based on Measurement.'),
+		},
+		addObservation: {
+			title: ko.i18n('const.initialEventList.addObservation.title', 'Add Observation'),
+			desc: ko.i18n('const.initialEventList.addObservation.desc', 'Find patients based on lab tests or other observations..'),
+		},
+		addObservationPeriod: {
+			title: ko.i18n('const.initialEventList.addObservationPeriod.title', 'Add Observation Period'),
+			desc: ko.i18n('const.initialEventList.addObservationPeriod.desc', 'Find patients based on Observation Period.'),
+		},
+		addPayerPlanPeriod: {
+			title: ko.i18n('const.initialEventList.addPayerPlanPeriod.title', 'Add Payer Plan Period'),
+			desc: ko.i18n('const.initialEventList.addPayerPlanPeriod.desc', 'Find patients based on Payer Plan Period.'),
+		},
+		addProcedureOccurrence: {
+			title: ko.i18n('const.initialEventList.addProcedureOccurrence.title', 'Add Procedure Occurrence'),
+			desc: ko.i18n('const.initialEventList.addProcedureOccurrence.desc', 'Find patients that experienced a specific procedure.'),
+		},
+		addSpecimen: {
+			title: ko.i18n('const.initialEventList.addSpecimen.title', 'Add Specimen'),
+			desc: ko.i18n('const.initialEventList.addSpecimen.desc', 'Find patients based on Specimen.'),
+		},
+		addVisit: {
+			title: ko.i18n('const.initialEventList.addVisit.title', 'Add Visit'),
+			desc: ko.i18n('const.initialEventList.addVisit.desc', 'Find patients based on visit information.'),
+		},
+	}
 
 	const AddDemographic = {
 		text: "Add Demographic",
@@ -172,5 +338,7 @@ function (
 		CriteriaTypes,
 		AddCriteriaActions,
 		AddWindowedCriteriaActions,
+		initialEventList,
+		eventsList,
 	};
 });

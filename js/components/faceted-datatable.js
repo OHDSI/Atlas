@@ -3,7 +3,6 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 	function facetedDatatable(params) {
 		var self = this;
 		var subscriptions = [];
-
 		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
@@ -189,6 +188,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			subscriptions.forEach(sub => sub.dispose());
 		}
 	};
+
 
 	var component = {
 		viewModel: facetedDatatable,
