@@ -35,9 +35,9 @@ define([
 
 			this.newCohortButtonCaption = ko.computed(() => {
 				if (this.currentCohortDefinition()) {
-					return 'Please close your current cohort definition before creating a new one.';
+					return ko.i18n('cohortDefinition.closeYourCurrentCohort', 'Please close your current cohort definition before creating a new one');
 				}
-				return 'Create a new cohort definition.';
+				return ko.i18n('cohortDefinition.newDefinitionTitle', 'Create a new cohort definition');
 			});
 
 			this.isAuthenticated 	= authApi.isAuthenticated;

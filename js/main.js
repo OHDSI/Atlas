@@ -42,7 +42,7 @@ require(["./settings"], (settings) => {
 				sharedState,
 			) => {
 				const app = new Application(router);
-
+				
 				// This was added to avoid multiple UI updates,
 				// but this can break code that depends on synchronous updates
 				// More details about deferred updates available at https://knockoutjs.com/documentation/deferred-updates.html

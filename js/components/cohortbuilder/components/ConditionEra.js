@@ -1,4 +1,5 @@
-define(['knockout', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html'], function (ko, options, utils, Range, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./ConditionEraTemplate.html', '../const'], 
+function (ko, options, utils, Range, CriteriaGroup, template, constants) {
 
 	function ConditionEraViewModel(params) {
 
@@ -7,46 +8,51 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 		self.Criteria = params.criteria.ConditionEra;
 		self.options = options;
 
+		self.formatOption = function (d) {
+			return '<div class="optionText">' + d.text + '</div>' +
+				'<div class="optionDescription">' + d.description + '</div>';
+		};
+
 		self.addActions = [{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.first-diagnosis.option.text', "Add First Diagnosis Criteria"),
+				text: constants.eventsList.addFirstDiagnosisCriteria.title(),
 				selected: false,
-			    description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.first-diagnosis.option.description', "Limit Condition Eras to first diagnosis era in history."),
+				description: constants.eventsList.addFirstDiagnosisCriteria.desc(),
 				action: function () {
 					if (self.Criteria.First() == null)
 						self.Criteria.First(true);
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.age-at-era-start.option.text', "Add Age at Era Start Criteria"),
+				text: constants.eventsList.addAgeAtEraStartCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.age-at-era-start.option.description', "Filter Condition Eras by age at era start."),
+				description: constants.eventsList.addAgeAtEraStartCriteria.desc(),
 				action: function () {
 					if (self.Criteria.AgeAtStart() == null)
 						self.Criteria.AgeAtStart(new Range());
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.age-at-era-end.option.text', "Add Age at Era End Criteria"),
+				text: constants.eventsList.addAgeAtEraEndCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.age-at-era-end.option.description', "Filter Condition Eras by age at era end."),
+				description: constants.eventsList.addAgeAtEraEndCriteria.desc(),
 				action: function () {
 					if (self.Criteria.AgeAtEnd() == null)
 						self.Criteria.AgeAtEnd(new Range());
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.gender.option.text', "Add Gender Criteria"),
+				text: constants.eventsList.addGenderCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.gender.option.description', "Filter Condition Eras based on Gender."),
+				description: constants.eventsList.addGenderCriteria.desc(),
 				action: function () {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.start-date.option.text', "Add Start Date Criteria"),
+				text: constants.eventsList.addStartDateCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.start-date.option.description', "Filter Condition Eras by the Era Start Date."),
+				description: constants.eventsList.addStartDateCriteria.desc(),
 				action: function () {
 					if (self.Criteria.EraStartDate() == null)
 						self.Criteria.EraStartDate(new Range({
@@ -55,9 +61,9 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.end-date.option.text', "Add End Date Criteria"),
+				text: constants.eventsList.addEndDateCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.end-date.option.description', "Filter Condition Eras  by the Era End Date"),
+				description: constants.eventsList.addEndDateCriteria.desc(),
 				action: function () {
 					if (self.Criteria.EraEndDate() == null)
 						self.Criteria.EraEndDate(new Range({
@@ -66,27 +72,27 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.era-condition-count.option.text', "Add Era Conditon Count Criteria"),
+				text: constants.eventsList.addEraConditonCountCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.era-condition-count.option.description', "Filter Condition Eras by the Condition Count."),
+				description: constants.eventsList.addEraConditonCountCriteria.desc(),
 				action: function () {
 					if (self.Criteria.OccurrenceCount() == null)
 						self.Criteria.OccurrenceCount(new Range());
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.era-length.option.text', "Add Era Length Criteria"),
+				text: constants.eventsList.addEraLengthCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.era-length.option.description', "Filter Condition Eras by the Era duration."),
+				description: constants.eventsList.addEraLengthCriteria.desc(),
 				action: function () {
 					if (self.Criteria.EraLength() == null)
 						self.Criteria.EraLength(new Range());
 				}
 			},
 			{
-				text: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.nested-criteria.option.text', "Add Nested Criteria..."),
+				text: constants.eventsList.addNestedCriteria.title(),
 				selected: false,
-				description: ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.nested-criteria.option.description', "Apply criteria using the condition era as the index event..."),
+				description: constants.eventsList.addNestedCriteria.desc(),
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
@@ -98,12 +104,13 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 			self.Criteria[propertyName](null);
 		}
 
-		self.indexMessage = ko.i18nformat('cc.viewEdit.design.subgroups.add.condition-era.criteria.index-data.text', 'The index date refers to the condition era of <%= conceptSetName %>.',
-			{conceptSetName: utils.getConceptSetName(
-					self.Criteria.CodesetId,
-					self.expression.ConceptSets,
-					ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.index-data.default-name', 'Any Condition'))
-			});
+		self.indexMessage = ko.pureComputed(() => {
+			var anyCondition = ko.i18n('components.conditionEra.anyConditionButton', 'Any Condition');
+			var message = ko.i18n('components.conditionEra.returnText_1', 'The index date refers to the condition era of')
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, anyCondition());
+			return `${message()} ${conceptSetName}.`;
+		});
+		
 	}
 
 	// return compoonent definition

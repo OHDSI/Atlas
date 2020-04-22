@@ -1,6 +1,5 @@
 define(['knockout', 'atlas-state', 'lodash'],
 	function(ko, sharedState, {get, template}){
-
 		ko.i18n = function(key, defaultValue, subtree) {
 			return ko.pureComputed({
 				read: () => {

@@ -1,6 +1,6 @@
-define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', './EndStrategyEditor',
+define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaTypes', '../CohortExpression', '../InclusionRule', 'text!./CohortExpressionEditorTemplate.html', '../const', './EndStrategyEditor',
 	'databindings', 'conceptpicker/ConceptPicker', 'css!../css/builder.css', 'ko.sortable', 'less!./CohortExpressionEditor.less'
-], function (ko, $, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template) {
+], function (ko, $, options, CriteriaGroup, criteriaTypes, CohortExpression, InclusionRule, template, constants) {
 
 	function CohortExpressionEditorViewModel(params) {
 		var self = this;
@@ -12,11 +12,10 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		self.helpCohortEventsOpened = ko.observable(false);
 		self.helpInclusionCriteriaOpened = ko.observable(false);
 		self.helpCohortExitOpened = ko.observable(false);
-
 		self.primaryCriteriaOptions = [{
-				text: "Add Condition Era",
+				text: constants.eventsList.addConditionEra.title(),
 				selected: false,
-				description: "Find patients with specific diagosis era.",
+				description: constants.eventsList.addConditionEra.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						ConditionEra: new criteriaTypes.ConditionEra(null, self.expression().ConceptSets)
@@ -24,9 +23,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Condition Occurrence",
+				text: constants.eventsList.addConditionOccurrence.title(),
 				selected: false,
-				description: "Find patients with specific diagnoses.",
+				description: constants.eventsList.addConditionOccurrence.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						ConditionOccurrence: new criteriaTypes.ConditionOccurrence(null, self.expression().ConceptSets)
@@ -34,9 +33,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Death",
+				text: constants.eventsList.addDeath.title(),
 				selected: false,
-				description: "Find patients based on death.",
+				description: constants.eventsList.addDeath.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						Death: new criteriaTypes.Death(null, self.expression().ConceptSets)
@@ -44,9 +43,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Device Exposure",
+				text: constants.eventsList.addDeviceExposure.title(),
 				selected: false,
-				description: "Find patients based on device exposure.",
+				description: constants.eventsList.addDeviceExposure.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						DeviceExposure: new criteriaTypes.DeviceExposure(null, self.expression().ConceptSets)
@@ -54,9 +53,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Dose Era",
+				text: constants.eventsList.addDoseEra.title(),
 				selected: false,
-				description: "Find patients with dose eras.",
+				description: constants.eventsList.addDoseEra.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						DoseEra: new criteriaTypes.DoseEra(null, self.expression().ConceptSets)
@@ -64,9 +63,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Era",
+				text: constants.eventsList.addDrugEra.title(),
 				selected: false,
-				description: "Find patients with with exposure to drugs over time.",
+				description: constants.eventsList.addDrugEra.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						DrugEra: new criteriaTypes.DrugEra(null, self.expression().ConceptSets)
@@ -74,9 +73,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Exposure",
+				text: constants.eventsList.addDrugExposure.title(),
 				selected: false,
-				description: "Find patients with exposure to specific drugs or drug classes.",
+				description: constants.eventsList.addDrugExposure.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						DrugExposure: new criteriaTypes.DrugExposure(null, self.expression().ConceptSets)
@@ -84,9 +83,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Measurement",
+				text: constants.eventsList.addMeasurement.title(),
 				selected: false,
-				description: "Find patients based on Measurement.",
+				description: constants.eventsList.addMeasurement.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						Measurement: new criteriaTypes.Measurement(null, self.expression().ConceptSets)
@@ -94,9 +93,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Observation",
+				text: constants.eventsList.addObservation.title(),
 				selected: false,
-				description: "Find patients based on lab tests or other observations.",
+				description: constants.eventsList.addObservation.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						Observation: new criteriaTypes.Observation(null, self.expression().ConceptSets)
@@ -104,9 +103,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Observation Period",
+				text: constants.eventsList.addObservationPeriod.title(),
 				selected: false,
-				description: "Find patients based on Observation Period.",
+				description: constants.eventsList.addObservationPeriod.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						ObservationPeriod: new criteriaTypes.ObservationPeriod(null, self.expression().ConceptSets)
@@ -114,9 +113,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Payer Plan Period",
+				text: constants.eventsList.addPayerPlanPeriod.title(),
 				selected: false,
-				description: "Find patients based on Payer Plan Period.",
+				description: constants.eventsList.addPayerPlanPeriod.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						PayerPlanPeriod: new criteriaTypes.PayerPlanPeriod(null, self.expression().ConceptSets)
@@ -124,9 +123,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Procedure Occurrence",
+				text: constants.eventsList.addProcedureOccurrence.title(),
 				selected: false,
-				description: "Find patients that experienced a specific procedure.",
+				description: constants.eventsList.addProcedureOccurrence.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						ProcedureOccurrence: new criteriaTypes.ProcedureOccurrence(null, self.expression().ConceptSets)
@@ -134,9 +133,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Specimen",
+				text: constants.eventsList.addSpecimen.title(),
 				selected: false,
-				description: "Find patients based on Specimen.",
+				description: constants.eventsList.addSpecimen.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
@@ -144,9 +143,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Visit",
+				text: constants.eventsList.addVisit.title(),
 				selected: false,
-				description: "Find patients based on visit information.",
+				description: constants.eventsList.addVisit.desc(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						VisitOccurrence: new criteriaTypes.VisitOccurrence(null, self.expression().ConceptSets)
@@ -156,9 +155,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 		];
 
 		self.censorCriteriaOptions = [{
-				text: "Add Condition Era",
+				text: constants.eventsList.addConditionEra.title(),
 				selected: false,
-				description: "Exit cohort based on diagosis era.",
+				description: constants.eventsList.addConditionEra.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						ConditionEra: new criteriaTypes.ConditionEra(null, self.expression().ConceptSets)
@@ -166,9 +165,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Condition Occurrence",
+				text: constants.eventsList.addConditionOccurrence.title(),
 				selected: false,
-				description: "Exit cohort based on  diagnoses.",
+				description: constants.eventsList.addConditionOccurrence.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						ConditionOccurrence: new criteriaTypes.ConditionOccurrence(null, self.expression().ConceptSets)
@@ -176,9 +175,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Death",
+				text: constants.eventsList.addDeath.title(),
 				selected: false,
-				description: "Exit cohort based on  death.",
+				description: constants.eventsList.addDeath.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						Death: new criteriaTypes.Death(null, self.expression().ConceptSets)
@@ -186,9 +185,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Device Exposure",
+				text: constants.eventsList.addDeviceExposure.title(),
 				selected: false,
-				description: "Exit cohort based on  device exposure.",
+				description: constants.eventsList.addDeviceExposure.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						DeviceExposure: new criteriaTypes.DeviceExposure(null, self.expression().ConceptSets)
@@ -196,9 +195,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Dose Era",
+				text: constants.eventsList.addDoseEra.title(),
 				selected: false,
-				description: "Exit cohort based on dose eras.",
+				description: constants.eventsList.addDoseEra.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						DoseEra: new criteriaTypes.DoseEra(null, self.expression().ConceptSets)
@@ -206,9 +205,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Era",
+				text: constants.eventsList.addDrugEra.title(),
 				selected: false,
-				description: "Exit cohort based on drugs over time.",
+				description: constants.eventsList.addDrugEra.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						DrugEra: new criteriaTypes.DrugEra(null, self.expression().ConceptSets)
@@ -216,9 +215,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Drug Exposure",
+				text: constants.eventsList.addDrugExposure.title(),
 				selected: false,
-				description: "Exit cohort based on exposure to specific drugs or drug classes.",
+				description: constants.eventsList.addDrugExposure.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						DrugExposure: new criteriaTypes.DrugExposure(null, self.expression().ConceptSets)
@@ -226,9 +225,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Measurement",
+				text: constants.eventsList.addMeasurement.title(),
 				selected: false,
-				description: "Exit cohort based on Measurement.",
+				description: constants.eventsList.addMeasurement.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						Measurement: new criteriaTypes.Measurement(null, self.expression().ConceptSets)
@@ -236,9 +235,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Observation",
+				text: constants.eventsList.addObservation.title(),
 				selected: false,
-				description: "Exit cohort based on lab tests or other observations.",
+				description: constants.eventsList.addObservation.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						Observation: new criteriaTypes.Observation(null, self.expression().ConceptSets)
@@ -246,9 +245,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Payer Plan Period",
+				text: constants.eventsList.addPayerPlanPeriod.title(),
 				selected: false,
-				description: "Find patients based on Payer Plan Period.",
+				description: constants.eventsList.addPayerPlanPeriod.desc_second(),
 				action: function () {
 					self.expression().PrimaryCriteria().CriteriaList.push({
 						PayerPlanPeriod: new criteriaTypes.PayerPlanPeriod(null, self.expression().ConceptSets)
@@ -256,9 +255,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Procedure Occurrence",
+				text: constants.eventsList.addProcedureOccurrence.title(),
 				selected: false,
-				description: "Exit cohort based on procedures.",
+				description: constants.eventsList.addProcedureOccurrence.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						ProcedureOccurrence: new criteriaTypes.ProcedureOccurrence(null, self.expression().ConceptSets)
@@ -266,9 +265,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Specimen",
+				text: constants.eventsList.addVisit.title(),
 				selected: false,
-				description: "Find patients based on Specimen.",
+				description: constants.eventsList.addVisit.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
@@ -276,9 +275,9 @@ define(['knockout', 'jquery', '../options', '../CriteriaGroup', '../CriteriaType
 				}
 			},
 			{
-				text: "Add Visit",
+				text: constants.eventsList.addDeviceExposure.title(),
 				selected: false,
-				description: "Exit cohort based on visit information.",
+				description: constants.eventsList.addDeviceExposure.desc_second(),
 				action: function () {
 					self.expression().CensoringCriteria.push({
 						VisitOccurrence: new criteriaTypes.VisitOccurrence(null, self.expression().ConceptSets)

@@ -1,8 +1,4 @@
-define((require, exports) => {
-
-    const ko = require('knockout');
-    //todo yar this way we guaranty that i18n is already in ok. think about alternative way to do so...
-    const appConfig = require('appConfig');
+define(["knockout"], function (ko) {
 
     var options = {};
 
@@ -76,20 +72,16 @@ define((require, exports) => {
         }
     ];
 
-    options.resultLimitOptions = [
-        {
-            id: "All",
-            name: ko.i18n('cc.viewEdit.design.subgroups.component.result-limit.options.all-events', 'all events')
-        },
-        {
-            id: "First",
-            name: ko.i18n('cc.viewEdit.design.subgroups.component.result-limit.options.earliest-event', 'earliest event')
-        },
-        {
-            id: "Last",
-            name: ko.i18n('cc.viewEdit.design.subgroups.component.result-limit.options.last-event', 'latest event')
-        }
-    ];
+    options.resultLimitOptions = [{
+        name: ko.i18n('options.allEvents', 'all events'),
+        id: "All"
+		}, {
+        name: ko.i18n('options.earliestEvents', 'earliest event'),
+        id: "First"
+		}, {
+        name: ko.i18n('options.latestEvents', 'latest event'),
+        id: "Last"
+		}];
 
     options.yesNoOptions = [
         {

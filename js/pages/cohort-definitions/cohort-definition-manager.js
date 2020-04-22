@@ -164,7 +164,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					if (this.currentCohortDefinition().id() == 0) {
 					return this.defaultName;
 				} else {
-						return 'Cohort #' + this.currentCohortDefinition().id();
+						return ko.i18n('cohortDefinition.cohortId', 'Cohort #') + this.currentCohortDefinition().id(); //'Cohort #'
 				}
 			}
 			});
@@ -277,10 +277,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.disableConceptSetExportMessage = ko.pureComputed(() => {
 				if (this.currentCohortDefinition() && this.currentCohortDefinition().expression().ConceptSets().length === 0) {
-					return "No concept sets to export.";
+					return ko.i18n('cohortDefinitions.noConceptSets', 'No concept sets to export'); //"No concept sets to export.";
 				}
 				if (this.dirtyFlag().isDirty()) {
-					return "You must save the definition before you can export.";
+					return ko.i18n('cohortDefinitions.saveDefinitionBefore', 'You must save the definition before you can export'); //"You must save the definition before you can export.";
 				}
 			});
 

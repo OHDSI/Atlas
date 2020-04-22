@@ -6,16 +6,16 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.of', 'a condition era of')"></span>
-					<conceptset-selector params="conceptSetId: CodesetId,
-												 conceptSets: $component.expression.ConceptSets,
-												 defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.add.any-condition', 'Any Condition')">
-					</conceptset-selector>
+				<td>
+					<span data-bind="text: ko.i18n('components.conditionEra.criteriaText_1', 'a condition era of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
 						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-							<i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span>
+							<i class="fa fa-plus"></i>
+							<span data-bind="text: ko.i18n('components.conditionEra.addAttribute', 'Add attribute...')"></span>
+							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="click:action" href="#">
