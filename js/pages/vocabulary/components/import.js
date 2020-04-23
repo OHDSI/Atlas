@@ -108,7 +108,7 @@ define([
             this.error('');
             const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
             if (identifers === null) {
-                this.error('Unable to parse Concept Identifiers');
+                this.error(ko.i18n('search.import.unableToParseConceptIdentifiers', 'Unable to parse Concept Identifiers')());
                 this.loading(false);
             } else {
                 vocabularyProvider.getConceptsById(identifers)
