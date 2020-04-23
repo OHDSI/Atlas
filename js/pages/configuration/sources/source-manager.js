@@ -34,6 +34,8 @@ define([
     constants
   ) {
 
+
+  //todo yar should we translate daimons?
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -143,16 +145,18 @@ define([
 
       this.canEditKey = ko.pureComputed(this.isNew);
 
+
+
       this.options.dialectOptions = [
-        { name: 'PostgreSQL', id: 'postgresql' },
-        { name: 'SQL server', id: 'sql server' },
-        { name: 'Oracle', id: 'oracle' },
-        { name: 'Amazon Redshift', id: 'redshift' },
-        { name: 'Google BigQuery', id: 'bigquery' },
-        { name: 'Impala', id: 'impala' },
-        { name: 'Microsoft PDW', id: 'pdw' },
-        { name: 'IBM Netezza', id: 'netezza' },
-        { name: 'Hive LLAP', id: 'hive'},
+        { id: 'postgresql', name: ko.i18n('configuration.viewEdit.dialect.options.postgresql', 'PostgreSQL') },
+        { id: 'sql server', name: ko.i18n('configuration.viewEdit.dialect.options.sqlserver', 'SQL server') },
+        { id: 'oracle', name: ko.i18n('configuration.viewEdit.dialect.options.oracle', 'Oracle') },
+        { id: 'redshift', name: ko.i18n('configuration.viewEdit.dialect.options.redshift', 'Amazon Redshift') },
+        { id: 'bigquery', name: ko.i18n('configuration.viewEdit.dialect.options.bigquery', 'Google BigQuery') },
+        { id: 'impala', name: ko.i18n('configuration.viewEdit.dialect.options.impala', 'Impala') },
+        { id: 'pdw', name: ko.i18n('configuration.viewEdit.dialect.options.pdw', 'Microsoft PDW') },
+        { id: 'netezza', name: ko.i18n('configuration.viewEdit.dialect.options.netezza', 'IBM Netezza') },
+        { id: 'hive', name: ko.i18n('configuration.viewEdit.dialect.options.hive', 'Hive LLAP')},
       ];
 
       this.sourceCaption = ko.computed(() => {
@@ -294,13 +298,18 @@ define([
         this.goToConfigure();
       } catch ({ data = {} }) {
         this.loading(false);
-        const { payload: { message = 'Please contact your administrator to resolve this issue.' } = {} } = data;
-        alert(`The Source was not saved. ${message}`);
+        const {
+          payload: {
+            message = ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.save.error-message', 'Please contact your administrator to resolve this issue.'))
+          } = {}
+        } = data;
+        alert(ko.unwrap(ko.i18nformat('configuration.viewEdit.source.alerts.save.error', 'The Source was not saved. <%= message %>', {message: message})));
       }
     }
 
     close() {
-      if (this.dirtyFlag().isDirty() && !confirm('Source changes are not saved. Would you like to continue?')) {
+
+      if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('configuration.viewEdit.source.confirms.close', 'Source changes are not saved. Would you like to continue?')))) {
         return;
       }
       this.selectedSource(null);
@@ -324,11 +333,12 @@ define([
 
     async delete() {
       if (this.hasSelectedPriotirizableDaimons()) {
-        alert('Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source');
+        alert(ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.delete.has-selected-priotirizable-daimons',
+                                'Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source')));
         return;
       }
 
-      if (!confirm('Delete source? Warning: deletion can not be undone!')) {
+      if (!confirm(ko.unwrap(ko.i18n('configuration.viewEdit.source.confirms.delete', 'Delete source? Warning: deletion can not be undone!')))) {
         return;
       }
       try {
@@ -368,7 +378,7 @@ define([
           this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
         } catch (e) {
           console.error(e);
-          alert(`An error occurred while attempting to get a source with id=${this.selectedSourceId()}.`);
+          alert(ko.unwrap(ko.i18nformat('configuration.viewEdit.source.alerts.source-selected.error', 'An error occurred while attempting to get a source with id=<%=selectedSourceId%>.', {selectedSourceId: this.selectedSourceId()})));
           commonUtils.routeTo('/configure');
         } finally {
           this.loading(false);

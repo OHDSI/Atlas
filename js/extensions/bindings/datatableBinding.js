@@ -79,6 +79,8 @@ define([
 
 			return Object.assign({}, column, {
 				title: ko.unwrap(column.title),
+				//todo yar this title is not observer, shout be fix
+				// title: column.title,
 				data: hasDataAccessor
 					? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
 					: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
