@@ -4,18 +4,20 @@
 
 <div data-bind="css: classes({extra: ['paddedWrapper']}), if: config.userAuthenticationEnabled && canImport">
     <div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
-        <div data-bind="css: classes({extra: ['panel-heading', 'padded']})">Importing users</div>
+        <div data-bind="css: classes({extra: ['panel-heading', 'padded']}), text: ko.i18n('configuration.user-import.wizard.title', 'Importing users')"></div>
         <div data-bind="css: classes({extra: ['panel-body']})">
 
             <!-- select sources -->
             <div data-bind="if: hasMultipleProviders && wizardStep() === $component.WIZARD_STEPS.PROVIDERS">
-                <step-header params="header:'Please, select a provider to import users from.'"></step-header>
+                <step-header params="header:ko.i18n('configuration.user-import.wizard.select-source.header', 'Please, select a provider to import users from.')"></step-header>
                 <div data-bind="if: connectionCheck()">
                     <div data-bind="css: classes({extra: ['panel', 'panel-warning', 'padded']})">
                         <div data-bind="css: classes({extra: ['panel-body']})">
                             <div data-bind="css: infoMessageClass(), text: connectionCheck().message"></div>
                             <div data-bind="if: connectionCheck() && connectionCheck().state === 'FAILED'">
-                                <button data-bind="click: toggleConnectionDetails, css: classes({extra: ['btn', 'btn-sm', 'btn-info']}), text: detailsButtonText">Details >>></button>
+                                <button data-bind="click: toggleConnectionDetails, css: classes({extra: ['btn', 'btn-sm', 'btn-info']}), text: detailsButtonText">
+                                    <span data-bind="text: ko.i18n('configuration.user-import.wizard.select-source.buttons.detials', 'Details >>>')"></span>
+                                </button>
                                 <div data-bind="if: showConnectionDetails(), css: classes('connection-details')">
                                     <pre data-bind="text: connectionCheck().details, css: classes({extra: 'radius-border'})">
                                     </pre>
@@ -25,18 +27,27 @@
                     </div>
                 </div>
                 <div data-bind="css: classes({extra: ['btn-group', 'users-import__group']})">
-                    <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" /> Active Directory</label>
-                    <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" /> LDAP server</label>
+                    <label data-bind="css: classes({extra: ['btn']})" ><input name="importSource" id="cbActiveDirectory" type="radio" value="ad" data-bind="checked: importProvider" />
+                        <span data-bind="text: ko.i18n('configuration.user-import.wizard.select-source.source.active-directory', 'Active Directory')"></span>
+
+                    </label>
+                    <label data-bind="css: classes({extra: ['btn']})"><input name="importSource" id="cbLdap" type="radio" value="ldap" data-bind="checked: importProvider" />
+                        <span data-bind="text: ko.i18n('configuration.user-import.wizard.select-source.source.ldap', 'LDAP server')"></span>
+
+                    </label>
                 </div>
                 <div data-bind="css: classes('provider-buttons')">
-                    <button data-bind="click: testConnectionClick, css: classes({extra: ['btn', 'btn-sm', 'btn-success']})"><i data-bind="css: classes({ extra: ['fa', 'fa-plug']})"></i> Test connection</button>
+                    <button data-bind="click: testConnectionClick, css: classes({extra: ['btn', 'btn-sm', 'btn-success']})"><i data-bind="css: classes({ extra: ['fa', 'fa-plug']})"></i>
+
+                        <span data-bind="text: ko.i18n('configuration.user-import.wizard.select-source.buttons.test-connection', 'Test connection')"></span>
+                    </button>
                 </div>
             </div>
 
             <!-- Role mapping -->
             <div data-bind="if: wizardStep() === WIZARD_STEPS.MAPPING">
                 <div data-bind="css: classes({extra: ['padded']})">
-                    <step-header params="header:'Please, provide LDAP/Active Directory groups mapping to Atlas roles if required.'"></step-header>
+                    <step-header params="header:ko.i18n('configuration.user-import.wizard.role-mapping.header', 'Please, provide LDAP/Active Directory groups mapping to Atlas roles if required.')"></step-header>
                     <div>
                         <role-group-mapping params="rolesMapping: rolesMapping, provider: importProvider">
                         </role-group-mapping>
@@ -50,8 +61,10 @@
                     <loading params="status:'loading'" />
                 </div>
                 <div data-bind="css: classes({extra: ['padded']}), ifnot: loading()">
-                    <step-header params="header:'Please, check users to be imported'"></step-header>
+
+                    <step-header params="header:ko.i18n('configuration.user-import.wizard.import.header', 'Please, check users to be imported')"></step-header>
                     <div>
+<!--                        todo yar observer does not work for buttons. remove somehow ko.unwrap -->
                         <table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: usersList(),
                             api: dtApi,
@@ -61,8 +74,8 @@
                                             search : 'Filter:'
                                         },
                                         buttons: [
-                                            { text: 'Check all', action: function(e) { checkAll(); }, },
-                                            { text: 'Uncheck all', action: function(e) { uncheckAll(); }, },
+                                            { text: ko.unwrap(ko.i18n('configuration.user-import.wizard.import.buttons.check-all', 'Check all')), action: function(e) { checkAll(); }, },
+                                            { text: ko.unwrap(ko.i18n('configuration.user-import.wizard.import.buttons.uncheck-all', 'Uncheck all')), action: function(e) { uncheckAll(); }, },
                                         ],
                                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                                         orderClasses: false,
@@ -81,15 +94,26 @@
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
                             <thead>
-                                <th>Selected</th>
-                                <th>
-                                    <span>AD/LDAP username <i data-bind="click: $component.showUsernameHelp, clickBubble: false" class="users-import__helpIcon fa fa-question-circle"></i></span>
+                                <th data-bind="text: ko.i18n('configuration.user-import.wizard.import.table.columns.selected', 'Selected')">
+
                                 </th>
                                 <th>
-                                    <span>Atlas Login <i data-bind="click: $component.showLoginHelp, clickBubble: false" class="users-import__helpIcon fa fa-question-circle"></i></span>
+                                    <span>
+                                        <span data-bind="text: ko.i18n('configuration.user-import.wizard.import.table.columns.username', 'AD/LDAP username')"></span>
+                                        <i data-bind="click: $component.showUsernameHelp, clickBubble: false" class="users-import__helpIcon fa fa-question-circle"></i>
+                                    </span>
                                 </th>
-                                <th>Atlas roles</th>
-                                <th>Status</th>
+                                <th>
+                                    <span>
+                                        <span data-bind="text: ko.i18n('configuration.user-import.wizard.import.table.columns.atlas-login', 'Atlas Login')"></span>
+                                        <i data-bind="click: $component.showLoginHelp, clickBubble: false" class="users-import__helpIcon fa fa-question-circle"></i>
+                                    </span>
+                                </th>
+                                <th data-bind="text: ko.i18n('configuration.user-import.wizard.import.table.columns.atlas-roles', 'Atlas roles')">
+
+                                </th>
+                                <th data-bind="text: ko.i18n('configuration.user-import.wizard.import.table.columns.status', 'Status')">
+                                </th>
                             </thead>
                         </table>
                     </div>
@@ -97,8 +121,13 @@
             </div>
 
             <div data-bind="css: classes({ element: 'row', modifiers: 'footer' })">
-                <button data-bind="visible: hasPrevious, click: prevStep, css: classes({extra: ['btn', 'btn-sm', 'btn-primary']})">Prev</button>
-                <button data-bind="visible: hasNext, text: nextTitle, click: nextStep, css: nextClasses">Next</button>
+                <button data-bind="visible: hasPrevious, click: prevStep, css: classes({extra: ['btn', 'btn-sm', 'btn-primary']})">
+                    <span data-bind="text: ko.i18n('configuration.user-import.wizard.buttons.prev', 'Prev')"></span>
+
+                </button>
+                <button data-bind="visible: hasNext, text: nextTitle, click: nextStep, css: nextClasses">
+                    <span data-bind="text: ko.i18n('configuration.user-import.wizard.buttons.next', 'Next')"></span>
+                </button>
             </div>
         </div>
 
@@ -110,7 +139,8 @@
                     <loading params="status:'loading'" />
                 </div>
                 <div data-bind="if: !loading(), css: classes('finish')">
-                    Import of users was finished.
+                    <span data-bind="text: ko.i18n('configuration.user-import.wizard.final-page.message', 'Import of users was finished.')"></span>
+
                 </div>
             </div>
         </div>

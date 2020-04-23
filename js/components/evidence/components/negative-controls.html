@@ -30,7 +30,7 @@
 						<div data-bind="visible: !$data.csToIncludeLoading() && $data.csToInclude() > 0 && $data.csToIncludeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text: $data.csToInclude()"></span>) was deleted. Please select a different concept set.</div>
 					</div>
 					<div class="form-group">
-						<label>What concepts do you want to exclude as known positive controls? (Optional)</label>
+						<label data-bind="text:i18n('evidence.comonent.test','What concepts do you want to exclude as known positive controls? (Optional)')"></label>
 						<div class="input-group">
 							<input class="form-control" type="text" disabled data-bind="value: $data.csToExcludeCaption" />
 							<span class="input-group-btn">

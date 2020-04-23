@@ -37,9 +37,13 @@ define([
 				this.loading = ko.observable();
 				this.data = ko.observableArray();
 
+
+
 				this.gridColumns = [
 					{
-						title: 'Provider',
+
+
+						title: ko.i18n('configuration.user-import.browser.table.columns.provider', 'Provider'),
 						data: 'providerType',
 						className: this.classes('tbl-col', 'provider'),
 						render: datatableUtils.getLinkFormatter(d => ({
@@ -48,34 +52,34 @@ define([
 						})),
 					},
 					{
-						title: 'Enabled',
+						title: ko.i18n('configuration.user-import.browser.table.columns.enabled', 'Enabled'),
 						data: 'enabled',
 						className: this.classes('tbl-col', 'enabled'),
 						render: data => data ? 'Yes' : 'No',
 					},
 					{
-						title: 'Start date',
+						title: ko.i18n('configuration.user-import.browser.table.columns.start-date', 'Start date'),
 						className: this.classes('tbl-col', 'start-date'),
 						render: datatableUtils.getDateFieldFormatter('startDate'),
 					},
 					{
-						title: 'Execute',
+						title: ko.i18n('configuration.user-import.browser.table.columns.execute', 'Execute'),
 						data: 'frequency',
 						className: this.classes('tbl-col', 'frequency'),
 						render: Utils.ExecuteRender,
 					},
 					{
-						title: 'Ends',
+						title: ko.i18n('configuration.user-import.browser.table.columns.ends', 'Ends'),
 						className: this.classes('tbl-col', 'ends'),
 						render: Utils.EndsRender,
 					},
 					{
-						title: 'Last executed',
+						title: ko.i18n('configuration.user-import.browser.table.columns.last-executed', 'Last executed'),
 						className: this.classes('tbl-col', 'last-executed'),
 						render: datatableUtils.getDateFieldFormatter('lastExecuted', '-'),
 					},
 					{
-						title: 'Next execution',
+						title: ko.i18n('configuration.user-import.browser.table.columns.next-execution', 'Next execution'),
 						className: this.classes('tbl0col', 'next-execution'),
 						render: datatableUtils.getDateFieldFormatter('nextExecution', '-'),
 					},
@@ -83,11 +87,11 @@ define([
 				this.gridOptions = {
 					Facets: [
 						{
-							caption: 'Provider',
+							'caption': ko.i18n('configuration.user-import.browser.table.facets.provider', 'Provider'),
 							'binding': (o) => o.providerType,
 						},
 						{
-							'caption': 'Start date',
+							'caption': ko.i18n('configuration.user-import.browser.table.facets.start-date', 'Start date'),
 							'binding': (o) => datatableUtils.getFacetForDate(o.startDate)
 						},
 					]

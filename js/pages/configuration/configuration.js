@@ -40,9 +40,10 @@ define([
       this.jobListing = sharedState.jobListing;
       this.sourceJobs = new Map();
       this.sources = sharedState.sources;
+
       this.priorityOptions = [
-        {name: 'Current Session', id: 'session'},
-        {name: 'Whole Application', id: 'application'},
+        {id: 'session', name: ko.i18n('configuration.priority-options.session', 'Current Session')},
+        {id: 'application', name: ko.i18n('configuration.priority-options.application', 'Whole Application')},
       ];
 
       this.isAuthenticated = authApi.isAuthenticated;
@@ -132,13 +133,15 @@ define([
 
 		clearLocalStorageCache() {
 			localStorage.clear();
-			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
+
+			alert(ko.unwrap(ko.i18n('configuration.alerts.clear-local-cache', 'Local Storage has been cleared.  Please refresh the page to reload configuration information.')))
 		};
 
 		clearServerCache() {
-      if (confirm('Are you sure you want to clear the server cache?')) {
+      if (confirm(ko.unwrap(ko.i18n('configuration.confirms.clear-server-cache', 'Are you sure you want to clear the server cache?')))) {
         cacheApi.clearCache().then(() => {
-          alert("Server cache has been cleared.");
+
+          alert(ko.unwrap(ko.i18n('configuration.alerts.clear-server-cache', 'Server cache has been cleared.')));
         });
       }
     };
@@ -160,7 +163,8 @@ define([
         await sourceApi.updateSourceDaimonPriority(sourceKey, daimonType);
         await sourceApi.initSourcesConfig();
       } catch(err) {
-        alert('Failed to update priority source daimon');
+        alert(ko.unwrap(ko.i18n('configuration.alerts.fail-update-priority-source-daimon', 'Failed to update priority source daimon')));
+
       }
       this.isInProgress(false);
     }
