@@ -1,0 +1,6 @@
+<div data-bind="eventListener:[{event:'click', selector: '.btn-fix', callback: fixWarning}]">
+    <div data-bind="css: classes({ extra: 'warnings'})">
+        <faceted-datatable params="{columns: $component.warningsColumns, options: $component.warningsOptions,reference: $component.warnings, order: [],
+           drawCallback: $component.drawCallback}"></faceted-datatable>
+    </div>
+</div>
