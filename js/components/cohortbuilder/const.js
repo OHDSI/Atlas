@@ -39,6 +39,7 @@ function (
 		addGenderCriteria: {
 			title: ko.i18n('const.eventsList.addGenderCriteria.title', 'Add Gender Criteria'),
 			desc: ko.i18n('const.eventsList.addGenderCriteria.desc', 'Filter Condition Eras based on Gender.'),
+			desc_second: ko.i18n('const.eventsList.addGenderCriteria.desc_second', 'Filter events based on Gender.'),
 		},
 		addStartDateCriteria: {
 			title: ko.i18n('const.eventsList.addStartDateCriteria.title', 'Add Start Date Criteria'),
@@ -61,14 +62,16 @@ function (
 			desc: ko.i18n('const.eventsList.addNestedCriteria.desc', 'Apply criteria using the condition era as the index event'),
 		},
 		addConditionEra: {
-			title: ko.i18n('const.eventsList.addConditionEra.title', 'Add Condition Era'), //'Add Condition Era',
+			title: ko.i18n('const.eventsList.addConditionEra.title', 'Add Condition Era'),
 			desc: ko.i18n('const.eventsList.addConditionEra.desc', 'Find patients with specific diagosis era.'), //'Find patients with specific diagosis era.'
-			desc_second: ko.i18n('const.eventsList.addConditionEra.desc_second', 'Exit cohort based on diagosis era.')
+			desc_second: ko.i18n('const.eventsList.addConditionEra.desc_second', 'Exit cohort based on diagosis era.'),
+			desc_third: ko.i18n('const.eventsList.addConditionEra.third_third', 'Find patients with specific condition era.'), 
 		},
 		addConditionOccurrence: {
 			title: ko.i18n('const.eventsList.addConditionOccurrence.title', 'Add Condition Occurrence'),
 			desc: ko.i18n('const.eventsList.addConditionOccurrence.desc', 'Find patients with specific diagnoses.'),
-			desc_second: ko.i18n('const.eventsList.addConditionOccurrence.desc_second', 'Exit cohort based on  diagnoses')
+			desc_second: ko.i18n('const.eventsList.addConditionOccurrence.desc_second', 'Exit cohort based on  diagnoses'),
+			desc_third: ko.i18n('const.eventsList.addConditionOccurrence.desc_third', 'Find patients with specific conditions.')
 		},
 		addDeath: {
 			title: ko.i18n('const.eventsList.addDeath.title', 'Add Death'),
@@ -129,6 +132,30 @@ function (
 			desc: ko.i18n('const.eventsList.addVisit.desc', 'Find patients based on visit information.'),
 			desc_second: ko.i18n('const.eventsList.addVisit.desc_second', 'Exit cohort based on visit information.')
 		},
+		addAgeCriteria: {
+			title: ko.i18n('const.eventsList.addAgeCriteria.title', 'Add Age Criteria'),
+			desc: ko.i18n('const.eventsList.addAgeCriteria.desc', 'Filter events based on age.'),
+		},
+		addEventStartDateCriteria: {
+			title: ko.i18n('const.eventsList.addEventStartDateCriteria.title', 'Add Event Start Date Criteria'),
+			desc: ko.i18n('const.eventsList.addEventStartDateCriteria.desc', 'Filter Events by Start Date.'),
+		},
+		addEventEndDateCriteria: {
+			title: ko.i18n('const.eventsList.addEventEndDateCriteria.title', 'Add Event End Date Criteria'),
+			desc: ko.i18n('const.eventsList.addEventEndDateCriteria.desc', 'Filter Events by End Date.'),
+		},
+		addRaceCriteria: {
+			title: ko.i18n('const.eventsList.addRaceCriteria.title', 'Add Race Criteria'),
+			desc: ko.i18n('const.eventsList.addRaceCriteria.desc', 'Filter events based on Gender.'),
+		},
+		addEthnicityCriteria: {
+			title: ko.i18n('const.eventsList.addEthnicityCriteria.title', 'Add Ethnicity Criteria'),
+			desc: ko.i18n('const.eventsList.addEthnicityCriteria.desc', 'Filter events based on Ethnicity.'),
+		},
+		addDemographic: {
+			title: ko.i18n('const.eventsList.addDemographic.title', 'Add Demographic'),
+			desc: ko.i18n('const.eventsList.addDemographic.desc', 'Filter events based on demographic criteria.'),
+		}
 	}
 
 	const initialEventList = {
@@ -187,7 +214,7 @@ function (
 		addVisit: {
 			title: ko.i18n('const.initialEventList.addVisit.title', 'Add Visit'),
 			desc: ko.i18n('const.initialEventList.addVisit.desc', 'Find patients based on visit information.'),
-		},
+		}
 	}
 
 	const AddDemographic = {
@@ -294,6 +321,10 @@ function (
 		description: "Add a group to combine criteria using and/or relationships.",
 		type: CriteriaTypes.GROUP,
 	};
+
+	const DateRange = {
+		
+	}
 
 	const AddCriteriaActions = [
 		AddDemographic,

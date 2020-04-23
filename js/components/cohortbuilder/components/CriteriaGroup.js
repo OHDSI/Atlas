@@ -209,7 +209,7 @@ define([
 		self.actions[consts.CriteriaTypes.GROUP] = self.addAdditionalCriteria;
 
 		self.addCriteriaActions = consts.AddCriteriaActions.map(a => ({...a, action: self.actions[a.type]}));
-
+		
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",
 			width: 250,

@@ -35,18 +35,18 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 
 <div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
-		<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEvents', 'Cohort Entry Events')"></span>
+		<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEvents', 'Cohort Entry Events')"></span>
 		<i data-bind="click: function () { $component.helpCohortEventsOpened(true) }" class="fa fa-question-circle pull-right"></i>
 	</div>
 	<div class="panel-body">
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
 				<div class="row">
-					<div class="col-sm-4" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_2', 'Events having any of the following criteria:')">
+					<div class="col-sm-4" data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_2', 'Events having any of the following criteria:')">
 					</div>
 					<div class="col-sm-8">
 						<div class="btn-group pull-right">
-							<button type="button" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.addInitialEvent', 'Add Initial Event')" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i><span class="caret"></span></button>
+							<button type="button" data-bind="text: ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event')" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i><span class="caret"></span></button>
 							<ul class="dropdown-menu" data-bind="foreach:$component.primaryCriteriaOptions">
 								<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 							</ul>
@@ -70,34 +70,34 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 							</div>
 						</td>
 						<td style="vertical-align: top;">
-							<button class="btn btn-sm btn-danger" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removePrimaryCriteria(data) }"></button>
+							<button class="btn btn-sm btn-danger" data-bind="text: ko.i18n('components.cohortExpressionEditor.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removePrimaryCriteria(data) }"></button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="observation-window" data-bind="with: $component.expression().PrimaryCriteria().ObservationWindow"> 
-				<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_3', 'with continuous observation of at least')"></span>
+				<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_3', 'with continuous observation of at least')"></span>
 				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PriorDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-				<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_4', 'days before and')"></span> 
+				<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_4', 'days before and')"></span> 
 				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PostDays.numeric(), eventType: 'blur', ko_autocomplete: { value: PostDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"/> 
-				<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_5', 'days after event index date')"></span>
+				<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_5', 'days after event index date')"></span>
 			</div>
 			<div style="padding-top: 3px" data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit">
-				<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_6', 'Limit initial events to:')"></span>
+				<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_6', 'Limit initial events to:')"></span>
 				<select data-bind="options: $component.options.resultLimitOptions,
 				optionsText: function(item) { return item.name },
 				optionsValue: 'id',
 				value: Type">
 				</select>
-				<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_7', 'per person.')"></span>
+				<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_7', 'per person.')"></span>
 			</div>
 		</div>
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
-				<div><b data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.restrictInitialEventsTitle', 'Restrict intial events to:')"></b></div>
+				<div><b data-bind="text: ko.i18n('components.cohortExpressionEditor.restrictInitialEventsTitle', 'Restrict intial events to:')"></b></div>
 				<criteria-group params="{expression: $data, group: AdditionalCriteria, indexMessage: 'The index date refers to the event from the Cohort Entry criteria.'}"> </criteria-group>
 				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">
-					<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_6', 'Limit initial events to:')"></span>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_6', 'Limit initial events to:')"></span>
 					<select data-bind="options: $component.options.resultLimitOptions,
 					optionsText: function(item) { return item.name() },
 					optionsValue: 'id',
@@ -105,10 +105,10 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 					</select>
 					<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_7', 'per person.')"></span>
 				</div>
-				<button class="btn btn-sm btn-danger" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.removeRestriction', 'Remove initial event restriction'), click: function () { $component.removeAdditionalCriteria() }"></button>
+				<button class="btn btn-sm btn-danger" data-bind="text: ko.i18n('components.cohortExpressionEditor.removeRestriction', 'Remove initial event restriction'), click: function () { $component.removeAdditionalCriteria() }"></button>
 			</div>
 			<div data-bind="ifnot: AdditionalCriteria">
-				<button class="btn btn-sm btn-success" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.restrictInitialEventsButton', 'Restrict initial events'), click: function () { $component.addAdditionalCriteria() }"></button>
+				<button class="btn btn-sm btn-success" data-bind="text: ko.i18n('components.cohortExpressionEditor.restrictInitialEventsButton', 'Restrict initial events'), click: function () { $component.addAdditionalCriteria() }"></button>
 			</div>
 		</div>
 	</div>
@@ -117,7 +117,7 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 
 <div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
-	<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.inclusionCriteriaTitle', 'Inclusion Criteria')"></span>
+	<span data-bind="text: ko.i18n('components.cohortExpressionEditor.inclusionCriteriaTitle', 'Inclusion Criteria')"></span>
 	 <i data-bind="click: function () { $component.helpInclusionCriteriaOpened(true) }" class="fa fa-question-circle pull-right"></i>
 	</div>
 	<div class="panel-body">
@@ -130,7 +130,7 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 
 					<div class="inclusion-criteria__block">
 						<div>
-							<button class="btn btn-sm btn-success" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.newInclusionCriteria', 'New inclusion criteria'), click: addInclusionRule"></button>
+							<button class="btn btn-sm btn-success" data-bind="text: ko.i18n('components.cohortExpressionEditor.newInclusionCriteria', 'New inclusion criteria'), click: addInclusionRule"></button>
 						</div>
 						<div>
 							<table style="width: 100%" class="inclusionRules">
@@ -160,13 +160,13 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 			</div>
 		</div>
 		<div style="padding-top: 3px" data-bind="with: expression().ExpressionLimit">
-			<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.inclusionCriteriaText_1', 'Limit qualifying events to:')"></span>
+			<span data-bind="text: ko.i18n('components.cohortExpressionEditor.inclusionCriteriaText_1', 'Limit qualifying events to:')"></span>
 			<select data-bind="options: $component.options.resultLimitOptions,
 			optionsText: function(item) { return item.name },
 			optionsValue: 'id',
 			value: Type">
 			</select> 
-			<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_7', 'per person.')"></span>
+			<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_7', 'per person.')"></span>
 		</div>
 	</div>
 </div>
@@ -174,13 +174,13 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 
 <div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
-		<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitTitle', 'Cohort Exit')"></span>
+		<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitTitle', 'Cohort Exit')"></span>
 		<i data-bind="click: function () { $component.helpCohortExitOpened(true) }" class="fa fa-question-circle pull-right"></i>
 	</div>
 	<div class="panel-body">
-		<div class="heading strong" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.eventPersistence', 'Event Persistence:')"></div>
+		<div class="heading strong" data-bind="text: ko.i18n('components.cohortExpressionEditor.eventPersistence', 'Event Persistence:')"></div>
 		<end-strategy-editor params="strategy: $component.expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-editor>
-		<div class="heading strong" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.censoringEvents', 'Censoring Events:')"></div>
+		<div class="heading strong" data-bind="text: ko.i18n('components.cohortExpressionEditor.censoringEvents', 'Censoring Events:')"></div>
 		<div class="criteriaGroup">
 			<div class="criteriaHeading">
 				<table>
@@ -190,13 +190,13 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 					</colgroup>
 					<tbody>
 						<tr>
-							<td data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitText_4', 'Exit Cohort based on the following criteria:')">
+							<td data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_4', 'Exit Cohort based on the following criteria:')">
 							</td>
 							<td>
 								<div class="btn-group pull-right">
 									<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
 										<i class="fa fa-plus"></i> 
-										<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.addCensoringEvent', 'Add Censoring Event')"></span>
+										<span data-bind="text: ko.i18n('components.cohortExpressionEditor.addCensoringEvent', 'Add Censoring Event')"></span>
 										<span class="caret"></span>
 									</button>
 									<ul class="dropdown-menu" data-bind="foreach:$component.censorCriteriaOptions">
@@ -225,12 +225,12 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 							</div>
 						</td>
 						<td style="vertical-align: top;">
-							<button class="btn btn-sm btn-danger" data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removeCensoringCriteria(data) }"></button>
+							<button class="btn btn-sm btn-danger" data-bind="text: ko.i18n('components.cohortExpressionEditor.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removeCensoringCriteria(data) }"></button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
-			<div data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitText_5', 'No censoring events selected.'), visible: expression().CensoringCriteria().length == 0">
+			<div data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_5', 'No censoring events selected.'), visible: expression().CensoringCriteria().length == 0">
 			</div>
 		</div>
 	</div>
@@ -238,29 +238,29 @@ impact of the criteria on the attrition of persons from the initial cohort.')">d
 
 <div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
-		<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortErasTitle', 'Cohort Eras')"></span>
+		<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasTitle', 'Cohort Eras')"></span>
 	</div>
 	<div class="panel-body">
 		<div data-bind="with: expression">
 			<ul>
 				<li>
-					<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: CollapseSettings.EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: CollapseSettings.EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
 				</li>
 				<!-- ko if: $component.showCensorWindow -->
 				<li>
-					<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')"></span>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')"></span>
 					<input placeholder="No Censoring" class="dateField" data-bind="datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /> <i data-bind="visible:CensorWindow().StartDate(),  click: () => CensorWindow().StartDate(null)" class="fa fa-times"></i>
 				</li>
 				<li>
-					<span data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortErasText_3', 'Right censor cohort end dates to')"></span>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_3', 'Right censor cohort end dates to')"></span>
 					<input placeholder="No Censoring" class="dateField" data-bind="datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /> <i data-bind="visible:CensorWindow().EndDate(),  click: () => CensorWindow().EndDate(null)" class="fa fa-times"></i>
 				</li>
 				<!-- /ko -->
 				<!-- ko ifnot: $component.showCensorWindow -->
 				<li>
 					<span class="linkish" data-bind="click: () => $component.showCensorWindow(!$component.showCensorWindow())">
-						<i data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.addTrimmingOptions', 'add trimming options...')"></i>
+						<i data-bind="text: ko.i18n('components.cohortExpressionEditor.addTrimmingOptions', 'add trimming options...')"></i>
 					</span>
 				</li>
 				<!-- /ko -->

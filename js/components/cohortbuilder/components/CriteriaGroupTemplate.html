@@ -10,7 +10,7 @@
 					<td>
 						<span data-bind="if: parentGroup">
 							<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And ' : 'Or '"></span>having</span>
-						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">having</span>
+							<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">having</span>
 						</span>
 						<span data-bind="ifnot: parentGroup">having</span>
 						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
@@ -18,10 +18,10 @@
 						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), eventType:'blur', ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
 						/>
 						<!-- /ko -->
-						of the following criteria:
+						<span data-bind="text: ko.i18n('components.criteriaGroup.followingCriteria', 'of the following criteria:')"></span>
 					</td>
 					<td>
-						<drop-down-menu params="actions: $component.addCriteriaActions, title: 'Add criteria to group...', formatOption: $component.formatOption"></drop-down-menu>
+						<drop-down-menu params="actions: $component.addCriteriaActions, title: ko.i18n('components.criteriaGroup.addCriteria', 'Add criteria to group...'), formatOption: $component.formatOption"></drop-down-menu>
 					</td>
 				</tr>
 			</tbody>
@@ -40,7 +40,10 @@
 						<td>
 							<div class="criteria-content">
 								<div class="occurrenceSection">
-									<span data-bind="if: ($index() > 0)"><span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span> with the following event criteria:
+									<span data-bind="if: ($index() > 0)">
+										<span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span>
+									</span>
+									<span data-bind="text: ko.i18n('components.criteriaGroup.withFollowingCriteria', 'with the following event criteria:')"></span>
 								</div>
 								<div>
 									<demographic-criteria params="criteria: $data"></demographic-criteria>
@@ -48,7 +51,7 @@
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger" data-bind="text: ko.i18n('components.criteriaGroup.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }"></button>
 						</td>
 					</tr>
 				</tbody>

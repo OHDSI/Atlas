@@ -16,7 +16,7 @@ define([
 
 		constructor(params) {
 			super(params);
-			this.title = ko.observable(params.title || 'Menu');
+			this.title = params.title  || 'Menu';
 			this.actions = params.actions || [];
 			this.formatOption = params.formatOption || function(d){ return d};
 			this.dropDownClasses = params.cssClasses || 'btn-group pull-right';

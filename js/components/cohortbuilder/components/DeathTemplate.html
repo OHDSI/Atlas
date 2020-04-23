@@ -6,12 +6,16 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a death occurrence from
+				<td> 
+					a death occurrence from
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Death'"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							Add attribute...
+							<span class="caret"></span>
+						</button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:$component.actionHandler" href="#"></a></li>
 						</ul>
@@ -34,7 +38,8 @@
 			<tr data-bind="if: DeathType() != null, visible: DeathType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathType') }" class="fa fa-times" /></td>
 				<td>
-					Death Type <cycle-toggle-input params="{value:  DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+					Death Type 
+					<cycle-toggle-input params="{value:  DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
 				</td>
 			</tr>

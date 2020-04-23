@@ -17,13 +17,13 @@ define(["knockout"], function (ko) {
 
     options.occurrenceTypeOptions = [{
         id: 1,
-        name: 'at most'
+        name: ko.i18n('options.atMost', 'at most')
 }, {
         id: 0,
-        name: 'exactly'
+        name: ko.i18n('options.exactly', 'exactly')
 }, {
         id: 2,
-        name: 'at least'
+        name: ko.i18n('options.atLeast', 'at least')
 }];
 
     options.windowDayOptions = new Array();
@@ -39,25 +39,25 @@ define(["knockout"], function (ko) {
     }
     options.windowCoeffOptions = [{
         value: -1,
-        name: 'Before'
+        name: ko.i18n('options.before', 'Before')
 }, {
         value: 1,
-        name: 'After'
+        name: ko.i18n('options.after', 'After')
 }];
 
 		options.occurrenceCountOptions = ['0','1','2','3','4','5','6','7','8','9','10','20','50','100'];
     options.groupTypeOptions = [{
         id: 'ALL',
-        name: 'all'
+        name: ko.i18n('options.all', 'all')
 	}, {
         id: 'ANY',
-        name: 'any'
+        name: ko.i18n('options.any', 'any')
 	}, {
         id: 'AT_LEAST',
-        name: 'at least'
+        name: ko.i18n('options.atLeast', 'at least')
 	}, {
         id: 'AT_MOST',
-        name: 'at most'
+        name: ko.i18n('options.atMost', 'at most')
 	}];
 
     options.resultLimitOptions = [{
@@ -72,35 +72,35 @@ define(["knockout"], function (ko) {
 		}];
 
     options.yesNoOptions = [{
-        name: "Yes",
+        name: ko.i18n('options.yes', 'Yes'),
         id: "1"
 		}, {
-        name: "No",
+        name: ko.i18n('options.no', 'No'),
         id: "0"
 		}];
 		
 
 		options.DomainTypeExcludeOptions = [{
-			name: 'is any of',
+			name: ko.i18n('options.isAnyOf', 'is any of'),
 			value: false
 		}, {
-			name: 'is not any of',
+			name: ko.i18n('options.isNotAnyOf', 'is not any of'),
 			value: true
 		}];
 	
 		options.IndexDateOptions = [{
-			name: 'index start date',
+			name: ko.i18n('options.indexStartDate', 'index start date'),
 			value: false
 		}, {
-			name: 'index end date',
+			name: ko.i18n('options.indexEndDate', 'index end date'),
 			value: true
 		}];
 
 		options.EventDateOptions = [{
-			name: 'event starts',
+			name: ko.i18n('options.eventStarts', 'event starts'),
 			value: false
 		}, {
-			name: 'event ends',
+			name: ko.i18n('options.eventEnds', 'event ends'),
 			value: true
 		}]
 	

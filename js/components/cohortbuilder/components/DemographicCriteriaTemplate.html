@@ -6,7 +6,9 @@
 			<tr>
 				<td colspan="2">
 					<div class="btn-group pull-left">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>
+							<span data-bind="text: ko.i18n('components.demographicCriteria.addAttribute', 'Add attribute...')"></span>
+							<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>
@@ -16,7 +18,7 @@
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age
+					<span data-bind="text: ko.i18n('components.demographicCriteria.withAge', 'with age')"></span>
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -24,7 +26,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('components.demographicCriteria.withGenderOf', 'with a gender of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
@@ -33,7 +35,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Race') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a race of:
+						<span data-bind="text: ko.i18n('components.demographicCriteria.withRaceOf', 'with a race of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Race', DefaultQuery: ''}, ConceptList: Race()"></concept-list>
 					</div>
 				</td>
@@ -42,7 +44,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Ethnicity') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a ethnicity of:
+						<span data-bind="text: ko.i18n('components.demographicCriteria.withEthnicity', 'with a ethnicity of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Ethnicity', DefaultQuery: ''}, ConceptList: Ethnicity()"></concept-list>
 					</div>
 				</td>
@@ -52,14 +54,14 @@
 					<i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" />
 				</td>
 				<td>
-					occurrence start is:
+					<span data-bind="text: ko.i18n('components.demographicCriteria.occurrenceStart', 'occurrence start is:')"></span>
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence end is:
+					<span data-bind="text: ko.i18n('components.demographicCriteria.occurrenceEnd', 'occurrence end is:')"></span>
 					<date-range params="Range: OccurrenceEndDate"></date-range>
 				</td>
 			</tr>

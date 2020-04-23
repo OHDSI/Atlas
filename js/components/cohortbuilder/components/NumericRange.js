@@ -6,25 +6,25 @@ define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings/autoGrowIn
 		
 		self.operationOptions = [{
 			id: 'lt',
-			name: 'Less Than'
+			name: ko.i18n('components.numericRange.lessThan', 'Less Than')
 		}, {
 			id: 'lte',
-			name: 'Less or Equal To'
+			name: ko.i18n('components.numericRange.lessOrEqualTo', 'Less or Equal To')
 		}, {
 			id: 'eq',
-			name: 'Equal To'
+			name: ko.i18n('components.numericRange.equalTo', 'Equal To')
 		}, {
 			id: 'gt',
-			name: 'Greater Than'
+			name: ko.i18n('components.numericRange.greaterThan', 'Greater Than')
 		}, {
 			id: 'gte',
-			name: 'Greater or Equal To'
+			name: ko.i18n('components.numericRange.greaterOrEqualTo', 'Greater or Equal To')
 		}, {
 			id: 'bt',
-			name: 'Between'
+			name: ko.i18n('components.numericRange.between', 'Between')
 		}, {
 			id: '!bt',
-			name: 'Not Between'
+			name: ko.i18n('components.numericRange.notBetween', 'Not Between')
 		}];
 	};
 
