@@ -38,7 +38,7 @@ define([
 		action(callback) {
 			const isCohortDefinitionDirty = this.currentCohortDefinition() && this.currentCohortDefinitionDirtyFlag().isDirty();
 			if (isCohortDefinitionDirty) {
-				if (confirm('Cohort changes are not saved. Would you like to continue?')) {
+				if (confirm(ko.i18n('cs.browser.saveWarning', 'Cohort changes are not saved. Would you like to continue?'))) {
 					this.clearCohortDefinition();
 					callback();
 				}

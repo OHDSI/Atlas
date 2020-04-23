@@ -10,22 +10,18 @@
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li role="presentation" data-bind="click: function() {currentConceptMode('details');}, attr: {class: currentConceptMode() == 'details' ? 'active' : ''}"><a>Details</a>
+		<li role="presentation" data-bind="click: function() {currentConceptMode('details');}, attr: {class: currentConceptMode() == 'details' ? 'active' : ''}"><a data-bind="text: ko.i18n('cs.manager.details', 'Details')"></a>
 		</li>
 		<li role="presentation" data-bind="click: function() {currentConceptMode('related');}, attr: {class: currentConceptMode() == 'related' ? 'active' : ''}">
-			<a><span data-bind="if:loadingRelated();">
-							<i class="fa fa-circle-o-notch fa-spin"></i>
-						</span>Related Concepts</a>
+			<a><span data-bind="if:loadingRelated();"><i class="fa fa-circle-o-notch fa-spin"></i></span><span data-bind="text: ko.i18n('cs.manager.relatedConcepts', 'Related Concepts')"></span></a>
 		</li>
 
 		<li role="presentation" data-bind="click: function() {currentConceptMode('hierarchy');}, attr: {class: currentConceptMode() == 'hierarchy' ? 'active' : ''}">
-			<a><span data-bind="if:loadingRelated();">
-							<i class="fa fa-circle-o-notch fa-spin"></i>
-						</span>Hierarchy</a>
+			<a><span data-bind="if:loadingRelated();"><i class="fa fa-circle-o-notch fa-spin"></i></span><span data-bind="text: ko.i18n('cs.manager.hierarchy', 'Hierarchy')"></span></a>
 		</li>
 
 		<li role="presentation" data-bind="click: function() {currentConceptMode('recordcounts');}, attr: {class: currentConceptMode() == 'recordcounts' ? 'active' : ''}">
-			<a>Record Counts</a>
+			<a data-bind="text: ko.i18n('cs.manager.recordCounts', 'Record Counts')"></a>
 		</li>
 	</ul>
 
@@ -33,12 +29,12 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasRCAccess"></access-denied>
 
         <!-- ko if: hasRCAccess() -->
-			<div data-bind="visible:loadingSourceCounts()" class="loading">loading</div>
+			<div data-bind="visible:loadingSourceCounts(), text: ko.i18n('cs.manager.loading', 'loading')" class="loading"></div>
 
 			<div data-bind="visible:!loadingSourceCounts()">
 
 				<div class="panel panel-primary" data-bind="if: hasRCAccess()">
-					<div class="panel-heading">Record Counts across Sources</div>
+					<div class="panel-heading" data-bind="text: ko.i18n('cs.manager.recordCountsAcrossSources', 'Record Counts across Sources')"></div>
 					<div class="panel-body">
 						<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 									data: sourceCounts(),
@@ -70,7 +66,7 @@
 
         <!-- ko if: hasInfoAccess() -->
             <!-- ko ifnot: currentConcept().STANDARD_CONCEPT == 'S' -->
-                <div>No hierarchy found for non-standard concepts.</div>
+                <div data-bind="text: ko.i18n('cs.manager.noHierarchyFoundMessage', 'No hierarchy found for non-standard concepts.')"></div>
             <!-- /ko -->
 			<!-- ko if: currentConcept().STANDARD_CONCEPT == 'S' -->
 				<div data-bind="css: classes('hierarchy-filters')">

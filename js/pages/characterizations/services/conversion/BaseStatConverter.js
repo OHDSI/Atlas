@@ -1,12 +1,15 @@
 define([
+    'knockout',
     'numeral',
     '../../utils',
     'lodash',
 ], function (
+  ko,
 	numeral,
     utils,
     lodash,
 ) {
+
 
     class BaseStatConverter {
 
@@ -84,7 +87,7 @@ define([
                 strataNames: strataNames,
                 defaultColNames: this.getDefaultColumns().map(col => col.title),
                 perStrataColNames: this.getReportColumns(0,0).map(col => col.title),
-                columns: columns,
+                columns: columns.map(col => ({...col, title: ko.unwrap(col.title)})),
                 defaultSort: this.getDefaultSort(columns.length, cohorts.length),
                 data: Array.from(data.values()),
             };

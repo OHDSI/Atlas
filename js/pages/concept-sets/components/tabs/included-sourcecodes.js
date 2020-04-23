@@ -25,6 +25,7 @@ define([
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, this);
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
+			this.relatedSourcecodesLanguage = ko.i18n('datatable.language')
 		}
 
 	}

@@ -2,15 +2,15 @@
   <tr>
     <th><i class="fa fa-shopping-cart"></i></th>
     <th>Id</th>
-    <th>Code</th>
-    <th>Name</th>
-    <th>Class</th>
-    <th>Standard Concept Caption</th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.code', 'Code')"></th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.name', 'Name')"></th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.class', 'Class')"></th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.standardConceptCaption', 'Standard Concept Caption')"></th>
     <th>RC</th>
     <th>DRC</th>
-    <th>Domain</th>
-    <th>Vocabulary</th>
-    <th>Ancestors</th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.domain', 'Domain')"></th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.vocabulary', 'Vocabulary')"></th>
+    <th data-bind="text: ko.i18n('cs.manager.includedConceptSets.ancestors', 'Ancestors')"></th>
   </tr>
 </script>
 <!-- ko if: loading -->
@@ -24,23 +24,24 @@
   rowCallback: $component.commonUtils.contextSensitiveLinkColor,
   headersTemplateId: 'included-conceptsets-headers',
   deferRender: false,
+  language: $component.datatableLanguage
 }">
 </faceted-datatable>
 <div class="linkLegend">
   <div class="linkLegendItem">
     <div class="swatch standard">
     </div>
-    <div class="linkLegendTitle">Standard</div>
+    <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.standard', 'Standard')"></div>
   </div>
   <div class="linkLegendItem">
     <div class="swatch nonStandard">
     </div>
-    <div class="linkLegendTitle">Non-Standard</div>
+    <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.nonStandard', 'Non-Standard')"></div>
   </div>
   <div class="linkLegendItem">
     <div class="swatch classification">
     </div>
-    <div class="linkLegendTitle">Classification</div>
+    <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.classification', 'Classification')"></div>
   </div>
 </div>
 <!-- /ko -->

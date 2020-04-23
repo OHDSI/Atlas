@@ -6,13 +6,18 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td>payer plan periods with the following criteria:
+				<td>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.with', 'payer plan periods with the following criteria:')"></span>
+
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>				
@@ -27,28 +32,32 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						limited to the patients first payer plan period
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.first.text', 'limited to the patients first payer plan period')"></span>
+
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
 				<td>
-					with age at period start
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.age-at-start.text', 'with age at period start')"></span>
+
 					<numeric-range params="Range: AgeAtStart"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
 				<td>
-					with age at period end
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.age-at-end.text', 'with age at period end')"></span>
+
 					<numeric-range params="Range: AgeAtEnd"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodLength() != null, visible: PeriodLength() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }" class="fa fa-times" /></td>
 				<td>
-					with period duration
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.ageperiod-length.text', 'with period duration')"></span>
+
 					<numeric-range params="Range: PeriodLength"></numeric-range> days.
 				</td>
 			</tr>
@@ -56,7 +65,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.gender.text', 'with a gender of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"> </concept-list>
 					</div>
 				</td>
@@ -64,21 +74,24 @@
 			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" /></td>
 				<td>
-					using specified period:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.user-defined-period.text', 'using specified period:')"></span>
+
 					<period-input params="Period: UserDefinedPeriod"></period-input>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" /></td>
 				<td>
-					payer plan period start is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.period-start-date.text', 'payer plan period start is:')"></span>
+
 					<date-range params="Range: PeriodStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodEndDate() != null, visible: PeriodEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }" class="fa fa-times" /></td>
 				<td>
-					payer plan period end is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.period-end-date.text', 'payer plan period end is:')"></span>
+
 					<date-range params="Range: PeriodEndDate"></date-range>
 				</td>
 			</tr>
@@ -86,7 +99,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('PayerConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Payer Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.payer-concept.text', 'Payer Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: PayerConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer'"></conceptset-selector>
 					</div>
 				</td>
@@ -95,7 +109,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('PlanConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Plan Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.plan-concept.text', 'Plan Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: PlanConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan'"></conceptset-selector>
 					</div>
 				</td>
@@ -104,7 +119,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('SponsorConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Sponsor Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.sponsor-concept.text', 'Sponsor Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: SponsorConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor'"></conceptset-selector>
 					</div>
 				</td>
@@ -113,7 +129,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Stop Reason Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.stop-reason-concept.text', 'Stop Reason Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: StopReasonConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason'"></conceptset-selector>
 					</div>
 				</td>
@@ -122,7 +139,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('PayerSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Payer Source Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.payer-source-concept.text', 'Payer Source Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: PayerSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer Source'"></conceptset-selector>
 					</div>
 				</td>
@@ -131,7 +149,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('PlanSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Plan Source Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.pla-source-concept.text', 'Plan Source Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: PlanSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan Source'"></conceptset-selector>
 					</div>
 				</td>
@@ -140,7 +159,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('SponsorSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Sponsor Source Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.sponsor-source-concept.text', 'Sponsor Source Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: SponsorSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor Source'"></conceptset-selector>
 					</div>
 				</td>
@@ -149,7 +169,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Stop Reason Source Concept is
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.stop-reason-source-concept.text', 'Stop Reason Source Concept is')"></span>
+
 						<conceptset-selector params="conceptSetId: StopReasonSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason Source'"></conceptset-selector>
 					</div>
 				</td>
@@ -161,6 +182,9 @@
 				</td>
 			</tr>
 		</table>
-		<span class="fa fa-exclamation-triangle" style="color:#d4bd09"></span><i> Note: Payer Plan Period criteria is only available in CDM v5.3 and later.</i>
+		<span class="fa fa-exclamation-triangle" style="color:#d4bd09"></span>
+		<i>
+			<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.note', 'Note: Payer Plan Period criteria is only available in CDM v5.3 and later.')"></span>
+		</i>
 	</div>
 </div>

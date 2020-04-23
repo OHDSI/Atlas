@@ -6,19 +6,22 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> 
+				<td>
 					<span data-bind="text: ko.i18n('components.conditionEra.criteriaText_1', 'a condition era of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Condition'"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
 						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-							<i class="fa fa-plus"></i> 
-							<span data-bind="text: ko.i18n('components.conditionEra.addAttribute', 'Add attribute...')"></span> 
+							<i class="fa fa-plus"></i>
+							<span data-bind="text: ko.i18n('components.conditionEra.addAttribute', 'Add attribute...')"></span>
 							<span class="caret"></span>
 						</button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -32,20 +35,32 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
+<<<<<<< HEAD
 					<span data-bind="text: ko.i18n('components.conditionEra.attributeText_1', 'for the first time in the person\'s history')"></span>
+=======
+					<div data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
+>>>>>>> i18n-conceptsets
 				</td>
 			</tr>
 			<tr data-bind="if: EraStartDate() != null, visible: EraStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraStartDate') }" class="fa fa-times" /></td>
 				<td>
+<<<<<<< HEAD
 					<span data-bind="text: ko.i18n('components.conditionEra.attributeText_2', 'era start is:')"></span>
+=======
+					<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.start-date.text', 'era start is:')"></span>
+>>>>>>> i18n-conceptsets
 					<date-range params="Range: EraStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: EraEndDate() != null, visible: EraEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraEndDate') }" class="fa fa-times" /></td>
 				<td>
+<<<<<<< HEAD
 					<span data-bind="text: ko.i18n('components.conditionEra.attributeText_3', 'era end is:')"></span>
+=======
+					<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.criteria.end-date.text', 'era end is:')"></span>
+>>>>>>> i18n-conceptsets
 					<date-range params="Range: EraEndDate"></date-range>
 				</td>
 			</tr>

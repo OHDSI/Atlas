@@ -20,22 +20,22 @@ define([
 
 		const relatedSourcecodesOptions = {
 			Facets: [{
-				'caption': 'Vocabulary',
+				'caption': ko.i18n('const.relatedSourcecodesOptions.vocabulary', 'Vocabulary'),
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				}
 			}, {
-				'caption': 'Invalid Reason',
+				'caption': ko.i18n('const.relatedSourcecodesOptions.invalidReason', 'Invalid Reason'),
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				}
 			}, {
-				'caption': 'Class',
+				'caption': ko.i18n('const.relatedSourcecodesOptions.class', 'Class'),
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				}
 			}, {
-				'caption': 'Domain',
+				'caption': ko.i18n('const.relatedSourcecodesOptions.domain', 'Domain'),
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				}
@@ -60,30 +60,30 @@ define([
 			orderable: false,
 			searchable: false
 		}, {
-			title: 'Id',
+			title:  ko.i18n('const.relatedSourcecodesColumns.id', 'Id'),
 			data: 'CONCEPT_ID'
 		}, {
-			title: 'Code',
+			title: ko.i18n('const.relatedSourcecodesColumns.code', 'Code'),
 			data: 'CONCEPT_CODE'
 		}, {
-			title: 'Name',
+			title: ko.i18n('const.relatedSourcecodesColumns.name', 'Name'),
 			data: 'CONCEPT_NAME',
 			render: function (s, p, d) {
 				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
 		}, {
-			title: 'Class',
+			title: ko.i18n('const.relatedSourcecodesColumns.class', 'Class'),
 			data: 'CONCEPT_CLASS_ID'
 		}, {
-			title: 'Standard Concept Caption',
+			title: ko.i18n('const.relatedSourcecodesColumns.standardConceptCaption', 'Standard Concept Caption'),
 			data: 'STANDARD_CONCEPT_CAPTION',
 			visible: false
 		}, {
-			title: 'Domain',
+			title: ko.i18n('const.relatedSourcecodesColumns.domain', 'Domain'),
 			data: 'DOMAIN_ID'
 		}, {
-			title: 'Vocabulary',
+			title: ko.i18n('const.relatedSourcecodesColumns.vocabulary', 'Vocabulary'),
 			data: 'VOCABULARY_ID'
 		}];
 

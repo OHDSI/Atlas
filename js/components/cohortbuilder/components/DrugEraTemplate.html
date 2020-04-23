@@ -6,14 +6,17 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a drug era of
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+				<td> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.of', 'a drug era of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.default-concept-name', 'Any Drug')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -27,33 +30,37 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div>for the first time in the person's history</div>
+					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: EraStartDate() != null, visible: EraStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraStartDate') }" class="fa fa-times" /></td>
 				<td>
-					era start is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.era-start-date.text', 'era start is:')"></span>
+
 					<date-range params="Range: EraStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: EraEndDate() != null, visible: EraEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraEndDate') }" class="fa fa-times" /></td>
 				<td>
-					era end is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.era-end-date.text', 'era end is:')"></span>
+
 					<date-range params="Range: EraEndDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceCount() != null, visible: OccurrenceCount() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceCount') }" class="fa fa-times" /></td>
 				<td>
-					with exposure count
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.occurrence-count.text', 'with exposure count')"></span>
+
 					<numeric-range params="Range: OccurrenceCount"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: GapDays() != null, visible: GapDays() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('GapDays') }" class="fa fa-times" /></td>
 				<td>
+					<span data-bind="text: ko.i18n('', '')"></span>
 					with gap days of
 					<numeric-range params="Range: GapDays"></numeric-range> days
 				</td>
@@ -61,21 +68,24 @@
 			<tr data-bind="if: EraLength() != null, visible: EraLength() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('EraLength') }" class="fa fa-times" /></td>
 				<td>
-					with era length
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.era-length.text', 'with era length')"></span>
+
 					<numeric-range params="Range: EraLength"></numeric-range> days
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
 				<td>
-					with age in years at era start
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.age-at-start.text', 'with age in years at era start')"></span>
+
 					<numeric-range params="Range: AgeAtStart"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
 				<td>
-					with age in years at era end
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.age-at-end.text', 'with age in years at era end')"></span>
+
 					<numeric-range params="Range: AgeAtEnd"></numeric-range>
 				</td>
 			</tr>
@@ -83,7 +93,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.criteria.gender.text', 'with a gender of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>

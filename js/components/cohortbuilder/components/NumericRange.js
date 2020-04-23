@@ -1,10 +1,10 @@
 define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings/autoGrowInput'], function (ko, componentTemplate) {
 
-	function NumericRangeViewModel(params) {
-		var self = this;
-		self.Range = params.Range; // this will be a NumericRange input type.
-		
-		self.operationOptions = [{
+    function NumericRangeViewModel(params) {
+        var self = this;
+        self.Range = params.Range; // this will be a NumericRange input type.
+
+        self.operationOptions = [{
 			id: 'lt',
 			name: ko.i18n('components.numericRange.lessThan', 'Less Than')
 		}, {
@@ -26,12 +26,12 @@ define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings/autoGrowIn
 			id: '!bt',
 			name: ko.i18n('components.numericRange.notBetween', 'Not Between')
 		}];
-	};
+    };
 
-	// return compoonent definition
-	return {
-		viewModel: NumericRangeViewModel,
-		template: componentTemplate
-	};
+    // return compoonent definition
+    return {
+        viewModel: NumericRangeViewModel,
+        template: componentTemplate
+    };
 
 });

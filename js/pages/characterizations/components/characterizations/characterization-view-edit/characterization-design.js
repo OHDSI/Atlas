@@ -69,22 +69,22 @@ define([
                 newItemAction: this.showFeatureBrowser,
                 columns: [
                     {
-                        title: 'ID',
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.id', 'ID'),
                         data: 'id',
                         className: this.classes('col-feature-id'),
                     },
                     {
-                        title: 'Name',
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.name', 'Name'),
                         data: 'name',
                         className: this.classes('col-feature-name'),
                     },
                     {
-                        title: 'Description',
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.description', 'Description'),
                         data: 'description',
                         className: this.classes('col-feature-descr'),
                     },
                     {
-                        title: 'Actions',
+                        title: ko.i18n('cc.viewEdit.design.fa.columns.actions', 'Actions'),
                         render: this.getRemoveCell('removeFeature'),
                         className: this.classes('col-feature-remove'),
                     }
@@ -96,17 +96,17 @@ define([
                 newItemAction: this.showParameterCreateModal,
                 columns: [
                     {
-                        title: 'Name',
+                        title: ko.i18n('cc.viewEdit.design.faParams.columns.name', 'Name'),
                         data: 'name',
                         className: this.classes('col-param-name'),
                     },
                     {
-                        title: 'Value',
+                        title: ko.i18n('cc.viewEdit.design.faParams.columns.value', 'Value'),
                         data: 'value',
                         className: this.classes('col-param-value'),
                     },
                     {
-                        title: 'Actions',
+                        title: ko.i18n('cc.viewEdit.design.faParams.columns.actions', 'Actions'),
                         render: this.getRemoveCell('removeParam', 'name'),
                         className: this.classes('col-param-remove'),
                     }
@@ -140,7 +140,7 @@ define([
 
         getRemoveCell(action, identifierField = 'id') {
             return (s, p, d) => {
-                return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
+                return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}'), text: ko.i18n('cc.viewEdit.design.fa.actions.remove', 'Remove')">Remove</a>`;
             }
         }
 
@@ -192,8 +192,9 @@ define([
         }
 
         addStrata() {
+
             const strata = {
-              name: ko.observable('New Subgroup'),
+              name: ko.i18n('cc.viewEdit.design.subgroups.placeholder.new', 'New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
             };
             const ccDesign = this.design();

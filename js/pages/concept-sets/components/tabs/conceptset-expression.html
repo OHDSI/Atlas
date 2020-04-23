@@ -3,13 +3,14 @@
         xssSafe: true,
         data: selectedConcepts(),
         options: {
+          language: datatableLanguage,
           dom: 'Clfiprt',
           colVis: {
-            buttonText: 'Change Columns',
+            buttonText: ko.i18n('cs.manager.expression.changeColumns', 'Change Columns'),
             align: 'right',
             overlayFade: 0,
-            showAll: 'Show All Columns',
-            restore: 'Reset Columns'
+            showAll: ko.i18n('cs.manager.expression.showAllColumns', 'Show All Columns'),
+            restore: ko.i18n('cs.manager.expression.resetColumns', 'Reset Columns')
           },
           rowCallback: commonUtils.contextSensitiveLinkColor,
           lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
@@ -45,12 +46,12 @@
       }">
       <thead>
         <th><li class='fa fa-shopping-cart'></li></th>
-        <th>Concept Id</th>
-        <th>Concept Code</th>
-        <th>Concept Name</th>
-        <th>Domain</th>
-        <th>Standard Concept Code</th>
-        <th>Standard Concept Caption</th>
+        <th data-bind="text: ko.i18n('cs.manager.expression.conceptId', 'Concept Id')"></th>
+        <th data-bind="text: ko.i18n('cs.manager.expression.conceptCode', 'Concept Code')"></th>
+        <th data-bind="text: ko.i18n('cs.manager.expression.conceptName', 'Concept Name')"></th>
+        <th data-bind="text: ko.i18n('cs.manager.expression.domain', 'Domain')"></th>
+        <th data-bind="text: ko.i18n('cs.manager.expression.standardConceptCode', 'Standard Concept Code')"></th>
+        <th data-bind="text: ko.i18n('cs.manager.expression.standardConceptCaption', 'Standard Concept Caption')"></th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
             <span data-bind="
@@ -60,7 +61,8 @@
               }),
               click: toggleExcluded
             "></span>
-          <!-- /ko --> Exclude
+          <!-- /ko -->
+          <span data-bind="text: ko.i18n('cs.manager.expression.exclude', 'Exclude')"></span>
         </th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
@@ -71,18 +73,20 @@
             }),
             click: toggleDescendants
           "></span>
-          <!-- /ko --> Descendants
+          <!-- /ko -->
+          <span data-bind="text: ko.i18n('cs.manager.expression.descendants', 'Descendants')"></span>
         </th>
         <th>
-            <!-- ko if: canEditCurrentConceptSet -->
-              <span data-bind="
-                css: classes({
-                    element: 'checkmark',
-                    extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
-                }),
-                click: toggleMapped
-              "></span>
-            <!-- /ko --> Mapped
+          <!-- ko if: canEditCurrentConceptSet -->
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
+              }),
+              click: toggleMapped
+            "></span>
+          <!-- /ko -->
+          <span data-bind="text: ko.i18n('cs.manager.expression.mapped', 'Mapped')"></span>
         </th>
       </thead>
   </table>
@@ -91,17 +95,17 @@
     <div class="linkLegendItem">
       <div class="swatch standard">
       </div>
-      <div class="linkLegendTitle">Standard</div>
+      <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.standard', 'Standard')"></div>
     </div>
     <div class="linkLegendItem">
       <div class="swatch nonStandard">
       </div>
-      <div class="linkLegendTitle">Non-Standard</div>
+      <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.nonStandard', 'Non-Standard')"></div>
     </div>
     <div class="linkLegendItem">
       <div class="swatch classification">
       </div>
-      <div class="linkLegendTitle">Classification</div>
+      <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.classification', 'Classification')"></div>
     </div>
   </div>
 </div>

@@ -1,39 +1,40 @@
-<loading data-bind="visible: loading()" params="status: 'Loading execution results...'"></loading>
+<loading data-bind="visible: loading()" params="status: ko.i18n('cc.viewEdit.results.loading', 'Loading execution results...')"></loading>
 
 <div data-bind="css: classes(), visible: !loading()">
     <div data-bind="css: classes('header')">
         <div>
             <h2 data-bind="css: classes('title')">
-                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }">Executions</a>
+                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }, text: ko.i18n('cc.viewEdit.executions.title','Executions')"></a>
                 <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
-                <span data-bind="text: 'Reports for ' + $component.data().sourceName"></span>
+                <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', 'text: 'Reports for <%= sourceName %>', {sourceName: $component.data().sourceName})"></span>
             </h2>
             <div data-bind="css: classes('toolbar')">
                 <ul data-bind="css: classes('detail-list')">
                     <li data-bind="css: classes('detail')">
-                        <label data-bind="css: classes('detail-label')">Date:</label>
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.date', 'Date:')"></label>
                         <span data-bind="css: classes('detail-value'), text: $component.formatDate($component.data().date)"></span>
                     </li>
                     <li data-bind="css: classes('detail')">
-                        <label data-bind="css: classes('detail-label')">Design:</label>
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.design', 'Design:')">:</label>
                         <a href='#' data-bind="css: classes('detail-value'), click: showExecutionDesign, text: $component.data().designHash">x6t21cda</a>
                     </li>
                     <li data-bind="css: classes('detail')">
-                        <label data-bind="css: classes('detail-label')">Results:</label>
-                        <span data-bind="css: classes('detail-value'), text: ($component.data().analyses || []).length + ' reports'"></span>
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.results.label', 'Results:')">:</label>
+                        <span data-bind="css: classes('detail-value'), text: ko.i18nformat('cc.viewEdit.results.detail.results.text', '<%= reports %> reports' { reports: ($component.data().analyses || []).length })"></span>
                     </li>
                 </ul>
             </div>
         </div>
         <div data-bind="css: classes('threshold')">
             <div data-bind="css: classes('threshold-setter')">
-                <label  data-bind="css: classes('threshold-label')">Filter results to covariates with prevalence greater than:</label>
-                <input type="number" min="1" max="100" class="form-control" placeholder="Threshold value"
-                       data-bind="css: classes('threshold-input'), textInput: $component.newThresholdValuePct">
+                <label  data-bind="css: classes('threshold-label'), text: ko.i18n('cc.viewEdit.results.threshold.label', 'Filter results to covariates with prevalence greater than:')"></label>
+                <input type="number" min="1" max="100" class="form-control"
+                       data-bind="css: classes('threshold-input'), textInput: $component.newThresholdValuePct,
+                       attr: { placeholder: ko.i18n('cc.viewEdit.results.threshold.placeholder', 'Threshold value') }">
                 <label>%</label>
                 <button data-bind="
                     css: classes({ element: 'threshold-submit', extra: 'btn btn-primary btn-sm' }),
-                    text: 'Apply',
+                    text: ko.i18n('cc.viewEdit.results.threshold.apply', 'Apply'),
                     click: $component.updateThreshold"
                 >
                 </button>
@@ -46,7 +47,7 @@
     </div>
     <div data-bind="css: classes('report-section')">
         <div>
-            <button class="btn btn-sm btn-primary" type="button" data-bind="enable: $component.canExportAll(), click: $component.exportAllCSV">Export all</button>
+            <button class="btn btn-sm btn-primary" type="button" data-bind="enable: $component.canExportAll(), click: $component.exportAllCSV, text: ko.i18n('cc.viewEdit.results.exportAll', 'Export all')">Export all</button>
             <i data-bind="visible: isResultDownloading('__ALL__'), css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
         </div>
         <!-- ko foreach: analysisList -->
@@ -70,6 +71,7 @@
                                     dom: 'Blftipr',
                                     rowCallback: $component.isRowGreyed,
                                     order: $data.defaultSort,
+                                    language: $component.datatableLanguage
                                 }
                             }
                         ">

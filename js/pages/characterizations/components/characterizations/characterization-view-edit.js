@@ -56,7 +56,7 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.defaultName = constants.newEntityNames.characterization;
+            this.defaultName = ko.i18n('cc.defaultName', constants.newEntityNames.characterization);
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });
@@ -90,7 +90,7 @@ define([
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
                     } else {
-                        return 'Characterization #' + this.characterizationId();
+                        return ko.i18n('cc.viewEdit.caption', 'Characterization #')() + this.characterizationId();
                     }
                 }
             });

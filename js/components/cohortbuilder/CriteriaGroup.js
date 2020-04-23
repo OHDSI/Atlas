@@ -34,8 +34,7 @@ define(function (require, exports, module) {
 				self.Groups.push(new CriteriaGroup(d, conceptSets));
 			});
 		}
-		
-		
+
 	}
 
 	CriteriaGroup.prototype.toJSON = function () {

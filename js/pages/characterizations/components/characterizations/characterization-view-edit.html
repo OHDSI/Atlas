@@ -5,13 +5,13 @@
     <heading-title params="name: characterizationCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
     <div class="asset-heading">
         <div class="input-group">
-            <input type="text" placeholder="New Characterization" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
+            <input type="text" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
             <div class="input-group-btn">
                 <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }"><i class="fa fa-save"></i></button>
                 <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity() -->
-                <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }" title="Create a copy of this cohort characterization"><i class="fa fa-copy"></i></button>
-                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }, attr: { title: ko.i18n('cc.viewEdit.buttons.copy', 'Create a copy of this cohort characterization') }"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" data-bind="attr: {title: ko.i18n('cc.viewEdit.buttons.access', 'Configure access')}, visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
                     <i class="fa fa-lock"></i>
                 </button>
                 <button type="button" class="btn btn-danger"  data-bind="click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
@@ -20,7 +20,7 @@
         </div>
         <div data-bind="visible: !isNameFilled()" class="empty-name-error">
             <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-            <label>Characterization name is empty.</label>
+            <label data-bind="text: ko.i18n('cc.viewEdit.messages.nameIsEmpty', 'Characterization name is empty.')"></label>
         </div>
     </div>
 
@@ -29,19 +29,19 @@
         selectTab: $component.selectTab,
         tabs: [
             {
-                title: 'Design',
+                title: ko.i18n('cc.viewEdit.tabs.design', 'Design'),
                 key: 'design',
                 componentName: 'characterization-design',
                 componentParams: $component.componentParams,
             },
             {
-                title: 'Executions',
+                title: ko.i18n('cc.viewEdit.tabs.executions', 'Executions'),
                 key: 'executions',
                 componentName: 'characterization-exec-wrapper',
                 componentParams: $component.componentParams,
             },
             {
-                title: 'Utilities',
+                title: ko.i18n('cc.viewEdit.tabs.utilities', 'Utilities'),
                 key: 'utilities',
                 componentName: 'characterization-view-edit-utils',
                 componentParams: $component.componentParams,

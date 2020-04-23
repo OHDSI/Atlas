@@ -2,7 +2,7 @@ define(['knockout', 'utils/CommonUtils', 'text!./conceptset-list-modal.html'], f
 
 	function ConceptSetListModal(params) {
 		const self = this;
-		self.title = params.title || 'Concept List';
+		self.title = params.title || ko.i18n('cs.modal.title', 'Concept List');
 		self.conceptSetList = params.conceptSetList;
 		self.isShown = params.isShown;
 		self.commonUtils = commonUtils;

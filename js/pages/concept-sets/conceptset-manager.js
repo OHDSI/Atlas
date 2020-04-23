@@ -105,7 +105,7 @@ define([
 					if (this.currentConceptSet().id === 0) {
 						return this.defaultName;
 					} else {
-						return 'Concept Set #' + this.currentConceptSet().id;
+						return ko.i18n('cs.manager.caption', 'Concept Set #')() + this.currentConceptSet().id;
 					}
 				}
 			});
@@ -154,23 +154,23 @@ define([
 			});
 			this.tabs = [
 				{
-						title: 'Concept Set Expression',
+						title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
 						componentName: 'conceptset-expression',
 						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
 				},
 				{
-						title: 'Included Concepts',
+						title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
 						componentName: 'included-conceptsets',
 						componentParams: params,
 						hasBadge: true,
 				},
 				{
-						title: 'Included Source Codes',
+						title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Included Source Codes'),
 						componentName: 'included-sourcecodes',
 						componentParams:  { ...params, canEditCurrentConceptSet: this.canEdit },
 				},
 				{
-						title: 'Explore Evidence',
+						title: ko.i18n('cs.manager.tabs.exploreEvidence', 'Explore Evidence'),
 						componentName: 'explore-evidence',
 						componentParams: {
 							...params,
@@ -178,12 +178,12 @@ define([
 						},
 				},
 				{
-						title: 'Export',
+						title: ko.i18n('cs.manager.tabs.Export', 'Export'),
 						componentName: 'conceptset-export',
 						componentParams: params,
 				},
 				{
-						title: 'Compare',
+						title: ko.i18n('cs.manager.tabs.Compare', 'Compare'),
 						componentName: 'conceptset-compare',
 						componentParams: {
 							...params,
@@ -302,7 +302,7 @@ define([
 			try{
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
-					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
+					this.raiseConceptSetNameProblem(ko.i18n('cs.manager.csAlreadyExistsMessage', 'A concept set with this name already exists. Please choose a different name.')(), txtElem);
 				} else {
 					const conceptSetItems = utils.toConceptSetItems(selectedConcepts);
 					try{
@@ -313,11 +313,11 @@ define([
 						this.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
 					} catch(e){
-						alert('Unable to save concept set');
+						alert(ko.i18n('cs.manager.csUnableToSaveMessage', 'Unable to save concept set'));
 					}
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save a concept set.');
+				alert(ko.i18n('cs.manager.csSaveErrorMessage', 'An error occurred while attempting to save a concept set.')());
 			} finally {
 				this.loading(false);
 				this.isSaving(false);
@@ -335,7 +335,8 @@ define([
 		}
 
 		closeConceptSet() {
-			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
+			if (this.currentConceptSetDirtyFlag().isDirty() &&
+					!confirm(ko.i18n('cs.manager.csNotSavedConfirmMessage','Your concept set changes are not saved. Would you like to continue?')())) {
 				return;
 			} else {
 				conceptSetService.clearConceptSet();
@@ -393,7 +394,7 @@ define([
 		}
 
 		delete() {
-			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
+			if (!confirm(ko.i18n('cs.manager.csDeleteConfirmMessage','Delete concept set? Warning: deletion can not be undone!')()))
 				return;
 
 			this.isDeleting(true);

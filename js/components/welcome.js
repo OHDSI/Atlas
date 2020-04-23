@@ -51,9 +51,13 @@ define([
                 return self.errorMsg();
             if (self.isLoggedIn()) {
                 if (self.expiration()) {
-                    return ko.i18nformat('components.welcome.loggedInExp', {login: self.login(), expiration: self.expiration()})();
+                    return ko.i18nformat('components.welcome.loggedInExp', 'Logged in as \'<%=login%>\' (exp: <%=expiration%>)',
+                        {login: self.login(), expiration: self.expiration()}
+                    )();
                 } else {
-                    return ko.i18nformat('components.welcome.loggedIn', {login: self.login()});
+                    return ko.i18nformat('components.welcome.loggedIn', 'Logged in as \'<%=login%>\'',
+                        {login: self.login()}
+                    )();
                 }
             }
             return 'Not logged in';
@@ -128,6 +132,12 @@ define([
 
         self.signout = function () {
             self.isInProgress(true);
+            if (authApi.authClient() === authApi.AUTH_CLIENTS.SAML) {
+                const id = 'saml-iframe';
+                const iframe = `<iframe id="${id}" src="${self.serviceUrl + 'saml/slo'}" style="position: absolute; width:0;height:0;border:0; border:none;"></iframe>`;
+                $('#' + id).remove();
+                $('body').append(iframe);
+            }
             $.ajax({
                 url: self.serviceUrl + "user/logout",
                 method: 'GET',

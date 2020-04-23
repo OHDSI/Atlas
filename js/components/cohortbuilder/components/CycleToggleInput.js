@@ -12,7 +12,7 @@ define(['knockout', 'text!./CycleToggleInputTemplate.html'], function (ko, templ
 		
 		self.currentIndex = ko.pureComputed(() => getOptionIndex(self.value(), self.options));
 		self.selectedOptionText = ko.pureComputed(function() {
-			return self.options[self.currentIndex()].name;
+			return ko.unwrap(self.options[self.currentIndex()].name);
 		});
 		
 		self.nextOption = function () {

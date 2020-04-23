@@ -6,12 +6,13 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> an observation of
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
+				<td>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.of', 'an observation of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name', 'Any Observation'))"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>
@@ -27,13 +28,14 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div>for the first time in the person's history</div>
+					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence start is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
+
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
@@ -41,21 +43,25 @@
 			<tr data-bind="if: ObservationType() != null, visible: ObservationType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationType') }" class="fa fa-times" /></td>
 				<td>
-					Observation Type <cycle-toggle-input params="{value: ObservationTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.observation-type.text', 'Observation Type')"></span>
+
+					<cycle-toggle-input params="{value: ObservationTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: ValueAsNumber() != null, visible: ValueAsNumber() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsNumber') }" class="fa fa-times" /></td>
 				<td>
-					with Value as Number
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.value-as-number.text', 'with Value as Number')"></span>
+
 					<numeric-range params="Range: ValueAsNumber"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: ValueAsString() != null, visible: ValueAsString() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsString') }" class="fa fa-times" /></td>
 				<td>
-					with Value as String
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.value-as-string.text', 'with Value as String')"></span>
+
 					<text-filter-input params="Filter: ValueAsString"></text-filter-input>
 				</td>
 			</tr>
@@ -63,7 +69,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with Value as Concept:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.value-as-concept.text', 'with Value as Concept:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Meas Value'}, ConceptList: ValueAsConcept()"></concept-list>
 					</div>
 				</td>
@@ -72,7 +79,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Qualifier') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with Qualifier:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.qualifier.text', 'with Qualifier:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Condition'}, ConceptList: Qualifier()"></concept-list>
 					</div>
 				</td>
@@ -81,7 +89,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with Unit:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.unit.text', 'with Unit:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
 					</div>
 				</td>
@@ -90,15 +99,17 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Observation Source Concept is:
-						<conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Observation'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.observation-source-concept.text', 'Observation Source Concept is:')"></span>
+
+						<conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name', 'Any Observation'))"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.age.text', 'with age')"></span>
+
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -106,7 +117,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.gender.text', 'with a gender of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
@@ -129,7 +141,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a Provider Specialty of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
 				</td>
@@ -137,7 +150,8 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					with a Visit occurrence of:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.visit-type.text', 'with a Visit occurrence of:')"></span>
+
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>
 			</tr>

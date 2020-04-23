@@ -27,7 +27,8 @@
 									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');} },
 									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');} }
               ]
-           }
+           },
+           language: ko.i18n('datatable.language')
         }">
 </table>
 
@@ -35,17 +36,17 @@
     <div class="linkLegendItem">
         <div class="swatch standard">
         </div>
-        <div class="linkLegendTitle">Standard</div>
+        <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.standard', 'Standard')"></div>
     </div>
     <div class="linkLegendItem">
         <div class="swatch nonStandard">
         </div>
-        <div class="linkLegendTitle">Non-Standard</div>
+        <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.nonstandard', 'Non-Standard')"></div>
     </div>
     <div class="linkLegendItem">
         <div class="swatch classification">
         </div>
-        <div class="linkLegendTitle">Classification</div>
+        <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.classification', 'Classification')"></div>
     </div>
 </div>
 

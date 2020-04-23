@@ -6,14 +6,19 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td> a drug exposure of
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+				<td>
+
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.of', 'a drug exposure of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.default-concept-name', 'Any Drug')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:$component.actionHandler" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: text"></div>
+								<div class="optionDescription" data-bind="text: description"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -27,83 +32,95 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div>for the first time in the person's history</div>
+					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence start is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
+
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" /></td>
 				<td>
-					occurrence end is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.occurrence-end-date.text', 'occurrence end is:')"></span>
+
 					<date-range params="Range: OccurrenceEndDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: DrugType() != null, visible: DrugType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DrugType') }" class="fa fa-times" /></td>
 				<td>
-					Drug Type <cycle-toggle-input params="{value:  DrugTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.drug-type.text', 'Drug Type')"></span>
+
+					<cycle-toggle-input params="{value:  DrugTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DrugType()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: StopReason() != null, visible: StopReason() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('StopReason') }" class="fa fa-times" /></td>
 				<td>
-					with a Stop Reason
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.stop-reason.text', 'with a Stop Reason')"></span>
+
 					<text-filter-input params="Filter: StopReason"></text-filter-input>
 				</td>
 			</tr>
 			<tr data-bind="if: Refills() != null, visible: Refills() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Refills') }" class="fa fa-times" /></td>
 				<td>
-					with Refills
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.refills.text', 'with Refills')"></span>
+
 					<numeric-range params="Range: Refills"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Quantity() != null, visible: Quantity() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Quantity') }" class="fa fa-times" /></td>
 				<td>
-					with Quantity
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.quantity.text', 'with Quantity')"></span>
+
 					<numeric-range params="Range: Quantity"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: DaysSupply() != null, visible: DaysSupply() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DaysSupply') }" class="fa fa-times" /></td>
 				<td>
-					with Days Supply
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.days-supply.text', 'with Days Supply')"></span>
+
 					<numeric-range params="Range: DaysSupply"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: RouteConcept() != null, visible: RouteConcept() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('RouteConcept') }" class="fa fa-times" /></td>
 				<td>
-					Route Concept is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.route-concept.text', 'Route Concept is:')"></span>
+
 					<concept-list params="PickerParams: { DefaultDomain: 'Route', DefaultQuery: ''}, ConceptList: RouteConcept()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: EffectiveDrugDose() != null, visible: EffectiveDrugDose() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('RouteConcept') }" class="fa fa-times" /></td>
 				<td>
-					with Effective Drug Dose
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.effective-drug-dose.text', 'with Effective Drug Dose')"></span>
+
 					<numeric-range params="Range: EffectiveDrugDose"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: DoseUnit() != null, visible: DoseUnit() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DoseUnit') }" class="fa fa-times" /></td>
 				<td>
-					Dose Unit is:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.dose-unit.text', 'Dose Unit is:')"></span>
+
 					<concept-list params="PickerParams: { DefaultDomain: 'Unit', DefaultQuery: ''}, ConceptList: DoseUnit()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: LotNumber() != null, visible: LotNumber() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('LotNumber') }" class="fa fa-times" /></td>
 				<td>
-					with a Lot Number
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.lot-number.text', 'with a Lot Number')"></span>
+
 					<text-filter-input params="Filter: LotNumber"></text-filter-input>
 				</td>
 			</tr>
@@ -111,15 +128,17 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('DrugSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Drug Source Concept is:
-						<conceptset-selector params="conceptSetId: DrugSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Drug'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.drug-source-concept.text', 'Drug Source Concept is:')"></span>
+
+						<conceptset-selector params="conceptSetId: DrugSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.default-concept-name', 'Any Drug')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					with age
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.age.text', 'with age')"></span>
+
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -127,7 +146,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.gender.text', 'with a gender of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
@@ -150,7 +170,8 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a Provider Specialty of:
+						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
 				</td>
@@ -158,7 +179,8 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					with a Visit occurrence of:
+					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.visit-type.text', 'with a Visit occurrence of:')"></span>
+
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>
 			</tr>

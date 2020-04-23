@@ -41,7 +41,16 @@ data-bind="attr: {placeholder: ko.i18n('components.conceptPicker.importConcepts'
 												}
 											}
 										 }"></table>
-		<div style="text-align: right; padding: 5px"><button class="btn btn-primary btn-sm" data-bind="click: add">Add Selected</button> <button class="btn btn-primary btn-sm" data-bind="click: addAndClose">Add And Close</button> <button class="btn btn-primary btn-sm" data-bind="click: function() { this.isOpen(false);}">Close</button></div>
+		<div style="text-align: right; padding: 5px">
+			<button class="btn btn-primary btn-sm" data-bind="click: add">
+				<span data-bind="text: ko.i18n('components.conceptpicker.add-selected', 'Add Selected')"></span>
+			</button>
+			<button class="btn btn-primary btn-sm" data-bind="click: addAndClose">
+				<span data-bind="text: ko.i18n('components.conceptpicker.add-and-close', 'Add And Close')"></span>
+			</button>
+			<button class="btn btn-primary btn-sm" data-bind="click: function() { this.isOpen(false);}">
+				<span data-bind="text: ko.i18n('components.conceptpicker.close', 'Close')"></span>
+			</button></div>
 	</div>
 	<div data-bind="if: !ProviderReady()">
 		<span data-bind="text: ko.i18n('components.conceptPicker.waitMessage', 'Please wait while the Vocabulary Provider initalizes...')"></span>

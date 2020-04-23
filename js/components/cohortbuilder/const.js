@@ -218,107 +218,107 @@ function (
 	}
 
 	const AddDemographic = {
-		text: "Add Demographic",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.demographic.text", "Add Demographic")),
 		selected: false,
-		description: "Filter events based on demographic criteria.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.demographic.description", "Filter events based on demographic criteria.")),
 		type: CriteriaTypes.DEMOGRAPHIC,
 	};
 	const AddConditionEra = {
-		text: "Add Condition Era",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.condition-era.text", "Add Condition Era")),
 		selected: false,
-		description: "Find patients with specific condition era.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.condition-era.description", "Find patients with specific condition era.")),
 		type: CriteriaTypes.CONDITION_ERA,
 	};
 	const AddConditionOccurrence = {
-		text: "Add Condition Occurrence",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.condition-occurrence.text", "Add Condition Occurrence")),
 		selected: false,
-		description: "Find patients with specific conditions.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.condition-occurrence.tedescriptionxt", "Find patients with specific conditions.")),
 		type: CriteriaTypes.CONDITION_OCCURRENCE,
 	};
 	const AddDeath = {
-		text: "Add Death",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.death.text", "Add Death")),
 		selected: false,
-		description: "Find patients based on death.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.death.description", "Find patients based on death.")),
 		type: CriteriaTypes.DEATH,
 	};
 	const AddDeviceExposure = {
-		text: "Add Device Exposure",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.device-exposure.text", "Add Device Exposure")),
 		selected: false,
-		description: "Find patients based on device exposure.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.device-exposure.description", "Find patients based on device exposure.")),
 		type: CriteriaTypes.DEVICE_EXPOSURE,
 	};
 	const AddDoseEra = {
-		text: "Add Dose Era",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.dose-era.text", "Add Dose Era")),
 		selected: false,
-		description: "Find patients with dose eras.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.dose-era.description", "Find patients with dose eras.")),
 		type: CriteriaTypes.DOSE_ERA,
 	};
 	const AddDrugEra = {
-		text: "Add Drug Era",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.drug-era.text", "Add Drug Era")),
 		selected: false,
-		description: "Find patients with drug eras.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.drug-era.description", "Find patients with drug eras.")),
 		type: CriteriaTypes.DRUG_ERA,
 	};
 	const AddDrugExposure = {
-		text: "Add Drug Exposure",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.drug-exposure.text", "Add Drug Exposure")),
 		selected: false,
-		description: "Find patients with exposure to specific drugs or drug classes.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.drug-exposure.description", "Find patients with exposure to specific drugs or drug classes.")),
 		type: CriteriaTypes.DRUG_EXPOSURE,
 	};
 
 	const AddLocationRegion = {
-		text: "Add Location Region",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.location-region.text", "Add Location Region")),
 		selected: false,
-		description: "Find patients within geographical area.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.location-region.description", "Find patients within geographical area.")),
 		type: CriteriaTypes.LOCATION_REGION,
 	};
 
 	const AddMeasurement = {
-		text: "Add Measurement",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.measurement.text", "Add Measurement")),
 		selected: false,
-		description: "Find patients based on measurements.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.measurement.description", "Find patients based on measurements.")),
 		type: CriteriaTypes.MEASUREMENT,
 	};
 	const AddObservation = {
-		text: "Add Observation",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.observation.text", "Add Observation")),
 		selected: false,
-		description: "Find patients based on observations.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.observation.description", "Find patients based on observations.")),
 		type: CriteriaTypes.OBSERVATION,
 	};
 	const AddObservationPeriod = {
-		text: "Add Observation Period",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.observation-period.text", "Add Observation Period")),
 		selected: false,
-		description: "Find patients based on observation periods.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.observation-period.description", "Find patients based on observation periods.")),
 		type: CriteriaTypes.OBSERVATION_PERIOD,
 	};
 	const AddPayerPlanPeriod = {
-		text: "Add Payer Plan Period",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.payer-plan-period.text", "Add Payer Plan Period")),
 		selected: false,
-		description: "Find patients based on Payer Plan Period.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.payer-plan-period.description", "Find patients based on Payer Plan Period.")),
 		type: CriteriaTypes.PAYER_PLAN_PERIOD,
 	};
 	const AddProcedureOccurrence = {
-		text: "Add Procedure Occurrence",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.procedure-occurrence.text", "Add Procedure Occurrence")),
 		selected: false,
-		description: "Find patients that experienced a specific procedure.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.procedure-occurrence.description", "Find patients that experienced a specific procedure.")),
 		type: CriteriaTypes.PROCEDURE_OCCURRENCE,
 	};
 	const AddSpecimen = {
-		text: "Add Specimen",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.specimen.text", "Add Specimen")),
 		selected: false,
-		description: "Find patients based on specimen.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.specimen.description", "Find patients based on specimen.")),
 		type: CriteriaTypes.SPECIMEN,
 	};
 	const AddVisit = {
-		text: "Add Visit",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.visit.text", "Visit")),
 		selected: false,
-		description: "Find patients based on visit information.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.visit.description", "Find patients based on visit information.")),
 		type: CriteriaTypes.VISIT,
 	};
 	const AddGroup = {
-		text: "Add Group",
+		text: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.group.text", "Add Group")),
 		selected: false,
-		description: "Add a group to combine criteria using and/or relationships.",
+		description: ko.unwrap(ko.i18n("cc.viewEdit.design.subgroups.add.group.description", "Add a group to combine criteria using and/or relationships.")),
 		type: CriteriaTypes.GROUP,
 	};
 
