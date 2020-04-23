@@ -1,7 +1,8 @@
 <loading data-bind="visible: exporting" params="status: 'Exporting CSV...'"></loading>
 <loading data-bind="visible: $component.loading()" params="status: 'Loading for export...'"></loading>
 <div data-bind="hidden: exporting() || $component.loading()">
-  <div class="heading">Concept Set Expression JSON
+  <div class="heading">
+    <span data-bind="text: ko.i18n('cs.manager.export.conceptSetExpressionJSON', 'Concept Set Expression JSON')"></span>
     <button
       class="btn btn-sm btn-primary"
       title="Copy to clipboard"
@@ -13,11 +14,12 @@
     </button>
     <span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert">
       <i class="fa fa-check-square-o" aria-hidden="true"></i>
-      <strong>Copied To Clipboard!</strong>
+      <strong data-bind="text: ko.i18n('cs.manager.export.copiedToClipboard!', 'Copied To Clipboard!')"></strong>
     </span>
   </div>
   <pre id="conceptSetExpression" data-bind="html: currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
-  <div class="heading">Concept Identifer List
+  <div class="heading">
+    <span data-bind="text: ko.i18n('cs.manager.export.conceptIdentiferList', 'Concept Identifer List')"></span>
     <button
       class="btn btn-sm btn-primary"
       title="Copy to clipboard"
@@ -29,11 +31,12 @@
     </button>
     <span id="copyIdentifierListMessage" style="display: none" class="alert alert-success" role="alert">
       <i class="fa fa-check-square-o" aria-hidden="true"></i>
-      <strong>Copied To Clipboard!</strong>
+      <strong data-bind="text: ko.i18n('cs.manager.export.copiedToClipboard!', 'Copied To Clipboard!')"></strong>
     </span>
   </div>
   <pre id="conceptIdentifierList" data-bind="html: currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-  <div class="heading">Included Concept Identifer List
+  <div class="heading">
+    <span data-bind="text: ko.i18n('cs.manager.export.includedConceptIdentiferList', 'Included Concept Identifer List')"></span>
     <button
       class="btn btn-sm btn-primary"
       title="Copy to clipboard"
@@ -45,7 +48,7 @@
     </button>
     <span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert">
       <i class="fa fa-check-square-o" aria-hidden="true"></i>
-      <strong>Copied To Clipboard!</strong>
+      <strong data-bind="text: ko.i18n('cs.manager.export.copiedToClipboard!', 'Copied To Clipboard!')"></strong>
     </span>
   </div>
   <pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
@@ -55,6 +58,7 @@
     css: {
       disabled:! (currentConceptSet() != null && !currentConceptSetDirtyFlag().isDirty())
     }">
-    <i class="fa fa-download" aria-hidden="true"></i>Export To CSV
+    <i class="fa fa-download" aria-hidden="true"></i>
+    <span data-bind="text: ko.i18n('cs.manager.export.exportToCSV', 'Export To CSV')"></span>
   </button>
 </div>

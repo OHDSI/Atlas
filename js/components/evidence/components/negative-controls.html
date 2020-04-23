@@ -6,20 +6,25 @@
 <div data-bind="if: $component.conceptSetValid()">
 	<div data-bind="if: !$component.loadingEvidenceSources()">
 		<div class="heading">
-			<b>Explore Evidence:</b> Evidence comes from the
-			<a href="https://github.com/OHDSI/CommonEvidenceModel"></a>Common Evidence Model</a> (CEM). The evidence base is comprised of evidence found in published literature, product labels and spontaneous reports. Use the evidence sources below to find out what evidence has been associated to the concepts included in this concept set.
+			<b data-bind="text: ko.i18n('cs.manager.exploreEvidence.title', 'Explore Evidence:')"></b>
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.message1', 'Evidence comes from the')"></span>
+			<a href="https://github.com/OHDSI/CommonEvidenceModel"></a>Common Evidence Model</a> (CEM).
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.message2', 'The evidence base is comprised of evidence found in published literature, product labels and spontaneous reports. Use the evidence sources below to find out what evidence has been associated to the concepts included in this concept set.')"></span>
 			<br/><br/>
-			<strong>Additional Information:</strong> <a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/wiki/Negative-Controls-In-ATLAS">Obtaining Negative Controls from ATLAS</a>&nbsp;|&nbsp;<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControls/README.md">High level information on negative controls processing</a>&nbsp;|&nbsp;<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControlsPrep/README.md">Additional resources</a>
+			<strong data-bind="text: ko.i18n('cs.manager.exploreEvidence.additionalInformation', 'Additional Information:')"></strong>
+			<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/wiki/Negative-Controls-In-ATLAS" data-bind="text: ko.i18n('cs.manager.exploreEvidence.anchor1', 'Obtaining Negative Controls from ATLAS')"></a>&nbsp;|&nbsp;
+			<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControls/README.md" data-bind="text: ko.i18n('cs.manager.exploreEvidence.anchor2', 'High level information on negative controls processing')"></a>&nbsp;|&nbsp;
+			<a target="_new" href="https://github.com/OHDSI/CommonEvidenceModel/blob/master/postProcessingNegativeControlsPrep/README.md" data-bind="text: ko.i18n('cs.manager.exploreEvidence.anchor3', 'Additional resources')"></a>
 		</div>
 		<br/>
-		<div class="heading">Evidence Sources</div>
+		<div class="heading" data-bind="text: ko.i18n('cs.manager.exploreEvidence.evidenceSources', 'Evidence Sources')"></div>
 		<div class="paddedWrapper" data-bind="foreach:$component.evidenceSources">
 			<div class="panel panel-default">
 				<div class="panel-heading" data-bind="text:sourceName"></div>
 				<div class="panel-body">
 					<div class="form-group">
-						<strong>Generation Settings</strong><br/>
-						<label>What concepts do you want to include as known negative controls? (Optional)</label>
+						<strong data-bind="text: ko.i18n('cs.manager.exploreEvidence.generationSettings', 'Generation Settings')"></strong><br/>
+						<label data-bind="text: ko.i18n('cs.manager.exploreEvidence.includeLabel', 'What concepts do you want to include as known negative controls? (Optional)')"></label>
 						<div class="input-group">
 							<input class="form-control" type="text" disabled data-bind="value: $data.csToIncludeCaption" />
 							<span class="input-group-btn">
@@ -27,10 +32,12 @@
 								<button class="btn btn-danger" data-bind="disable: $data.csToInclude() == 0, click:function() {$component.clearIncludeConceptSet($data)}" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
-						<div data-bind="visible: !$data.csToIncludeLoading() && $data.csToInclude() > 0 && $data.csToIncludeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text: $data.csToInclude()"></span>) was deleted. Please select a different concept set.</div>
+						<div data-bind="visible: !$data.csToIncludeLoading() && $data.csToInclude() > 0 && $data.csToIncludeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+							<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.deletedCcMessage1', 'The concept set specified')"></span> (#<span data-bind="text: $data.csToInclude()"></span>)
+						</div>
 					</div>
 					<div class="form-group">
-						<label>What concepts do you want to exclude as known positive controls? (Optional)</label>
+						<label data-bind="text: ko.i18n('cs.manager.exploreEvidence.excludeLabel', 'What concepts do you want to exclude as known positive controls? (Optional)')"></label>
 						<div class="input-group">
 							<input class="form-control" type="text" disabled data-bind="value: $data.csToExcludeCaption" />
 							<span class="input-group-btn">
@@ -38,21 +45,23 @@
 								<button class="btn btn-danger" data-bind="disable: $data.csToExclude() == 0, click:function() {$component.clearExcludeConceptSet($data)}" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
 							</span>
 						</div>
-						<div data-bind="visible: !$data.csToExcludeLoading() && $data.csToExclude() > 0 && $data.csToExcludeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> The concept set specified (#<span data-bind="text: $data.csToExclude()"></span>) was deleted. Please select a different concept set.</div>
+						<div data-bind="visible: !$data.csToExcludeLoading() && $data.csToExclude() > 0 && $data.csToExcludeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+							<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.deletedCcMessage1', 'The concept set specified')"></span> (#<span data-bind="text: $data.csToExclude()"></span>)<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.deletedCcMessage2', 'was deleted. Please select a different concept set.')"></span>
+						</div>
 					</div>
 					<div class="form-group">
 						<table style="width: 100%">
 						<tr>
 							<td style="width: 120px">
-								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generate"><i class="fa fa-play"></i>&nbsp;&nbsp;Generate</div>
+								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data), attr: {'disabled':$component.canGenerate()==false}, click:$component.generate"><i class="fa fa-play"></i>&nbsp;&nbsp;<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.generate', 'Generate')"></span></div>
 								<div class="btn btn-sm btn-warning" data-bind="visible:$component.isSourceRunning($data)"><i class="fa fa-spinner fa-spin"></i></div>
 							</td>	
 							<td>
 								<table style="width: 100%">
 									<thead>
-										<th>Generation Status</th>
-										<th>Generated</th>
-										<th>Generation Duration</th>
+										<th data-bind="text: ko.i18n('cs.manager.exploreEvidence.generationStatus', 'Generation Status')"></th>
+										<th data-bind="text: ko.i18n('cs.manager.exploreEvidence.generated', 'Generated')"></th>
+										<th data-bind="text: ko.i18n('cs.manager.exploreEvidence.generationDuration', 'Generation Duration')"></th>
 									</thead>
 									<tbody>
 										<tr data-bind="css: { 'selected': $component.negativeControls() && $component.negativeControls().sourceKey == $data.sourceKey}">
@@ -70,7 +79,7 @@
 								</table>
 							</td>
 							<td style="width: 120px; padding-left: 20px;">
-								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.loadResults"><i class="fa fa-eye"></i>&nbsp;View Evidence</div>
+								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid, click:$component.loadResults"><i class="fa fa-eye"></i>&nbsp;<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.viewEvidence', 'View Evidence')"></span></div>
 							</td>							
 						</tr>
 						</table>
@@ -80,18 +89,30 @@
 		</div>
 	</div>
 </div>
-<div class="loading" data-bind="if:$component.loadingResults()">loading evidence</div>
+<div class="loading" data-bind="if:$component.loadingResults()">
+	<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.loadingEvidence', 'loading evidence')"></span>
+</div>
 <div class="paddedWrapper" data-bind="if: $component.negativeControls() && $component.negativeControls().length > 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
 	<div data-bind="if:$component.drugLabelExists().length > 0">
 		<div class="heading">
-			Drug Label Evidence: Found <span data-bind="text: $component.drugLabelExistsIsTrue().length"></span> of <span data-bind="text: $component.drugLabelExists().length"></span> (<span data-bind="text: $component.drugLabelExistsPercentage"></span>%) drug labels in CEM. (<span class="linkish" data-bind="click:toggleLabelDetails"><span data-bind="text:toggleLabelDisplay"></span> details</span>)
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelEvidence', 'Drug Label Evidence:')"></span>
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelEvidenceFound', 'Found')"></span>
+			<span data-bind="text: $component.drugLabelExistsIsTrue().length"></span>
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelEvidenceOf', 'of')"></span>
+			<span data-bind="text: $component.drugLabelExists().length"></span>
+			(<span data-bind="text: $component.drugLabelExistsPercentage"></span>%)
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelEvidenceEnd', 'drug labels in CEM.')"></span>
+			(<span class="linkish" data-bind="click:toggleLabelDetails"><span data-bind="text:toggleLabelDisplay"></span> <span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelEvidenceDetails', 'details')"></span></span>)
 		</div>
 		<div data-bind="visible: $component.drugLabelDetailsDisplay()">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-md-6">
 						<div class="panel panel-success">
-							<div class="panel-heading">Drug Labels Found (<span data-bind="text: $component.drugLabelExistsIsTrue().length"</span></span>)</div>
+							<div class="panel-heading">
+								<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelsFound', 'Drug Labels Found')"></span>
+								(<span data-bind="text: $component.drugLabelExistsIsTrue().length"></span>)
+							</div>
 							<ul class="list-group">
 								<li class="list-group-item" data-bind="foreach:$component.drugLabelExistsIsTrue">
 									<a data-bind="text:$data.conceptName, attr: {href: '#/concept/' + $data.conceptId, title: $data.conceptName}" target="_blank" /><span data-bind="if:($index() < $component.drugLabelExistsIsTrue().length - 1)">,</span>
@@ -101,7 +122,10 @@
 					</div>
 					<div class="col-md-6">
 						<div class="panel panel-danger">
-							<div class="panel-heading">Drug Labels Not Found (<span data-bind="text: $component.drugLabelExistsIsFalse().length"</span></span>)</div>
+							<div class="panel-heading">
+								<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.drugLabelsNotFound', 'Drug Labels Not Found')"></span>
+								(<span data-bind="text: $component.drugLabelExistsIsFalse().length"></span>)
+							</div>
 							<li class="list-group-item" data-bind="foreach:$component.drugLabelExistsIsFalse">
 								<a data-bind="text:$data.conceptName, attr: {href: '#/concept/' + $data.conceptId, title: $data.conceptName}" target="_blank" /><span data-bind="if:($index() < $component.drugLabelExistsIsTrue().length - 1)">,</span>
 							</li>
@@ -113,12 +137,21 @@
 	</div>
 	<br/>
 	<div class="paddedWrapper">
-		<div class="heading">Evidence for all <span style="text-transform: lowercase;" data-bind="text: $component.targetDomainId()"></span>s for <span data-bind="text: $component.conceptSet().name()"></span></div>
+		<div class="heading">
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.evidenceForAll', 'Evidence for all')"></span>
+			<span style="text-transform: lowercase;" data-bind="text: $component.targetDomainId()"></span>s
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.evidenceForAllFor', 'for')"></span>
+			<span data-bind="text: $component.conceptSet().name()"></span>
+		</div>
 	</div>
 	<div class="container-fluid">
-		<div class="pull-left"><button class="btn btn-sm btn-primary" data-bind="click:function() { showNegControlsSaveNewModal(true); }">Save New Concept Set From Selection Below</button></div>
+		<div class="pull-left">
+			<button class="btn btn-sm btn-primary" data-bind="click:function() { showNegControlsSaveNewModal(true); }, text: ko.i18n('cs.manager.exploreEvidence.saveNewButton', 'Save New Concept Set From Selection Below')"></button>
+		</div>
 		<div class="pull-right" style="padding-bottom: 10px;">
-			<i data-bind="attr: { class: $component.recordCountClass }" aria-hidden="true"></i> View database record counts (RC) and descendant record counts (DRC) for: <select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey, event: { change: $component.refreshRecordCounts }"></select>
+			<i data-bind="attr: { class: $component.recordCountClass }" aria-hidden="true"></i>
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.viewDatabaseRecordCounts', 'View database record counts (RC) and descendant record counts (DRC) for:')"></span>
+			<select data-bind="options: $component.resultSources, optionsText: 'sourceName', optionsValue: 'sourceKey', value: $component.currentResultSource().sourceKey, event: { change: $component.refreshRecordCounts }"></select>
 		</div>
 	</div>
 	<div class="paddedWrapper" id="negControlResults">
@@ -128,17 +161,22 @@
 </div>
 <div data-bind="if: $component.negativeControls() && $component.negativeControls().length <= 0 && $component.currentEvidenceService() && $component.currentResultSource() && $component.conceptSet() && !$component.loadingResults()">
 	<div class="paddedWrapper">
-		<div class="heading">No evidence found for <span data-bind="text: $component.conceptSet().name()"></span></div>
+		<div class="heading">
+			<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.noEvidenceFoundFor', 'No evidence found for')"></span>
+			<span data-bind="text: $component.conceptSet().name()"></span>
+		</div>
 	</div>
 </div>
-<div class="loading" data-bind="if:$component.loadingEvidenceSources()">loading</div>
+<div class="loading" data-bind="if:$component.loadingEvidenceSources()">
+	<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.loading', 'loading')"></span>
+</div>
 <conceptset-save params="conceptSetName: newConceptSetName, onSave: saveNewConceptSet, show: showNegControlsSaveNewModal"></conceptset-save>
 <div id="ncModalConceptSetSelect" class="modal fade" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<div class="modal-title">Choose a Concept Set</div>
+				<div class="modal-title" data-bind="text: ko.i18n('cs.manager.exploreEvidence.chooseAConceptSet', 'Choose a Concept Set')"></div>
 			</div>
 			<div class="modal-body">
 				<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: $component.conceptsetSelected, repositoryConceptSetTableId: 'negativeControlConceptSets', disableConceptSetButton: $component.disableNewConceptSetButton}"></cohort-concept-set-browser>
@@ -151,7 +189,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<div class="modal-title">Viewing Evidence</div>
+				<div class="modal-title" data-bind="text: ko.i18n('cs.manager.exploreEvidence.viewingEvidence', 'Viewing Evidence')"></div>
 			</div>
 			<div class="modal-body">
 				<evidence-pair-viewer params="{sourceKey: $component.currentEvidenceService().sourceKey, sourceIds: $component.sourceIds, targetDomainId: $component.targetDomainId, drugConceptIds: $component.linkoutDrugConceptIds, conditionConceptIds: $component.linkoutConditionConceptIds}"></evidence-pair-viewer>
