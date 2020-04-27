@@ -91,19 +91,23 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       self.getWarnings = function() {
-        if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
-          return false;
+        if (this.cohortDefinitionId()) {
+          if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
+            return false;
+          }
+          self.loading(true);
+          cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
+            .then(showWarnings, handleError);
         }
-        self.loading(true);
-        cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
-          .then(showWarnings, handleError);
       };
 
       self.onDiagnose = function(){
-        const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
-          return (value === 0 || value) ?  value : undefined;
-        }, 2);
-        self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
+        if (this.currentCohortDefinition()) {
+          const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
+            return (value === 0 || value) ?  value : undefined;
+          }, 2);
+          self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
+        }
       };
 
 
