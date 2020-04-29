@@ -7,14 +7,20 @@
 			</colgroup>
 			<tr>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.of', 'an observation of')"></span>
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name', 'Any Observation'))"></conceptset-selector>
+					<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_1', 'an observation of')"></span>
+					<conceptset-selector 
+					params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, 
+					defaultText: ko.i18n('components.conditionObservation.anyObservation', 'Any Observation')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionObservation.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>
@@ -28,13 +34,13 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
+					<div data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_2', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_3', 'occurrence start is:')"></span>
 
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
@@ -43,7 +49,7 @@
 			<tr data-bind="if: ObservationType() != null, visible: ObservationType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.observation-type.text', 'Observation Type')"></span>
+					<span data-bind="text: ko.i18n('components.conditionObservation.observationType', 'Observation Type')"></span>
 
 					<cycle-toggle-input params="{value: ObservationTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: ObservationType()"></concept-list>
@@ -52,7 +58,7 @@
 			<tr data-bind="if: ValueAsNumber() != null, visible: ValueAsNumber() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsNumber') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.value-as-number.text', 'with Value as Number')"></span>
+					<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_4', 'with Value as Number')"></span>
 
 					<numeric-range params="Range: ValueAsNumber"></numeric-range>
 				</td>
@@ -60,7 +66,7 @@
 			<tr data-bind="if: ValueAsString() != null, visible: ValueAsString() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsString') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.value-as-string.text', 'with Value as String')"></span>
+					<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_5', 'with Value as String')"></span>
 
 					<text-filter-input params="Filter: ValueAsString"></text-filter-input>
 				</td>
@@ -69,7 +75,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.value-as-concept.text', 'with Value as Concept:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_6', 'with Value as Concept:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Meas Value'}, ConceptList: ValueAsConcept()"></concept-list>
 					</div>
@@ -79,7 +85,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Qualifier') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.qualifier.text', 'with Qualifier:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_7', 'with Qualifier:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Condition'}, ConceptList: Qualifier()"></concept-list>
 					</div>
@@ -89,7 +95,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.unit.text', 'with Unit:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_8', 'with Unit:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
 					</div>
@@ -99,16 +105,17 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ObservationSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.observation-source-concept.text', 'Observation Source Concept is:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_9', 'Observation Source Concept is:')"></span>
 
-						<conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name', 'Any Observation'))"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: ObservationSourceConcept(), conceptSets: $component.expression.ConceptSets, 
+						defaultText: ko.i18n('components.conditionObservation.anyObservation', 'Any Observation'))"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.age.text', 'with age')"></span>
+					<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_10', 'with age')"></span>
 
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
@@ -117,7 +124,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.gender.text', 'with a gender of:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_11', 'with a gender of:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
@@ -141,7 +148,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_12', 'with a Provider Specialty of:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
@@ -150,7 +157,7 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.visit-type.text', 'with a Visit occurrence of:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_13', 'with a Visit occurrence of:')"></span>
 
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>

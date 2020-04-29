@@ -3,18 +3,25 @@
 																																	{ event: 'mouseenter', selector: '.conceptset', callback: showConceptSetPreview},
 																																	{ event: 'hidden.bs.dropdown', callback: hideConceptSetPreview}
 																																]">
-		<button type="button" class="btn btn-primary conceptset_edit" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="text:conceptSetName, attr:{'title': conceptSetName}"></button>
+		<button type="button" class="btn btn-primary conceptset_edit"
+			style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap"
+			data-bind="text:conceptSetName, attr:{'title': conceptSetName}"></button>
 		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-			<span class="caret"></span>  <!-- caret -->
+			<span class="caret"></span> <!-- caret -->
 			<span class="sr-only" data-bind="text:conceptSetName"></span>
 		</button>
 
-		<ul class="dropdown-menu dropdown-menu-right" style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
-			<li class="dropdown-item" onclick="event.stopPropagation();"><input type="text" placeholder="Search..." style="width:100%; border: solid 1px #9bc1fd; border-radius: 3px" data-bind="textInput: filterText"></li>
+		<ul class="dropdown-menu dropdown-menu-right"
+			style="height: auto; max-height:200px; width:200px; overflow-x: hidden; padding:4px" role="menu">
+			<li class="dropdown-item" onclick="event.stopPropagation();">
+				<input type="text" style="width:100%; border: solid 1px #9bc1fd; border-radius: 3px"
+					data-bind="attr: {placeholder: ko.i18n('components.conceptSetSelector.searchWithTripleDots', 'Search...')}, textInput: filterText">
+			</li>
 			<!-- ko foreach: filteredConceptSets -->
 			<li class="dropdown-item conceptset" style="cursor:pointer">
 				<a>
-					<div style="max-width:195px; overflow-x: hidden; text-overflow:ellipsis;" data-bind="text: name, attr:{'title': name}, click: $component.itemClicked"></div>
+					<div style="max-width:195px; overflow-x: hidden; text-overflow:ellipsis;"
+						data-bind="text: name, attr:{'title': name}, click: $component.itemClicked"></div>
 				</a>
 			</li>
 			<!-- ko if: $component.conceptSetId() != null && $index() == 0  -->
@@ -25,19 +32,21 @@
 			<li class="divider"></li>
 			<!-- /ko -->
 			<li style="cursor:pointer"><a class="conceptset_import">
-				<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.concept-set-selector.import-concept','Import Concept Set')"></span>
-			</a></li>
+					<span data-bind="text:ko.i18n('components.conceptSetSelector.importConcept','Import Concept Set')"></span>
+				</a></li>
 			<li style="cursor:pointer"><a data-bind="click: clear">
-				<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.concept-set-selector.clear-concept-set','Clear Concept Set')"></span>
-			</a></li>
+					<span data-bind="text:ko.i18n('components.conceptSetSelector.clearConceptSet','Clear Concept Set')"></span>
+				</a></li>
 		</ul>
 		<ul>
-		<!-- ko if: previewVisible -->
-		<div onclick="event.stopPropagation();" class="undraggable" style="border: solid 1px black;padding:5px; z-index: 999; background-color:white; position: absolute; max-height:200px; overflow-y:auto" data-bind="style: { top: `${previewTop()}px`, left: `${previewLeft()}px`}">
-			<div style="background-color:#aaa; font-weight: bold" data-bind="text: previewConceptSet().name"></div>
-			<conceptset-quickview params="conceptSet: previewConceptSet"></conceptset-quickview>
-		</div>
-		<!-- /ko -->
+			<!-- ko if: previewVisible -->
+			<div onclick="event.stopPropagation();" class="undraggable"
+				style="border: solid 1px black;padding:5px; z-index: 999; background-color:white; position: absolute; max-height:200px; overflow-y:auto"
+				data-bind="style: { top: `${previewTop()}px`, left: `${previewLeft()}px`}">
+				<div style="background-color:#aaa; font-weight: bold" data-bind="text: previewConceptSet().name"></div>
+				<conceptset-quickview params="conceptSet: previewConceptSet"></conceptset-quickview>
+			</div>
+			<!-- /ko -->
 		</ul>
 
 	</div>

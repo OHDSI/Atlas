@@ -14,45 +14,40 @@ function (ko, options, utils, Range, CriteriaGroup, template, constants) {
 		};
 
 		self.addActions = [{
-				text: constants.eventsList.addFirstDiagnosisCriteria.title(),
+				...constants.eraAttributes.addFirstDiagnosis,
 				selected: false,
-				description: constants.eventsList.addFirstDiagnosisCriteria.desc(),
 				action: function () {
 					if (self.Criteria.First() == null)
 						self.Criteria.First(true);
 				}
 			},
 			{
-				text: constants.eventsList.addAgeAtEraStartCriteria.title(),
+				...constants.eraAttributes.addAgeAtStart,
 				selected: false,
-				description: constants.eventsList.addAgeAtEraStartCriteria.desc(),
 				action: function () {
 					if (self.Criteria.AgeAtStart() == null)
 						self.Criteria.AgeAtStart(new Range());
 				}
 			},
 			{
-				text: constants.eventsList.addAgeAtEraEndCriteria.title(),
+				...constants.eraAttributes.addAgeAtEnd,
 				selected: false,
-				description: constants.eventsList.addAgeAtEraEndCriteria.desc(),
 				action: function () {
 					if (self.Criteria.AgeAtEnd() == null)
 						self.Criteria.AgeAtEnd(new Range());
 				}
 			},
 			{
-				text: constants.eventsList.addGenderCriteria.title(),
+				...constants.eraAttributes.addGender,
 				selected: false,
-				description: constants.eventsList.addGenderCriteria.desc(),
 				action: function () {
 					if (self.Criteria.Gender() == null)
 						self.Criteria.Gender(ko.observableArray());
 				}
 			},
 			{
-				text: constants.eventsList.addStartDateCriteria.title(),
+				...constants.eraAttributes.addStartDate,
 				selected: false,
-				description: constants.eventsList.addStartDateCriteria.desc(),
 				action: function () {
 					if (self.Criteria.EraStartDate() == null)
 						self.Criteria.EraStartDate(new Range({
@@ -61,9 +56,8 @@ function (ko, options, utils, Range, CriteriaGroup, template, constants) {
 				}
 			},
 			{
-				text: constants.eventsList.addEndDateCriteria.title(),
+				...constants.eraAttributes.addEndDate,
 				selected: false,
-				description: constants.eventsList.addEndDateCriteria.desc(),
 				action: function () {
 					if (self.Criteria.EraEndDate() == null)
 						self.Criteria.EraEndDate(new Range({
@@ -72,27 +66,24 @@ function (ko, options, utils, Range, CriteriaGroup, template, constants) {
 				}
 			},
 			{
-				text: constants.eventsList.addEraConditonCountCriteria.title(),
+				...constants.eraAttributes.addConditonCount,
 				selected: false,
-				description: constants.eventsList.addEraConditonCountCriteria.desc(),
 				action: function () {
 					if (self.Criteria.OccurrenceCount() == null)
 						self.Criteria.OccurrenceCount(new Range());
 				}
 			},
 			{
-				text: constants.eventsList.addEraLengthCriteria.title(),
+				...constants.eraAttributes.addLength,
 				selected: false,
-				description: constants.eventsList.addEraLengthCriteria.desc(),
 				action: function () {
 					if (self.Criteria.EraLength() == null)
 						self.Criteria.EraLength(new Range());
 				}
 			},
 			{
-				text: constants.eventsList.addNestedCriteria.title(),
+				...constants.eraAttributes.addNested,
 				selected: false,
-				description: constants.eventsList.addNestedCriteria.desc(),
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));

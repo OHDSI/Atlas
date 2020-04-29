@@ -7,16 +7,18 @@
 			</colgroup>
 			<tr>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.device-exposure-of', 'a device exposure of')"></span>
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.default-concept-name', 'Any Device')"></conceptset-selector>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_1', 'a device exposure of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, 
+					defaultText: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionDevice.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="click:action" href="#">
-								<div class="optionText" data-bind="text: text"></div>
-								<div class="optionDescription" data-bind="text: description"></div>
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
 							</a></li>
 						</ul>
 					</div>
@@ -31,27 +33,27 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
+					<div data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_2', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_3', 'occurrence start is:')"></span>
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.occurrence-end-date.text', 'occurrence end is:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_4', 'occurrence end is:')"></span>
 					<date-range params="Range: OccurrenceEndDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: DeviceType() != null, visible: DeviceType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeviceType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.device-type.text', 'Device Type')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.deviceType', 'Device Type')"></span>
 					<cycle-toggle-input params="{value:  DeviceTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeviceType()"></concept-list>
 				</td>
@@ -59,14 +61,14 @@
 			<tr data-bind="if: UniqueDeviceId() != null, visible: UniqueDeviceId() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('UniqueDeviceId') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.unique-device-id.text', 'with a Unique Device ID')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_5', 'with a Unique Device ID')"></span>
 					<text-filter-input params="Filter: UniqueDeviceId"></text-filter-input>
 				</td>
 			</tr>
 			<tr data-bind="if: Quantity() != null, visible: Quantity() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Quantity') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.quantity.text', 'with quantity')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_6', 'with quantity')"></span>
 					<numeric-range params="Range: Quantity">
 						</date-range>
 				</td>
@@ -75,15 +77,15 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('DeviceSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.device-source-concept.text', 'Device Source Concept is')"></span>
-						<conceptset-selector params="conceptSetId: DeviceSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.default-concept-name', 'Any Device')"></conceptset-selector>
+						<span data-bind="text: ko.i18n('ccomponents.conditionDevice.conditionDeviceText_7', 'Device Source Concept is')"></span>
+						<conceptset-selector params="conceptSetId: DeviceSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.age.text', 'with age')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_8', 'with age')"></span>
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -91,30 +93,16 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.gender.text', 'with a gender of:')"></span>
+						<span data-bind="text: ko.i18n('ccomponents.conditionDevice.conditionDeviceText_9', 'with a gender of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
 			</tr>
-			<!--
-			<tr data-bind="if: PriorEnrollDays() != null, visible: PriorEnrollDays() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }" class="fa fa-times" /></td>
-				<td>with at least
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation prior to diagnosis
-				</td>
-			</tr>
-			<tr data-bind="if: AfterEnrollDays() != null, visible: AfterEnrollDays() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AfterEnrollDays') }" class="fa fa-times" /></td>
-				<td>with at least
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: AfterEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation after diagnosis
-				</td>
-			</tr>
- 			-->
 			<tr data-bind="if: ProviderSpecialty() != null, visible: ProviderSpecialty() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_10', 'with a Provider Specialty of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
 					</div>
 				</td>
@@ -122,7 +110,7 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.visit-type.text', 'with a Visit occurrence of:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_11', 'with a Visit occurrence of:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
 				</td>
 			</tr>

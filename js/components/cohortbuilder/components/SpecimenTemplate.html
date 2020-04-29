@@ -7,17 +7,19 @@
 			</colgroup>
 			<tr>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.speciment.criteria.of', 'a specimen of')"></span>
+					<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_1', 'a specimen of')"></span>
 
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.default-concept-name', 'Any Specimen')"></conceptset-selector>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 
+					ko.i18n('components.conditionSpecimen.anySpecimen', 'Any Specimen')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionSpecimen.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="click:action" href="#">
-								<div class="optionText" data-bind="text: text"></div>
-								<div class="optionDescription" data-bind="text: description"></div>
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
 							</a></li>
 						</ul>
 					</div>
@@ -32,13 +34,13 @@
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
+					<div data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_2', 'for the first time in the person\'s history')"></div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_3', 'occurrence start is:')"></span>
 
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
@@ -47,7 +49,7 @@
 			<tr data-bind="if: SpecimenType() != null, visible: SpecimenType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('SpecimenType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.specimen-type.text', 'Specimen Type')"></span>
+					<span data-bind="text: ko.i18n('components.conditionSpecimen.specimenType', 'Specimen Type')"></span>
 
 					<cycle-toggle-input params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: SpecimenType()"></concept-list>
@@ -56,7 +58,7 @@
 			<tr data-bind="if: Quantity() != null, visible: Quantity() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Quantity') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.quantity.text', 'with Quantity')"></span>
+					<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_4', 'with Quantity')"></span>
 
 					<numeric-range params="Range: Quantity"></numeric-range>
 				</td>
@@ -65,7 +67,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.unit.text', 'with Unit:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_5', 'with Unit:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
 					</div>
@@ -75,7 +77,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('AnatomicSite') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.anatomic-site.text', 'with Anatomic Site:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_6', 'with Anatomic Site:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Spec Anatomic Site'}, ConceptList: AnatomicSite()"></concept-list>
 					</div>
@@ -85,7 +87,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('DiseaseStatus') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.disease-status.text', 'with Disease Status:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_7', 'with Disease Status:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Spec Disease Status'}, ConceptList: DiseaseStatus()"></concept-list>
 					</div>
@@ -94,7 +96,7 @@
 			<tr data-bind="if: SourceId() != null, visible: SourceId() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('SourceId') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.source-id.text', 'with Source ID')"></span>
+					<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_8', 'with Source ID')"></span>
 
 					<text-filter-input params="Filter: SourceId"></text-filter-input>
 				</td>
@@ -102,7 +104,7 @@
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.age.text', 'with age')"></span>
+					<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_9', 'with age')"></span>
 
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
@@ -111,7 +113,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.gender.text', 'with a gender of:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_10', 'with a gender of:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>

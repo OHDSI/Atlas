@@ -7,17 +7,18 @@
 			</colgroup>
 			<tr>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.death.from', 'a death occurrence from')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_1', 'a death occurrence from')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets,
-					                             defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.default-concept-name', 'Any Death')"></conceptset-selector>
+					                             defaultText: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionDeath.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="click:action" href="#">
-								<div class="optionText" data-bind="text: text"></div>
-								<div class="optionDescription" data-bind="text: description"></div>
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
 							</a></li>
 						</ul>
 					</div>
@@ -32,14 +33,14 @@
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.death-date.text', 'occurrence start is:')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_2', 'occurrence start is:')"></span>
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: DeathType() != null, visible: DeathType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.death-type.text', 'Death Type')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDeath.deathType', 'Death Type')"></span>
 
 					<cycle-toggle-input params="{value:  DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: DeathType()"></concept-list>
@@ -49,7 +50,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('DeathSourceConcept') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.cause-of-death-source-concept.text', 'Death Source Concept is')"></span>
+						<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_3', 'Death Source Concept is')"></span>
 
 						<conceptset-selector params="conceptSetId: DeathSourceConcept(), conceptSets: $component.expression.ConceptSets,
 						                             defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.default-concept-name', 'Any Death')"></conceptset-selector>
@@ -59,7 +60,7 @@
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.age.text', 'with age')"></span>
+					<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_4', 'with age')"></span>
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
@@ -67,7 +68,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.death.criteria.gender.text', 'with a gender of:')"></span>
+						<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_5', 'with a gender of:')"></span>
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>

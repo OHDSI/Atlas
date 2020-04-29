@@ -2,22 +2,24 @@
 	<div style="position: relative">
 		<table class="criteriaTable">
 			<colgroup>
-				<col style="width:100%"/>
+				<col style="width:100%" />
 				<col />
 			</colgroup>
 			<tr>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.of', 'a visit occurrence of')"></span>
+					<span
+						data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_1', 'a visit occurrence of')"></span>
 
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.default-concept-name', 'Any Visit')"></conceptset-selector>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('components.conditionVisit.anyVisit', 'Any Visit')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionVisit.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="click:action" href="#">
-								<div class="optionText" data-bind="text: text"></div>
-								<div class="optionDescription" data-bind="text: description"></div>
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
 							</a></li>
 						</ul>
 					</div>
@@ -26,27 +28,33 @@
 		</table>
 		<table class="criteriaTable">
 			<colgroup>
-				<col style="width:20px"/>
+				<col style="width:20px" />
 				<col />
-			</colgroup>		
+			</colgroup>
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
-					<div data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.first', 'for the first time in the person\'s history')"></div>
+					<div
+						data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_2', 'for the first time in the person\'s history')">
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }"
+						class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.occurrence-start-date.text', 'occurrence start is:')"></span>
+					<span
+						data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_3', 'occurrence start is:')"></span>
 
 					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceEndDate() != null, visible: OccurrenceEndDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceEndDate') }" class="fa fa-times" />
+				</td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.occurrence-end-date.text', 'occurrence end is:')"></span>
+					<span
+						data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_4', 'occurrence end is:')"></span>
 
 					<date-range params="Range: OccurrenceEndDate"></date-range>
 				</td>
@@ -54,26 +62,33 @@
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.visit-type.text', 'Visit Type')"></span>
+					<span data-bind="text: ko.i18n('components.conditionVisit.visitType', 'Visit Type')"></span>
 
-					<cycle-toggle-input params="{value: VisitTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
-					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
+					<cycle-toggle-input params="{value: VisitTypeExclude, options: $component.options.DomainTypeExcludeOptions}">
+					</cycle-toggle-input>
+					<concept-list
+						params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: VisitType()">
+					</concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: VisitSourceConcept() != null, visible: VisitSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('VisitSourceConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('VisitSourceConcept') }" class="fa fa-times" />
+				</td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.visit-source-concept.text', 'Visit Source Concept is')"></span>
+						<span
+							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_5', 'Visit Source Concept is')"></span>
 
-						<conceptset-selector params="conceptSetId: VisitSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.default-concept-name', 'Any Visit')"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: VisitSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionVisit.anyVisit', 'Any Visit')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: VisitLength() != null, visible: VisitLength() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitLength') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.visit-length.text', 'with visit duration')"></span>
+					<span
+						data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_6', 'with visit duration')"></span>
 
 					<numeric-range params="Range: VisitLength"></numeric-range>
 				</td>
@@ -81,7 +96,7 @@
 			<tr data-bind="if: Age() != null, visible: Age() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.age.text', 'with age')"></span>
+					<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_7', 'with age')"></span>
 
 					<numeric-range params="Range: Age"></numeric-range>
 				</td>
@@ -90,56 +105,73 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.gender.text', 'with a gender of:')"></span>
+						<span
+							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_8', 'with a gender of:')"></span>
 
-						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()">
+						</concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: ProviderSpecialty() != null, visible: ProviderSpecialty() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }" class="fa fa-times" />
+				</td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.provider-specialty.text', 'with a Provider Specialty of:')"></span>
+						<span
+							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_9', 'with a Provider Specialty of:')"></span>
 
-						<concept-list params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()"></concept-list>
+						<concept-list
+							params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()">
+						</concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlaceOfService() != null, visible: PlaceOfService() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfService') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfService') }" class="fa fa-times" />
+				</td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.place-of-service.text', 'with a Place of Service of:')"></span>
+						<span
+							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_10', 'with a Place of Service of:')"></span>
 
-						<concept-list params="PickerParams: { DefaultDomain: 'Place of Service'}, ConceptList: PlaceOfService()"></concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Place of Service'}, ConceptList: PlaceOfService()">
+						</concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlaceOfServiceLocation() !== undefined, visible: PlaceOfServiceLocation() !== undefined">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceLocation') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceLocation') }"
+						class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.place-of-service-location.text', 'with a Place of Service located in:')"></span>
+						<span
+							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_11', 'with a Place of Service located in:')"></span>
 
-						<conceptset-selector params="conceptSetId: PlaceOfServiceLocation, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Location'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: PlaceOfServiceLocation, conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionVisit.anyLocation', 'Any Location')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlaceOfServiceDistance() !== undefined, visible: PlaceOfServiceDistance() !== undefined">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceDistance') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceDistance') }"
+						class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.visit-occurrence.criteria.place-of-service-distance.text', 'with distance from a Place of Service to Patient')"></span>
+						<span
+							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_12', 'with distance from a Place of Service to Patient')"></span>
 
 						<numeric-range params="Range: PlaceOfServiceDistance"></numeric-range>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" />
+				</td>
 				<td style="background-color: white">
-					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
+					<criteria-group
+						params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}">
+					</criteria-group>
 				</td>
 			</tr>
 		</table>
