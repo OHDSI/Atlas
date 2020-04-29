@@ -92,13 +92,15 @@ define([
 			render: function (s, p, d) {
 				var css = '';
 				var icon = 'fa-shopping-cart';
+				var tag = 'i';
 				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
 					css = ' selected';
 				}
 				if (!context.canEditCurrentConceptSet()) {
 					css += ' readonly';
+					tag = 'span';
 				}
-				return '<i class="fa ' + icon + ' ' + css + '"></i>';
+				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
 			},
 			orderable: false,
 			searchable: false
