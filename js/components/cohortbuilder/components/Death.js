@@ -6,22 +6,31 @@ define([
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./DeathTemplate.html",
-  "../const"
-], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
+  "../const",
+], function (
+  ko,
+  options,
+  utils,
+  Range,
+  Text,
+  CriteriaGroup,
+  template,
+  constants
+) {
   function DeathViewModel(params) {
     var self = this;
 
     self.addActions = [
       {
         ...constants.deathAttributes.addAge,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.Age() == null) self.Criteria.Age(new Range());
         },
       },
       {
         ...constants.deathAttributes.addGender,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
@@ -29,7 +38,7 @@ define([
       },
       {
         ...constants.deathAttributes.addDate,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.OccurrenceStartDate() == null)
             self.Criteria.OccurrenceStartDate(
@@ -41,7 +50,7 @@ define([
       },
       {
         ...constants.deathAttributes.addType,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.DeathType() == null)
             self.Criteria.DeathType(ko.observableArray());
@@ -49,7 +58,7 @@ define([
       },
       {
         ...constants.deathAttributes.addSourceConcept,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.DeathSourceConcept() == null)
             self.Criteria.DeathSourceConcept(ko.observable());
@@ -57,7 +66,7 @@ define([
       },
       {
         ...constants.deathAttributes.addNested,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.CorrelatedCriteria() == null)
             self.Criteria.CorrelatedCriteria(
@@ -82,10 +91,7 @@ define([
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "components.conditionDeath.anyDeath",
-            "Any Death"
-          )
+          ko.i18n("components.conditionDeath.anyDeath", "Any Death")
         ),
       }
     );

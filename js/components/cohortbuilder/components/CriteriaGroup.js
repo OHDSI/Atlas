@@ -8,8 +8,9 @@ define([
 		'../utils',
 		'../const',
 		'text!./CriteriaGroupTemplate.html',
+		'../const',
 		'components/DropDownMenu'],
-	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
+	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template, constants) {
 
 	function CriteriaGroupViewModel(params) {
 		const self = this;
@@ -30,155 +31,208 @@ define([
 
 		self.getCriteriaComponent = utils.getCriteriaComponent;
 
-		self.addAdditionalCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDemographicCriteria = function () {
-			self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
-		}
-
-		self.addConditionCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					ConditionOccurrence: {}
+		self.addActions = [
+      {
+        ...constants.groupAttributes.addDemographic,
+        selected: false,
+        action: function () {
+					self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addConditionEraCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					ConditionEra: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
-		
-		self.addDrugExposureCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DrugExposure: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDrugEraCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DrugEra: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDoseEraCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DoseEra: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addLocationRegionCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					LocationRegion: {}
+      },
+      {
+        ...constants.groupAttributes.addConditionEra,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							ConditionEra: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				},
-				IgnoreObservationPeriod: true,
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addPayerPlanPeriodCriteria = function() {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					PayerPlanPeriod: {}
+			},
+			{
+        ...constants.groupAttributes.addConditionOccurrence,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							ConditionOccurrence: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));			
-		};
-		
-		self.addProcedureCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					ProcedureOccurrence: {}
+			},
+			{
+        ...constants.groupAttributes.addDeath,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							Death: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addObservationCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					Observation: {}
+			},
+			{
+        ...constants.groupAttributes.addDeviceExposure,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							DeviceExposure: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addVisitCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					VisitOccurrence: {}
+			},
+			{
+        ...constants.groupAttributes.addDoseEra,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							DoseEra: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDeviceCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DeviceExposure: {}
+			},
+			{
+        ...constants.groupAttributes.addDrugEra,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							DrugEra: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addMeasurementCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					Measurement: {}
+			},
+			{
+        ...constants.groupAttributes.addDrugExposure,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							DrugExposure: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addSpecimenCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					Specimen: {}
+			},
+			{
+        ...constants.groupAttributes.addLocationRegion,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							LocationRegion: {}
+						},
+						IgnoreObservationPeriod: true,
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addObservationPeriodCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					ObservationPeriod: {}
+			},
+			{
+        ...constants.groupAttributes.addMeasurement,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							Measurement: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDeathCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					Death: {}
+			},
+			{
+        ...constants.groupAttributes.addObservation,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							Observation: {}
+						}
+					}, unwrappedExpression.ConceptSets));
 				}
-			}, unwrappedExpression.ConceptSets));
-		}
+			},
+			{
+        ...constants.groupAttributes.addObservationPeriod,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							ObservationPeriod: {}
+						}
+					}, unwrappedExpression.ConceptSets));
+				}
+			},
+			{
+        ...constants.groupAttributes.addPayerPlanPeriod,
+        selected: false,
+        action: function() {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							PayerPlanPeriod: {}
+						}
+					}, unwrappedExpression.ConceptSets));			
+				}
+			},
+			{
+        ...constants.groupAttributes.addProcedureOccurrence,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							ProcedureOccurrence: {}
+						}
+					}, unwrappedExpression.ConceptSets));
+				}
+			},
+			{
+        ...constants.groupAttributes.addSpecimen,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							Specimen: {}
+						}
+					}, unwrappedExpression.ConceptSets));
+				}
+			},
+			{
+        ...constants.groupAttributes.addVisit,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							VisitOccurrence: {}
+						}
+					}, unwrappedExpression.ConceptSets));
+				}
+			},
+			{
+        ...constants.groupAttributes.addGroup,
+        selected: false,
+        action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
+				}
+      },
+    ];
 
 		self.removeCriteria = function (observableList, data) {
 			observableList.remove(data);
 		};
-
 
 		self.addEndWindow = function (corelatedCriteria) {
 			corelatedCriteria.EndWindow(new Window({UseEventEnd:true}));
@@ -187,28 +241,6 @@ define([
 		self.removeEndWindow = function (corelatedCriteria) {
 			corelatedCriteria.EndWindow(null);
 		};
-
-		self.actions = {};
-
-		self.actions[consts.CriteriaTypes.DEMOGRAPHIC] = self.addDemographicCriteria;
-		self.actions[consts.CriteriaTypes.CONDITION_ERA] = self.addConditionEraCriteria;
-		self.actions[consts.CriteriaTypes.CONDITION_OCCURRENCE] = self.addConditionCriteria;
-		self.actions[consts.CriteriaTypes.DEATH] = self.addDeathCriteria;
-		self.actions[consts.CriteriaTypes.DEVICE_EXPOSURE] = self.addDeviceCriteria;
-		self.actions[consts.CriteriaTypes.DOSE_ERA] = self.addDoseEraCriteria;
-		self.actions[consts.CriteriaTypes.DRUG_ERA] = self.addDrugEraCriteria;
-		self.actions[consts.CriteriaTypes.DRUG_EXPOSURE] = self.addDrugExposureCriteria;
-		self.actions[consts.CriteriaTypes.LOCATION_REGION] = self.addLocationRegionCriteria;
-		self.actions[consts.CriteriaTypes.MEASUREMENT] = self.addMeasurementCriteria;
-		self.actions[consts.CriteriaTypes.OBSERVATION] = self.addObservationCriteria;
-		self.actions[consts.CriteriaTypes.OBSERVATION_PERIOD] = self.addObservationPeriodCriteria;
-		self.actions[consts.CriteriaTypes.PAYER_PLAN_PERIOD] = self.addPayerPlanPeriodCriteria;
-		self.actions[consts.CriteriaTypes.PROCEDURE_OCCURRENCE] = self.addProcedureCriteria;
-		self.actions[consts.CriteriaTypes.SPECIMEN] = self.addSpecimenCriteria;
-		self.actions[consts.CriteriaTypes.VISIT] = self.addVisitCriteria;
-		self.actions[consts.CriteriaTypes.GROUP] = self.addAdditionalCriteria;
-
-		self.addCriteriaActions = consts.AddCriteriaActions.map(a => ({...a, action: self.actions[a.type]}));
 		
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",

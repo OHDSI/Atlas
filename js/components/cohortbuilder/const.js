@@ -274,6 +274,10 @@ define(["knockout"], function (ko) {
       defaultTitleVisit: 'Add Age at Occurrence Criteria',
       descriptionVisit: 'const.eventsList.addAge.desc_visit',
       defaultDescriptionVisit: 'Filter Visit Occurrences by age at occurrence.',
+      titleDemographic: 'const.eventsList.addAge.title_demographic',
+      defaultTitleDemographic: 'Add Age Criteria',
+      descriptionDemographic: 'const.eventsList.addAge.desc_demographic',
+      defaultDescriptionDemographic: 'Filter events based on age.',
     },
     addAgeAtStart: {
       titleEra: 'const.eventsList.addAgeAtStart.title_era',
@@ -368,11 +372,15 @@ define(["knockout"], function (ko) {
       defaultTitleSpecimen: 'Add Gender Criteria',
       descriptionSpecimen: 'const.eventsList.addGender.desc_specimen',
       defaultDescriptionSpecimen: 'Filter specimens based on Gender.',
-
       titleVisit: 'const.eventsList.addGender.title_visit',
       defaultTitleVisit: 'Add Gender Criteria',
       descriptionVisit: 'const.eventsList.addGender.desc_visit',
       defaultDescriptionVisit: 'Filter Visit Occurrences based on Gender.',
+
+      titleDemographic: 'const.eventsList.addGender.title_demographic',
+      defaultTitleDemographic: 'Add Gender Criteria',
+      descriptionDemographic: 'const.eventsList.addGender.desc_demographic',
+      defaultDescriptionDemographic: 'Filter events based on Gender.',
     },
     addDate:{
       titleDeath: 'const.eventsList.addDate.title_death',
@@ -433,6 +441,10 @@ define(["knockout"], function (ko) {
       defaultTitleVisit: 'Add Start Date Criteria',
       descriptionVisit: 'const.eventsList.addStartDate.desc_visit',
       defaultDescriptionVisit: 'Filter Visit Occurrences by the Condition Start Date.',
+      titleDemographic: 'const.eventsList.addStartDate.title_demographic',
+      defaultTitleDemographic: 'Add Start Date Criteria',
+      descriptionDemographic: 'const.eventsList.addStartDate.desc_demographic',
+      defaultDescriptionDemographic: 'Filter events based by Start Date.',
     },
     addEndDate: {
       titleEra: 'const.eventsList.addEndDate.title_era',
@@ -471,6 +483,10 @@ define(["knockout"], function (ko) {
       defaultTitleVisit: 'Add End Date Criteria',
       descriptionVisit: 'const.eventsList.addEndDate.desc_visit',
       defaultDescriptionVisit: 'Filter Visit Occurrences  by the Condition End Date.',
+      titleDemographic: 'const.eventsList.addEndDate.title_demographic',
+      defaultTitleDemographic: 'Add Event End Date Criteria',
+      descriptionDemographic: 'const.eventsList.addEndDate.desc_demographic',
+      defaultDescriptionDemographic: 'Filter events based by End Date.',
     },
     addUnit: {
       titleDose: 'const.eventsList.addUnit.title_dose',
@@ -927,6 +943,36 @@ define(["knockout"], function (ko) {
       defaultTitleSpecimen: 'Add Source ID Criteria',
       descriptionSpecimen: 'const.eventsList.addSourceId.desc_specimen',
       defaultDescriptionSpecimen: 'Filter Specimens by the Source ID.',
+    },
+    addRace: {
+      titleDemographic: 'const.eventsList.addRace.title_demographic',
+      defaultTitleDemographic: 'Add Race Criteria',
+      descriptionDemographic: 'const.eventsList.addRace.desc_demographic',
+      defaultDescriptionDemographic: 'Filter events based on Race.',
+    },
+    addEthnicity: {
+      titleDemographic: 'const.eventsList.addEthnicity.title_demographic',
+      defaultTitleDemographic: 'Add Ethnicity Criteria',
+      descriptionDemographic: 'const.eventsList.addEthnicity.desc_demographic',
+      defaultDescriptionDemographic: 'Filter events based on Ethnicity.',
+    },
+    addGroup: {
+      title: 'const.eventsList.addGroup.title',
+      defaultTitle: 'Add Group',
+      descriptionGroup: 'const.eventsList.addGroup.desc_group',
+      defaultDescriptionGroup: 'Add a group to combine criteria using and/or relationships.',
+    },
+    addDemographic: {
+      title: 'const.eventsList.addDemographic.title',
+      defaultTitle: 'Add Demographic',
+      descriptionGroup: 'const.eventsList.addDemographic.desc_group',
+      defaultDescriptionGroup: 'Filter events based on demographic criteria.',
+    },
+    addLocationRegion: {
+      title: 'const.eventsList.addLocationRegion.title',
+      defaultTitle: 'Add Location Region',
+      descriptionGroup: 'const.eventsList.addLocationRegion.desc_group',
+      defaultDescriptionGroup: 'Find patients within geographical area.',
     }
   }
 
@@ -1044,7 +1090,6 @@ define(["knockout"], function (ko) {
         "Apply criteria using the condition era as the index event"
       ),
     },
-
     addConditionEra: {
       title: "const.eventsList.addConditionEra.title",
       defaultText: "Add Condition Era",
@@ -1319,6 +1364,25 @@ define(["knockout"], function (ko) {
     'addSpecimen',
     'addVisit'
   ];
+  const groupAttributesList = [
+    'addDemographic',
+    'addConditionEra',
+    'addConditionOccurrence',
+    'addDeath',
+    'addDeviceExposure',
+    'addDoseEra',
+    'addDrugEra',
+    'addDrugExposure',
+    'addLocationRegion',
+    'addMeasurement',
+    'addObservation',
+    'addObservationPeriod',
+    'addPayerPlanPeriod',
+    'addProcedureOccurrence',
+    'addSpecimen',
+    'addVisit',
+    'addGroup',
+  ];
   const eraAttributesList = [
     'addFirstDiagnosis',
     'addAgeAtStart',
@@ -1474,7 +1538,6 @@ define(["knockout"], function (ko) {
     'addStopReasonSourceConcept',
     'addNested',
   ];
-
   const procedureOccurrenceAttributesList = [
     'addFirstDiagnosis',
     'addVisit',
@@ -1488,7 +1551,6 @@ define(["knockout"], function (ko) {
     'addModifier',
     'addNested',
   ];
-
   const specimenAttributesList = [
     'addFirstDiagnosis',
     'addGender',
@@ -1502,7 +1564,6 @@ define(["knockout"], function (ko) {
     'addDiseaseStatus',
     'addSourceId',
   ];
-
   const visitAttributesList = [
     'addFirstDiagnosis',
     'addGender',
@@ -1518,7 +1579,14 @@ define(["knockout"], function (ko) {
     'addPlaceServiceDistance',
     'addNested',
   ];
-
+  const demographicAttributesList = [
+    'addAge',
+    'addGender',
+    'addStartDate',
+    'addEndDate',
+    'addRace',
+    'addEthnicity',
+  ];
   const AddDemographic = {
     text: ko.unwrap(
       ko.i18n(
@@ -1736,7 +1804,8 @@ define(["knockout"], function (ko) {
   };
   const AddSpecimen = {
     text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.specimen.text", "Add Specimen")
+      ko.i18n("cc.viewEdit.design.subgroups.add.specimen.text", 
+      "Add Specimen")
     ),
     selected: false,
     description: ko.unwrap(
@@ -1749,7 +1818,8 @@ define(["knockout"], function (ko) {
   };
   const AddVisit = {
     text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.visit.text", "Visit")
+      ko.i18n("cc.viewEdit.design.subgroups.add.visit.text", 
+      "Visit")
     ),
     selected: false,
     description: ko.unwrap(
@@ -1762,7 +1832,8 @@ define(["knockout"], function (ko) {
   };
   const AddGroup = {
     text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.group.text", "Add Group")
+      ko.i18n("cc.viewEdit.design.subgroups.add.group.text", 
+      "Add Group")
     ),
     selected: false,
     description: ko.unwrap(
@@ -1818,6 +1889,7 @@ define(["knockout"], function (ko) {
   return {
     initialEventList: getListCriteria(initialEventList, 'initial'),
     censoringEventList: getListCriteria(censoringEventList, 'censoring'),
+    groupAttributes: getListCriteria(groupAttributesList, 'group'),
     eraAttributes: getListCriteria(eraAttributesList, 'era', 'era'),
     occurrenceAttributes: getListCriteria(occurrenceAttributesList, 'occurrence', 'occurrence'),
     deathAttributes: getListCriteria(deathAttributesList, 'death', 'death'),
@@ -1832,6 +1904,7 @@ define(["knockout"], function (ko) {
     procedureOccurrenceAttributes: getListCriteria(procedureOccurrenceAttributesList, 'procedureoccurrence', 'procedureoccurrence'),
     specimenAttributes: getListCriteria(specimenAttributesList, 'specimen', 'specimen'),
     visitAttributes: getListCriteria(visitAttributesList, 'visit', 'visit'),
+    demographicAttributes: getListCriteria(demographicAttributesList, 'demographic', 'demographic'),
 
     CriteriaTypes,
     AddCriteriaActions,

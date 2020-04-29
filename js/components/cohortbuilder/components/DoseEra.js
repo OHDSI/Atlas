@@ -5,7 +5,7 @@ define([
   "../InputTypes/Range",
   "../CriteriaGroup",
   "text!./DoseEraTemplate.html",
-  "../const"
+  "../const",
 ], function (ko, options, utils, Range, CriteriaGroup, template, constants) {
   function DoseEraViewModel(params) {
     var self = this;

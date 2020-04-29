@@ -4,16 +4,26 @@
 	<thead>
 		<th style="width: 15px;"></th>
 		<th></th>
-		<th>Match Rate</th>
-		<th>Matches</th>
+		<th>
+			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_1', 'Match Rate')"></span>
+		</th>
+		<th>
+			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_2', 'Matches')"></span>
+		</th>
 		<!-- ko if: report().summary.lostCount != 0 -->
-		<th>Lost from censoring</th>
+		<th>
+			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_3', 'Lost from censoring')"></span>
+		</th>
 		<!-- /ko -->
-		<th>Total Events</th>
+		<th>
+			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_4', 'Total Events')"></span>
+		</th>
 	</thead>
 	<tbody>
 		<td></td>
-		<td class="header">Summary Statistics:</td>
+		<td class="header">
+			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_5', 'Summary Statistics:')"></span>
+		</td>
 		<td data-bind="text:report().summary.percentMatched"></td>
 		<td data-bind="text:report().summary.finalCount.toLocaleString()"></td>
 		<!-- ko if: report().summary.lostCount != 0 -->
@@ -25,15 +35,23 @@
 
 <!-- ko if: report().inclusionRuleStats.length > 0 -->
 <div style="position: relative">
-<!-- ko if: selectedView() == 'intersect' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to attrition view', click: function() { selectedView('attrition'); }"></span> <!-- /ko -->
-<!-- ko if: selectedView() == 'attrition' --><span class="toggleView" style="position: absolute; right:5px" data-bind="text: 'Switch to intersect view', click: function() { selectedView('intersect'); }"></span> <!-- /ko -->			
+<!-- ko if: selectedView() == 'intersect' -->
+<span class="toggleView" style="position: absolute; right:5px" 
+data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_6', 'Switch to attrition view'), click: function() { selectedView('attrition'); }"></span> <!-- /ko -->
+<!-- ko if: selectedView() == 'attrition' -->
+<span class="toggleView" style="position: absolute; right:5px" 
+data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_7', 'Switch to intersect view'), click: function() { selectedView('intersect'); }"></span> <!-- /ko -->			
 </div>
-<div data-bind="visible: selectedView() == 'intersect'"><feasibility-intersect-report params="report: report"></feasibility-intersect-report></div>
-<div data-bind="visible: selectedView() == 'attrition'"><feasibility-attrition-report params="report: report"></feasibility-attrition-report></div>
+<div data-bind="visible: selectedView() == 'intersect'">
+	<feasibility-intersect-report params="report: report"></feasibility-intersect-report></div>
+<div data-bind="visible: selectedView() == 'attrition'">
+	<feasibility-attrition-report params="report: report"></feasibility-attrition-report></div>
 <!-- /ko -->
 <!-- ko if: report().inclusionRuleStats.length == 0 -->
 <div class="no-inclusion-message__container">
-	<div>No inclusion rules specified for this cohort definition.</div>
+	<div>
+		<span dta-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_8', 'No inclusion rules specified for this cohort definition.')"></span>
+	</div>
 </div>
 <!-- /ko -->
 <!-- /ko -->

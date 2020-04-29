@@ -10,7 +10,10 @@
 							<span data-bind="text: ko.i18n('components.demographicCriteria.addAttribute', 'Add attribute...')"></span>
 							<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>

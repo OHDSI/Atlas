@@ -5,7 +5,7 @@ define([
   "../InputTypes/Range",
   "../CriteriaGroup",
   "text!./DrugEraTemplate.html",
-  "../const"
+  "../const",
 ], function (ko, options, utils, Range, CriteriaGroup, template, constants) {
   function DrugEraViewModel(params) {
     var self = this;
@@ -99,7 +99,6 @@ define([
     self.removeCriterion = function (propertyName) {
       self.Criteria[propertyName](null);
     };
-
     self.indexMessage = ko.i18nformat(
       "cc.viewEdit.design.subgroups.add.drug-era.criteria.index-data.text",
       "The index date refers to the drug era of <%= conceptSetName %>.",

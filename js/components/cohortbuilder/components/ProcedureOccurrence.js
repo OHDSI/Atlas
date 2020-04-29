@@ -5,9 +5,18 @@ define([
   "../InputTypes/Range",
   "../InputTypes/Text",
   "../CriteriaGroup",
-	"text!./ProcedureOccurrenceTemplate.html",
-	"../const"
-], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
+  "text!./ProcedureOccurrenceTemplate.html",
+  "../const",
+], function (
+  ko,
+  options,
+  utils,
+  Range,
+  Text,
+  CriteriaGroup,
+  template,
+  constants
+) {
   function ProcedureOccurrenceViewModel(params) {
     var self = this;
     self.addActions = [

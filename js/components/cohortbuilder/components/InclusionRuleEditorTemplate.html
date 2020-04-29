@@ -1,10 +1,15 @@
 <!-- ko with: InclusionRule -->
 <div class="inclusion-rule-header">
 	<div class="input-group">
-		<input type="text" class="form-control" maxlength="255" placeholder="Unnamed Criteria" data-bind="textInput: name, css: { emptyInput: !(name() && (name().length > 0)) }" />
+		<input type="text" class="form-control" maxlength="255" 
+		data-bind="attr: {placeholder: ko.i18n('components.inclusionRuleEditor.unnamedCriteria', 'Unnamed Criteria')}, textInput: name, css: { emptyInput: !(name() && (name().length > 0)) }" />
 		<div class="input-group-btn">
-			<button class="btn btn-sm btn-primary copyInclusionRule">Copy</button>
-			<button class="btn btn-sm btn-danger deleteInclusionRule">Delete</button>
+			<button class="btn btn-sm btn-primary copyInclusionRule">
+				<span data-bind="text: ko.i18n('components.inclusionRuleEditor.copy', 'Copy')"></span>
+			</button>
+			<button class="btn btn-sm btn-danger deleteInclusionRule">
+				<span data-bind="text: ko.i18n('components.inclusionRuleEditor.delete', 'Delete')"></span>
+			</button>
 		</div>
 	</div>
 </div>

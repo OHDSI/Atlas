@@ -1,22 +1,25 @@
 <!-- ko if: strategy()-->
 <div>
-	<b>Fixed Duration Persistence:</b><br/>
+	<b data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_1', 'Fixed Duration Persistence:')"></b><br/>
 </div>
 <div>
-	The event end date is derived from adding a number of days to the event's start or end date.
+	<span data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_2', 'The event end date is derived from adding a number of days to the event's start or end date.
 	If an offset is added to the event's start date, all cohort episodes will have the same fixed duration
 	(subject to further censoring).  If an offset is added to the event's end date,
 	persons in the cohort may have varying cohort duration times due to the varying event durations
 	(such as eras of persistent drug exposure or visit length of stay).  This event persistence assures that the cohort
-	end date will be no greater than the selected index event date, plus the days offset.
+	end date will be no greater than the selected index event date, plus the days offset.')"></span>
 </div>
 <div style="padding: 5px 0px">
 	<ul>
 		<li>
-			Event date to offset from:  <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: strategy().DateField" />
+			<span data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_3', 'Event date to offset from:')"></span> 
+			<select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: strategy().DateField" />
 		</li>
 		<li>
-			Number of days offset:  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: strategy().Offset.numeric(), eventType:'blur', ko_autocomplete: { value: strategy().Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days
+			<span data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_4', 'Number of days offset:')"></span>  
+			<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: strategy().Offset.numeric(), eventType:'blur', ko_autocomplete: { value: strategy().Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"></span>
+			<span data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_5', 'days')"></span>  
 		</li>
 	</ul>
 </div>

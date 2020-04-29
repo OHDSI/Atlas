@@ -4,16 +4,16 @@
         eventType: 'blur',
         ko_autocomplete: { value: Window.Start.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
         selectOnFocus: {events: ['click']},
-        attr: {placeholder: ko.i18n('cc.viewEdit.design.subgroups.component.window-input-template.placeholder.all', 'All')}
+        attr: {placeholder: ko.i18n('components.windowInput.windowInputText_1', 'All')}
     " />
-    <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.window-input-template.days', 'days')"></span>
+    <span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.Start.Coeff" />
-    <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.window-input-template.and', 'and')"></span>
+    <span data-bind="text:ko.i18n('components.windowInput.windowInputText_3', 'and')"></span>
 <span contenteditable="true" placeholder="All" class="dropdown numericInputField" data-bind="
         htmlValue: Window.End.Days.numeric(),
         eventType: 'blur', ko_autocomplete: { value: Window.End.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
         selectOnFocus: {events: ['click']},
-        attr: {placeholder: ko.i18n('cc.viewEdit.design.subgroups.component.window-input-template.placeholder.all', 'All')}
+        attr: {placeholder: ko.i18n('components.windowInput.windowInputText_1', 'All')}
 " />
-    <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.component.window-input-template.days', 'days')"></span>
+    <span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.End.Coeff" />

@@ -216,7 +216,6 @@ define([
     self.removeCriterion = function (propertyName) {
       self.Criteria[propertyName](null);
     };
-
     self.indexMessage = ko.i18nformat(
       "cc.viewEdit.design.subgroups.add.drug-exposure.criteria.index-data.text",
       "The index date refers to the drug exposure of <%= conceptSetName %>.",

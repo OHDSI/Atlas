@@ -6,8 +6,17 @@ define([
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./DeviceExposureTemplate.html",
-  "../const"
-], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
+  "../const",
+], function (
+  ko,
+  options,
+  utils,
+  Range,
+  Text,
+  CriteriaGroup,
+  template,
+  constants
+) {
   function DeviceExposureViewModel(params) {
     var self = this;
 
@@ -25,21 +34,21 @@ define([
     self.addActions = [
       {
         ...constants.deviceAttributes.addFirstDiagnosis,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.First() == null) self.Criteria.First(true);
         },
       },
       {
         ...constants.deviceAttributes.addAge,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.Age() == null) self.Criteria.Age(new Range());
         },
       },
       {
         ...constants.deviceAttributes.addGender,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
@@ -47,7 +56,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addStartDate,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.OccurrenceStartDate() == null)
             self.Criteria.OccurrenceStartDate(
@@ -59,7 +68,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addEndDate,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.OccurrenceEndDate() == null)
             self.Criteria.OccurrenceEndDate(
@@ -71,7 +80,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addType,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.DeviceType() == null)
             self.Criteria.DeviceType(ko.observableArray());
@@ -79,7 +88,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addVisit,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.VisitType() == null)
             self.Criteria.VisitType(ko.observableArray());
@@ -87,7 +96,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addUniqueId,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.UniqueDeviceId() == null)
             self.Criteria.UniqueDeviceId(
@@ -99,7 +108,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addQuantity,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.Quantity() == null)
             self.Criteria.Quantity(
@@ -111,7 +120,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addSourceConcept,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.DeviceSourceConcept() == null)
             self.Criteria.DeviceSourceConcept(ko.observable());
@@ -119,7 +128,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addProviderSpecialty,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.ProviderSpecialty() == null)
             self.Criteria.ProviderSpecialty(ko.observableArray());
@@ -127,7 +136,7 @@ define([
       },
       {
         ...constants.deviceAttributes.addNested,
-		selected: false,
+        selected: false,
         action: function () {
           if (self.Criteria.CorrelatedCriteria() == null)
             self.Criteria.CorrelatedCriteria(
