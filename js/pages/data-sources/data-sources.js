@@ -36,68 +36,68 @@ define([
 			super(params);
 
 			this.reports = [{
-					name: "Dashboard",
+					name: ko.i18n('dataSources.reports.dashboard', 'Dashboard'),
 					path: "dashboard",
 					component: "report-dashboard",
 					summary: ko.observable()
 				},
 				{
-					name: "Data Density",
+					name: ko.i18n('dataSources.reports.dataDensity', 'Data Density'),
 					path: "datadensity",
 					component: "report-datadensity",
 				},
 				{
-					name: "Person",
+					name: ko.i18n('dataSources.reports.person', 'Person'),
 					path: "person",
 					component: "report-person",
 				},
 				{
-					name: "Visit",
+					name: ko.i18n('dataSources.reports.visit', 'Visit'),
 					path: "visit",
 					component: "report-visit",
 				},
 				{
-					name: "Condition Occurrence",
+					name: ko.i18n('dataSources.reports.conditionOccurrence', 'Condition Occurrence'),
 					path: "condition",
 					component: "report-condition",
 				},
 				{
-					name: "Condition Era",
+					name: ko.i18n('dataSources.reports.conditionEra', 'Condition Era'),
 					path: "conditionera",
 					component: "report-condition-era",
 				},
 				{
-					name: "Procedure",
+					name: ko.i18n('dataSources.reports.procedure', 'Procedure'),
 					path: "procedure",
 					component: "report-procedure",
 				},
 				{
-					name: "Drug Exposure",
+					name: ko.i18n('dataSources.reports.drugExposure', 'Drug Exposure'),
 					path: "drug",
 					component: "report-drug",
 				},
 				{
-					name: "Drug Era",
+					name: ko.i18n('dataSources.reports.drugEra', 'Drug Era'),
 					path: "drugera",
 					component: "report-drug-era",
 				},
 				{
-					name: "Measurement",
+					name: ko.i18n('dataSources.reports.measurement', 'Measurement'),
 					path: "measurement",
 					component: "report-measurement",
 				},
 				{
-					name: "Observation",
+					name: ko.i18n('dataSources.reports.observation', 'Observation'),
 					path: "observation",
 					component: "report-observation",
 				},
 				{
-					name: "Death",
+					name: ko.i18n('dataSources.reports.death', 'Death'),
 					path: "death",
 					component: "report-death",
 				},
 				{
-					name: "Achilles Heel",
+					name: ko.i18n('dataSources.reports.achillesHeel', 'Achilles Heel'),
 					path: "achillesheel",
 					component: "report-achilles-heel",
 				},
