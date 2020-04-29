@@ -47,9 +47,9 @@ define([
 						const steps = node.path.split('||');
 						const i = steps.length - 1;
 						return `<div class="pathleaf">${steps[i]}</div>
-            <div class="pathleafstat">Prevalence: ${ChartUtils.formatPercent(node.percent_persons)}</div>
-            <div class="pathleafstat">Number of People: ${ChartUtils.formatComma(node.num_persons)}</div>
-            <div class="pathleafstat">${this.aggProperty.description}: ${ChartUtils.formatFixed(node.agg_value)}</div>
+            <div class="pathleafstat">${ko.i18n('dataSources.prevalence', 'Prevalence')()}: ${ChartUtils.formatPercent(node.percent_persons)}</div>
+            <div class="pathleafstat">${ko.i18n('dataSources.numberOfPeople', 'Number of People')()}</span>: ${ChartUtils.formatComma(node.num_persons)}</div>
+            <div class="pathleafstat">${ko.unwrap(this.aggProperty.description)}: ${ChartUtils.formatFixed(node.agg_value)}</div>
             `;
 					},
 					gettitle: (node) => {
@@ -70,28 +70,28 @@ define([
 						$(row).addClass('table_selector');
 					},
 					columns: [{
-							title: 'Concept Id',
+							title: ko.i18n('dataSources.table.conceptId', 'Concept Id'),
 							data: 'concept_id',
 							className: 'treemap__tbl-col--narrow numeric'
 						},
 						{
-							title: 'Name',
+							title: ko.i18n('dataSources.table.name', 'Name'),
 							data: 'name'
 						},
 						{
-							title: 'Person Count',
+							title: ko.i18n('dataSources.table.personCount', 'Person Count'),
 							data: 'num_persons',
 							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
 						},
 						{
-							title: 'Prevalence',
+							title: ko.i18n('dataSources.table.prevalence', 'Prevalence'),
 							data: 'percent_persons',
 							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
 						},
 						{
-							title: this.aggProperty.description,
+							title: ko.unwrap(this.aggProperty.description),
 							data: 'agg_value',
 							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']

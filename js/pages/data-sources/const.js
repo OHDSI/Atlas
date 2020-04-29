@@ -1,5 +1,6 @@
 define(
   (require, factory) => {
+    const ko = require('knockout');
     const config = require('appConfig');
 
     const apiPaths = {
@@ -9,11 +10,11 @@ define(
     // aggregate property descriptors
     const recordsPerPersonProperty = {
       name: "recordsPerPerson",
-      description: "Records per person"
+      description: ko.i18n('dataSources.const.recordsPerPerson', 'Records per person')
     };
     const lengthOfEraProperty = {
       name: "lengthOfEra",
-      description: "Length of era"
+      description: ko.i18n('dataSources.const.lengthOfEra', 'Length of era')
     };
 
     return {

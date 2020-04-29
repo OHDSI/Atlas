@@ -71,8 +71,8 @@ define([
 					xScale: null,
 					xFormat: d3.timeFormat("%m/%Y"),
 					tickFormat: d3.timeFormat("%Y"),
-					xLabel: "Date",
-					yLabel: "Prevalence per 1000 People",
+					xLabel: ko.i18n('dataSources.drilldown.chartFormat.date', 'Date'),
+					yLabel: ko.i18n('dataSources.drilldown.chartFormat.prevalencePer1000People', 'Prevalence per 1000 People'),
 				},
 				prevalenceByType: {
 					margin: {
@@ -83,8 +83,8 @@ define([
 					}
 				},
 				age: {
-					xLabel: 'Gender',
-					yLabel: 'Age at First Occurrence',
+					xLabel: ko.i18n('dataSources.drilldown.chartFormat.gender', 'Gender'),
+					yLabel: ko.i18n('dataSources.drilldown.chartFormat.ageAtFirstOccurrence', 'Age at First Occurrence'),
 					yFormat: d3.format(',.1s'),
 				},
 				frequencyDistribution: {
@@ -94,7 +94,7 @@ define([
 					yScale: d3.scaleLinear().domain([0, 100]),
 					yMax: 0,
 					xLabel: 'xLabel',
-					yLabel: '% of total number of persons',
+					yLabel: ko.i18n('dataSources.drilldown.chartFormat.percentOfTotalNumberOfPersons', '% of total number of persons'),
 					xValue: 'x',
 					yValue: 'y',
 					getTooltipBuilder: options => d => {
@@ -107,9 +107,9 @@ define([
 				},
 				prevalenceByGenderAgeYear: {
 					trellisSet: [],
-					trellisLabel: "Age Decile",
-					seriesLabel: "Year of Observation",
-					yLabel: "Prevalence Per 1000 People",
+					trellisLabel: ko.i18n('dataSources.drilldown.chartFormat.ageDecile', 'Age Decile'),
+					seriesLabel: ko.i18n('dataSources.drilldown.chartFormat.yearOfObservation', 'Year of Observation'),
+					yLabel: ko.i18n('dataSources.drilldown.chartFormat.prevalencePer1000People', 'Prevalence Per 1000 People'),
 					xFormat: d3.timeFormat("%Y"),
 					yFormat: d3.format("0.2f"),
 					tickPadding: 20,
@@ -209,7 +209,11 @@ define([
 					frequencyHistogram.INTERVAL_SIZE = 1;
 					const yScaleMax = (Math.floor((Math.max.apply(null, freqData.yNumPersons) + 5) / 10) + 1) * 10;
 					this.chartFormats.frequencyDistribution.yMax = yScaleMax;
-					this.chartFormats.frequencyDistribution.xLabel = `Count ('x' or more ${report}s)`;
+					this.chartFormats.frequencyDistribution.xLabel = ko.pureComputed(function () {
+						return ko.i18n('dataSources.drilldown.chartFormat.frequencyDistribution.xLabel1', 'Count ("x" or more ')() +
+							report() +
+							ko.i18n('dataSources.drilldown.chartFormat.frequencyDistribution.xLabel2', 's)')();
+					});
 					this.chartFormats.frequencyDistribution.ticks = Math.min(5, frequencyHistogram.INTERVALS);
 					const freqHistData = atlascharts.histogram.mapHistogram(frequencyHistogram);
 					this.frequencyDistributionData(freqHistData);
@@ -272,7 +276,7 @@ define([
 			this.parsePrevalenceByType(data.byType);
 			this.parsePrevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
 			if (this.byFrequency) {
-				this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.path);
+				this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.name);
 			}
 
 			if (this.byValueAsConcept) {
