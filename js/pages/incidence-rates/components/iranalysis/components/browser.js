@@ -23,20 +23,20 @@ define([
 			this.options = {
 				Facets: [
 					{
-						'caption': 'Last Modified',
+						'caption': ko.i18n('facets.caption.lastModified', 'Last Modified'),
 						'binding': function (o) {
 							var daysSinceModification = (new Date().getTime() - new Date(o.modifiedDate || o.createdDate).getTime()) / 1000 / 60 / 60 / 24;
 							if (daysSinceModification < 7) {
-								return 'This Week';
+								return ko.i18n('facets.date.thisWeek', 'This Week');
 							} else if (daysSinceModification < 14) {
-								return 'Last Week';
+								return ko.i18n('facets.date.lastWeek', 'Last Week');
 							} else {
-								return '2+ Weeks Ago';
+								return ko.i18n('facets.date.other', '2+ Weeks Ago');
 							}
 						}
 					},
 					{
-						'caption': 'Author',
+						'caption': ko.i18n('facets.caption.author', 'Author'),
 						'binding': function (o) {
 							return o.createdBy;
 						}
@@ -46,26 +46,26 @@ define([
 
 			this.columns = [
 				{
-					title: 'Id',
+					title: ko.i18n('columns.id', 'Id'),
 					data: 'id'
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['name'],
 						linkish: true,
 					})),
 				},
 				{
-					title: 'Created',
+					title: ko.i18n('columns.created', 'Created'),
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
-					title: 'Updated',
+					title: ko.i18n('columns.updated', 'Updated'),
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
-					title: 'Author',
+					title: ko.i18n('columns.author', 'Author'),
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];
