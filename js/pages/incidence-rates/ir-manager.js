@@ -372,8 +372,7 @@ define([
 		}
 
 		closeAndShowList() {
-
-			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('ir.notSavedMessage', 'Incidence Rate Analysis changes are not saved. Would you like to continue?')())) {
 				return;
 			}
 			this.close();

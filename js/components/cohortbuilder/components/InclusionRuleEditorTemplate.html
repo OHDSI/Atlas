@@ -13,6 +13,6 @@
 		</div>
 	</div>
 </div>
-<div class="divtext" placeholder="enter an inclusion rule description" data-bind="contentEditable:description"></div>
+<div class="divtext" data-bind="contentEditable: description, placeholder: ko.i18n('components.inclusionRuleEditor.ruleDescriptionPlaceholder', 'enter an inclusion rule description')"></div>
 <!-- /ko -->
 <criteria-group params="{expression: IndexRule, group: InclusionRule().expression, indexMessage: 'The index date refers to the event from the Cohort Entry criteria.'}"></criteria-group>

@@ -21,25 +21,25 @@
 			</div>
 			<div data-bind="visible: !isNameFilled()" class="empty-name-error">
 				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-				<label>Incidence Rate Analysis name is empty.</label>
+				<label data-bind="text: ko.i18n('ir.nameIsEmpty', 'Incidence Rate Analysis name is empty.')"></label>
 			</div>
 		</div>
 
 		<ul class="nav nav-tabs">
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.selectTab(tabs.DEFINITION) };">
-				<a>Definition</a>
+				<a data-bind="text: ko.i18n('ir.tabs.definition', 'Definition')"></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.CONCEPT_SETS }, click: function() { $component.selectTab(tabs.CONCEPT_SETS) };">
-				<a>Concept Sets</a>
+				<a data-bind="text: ko.i18n('ir.tabs.conceptSets', 'Concept Sets')"></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.GENERATION }, click: function() { $component.selectTab(tabs.GENERATION) };">
-				<a>Generation</a>
+				<a data-bind="text: ko.i18n('ir.tabs.generation', 'Generation')"></a>
 			</li>
 
             <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
-				<a>Utilities</a>
+				<a data-bind="text: ko.i18n('ir.tabs.utilities', 'Utilities')"></a>
             </li>
 
 		</ul>
@@ -78,8 +78,8 @@
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
 				<div class="paddedWrapper">
                     <ul class="nav nav-pills">
-                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
-                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a data-bind="text: ko.i18n('component.import.button', 'Import')"></a></li>
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a data-bind="text: ko.i18n('component.export.button', 'Export')"></a></li>
 						<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'sql'}, click: () => $component.expressionMode('sql')"><a>SQL</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
@@ -116,7 +116,7 @@
 	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<div class="modal-header">Select Concept Set...</div>
+				<div class="modal-header" data-bind="text: ko.i18n('ir.cs.modalTitle', 'Select Concept Set...')"></div>
 				<div class="paddedWrapper">
 					<cohort-concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></cohort-concept-set-browser>
 				</div>
@@ -125,7 +125,7 @@
 	</div>
 	<!-- /ko -->
 </div>
-<div data-bind="visible:loading()" class="loading">loading</div>
+<div data-bind="visible: loading(), text: ko.i18n('common.loading', 'loading')" class="loading"></div>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,
