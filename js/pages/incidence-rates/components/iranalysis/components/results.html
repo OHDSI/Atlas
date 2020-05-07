@@ -1,11 +1,11 @@
 <div data-bind="css: classes('header')">
 	<div>
-		Showing target cohort: <select data-bind="options: analysisCohorts().targetCohorts,
+		<span data-bind="text: ko.i18n('ir.results.showingTargetCohort', 'Showing target cohort:')"></span> <select data-bind="options: analysisCohorts().targetCohorts,
 			optionsText: function(item) { return item.name },
 			optionsValue: 'id',
 			value: selectedTarget" class="mediumInputField">
 		</select>
-			and outcome cohort:
+		<span data-bind="text: ko.i18n('ir.results.andOutcomeCohort', 'and outcome cohort:')"></span>
 		<select data-bind="options: analysisCohorts().outcomeCohorts,
 			optionsText: function(item) { return item.name },
 			optionsValue: 'id',
@@ -17,7 +17,7 @@
 			data-bind="css: classes('generate-btn')"
 			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: $component.executionDisabled, disabledReason: $component.executionDisabledReason"
 		></select-sources-btn>
-		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': disableExportAnalysis, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export Analysis to CSV</button>
+		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': disableExportAnalysis, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> <span data-bind="text: ko.i18n('ir.results.exportToCsvButton', 'Export Analysis to CSV')"></span></button>
 	</div>
 </div>
 
@@ -25,39 +25,31 @@
 	<table data-bind="css: classes({ element: 'tbl', extra: 'sourceTable' })">
 		<thead>
 			<th data-bind="css: classes('tbl-th', 'execute')"></th>
-			<th data-bind="css: classes('tbl-th', 'source')">Source Name</th>
-			<th data-bind="css: classes('tbl-th', 'persons', 'smallHeading dataCol')">
-				Persons
-			</th>
-			<th data-bind="css: classes('tbl-th', 'cases', 'smallHeading dataCol')">
-				Cases
-			</th>
+			<th data-bind="css: classes('tbl-th', 'source'), text: ko.i18n('ir.results.sourceName', 'Source Name')"></th>
+			<th data-bind="css: classes('tbl-th', 'persons', 'smallHeading dataCol'), text: ko.i18n('ir.results.persons', 'Persons')"></th>
+			<th data-bind="css: classes('tbl-th', 'cases', 'smallHeading dataCol'), text: ko.i18n('ir.results.cases', 'Cases')"></th>
 			<th data-bind="css: classes('tbl-th', 'proportion', 'smallHeading dataCol')">
-				Proportion [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small>
+				<span data-bind="text: ko.i18n('ir.results.proportion', 'Proportion')"></span> [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small>
 			</th>
 			<th data-bind="css: classes('tbl-th', 'time-at-risk', 'smallHeading dataCol')">
-				Time At Risk<br/><small>(years)</small>
+				<span data-bind="text: ko.i18n('ir.results.timeAtRisk', 'Time At Risk')"></span><br/><small data-bind="text: ko.i18n('ir.results.timeAtRiskYears', '(years)')"></small>
 			</th>
 			<th data-bind="css: classes('tbl-th', 'rate', 'smallHeading dataCol')">
-				Rate [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small>
+				<span data-bind="text: ko.i18n('ir.results.rate', 'Rate')"></span> [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small>
 			</th>
-			<th data-bind="css: classes('tbl-th', 'started', 'smallHeading dataCol')">
-				Started
-			</th>
-			<th data-bind="css: classes('tbl-th', 'duration', 'smallHeading dataCol')">
-				Duration
-			</th>
+			<th data-bind="css: classes('tbl-th', 'started', 'smallHeading dataCol'), text: ko.i18n('ir.results.started', 'Started')"></th>
+			<th data-bind="css: classes('tbl-th', 'duration', 'smallHeading dataCol'), text: ko.i18n('ir.results.duration', 'Duration')"></th>
 			<th data-bind="css: classes('tbl-th', 'view-results')"></th>
 		</thead>
 		<tbody data-bind="foreach: sources().filter(function(source) { return source.info() != null; })">
 			<tr>
 				<td data-bind="css: $component.classes('tbl-col')" nowrap>
 					<!-- ko ifnot: $component.isInProgress($data) -->
-						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: $component.isExecutionDisabled(source), disabledReason: $component.executionDisabledReason"></select-sources-btn>
+						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: ko.i18n('ir.results.rerun', 'Rerun'), disabled: $component.isExecutionDisabled(source), disabledReason: $component.executionDisabledReason"></select-sources-btn>
 					<!-- /ko -->
 					<!-- ko if: $component.isInProgress($data) -->
 						<a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelExecution(source.sourceKey), attr: {disabled: $component.stoppingSources()[source.sourceKey] }">
-							<i class="fa fa-spinner fa-spin"></i> Cancel
+							<i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('ir.results.cancel', 'Cancel')"></span>
 						</a>
 					<!-- /ko -->
 				</td>
@@ -77,10 +69,10 @@
 					<!-- ko ifnot: info().executionInfo.isValid -->
 						<td data-bind="css: $component.classes('tbl-col')" colspan="5">
 							<!-- ko if: info().executionInfo.isCanceled -->
-								CANCELED
+							<span data-bind="text: ko.i18n('ir.results.canceled', 'CANCELED')"></span>
 							<!-- /ko -->
 							<!-- ko if: !info().executionInfo.isCanceled -->
-								<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage(source.sourceKey)">FAILED</a>
+								<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage(source.sourceKey), text: ko.i18n('ir.results.failed', 'FAILED')"></a>
 							<!-- /ko -->
 						</td>
 					<!-- /ko -->
@@ -89,7 +81,7 @@
 					<td align="center" data-bind="css: $component.classes('tbl-col', 'view-reports') ">
 						<span data-bind="tooltip: $component.reportDisabledReason(source)">
 							<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid, click:$parent.selectSource, enable: $component.hasSourceAccess(source.sourceKey)">
-								<i class="fa fa-eye"></i> Reports
+								<i class="fa fa-eye"></i> <span data-bind="text: ko.i18n('ir.results.reports', 'Reports')"></span>
 							</button>
 							<button data-bind="enable: $component.hasSourceAccess(source.sourceKey)" class="btn btn-sm btn-danger removeResult">
 								<i class="fa fa-trash"></i>
@@ -98,10 +90,10 @@
 					</td>
 				<!-- /ko -->
 				<!-- ko if: $component.isInProgress($data) -->
-					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
+					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> <span data-bind="text: ko.i18n('ir.results.running', 'Running')"></span></td>
 				<!-- /ko -->
 				<!-- ko if: $component.isSummaryLoading($data) -->
-					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Loading summary...</td>
+					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> <span data-bind="text: ko.i18n('ir.results.loadingSummary', 'Loading summary...')"></span></td>
 				<!-- /ko -->
 			</tr>
 		</tbody>
@@ -112,13 +104,13 @@
 	<div data-bind="css: classes('report-block'), visible: !isLoading()">
 		<div data-bind="css: classes('report-header')">
 			<h3 data-bind="css: classes('report-title'), text: selectedSource() ? selectedSource().source.sourceName : ''"></h3>
-			<a data-bind="css: classes('report-close'), click: closeReport">Close</a>
+			<a data-bind="css: classes('report-close'), click: closeReport, text: ko.i18n('ir.results.close', 'Close')"></a>
 		</div>
 		<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, calculateProportion: calculateProportion, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption, ipCaption: ipCaption"></ir-analysis-report>
 	</div>
 <!-- /ko -->
 
-<div data-bind="visible: isLoading()" class="loading">loading</div>
+<div data-bind="visible: isLoading(), text: ko.i18n('common.loading', 'loading')" class="loading"></div>
 
 
 <modal-exit-message params="{

@@ -36,7 +36,7 @@ define([
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
 				disabled: this.isInProgress(s) || !this.hasSourceAccess(s.source.sourceKey),
-				disabledReason: this.isInProgress(s) ? 'Generation is in progress' : !this.hasSourceAccess(s.source.sourceKey) ? 'Access denied' : null,
+				disabledReason: this.isInProgress(s) ? ko.i18n('ir.results.generationInProgress', 'Generation is in progress')() : !this.hasSourceAccess(s.source.sourceKey) ? ko.i18n('ir.results.accessDenied', 'Access denied')() : null,
 			})));
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
@@ -64,14 +64,14 @@ define([
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
-				return "per " + multiplier  + " years";
+				return ko.i18n('ir.results.per', 'per')() + ' ' + multiplier  + ' ' + ko.i18n('ir.results.perYears', 'years')();
 			});
 
 			this.ipCaption = ko.pureComputed(() => {
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
-				return "per " + multiplier  + " persons";
+				return ko.i18n('ir.results.per', 'per')() + ' ' + multiplier  + ' ' + ko.i18n('ir.results.perPersons', 'persons')();
 			});
 
 			// observable subscriptions
@@ -190,14 +190,14 @@ define([
 			})
 			.catch(er => {
 				console.error(er);
-				alert('There was an error while loading generation result reports');
+				alert(ko.i18n('ir.results.loadingGenerationResultErrorMessage', 'There was an error while loading generation result reports')());
 				this.isLoading(false);
 			});
 		};
 
 		runGenerations(selectedSources) {
 			if (!this.analysisCohorts().targetCohorts().length || !this.analysisCohorts().outcomeCohorts().length) {
-				alert('You should select at least one target and outcome cohort to generate');
+				alert(ko.i18n('ir.results.selectTargetAndOutcomeAlert', 'You should select at least one target and outcome cohort to generate')());
 				return false;
 			}
 			selectedSources.forEach(source => this.execute(source.sourceKey));

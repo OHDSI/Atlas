@@ -388,7 +388,7 @@ define([
 			try{
 				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
 				if (results > 0) {
-					alert('An incidence rate with this name already exists. Please choose a different name.');
+					alert(ko.i18n('ir.nameConflict', 'An incidence rate with this name already exists. Please choose a different name.')());
 				} else {
 					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
 					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
@@ -396,7 +396,7 @@ define([
 					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save an incidence rate.');
+				alert(ko.i18n('ir.savingError', 'An error occurred while attempting to save an incidence rate.')());
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -404,7 +404,7 @@ define([
 		}
 
 		delete() {
-			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
+			if (!confirm(ko.i18n('ir.deleteConfirmation', 'Delete incidence rate analysis? Warning: deletion can not be undone!')()))
 				return;
 
 			this.isDeleting(true);
@@ -416,7 +416,7 @@ define([
 		}
 
 		removeResult(analysisResult) {
-			if (confirm(`Do you really want to remove result of ${analysisResult.source.sourceName} ?`)) {
+			if (confirm(ko.i18n('ir.deleteResultConfirmation', 'Do you really want to remove result of ')() + `${analysisResult.source.sourceName}` + '?')) {
 				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
 					const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 					source.info(null);

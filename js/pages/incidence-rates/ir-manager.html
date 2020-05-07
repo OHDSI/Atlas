@@ -78,8 +78,8 @@
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
 				<div class="paddedWrapper">
                     <ul class="nav nav-pills">
-                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a data-bind="text: ko.i18n('component.import.button', 'Import')"></a></li>
-                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a data-bind="text: ko.i18n('component.export.button', 'Export')"></a></li>
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a data-bind="text: ko.i18n('components.import.button', 'Import')"></a></li>
+                        <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a data-bind="text: ko.i18n('components.export.button', 'Export')"></a></li>
 						<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'sql'}, click: () => $component.expressionMode('sql')"><a>SQL</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">

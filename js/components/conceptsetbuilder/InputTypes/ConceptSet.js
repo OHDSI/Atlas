@@ -5,7 +5,7 @@ define(['knockout', './ConceptSetItem'], function (ko, ConceptSetItem) {
 		data = data || {};
 
 		self.id = data.id;
-		self.name = ko.observable(data.name || "Unnamed Concept Set");
+		self.name = ko.observable(data.name || ko.i18n('components.conceptSetBuilder.unnamedConceptSet', 'Unnamed Concept Set')());
 		self.expression = {
 			items: ko.observableArray(data.expression && data.expression.items && 
 																data.expression.items.filter(function (item) { 

@@ -1,4 +1,4 @@
-<button class="btn btn-primary btn-sm" data-bind="text: ko.i18n('components.conceptPicker.addButton', 'Add'), click: open, disable: isOpen">Add</button>
+<button class="btn btn-primary btn-sm" data-bind="text: ko.i18n('components.conceptPicker.addButton', 'Add'), click: open, disable: isOpen"></button>
 <!-- ko ifnot: isImportEnabled -->
 <button class="btn btn-primary btn-sm" data-bind="text: ko.i18n('components.conceptPicker.importButton', 'Import'), click: function() { isImportEnabled(true); }">Import</button>
 <!-- /ko -->
@@ -17,7 +17,7 @@ data-bind="attr: {placeholder: ko.i18n('components.conceptPicker.importConcepts'
 			<input 
 			data-bind="attr: {placeholder: ko.i18n('components.conceptPicker.search', 'Search')}, value: searchText, valueUpdate: 'input', event: { keyup: searchKeyUp }" />
 			<select class="form-input" data-bind="options: $component.DomainOptions, value: SelectedDomain" />
-			<button data-bind="text: ko.i18n('components.conceptPicker.search', 'Search'), click: search" type="button" class="btn btn-primary btn-sm">Search</button>
+			<button data-bind="text: ko.i18n('components.conceptPicker.search', 'Search'), click: search" type="button" class="btn btn-primary btn-sm"></button>
 		</div>
 		<table class="stripe compact hover" cellspacing="0" width="100%"
 					 data-bind="dataTable:{
@@ -36,20 +36,18 @@ data-bind="attr: {placeholder: ko.i18n('components.conceptPicker.importConcepts'
 													{ data: 'VOCABULARY_ID', title: 'Vocabulary' },
 													{ data: 'DOMAIN_ID', title: 'Domain' }
 												],
-												language: {
-													search: 'Filter records:'
-												}
+												language: ko.i18n('datatable.language')
 											}
 										 }"></table>
 		<div style="text-align: right; padding: 5px">
 			<button class="btn btn-primary btn-sm" data-bind="click: add">
-				<span data-bind="text: ko.i18n('components.conceptpicker.add-selected', 'Add Selected')"></span>
+				<span data-bind="text: ko.i18n('components.conceptPicker.addSelected', 'Add Selected')"></span>
 			</button>
 			<button class="btn btn-primary btn-sm" data-bind="click: addAndClose">
-				<span data-bind="text: ko.i18n('components.conceptpicker.add-and-close', 'Add And Close')"></span>
+				<span data-bind="text: ko.i18n('components.conceptPicker.addAndClose', 'Add And Close')"></span>
 			</button>
 			<button class="btn btn-primary btn-sm" data-bind="click: function() { this.isOpen(false);}">
-				<span data-bind="text: ko.i18n('components.conceptpicker.close', 'Close')"></span>
+				<span data-bind="text: ko.i18n('components.conceptPicker.close', 'Close')"></span>
 			</button></div>
 	</div>
 	<div data-bind="if: !ProviderReady()">
