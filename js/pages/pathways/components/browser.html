@@ -6,10 +6,8 @@
 	<div data-bind="css: classes('toolbar')">
 		<button
 				type="button"
-				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis, text: ko.i18n('pathways.newanalysis')"
-		>
-			New Pathway Analysis
-		</button>
+				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis, text: ko.i18n('pathways.newanalysis', 'New Pathway Analysis')"
+		></button>
 	</div>
 	<div data-bind="css: classes('list')">
 		<faceted-datatable params="{
@@ -18,7 +16,7 @@
 				columns: $component.gridColumns,
 				options: $component.gridOptions,
 				reference: $component.analysisList,
-				language: $component.datatableLanguage
+				language: ko.i18n('datatable.language')
 		}"></faceted-datatable>
 	</div>
 </div>
