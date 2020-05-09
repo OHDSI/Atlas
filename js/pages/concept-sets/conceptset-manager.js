@@ -103,7 +103,7 @@ define([
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.currentConceptSet()) {
 					if (this.currentConceptSet().id === 0) {
-						return this.defaultName;
+						return ko.unwrap(this.defaultName);
 					} else {
 						return ko.i18n('cs.manager.caption', 'Concept Set #')() + this.currentConceptSet().id;
 					}
@@ -240,7 +240,7 @@ define([
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				// Create a new concept set
 				this.currentConceptSet({
-					name: ko.observable('New Concept Set'),
+					name: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
 					id: 0
 				});
 				this.loading(false);
