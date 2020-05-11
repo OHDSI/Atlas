@@ -17,73 +17,73 @@ define(function (require, exports) {
 	var PayerPlanPeriod = require("./CriteriaTypes/PayerPlanPeriod");
 	var LocationRegion = require("./CriteriaTypes/LocationRegion");
 	
-	function GetCriteriaFromObject (data, conceptSets)
+	function GetCriteriaFromObject (data, conceptSets, isEditPermitted)
 	{
 		var result;
 		
 		if (data.hasOwnProperty("ConditionOccurrence")) {
 			return {
-				ConditionOccurrence: new exports.ConditionOccurrence(data.ConditionOccurrence, conceptSets)
+				ConditionOccurrence: new exports.ConditionOccurrence(data.ConditionOccurrence, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("ConditionEra")) {
 			return {
-				ConditionEra: new exports.ConditionEra(data.ConditionEra, conceptSets)
+				ConditionEra: new exports.ConditionEra(data.ConditionEra, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("DrugExposure")) {
 			return {
-				DrugExposure: new exports.DrugExposure(data.DrugExposure, conceptSets)
+				DrugExposure: new exports.DrugExposure(data.DrugExposure, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("DrugEra")) {
 			return {
-				DrugEra: new exports.DrugEra(data.DrugEra, conceptSets)
+				DrugEra: new exports.DrugEra(data.DrugEra, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("DoseEra")) {
 			return {
-				DoseEra: new exports.DoseEra(data.DoseEra, conceptSets)
+				DoseEra: new exports.DoseEra(data.DoseEra, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("Observation")) {
 			return {
-				Observation: new exports.Observation(data.Observation, conceptSets)
+				Observation: new exports.Observation(data.Observation, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("Person")) {
 			return {
-				Person: new exports.Person(data.Person)
+				Person: new exports.Person(data.Person, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("ProcedureOccurrence")) {
 			return {
-				ProcedureOccurrence: new exports.ProcedureOccurrence(data.ProcedureOccurrence, conceptSets)
+				ProcedureOccurrence: new exports.ProcedureOccurrence(data.ProcedureOccurrence, conceptSets, isEditPermitted)
 			};
 		} else if (data.hasOwnProperty("VisitOccurrence")) {
 			return {
-				VisitOccurrence: new exports.VisitOccurrence(data.VisitOccurrence, conceptSets)
+				VisitOccurrence: new exports.VisitOccurrence(data.VisitOccurrence, conceptSets, isEditPermitted)
 			};	
 		} else if (data.hasOwnProperty("DeviceExposure")) {
 			return {
-				DeviceExposure: new exports.DeviceExposure(data.DeviceExposure, conceptSets)
+				DeviceExposure: new exports.DeviceExposure(data.DeviceExposure, conceptSets, isEditPermitted)
 			};		
 		} else if (data.hasOwnProperty("Measurement")) {
 			return {
-				Measurement: new exports.Measurement(data.Measurement, conceptSets)
+				Measurement: new exports.Measurement(data.Measurement, conceptSets, isEditPermitted)
 			};		
 		} else if (data.hasOwnProperty("ObservationPeriod")) {
 			return {
-				ObservationPeriod: new exports.ObservationPeriod(data.ObservationPeriod, conceptSets)
+				ObservationPeriod: new exports.ObservationPeriod(data.ObservationPeriod, conceptSets, isEditPermitted)
 			};		
 		} else if (data.hasOwnProperty("Specimen")) {
 			return {
-				Specimen: new exports.Specimen(data.Specimen, conceptSets)
+				Specimen: new exports.Specimen(data.Specimen, conceptSets, isEditPermitted)
 			};		
 		}	else if (data.hasOwnProperty("Death")) {
 			return {
-				Death: new exports.Death(data.Death, conceptSets)
+				Death: new exports.Death(data.Death, conceptSets, isEditPermitted)
 			};
 		}	else if (data.hasOwnProperty("PayerPlanPeriod")) {
 			return {
-				PayerPlanPeriod: new exports.PayerPlanPeriod(data.PayerPlanPeriod, conceptSets)
+				PayerPlanPeriod: new exports.PayerPlanPeriod(data.PayerPlanPeriod, conceptSets, isEditPermitted)
 			};
 		}	else if (data.hasOwnProperty("LocationRegion")) {
 			return {
-				LocationRegion: new exports.LocationRegion(data.LocationRegion, conceptSets)
+				LocationRegion: new exports.LocationRegion(data.LocationRegion, conceptSets, isEditPermitted)
 			};
 		};
 	}

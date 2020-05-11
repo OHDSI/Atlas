@@ -3,6 +3,7 @@ define(['knockout', '../options', 'text!./WindowInputTemplate.html', 'databindin
 	function WindowInputViewModel(params) {
 		var self = this;
 		self.options = options;
+		self.isEditPermitted = params.isEditPermitted;
 		self.Window = ko.utils.unwrapObservable(params.Window); // this will be a Window input type.
 	}
 	

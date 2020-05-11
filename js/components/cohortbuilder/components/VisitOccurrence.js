@@ -136,6 +136,7 @@ define(['knockout', 'appConfig', '../options', '../utils', '../InputTypes/Range'
 
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.VisitOccurrence;
+		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.options = options;
 
 		self.removeCriterion = function (propertyName) {

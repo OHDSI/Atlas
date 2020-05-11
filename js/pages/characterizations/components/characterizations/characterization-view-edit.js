@@ -84,6 +84,7 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                isEditPermitted: this.isEditPermitted,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -164,7 +165,7 @@ define([
           } else {
             this.loading(true);
             const res = await CharacterizationService.loadCharacterizationDesign(id);
-            this.setupDesign(new CharacterizationAnalysis(res));
+            this.setupDesign(new CharacterizationAnalysis(res, this.isEditPermitted));
             this.loading(false);
           }
         }
@@ -190,7 +191,7 @@ define([
                         commonUtils.routeTo(`/cc/characterizations/${newCharacterization.id}/${this.selectedTabKey()}`);
                     } else {
                         const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
-                        this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
+                        this.setupDesign(new CharacterizationAnalysis(updatedCharacterization, this.isEditPermitted));
                     }
                 }
             } catch (e) {

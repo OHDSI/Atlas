@@ -3,6 +3,7 @@ define(['knockout', 'text!./DateRangeTemplate.html'], function (ko, componentTem
 	function DateRangeViewModel(params) {
 		var self = this;
 		self.Range = params.Range; // this will be a NumericRange input type.
+		self.isEditPermitted = params.isEditPermitted;
 		
 		self.operationOptions = [{
 			id: 'lt',

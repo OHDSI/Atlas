@@ -18,6 +18,7 @@ define(['knockout','text!./ConceptSetSelectorTemplate.html', 'databindings/cohor
 		self.previewVisible = ko.observable(false);
 		self.previewTop = ko.observable(0);
 		self.previewLeft = ko.observable(0);
+		self.isEditPermitted = params.isEditPermitted;
 		
 		self.previewConceptSet = ko.observable();
 		

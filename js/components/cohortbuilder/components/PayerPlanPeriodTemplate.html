@@ -10,7 +10,7 @@
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bind="css:{ 'disabled': !$component.isEditPermitted}" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>
@@ -24,7 +24,7 @@
 				<col />
 			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						limited to the patients first payer plan period
@@ -32,132 +32,132 @@
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					with age at period start
-					<numeric-range params="Range: AgeAtStart"></numeric-range>
+					<numeric-range params="Range: AgeAtStart, isEditPermitted: $component.isEditPermitted"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					with age at period end
-					<numeric-range params="Range: AgeAtEnd"></numeric-range>
+					<numeric-range params="Range: AgeAtEnd, isEditPermitted: $component.isEditPermitted"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodLength() != null, visible: PeriodLength() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					with period duration
-					<numeric-range params="Range: PeriodLength"></numeric-range> days.
+					<numeric-range params="Range: PeriodLength, isEditPermitted: $component.isEditPermitted"></numeric-range> days.
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						with a gender of:
-						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"> </concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender(), isEditPermitted: $component.isEditPermitted"> </concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					using specified period:
-					<period-input params="Period: UserDefinedPeriod"></period-input>
+					<period-input params="Period: UserDefinedPeriod, isEditPermitted: $component.isEditPermitted"></period-input>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					payer plan period start is:
-					<date-range params="Range: PeriodStartDate"></date-range>
+					<date-range params="Range: PeriodStartDate, isEditPermitted: $component.isEditPermitted"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodEndDate() != null, visible: PeriodEndDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					payer plan period end is:
-					<date-range params="Range: PeriodEndDate"></date-range>
+					<date-range params="Range: PeriodEndDate, isEditPermitted: $component.isEditPermitted"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PayerConcept() != null, visible: PayerConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PayerConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PayerConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Payer Concept is
-						<conceptset-selector params="conceptSetId: PayerConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: PayerConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlanConcept() != null, visible: PlanConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlanConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlanConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Plan Concept is
-						<conceptset-selector params="conceptSetId: PlanConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: PlanConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: SponsorConcept() != null, visible: SponsorConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('SponsorConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('SponsorConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Sponsor Concept is
-						<conceptset-selector params="conceptSetId: SponsorConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: SponsorConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: StopReasonConcept() != null, visible: StopReasonConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Stop Reason Concept is
-						<conceptset-selector params="conceptSetId: StopReasonConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: StopReasonConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PayerSourceConcept() != null, visible: PayerSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PayerSourceConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PayerSourceConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Payer Source Concept is
-						<conceptset-selector params="conceptSetId: PayerSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer Source'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: PayerSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer Source', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlanSourceConcept() != null, visible: PlanSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlanSourceConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlanSourceConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Plan Source Concept is
-						<conceptset-selector params="conceptSetId: PlanSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan Source'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: PlanSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan Source', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: SponsorSourceConcept() != null, visible: SponsorSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('SponsorSourceConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('SponsorSourceConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Sponsor Source Concept is
-						<conceptset-selector params="conceptSetId: SponsorSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor Source'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: SponsorSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor Source', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: StopReasonSourceConcept() != null, visible: StopReasonSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonSourceConcept') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonSourceConcept') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>
 						Stop Reason Source Concept is
-						<conceptset-selector params="conceptSetId: StopReasonSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason Source'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: StopReasonSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason Source', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td style="background-color: white">
-					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
+					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage, isEditPermitted: $component.Criteria.isEditPermitted}"></criteria-group>
 				</td>
 			</tr>
 		</table>

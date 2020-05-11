@@ -95,6 +95,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Death;
 		self.options = options;
+		self.isEditPermitted = self.Criteria.isEditPermitted();
 
 		self.removeCriterion = function (propertyName) {
 			self.Criteria[propertyName](null);

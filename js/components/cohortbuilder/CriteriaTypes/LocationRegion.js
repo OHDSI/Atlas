@@ -1,10 +1,10 @@
 define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
 
-	function LocationRegion(data, conceptSets) {
+	function LocationRegion(data, conceptSets, isEditPermitted) {
 		var self = this;
 		data = data || {};
 
-		Criteria.call(this, data, conceptSets);
+		Criteria.call(this, data, conceptSets, isEditPermitted);
 
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
@@ -18,6 +18,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		// General Location Region Criteria
 
 		self.CodesetId = ko.observable(data.CodesetId);
+		self.isEditPermitted = isEditPermitted;
 
 		self.StartDate = ko.observable(data.OccurrenceStartDate && new Range(data.StartDate));
 		self.EndDate = ko.observable(data.OccurrenceEndDate && new Range(data.EndDate));

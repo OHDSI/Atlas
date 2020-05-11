@@ -8,8 +8,8 @@ define([
 	Window,
 ){
 	class WindowedCriteria {
-		constructor(data = {}, conceptSets) {
-			this.Criteria = CriteriaTypes.GetCriteriaFromObject(data.Criteria, conceptSets);
+		constructor(data = {}, conceptSets, isEditPermitted) {
+			this.Criteria = CriteriaTypes.GetCriteriaFromObject(data.Criteria, conceptSets, isEditPermitted);
 			this.StartWindow = new Window(data.StartWindow);
 
 			// for backwards compatability, if the data.EndWindow is populated, but useEventEnd is null, set useEventEnd = true

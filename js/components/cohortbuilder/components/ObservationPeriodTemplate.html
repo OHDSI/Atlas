@@ -10,7 +10,7 @@
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bind="css:{ 'disabled': !$component.isEditPermitted}" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>
@@ -24,64 +24,64 @@
 				<col />
 			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					<div>limited to the patients first observation period</div>
 				</td>
 			</tr>
 			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					using specified period:
-					<period-input params="Period: UserDefinedPeriod"></period-input>
+					<period-input params="Period: UserDefinedPeriod, isEditPermitted: $component.isEditPermitted"></period-input>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					observation period start is:
-					<date-range params="Range: PeriodStartDate"></date-range>
+					<date-range params="Range: PeriodStartDate, isEditPermitted: $component.isEditPermitted"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodEndDate() != null, visible: PeriodEndDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					observation period end is:
-					<date-range params="Range: PeriodEndDate"></date-range>
+					<date-range params="Range: PeriodEndDate, isEditPermitted: $component.isEditPermitted"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodType() != null, visible: PeriodType() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodType') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodType') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					Period Type is:
-					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: PeriodType()"></concept-list>
+					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: PeriodType(), isEditPermitted: $component.isEditPermitted"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					with age in years at period start
-					<numeric-range params="Range: AgeAtStart"></numeric-range>
+					<numeric-range params="Range: AgeAtStart, isEditPermitted: $component.isEditPermitted"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					with age in years at period end
-					<numeric-range params="Range: AgeAtEnd"></numeric-range>
+					<numeric-range params="Range: AgeAtEnd, isEditPermitted: $component.isEditPermitted"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodLength() != null, visible: PeriodLength() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td>
 					with period duration
-					<numeric-range params="Range: PeriodLength"></numeric-range> days.
+					<numeric-range params="Range: PeriodLength, isEditPermitted: $component.isEditPermitted"></numeric-range> days.
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
 				<td style="background-color: white">
-					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: 'The index date refers to the observation period.'}"></criteria-group>
+					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: 'The index date refers to the observation period.', isEditPermitted: $component.Criteria.isEditPermitted}"></criteria-group>
 				</td>
 			</tr>
 		</table>

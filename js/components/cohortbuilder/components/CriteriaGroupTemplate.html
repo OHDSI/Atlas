@@ -13,7 +13,7 @@
 						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">having</span>
 						</span>
 						<span data-bind="ifnot: parentGroup">having</span>
-						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
+						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type, enable: $component.isEditPermitted()"></select>
 						<!-- ko if: group().Type().startsWith("AT_") -->
 						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), eventType:'blur', ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
 						/>
@@ -21,7 +21,7 @@
 						of the following criteria:
 					</td>
 					<td>
-						<drop-down-menu params="actions: $component.addCriteriaActions, title: 'Add criteria to group...', formatOption: $component.formatOption"></drop-down-menu>
+						<drop-down-menu params="actions: $component.addCriteriaActions, title: 'Add criteria to group...', formatOption: $component.formatOption, buttonClasses: $component.buttonClasses"></drop-down-menu>
 					</td>
 				</tr>
 			</tbody>
@@ -48,7 +48,7 @@
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }, css:{ 'disabled': !$component.isEditPermitted()}">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
@@ -70,13 +70,13 @@
 								<div class="occurrenceSection">
 									<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
 									with
-									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
+									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type, disable: !$component.isEditPermitted()" />
 <!--									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" /> -->
 									<span contenteditable="true" class="numericInputField dropdown" 
 												data-bind="htmlValue: Occurrence.Count.numeric(), 
 																	 eventType: 'blur', 
 																	 ko_autocomplete: { value: Occurrence.Count, source: $component.options.occurrenceCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" />									
-									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> occurrences of:
+									<button data-bind="disable: !$component.isEditPermitted(), click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> occurrences of:
 								</div>
 								<div data-bind="component: {
 									name: $component.getCriteriaComponent($data.Criteria),
@@ -84,28 +84,28 @@
 								}"></div>
 
 								<div class="indexWindowSection">
-									where <cycle-toggle-input params="{value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
-									<window-input params="Window: StartWindow"></window-input> <cycle-toggle-input params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
+									where <cycle-toggle-input params="{value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions, isEditPermitted: $component.isEditPermitted}"></cycle-toggle-input> between
+									<window-input params="Window: StartWindow, isEditPermitted: $component.isEditPermitted"></window-input> <cycle-toggle-input params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions, isEditPermitted: $component.isEditPermitted}"></cycle-toggle-input>
 									<!-- ko if: EndWindow -->
 									<div>
-										<i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and <cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
-										<window-input params="Window: EndWindow"></window-input> <cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
+										<i data-bind="click: $component.removeEndWindow, visible: $component.isEditPermitted()" class="fa fa-times" /> and <cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions, isEditPermitted: $component.isEditPermitted}"></cycle-toggle-input> between
+										<window-input params="Window: EndWindow, isEditPermitted: $component.isEditPermitted"></window-input> <cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions, isEditPermitted: $component.isEditPermitted}"></cycle-toggle-input>
 									</div>
 									<!-- /ko -->
 									<!-- ko ifnot: EndWindow -->
-									<span class="linkish" data-bind="click: $component.addEndWindow"><i>add additional constraint</i></span>
+									<span class="linkish" data-bind="click: $component.addEndWindow, css:{ 'disabled': !$component.isEditPermitted()}"><i>add additional constraint</i></span>
 									<!-- /ko -->
 									<div class="indexMessage"><span class="indexMessage" data-bind="text: $component.indexMessage"></span></div>
 								</div>
 
 								<div class="restrictVisitSection" data-bind="if: $component.hasVO($data.Criteria)">
-									<input type="checkbox" data-bind="checked: RestrictVisit"> restrict to the same visit occurrence<br/>
+									<input type="checkbox" data-bind="checked: RestrictVisit, disable: !$component.isEditPermitted()"> restrict to the same visit occurrence<br/>
 								</div>
-								<input type="checkbox" data-bind="checked: IgnoreObservationPeriod"> allow events from outside observation period<br/>
+								<input type="checkbox" data-bind="checked: IgnoreObservationPeriod, disable: !$component.isEditPermitted()"> allow events from outside observation period<br/>
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }, css:{ 'disabled': !$component.isEditPermitted()}">Delete Criteria</button>
 						</td>
 					</tr>
 				</tbody>
@@ -115,8 +115,8 @@
 
 	<!-- ko foreach: group().Groups -->
 	<div class="critera-group-container" style="position:relative">
-		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group(), indexMessage: $component.indexMessage}"></criteria-group>
-		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
+		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group(), indexMessage: $component.indexMessage, isEditPermitted: $component.isEditPermitted}"></criteria-group>
+		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }, css:{ 'disabled': !$component.isEditPermitted()}">Delete Group</button>
 	</div>
 	<!-- /ko -->
 </div>

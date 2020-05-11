@@ -3,8 +3,8 @@
 																																	{ event: 'mouseenter', selector: '.conceptset', callback: showConceptSetPreview},
 																																	{ event: 'hidden.bs.dropdown', callback: hideConceptSetPreview}
 																																]">
-		<button type="button" class="btn btn-primary conceptset_edit" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="text:conceptSetName, attr:{'title': conceptSetName}"></button>
-		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+		<button type="button" class="btn btn-primary conceptset_edit" style="max-width:200px; overflow-x: hidden; text-overflow:ellipsis; white-space:nowrap" data-bind="text:conceptSetName, attr:{'title': conceptSetName}, css:{ 'disabled': !$component.isEditPermitted}"></button>
+		<button type="button" class="btn btn-primary dropdown-toggle" data-bind="css:{ 'disabled': !$component.isEditPermitted}" data-toggle="dropdown">
 			<span class="caret"></span>  <!-- caret -->
 			<span class="sr-only" data-bind="text:conceptSetName"></span>
 		</button>

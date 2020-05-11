@@ -6,7 +6,7 @@
         <b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.
     </p>
     <div data-bind="css: classes('linked-entities')">
-        <linked-cohort-list params="data: $component.cohorts"></linked-cohort-list>
+        <linked-cohort-list params="data: $component.cohorts, isEditPermitted: $component.isEditPermitted"></linked-cohort-list>
     </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
@@ -14,8 +14,8 @@
             columns: $component.featureAnalyses.columns,
             data: $component.featureAnalyses.data,
             newItemAction: $component.featureAnalyses.newItemAction,
-
             removeFeature: $component.removeFeature,
+            isEditPermitted: $component.isEditPermitted
         "></linked-entity-list>
     </div>
     <div data-bind="css: classes('linked-entities'), eventListener: [
@@ -23,22 +23,22 @@
                                 { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
                             ]">
         <h2 data-bind="css: classes('strata-title')">Subgroup analyses</h2>
-        <button data-bind="css: classes({extra: 'btn btn-sm btn-primary'}), click: addStrata">New subgroup</button>
+        <button data-bind="css: $component.subgroupButtonCss, click: addStrata">New subgroup</button>
         <div data-bind="css: classes('strata'), visible: stratas().length === 0">
             <span>No subgroups defined</span>
         </div>
         <!-- ko if: stratas().length > 0 -->
-        <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), textInput: design().stratifiedBy" />
+        <input type="text" placeholder="Stratified by" data-bind="css: classes({ element: 'stratified-by', extra: 'form-control'}), attr: { disabled: isEditPermitted() ? null : true }, textInput: design().stratifiedBy" />
         <label data-bind="css: classes('strata-checkbox')">
-            <input type="checkbox" data-bind="checked: design().strataOnly" /> Calculate subgroup analyses only
+            <input type="checkbox" data-bind="checked: design().strataOnly, enable: isEditPermitted()"/> Calculate subgroup analyses only
         </label>
         <!-- /ko -->
         <div data-bind="foreach: stratas">
             <div data-bind="css: $component.classes('strata')">
                 <div data-bind="css: $component.classes('strata-heading')">
-                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + (($data.name() == '' || $component.isStrataDuplicated($data.name())) ? ' emptyInput' : '')}),
+                    <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + (($data.name() == '' || $component.isStrataDuplicated($data.name())) ? ' emptyInput' : '')}), attr: { disabled: $component.isEditPermitted() ? null : true },
                                  textInput: $data.name, event: {'keyup': $component.checkStrataNames}" placeholder="Strata name">
-                    <button type="button" data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
+                    <button type="button" data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), attr: { disabled: $component.isEditPermitted() ? null : true }, click: () => $component.removeStrata($index())"
                     ><i class="fa fa-trash-o"></i></button>
                 </div>
                 <div data-bind="visible: $data.name() === '', css: { 'empty-name-error': !$data.name() }">
@@ -50,7 +50,7 @@
                     <label>Subgroup name is duplicated.</label>
                 </div>
                 <div>
-                    <criteria-group params="{ expression: { ConceptSets: $component.strataConceptSets() }, group: $data.criteria }"></criteria-group>
+                    <criteria-group params="{ expression: { ConceptSets: $component.strataConceptSets() }, isEditPermitted: $component.isEditPermitted(), group: $data.criteria }"></criteria-group>
                 </div>
             </div>
         </div>
@@ -64,6 +64,7 @@
             newItemAction: $component.featureAnalysesParams.newItemAction,
 
             removeParam: $component.removeParam,
+            isEditPermitted: $component.isEditPermitted
         "></linked-entity-list>
     </div>
 

@@ -4,6 +4,7 @@ define(['knockout','text!./ConceptListTemplate.html', 'conceptpicker/InputTypes/
 		var self = this;
 		self.ConceptList = ko.utils.unwrapObservable(params.$raw.ConceptList);
 		self.PickerParams = params.PickerParams;
+		self.isEditPermitted = params.isEditPermitted;
 		
 		// onAdd handler
 		self.addConcepts = function(concepts) {

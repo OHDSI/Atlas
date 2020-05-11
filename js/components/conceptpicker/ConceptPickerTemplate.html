@@ -1,6 +1,6 @@
-<button class="btn btn-primary btn-sm" data-bind="click: open, disable: isOpen">Add</button>
+<button class="btn btn-primary btn-sm" data-bind="click: open, disable: isOpen, css:{ 'disabled': !$component.isEditPermitted}">Add</button>
 <!-- ko ifnot: isImportEnabled -->
-<button class="btn btn-primary btn-sm" data-bind="click: function() { isImportEnabled(true); }">Import</button>
+<button class="btn btn-primary btn-sm" data-bind="click: function() { isImportEnabled(true); }, css:{ 'disabled': !$component.isEditPermitted}">Import</button>
 <!-- /ko -->
 <!-- ko if: isImportEnabled -->
 <div title="Import Concepts" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: '' }">

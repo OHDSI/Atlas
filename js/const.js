@@ -42,7 +42,73 @@ define([
 				}
 			}]
 		};
+		
+		const getLinkedFeAParametersColumns = (context) => {
+			return [
+				{
+					title: 'Name',
+					data: 'name',
+					className: context.classes('col-param-name'),
+				},
+				{
+					title: 'Value',
+					data: 'value',
+					className: context.classes('col-param-value'),
+				},
+				... context.isEditPermitted() ? [{
+					title: 'Actions',
+					render: context.getRemoveCell('removeParam', 'name'),
+					className: context.classes('col-param-remove'),
+				}] : []
+			];
+		};
+		
+		const getLinkedFeatureAnalysisColumns = (context) => {
+			return [
+				{
+					title: 'ID',
+					data: 'id',
+					className: context.classes('col-feature-id'),
+				},
+				{
+					title: 'Name',
+					data: 'name',
+					className: context.classes('col-feature-name'),
+				},
+				{
+					title: 'Description',
+					data: 'description',
+					className: context.classes('col-feature-descr'),
+				},
+				... context.isEditPermitted() ? [{
+					title: 'Actions',
+					render: context.getRemoveCell('removeFeature'),
+					className: context.classes('col-feature-remove'),
+				}] : []
+			];
+		};
 
+		const getLinkedCohortColumns = (context, nameCol) => {
+			return [
+				{
+					title: 'ID',
+					data: 'id',
+					className: context.classes('col-cohort-id'),
+				},
+				nameCol,
+				... context.isEditPermitted() ? [{
+					title: '',
+					render: context.getEditCell('editCohort'),
+					className: context.classes('col-cohort-edit'),
+				},
+					{
+						title: '',
+						render: context.getRemoveCell('removeCohort'),
+						className: context.classes('col-cohort-remove'),
+					}] : []
+			];
+		};
+		
 		const getRelatedSourcecodesColumns = (sharedState, context) => [{
 			title: '',
 			render: (s, p, d) => {
@@ -175,6 +241,9 @@ define([
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
+			getLinkedFeAParametersColumns,
+			getLinkedFeatureAnalysisColumns,
+			getLinkedCohortColumns,
 			getRelatedSourcecodesColumns,
 			apiPaths,
 			applicationStatuses,

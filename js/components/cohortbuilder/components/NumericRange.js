@@ -3,6 +3,7 @@ define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings/autoGrowIn
 	function NumericRangeViewModel(params) {
 		var self = this;
 		self.Range = params.Range; // this will be a NumericRange input type.
+		self.isEditPermitted = params.isEditPermitted;
 		
 		self.operationOptions = [{
 			id: 'lt',
@@ -28,7 +29,7 @@ define(['knockout', 'text!./NumericRangeTemplate.html', 'databindings/autoGrowIn
 		}];
 	};
 
-	// return compoonent definition
+	// return component definition
 	return {
 		viewModel: NumericRangeViewModel,
 		template: componentTemplate

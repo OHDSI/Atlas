@@ -20,6 +20,9 @@ define([
 		self.parentGroup = params.parentGroup;
 		self.options = options;
 		self.indexMessage = params.indexMessage;
+		self.isEditPermitted = params.isEditPermitted ? params.isEditPermitted : params.group().isEditPermitted;
+		self.elementState = self.isEditPermitted() ? '' : 'disabled';
+		self.buttonClasses = 'btn btn-primary btn-sm dropdown-toggle ' + self.elementState;
 		self.groupCountOptions = ko.pureComputed(function () {
 			var optionsArray = ['0'];
 			for (var i = 0; i < (self.group().CriteriaList().length + self.group().Groups().length); i++) {
@@ -32,11 +35,11 @@ define([
 
 		self.addAdditionalCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
+			self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addDemographicCriteria = function () {
-			self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
+			self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria(null, self.isEditPermitted));
 		}
 
 		self.addConditionCriteria = function () {
@@ -45,7 +48,7 @@ define([
 				Criteria: {
 					ConditionOccurrence: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addConditionEraCriteria = function () {
@@ -54,7 +57,7 @@ define([
 				Criteria: {
 					ConditionEra: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 		
 		self.addDrugExposureCriteria = function () {
@@ -63,7 +66,7 @@ define([
 				Criteria: {
 					DrugExposure: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addDrugEraCriteria = function () {
@@ -72,7 +75,7 @@ define([
 				Criteria: {
 					DrugEra: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addDoseEraCriteria = function () {
@@ -81,7 +84,7 @@ define([
 				Criteria: {
 					DoseEra: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addLocationRegionCriteria = function () {
@@ -91,7 +94,7 @@ define([
 					LocationRegion: {}
 				},
 				IgnoreObservationPeriod: true,
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addPayerPlanPeriodCriteria = function() {
@@ -100,7 +103,7 @@ define([
 				Criteria: {
 					PayerPlanPeriod: {}
 				}
-			}, unwrappedExpression.ConceptSets));			
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));			
 		};
 		
 		self.addProcedureCriteria = function () {
@@ -109,7 +112,7 @@ define([
 				Criteria: {
 					ProcedureOccurrence: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addObservationCriteria = function () {
@@ -118,7 +121,7 @@ define([
 				Criteria: {
 					Observation: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addVisitCriteria = function () {
@@ -127,7 +130,7 @@ define([
 				Criteria: {
 					VisitOccurrence: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addDeviceCriteria = function () {
@@ -136,7 +139,7 @@ define([
 				Criteria: {
 					DeviceExposure: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addMeasurementCriteria = function () {
@@ -145,7 +148,7 @@ define([
 				Criteria: {
 					Measurement: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addSpecimenCriteria = function () {
@@ -154,7 +157,7 @@ define([
 				Criteria: {
 					Specimen: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addObservationPeriodCriteria = function () {
@@ -163,7 +166,7 @@ define([
 				Criteria: {
 					ObservationPeriod: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		};
 
 		self.addDeathCriteria = function () {
@@ -172,7 +175,7 @@ define([
 				Criteria: {
 					Death: {}
 				}
-			}, unwrappedExpression.ConceptSets));
+			}, unwrappedExpression.ConceptSets, self.isEditPermitted));
 		}
 
 		self.removeCriteria = function (observableList, data) {
@@ -238,7 +241,7 @@ define([
 		}
 	}
 
-	// return compoonent definition
+	// return component definition
 	return {
 		viewModel: CriteriaGroupViewModel,
 		template: template

@@ -5,11 +5,12 @@ define(function(require, exports){
 	const CriteriaGroup = require('components/cohortbuilder/CriteriaGroup');
 
 	class CharacterizationAnalysis {
-		constructor(design) {
+		constructor(design, isEditPermitted) {
 			let data = design || {};
 
 			Object.assign(this, data);
 			this.name = ko.observable(data.name || 'New Characterization');
+			this.isEditPermitted = isEditPermitted;
 			this.cohorts = ko.observableArray(data.cohorts);
 			this.featureAnalyses = ko.observableArray(data.featureAnalyses);
 			this.parameters = ko.observableArray(data.parameters);
@@ -18,7 +19,7 @@ define(function(require, exports){
 			this.stratas = ko.observableArray((data.stratas && data.stratas.map(s => ({
 				id: ko.observable(s.id),
 				name: ko.observable(s.name),
-				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets)),
+				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets, this.isEditPermitted)),
 			}))) || []);
 		}
 	}

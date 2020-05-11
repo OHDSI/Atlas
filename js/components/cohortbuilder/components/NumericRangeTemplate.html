@@ -1,3 +1,3 @@
-<select data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op"></select> 
-<input class="numericInputField" style="width:25px" data-bind="value: Range().Value.numeric(), autoGrowInput: {comfortZone: 8}"></input>
-<span data-bind="if: Range().Op().substr(-2) == 'bt'"> and <input class="numericInputField" style="width:25px" data-bind="value: Range().Extent.numeric(), autoGrowInput: {comfortZone: 8}"></input> 
+<select data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op, disable: !$component.isEditPermitted"></select> 
+<input class="numericInputField" style="width:25px" data-bind="value: Range().Value.numeric(), autoGrowInput: {comfortZone: 8}, disable: !$component.isEditPermitted"></input>
+<span data-bind="if: Range().Op().substr(-2) == 'bt'"> and <input class="numericInputField" style="width:25px" data-bind="value: Range().Extent.numeric(), autoGrowInput: {comfortZone: 8}, disable: !$component.isEditPermitted"></input> 
