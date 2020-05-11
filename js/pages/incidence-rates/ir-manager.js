@@ -148,7 +148,7 @@ define([
 			};
 			this.incidenceRateCaption = ko.computed(() => {
 				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
-					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
+					return ko.i18n('ir.caption', 'Incidence Rate Analysis #')() + this.selectedAnalysisId();
 				}
 				return this.defaultName;
 			});
