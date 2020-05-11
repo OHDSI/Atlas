@@ -3,30 +3,30 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<i class="fa fa-lightbulb"></i> Event Highlighting
+				<i class="fa fa-lightbulb"></i> <span data-bind="text: ko.i18n('profiles.eventHighlighting', 'Event Highlighting')"></span>
 			</div>
 			<div class="modal-body">
 				<div class="row highlight-pane">
 					<div class="btn-group" role="group">
-						<button title="set selected events color" class="btn" data-bind="click: setHighlights(0), style: {borderColor: getHighlightColor(0), backgroundColor: getHighlightBackground(0)}">
+						<button class="btn" data-bind="click: setHighlights(0), style: {borderColor: getHighlightColor(0), backgroundColor: getHighlightBackground(0)}, title: ko.i18n('profiles.setSelectedEventsColor', 'set selected events color')">
 							<i data-bind="style: {color: getHighlightColor(0)}" class="fa fa-paint-brush"></i>
 						</button>
-						<button title="set selected events color" class="btn" data-bind="click: setHighlights(1), style: {borderColor: getHighlightColor(1), backgroundColor: getHighlightBackground(1)}">
+						<button class="btn" data-bind="click: setHighlights(1), style: {borderColor: getHighlightColor(1), backgroundColor: getHighlightBackground(1)}, title: ko.i18n('profiles.setSelectedEventsColor', 'set selected events color')">
 							<i data-bind="style: {color: getHighlightColor(1)}" class="fa fa-paint-brush"></i>
 						</button>
-						<button title="set selected events color" class="btn" data-bind="click: setHighlights(2), style: {borderColor: getHighlightColor(2), backgroundColor: getHighlightBackground(2)}">
+						<button class="btn" data-bind="click: setHighlights(2), style: {borderColor: getHighlightColor(2), backgroundColor: getHighlightBackground(2)}, title: ko.i18n('profiles.setSelectedEventsColor', 'set selected events color')">
 							<i data-bind="style: {color: getHighlightColor(2)}" class="fa fa-paint-brush"></i>
 						</button>
-						<button title="set selected events color" class="btn" data-bind="click: setHighlights(3), style: {borderColor: getHighlightColor(3), backgroundColor: getHighlightBackground(3)}">
+						<button class="btn" data-bind="click: setHighlights(3), style: {borderColor: getHighlightColor(3), backgroundColor: getHighlightBackground(3)}, title: ko.i18n('profiles.setSelectedEventsColor', 'set selected events color')">
 							<i data-bind="style: {color: getHighlightColor(3)}" class="fa fa-paint-brush"></i>
 						</button>
-						<button title="set selected events color" class="btn" data-bind="click: setHighlights(4), style: {borderColor: getHighlightColor(4), backgroundColor: getHighlightBackground(4)}">
+						<button class="btn" data-bind="click: setHighlights(4), style: {borderColor: getHighlightColor(4), backgroundColor: getHighlightBackground(4)}, title: ko.i18n('profiles.setSelectedEventsColor', 'set selected events color')">
 							<i data-bind="style: {color: getHighlightColor(4)}" class="fa fa-paint-brush"></i>
 						</button>
-						<button title="set selected events color" class="btn" data-bind="click: setHighlights(5), style: {borderColor: getHighlightColor(5), backgroundColor: getHighlightBackground(5)}">
+						<button class="btn" data-bind="click: setHighlights(5), style: {borderColor: getHighlightColor(5), backgroundColor: getHighlightBackground(5)}, title: ko.i18n('profiles.setSelectedEventsColor', 'set selected events color')">
 							<i data-bind="style: {color: getHighlightColor(5)}" class="fa fa-paint-brush"></i>
 						</button>
-						<button title="clear all highlight colors" class="btn btn-default" data-bind="click:clearHighlights">
+						<button class="btn btn-default" data-bind="click:clearHighlights, title: ko.i18n('profiles.clearAllHighlightColors', 'clear all highlight colors')">
 							<i class="fa fa-eraser"></i>
 						</button>
 					</div>
@@ -38,13 +38,14 @@
 								order: [[4,'desc']],
 								pageLength: 5,
 								rowClick: highlightRowClick,
-								dom: highlightDom
+								dom: highlightDom,
+								language: ko.i18n('datatable.language')
 							}"></faceted-datatable>
 			</div>
 		</div>
 	</div>
 </div>
-<heading-title params="name: 'Profiles', icon: 'user', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('profiles.title', 'Profiles'), icon: 'user', theme: 'dark'"></heading-title>
 
 <div data-bind="if:$component.canViewProfiles">
 	<div class="asset-heading">
@@ -62,15 +63,15 @@
 				</div>
 				<input type="text" class="form-control" placeholder="Person Id" data-bind="enable: sourceKey(),value: personId">
 				<div class="input-group-btn">
-					<div class="btn btn-primary" title="toggle chart display" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart'">
+					<div class="btn btn-primary" data-bind="css:{active:$component.showSection.profileChart},click:$component.dispToggle, value:'profileChart', title: ko.i18n('profiles.toggleChartTooltip', 'toggle chart display')">
 						<i class="fa fa-line-chart" data-bind="value:'profileChart'" />
 					</div>
-					<div class="btn btn-primary" title="toggle table display" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable'">
+					<div class="btn btn-primary" data-bind="css:{active:$component.showSection.datatable},click:$component.dispToggle, value:'datatable', title: ko.i18n('profiles.toggleTableTooltip', 'toggle table display')">
 						<i class="fa fa-table" data-bind="value:'datatable'" />
 					</div>
 				</div>
 				<div class="input-group-btn" role="group">
-					<button type="button" class="btn btn-primary" title="highlight events" data-toggle="modal" data-target="#modalHighlights">
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalHighlights" data-bind="title: ko.i18n('profiles.highlightEventsTooltip', 'highlight events')">
 						<span><i class="fa fa-paint-brush"></i></span>
 					</button>
 				</div>
@@ -79,10 +80,10 @@
 		<div style="margin-top:5px;" data-bind="visible:person && !cantFindPerson() && !loadingPerson(), with:person">
 			<i data-bind="attr: {class : $component.getGenderClass}"></i>&nbsp;
 			<span data-bind="text: gender"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
-			<span data-bind="text: recordCount + ' events'"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
-			<span data-bind="text: `Age ${ageAtIndex} `"></span>
-			<span data-bind="if: $component.currentCohortDefinition() != null">at index</span>
-			<span data-bind="if: $component.currentCohortDefinition() == null">at start of observation</span>
+			<span data-bind="text: ko.i18nformat('profiles.recordCounts', '<%=count%> events', {count: recordCount})"></span>&nbsp;&nbsp;|&nbsp;&nbsp;
+			<span data-bind="text: ko.i18nformat('profiles.ageAt', 'Age <%=age%>', {age: ageAtIndex})"></span>
+			<span data-bind="if: $component.currentCohortDefinition() != null"><span data-bind="text: ko.i18n('profiles.atIndex', 'at index')"></span></span>
+			<span data-bind="if: $component.currentCohortDefinition() == null"><span data-bind="text: ko.i18n('profiles.atStartOfObservation', 'at start of observation')"></span></span>
 			<span data-bind="if: $component.currentCohortDefinition() != null">|&nbsp;&nbsp;Cohort: <a class="asset-heading-link" data-bind="text: $component.currentCohortDefinition().name(), attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId()}" target="_new"></a></span>
 		</div>
 	</div>
@@ -91,7 +92,8 @@
 	<loading params="status: loadingStatus"></loading>
 	<!-- /ko -->
 	
-	<div data-bind="visible: cantFindPerson()" class="loading">Can't find
+	<div data-bind="visible: cantFindPerson()" class="loading">
+		<span data-bind="text: ko.i18n('profiles.сantFind', 'Can\'t find')"></span>
 		<span data-bind="text:personId" />
 	</div>
 
@@ -120,7 +122,8 @@
 								columns: columns,
 								options: options,
 								order: [[3,'asc']],
-								searchFilter: searchHighlight
+								searchFilter: searchHighlight,
+								language: ko.i18n('datatable.language')
 							}"></faceted-datatable>
 					</div>
 				</div>
