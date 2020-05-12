@@ -28,7 +28,7 @@
 		</table>
 	</div>
 
-	<div style="min-height: 10px;" data-bind="sortable: {data: group().DemographicCriteriaList, connectClass: 'demographicCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+	<div style="min-height: 10px;" data-bind="sortable: {data: group().DemographicCriteriaList, connectClass: 'demographicCriteria', options: {cancel: ':input, button, [contenteditable]'}}, css:{ 'disable-sortable': !$component.isEditPermitted()}">
 		<div class="demographicCriteria">
 			<table>
 				<colgroup>
@@ -56,7 +56,7 @@
 		</div>
 	</div>
 
-	<div style="min-height: 10px;" data-bind="sortable: {data: group().CriteriaList, connectClass: 'additionalCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+	<div style="min-height: 10px;" data-bind="sortable: {data: group().CriteriaList, connectClass: 'additionalCriteria', options: {cancel: ':input, button, [contenteditable]'}}, css:{ 'disable-sortable': !$component.isEditPermitted()}">
 		<div class="additionalCriteria">
 			<table>
 				<colgroup>
@@ -93,7 +93,7 @@
 									</div>
 									<!-- /ko -->
 									<!-- ko ifnot: EndWindow -->
-									<span class="linkish" data-bind="click: $component.addEndWindow, css:{ 'disabled': !$component.isEditPermitted()}"><i>add additional constraint</i></span>
+									<span class="linkish" data-bind="click: $component.addEndWindow, visible: $component.isEditPermitted()"><i>add additional constraint</i></span>
 									<!-- /ko -->
 									<div class="indexMessage"><span class="indexMessage" data-bind="text: $component.indexMessage"></span></div>
 								</div>
