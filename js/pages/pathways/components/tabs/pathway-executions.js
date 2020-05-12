@@ -210,7 +210,7 @@ define([
 
 		cancelGenerate(source) {
 			this.stopping({...this.stopping(), [source.sourceKey]: true});
-			if (confirm('Do you want to stop generation?')) {
+			if (confirm(ko.i18n('pathways.manager.executions.stopGenerationConfirmation', 'Do you want to stop generation?')())) {
 				PathwayService.cancelGeneration(this.analysisId(), source.sourceKey);
 			} else {
 				this.stopping({...this.stopping(), [source.sourceKey]: false});
@@ -250,7 +250,7 @@ define([
 					}
 				}
 			}
-			alert('There is no completed executions for the data source yet');
+			alert(ko.i18n('pathways.manager.executions.noCompletedExecutionsWarning', 'There is no completed executions for the data source yet')());
 		}
 	}
 

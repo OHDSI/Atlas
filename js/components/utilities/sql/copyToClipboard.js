@@ -19,12 +19,11 @@ define([
 
 		constructor(params) {
 			super(params);
-			const {copyButtonId = "btnCopyCohortSQLClipboard", copyMessageId = "copyCopyCohortSQLMessage",
-				buttonText = "Copy To Clipboard", messageText = "Copied To Clipboard!"} = params;
+			const {copyButtonId = "btnCopyCohortSQLClipboard", copyMessageId = "copyCopyCohortSQLMessage"} = params;
 			this.copyButtonId = ko.observable(copyButtonId);
 			this.copyMessageId = ko.observable(copyMessageId);
-			this.buttonText = ko.observable(buttonText);
-			this.messageText = ko.observable(messageText);
+			this.buttonText = ko.i18n('components.copyToClipboard.buttonText', 'Copy To Clipboard');
+			this.messageText = ko.i18n('components.copyToClipboard.messageText', 'Copied To Clipboard!');
 			this.selectedTab = params.selectedTab;
 			this.componentParams = ko.computed(() => this.selectedTab().componentParams);
 			this.clipboardTarget = ko.computed(() => '#' + this.componentParams().clipboardTarget);

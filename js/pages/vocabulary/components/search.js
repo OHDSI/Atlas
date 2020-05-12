@@ -190,19 +190,7 @@ define([
 				if (this.hasAccess()) {
 					this.getDomains();
 					this.getVocabularies();
-                }
-
-                ko.bindingHandlers.placeholder = {
-                    init: function (element, valueAccessor) {
-                        ko.applyBindingsToNode(element, { attr: { placeholder: valueAccessor() } } );
-                    }
-                };
-
-			    ko.bindingHandlers.title = {
-				    init: function (element, valueAccessor) {
-					    ko.applyBindingsToNode(element, { attr: { title: valueAccessor() } } );
-				    }
-			    };
+				}
 			}
 
 			encodeSpecialCharacters(str) {

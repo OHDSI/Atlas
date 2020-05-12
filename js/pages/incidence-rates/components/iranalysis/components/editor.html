@@ -2,14 +2,14 @@
 
 	<div class="criteriaGroup">
 		<div class="criteriaHeading">
-			<b>Study Cohorts</b>
+			<b data-bind="text: ko.i18n('ir.editor.studyCohorts', 'Study Cohorts')"></b>
 		</div>
 		<table style="margin:0px auto; width:900px" data-bind="eventListener: [{event: 'click', selector: '.fa-times.targetCohort', callback: deleteTargetCohort}, {event: 'click', selector: '.fa-times.outcomeCohort', callback: deleteOutcomeCohort}]">
 			<col width="50">
 			<col width="50">
 			<tr>
-				<td align="center"><div style="border-radius: 2px;width:auto;border: solid 1px;margin: 0px 20px;">Target Cohorts</div></td>
-				<td align="center"><div style="border-radius: 2px;width:auto;border: solid 1px;margin: 0px 20px;">Outcome Cohorts</div></td>
+				<td align="center"><div style="border-radius: 2px;width:auto;border: solid 1px;margin: 0px 20px;" data-bind="text: ko.i18n('ir.editor.targetCohorts', 'Target Cohorts')"></div></td>
+				<td align="center"><div style="border-radius: 2px;width:auto;border: solid 1px;margin: 0px 20px;" data-bind="text: ko.i18n('ir.editor.outcomeCohorts', 'Outcome Cohorts')"></div></td>
 			</tr>
 			<tr>
 				<td valign="top">
@@ -39,8 +39,8 @@
 			</tr>
 			<!-- ko if: isEditable -->
 				<tr>
-					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button class="btn btn-sm btn-success" data-bind="click: addTargetCohort">Add Target Cohort</button></div></td>
-					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button style="margin:auto" class="btn btn-sm btn-danger" data-bind="click: addOutcomeCohort">Add Outcome Cohort</button></div></td>
+					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button class="btn btn-sm btn-success" data-bind="click: addTargetCohort, text: ko.i18n('ir.editor.addTargetCohort', 'Add Target Cohort')"></button></div></td>
+					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button style="margin:auto" class="btn btn-sm btn-danger" data-bind="click: addOutcomeCohort, text: ko.i18n('ir.editor.addOutcomeCohort', 'Add Outcome Cohort')"></button></div></td>
 				</tr>
 			<!-- /ko -->
 		</table>
@@ -48,16 +48,24 @@
 
 	<div class="criteriaGroup">
 		<div class="criteriaHeading">
-			<b>Time At Risk</b>
+			<b data-bind="text: ko.i18n('ir.editor.timeAtRisk', 'Time At Risk')"></b>
 		</div>
-		Time at risk defines the time window relative to the cohort start or end date with an offset to consider the person 'at risk' of the outcome.
+		<span data-bind="text: ko.i18n('ir.editor.timeAtRiskMessage', "Time at risk defines the time window relative to the cohort start or end date with an offset to consider the person 'at risk' of the outcome.")"></span>
 		<div style="padding: 5px 0px">
 			<ul>
 				<li>
-					Time at risk starts with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.start.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskStartsWith', 'Time at risk starts with')"></span>
+					<select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" />
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskPlus', 'plus')"></span>
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.start.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskDays', 'days.')"></span>
 				</li>
 				<li>
-					Time at risk ends with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.end.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskEndsWith', 'Time at risk ends with')"></span>
+					<select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" />
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskPlus', 'plus')"></span>
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.end.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskDays', 'days.')"></span>
 				</li>
 			</ul>
 		</div>
@@ -65,23 +73,23 @@
 	</div>
 
 	<div style="padding-top:10px" data-bind="if: analysis().studyWindow() == null && isEditable()">
-	No study window defined. <button class="btn btn-sm btn-success" data-bind="click: addStudyWindow">Add Study Window</button>
+		<span data-bind="text: ko.i18n('ir.editor.noStudyWindowDefined', 'No study window defined.')"></span> <button class="btn btn-sm btn-success" data-bind="click: addStudyWindow, text: ko.i18n('ir.editor.addStudyWindow', 'Add Study Window')"></button>
 	</div>
 	<div class="form-inline" data-bind="if: analysis().studyWindow() != null">
 		<div class="form-group">
-			<label for="studyWindowStartDate">Study window begins on</label>
+			<label for="studyWindowStartDate" data-bind="text: ko.i18n('ir.editor.studyWindowBeginsOn', 'Study window begins on')"></label>
 			<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowStartDate" data-bind="datepicker: analysis().studyWindow().startDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }">
 		</div>
 		<div class="form-group">
-				<label for="studyWindowEndDate">and ends on</label>
+				<label for="studyWindowEndDate" data-bind="text: ko.i18n('ir.editor.studyWindowEndsOn', 'and ends on')"></label>
 				<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowEndDate" data-bind="datepicker: analysis().studyWindow().endDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }">
 		</div>
-		<button class="btn btn-sm btn-danger" data-bind="click: function() { analysis().studyWindow(null); }">Remove Study Window</button>
+		<button class="btn btn-sm btn-danger" data-bind="click: function() { analysis().studyWindow(null); }, text: ko.i18n('ir.editor.removeStudyWindow', 'Remove Study Window')"></button>
 	</div>
 
 	<div class="heading">
-		<b>Stratify Criteria:  </b>
-		You can provide optional stratification criteria to the analysis that will divide the population into unique groups based on their satisified criteria.
+		<b data-bind="text: ko.i18n('ir.editor.stratifyCriteria', 'Stratify Criteria:')"></b>
+		<span data-bind="text: ko.i18n('ir.editor.stratifyCriteriaMessage', 'You can provide optional stratification criteria to the analysis that will divide the population into unique groups based on their satisified criteria.')"></span>
 	</div>
 	<div data-bind="eventListener: [
 		 { event: 'click', selector: '.copyInclusionRule', callback: copyStrataRule},
@@ -97,7 +105,7 @@
 					<td style="vertical-align: top; padding-right: 20px;">
 						<!-- ko if: isEditable -->
 							<div>
-								<button class="btn btn-sm btn-success" data-bind="click: addStrataRule">New stratify criteria</button>
+								<button class="btn btn-sm btn-success" data-bind="click: addStrataRule, text: ko.i18n('ir.editor.newStratifyCriteria', 'New stratify criteria')"></button>
 							</div>
 						<!-- /ko -->
 						<div>
@@ -106,7 +114,7 @@
 									<tr data-bind="click: $component.selectStrataRule, css: { selectedInclusion: $data == $component.selectedStrataRule() }">
 										<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
 										</td>
-										<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : 'Unnamed Criteria' "></td>
+										<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : ko.i18n('components.inclusionRuleEditor.unnamedCriteria', 'Unnamed Criteria')"></td>
 									</tr>
 								</tbody>
 							</table>
@@ -118,7 +126,7 @@
 							<inclusion-rule-editor params="{IndexRule: analysis, InclusionRule: selectedStrataRule}"></inclusion-rule-editor>
 							<!-- /ko -->
 							<!-- ko ifnot: $component.selectedStrataRule() -->
-							<div>Please select a qualifying inclusion criteria to edit.</div>
+							<div data-bind="text: ko.i18n('ir.editor.selectInclusionCriteriaMessage', 'Please select a qualifying inclusion criteria to edit.')"></div>
 							<!-- /ko -->
 						<!-- /ko -->
 						</td>
@@ -132,7 +140,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<div class="modal-title">Choose a Cohort</div>
+					<div class="modal-title" data-bind="text: ko.i18n('ir.editor.chooseACohort', 'Choose a Cohort')"></div>
 				</div>
 				<div class="modal-body">
 					<cohort-definition-browser params="cohortDefinitionSelected: data => cohortSelected(data.id)"></cohort-definition-browser>

@@ -31,7 +31,7 @@
 
 <atlas-modal params="{
 		showModal: jobModalOpened,
-		title: 'Notifications (last ' + $component.jobListing().length + ')',
+		title: ko.i18nformat('notifications.title', 'Notifications (last <%=length%>>)', {length: $component.jobListing().length}),
 		templateWrapperClass: {},
 		data: {
 			jobListing: $component.sortedJobListing,
@@ -44,17 +44,16 @@
 		}
 }">
 	<div data-bind="css: classes('jobs-modal-content')">
-		<div data-bind="if: jobListing().length == 0">
-			Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
-			have new notifications available.
+		<div data-bind="if: jobListing().length == 0" style="padding: 5px 10px 0">
+			<span data-bind="html: ko.i18n('notifications.explanation')"></span>
 		</div>
 		<div data-bind="if: jobListing().length > 0">
 			<table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
 				<thead>
-				<th>Job Name</th>
-				<th>Duration</th>
-				<th>End time</th>
-				<th>Status</th>
+				<th data-bind="text: ko.i18n('notifications.jobName', 'Job Name')"></th>
+				<th data-bind="text: ko.i18n('notifications.duration', 'Duration')"></th>
+				<th data-bind="text: ko.i18n('notifications.endTime', 'End time')"></th>
+				<th data-bind="text: ko.i18n('notifications.status', 'Status')"></th>
 				</thead>
 				<tbody>
 				<!-- ko foreach: jobListing -->
@@ -70,7 +69,12 @@
 				<td colspan="4">
 					<div class="btn-group pull-right">
 						<button type="button" class="btn btn-sm btn-primary" data-bind="click: toggleCompletedFilter">
-							<span data-bind="text: (hideCompleted ? 'Show' : 'Hide') + ' completed jobs'"></span>
+							<!-- ko if: hideCompleted -->
+							<span data-bind="text: ko.i18n('notifications.showCompletedJobsButton', 'Show completed jobs')"></span>
+							<!-- /ko -->
+							<!-- ko ifnot: hideCompleted -->
+							<span data-bind="text: ko.i18n('notifications.hideCompletedJobsButton', 'Hide completed jobs')"></span>
+							<!-- /ko -->
 							<i data-bind="visible: isRefreshing, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
 						</button>
 					</div>

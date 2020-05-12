@@ -1,22 +1,22 @@
 <select data-bind="options: conceptSets,
 	optionsText: function(item) { return item.name },
-	optionsCaption: 'Please select codeset to modify...',
+	optionsCaption: ko.i18n('components.conceptSetBuilder.pleaseSelectCodesetToModify', 'Please select codeset to modify...'),
 	value: selectedConceptSet" class="mediumInputField">
 </select>
-<button class="btn btn-primary btn-sm" data-bind="click: function () { $component.createConceptSet() }">New Concept Set</button>
-<button class="btn btn-primary btn-sm" data-bind="visible: !(selectedConceptSet()), click: function () { $component.isModalOpened(true) }">Load</button>
-<button class="btn btn-primary btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.isImportEnabled(true) }">Import</button>
-<button class="btn btn-primary btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.isExportEnabled(true) }">Export</button>
-<button class="btn btn-danger btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.deleteConceptSet() }">Delete</button>
+<button class="btn btn-primary btn-sm" data-bind="click: function () { $component.createConceptSet() }, text: ko.i18n('components.conceptSetBuilder.newConceptSet', 'New Concept Set')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: !(selectedConceptSet()), click: function () { $component.isModalOpened(true) }, text: ko.i18n('components.conceptSetBuilder.load', 'Load')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.isImportEnabled(true) }, text: ko.i18n('components.conceptSetBuilder.import', 'Import')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.isExportEnabled(true) }, text: ko.i18n('components.conceptSetBuilder.export', 'Export')"></button>
+<button class="btn btn-danger btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.deleteConceptSet() }, text: ko.i18n('components.conceptSetBuilder.delete', 'Delete')"></button>
 <div data-bind="if: selectedConceptSet">
 		<div class="tabs" data-bind="tabs: { widget: $component.tabWidget }">
 		<ul>
 			<li data-bind="attr: { 'aria-controls': 'csExpression' }">
-				<a data-bind="attr: { title: 'Concept Set Expression', href: '#csExpression' }, text: 'Concept Set'"></a>
+				<a data-bind="attr: { title: 'Concept Set Expression', href: '#csExpression' }, text: ko.i18n('components.conceptSetBuilder.conceptSet', 'Concept Set')"></a>
 			</li>
 			<li data-bind="attr: { 'aria-controls': 'csIncluded' }">
 				<a data-bind="attr: { title: 'Concept Sets', href: '#csIncluded' }">
-					Included Concepts
+					<span data-bind="text: ko.i18n('components.conceptSetBuilder.includedConcepts', 'Included Concepts')"></span>
 					<!-- ko if: includedConceptsComponent() && includedConceptsComponent().isLoading() -->
 					<img class="spin" style="width: 14px; height: 14px" src="images/running.png" />
 					<!-- /ko -->
@@ -27,7 +27,7 @@
 			</li>
 			<li data-bind="attr: { 'aria-controls': 'csMapped' }">
 				<a data-bind="attr: { title: 'Mapped Concepts', href: '#csMapped' }">
-					Mapped Concepts
+					<span data-bind="text: ko.i18n('components.conceptSetBuilder.mappedConcepts', 'Mapped Concepts')"></span>
 					<!-- ko if: mappedConceptsComponent() && mappedConceptsComponent().isLoading() -->
 					<img class="spin" style="width: 14px; height: 14px" src="images/running.png" />
 					<!-- /ko -->
@@ -49,23 +49,21 @@
 							order: [[2, 'desc']],
 							columns: [
 									'select',
-									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
-									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-									{ title: 'Concept Name', data: 'concept.CONCEPT_NAME'},
-									{ title: 'Domain', data: 'concept.DOMAIN_ID' },
-									{ title: 'Vocabulary', data: 'concept.VOCABULARY_ID' },
-									{ title: 'Exclude', class:'text-center', orderable:false, render: function() { return $component.renderCheckbox('isExcluded');} },
-									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');} },
-									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');} }
+									{ title: ko.i18n('columns.conceptId', 'Concept Id'), data: 'concept.CONCEPT_ID'},
+									{ title: ko.i18n('columns.conceptCode', 'Concept Code'), data: 'concept.CONCEPT_CODE'},
+									{ title: ko.i18n('columns.conceptName', 'Concept Name'), data: 'concept.CONCEPT_NAME'},
+									{ title: ko.i18n('columns.domain', 'Domain'), data: 'concept.DOMAIN_ID' },
+									{ title: ko.i18n('columns.vocabulary', 'Vocabulary'), data: 'concept.VOCABULARY_ID' },
+									{ title: ko.i18n('columns.exclude', 'Exclude'), class:'text-center', orderable:false, render: function() { return $component.renderCheckbox('isExcluded');} },
+									{ title: ko.i18n('columns.descendants', 'Descendants'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');} },
+									{ title: ko.i18n('columns.mapped', 'Mapped'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');} }
 							],
-							language: {
-								search: 'Filter records:'
-							}
+							language: ko.i18n('datatable.language')
 					 }
 				}">
 				</table>
 			</div>
-			<concept-picker params="onAdd: $component.addConcepts"></concept-picker><button class="btn btn-danger btn-sm" data-bind="click: function () { $component.removeSelected() }">Remove Selected</button>
+			<concept-picker params="onAdd: $component.addConcepts"></concept-picker><button class="btn btn-danger btn-sm" data-bind="click: function () { $component.removeSelected() }, text: ko.i18n('components.conceptSetBuilder.removeSelected', 'Remove Selected')"></button>
 		</div>
 		<div data-bind="attr: { id: 'csIncluded' }">
 			<div style="padding: 5px;">
@@ -82,17 +80,17 @@
 		</div>
 	</div>
 	<!-- ko if: isImportEnabled -->
-	<div title="Import Concept Set" style="padding: 0px; padding-top: 5px; padding-right: 5px" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: ''}">
+	<div title="Import Concept Set" style="padding: 0px; padding-top: 5px; padding-right: 5px" data-bind="dialog: { isOpen: isImportEnabled, modal: true, width:700, height:500, closeText: '', title: ko.i18n('components.conceptSetBuilder.importConceptSetTitle', 'Import Concept Set...')}">
 		<div style="height:100%; overflow: none; padding-top: 5px; padding-bottom: 40px;">
-			<textarea placeholder="Import Concept Set" style="width: 100%; height: 100%; resize: none" data-bind="textInput: importValues"></textarea>
+			<textarea style="width: 100%; height: 100%; resize: none" data-bind="textInput: importValues, placeholder: ko.i18n('components.conceptSetBuilder.importConceptSetPlaceholder', 'Import Concept Set')"></textarea>
 		</div>
 		<div style="position: relative; margin-top: -30px; height: 30px; clear: both;">
-			<button class="btn btn-sm btn-primary" data-bind="click: doImport">Import</button>
+			<button class="btn btn-sm btn-primary" data-bind="click: doImport, text: ko.i18n('components.conceptSetBuilder.import', 'Import')"></button>
 		</div>
 	</div>
 	<!-- /ko -->
 	<!-- ko if: isExportEnabled -->
-	<div title="Export Concept Set..." style="padding: 0px; padding-top: 5px; padding-right: 5px" data-bind="dialog: { isOpen: isExportEnabled, modal: true, width:700, height:500, closeText: ''}">
+	<div style="padding: 0px; padding-top: 5px; padding-right: 5px" data-bind="dialog: { isOpen: isExportEnabled, modal: true, width:700, height:500, closeText: '', title: ko.i18n('components.conceptSetBuilder.exportConceptSetTitle', 'Export Concept Set...')}">
 		<div style="height:100%; overflow: none; padding-top: 5px; padding-bottom: 10px;">
 			<textarea style="width: 100%; height: 100%; resize: none" data-bind="value: getConceptSetJson()"></textarea>
 		</div>

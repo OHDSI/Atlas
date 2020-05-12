@@ -36,7 +36,16 @@ define([
 			this.selectedStrataRuleIndex = null;
 			this.isEditable = params.isEditable;
 
-			this.fieldOptions = [{id: 'StartDate', name: 'start date'}, {id: 'EndDate', name: 'end date'}];
+			this.fieldOptions = [
+				{
+					id: 'StartDate',
+					name: ko.i18n('ir.editor.timeAtRiskStartDate', 'start date')
+				},
+				{
+					id: 'EndDate',
+					name: ko.i18n('ir.editor.timeAtRiskEndDate', 'end date')
+				}
+			];
 			// Subscriptions
 			this.subscriptions.push(this.analysis.subscribe((newVal) => {
 				console.log("New analysis set.");
@@ -46,7 +55,9 @@ define([
 			this.tarMessage = ko.pureComputed( () => {
 				const analysis = this.analysis();
 				if (analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField()) {
-					if (analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset()) return "Error: Time at risk starts on or after time at risk end, resulting in zero time at risk.  Please ensure the start offset is greater than the end offset."
+					if (analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset()) {
+						return ko.i18n('ir.editor.timeAtRiskWarningMessage', 'Error: Time at risk starts on or after time at risk end, resulting in zero time at risk.  Please ensure the start offset is greater than the end offset.')();
+					}
 				}
 			})
 		}

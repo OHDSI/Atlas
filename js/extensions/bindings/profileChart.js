@@ -45,9 +45,9 @@ define([
 	};
 
 	var htmlTipText = d => {
-		var tipText = '<p>Event: ' + d.conceptName + '</p><p>Start Day: ' + d.startDay + '</p>';
+		var tipText = '<p>' + ko.i18n('profiles.chart.event', 'Event: ')() + d.conceptName + '</p><p>' + ko.i18n('profiles.chart.startDay', 'Start Day: ')() + d.startDay + '</p>';
 		if (canViewProfileDates() && d.startDate != null) {
-			tipText += '<p>Start Date: ' + momentApi.formatDate(new Date(d.startDate)) + '</p>'
+			tipText += '<p>' + ko.i18n('profiles.chart.startDate', 'Start Date: ')() + momentApi.formatDate(new Date(d.startDate)) + '</p>'
 		}
 		return tipText;
 	};

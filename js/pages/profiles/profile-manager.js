@@ -67,7 +67,7 @@ define([
 				this.aspectRatio = ko.observable();
 				this.config = config;
 				this.filterHighlightsText = ko.observable();
-				this.loadingStatus = ko.observable('loading');
+				this.loadingStatus = ko.i18n('common.loading', 'loading');
 
 				this.sourceKey = ko.observable(router.routerParams().sourceKey);
 				this.personId = ko.observable(router.routerParams().personId);
@@ -267,7 +267,7 @@ define([
 					else
 						this.highlight([]);
 				});
-				this.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
+				this.cohortDefinitionButtonText = ko.i18n('profile.clickHereToSelectACohort', 'Click Here to Select a Cohort');
 
 				this.showSection = {
 					profileChart: ko.observable(true),
@@ -279,34 +279,34 @@ define([
 					data: 'highlight()',
 					sortable: false
 				}, {
-					title: 'Concept Name',
+					title: ko.i18n('profiles.highlightColumns.name', 'Concept Name'),
 					data: 'caption'
 				}, {
-					title: 'Domain',
+					title: ko.i18n('profiles.highlightColumns.domain', 'Domain'),
 					data: 'domain'
 				}, {
-					title: 'Total Records',
+					title: ko.i18n('profiles.highlightColumns.totalRecords', 'Total Records'),
 					data: 'count'
 				}];
 
 				this.columns = [{
-						title: 'Concept Id',
+						title: ko.i18n('profiles.columns.id', 'Concept Id'),
 						data: 'conceptId'
 					},
 					{
-						title: 'Concept Name',
+						title: ko.i18n('profiles.columns.name', 'Concept Name'),
 						data: 'conceptName'
 					},
 					{
-						title: 'Domain',
+						title: ko.i18n('profiles.columns.domain', 'Domain'),
 						data: 'domain'
 					},
 					{
-						title: 'Start Day',
+						title: ko.i18n('profiles.columns.startDay', 'Start Day'),
 						data: 'startDay'
 					},
 					{
-						title: 'End Day',
+						title: ko.i18n('profiles.columns.endDay', 'End Day'),
 						data: 'endDay'
 					}
 				];
@@ -328,7 +328,7 @@ define([
 				this.highlightOptions = {};
 				this.options = {
 					Facets: [{
-						'caption': 'Domain',
+						'caption': ko.i18n('facets.caption.domain', 'Domain'),
 						'binding': d => d.domain,
 					}]
 				};
@@ -349,13 +349,13 @@ define([
 
 				let url = constants.paths.person(this.sourceKey(), this.personId());
 
-				this.loadingStatus('loading profile data from database');
+				this.loadingStatus = ko.i18n('profiles.loadingProfile', 'loading profile data from database');
 				this.personRequest = this.personRequests[url] = profileService.getProfile(this.sourceKey(), this.personId(), this.cohortDefinitionId())
 					.then((person) => {
 						if (this.personRequest !== this.personRequests[url]) {
 							return;
 						}
-						this.loadingStatus('processing profile data');
+						this.loadingStatus = ko.i18n('profiles.processingProfile', 'processing profile data');
 						person.personId = this.personId();
 						this.loadingPerson(false);
 						let cohort;

@@ -115,14 +115,14 @@ define([
 		};
 
 		const newEntityNames = {
-			characterization: ko.i18n('const.newEntityNames.characterization', 'New Characterization'), //'New Characterization'
-			featureAnalysis: ko.i18n('const.newEntityNames.featureAnalysis', 'New Feature Analysis'), //'New Feature Analysis',
-			cohortDefinition: ko.i18n('const.newEntityNames.cohortDefinition'), //"New Cohort Definition",
-			incidenceRate: ko.i18n('const.newEntityNames.incidenceRate'), //"New Incidence Rate Analysis",
-			pathway: ko.i18n('const.newEntityNames.pathway'), //'New Cohort Pathway',
-			ple: ko.i18n('const.newEntityNames.ple'), //'New Population Level Estimation Analysis',
-			conceptSet: ko.i18n('const.newEntityNames.conceptSet'), //'New Concept Set',
-			plp: ko.i18n('const.newEntityNames.plp'), //'New Patient Level Prediction Analysis',
+			characterization: ko.i18n('const.newEntityNames.characterization', 'New Characterization'),
+			featureAnalysis: ko.i18n('const.newEntityNames.featureAnalysis', 'New Feature Analysis'),
+			cohortDefinition: ko.i18n('const.newEntityNames.cohortDefinition', 'New Cohort Definition'),
+			incidenceRate: ko.i18n('const.newEntityNames.incidenceRate', 'New Incidence Rate Analysis'),
+			pathway: ko.i18n('const.newEntityNames.pathway', 'New Cohort Pathway'),
+			ple: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis'),
+			conceptSet: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
+			plp: ko.i18n('const.newEntityNames.plp', 'New Patient Level Prediction Analysis'),
 		};
 
 		const pluginTypes = {
