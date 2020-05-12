@@ -102,7 +102,7 @@
 							data-bind="text:ko.i18n('pages.cohortDefinitionManager.panels.newConceptSet', 'New Concept Set'), click:function() { newConceptSet(); }, enable: canEdit"></button>
 						<button type="button" class="btn btn-sm btn-primary"
 							data-bind="text:ko.i18n('pages.cohortDefinitionManager.panels.import', 'Import'), click:function(){ $component.importConceptSet() }, enable: canEdit"><i
-								class="fa fa-upload" aria-hidden="true" /> Import</button>
+								class="fa fa-upload" aria-hidden="true" /></button>
 						<span
 							data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null"
 							data-placement="bottom"><button type="button" class="btn btn-sm btn-success"
@@ -125,9 +125,7 @@
 															{ data: 'id', title: 'Id', width: '25px'},
 															$component.getDataboundColumn('name', 'Title', '100%')
 													],
-													language: {
-															search: 'Filter Cohort Concept Sets:'
-													}
+													language: ko.i18n('datatable.language')
 											}
 									 }">
 					</table>

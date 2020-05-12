@@ -1,6 +1,9 @@
 <!-- ko ifnot: isRunning -->
-<button class="btn btn-sm btn-primary generate" data-bind="css: {disable: dirtyFlag().isDirty}, disable: dirtyFlag().isDirty">Generate</button>
+<button class="btn btn-sm btn-primary generate" data-bind="css: {disable: dirtyFlag().isDirty}, disable: dirtyFlag().isDirty">
+  <span data-bind="text: ko.i18n('components.generateComponent.generate', 'Generate')"></span>
+</button>
 <!-- /ko -->
 <!-- ko if: isRunning -->
-<img class="spin" src="images/running.png" />Generating...
+<img class="spin" src="images/running.png" />
+<span data-bind="text: ko.i18n('components.generateComponent.generating', 'Generating...')"></span>
 <!-- /ko -->
