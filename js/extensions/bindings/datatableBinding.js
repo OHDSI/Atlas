@@ -6,6 +6,7 @@ define([
 	'xss',
 	'moment',
 	'services/MomentAPI',
+	'utils/DatatablePaginationUtils',
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
@@ -16,7 +17,8 @@ define([
 	config,
 	filterXSS,
 	moment,
-	momentApi
+	momentApi,
+	paginationUtils
 	) {
 
 	function renderSelected(s, p, d) {
@@ -130,7 +132,8 @@ define([
 					ko.applyBindings(bindingContext, $(element).find('thead')[0]);
 				}
 
-				$(element).DataTable(binding.options);
+				const datatable = $(element).DataTable(binding.options);
+				paginationUtils.applyPaginationListeners(element, datatable, binding);
 
 				if (binding.api != null)
 				{
@@ -185,9 +188,7 @@ define([
 			if (data.length > 0)
 				table.rows.add(data);
 
-			// drawing may access observables, which updating we do not want to trigger a redraw to the table
-			// see: https://knockoutjs.com/documentation/computed-dependency-tracking.html#IgnoringDependencies
-			ko.ignoreDependencies(table.draw);
+			paginationUtils.refreshTable(table);
 		}
 
 

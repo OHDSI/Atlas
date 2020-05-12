@@ -1,9 +1,21 @@
-define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ], function (ko, view, crossfilter) {
+define(
+	['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/DatatablePaginationUtils', 'colvis', ],
+	function (ko, view, crossfilter, DatatablePaginationUtils)
+{
 
-	function facetedDatatable(params) {
+	function getDtElement(facetedDtEl) {
+		return $(facetedDtEl).find('table');
+	}
+
+	function getSavedSearch(element) {
+		return DatatablePaginationUtils.getFacets(getDtElement(element).dataTable().DataTable());
+	}
+
+	function facetedDatatable(params, componentInfo) {
 		var self = this;
 		var subscriptions = [];
 
+		self.element = componentInfo.element;
 		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
@@ -66,9 +78,16 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.scrollY = params.scrollY || null;
 		self.scrollCollapse = params.scrollCollapse || false;
 
-		self.updateFilters = function (data, event) {
+		self.selectFacetItems = function(targetCaption, selectedFacetValues) {
+			const facetItems = self.facets().find(f => f.caption === targetCaption).facetItems;
+			if (facetItems) {
+				facetItems.forEach(fi => self.updateFilters(fi, null, selectedFacetValues.includes(fi.key), false));
+			}
+		};
+
+		self.updateFilters = function (data, event, selected, emitEvent = true) {
 			var facet = data.facet;
-			data.selected(!data.selected());
+			data.selected(typeof selected !== 'undefined' ? selected : !data.selected());
 			if (data.selected()) {
 				if (!facet.selectedItems.hasOwnProperty(data.key)) {
 					facet.selectedItems[data.key] = data;
@@ -88,6 +107,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 				});
 			}
 			self.data.valueHasMutated();
+
+			emitEvent && getDtElement(self.element).trigger('facet.dt', data);
 		}
 
 		// additional helper function to help with crossfilter-ing dimensions that contain nulls
@@ -126,16 +147,22 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 							self.facets.push(facet);
 						});
 						// Iterate over the facets and set any defaults
+						const savedSearch = getSavedSearch(self.element);
 						$.each(self.options.Facets, function (i, facetConfig) {
-							if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
-								$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
-									var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
-										return f.key == defaultFacet;
-									});
-									if (facetItem.length > 0) {
-										self.updateFilters(facetItem[0], null);
-									}
-								})
+							const savedFacetValues = savedSearch[facetConfig.caption];
+							if (savedFacetValues) {
+								self.selectFacetItems(facetConfig.caption, savedFacetValues);
+							} else {
+								if (facetConfig.defaultFacets && facetConfig.defaultFacets.length > 0) {
+									$.each(facetConfig.defaultFacets, function (d, defaultFacet) {
+										var facetItem = $.grep(self.facets()[i].facetItems, function (f) {
+											return f.key == defaultFacet;
+										});
+										if (facetItem.length > 0) {
+											self.updateFilters(facetItem[0], null, true, false);
+										}
+									})
+								}
 							}
 						});
 					}
@@ -143,6 +170,16 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 				}
 			})
 		);
+
+		$(self.element).on('refresh.faceted-dt', () => {
+			if (Array.isArray(self.options.Facets)) {
+				const savedSearch = getSavedSearch(self.element);
+				self.options.Facets.forEach(facetConfig => {
+					const savedFacetValues = savedSearch[facetConfig.caption] || facetConfig.defaultFacets || [];
+					self.selectFacetItems(facetConfig.caption, savedFacetValues);
+				});
+			}
+		});
 
 		// init component
 		if (ko.isComputed(self.reference)) {
@@ -190,7 +227,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 	};
 
 	var component = {
-		viewModel: facetedDatatable,
+		viewModel: {createViewModel: (params, info) => new facetedDatatable(params, info)},
 		template: view
 	};
 

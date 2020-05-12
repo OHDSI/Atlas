@@ -8,6 +8,8 @@ define(
     'knockout',
     'const',
     'services/EventBus',
+	'datatables.net',
+	'utils/DatatablePaginationUtils',
     'director',
 	],
 	(
@@ -19,6 +21,8 @@ define(
     ko,
     constants,
     EventBus,
+    dataTables,
+    DatatablePaginationUtils
 	) => {
     class AtlasRouter {
       constructor() {
@@ -127,6 +131,12 @@ define(
 					this.routerParams(routerParams);
 				}
 				this.currentView(view);
+				setTimeout(() => {
+					$.fn.dataTable.tables().forEach(dt => {
+						DatatablePaginationUtils.refreshTable($(dt).dataTable().DataTable());
+					});
+					$('faceted-datatable').trigger('refresh.faceted-dt');
+				});
       }
     }
     return new AtlasRouter();
