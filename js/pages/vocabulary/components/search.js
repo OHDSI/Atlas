@@ -51,6 +51,14 @@ define([
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
 			this.params = params;
+			this.hasActiveConcepts = ko.computed(() => !!Object.keys(sharedState.activeConceptSets()).length);
+			this.activeConceptSets = ko.computed(() => {
+				const activeConceptSets = sharedState.HashedConceptSets;
+				return Object.keys(activeConceptSets).map(key => activeConceptSets[key]);
+			});
+			this.currentlyActiveConceptSet = ko.computed(() => {
+				return sharedState.HashedConceptSets[sharedState.activeConceptSetSource()] || null;
+			});
 
 				this.isInProgress = ko.computed(() => {
 					return this.domainsLoading() === true && this.vocabulariesLoading() === true;
@@ -255,6 +263,10 @@ define([
 				} else {
 					return true;
 				}
+			}
+
+			setVocabularyActiveConceptSet(conceptSet) {
+				sharedState.activeConceptSetSource(conceptSet.source);
 			}
 
 			executeSearch() {

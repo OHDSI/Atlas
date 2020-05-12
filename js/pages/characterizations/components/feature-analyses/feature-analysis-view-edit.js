@@ -12,6 +12,7 @@ define([
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'atlas-state',
+    'services/EventEmitter',
     'services/AuthAPI',
     'services/Vocabulary',
 	'services/Permission',
@@ -48,6 +49,7 @@ define([
     view,
     config,
     sharedState,
+    EventEmitter,
     authApi,
     VocabularyAPI,
 	GlobalPermissionService,
@@ -77,16 +79,19 @@ define([
     class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
-
             this.featureId = sharedState.FeatureAnalysis.selectedId;
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
             this.previousDesign = {};
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
-
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
-
+            sharedState.activeConceptSetSource(globalConstants.conceptSetSources.featureAnalysis);
+            EventEmitter.on(globalConstants.eventTypes.conceptSetChanged, (conceptSetSource) => {
+                if( conceptSetSource === globalConstants.conceptSetSources.featureAnalysis ) {
+                    this.data().conceptSets.valueHasMutated();
+                }
+            })
             this.canEdit = this.isUpdatePermittedResolver();
             this.isNameFilled = ko.computed(() => {
                 return this.data() && this.data().name();

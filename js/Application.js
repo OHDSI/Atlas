@@ -8,6 +8,7 @@ define(
 		'lscache',
 		'atlas-state',
 		'jquery',
+		'services/EventEmitter',
 		'services/Execution',
 		'services/SourceAPI',
 		'services/EventBus',
@@ -27,6 +28,7 @@ define(
 		lscache,
 		sharedState,
 		$, // TODO: get rid of jquery
+		EventEmitter,
 		executionService,
 		sourceApi,
 		EventBus,
@@ -154,8 +156,12 @@ define(
 								id: 0
 							}
 							self.currentConceptSet(newConceptSet);
+							sharedState.activeConceptSetSource('repository');
+							conceptSetService.updateHashedConceptSet({
+								conceptSetName: ko.observable('New Concept Set'),
+								conceptSetId: 0,
+							})
 						}
-
 						var table = $(this)
 							.closest('.dataTable')
 							.DataTable();
@@ -164,7 +170,6 @@ define(
 							})
 							.data();
 						var selectedConcepts = sharedState.selectedConcepts();
-
 						for (var i = 0; i < concepts.length; i++) {
 							var concept = concepts[i];
 							if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
@@ -173,9 +178,11 @@ define(
 								var conceptSetItem = commonUtils.createConceptSetItem(concept);
 								sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 								selectedConcepts.push(conceptSetItem)
+								sharedState.selectedConcepts.valueHasMutated();
 							}
 						}
 						sharedState.selectedConcepts(selectedConcepts);
+						sharedState.selectedConcepts.valueHasMutated();
 						for (var i = 0; i < table.rows()[0].length; i++) {
 							table.cell(i,0).data('<i class="fa fa-shopping-cart"></i>');
 						}
@@ -193,7 +200,13 @@ define(
 								name: ko.observable('New Concept Set'),
 								id: 0
 							});
+							sharedState.activeConceptSetSource('repository');
+							conceptSetService.updateHashedConceptSet({
+								conceptSetName: ko.observable('New Concept Set'),
+								conceptSetId: 0,
+							})
 							self.currentConceptSetSource('repository');
+						
 						}
 
 						$(this)
@@ -207,13 +220,28 @@ define(
 							sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
 							sharedState.selectedConcepts.push(conceptSetItem);
 							conceptSetService.setConceptSetExpressionExportItems();
+							const conceptSetToUpdate = sharedState.HashedConceptSets[sharedState.activeConceptSetSource()];
+							if (conceptSetToUpdate) {
+								sharedState.HashedConceptSets[sharedState.activeConceptSetSource()] = {
+									...conceptSetToUpdate,
+									selectedConceptsIndex: {
+										...conceptSetToUpdate.selectedConceptsIndex,
+										[concept.CONCEPT_ID]: 1,
+									},
+									selectedConcepts: (conceptSetToUpdate.selectedConcepts || []).concat(conceptSetItem),
+								}
+							}
+
 						} else {
 							delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
 							sharedState.selectedConcepts.remove(function (i) {
 								return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
 							});
+							
+
 						}
 
+						EventEmitter.emit(constants.eventTypes.conceptSetChanged, self.currentConceptSetSource());
 						// If we are updating a concept set that is part of a cohort definition
 						// then we need to notify any dependent observables about this change in the concept set
 						if (self.currentCohortDefinition() && self.currentConceptSetSource() === "cohort") {
@@ -240,7 +268,6 @@ define(
 							.toggleClass('selected');
 						var conceptSetItem = ko.contextFor(this)
 							.$data;
-
 						delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
 						sharedState.selectedConcepts.remove(function (i) {
 							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;

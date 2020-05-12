@@ -217,7 +217,7 @@ define(function (require, exports) {
 		}
 	}
 
-	function setConceptSet(conceptset, expressionItems) {
+	function setConceptSet(conceptset, expressionItems, source) {
 		var conceptSetItemsToAdd = [];
 		expressionItems.forEach((conceptSet) => {
 			const conceptSetItem = enhanceConceptSet(conceptSet);
@@ -231,6 +231,12 @@ define(function (require, exports) {
 			name: ko.observable(conceptset.name),
 			id: conceptset.id
 		});
+		updateHashedConceptSet({
+			conceptSetName: conceptset.name,
+			conceptSetId: conceptset.id,
+			selectedConcepts: conceptSetItemsToAdd,
+			selectedConceptsIndex: sharedState.selectedConceptsIndex,
+		})
 	}
 
 	function setConceptSetExpressionExportItems() {
@@ -241,6 +247,41 @@ define(function (require, exports) {
 			conceptIdentifierList.push(sharedState.selectedConcepts()[i].concept.CONCEPT_ID);
 		}
 		sharedState.currentConceptIdentifierList(conceptIdentifierList.join(','));
+		updateHashedConceptSet({
+			currentConceptIdentifierList: sharedState.currentConceptIdentifierList(),
+			currentConceptSetExpressionJson: highlightedJson,
+		})
+	}
+
+	function updateHashedConceptSet(data) {
+		const activeConceptSetSource = sharedState.activeConceptSetSource();
+		console.log('updateHashedConceptSet', activeConceptSetSource, data)
+		if (activeConceptSetSource) {
+			const conceptToUpdate = sharedState.HashedConceptSets[activeConceptSetSource] || {};
+			sharedState.HashedConceptSets[activeConceptSetSource] = {
+				...conceptToUpdate,
+				...data,
+				source: activeConceptSetSource,
+			}
+		}
+	}
+
+	function setCurrentConceptSet() {
+		const concept = sharedState.HashedConceptSets[sharedState.activeConceptSetSource()];
+		if (!!concept) {
+			const { 
+				includedConcepts,
+				includedSourcecodes,
+				currentConceptIdentifierList,
+				currentIncludedConceptIdentifierList,
+				selectedConcepts,
+			 } = concept;
+			sharedState.includedConcepts(includedConcepts);
+			sharedState.includedSourcecodes(includedSourcecodes);
+			sharedState.currentConceptIdentifierList(currentConceptIdentifierList);
+			sharedState.currentIncludedConceptIdentifierList(currentIncludedConceptIdentifierList);
+			sharedState.selectedConcepts(selectedConcepts);
+		}
 	}
 
 	// for the current selected concepts:
@@ -253,6 +294,12 @@ define(function (require, exports) {
 		sharedState.currentConceptIdentifierList(null);
 		sharedState.currentIncludedConceptIdentifierList(null);
 		setConceptSetExpressionExportItems(sharedState.conceptSetExpression());
+		updateHashedConceptSet({
+			includedConcepts: sharedState.includedConcepts(),
+			includedSourcecodes: sharedState.includedSourcecodes(),
+			currentConceptIdentifierList: sharedState.currentConceptIdentifierList(),
+			currentIncludedConceptIdentifierList: sharedState.currentIncludedConceptIdentifierList(),
+		})
 		return resolveAgainstServer ? resolveConceptSetExpressionSimple(sharedState.conceptSetExpression()) : null;
 	}
 
@@ -266,6 +313,10 @@ define(function (require, exports) {
 				}
 				sharedState.conceptSetInclusionIdentifiers(info);
 				sharedState.currentIncludedConceptIdentifierList(info.join(','));
+				updateHashedConceptSet({
+					conceptSetInclusionIdentifiers: info,
+					currentIncludedConceptIdentifierList: info.join(','),
+				});
 			};
 		sharedState.resolvingConceptSetExpression(true);
 		const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
@@ -282,7 +333,45 @@ define(function (require, exports) {
 		sharedState.ConceptSet.dirtyFlag().reset();
 	}
 
+
+	
+
+	function savePreviousConceptSet() {
+		return true;
+		const {
+			ConceptSet,
+			currentConceptIdentifierList,
+			resolvingConceptSetExpression,
+			currentConceptSetExpressionJson,
+			includedConceptsMap,
+			includedSourcecodes,
+			currentConceptSetMode,
+			includedHash,
+			selectedConcepts,
+			activeConceptSetSource,
+		} = sharedState;
+		if (activeConceptSetSource()) {
+			sharedState.HashedConceptSets = {
+				...sharedState.HashedConceptSets,
+				[sharedState.activeConceptSetSource()]: {
+					ConceptSet,
+					currentConceptIdentifierList,
+					resolvingConceptSetExpression,
+					currentConceptSetExpressionJson,
+					includedConceptsMap,
+					includedSourcecodes,
+					currentConceptSetMode,
+					includedHash,
+					selectedConcepts,
+				}
+			}
+		}
+	}
+
 	const api = {
+		updateHashedConceptSet,
+		setCurrentConceptSet,
+		savePreviousConceptSet,
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,

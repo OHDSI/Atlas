@@ -25,7 +25,7 @@ define(
             'explore-cohort',
           ], function () {
             sharedState.CohortDefinition.mode('conceptsets');
-            sharedState.ConceptSet.source('cohort');
+            sharedState.ConceptSet.source('cohort-definition');
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
               mode: 'conceptsets',
@@ -59,7 +59,7 @@ define(
               mode: 'definition',
               sourceKey,
             });
-            sharedState.ConceptSet.source('cohort');
+            sharedState.ConceptSet.source('cohort-definition');
             sharedState.CohortDefinition.mode(view);
           });
         }),

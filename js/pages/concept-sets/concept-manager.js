@@ -41,10 +41,8 @@ define([
 			this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
 			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
-
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
-
 			this.subscriptions.push(
 				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {

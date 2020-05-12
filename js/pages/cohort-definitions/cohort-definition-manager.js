@@ -645,7 +645,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortLinkModalOpened = ko.observable(false);
 			this.cohortDefinitionOpened = ko.observable(false);
 			this.analysisTypesOpened = ko.observable(false);
-
+			sharedState.activeConceptSetSource('cohort-definition');
 			this.currentConceptSet = sharedState.ConceptSet.current;
 			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
 			this.currentConceptSetSource = sharedState.ConceptSet.source;

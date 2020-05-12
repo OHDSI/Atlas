@@ -165,6 +165,20 @@ define([
 			},
 		};
 
+		const eventTypes = {
+			conceptSetChanged: 'conceptSetChanged',
+		};
+
+		const conceptSetSources = {
+			featureAnalysis: 'feature-analysis',
+		};
+
+		const activeConceptSetSources = {
+			featureAnalyses: 'feature_analyses',
+			conceptSets: 'concept_sets',
+			characterizations: 'characterizations',
+		};
+
 		return {
 			minChartHeight,
 			treemapGradient,
@@ -178,6 +192,9 @@ define([
 			newEntityNames,
 			pluginTypes,
 			sqlDialects,
+			eventTypes,
+			conceptSetSources,
+			activeConceptSetSources,
     };
   }
 );

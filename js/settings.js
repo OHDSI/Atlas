@@ -120,7 +120,7 @@ const settingsObject = {
 		"appConfig": "config",
 		"prism": "../node_modules/prismjs/prism",
 		"js-cookie": "../node_modules/js-cookie/src/js.cookie",
-
+		'eventemitter3': '../node_modules/eventemitter3/umd/eventemitter3.min',
 		"d3": "../node_modules/d3/build/d3",
 		"d3-tip": "../node_modules/d3-tip/dist/index",
 		"d3-slider": "assets/d3.slider",

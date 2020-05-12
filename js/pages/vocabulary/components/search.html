@@ -50,6 +50,19 @@
 		</div>
 	</form>
 	<div class="row">
+		<!-- ko if: activeConceptSets().length > 0 -->
+		<div class="pull-left">
+			<div class="btn-group">
+				<div type="button" class="btn btn-sm btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Active Concept Set: <span data-bind="text: currentlyActiveConceptSet().conceptSetName"></span>&nbsp;
+					<span class="caret"></span>
+				</div>
+				<ul class="dropdown-menu" data-bind="foreach: activeConceptSets()">
+						<li data-bind="text: $data.conceptSetName, click: () => $component.setVocabularyActiveConceptSet($data)"></li>
+				</ul>
+			</div>
+		</div>
+		<!-- /ko -->
 		<div data-bind="click: toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
 	</div>
 	<!-- ko if: isInProgress() || loading() -->

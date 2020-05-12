@@ -242,6 +242,7 @@ define([
 				&& this.currentConceptSet().id === conceptSetId
 			) {
 				this.currentConceptSetSource('repository');
+				sharedState.activeConceptSetSource('repository');
 				this.loading(false);
 				return;
 			}
@@ -249,6 +250,7 @@ define([
 				const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
 				const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
 				const expression = _.isEmpty(data) ? { items: [] } : data;
+				sharedState.activeConceptSetSource('repository');
 				conceptSetService.setConceptSet(conceptset, expression.items);
 				await conceptSetService.resolveConceptSetExpression();
 				this.currentConceptSetSource('repository');

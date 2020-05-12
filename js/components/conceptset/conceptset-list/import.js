@@ -77,26 +77,24 @@ define([
 			return this.conceptSets().find(cs => cs.id === this.currentConceptSet().id);
 		}
 
-		onConceptSetRepositoryImport(newConceptSet) {
+		async onConceptSetRepositoryImport(newConceptSet) {
 			this.showImportConceptSetModal(false);
 			this.importing(true);
-			vocabularyApi.getConceptSetExpression(newConceptSet.id)
-				.done((result)=> {
-					const conceptSet = this.findConceptSet();
-					if (!conceptSet) {
-						return;
-					}
-					conceptSet.name(newConceptSet.name);
-					conceptSet.expression.items().forEach((item)=> {
-						sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
-						sharedState.selectedConcepts.remove((v)=> {
-							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
-						});
-					});
-					conceptSet.expression.items().length = 0;
-					this.importConceptSetExpressionItems(result.items);
-					this.importing(false);
+			const result = await vocabularyApi.getConceptSetExpression(newConceptSet.id)
+			const conceptSet = this.findConceptSet();
+			if (!conceptSet) {
+				return;
+			}
+			conceptSet.name(newConceptSet.name);
+			conceptSet.expression.items().forEach((item)=> {
+				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
+				sharedState.selectedConcepts.remove((v)=> {
+					return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
 				});
+			});
+			conceptSet.expression.items().length = 0;
+			this.importConceptSetExpressionItems(result.items);
+			this.importing(false);
 		}
 
 		async importConceptSetExpressionItems (items) {

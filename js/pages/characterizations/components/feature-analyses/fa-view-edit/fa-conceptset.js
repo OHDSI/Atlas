@@ -5,6 +5,7 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'../../../services/FeatureAnalysisService',
+	'atlas-state',
 	'components/conceptset/conceptset-list'
 ],function(
 	ko,
@@ -13,6 +14,7 @@ define([
 	AutoBind,
 	commonUtils,
 	faService,
+	sharedState,
 ){
 
 	class FeatureAnalysisConceptSet extends AutoBind(Component) {

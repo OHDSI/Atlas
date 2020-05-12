@@ -41,7 +41,7 @@ define([
 			this.canEdit = params.canEdit || (() => false);
 			this.exportConceptSets = params.exportConceptSets || (() => false);
 			this.currentConceptSet = sharedState.ConceptSet.current;
-			this.currentConceptSetSource = sharedState.ConceptSet.source;
+			this.currentConceptSetSource = sharedState.activeConceptSetSource;
 			this.selectedConcepts = sharedState.selectedConcepts;
 			this.showImportConceptSetModal = ko.observable();
 			this.includedHash = sharedState.includedHash;
@@ -119,6 +119,7 @@ define([
 					componentParams: tabParams,
 				}
 			];
+			sharedState.activeConceptSetSource.valueHasMutated();
 			this.subscriptions.push(this.tableApi.subscribe(() => {
 				this.currentConceptSet() && this.markConceptSetSelected(this.currentConceptSet());
 			}));
@@ -159,7 +160,7 @@ define([
 						return this.concept.CONCEPT_ID;
 					});
 				const { data } = await conceptSetService.lookupIdentifiers(identifiers);
-				data.forEach((item, index) => conceptSet.expression.items()[i].concept = item);
+				data.forEach((item, index) => conceptSet.expression.items()[index].concept = item);
 				conceptSet.expression.items.valueHasMutated();
 			}
 			items.forEach(item => sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1);
@@ -167,6 +168,12 @@ define([
 			this.currentConceptSet({
 				name: conceptSet.name,
 				id: conceptSet.id,
+			});
+			
+			conceptSetService.updateHashedConceptSet({
+				selectedConcepts: items,
+				conceptSetName: ko.unwrap(conceptSet.name),
+				conceptSetId: conceptSet.id,
 			});
 			conceptSetService.resolveConceptSetExpression();
 		}

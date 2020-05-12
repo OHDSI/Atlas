@@ -1,4 +1,4 @@
-define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
@@ -45,6 +45,11 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
 	};
+	state.FeatureAnalysis.current.subscribe(newValue => {
+		if (newValue != null) {
+			state.FeatureAnalysis.dirtyFlag(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
+		}
+	});
 	state.FeatureAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
 
 	// Pathways State
@@ -127,6 +132,49 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
+
+	state.activeConceptSets = ko.observable({});
+	state.vocabularyActiveConceptSet = ko.observable();
+
+	state.activeConceptSetSource = ko.observable();
+
+	state.activeConceptSetSource.subscribe(newValue => {
+		if (!newValue) return;
+		const concept = state.HashedConceptSets[state.activeConceptSetSource()];
+		if (!!concept) {
+			state.ConceptSet.current = ko.observable();
+			state.clearSelectedConcepts();
+			console.log('HAS HASHED CONCEPT', concept.selectedConcepts)
+			const { 
+				includedConcepts,
+				includedSourcecodes,
+				currentConceptIdentifierList,
+				currentIncludedConceptIdentifierList,
+				selectedConcepts,
+				conceptSetName,
+				conceptSetId,
+			 } = concept;
+			state.includedConcepts(includedConcepts);
+			state.includedSourcecodes(includedSourcecodes);
+			state.currentConceptIdentifierList(currentConceptIdentifierList);
+			state.currentIncludedConceptIdentifierList(currentIncludedConceptIdentifierList);
+			state.selectedConcepts(selectedConcepts);
+			state.ConceptSet.current({
+				id: conceptSetId,
+				name: ko.observable(conceptSetName),
+			})
+		} else {
+			state.HashedConceptSets[state.activeConceptSetSource()] = {
+				includedConcepts: state.includedConcepts(),
+				includedSourcecodes: state.includedSourcecodes(),
+				currentConceptIdentifierList: state.currentConceptIdentifierList(),
+				currentIncludedConceptIdentifierList: state.currentIncludedConceptIdentifierList(),
+				selectedConcepts: state.selectedConcepts(),
+			}
+		}
+	});
+
+	state.HashedConceptSets = {};
 
 
 	return state;
