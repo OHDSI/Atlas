@@ -1,6 +1,6 @@
 <div class="paddedWrapper">
     <div>
-        <label>Choose your target cohort:</label>
+        <label data-bind="text: ko.i18n('ple.spec.chooseYourTargetCohort', 'Choose your target cohort:')"></label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.target().name" />
             <span class="input-group-btn">
@@ -10,7 +10,7 @@
         </div>
     </div>
     <div>
-        <label>Choose your comparator cohort:</label>
+        <label data-bind="text: ko.i18n('ple.spec.chooseYourComparatorCohort', 'Choose your comparator cohort:')"></label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.comparator().name" />
             <span class="input-group-btn">
@@ -20,13 +20,13 @@
         </div>
     </div>
     <div>
-        <label>Choose your outcome cohorts:</label>
+        <label data-bind="text: ko.i18n('ple.spec.chooseYourOutcomeCohorts:', 'Choose your outcome cohorts:')"></label>
     </div>
     <div>
-        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes}"></linked-cohort-list>
+        <linked-cohort-list params="{title: ' ', newItemLabel: ko.i18n('ple.spec.addOutcome', 'Add Outcome'), data: $component.comparison.outcomes}"></linked-cohort-list>
     </div>
     <div>
-        <label>Negative control concept set:</label>
+        <label data-bind="text: ko.i18n('ple.spec.negativeControlConceptSet', 'Negative control concept set:')"></label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.negativeControlOutcomesConceptSet().name" />
             <span class="input-group-btn">
@@ -37,11 +37,11 @@
     </div>    
     <div class="panel panel-default" data-bind="css: classes('panel-buffer')">
         <div class="panel-heading panel-subheading">
-          <i class="fa fa-cog"></i> Covariate selection
+            <i class="fa fa-cog"></i> <span data-bind="text: ko.i18n('ple.spec.covariateSelection', 'Covariate selection')">Covariate selection</span>
         </div>
         <div class="panel-body">
             <div>
-                <label>Concepts to <b>include</b> when constructing the covariates to be used in this study. (Leave blank if you want to include every concept).*</label>
+                <label data-bind="html: ko.i18n('ple.spec.conceptsToIncludeLabel', 'Concepts to <b>include</b> when constructing the covariates to be used in this study. (Leave blank if you want to include every concept).*')"></label>
                 <div class="input-group">
                     <input class="form-control" type="text" disabled data-bind="value: comparison.includedCovariateConceptSet().name" />
                     <span class="input-group-btn">
@@ -49,11 +49,11 @@
                         <button class="btn btn-danger" data-bind="disable: comparison.includedCovariateConceptSet().id == 0, click:clearIncludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
-                <label><i>* Concepts defined here are combined with those defined in the Analysis settings section.</i></label>
+                <label><i data-bind="text: ko.i18n('ple.spec.conceptsToIncludeNoteComparisons', '* Concepts defined here are combined with those defined in the Analysis settings section.')"></i></label>
             </div>
             <hr/>
             <div>
-                <label>Concepts to <b>exclude</b> when constructing the covariates to be used in this study.*</label>
+                <label data-bind="html: ko.i18n('ple.spec.conceptsToExcludeLabel', 'Concepts to <b>exclude</b> when constructing the covariates to be used in this study.*')"></label>
                 <div class="input-group">
                     <input class="form-control" type="text" disabled data-bind="value: comparison.excludedCovariateConceptSet().name" />
                     <span class="input-group-btn">
@@ -61,7 +61,7 @@
                         <button class="btn btn-danger" data-bind="disable: comparison.excludedCovariateConceptSet().id == 0, click:clearExcludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
-                <label><i>* Concepts defined here are combined with those defined in the Analysis settings section.</i></label>
+                <label><i data-bind="text: ko.i18n('ple.spec.conceptsToExcludeNoteComparisons', '* Concepts defined here are combined with those defined in the Analysis settings section.')"></i></label>
             </div>
         </div>
     </div>
@@ -70,7 +70,7 @@
     showModal: showCohortSelector,
     modifiers: ['lg'],
     iconClass: 'fa fa-users',
-    title: 'Select Cohort...',
+    title: ko.i18n('ple.spec.selectCohort', 'Select Cohort...'),
     data: {
         currentCohort: $component.currentCohort,
         cohortSelected: $component.cohortSelected,
@@ -83,7 +83,7 @@
     showModal: showConceptSetSelector,
     modifiers: ['lg'],
     iconClass: 'fa fa-shopping-cart',
-    title: 'Select Concept Set...',
+    title: ko.i18n('ple.spec.selectConceptSet', 'Select Concept Set...'),
     data: {
         currentConceptSet: $component.currentConceptSet,
         conceptsetSelected: $component.conceptsetSelected,
