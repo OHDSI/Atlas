@@ -14,6 +14,23 @@ define([
             super(classes);
         }
 
+        convertAnalysisToTabularData(analysis, stratas = null) {
+
+            const result = super.convertAnalysisToTabularData(analysis, stratas);
+            stratas && stratas.filter(s => result.data.findIndex(row => row.strataId === s.strataId) < 0)
+              .forEach(s => result.data.push(this.getResultObject(
+                {
+                  analysisId: analysis.analysisId,
+                  analysisName: analysis.analysisName,
+                  domainId: analysis.domainId,
+                  cohorts: [],
+                  strataId: s.strataId,
+                  strataName: s.strataName,
+                }
+              )));
+            return result;
+        }
+
         getRowId(stat) {
             // Transform stratas into rows
             return stat.strataId;

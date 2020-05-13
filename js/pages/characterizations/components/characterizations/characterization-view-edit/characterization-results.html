@@ -25,7 +25,7 @@
                 </ul>
             </div>
         </div>
-        <div data-bind="css: classes('threshold')">
+        <div data-bind="css: classes('threshold'), hidden: showEmptyResults">
             <div data-bind="css: classes('threshold-setter')">
                 <label  data-bind="css: classes('threshold-label'), text: ko.i18n('cc.viewEdit.results.threshold.label', 'Filter results to covariates with prevalence greater than:')"></label>
                 <input type="number" min="1" max="100" class="form-control"
@@ -47,7 +47,8 @@
     </div>
     <div data-bind="css: classes('report-section')">
         <div>
-            <button class="btn btn-sm btn-primary" type="button" data-bind="enable: $component.canExportAll(), click: $component.exportAllCSV, text: ko.i18n('cc.viewEdit.results.exportAll', 'Export all')">Export all</button>
+            <button class="btn btn-sm btn-primary" type="button" data-bind="text: showEmptyResults() ? 'Hide Empty Results' : 'Show All Results', click: toggleEmptyResults"></button>
+            <button class="btn btn-sm btn-primary" type="button" data-bind="enable: $component.canExportAll(), click: $component.exportAllCSV, text: ko.i18n('cc.viewEdit.results.exportAll', 'Export all')"></button>
             <i data-bind="visible: isResultDownloading('__ALL__'), css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
         </div>
         <!-- ko foreach: analysisList -->

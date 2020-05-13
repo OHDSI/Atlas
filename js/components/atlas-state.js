@@ -145,13 +145,14 @@ define([
   state.CohortDefinition = {
     current: ko.observable(null),
     info: ko.observable(),
-    mode: ko.observable("definition"),
+    mode: ko.observable('definition'),
     sourceInfo: ko.observableArray(),
+		lastUpdatedId: ko.observable(),
   };
   state.CohortDefinition.dirtyFlag = ko.observable(
     new ohdsiUtil.dirtyFlag(state.CohortDefinition.current())
   );
-  state.CohortDefinition.current.subscribe((newValue) => {
+  state.CohortDefinition.current.subscribe(newValue => {
     if (newValue != null) {
       state.CohortDefinition.dirtyFlag(
         new ohdsiUtil.dirtyFlag(state.CohortDefinition.current())

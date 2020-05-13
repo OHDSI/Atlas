@@ -6,8 +6,8 @@
 			<div class="input-group ir-header">
 				<input type="text" placeholder="New Incidence Rate Analysis" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !isNameFilled() }, enable: isEditable"/>
 				<div class="input-group-btn" role="group">
-					<button class="btn btn-success" data-bind="click: save, enable: canSave() && !isProcessing(), css: {'btn-success': canSave()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" data-bind="click: closeAndShowList, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
 					<button class="btn btn-primary" data-bind="click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
@@ -22,6 +22,10 @@
 			<div data-bind="visible: !isNameFilled()" class="empty-name-error">
 				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 				<label data-bind="text: ko.i18n('ir.nameIsEmpty', 'Incidence Rate Analysis name is empty.')"></label>
+			</div>
+			<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+				<label>The name of the analysis should differ from the default one.</label>
 			</div>
 		</div>
 
