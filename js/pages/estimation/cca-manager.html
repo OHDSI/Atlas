@@ -3,22 +3,22 @@
     <heading-title params="name: populationCaption(), icon: 'balance-scale', theme: 'dark'"></heading-title>
     <div class="asset-heading">
         <div class="input-group">
-          <input type="text" placeholder="New Population Level Estimation Analysis" class="form-control" data-bind="textInput: $component.estimationAnalysis() && $component.estimationAnalysis().name, css: { emptyInput: !isNameFilled() }" />
+          <input type="text" class="form-control" data-bind="textInput: $component.estimationAnalysis() && $component.estimationAnalysis().name, css: { emptyInput: !isNameFilled() }, placeholder: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis')" />
           <div class="input-group-btn" role="group">
-            <button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
-            <button class="btn btn-primary" title="Close" data-bind="click: close, enable: !isProcessing()"><i class="fa fa-times"></i></button>
+            <button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+            <button class="btn btn-primary" title="Close" data-bind="click: close, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
             <!-- ko ifnot: isNewEntity -->
-                <button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy() && !isProcessing(), css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>
-                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                <button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy() && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
-                <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
+                <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
             <!-- /ko -->
           </div>
         </div>
         <div data-bind="visible: !isNameFilled()" class="empty-name-error">
             <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-            <label>Population Level Effect Estimation name is empty.</label>
+            <label data-bind="text: ko.i18n('ple.nameIsEmptyWarning', 'Population Level Effect Estimation name is empty.')"></label>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
         selectTab: $component.selectTab,
         tabs: [
             {
-                title: 'Specification',
+                title: ko.i18n('ple.tabs.specification', 'Specification'),
                 key: 'specification',
                 componentName: 'comparative-cohort-analysis-specification-view-edit',
                 componentParams: $component.componentParams,
@@ -39,7 +39,7 @@
                 componentParams: $component.componentParams,
             },
             {
-                title: 'Utilities',
+                title: ko.i18n('ple.tabs.utilities', 'Utilities'),
                 key: 'utilities',
                 componentName: 'comparative-cohort-analysis-utilities',
                 componentParams: $component.componentParams,

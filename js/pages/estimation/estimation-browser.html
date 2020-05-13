@@ -1,13 +1,14 @@
-<heading-title params="name: 'Population Level Effect Estimation', icon: 'balance-scale', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('ple.title', 'Population Level Effect Estimation'), icon: 'balance-scale', theme: 'dark'"></heading-title>
 
 <div data-bind="if: canReadEstimations(), css: classes({ extra: 'paddedWrapper flexed' })">
 	<span data-bind="click: newEstimation,
 	css: classes({
 		element: 'new-btn',
 		extra: `pull-right btn btn-sm btn-primary ${canCreateEstimation() ? '' : 'disabled'}`,
-	})">New Population Level Effect Estimation</span>
+	}),
+	text: ko.i18n('const.newEntityNames.ple', 'New Population Level Effect Estimation')"></span>
 
-	<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 4, reference: reference, columns: columns, options:options"></faceted-datatable>
+	<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 4, reference: reference, columns: columns, options: options, language: ko.i18n('datatable.language')"></faceted-datatable>
 
 	<loading data-bind="visible:loading()" params="status: 'retrieving estimations'"></loading>
 </div>

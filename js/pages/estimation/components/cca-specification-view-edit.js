@@ -83,8 +83,8 @@ define([
 
 		editAnalysis(analysis) {
 			this.editorArray = this.cohortMethodAnalysisList;
-			this.editorHeading('Analysis Settings');
-			this.editorDescription('Add or update the analysis settings');
+			this.editorHeading(ko.i18n('ple.spec.analysisSettings', 'Analysis Settings'));
+			this.editorDescription(ko.i18n('ple.spec.analysisSettingsDescription', 'Add or update the analysis settings'));
 			this.editorComponentName('cohort-method-analysis-editor');
 			this.editorComponentParams({ 
 				analysis: analysis,
@@ -111,8 +111,8 @@ define([
 
 		editComparison(comparison) {
 			this.editorArray = this.comparisons;
-			this.editorHeading('Comparison');
-			this.editorDescription('Add or update the target, comparator, outcome(s) cohorts and negative control outcomes');
+			this.editorHeading(ko.i18n('ple.spec.comparison', 'Comparison'));
+			this.editorDescription(ko.i18n('ple.spec.comparisonDescription', 'Add or update the target, comparator, outcome(s) cohorts and negative control outcomes'));
 			this.editorComponentName('comparison-editor');
 			this.editorComponentParams({ 
 				comparison: comparison,

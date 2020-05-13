@@ -59,7 +59,7 @@ define([
 			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysisDash;
 
 			this.selectTab = this.selectTab.bind(this);
-			this.defaultLoadingMessage = "Loading...";
+			this.defaultLoadingMessage = ko.i18n('common.loading', 'Loading...');
 			this.estimationType = 'ComparativeCohortAnalysis';
 			this.cohortMethodAnalysisList = null;
 			this.defaultCovariateSettings = ko.observable();
@@ -81,7 +81,7 @@ define([
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.defaultName = globalConstants.newEntityNames.ple;
-			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
+			this.executionTabTitle = config.useExecutionEngine ? ko.i18n('ple.tabs.executions', 'Executions') : "";
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
@@ -122,9 +122,9 @@ define([
 			this.populationCaption = ko.computed(() => {
 				if (this.estimationAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
-						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
+						return ko.i18n('const.newEntityNames.ple', 'New Population Level Effect Estimation')() + ' - ' + ko.i18n('ple.caption', 'Comparative Cohort Analysis')();
 					} else {
-						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
+						return ko.i18n('ple.title', 'Population Level Effect Estimation')() + ' - ' + ko.i18n('ple.captionNumber', 'Comparative Cohort Analysis #')() + this.selectedAnalysisId();
 					}
 				}
 			});

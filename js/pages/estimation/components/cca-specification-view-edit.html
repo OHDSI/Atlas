@@ -1,17 +1,17 @@
 <div data-bind="css: classes()">
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis() && $component.estimationAnalysis().description" maxlength="1000"></textarea>
+            <textarea data-bind="css: classes('description-entry'), value: $component.estimationAnalysis() && $component.estimationAnalysis().description, placeholder: ko.i18n('ple.spec.descriptionPlaceholder', 'enter a description here (1000 characters max)')" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
                 <div class="row">
-                    <div class="pull-left" data-bind="css: classes('filter-view')">View:</div>
+                    <div class="pull-left" data-bind="css: classes('filter-view'), text: ko.i18n('ple.spec.view', 'View:')"></div>
                     <div class="pull-left">
                         <ul class="nav nav-pills">
-                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'all' }, click: function() {$component.specificationPillMode('all') };"><a>Full Specification</a></li>
-                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'comparisons' }, click: function() {$component.specificationPillMode('comparisons') };"><a>Comparisons</a></li>
-                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a>Analysis Settings</a></li>
-                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'evaluation' }, click: function() {$component.specificationPillMode('evaluation') };"><a>Evaluation Settings</a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'all' }, click: function() {$component.specificationPillMode('all') };"><a data-bind="text: ko.i18n('ple.spec.viewFull', 'Full Specification')"></a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'comparisons' }, click: function() {$component.specificationPillMode('comparisons') };"><a data-bind="text: ko.i18n('ple.spec.viewComparisons', 'Comparisons')"></a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a data-bind="text: ko.i18n('ple.spec.viewAnalysisSettings', 'Analysis Settings')"></a></li>
+                            <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'evaluation' }, click: function() {$component.specificationPillMode('evaluation') };"><a data-bind="text: ko.i18n('ple.spec.viewEvaluationSettings', 'Evaluation Settings')"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -20,14 +20,14 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <i class="fa fa-balance-scale"></i> Comparisons
+                        <i class="fa fa-balance-scale"></i> <span data-bind="text: ko.i18n('ple.spec.viewComparisons', 'Comparisons')"></span>
                     </div>
                     <div class="panel-body">
                         <div class="paddedWrapper">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                            <i class="fa fa-users"></i> Comparisons
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addComparison"><i class="fa fa-plus"></i> Add Comparison</button>
+                            <i class="fa fa-users"></i> <span data-bind="text: ko.i18n('ple.spec.viewComparisons', 'Comparisons')"></span>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addComparison"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('ple.spec.addComparisons', 'Add Comparisons')"></span></button>
                             </div>
                             <div class="panel-body">
                                 <faceted-datatable params="{ 
@@ -38,6 +38,7 @@
                                 dom: options.cca.comparisonTableOptions.dom,
                                 reference: $component.comparisons,
                                 rowClick: $component.comparisonTableRowClickHandler,
+                                language: ko.i18n('datatable.language')
                                 }"></faceted-datatable>
                             </div>
                         </div>
@@ -50,14 +51,14 @@
                     <div class="paddedWrapper">
                         <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <i class="fa fa-cogs"></i> Analysis Settings
+                        <i class="fa fa-cogs"></i> <span data-bind="text: ko.i18n('ple.spec.analysisSettings', 'Analysis Settings')"></span>
                     </div>
                     <div class="panel-body">
                         <div class="paddedWrapper">
                             <div class="panel panel-default">
                             <div class="panel-heading">
-                                Analysis Settings
-                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addAnalysis"><i class="fa fa-plus"></i> Add Analysis Settings</button>
+                                <span data-bind="text: ko.i18n('ple.spec.analysisSettings', 'Analysis Settings')"></span>
+                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addAnalysis"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('ple.spec.addAnalysisSettings', 'Add Analysis Settings')"></span></button>
                             </div>
                             <div class="panel-body">
                                 <faceted-datatable params="{ 
@@ -68,6 +69,7 @@
                                     dom: options.cca.analysisSettingsTableOptions.dom,
                                     reference: $component.cohortMethodAnalysisList,
                                     rowClick: $component.analysisSettingsTableRowClickHandler,
+                                    language: ko.i18n('datatable.language')
                                 }"></faceted-datatable>
                             </div>
                             </div>
@@ -80,26 +82,26 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <i class="fa fa-cogs"></i> Evaluation Settings
+                        <i class="fa fa-cogs"></i> <span data-bind="text: ko.i18n('ple.spec.evaluationSettings', 'Evaluation Settings')"></span>
                     </div>
                     <div class="panel-body">
                         <div class="paddedWrapper">
                             <div class="panel panel-default">
                             <div class="panel-heading">
-                                <i class="fa fa-users"></i> Negative Control Outcome Cohort Definition
+                                <i class="fa fa-users"></i> <span data-bind="text: ko.i18n('ple.spec.evaluationSettingsPanel.negativeControl', 'Negative Control Outcome Cohort Definition')"></span>
                             </div>
                             <div class="panel-body">
-                                This expression will define the criteria for inclusion and duration of time for cohorts intended for use as negative control outcomes. 
+                                <span data-bind="text: ko.i18n('ple.spec.evaluationSettingsPanel.negativeControlDesc', 'This expression will define the criteria for inclusion and duration of time for cohorts intended for use as negative control outcomes.')"></span>
                                 <nc-outcome-cohort-settings-editor params="negativeControlCohortSettings: $component.estimationAnalysis() && $component.estimationAnalysis().negativeControlOutcomeCohortDefinition"></nc-outcome-cohort-settings-editor>
                             </div>
                             </div>
                             <div class="panel panel-default">
                             <div class="panel-heading">
-                                <i class="fa fa-cog"></i> Positive Control Synthesis
+                                <i class="fa fa-cog"></i> <span data-bind="text: ko.i18n('ple.spec.evaluationSettingsPanel.positiveControl', 'Positive Control Synthesis')"></span>
                             </div>
                             <div class="panel-body">
                                 <div>
-                                    <label>Should we perform positive control synthesis? (to calibrate confidence intervals)</label>
+                                    <label data-bind="text: ko.i18n('ple.spec.evaluationSettingsPanel.positiveControlPerform', 'Should we perform positive control synthesis? (to calibrate confidence intervals)')"></label>
                                     <div class="input-group">
                                         <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.estimationAnalysis() && $component.estimationAnalysis().doPositiveControlSynthesis"></select>
                                     </div>
@@ -124,8 +126,8 @@
                     <div class="row">
                     <div data-bind="click: closeEditor" class="editor-back-icon"><i class="fa fa-chevron-left fa-lg"></i></div>
                     <div>
-                        <div class="editor-heading" data-bind="text: $component.editorHeading"></div>
-                        <div data-bind="text: $component.editorDescription"></div>
+                        <div class="editor-heading" data-bind="text: ko.unwrap(editorHeading)"></div>
+                        <div data-bind="text: ko.unwrap(editorDescription)"></div>
                     </div>
                     </div>
                 </div>
