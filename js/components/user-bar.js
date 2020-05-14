@@ -44,7 +44,6 @@ define([
 			this.permissionCheckWarningShown = false;
 			this.availableLocales = state.availableLocales;
 			this.locale = state.locale;
-
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {
 				if (authApi.isPermittedPostViewedNotifications()){

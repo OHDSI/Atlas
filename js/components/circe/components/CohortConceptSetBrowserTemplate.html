@@ -11,7 +11,8 @@
         <!-- /ko -->
 
         <div data-bind="visible: !loading() && !isProcessing()">
-            <table class="stripe compact hover" cellspacing="0" width="100%" data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
+						<table class="stripe compact hover" cellspacing="0" width="100%" 
+						data-bind="attr: { id: $component.repositoryConceptSetTableId}, dataTable:{
 				data: repositoryConceptSets,
 				options: {
 					deferRender: true,
@@ -26,11 +27,11 @@
 					],
                     stripeClasses : [ 'repositoryConceptSetItem' ],
                     columns: [
-						{ data: 'id', title: ko.i18n('cs.browser.table.id', 'Id'), width: '25px'},
-						{ data: 'name', title: ko.i18n('cs.browser.table.title', 'Title'), width: '55%' },
-						{ data: 'createdDate', title: ko.i18n('cs.browser.table.created', 'Created'), width: '15%', render: $component.datatableUtils.getDateFieldFormatter('createdDate') },
-						{ data: 'modifiedDate', title: ko.i18n('cs.browser.table.modified', 'Modified'), width: '15%', render: $component.datatableUtils.getDateFieldFormatter('modifiedDate') },
-						{ data: 'createdBy', title: ko.i18n('cs.browser.table.author', 'Author'), width: '15%', render: $component.datatableUtils.getCreatedByFormatter() }
+						{ data: 'id', title: ko.i18n('components.cohortConceptSetBrowser.tableId', 'Id'), width: '25px'},
+						{ data: 'name', title: ko.i18n('components.cohortConceptSetBrowser.tableTitle', 'Title'), width: '55%' },
+						{ data: 'createdDate', title: ko.i18n('components.cohortConceptSetBrowser.tableCreated', 'Created'), width: '15%', render: $component.datatableUtils.getDateFieldFormatter('createdDate') },
+						{ data: 'modifiedDate', title: ko.i18n('components.cohortConceptSetBrowser.tableModified', 'Modified'), width: '15%', render: $component.datatableUtils.getDateFieldFormatter('modifiedDate') },
+						{ data: 'createdBy', title: ko.i18n('components.cohortConceptSetBrowser.tableAuthor', 'Author'), width: '15%', render: $component.datatableUtils.getCreatedByFormatter() }
 					],
                     language: ko.i18n('datatable.language'),
 					order: [3, 'desc']

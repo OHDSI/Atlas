@@ -92,7 +92,7 @@ define([
     new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current())
   );
 
-  state.availableLocales = ko.observableArray();
+  state.availableLocales = ko.observableArray([]);
   state.locale = ko.observable();
   state.localeSettings = ko.observable();
   state.ConfigurationSource = {

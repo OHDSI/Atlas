@@ -7,7 +7,9 @@
 	<!-- ko ifnot: loading -->
 	<!-- for notifications, job completion, etc. -->
 	<div class="user-bar-container">
-		<select data-bind="css: classes('locale'), options: availableLocales, optionsText: 'name', optionsValue: 'code', value: locale"></select>
+		<select data-bind="css: classes('locale'), foreach:availableLocales, value: locale">
+			<option data-bind="value: $data.code, text:$data.name"></option>
+		</select>
 		<!-- ko if: isLoggedIn -->
 		<a data-bind="click: function () { $component.jobModalOpened(true) }"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
 		<!-- /ko -->
