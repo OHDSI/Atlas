@@ -28,15 +28,15 @@ define([
 			super(params);
 			this.jobs = ko.observableArray([]);
 			this.columns = ko.observableArray([
-				{title: 'ExecutionId', data: 'executionId'},
-				{title: 'Job Name', data: 'jobParameters.jobName'},
-				{title: 'Status', data: 'status'},
-				{title: 'Start Date', data: 'startDate'},
-				{title: 'End Date', data: 'endDate'}
+				{title: ko.i18n('columns.executionId', 'Execution Id'), data: 'executionId'},
+				{title: ko.i18n('columns.jobName', 'Job Name'), data: 'jobParameters.jobName'},
+				{title: ko.i18n('columns.status', 'Status'), data: 'status'},
+				{title: ko.i18n('columns.startDate', 'Start Date'), data: 'startDate'},
+				{title: ko.i18n('columns.endDate', 'End Date'), data: 'endDate'}
 			]);
 			if (config.userAuthenticationEnabled) {
 				// Add 'Author' column after 'Status' column
-				this.columns.splice(3, 0, {title: 'Author', data: 'jobParameters.jobAuthor', 'defaultContent': ''});
+				this.columns.splice(3, 0, {title: ko.i18n('columns.author', 'Author'), data: 'jobParameters.jobAuthor', 'defaultContent': ''});
 			}
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.canReadJobs = ko.pureComputed(() => {

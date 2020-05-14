@@ -1,16 +1,13 @@
-<heading-title params="name: 'Jobs', icon: 'tasks', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('navigation.jobs', 'Jobs'), icon: 'tasks', theme: 'dark'"></heading-title>
 <div data-bind="if: canReadJobs">
 	<div id="wrapperJobs">
-		<div data-bind="click: updateJobs" class="btn btn-xs btn-success pull-right">Refresh Jobs</div>
+		<div data-bind="click: updateJobs, text: ko.i18n('jobs.refreshJobs', 'Refresh Jobs')" class="btn btn-xs btn-success pull-right">Refresh Jobs</div>
 		<div class="clear"></div>
 
 		<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" data-bind="dataTable:{
 			data: jobs(),
 			options: {
 						dom: 'Blfiprt',
-						language: {
-							search : 'Filter Jobs:'
-						},
 						buttons: [
 									'colvis', 'copyHtml5', 'csvHtml5'
 						],
@@ -20,7 +17,8 @@
 						autoWidth: false,
 						ordering: true,
 						order: [[ 0, 'desc' ]],
-						columns: columns()
+						columns: columns(),
+						language: ko.i18n('datatable.language')
 				}
 		}"></table>
 	</div>
