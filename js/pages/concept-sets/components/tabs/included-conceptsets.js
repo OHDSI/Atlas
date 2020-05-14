@@ -27,6 +27,7 @@ define([
       this.ancestors = ko.observableArray([]);
       this.includedConcepts = sharedState.includedConcepts;
       this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
+      this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.loading = ko.pureComputed(() => {
 				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded() || sharedState.resolvingConceptSetExpression();
       });
@@ -35,43 +36,7 @@ define([
         ancestors: this.ancestors,
         ancestorsModalIsShown: this.ancestorsModalIsShown,
       });
-      this.searchConceptsColumns = [{
-        render: function (s, p, d) {
-          var css = '';
-          var icon = 'fa-shopping-cart';
-          if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-            css = ' selected';
-          }
-          return '<i class="fa ' + icon + ' ' + css + '"></i>';
-        },
-        orderable: false,
-        searchable: false
-      }, {
-        data: 'CONCEPT_ID'
-      }, {
-        data: 'CONCEPT_CODE'
-      }, {
-        data: 'CONCEPT_NAME',
-        render: commonUtils.renderLink,
-      }, {
-        data: 'CONCEPT_CLASS_ID'
-      }, {
-        data: 'STANDARD_CONCEPT_CAPTION',
-        visible: false
-      }, {
-        data: 'RECORD_COUNT',
-        className: 'numeric'
-      }, {
-        data: 'DESCENDANT_RECORD_COUNT',
-        className: 'numeric'
-      }, {
-        data: 'DOMAIN_ID'
-      }, {
-        data: 'VOCABULARY_ID'
-      }, {
-        data: 'ANCESTORS',
-        render: conceptSetService.getAncestorsRenderFunction()
-      }];
+      this.searchConceptsColumns = globalConstants.getSearchConceptsColumns(sharedState, this, commonUtils, conceptSetService);
 
       this.searchConceptsOptions = {
         Facets: [{
