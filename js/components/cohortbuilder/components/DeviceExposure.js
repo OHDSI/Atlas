@@ -91,7 +91,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add Nested Criteria...",
 				value: 11,
 				selected: false,
-				description: "Apply criteria using the device exposure as the index event",
+				description: "Apply criteria using the device exposure as the index event.",
 			}
 		];
 
