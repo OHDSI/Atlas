@@ -146,7 +146,7 @@ define([
 		}
 
 		async delete() {
-			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
+			if (!confirm(ko.i18n('ple.deleteConfirmation', 'Delete estimation specification? Warning: deletion can not be undone!')()))
 				return;
 
 			this.isDeleting(true);
@@ -169,7 +169,7 @@ define([
 			try{
 				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
 				if (results > 0) {
-					alert('An estimation analysis with this name already exists. Please choose a different name.');
+					alert(ko.i18n('ple.analysisExistsAlert', 'An estimation analysis with this name already exists. Please choose a different name.')());
 				} else {
 					this.fullAnalysisList.removeAll();
 					const payload = this.prepForSave();
@@ -178,7 +178,7 @@ define([
 					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save an estimation analysis.');
+				alert(ko.i18n('ple.analysisSaveErrorAlert', 'An error occurred while attempting to save an estimation analysis.')());
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -273,7 +273,7 @@ define([
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Estimation Analysis changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('ple.changesNotSavedConfirmation', 'Estimation Analysis changes are not saved. Would you like to continue?')())) {
 				return;
 			}
 			this.loading(true);
