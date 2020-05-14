@@ -64,7 +64,7 @@ define(
     }
 
     const getTimeAtRisk = (createStudyPopArgs) => {
-        return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + "d<br/>(min: " + createStudyPopArgs.minDaysAtRisk() + "d)");
+        return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + ko.i18n('common.daysAbbr', 'd')() + " (" + ko.i18n('common.min', 'min')() + ": " + createStudyPopArgs.minDaysAtRisk() + ko.i18n('common.daysAbbr', 'd')() + ")");
     };
 
     const options = {
