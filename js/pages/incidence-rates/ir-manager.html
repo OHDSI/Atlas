@@ -6,7 +6,7 @@
 			<div class="input-group ir-header">
 				<input type="text" placeholder="New Incidence Rate Analysis" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !isNameFilled() }, enable: isEditable"/>
 				<div class="input-group-btn" role="group">
-					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {'btn-success': canSave()}"><i class="fa fa-save"></i></button>
+					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing()"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
 					<button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>
@@ -22,6 +22,10 @@
 			<div data-bind="visible: !isNameFilled()" class="empty-name-error">
 				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 				<label>Incidence Rate Analysis name is empty.</label>
+			</div>
+			<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
+				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+				<label>The name of the analysis should differ from the default one.</label>
 			</div>
 		</div>
 
@@ -66,7 +70,13 @@
 				<loading data-bind="visible: exporting()" params="status: 'Exporting Analysis To CSV'"></loading>
 				<loading data-bind="visible: loadingInfo()" params="status: 'Loading Analysis Generations'"></loading>
 				<div data-bind="hidden: exporting() || loadingInfo()">
-					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources, loadingSummary: loadingSummary"></ir-analysis-results>
+					<ir-analysis-results params="sources: $component.sources, 
+																			 analysisCohorts: analysisCohorts, 
+																			 execute: execute, cancelExecution: 
+																			 cancelExecution, 
+																			 stoppingSources: stoppingSources, 
+																			 loadingSummary: loadingSummary,
+																			 isTarValid: isTarValid"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
@@ -74,6 +84,7 @@
                     <ul class="nav nav-pills">
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+						<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'sql'}, click: () => $component.expressionMode('sql')"><a>SQL</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
 						<import params="{
@@ -95,6 +106,12 @@
 							}"></export>
 						</div>
                     </div>
+					<div role="tabpanel" data-bind="visible: $component.expressionMode() === 'sql'" class="tab-pane">
+						<export-sql params="analysisId: $component.selectedAnalysisId,
+							expression: $component.selectedAnalysis() && $component.selectedAnalysis().expression,
+							isPermittedExport: isPermittedExportSQL,
+						 	exportSqlService: $component.exportSql"></export-sql>
+					</div>
                 </div>
             </div>
         </div>

@@ -128,8 +128,8 @@ define([
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
-    const renderConceptSetCheckbox = function(hasPermissions, field) {
-		return hasPermissions()
+    const renderConceptSetCheckbox = function(hasPermissions, field, readonly = false) {
+		return hasPermissions() && !readonly
 		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
 		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
 	}
@@ -199,14 +199,30 @@ define([
 			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
 			if (!!concept) {
 				concept[field](!concept[field]());
-				successFunction();
-			  }
+				if (successFunction && typeof successFunction === 'function') {
+					successFunction();
+				}
+			}
 		}
 	}
 
 	const selectAllFilteredItems = (data, filteredData, value) => {
 		const fData = (ko.utils.unwrapObservable(filteredData) || []).map(i => i.id);
-		data().forEach(i => fData.length === 0 ? i.selected(value) : (fData.includes(i.id) && i.selected(value)));
+		data().forEach(i => {
+			if (fData.length === 0) {
+				i.selected(value);
+			} else {
+				if (fData.includes(i.id)) {
+					i.selected(value);
+					console.log(i, i.selected());
+				}
+			}
+			console.log(data().filter(i => i.selected()));
+			// return fData.length === 0 ? i.selected(value) : (fData.includes(i.id) && i.selected(value));
+		});
+	}
+	const escapeTooltip = function(tooltipText) {
+		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
 
 	return {
@@ -230,5 +246,6 @@ define([
 		normalizeUrl,
 		toggleConceptSetCheckbox,
 		selectAllFilteredItems,
+		escapeTooltip,
 	};
 });

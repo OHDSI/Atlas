@@ -21,6 +21,7 @@ define([
             this.data = ko.observableArray([]);
             this.isLoading = ko.observable(false);
             this.importEnabled = ko.pureComputed(() => this.data().some(i => i.selected()));
+            this.dtApi = ko.observable();
             this.filteredData = ko.observableArray([]);
             this.buttons = !!this.multiChoice
                 ? [
@@ -77,7 +78,8 @@ define([
         }
 
         toggleSelected(selected) {
-            commonUtils.selectAllFilteredItems(this.data, this.filteredData, selected);
+            const filteredData = this.dtApi() ? this.dtApi().getFilteredData() : [];
+            commonUtils.selectAllFilteredItems(this.data, filteredData, selected);
         }
     }
 

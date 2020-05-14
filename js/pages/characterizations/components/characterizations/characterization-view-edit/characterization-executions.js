@@ -16,6 +16,7 @@ define([
 	'lodash',
 	'services/JobDetailsService',
 	'services/Poll',
+	'services/MomentAPI',
 	'less!./characterization-executions.less',
 	'./characterization-results',
 	'databindings/tooltipBinding',
@@ -38,6 +39,7 @@ define([
 	lodash,
 	jobDetailsService,
 	PollService,
+	momentApi,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -100,8 +102,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{
@@ -147,7 +149,9 @@ define([
 		}
 
 		getExecutionGroupStatus(submissions) {
-			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED) ?
+			return submissions().find(s => s.status === this.ccGenerationStatusOptions.STARTED ||
+				s.status === this.ccGenerationStatusOptions.PENDING ||
+				s.status === this.ccGenerationStatusOptions.STARTING) ?
 				this.ccGenerationStatusOptions.STARTED :
 				this.ccGenerationStatusOptions.COMPLETED;
 		}

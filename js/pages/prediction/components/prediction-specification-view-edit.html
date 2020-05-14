@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" class="descriptionEntry" data-bind="value: $component.patientLevelPredictionAnalysis().description" maxlength="1000"></textarea>
+            <textarea placeholder="enter a description here (1000 characters max)" class="descriptionEntry" data-bind="value: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().description" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
                 <div class="row">
@@ -142,7 +142,7 @@
                         <i class="fa fa-cog"></i> Execution Settings
                     </div>
                     <div class="panel-body">
-                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></execution-settings-editor>
+                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></execution-settings-editor>
                     </div>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                     <i class="fa fa-cog"></i> Training Settings
                     </div>
                     <div class="panel-body">
-                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></evaluation-settings-editor>
+                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></evaluation-settings-editor>
                     </div>
                 </div>
                 </div>

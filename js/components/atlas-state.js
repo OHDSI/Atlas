@@ -90,6 +90,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	state.includedConceptsMap = ko.observable({});
 	state.includedSourcecodes = ko.observableArray();
 	state.currentConceptSetMode = ko.observable('details');
+	state.includedHash = ko.observable();
 
 	state.ConceptSet = {
 		current: ko.observable(),
@@ -118,6 +119,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		info: ko.observable(),
 		mode: ko.observable('definition'),
 		sourceInfo: ko.observableArray(),
+		lastUpdatedId: ko.observable(),
 	};
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortDefinition.current()));
 	state.CohortDefinition.current.subscribe(newValue => {

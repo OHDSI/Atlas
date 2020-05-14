@@ -1,14 +1,15 @@
 {
   "name": "atlas",
-  "version": "2.7.2",
+  "version": "2.8.0-DEV",
   "description": "is an open source software tool for researchers to conduct scientific analyses on standardized observational data converted to the OMOP Common Data Model V5",
   "main": "js/main.js",
   "scripts": {
-    "prep": "npm i && npm run clean",
+    "prep": "npm i && npm run clean && npm run genversion",
     "clean": "rimraf ./js/assets/bundle && rimraf ./js/assets/fonts && rimraf ./js/assets/images",
     "build": "npm run prep && npm run build:dev",
     "build:dev": "node build/optimize.js && npm run compress",
-    "compress": "terser ./js/assets/bundle/bundle.js -o ./js/assets/bundle/bundle.js -c --source-map"
+    "compress": "terser ./js/assets/bundle/bundle.js -o ./js/assets/bundle/bundle.js -c --source-map",
+    "genversion": "genversion -s js/version/version.js && r_js -convert js/version js/ && rimraf js/version"
   },
   "repository": {
     "type": "git",
@@ -38,7 +39,8 @@
     "@babel/preset-env": "^7.1.5",
     "esprima": "^4.0.1",
     "html-document": "^0.8.1",
-    "requirejs": "^2.3.4",
+    "genversion": "^2.2.0",
+    "requirejs": "^2.3.6",
     "rimraf": "^2.6.2",
     "terser": "3.17.0"
   },
@@ -67,6 +69,7 @@
     "jquery-ui": "^1.12.1",
     "jquery-ui.autocomplete.scroll": "^0.1.9",
     "js-cookie": "^2.2.0",
+    "hash-it": "~4.0.4",
     "knockout": "3.4.2",
     "knockout-mapping": "^2.6.0",
     "knockout-sortable": "^1.1.0",

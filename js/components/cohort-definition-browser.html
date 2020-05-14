@@ -1,5 +1,5 @@
 <div data-bind="visible: !isLoading()">
-    <faceted-datatable params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY, selectedData: filteredData">
+    <faceted-datatable params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY, selectedData: filteredData, dtApi: dtApi">
     </faceted-datatable>
     <div class="import-modal-footer btn-toolbar" data-bind="visible: multiChoice">
             <div class="btn-group" role="group">

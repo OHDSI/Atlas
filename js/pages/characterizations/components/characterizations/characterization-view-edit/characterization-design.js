@@ -56,8 +56,8 @@ define([
             });
 
             this.strataConceptSets = ko.pureComputed({
-                read: () => params.design().strataConceptSets,
-                write: (value) => params.design().strataConceptSets(value)
+                read: () => params.design() && params.design().strataConceptSets || [],
+                write: (value) => params.design() && params.design().strataConceptSets(value)
             });
 
             this.stratas = ko.computed({
@@ -150,22 +150,11 @@ define([
             this.showFeatureAnalysesBrowser(false);
         }
 
-        onSelect(data) {
+        onSelect(data = []) {
             this.closeFeatureBrowser();
-            data.forEach(fe => this.attachFeature(fe));
-        }
-
-        attachFeature({ id, name, description }) {
             const ccDesign = this.design();
-            this.showFeatureAnalysesBrowser(false);
-            ccDesign.featureAnalyses(lodash.uniqBy(
-                    [
-                        ...(ccDesign.featureAnalyses() || []),
-                        { id, name, description }
-                    ],
-                    'id'
-                )
-            );
+            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description']));
+            ccDesign.featureAnalyses(featureAnalyses);
         }
 
         removeFeature(id) {
