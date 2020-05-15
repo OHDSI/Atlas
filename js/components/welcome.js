@@ -125,6 +125,12 @@ define([
 
         self.signout = function () {
             self.isInProgress(true);
+            if (authApi.authClient() === authApi.AUTH_CLIENTS.SAML) {
+                const id = 'saml-iframe';
+                const iframe = `<iframe id="${id}" src="${self.serviceUrl + 'saml/slo'}" style="position: absolute; width:0;height:0;border:0; border:none;"></iframe>`;
+                $('#' + id).remove();
+                $('body').append(iframe);
+            }
             $.ajax({
                 url: self.serviceUrl + "user/logout",
                 method: 'GET',

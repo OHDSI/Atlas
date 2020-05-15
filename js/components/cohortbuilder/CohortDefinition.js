@@ -14,6 +14,9 @@ define(function (require, exports) {
 		self.expressionType = (data.expressionType || "SIMPLE_EXPRESSION");
 		self.expression = ko.observable(new CohortExpression(data.expression));
 		self.createdBy = ko.observable(data.createdBy || null);
+		self.createdDate = ko.observable(data.createdDate || null);
+		self.modifiedBy = ko.observable(data.modifiedBy || null);
+		self.modifiedDate = ko.observable(data.modifiedDate || null);
 	}
 	return CohortDefinition;
 });

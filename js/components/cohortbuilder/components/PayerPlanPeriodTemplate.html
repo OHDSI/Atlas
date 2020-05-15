@@ -157,7 +157,7 @@
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
 				<td style="background-color: white">
-					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group>
+					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
 				</td>
 			</tr>
 		</table>

@@ -1,7 +1,9 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-
+	<!-- ko if: currentCohortDefinition().id() != 0 -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+	<!-- /ko -->
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 	<!-- ko if: hasAccess -->
@@ -189,25 +191,6 @@
 						<div type="button" data-bind="css: {disabled: !currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
-					<atlas-modal params="
-						showModal: $component.showImportConceptSetModal,
-						template: 'import-conceptset-template',
-						title: 'Import Concept Set From Repository...',
-						data: {
-							onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
-							criteriaContext: criteriaContext,
-							cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
-						}
-					"
-					></atlas-modal>
-					<script type='text/html' id="import-conceptset-template">
-						<cohort-concept-set-browser params="
-							criteriaContext: criteriaContext,
-							cohortConceptSets: cohortConceptSets,
-							onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
-							buttonActionEnabled: false
-						"></cohort-concept-set-browser>
-					</script>
 				</div>
                 <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->
@@ -542,6 +525,25 @@
 		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
 		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
 	</atlas-modal>
+	<atlas-modal params="
+		showModal: $component.showImportConceptSetModal,
+		template: 'import-conceptset-template',
+		title: 'Import Concept Set From Repository...',
+		data: {
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
+			criteriaContext: criteriaContext,
+			cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
+		}
+	"
+	></atlas-modal>
+	<script type='text/html' id="import-conceptset-template">
+		<cohort-concept-set-browser params="
+			criteriaContext: criteriaContext,
+			cohortConceptSets: cohortConceptSets,
+			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+			buttonActionEnabled: false
+		"></cohort-concept-set-browser>
+	</script>
 
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,

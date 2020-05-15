@@ -8,29 +8,40 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
 					.url)
 				.then((result) => {
-					var newId = self.cohortConceptSets()
-						.length > 0 ? Math.max.apply(null, self.cohortConceptSets()
-							.map(function (d) {
-								return d.id;
-							})) + 1 : 0;
-
-					var newConceptSet = new ConceptSet({
-						id: newId,
-						name: conceptSet.name,
-						expression: result
-					});
-					params.$raw.cohortConceptSets()
-						.push(newConceptSet);
-					self.criteriaContext() && self.criteriaContext()
-						.conceptSetId(newConceptSet.id);
-					self.onActionComplete({
-						action: 'load',
-						status: 'Success'
-					});
+					var isCancelled = false;
+					while (self.cohortConceptSets().find(cs => cs.name() == conceptSet.name) != null && !isCancelled)
+					{
+						var newName = prompt('Duplicate Concept Name. Please enter a new name', conceptSet.name);
+						if (newName) {
+							conceptSet.name = newName;
+						} else {
+							isCancelled = true;
+						}
+					}
+					if (!isCancelled)
+					{
+						var newId = self.cohortConceptSets().length > 0 ? Math.max.apply(null, self.cohortConceptSets().map(d => d.id)) + 1 : 0;
+						var newConceptSet = new ConceptSet({
+							id: newId,
+							name: conceptSet.name,
+							expression: result
+						});
+						params.$raw.cohortConceptSets().push(newConceptSet);
+						self.criteriaContext() && self.criteriaContext().conceptSetId(newConceptSet.id);
+						self.onActionComplete({
+							action: 'load',
+							status: 'Success'
+						});					
+					} else {
+						self.onActionComplete({
+							action: 'load',
+							status: 'Cancelled'
+						});
+					}
 					// Waiting for modal's amination to end
 					setTimeout(() => {
 						self.isProcessing(false);
-					}, 1000);
+					}, 1000);	
 				})
 				.catch((err) => {
 					console.log(err);
