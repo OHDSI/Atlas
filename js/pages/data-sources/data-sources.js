@@ -104,8 +104,8 @@ define([
 			];
 
 			this.sources = ko.computed(() => sharedState.sources().filter(function (s) {
-                return s.hasResults && s.hasVocabulary;
-            }));
+				return s.hasResults && s.hasVocabulary && authApi.isPermittedViewDataSourceReport(s.sourceKey);
+			}));
 
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
