@@ -148,9 +148,9 @@
                                                           { title: 'Domain', data: 'concept.DOMAIN_ID' },
                                                           { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
                                                           { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-                                                          { title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderCheckbox('isExcluded');} },
-                                                          { title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeDescendants');} },
-                                                          { title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeMapped');} }
+                                                          { title: 'Exclude', class:'text-center', orderable:false,render: function() { return renderCheckbox('isExcluded', true);} },
+                                                          { title: 'Descendants', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeDescendants', true);} },
+                                                          { title: 'Mapped', class:'text-center', orderable:false,render: function() { return renderCheckbox('includeMapped', true);} }
                                     ]
                                   }
                               }">
