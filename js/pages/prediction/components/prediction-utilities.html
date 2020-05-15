@@ -1,9 +1,15 @@
 <div data-bind="css: classes()">
     <div class="paddedWrapper">
         <ul class="nav nav-pills">
-            <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'download' }, click: function() {$component.utilityPillMode('download') };"><a>Review & Download</a></li>
-            <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'import' }, click: function() {$component.utilityPillMode('import') };"><a>Import</a></li>
-            <li role="presentation" data-bind="css: {active: $component.utilityPillMode() == 'export' }, click: function() {$component.utilityPillMode('export') };"><a>Export</a></li>
+            <li role="presentation" 
+            data-bind="css: {active: $component.utilityPillMode() == 'download' }, click: function() {$component.utilityPillMode('download') };">
+            <a data-bind="text: ko.i18n('pages.predictions.reviewAndDownload', 'Review & Download')"></a></li>
+            <li role="presentation" 
+            data-bind="css: {active: $component.utilityPillMode() == 'import' }, click: function() {$component.utilityPillMode('import') };">
+            <a data-bind="text: ko.i18n('pages.predictions.import', 'Import')"></a></li>
+            <li role="presentation" 
+            data-bind="css: {active: $component.utilityPillMode() == 'export' }, click: function() {$component.utilityPillMode('export') };">
+            <a data-bind="text: ko.i18n('pages.predictions.export', 'Export')"></a></li>
         </ul>
         <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'download'" class="tab-pane">
             <div class="paddedWrapper">

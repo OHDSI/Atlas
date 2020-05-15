@@ -164,7 +164,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					if (this.currentCohortDefinition().id() == 0) {
 					return this.defaultName;
 				} else {
-						return ko.i18n('cohortDefinitions.cohortId', 'Cohort #')() + this.currentCohortDefinition().id(); //'Cohort #'
+						return ko.unwrap(ko.i18n('cohortDefinitions.cohortId', 'Cohort #')) + this.currentCohortDefinition().id(); //'Cohort #'
 				}
 			}
 			});
