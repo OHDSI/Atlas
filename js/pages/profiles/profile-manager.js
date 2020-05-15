@@ -138,7 +138,7 @@ define([
 				this.loadConceptSets(this.cohortDefSource());
 
 				this.sourceKeyCaption = ko.computed(() => {
-					return this.sourceKey() || "Select a Data Source";
+					return this.sourceKey() || ko.i18n('profiles.selectADataSource', 'Select a Data Source')();
 				});
 				this.personRequests = {};
 				this.personRequest;
