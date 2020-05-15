@@ -1,112 +1,110 @@
 define([
-	'knockout',
-	'text!./prediction-browser.html',
-	'appConfig',
-	'./const',
-	'services/MomentAPI',
-	'./PermissionService',
-	'pages/Page',
-	'utils/CommonUtils',
-    'utils/DatatableUtils',
-	'services/Prediction',
-	'services/AuthAPI',
-	'faceted-datatable',
-	'components/ac-access-denied',
-	'components/heading',
-	'components/empty-state',
-	'less!./prediction-browser.less'
-], function(
-	ko,
-	view,
-	config,
-	constants,
-	momentApi,
-	PermissionService,
-	Page,
-	commonUtils,
-    datatableUtils,
-	PredictionService,
-	authAPI,
+  "knockout",
+  "text!./prediction-browser.html",
+  "appConfig",
+  "./const",
+  "services/MomentAPI",
+  "./PermissionService",
+  "pages/Page",
+  "utils/CommonUtils",
+  "utils/DatatableUtils",
+  "services/Prediction",
+  "services/AuthAPI",
+  "faceted-datatable",
+  "components/ac-access-denied",
+  "components/heading",
+  "components/empty-state",
+  "less!./prediction-browser.less",
+], function (
+  ko,
+  view,
+  config,
+  constants,
+  momentApi,
+  PermissionService,
+  Page,
+  commonUtils,
+  datatableUtils,
+  PredictionService,
+  authAPI
 ) {
   class PredictionBrowser extends Page {
-		constructor(params) {
-			super(params);
-			this.reference = ko.observableArray();
-			this.loading = ko.observable(false);
-			this.config = config;
+    constructor(params) {
+      super(params);
+      this.reference = ko.observableArray();
+      this.loading = ko.observable(false);
+      this.config = config;
 
-			this.canReadPredictions = PermissionService.isPermittedList;
-			this.canCreatePrediction = PermissionService.isPermittedCreate;
+      this.canReadPredictions = PermissionService.isPermittedList;
+      this.canCreatePrediction = PermissionService.isPermittedCreate;
 
-			this.isAuthenticated = authAPI.isAuthenticated;
-			this.hasAccess = authAPI.isPermittedReadPlps;
+      this.isAuthenticated = authAPI.isAuthenticated;
+      this.hasAccess = authAPI.isPermittedReadPlps;
 
-			this.options = {
-				Facets: [
-                    {
-                        'caption': 'Created',
-                        'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
-                    },
-                    {
-                        'caption': 'Updated',
-                        'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
-                    },
-                    {
-                        'caption': 'Author',
-                        'binding': datatableUtils.getFacetForCreatedBy,
-                    },
-				]
-			};
+      this.options = {
+        Facets: [
+          {
+            caption: ko.i18n('columns.created', 'Created'),
+            binding: (o) => datatableUtils.getFacetForDate(o.createdDate),
+          },
+          {
+            caption: ko.i18n('columns.updated', 'Updated'),
+            binding: (o) => datatableUtils.getFacetForDate(o.modifiedDate),
+          },
+          {
+            caption: ko.i18n('columns.author', 'Author'),
+            binding: datatableUtils.getFacetForCreatedBy,
+          },
+        ],
+      };
+			this.language = ko.i18n("datatable.language")
+      this.columns = [
+        {
+          title: ko.i18n('columns.id', 'Id'),
+          data: "id",
+        },
+        {
+          title: ko.i18n('columns.type', 'Type'),
+          data: (d) => d.type,
+          visible: false,
+        },
+        {
+          title: ko.i18n('columns.name', 'Name'),
+          render: datatableUtils.getLinkFormatter((d) => ({
+            link: constants.paths.analysis(d.id),
+            label: d["name"],
+          })),
+        },
+        {
+          title: ko.i18n('columns.created', 'Created'),
+          render: datatableUtils.getDateFieldFormatter("createdDate"),
+        },
+        {
+          title: ko.i18n('columns.modified', 'Modified'),
+          render: datatableUtils.getDateFieldFormatter("modifiedDate"),
+        },
+        {
+          title: ko.i18n('columns.author', 'Author'),
+          render: datatableUtils.getCreatedByFormatter(),
+        },
+      ];
+    }
 
-			this.columns = [
-				{
-					title: 'Id',
-					data: 'id'
-				},
-				{
-					title: 'Type',
-                    data: d => d.type,
-                    visible: false,
-				},
-				{
-					title: 'Name',
-					render: datatableUtils.getLinkFormatter(d => ({
-						link: constants.paths.analysis(d.id),
-						label: d['name']
-					})),
+    onPageCreated() {
+      if (this.canReadPredictions()) {
+        this.loading(true);
+        PredictionService.getPredictionList().then(({ data }) => {
+          datatableUtils.coalesceField(data, "modifiedDate", "createdDate");
+          this.loading(false);
+          this.reference(data);
+        });
+      }
+    }
 
-				},
-				{
-					title: 'Created',
-					render: datatableUtils.getDateFieldFormatter('createdDate'),
-				},
-				{
-					title: 'Modified',
-					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
-				},
-				{
-					title: 'Author',
-					render: datatableUtils.getCreatedByFormatter(),
-				}
-			];
-		}
+    newPrediction() {
+      document.location = constants.paths.createAnalysis();
+    }
+  }
 
-		onPageCreated() {
-			if (this.canReadPredictions()) {
-				this.loading(true);
-				PredictionService.getPredictionList()
-					.then(({ data }) => {
-						datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
-						this.loading(false);
-						this.reference(data);
-					});
-			}
-		}
-
-		newPrediction() {
-			document.location = constants.paths.createAnalysis();
-		}
-	}
-
-	return commonUtils.build('prediction-browser', PredictionBrowser, view);
+  return commonUtils.build("prediction-browser", PredictionBrowser, view);
 });

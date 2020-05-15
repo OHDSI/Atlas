@@ -47,6 +47,7 @@ define([
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 			this.modelSettingsOptions = ModelSettings.options;
 			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
+			this.language = ko.i18n("datatable.language")
 		}
 
 		removeTargetCohort(data, obj, tableRow, rowIndex) {

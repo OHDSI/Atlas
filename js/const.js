@@ -122,7 +122,7 @@ define([
 			pathway: ko.i18n('const.newEntityNames.pathway', 'New Cohort Pathway'),
 			ple: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis'),
 			conceptSet: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
-			plp: ko.i18n('const.newEntityNames.plp', 'New Patient Level Prediction Analysis'),
+			plp: ko.unwrap(ko.i18n('const.newEntityNames.plp', 'New Patient Level Prediction Analysis')),
 		};
 
 		const pluginTypes = {
