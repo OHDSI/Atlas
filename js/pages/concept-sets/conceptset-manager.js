@@ -161,7 +161,7 @@ define([
 				{
 						title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
 						componentName: 'included-conceptsets',
-						componentParams: params,
+						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
 						hasBadge: true,
 				},
 				{

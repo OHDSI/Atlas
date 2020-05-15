@@ -8,21 +8,15 @@
         <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'download'" class="tab-pane">
             <div class="paddedWrapper">
                 <div data-bind="if: !($component.specificationValid())">
-                    <b>Your study has the following issues that prevent you from reviewing the full specification details and downloading the study package:</b>
+                    <b data-bind="text: ko.i18n('ple.util.issues', 'Your study has the following issues that prevent you from reviewing the full specification details and downloading the study package:')"></b>
                     <ul>
-                    <li data-bind="visible: !($component.specificationMeetsMinimumRequirements())">
-                    You must specify at least 1 valid comparison and analysis setting.
-                    </li>
-                    <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasFullComparisons())">
-                    You must specify at least 1 target, comparator and outcome in your comparison settings.
-                    </li>
-                    <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasUniqueSettings())">
-                    Your study contains duplicate values in one of the following areas: Comparisons or Analysis Settings.
-                    </li>
+                    <li data-bind="visible: !($component.specificationMeetsMinimumRequirements()), text: ko.i18n('ple.util.issueComparisonAndAnalysis', 'You must specify at least 1 valid comparison and analysis setting.')"></li>
+                    <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasFullComparisons()), text: ko.i18n('ple.util.issueComparison', 'You must specify at least 1 target, comparator and outcome in your comparison settings.')"></li>
+                    <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasUniqueSettings()), text: ko.i18n('ple.util.issueDuplicate', 'Your study contains duplicate values in one of the following areas: Comparisons or Analysis Settings.')"></li>
                 </ul>
                 </div>
                 <div data-bind="if: $component.dirtyFlag().isDirty()">
-                    You must save your analysis before you can review & download.
+                    <span data-bind="text: ko.i18n('ple.util.issueNotSaved', 'You must save your analysis before you can review & download.')"></span>
                 </div>
                 <div data-bind="if: $component.specificationValid() && !($component.dirtyFlag().isDirty())">
                     <loading data-bind="visible:loadingDownload()" params="status: 'computing analyses'"></loading>
@@ -30,12 +24,12 @@
                     <div data-bind="visible:(!loadingDownload() && $component.fullAnalysisList().length > 0)">
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <i class="fa fa-heartbeat"></i> Review & Download
+                                <i class="fa fa-heartbeat"></i> <span data-bind="text: ko.i18n('ple.util.reviewDownload', 'Review & Download')"></span>
                             </div>
                             <div class="panel-body">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <i class="fa fa-book"></i> Review Full Study Specification
+                                        <i class="fa fa-book"></i> <span data-bind="text: ko.i18n('ple.util.reviewFullSpec', 'Review Full Study Specification')"></span>
                                     </div>
                                     <div class="panel-body">
                                         <faceted-datatable params="{
@@ -51,18 +45,18 @@
                                 </div>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <i class="fa fa-download"></i> Download Study Package
+                                        <i class="fa fa-download"></i> <span data-bind="text: ko.i18n('ple.util.downloadPackage', 'Download Study Package')"></span>
                                     </div>
                                     <div class="panel-body">
                                         <div>
-                                            <label>Please provide a name for the study package and click "download" to obtain the study package in ZIP format.</label>
+                                            <label data-bind="text: ko.i18n('ple.util.downloadNote', 'Please provide a name for the study package and click download to obtain the study package in ZIP format.')"></label>
                                             <div class="input-group">
-                                                <input class="form-control" type="text" data-bind="textInput: $component.packageName" placeholder="Package name..." />
+                                                <input class="form-control" type="text" data-bind="textInput: $component.packageName, placeholder: ko.i18n('ple.util.packageNamePlaceholder', 'Package name...')"/>
                                             </div>
-                                            <label><b>Please Note:</b> The package name should consist of alphanumeric characters only. No spaces or special characters are permitted.</label>
+                                            <label data-bind="html: ko.i18n('ple.util.downloadNameNote', '<b>Please Note:</b> The package name should consist of alphanumeric characters only. No spaces or special characters are permitted.')"></label>
                                         </div>
                                         <div style="padding-top: 10px;">
-                                            <button type="button" class="btn btn-primary" data-bind="enable: validPackageName, click: downloadPackage"><i class="fa fa-download"></i> Download</button>
+                                            <button type="button" class="btn btn-primary" data-bind="enable: validPackageName, click: downloadPackage"><i class="fa fa-download"></i> <span data-bind="text: ko.i18n('common.download', 'Download')"></span></button>
                                         </div>
                                     </div>
                                 </div>
@@ -85,7 +79,7 @@
         <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'export'" class="tab-pane">
             <div class="paddedWrapper">
             <div data-bind="if: !$component.specificationValid()">
-                Please see the downloads area to review problems with your analysis specification. These must be corrected before you can export your definition.
+                <span data-bind="text: ko.i18n('ple.util.downloadProblemsNote', 'Please see the downloads area to review problems with your analysis specification. These must be corrected before you can export your definition.')"></span>
             </div>
             <div data-bind="if: $component.specificationValid()">
                 <export params="{

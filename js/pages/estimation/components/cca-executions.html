@@ -1,8 +1,8 @@
 <div>
-    <loading data-bind="visible: loading()" params="status: 'Loading generations...'"></loading>
+    <loading data-bind="visible: loading()" params="status: ko.i18n('ple.exec.loadingGenerations', 'Loading generations...')"></loading>
     <div data-bind="visible: !loading()">
         <h2 data-bind="css: classes('title')">
-            Generations <i data-bind="visible: isResultsDownloading, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+            <span data-bind="text: ko.i18n('ple.exec.generations', 'Generations')"></span> <i data-bind="visible: isResultsDownloading, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
         </h2>
         <div data-bind="css: classes('content')">
             <!-- ko foreach: executionGroups -->
@@ -36,7 +36,7 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isGeneratePermitted(sourceKey) ? 'Not enough permissions to generate or changes were not saved or Execution Engine is not available' : null,
+                    tooltip: !$component.isGeneratePermitted(sourceKey) ? ko.i18n('ple.exec.notPermitted', 'Not enough permissions to generate or changes were not saved or Execution Engine is not available') : null,
                 ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
@@ -45,17 +45,17 @@
                     >
                         <!-- ko if: 'STARTED' === status() -->
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
-                        <span data-bind="css: classes('action-text')">Generating...</span>
+                        <span data-bind="css: classes('action-text'), text: ko.i18n('ple.exec.generating', 'Generating...')"></span>
                         <!-- /ko -->
                         <!-- ko if: 'COMPLETED' === status() -->
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-                        <span data-bind="css: classes('action-text')">Generate</span>
+                        <span data-bind="css: classes('action-text'), text: ko.i18n('ple.exec.generate', 'Generate')"></span>
                         <!-- /ko -->
                     </button>
                 </li>
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null,
+                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('ple.exec.notPermittedToVieweResults', 'Not enough permissions to view results') : null,
                 ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
@@ -63,13 +63,13 @@
 						click: () => $component.downloadLatestResults(sourceKey)
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-download']})"></i>
-                        Download latest result
+                        <span data-bind="text: ko.i18n('ple.exec.downloadLatestResult', 'Download latest result')"></span>
                     </button>
 
                 </li>
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null,
+                    tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('ple.exec.notPermittedToVieweResults', 'Not enough permissions to view results') : null,
                  ">
                     <button data-bind="
                         css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
@@ -77,7 +77,7 @@
                         click: toggleSection
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="text: 'All executions (' + submissions().length + ')'"></span>
+                        <span data-bind="text: ko.i18nformat('ple.exec.allExec', 'All executions (<%=len%>)', {len: submissions().length})"></span>
                     </button>
                 </li>
             </ul>
@@ -88,7 +88,7 @@
                     css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                     dataTable:{
                         data: submissions,
-                        options: {columns: execColumns, order: [[ 0, 'desc' ]]}
+                        options: {columns: execColumns, order: [[ 0, 'desc' ]], language: ko.i18n('datatable.language')},
                     }
                 "/>
             </li>

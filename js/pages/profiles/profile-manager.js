@@ -138,7 +138,7 @@ define([
 				this.loadConceptSets(this.cohortDefSource());
 
 				this.sourceKeyCaption = ko.computed(() => {
-					return this.sourceKey() || "Select a Data Source";
+					return this.sourceKey() || ko.i18n('profiles.selectADataSource', 'Select a Data Source')();
 				});
 				this.personRequests = {};
 				this.personRequest;
@@ -279,34 +279,34 @@ define([
 					data: 'highlight()',
 					sortable: false
 				}, {
-					title: ko.i18n('profiles.highlightColumns.name', 'Concept Name'),
+					title: ko.i18n('columns.conceptName', 'Concept Name'),
 					data: 'caption'
 				}, {
-					title: ko.i18n('profiles.highlightColumns.domain', 'Domain'),
+					title: ko.i18n('columns.domain', 'Domain'),
 					data: 'domain'
 				}, {
-					title: ko.i18n('profiles.highlightColumns.totalRecords', 'Total Records'),
+					title: ko.i18n('columns.totalRecords', 'Total Records'),
 					data: 'count'
 				}];
 
 				this.columns = [{
-						title: ko.i18n('profiles.columns.id', 'Concept Id'),
+						title: ko.i18n('columns.conceptId', 'Concept Id'),
 						data: 'conceptId'
 					},
 					{
-						title: ko.i18n('profiles.columns.name', 'Concept Name'),
+						title: ko.i18n('columns.conceptName', 'Concept Name'),
 						data: 'conceptName'
 					},
 					{
-						title: ko.i18n('profiles.columns.domain', 'Domain'),
+						title: ko.i18n('columns.domain', 'Domain'),
 						data: 'domain'
 					},
 					{
-						title: ko.i18n('profiles.columns.startDay', 'Start Day'),
+						title: ko.i18n('columns.startDay', 'Start Day'),
 						data: 'startDay'
 					},
 					{
-						title: ko.i18n('profiles.columns.endDay', 'End Day'),
+						title: ko.i18n('columns.endDay', 'End Day'),
 						data: 'endDay'
 					}
 				];

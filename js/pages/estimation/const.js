@@ -64,7 +64,7 @@ define(
     }
 
     const getTimeAtRisk = (createStudyPopArgs) => {
-        return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + "d<br/>(min: " + createStudyPopArgs.minDaysAtRisk() + "d)");
+        return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + ko.i18n('common.daysAbbr', 'd')() + " (" + ko.i18n('common.min', 'min')() + ": " + createStudyPopArgs.minDaysAtRisk() + ko.i18n('common.daysAbbr', 'd')() + ")");
     };
 
     const options = {
@@ -313,7 +313,7 @@ define(
               title: ko.i18n('columns.minimumTimeAtRisk', 'Minimum Time At Risk'),
               render: (s, p, d) => {
                     if (d.createStudyPopArgs != null) {
-                        return d.createStudyPopArgs.minDaysAtRisk() + "d";
+                        return d.createStudyPopArgs.minDaysAtRisk() + "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span>";
                     } else {
                         return '';
                     }
@@ -361,45 +361,45 @@ define(
         },
         fullAnalysisTableColumns: [
             {
-                title: 'Target Id',
+                title: ko.i18n('columns.targetId', 'Target Id'),
                 data: d => d.targetComparatorOutcome.target.id,
                 visible: false,
             },
             {
-                title: 'Target Cohort Name',
+                title: ko.i18n('columns.targetCohortName', 'Target Cohort Name'),
                 data: d => d.targetComparatorOutcome.target.name,
             },
             {
-                title: 'Comparator Id',
+                title: ko.i18n('columns.comparatorId', 'Comparator Id'),
                 data: d => d.targetComparatorOutcome.comparator.id,
                 visible: false,
             },
             {
-                title: 'Comparator Cohort Name',
+                title: ko.i18n('columns.comparatorCohortName', 'Comparator Cohort Name'),
                 data: d => d.targetComparatorOutcome.comparator.name,
             },
             {
-                title: 'Outcomes',
+                title: ko.i18n('columns.outcomes', 'Outcomes'),
                 data: d => d.targetComparatorOutcome.outcome.id,
                 visible: false,
             },
             {
-                title: 'Outcome Cohort Name',
+                title: ko.i18n('columns.outcomeCohortName', 'Outcome Cohort Name'),
                 data: d => d.targetComparatorOutcome.outcome.name,
             },
             {
-                title: 'Analysis Name',
+                title: ko.i18n('columns.analysisName', 'Analysis Name'),
                 data: d => d.cohortMethodAnalysis.description(),
             },
             {
-                title: 'Time At Risk',
+                title: ko.i18n('columns.timeAtRisk', 'Time At Risk'),
                 data: d => {
                     //return (d.cohortMethodAnalysis.createStudyPopArgs.riskWindowStart() + "-" + d.cohortMethodAnalysis.createStudyPopArgs.riskWindowEnd() + "d<br/>(min: " + d.cohortMethodAnalysis.createStudyPopArgs.minDaysAtRisk() + "d)");
                     return getTimeAtRisk(d.cohortMethodAnalysis.createStudyPopArgs);
                 }
             },
             {
-                title: 'Outcome Model',
+                title: ko.i18n('columns.outcomeModel', 'Outcome Model'),
                 data: d => {
                     return d.cohortMethodAnalysis.fitOutcomeModelArgs.modelType();
                 },
@@ -414,19 +414,19 @@ define(
             dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
             domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
             Facets: [{
-                'caption': 'Target Cohorts',
+                'caption': ko.i18n('facets.caption.targetCohorts', 'Target Cohorts'),
                 'binding': d => d.targetComparatorOutcome.target.name,
             },
             {
-                'caption': 'Comparator Cohorts',
+                'caption': ko.i18n('facets.caption.comparatorCohorts', 'Comparator Cohorts'),
                 'binding': d => d.targetComparatorOutcome.comparator.name,
             },
             {
-                'caption': 'Outcome Cohorts',
+                'caption': ko.i18n('facets.caption.outcomeCohorts', 'Outcome Cohorts'),
                 'binding': d => d.targetComparatorOutcome.outcome.name,
             },
             {
-                'caption': 'Analysis Name',
+                'caption': ko.i18n('facets.caption.analysisName', 'Analysis Name'),
                 'binding': d => d.cohortMethodAnalysis.description(),
             },
             ]

@@ -54,18 +54,18 @@ define([
 
 			this.execColumns = [
 				{
-					title: 'Date',
+					title: ko.i18n('columns.date', 'Date'),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 				{
-					title: 'Status',
+					title: ko.i18n('columns.status', 'Status'),
 					data: 'status',
 					className: this.classes('col-exec-status'),
 					render: (s, p, d) => s === 'FAILED' ? `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>` : s,
 				},
 				{
-					title: 'Duration',
+					title: ko.i18n('columns.duration', 'Duration'),
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
 						const endTime = d.endTime || Date.now();
@@ -73,7 +73,7 @@ define([
 					}
 				},
 				{
-					title: 'Results',
+					title: ko.i18n('columns.results', 'Results'),
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
 						return (d.status === this.estimationStatusGenerationOptions.COMPLETED || d.status === this.estimationStatusGenerationOptions.FAILED) && this.isResultsViewPermitted(d.id) && d.numResultFiles > 0 ?

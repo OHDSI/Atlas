@@ -74,7 +74,7 @@ define([
 
 		addAnalysis() {
 			this.cohortMethodAnalysisList.push(
-				new CohortMethodAnalysis({description: "New analysis " + (this.cohortMethodAnalysisList().length + 1)}, this.defaultCovariateSettings())
+				new CohortMethodAnalysis({description: ko.i18n('ple.spec.newAnalysis', 'New analysis')() + ' ' + (this.cohortMethodAnalysisList().length + 1)}, this.defaultCovariateSettings())
 			);
 			// Get the index
 			const index = this.cohortMethodAnalysisList().length - 1;
