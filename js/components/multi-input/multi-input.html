@@ -4,7 +4,9 @@
             <thead>
                 <tr role="row" class="active">
                     <th data-bind="css: classes({element: 'col-value'}), text: valueLabel"></th>
-                    <th data-bind="css: classes({element: 'col-action'})">Action</th>
+                    <th data-bind="css: classes({element: 'col-action'})">
+                        <span data-bind="text: ko.i18n('components.multiInput.action', 'Action')"></span>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -12,7 +14,9 @@
                 <tr>
                     <td data-bind="text: $data"></td>
                     <td>
-                        <a href='#' data-bind="click: $parent.deleteItem">Remove</a>
+                        <a href='#' data-bind="click: $parent.deleteItem">
+                            <span data-bind="text: ko.i18n('components.multiInput.remove', 'Remove')"></span>
+                        </a>
                     </td>
                 </tr>
                 <!-- /ko -->
@@ -20,10 +24,14 @@
         </table>
     </div>
     <div class="input-group">
-        <input class="form-control" type="text" data-bind="textInput: itemToAdd, eventListener: [{event: 'keypress', callback: enterPressed}]" />
+        <input class="form-control" type="text"
+            data-bind="textInput: itemToAdd, eventListener: [{event: 'keypress', callback: enterPressed}]" />
         <div class="input-group-btn">
-            <button class="btn btn-primary" data-bind="enable: enableAdd, click: addItem">Add</button>
-            <button class="btn" data-bind="visible: hasDefaults, click: setToDefaults, enable: enableDefaults, css: classes({element: 'btn-set-default', extra: enableDefaults() == true ? 'btn-danger' : ''}), text: defaultText"></button>
+            <button class="btn btn-primary" data-bind="enable: enableAdd, click: addItem">
+                <span data-bind="text: ko.i18n('components.multiInput.add', 'Add')"></span>
+            </button>
+            <button class="btn"
+                data-bind="visible: hasDefaults, click: setToDefaults, enable: enableDefaults, css: classes({element: 'btn-set-default', extra: enableDefaults() == true ? 'btn-danger' : ''}), text: ko.unwrap(defaultText)"></button>
         </div>
     </div>
 </div>
