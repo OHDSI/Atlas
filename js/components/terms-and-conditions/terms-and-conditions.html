@@ -6,11 +6,13 @@
       <button type="button" data-bind="
         css: classes({ element: 'btn', extra: 'btn btn-danger' }),
         click: reject,
-      ">Reject</button>
+        text: ko.i18n('licenseAgreement.reject', 'Reject')
+      "></button>
       <button type="button" data-bind="
         css: classes({ element: 'btn', extra: 'btn btn-success' }),
         click: accept,
-      ">Accept</button>
+        text: ko.i18n('licenseAgreement.accept', 'Accept')
+      "></button>
     </div>
   </div>
 </script>

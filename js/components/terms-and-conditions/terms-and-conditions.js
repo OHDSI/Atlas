@@ -34,8 +34,9 @@ define([
           return false;
         }
       });
-      this.title = appConfig.termsAndConditions.header;
-      this.description = appConfig.termsAndConditions.description;
+
+      this.title = ko.i18n('licenseAgreement.title', 'License Agreement');
+      this.description = ko.i18n('licenseAgreement.description', 'In order to use the SNOMED International SNOMED CT Browser and HemOnc, please accept the following license agreement:');
       this.content = appConfig.termsAndConditions.content;
       this.isAccepted = ko.observable(true);
 
@@ -59,7 +60,7 @@ define([
     }
 
     reject() {
-      alert('Without accepting this terms & conditions you can\'t use Atlas');
+      alert(ko.i18n('licenseAgreement.rejectWarning', 'Without accepting this terms & conditions you can\'t use Atlas')());
     }
 	}
 
