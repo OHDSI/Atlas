@@ -1,9 +1,9 @@
 <div class="wrapperTitle">
-    <i class="fa fa-home"></i> Feedback
+    <i class="fa fa-home"></i> <span data-bind="text: ko.i18n('feedback.title', 'Feedback')"></span>
 </div>
 
 <div class="paddedWrapper">
     <div class="alert alert-info">
-        <p class="feedback-text"><i class="fa fa-fw fa-info-circle"></i> For access or questions concerning the Atlas application please contact: <a data-bind="text: supportMail, attr: {href: supportMailRef}"></a>.</p>
+        <p class="feedback-text"><i class="fa fa-fw fa-info-circle"></i> <span data-bind="text: ko.i18n('feedback.pleaseContact', 'For access or questions concerning the Atlas application please contact:')"></span> <a data-bind="text: supportMail, attr: {href: supportMailRef}"></a>.</p>
     </div>
 </div>
