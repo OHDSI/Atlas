@@ -44,15 +44,15 @@ define([
       this.options = {
         Facets: [
           {
-            caption: ko.i18n('columns.created', 'Created'),
+            caption: ko.i18n('facets.caption.created', 'Created'),
             binding: (o) => datatableUtils.getFacetForDate(o.createdDate),
           },
           {
-            caption: ko.i18n('columns.updated', 'Updated'),
+            caption: ko.i18n('facets.caption.updated', 'Updated'),
             binding: (o) => datatableUtils.getFacetForDate(o.modifiedDate),
           },
           {
-            caption: ko.i18n('columns.author', 'Author'),
+            caption: ko.i18n('facets.caption.author', 'Author'),
             binding: datatableUtils.getFacetForCreatedBy,
           },
         ],

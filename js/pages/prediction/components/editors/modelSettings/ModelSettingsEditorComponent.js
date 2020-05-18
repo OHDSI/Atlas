@@ -26,8 +26,8 @@ define([
         }
 
         modelSettingDescription(settingName) {
-            return utils.getDefaultModelSettingDescription(this.defaultModelSettings, settingName);
-        } 
+            return utils.getDefaultModelSettingDescriptionTranslate(this.defaultModelSettings, settingName);
+        }
         getModelSettingByName(settingName) {
             if (!Object.keys(this.modelSettings).indexOf(settingName) < 0) {
                 console.error("Setting: " + settingName + " not found in modelSettings");

@@ -2,6 +2,7 @@ define(
     (require, exports) => {
 
     const ModelSettings = require('./inputTypes/ModelSettings');
+    const ko = require('knockout');
 
     function getDefaultModelSettings(modelName) {
         return ModelSettings.defaultModelSettings.find(item => item.name === modelName).modelSettings;
@@ -10,6 +11,10 @@ define(
     function getDefaultModelSettingDescription(defaultModelSettings, settingName) {
         const setting = defaultModelSettings.find(item => item.setting === settingName);
         return setting.description + " (default = " + setting.defaultValue + "):";
+    }
+    function getDefaultModelSettingDescriptionTranslate(defaultModelSettings, settingName) {
+        const setting = defaultModelSettings.find(item => item.setting === settingName);
+        return ko.unwrap(setting.description) + " (default = " + setting.defaultValue + "):";
     }
 
     function getDefaultModelSettingValue(defaultModelSettings, settingName) {
@@ -36,6 +41,7 @@ define(
         getDefaultModelSettingName: getDefaultModelSettingName,
         getDefaultModelSettingValue: getDefaultModelSettingValue,
         getDefaultModelSettingsValueList: getDefaultModelSettingsValueList,
+        getDefaultModelSettingDescriptionTranslate,
     };
 
     return utils;

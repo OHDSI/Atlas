@@ -134,7 +134,7 @@
                                             </button>
                                             <ul class="dropdown-menu"
                                                 data-bind="foreach:$component.modelSettingsOptions">
-                                                <li><a data-bind="text:$data.name, click:function() {$component.addModelSettings($data)}"
+                                                <li><a data-bind="text:ko.i18n($data.name, $data.defaultName), click:function() {$component.addModelSettings($data)}"
                                                         href="#"></a></li>
                                             </ul>
                                         </div>
@@ -255,8 +255,8 @@
                             <div data-bind="click: closeEditor" class="editor-back-icon"><i
                                     class="fa fa-chevron-left fa-lg"></i></div>
                             <div>
-                                <div class="editor-heading" data-bind="text: $component.editorHeading"></div>
-                                <div data-bind="text: $component.editorDescription"></div>
+                                <div class="editor-heading" data-bind="text: ko.unwrap($component.editorHeading)"></div>
+                                <div data-bind="text: ko.unwrap($component.editorDescription)"></div>
                             </div>
                         </div>
                     </div>
@@ -274,7 +274,7 @@
     showModal: showCohortSelector,
     modifiers: ['lg'],
     iconClass: 'fa fa-users',
-    title: 'Select Cohort...',
+    title: ko.i18n('pages.predictions.selectCohort', 'Select Cohort...'),
     data: {
         currentCohortList: $component.currentCohortList,
         cohortSelected: $component.cohortSelected,

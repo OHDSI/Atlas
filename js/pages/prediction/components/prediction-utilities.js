@@ -56,7 +56,7 @@ define([
 			this.importService = PredictionService.importPrediction;
 			this.isPermittedExport = PermissionService.isPermittedExport;
 			this.isPermittedImport = PermissionService.isPermittedImport;
-
+			this.language = ko.i18n("datatable.language");
 			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
 				return (
 					this.targetCohorts().length > 0 &&
