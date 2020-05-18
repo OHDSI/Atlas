@@ -1,16 +1,13 @@
 <div data-bind="css: classes('button-group')">
-    <button data-bind="css: classes({extra: ['btn', 'btn-sm', 'btn-success']}), click: loadHistory">Refresh</button>
+    <button data-bind="css: classes({extra: ['btn', 'btn-sm', 'btn-success']}), click: loadHistory, text: ko.i18n('common.refresh', 'Refresh')"></button>
 </div>
 
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job History...'"></loading>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('configuration.userImport.loadingHistory', 'Loading User Import Job History...')"></loading>
 <!-- ko if: !$component.loading() -->
 <table width="100%" cellspacing="0" data-bind="dataTable:{
                             data: jobHistory(),
                             options: {
                                         dom: 'lfiprt',
-                                        language: {
-                                            search : 'Filter:'
-                                        },
                                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                                         orderClasses: false,
                                         deferRender: true,
@@ -18,15 +15,16 @@
                                         ordering: true,
                                         order: [[ 4, 'desc' ]],
                                         columns: [
-                                                { title: 'Status', data: 'status', render: utils.JobStatusRender },
-                                                { title: 'Provider', data: 'providerType', render: utils.ProviderRender },
-                                                { title: 'Title', data: 'jobTitle', },
-                                                { title: 'Author', data: 'author', },
-                                                { title: 'Started', render: datatableUtils.getDateFieldFormatter('startTime') },
-                                                { title: 'Finished', render: datatableUtils.getDateFieldFormatter('endTime') },
-                                                { title: 'Message', data: 'exitMessage', render: utils.ExitMessageRender },
+                                                { title: ko.i18n('columns.status', 'Status'), data: 'status', render: utils.JobStatusRender },
+                                                { title: ko.i18n('columns.provider', 'Provider'), data: 'providerType', render: utils.ProviderRender },
+                                                { title: ko.i18n('columns.title', 'Status'), data: 'jobTitle', },
+                                                { title: ko.i18n('columns.author', 'Author'), data: 'author', },
+                                                { title: ko.i18n('columns.started', 'Started'), render: datatableUtils.getDateFieldFormatter('startTime') },
+                                                { title: ko.i18n('columns.finished', 'Finished'), render: datatableUtils.getDateFieldFormatter('endTime') },
+                                                { title: ko.i18n('columns.message', 'Message'), data: 'exitMessage', render: utils.ExitMessageRender },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
+                                        language: ko.i18n('datatable.language')
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
 </table>

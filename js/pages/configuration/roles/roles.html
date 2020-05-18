@@ -1,23 +1,20 @@
 <!-- ko if:loading -->
 <div class="wrapperTitle">
-    <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+    <i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: ko.i18n('common.loadingWithDots', 'Loading...')"></span>
 </div>
 <!-- /ko -->
 <!-- ko ifnot:loading -->
-    <heading-title params="name: 'Roles', icon: 'cogs', theme: 'dark'"></heading-title>
+    <heading-title params="name: ko.i18n('configuration.roles.title', 'Roles'), icon: 'cogs', theme: 'dark'"></heading-title>
 <!-- /ko -->
 <div data-bind="if:$component.canRead">
     <div class="paddedWrapper">
-        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole, css: { disabled: !canCreate() }">New role</span>
-        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click: importRoles, css: { disabled: !canCreate() }">Import roles</span>
+        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click:newRole, css: { disabled: !canCreate() }, text: ko.i18n('configuration.roles.newRole', 'New role')"></span>
+        <span class="pull-right btn btn-sm btn-primary new-role" data-bind="click: importRoles, css: { disabled: !canCreate() }, text: ko.i18n('configuration.roles.importRoles', 'Import roles')"></span>
         <div class="clear" data-bind="eventListener: [{event: 'click', selector: '.roleItem', callback: $component.selectRole}]">
             <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
             data: roles,
             options: {
                         dom: 'lfiprt',
-                        language: {
-                            search : 'Filter Roles:'
-                        },
                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                         orderClasses: false,
                         deferRender: true,
@@ -25,9 +22,10 @@
                         ordering: true,
                         order: [[ 0, 'asc' ]],
                         columns: [
-                                { title: 'Role', data: 'role' }
+                                { title: ko.i18n('column.role', 'Role'), data: 'role' }
                         ],
-                        stripeClasses : [ 'roleItem' ]
+                        stripeClasses : [ 'roleItem' ],
+                        language: ko.i18n('datatable.language')
                 }
         }"></table>
         </div>

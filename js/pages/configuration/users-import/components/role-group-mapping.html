@@ -13,10 +13,11 @@
                                         ordering: true,
                                         order: [[ 0, 'asc' ]],
                                         columns: [
-                                                { title: ko.i18n('configuration.user-import.wizard.role-mapping.table.columns.role', 'Role'), data: 'role' },
-                                                { title: ko.i18n('configuration.user-import.wizard.role-mapping.table.columns.role', 'Group name'), render: renderGroups },
+                                                { title: ko.i18n('columns.role', 'Role'), data: 'role' },
+                                                { title: ko.i18n('columns.groupName', 'Group name'), render: renderGroups },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
+                                        language: ko.i18n('datatable.language')
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
 </table>

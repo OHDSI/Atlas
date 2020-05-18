@@ -3,9 +3,6 @@
             data: $component.userItems,
             options: {
                         dom: 'lfiprt',
-                        language: {
-                            search : 'Filter:'
-                        },
                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                         orderClasses: false,
                         deferRender: true,
@@ -14,16 +11,17 @@
                         columns: [
                                 { class:'text-center', render: function() { return renderCheckbox('isRoleUser', $component.canEditRoleUsers); } },
                                 { data: 'login' }
-                        ]
+                        ],
+                        language: ko.i18n('datatable.language')
                 }
         }">
         <thead>
         <tr role="row">
             <th class="roles-table__included-th text-center sorting_disabled" rowspan="1" colspan="1">
                 <span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$component.areUsersSelected()?$component.deselectAllUsers():$component.selectAllUsers();}"></span>
-                Included
+                <span data-bind="text: ko.i18n('columns.included', 'Included')"></span>
             </th>
-            <th tabindex="0" rowspan="1" colspan="1">Login</th>
+            <th tabindex="0" rowspan="1" colspan="1" data-bind="text: ko.i18n('columns.login', 'Login')"></th>
         </tr>
         </thead>
     </table>

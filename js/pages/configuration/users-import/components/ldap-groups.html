@@ -1,9 +1,9 @@
 <div data-bind="css: classes({ extra: ['paddedWrapper'] })">
     <div data-bind="css: classes({ extra: ['form-group'] })">
-        <label>Search group:</label>
+        <label data-bind="text: ko.i18n('configuration.userImport.searchGroup', 'Search group:')"></label>
         <div data-bind="css: classes({ element: 'row', extra: ['input-group'] })">
-            <input type="text" placeholder="Search..." data-bind="textInput: searchText, css: classes({ extra: ['form-control'] }), event: { 'keyup': onSubmitSearch }, keyupBubble: false" />
-            <button data-bind="click: searchGroups, css: classes({ extra: ['btn', 'btn-sm', 'btn-primary'] })"><i class="fa fa-search"></i> Search</button>
+            <input type="text" data-bind="textInput: searchText, css: classes({ extra: ['form-control'] }), event: { 'keyup': onSubmitSearch }, keyupBubble: false, placeholder: ko.i18n('configuration.userImport.searchGroupPlaceholder', 'Search...')"/>
+            <button data-bind="click: searchGroups, css: classes({ extra: ['btn', 'btn-sm', 'btn-primary'] })"><i class="fa fa-search"></i> <span data-bind="text: ko.i18n('common.search', 'Search')"></span></button>
         </div>
     </div>
     <div data-bind="if: !loading() && hasResults()">
@@ -11,8 +11,6 @@
                             data: searchResults(),
                             options: {
                                         dom: 'liprt',
-                                        language: {
-                                        },
                                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                                         orderClasses: false,
                                         deferRender: true,
@@ -20,15 +18,16 @@
                                         ordering: true,
                                         order: [[ 1, 'asc' ]],
                                         columns: [
-                                            { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
-                                            { title: 'Group name', width: '100%', data: 'displayName' },
+                                            { title: ko.i18n('columns.selected', 'Selected'), class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
+                                            { title: ko.i18n('columns.groupName', 'Group name'), width: '100%', data: 'displayName' },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
+                                        language: ko.i18n('datatable.language')
                                 }
                               }, css: classes({ extra: ['stripe','compact','hover'] })">
         </table>
     </div>
     <div data-bind="css: classes('loader'), if: loading()">
-        <loading params="status:'loading'" />
+        <loading params="status: ko.i18n('common.loading', 'loading')" />
     </div>
 </div>
