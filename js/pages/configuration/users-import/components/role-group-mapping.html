@@ -1,11 +1,8 @@
 <table width="100%" cellspacing="0" data-bind="dataTable:{
-                            data: rolesMapping(),
+                            data: rolesMapping,
                             onRowClick: $component.onRolesRowClick,
                             options: {
                                         dom: 'lfiprt',
-                                        language: {
-                                            search : 'Filter:'
-                                        },
                                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                                         orderClasses: false,
                                         deferRender: true,
