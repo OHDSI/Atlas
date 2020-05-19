@@ -1,5 +1,6 @@
 define([
   'knockout',
+  'atlas-state',
 	'text!./terms-and-conditions.html',
   'components/Component',
   'utils/AutoBind',
@@ -13,6 +14,7 @@ define([
   'components/modal'
 ], function (
   ko,
+  state,
 	view,
   Component,
   AutoBind,
@@ -21,11 +23,15 @@ define([
   authApi,
   router,
   momentjs,
-  appConfig,
+  appConfig
 ) {
 	class TermsAndConditions extends AutoBind(Component) {
 		constructor(params) {
       super(params);
+
+      this.availableLocales = state.availableLocales;
+      this.locale = state.locale;
+
       this.isModalShown = ko.pureComputed({
         read: () => {
           return appConfig.enableTermsAndConditions && !this.isAccepted();
@@ -37,7 +43,11 @@ define([
 
       this.title = ko.i18n('licenseAgreement.title', 'License Agreement');
       this.description = ko.i18n('licenseAgreement.description', 'In order to use the SNOMED International SNOMED CT Browser and HemOnc, please accept the following license agreement:');
-      this.content = appConfig.termsAndConditions.content;
+      this.content = ko.observable();
+      this.adaptContentToLocaleChange(ko.unwrap(state.locale));
+
+      state.locale.subscribe(this.adaptContentToLocaleChange);
+
       this.isAccepted = ko.observable(true);
 
       router.currentView.subscribe(() => {
@@ -45,10 +55,14 @@ define([
       });
     }
 
+    adaptContentToLocaleChange(locale) {
+		  this.content(appConfig.termsAndConditions.contents[locale] || appConfig.termsAndConditions.contents.en); // EN is default
+    }
+
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {
-        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(appConfig.termsAndConditions.acceptanceExpiresInDays, 'days')) <= 0;
+        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate, 10), momentjs()) >= appConfig.termsAndConditions.acceptanceExpiresInDays;
         return !isExpired;
       }
       return false;

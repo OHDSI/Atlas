@@ -1,5 +1,8 @@
 <script type='template' id='terms-and-conditions-template'>
   <div data-bind="css: classes()">
+    <select data-bind="css: classes('locale'), foreach: availableLocales, value: locale">
+      <option data-bind="value: $data.code, text: $data.name"></option>
+    </select>
     <div data-bind="css: classes('description'), html: description"></div>
     <div data-bind="css: classes('content'), html: content"></div>
     <div data-bind="css: classes('controls')">
