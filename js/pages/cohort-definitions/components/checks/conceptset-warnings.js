@@ -12,7 +12,6 @@ define(['knockout', 'text!./conceptset-warnings.html',
     function conceptSetWarnings(params){
       var self = this;
       this.currentCohortDefinition = sharedState.CohortDefinition.current;
-      self.cohortDefinitionId = this.currentCohortDefinition().id || ko.observable(-1);
       self.count = params.count || ko.observable();
       self.infoCount = params.infoCount || ko.observable();
       self.warningCount = params.warningCount || ko.observable();
@@ -91,12 +90,12 @@ define(['knockout', 'text!./conceptset-warnings.html',
       };
 
       self.getWarnings = function() {
-        if (this.cohortDefinitionId()) {
-          if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
+        if (this.currentCohortDefinition()) {
+          if (parseInt(this.currentCohortDefinition().id(), 10) <= 0 || isNaN(this.currentCohortDefinition().id())) {
             return false;
           }
           self.loading(true);
-          cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
+          cohortDefinitionApi.getWarnings(this.currentCohortDefinition().id())
             .then(showWarnings, handleError);
         }
       };
@@ -106,7 +105,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
           const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
             return (value === 0 || value) ?  value : undefined;
           }, 2);
-          self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
+          self.runDiagnostics(this.currentCohortDefinition().id(), expressionJSON);
         }
       };
 
