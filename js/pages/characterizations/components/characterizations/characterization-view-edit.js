@@ -173,7 +173,7 @@ define([
           } else {
             this.loading(true);
             const res = await CharacterizationService.loadCharacterizationDesign(id);
-            this.setupDesign(new CharacterizationAnalysis(res, this.isEditPermitted));
+            this.setupDesign(new CharacterizationAnalysis(res));
             this.loading(false);
           }
         }
@@ -199,7 +199,7 @@ define([
                         commonUtils.routeTo(`/cc/characterizations/${newCharacterization.id}/${this.selectedTabKey()}`);
                     } else {
                         const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
-                        this.setupDesign(new CharacterizationAnalysis(updatedCharacterization, this.isEditPermitted));
+                        this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
                     }
                 }
             } catch (e) {
