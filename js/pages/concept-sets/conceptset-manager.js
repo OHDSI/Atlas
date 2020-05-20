@@ -178,12 +178,12 @@ define([
 						},
 				},
 				{
-						title: ko.i18n('cs.manager.tabs.Export', 'Export'),
+						title: ko.i18n('cs.manager.tabs.export', 'Export'),
 						componentName: 'conceptset-export',
 						componentParams: params,
 				},
 				{
-						title: ko.i18n('cs.manager.tabs.Compare', 'Compare'),
+						title: ko.i18n('cs.manager.tabs.compare', 'Compare'),
 						componentName: 'conceptset-compare',
 						componentParams: {
 							...params,

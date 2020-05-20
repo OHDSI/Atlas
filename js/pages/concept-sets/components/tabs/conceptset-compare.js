@@ -105,15 +105,15 @@ define([
       this.compareLoadingClass = ko.pureComputed(() => {
         return this.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
       });
-      this.compareNewConceptSetName = ko.observable(this.currentConceptSet().name() + " - From Comparison");
+      this.compareNewConceptSetName = ko.observable(this.currentConceptSet().name() + ko.i18n('cs.browser.compare.saveFromComparisonNameTail', ' - From Comparison')());
       this.compareResultsColumns = [{
         data: d => {
             if (d.conceptIn1Only == 1) {
-              return '1 Only'
+              return ko.i18n('facets.match.only1', '1 Only')();
             } else if (d.conceptIn2Only == 1) {
-              return '2 Only'
+              return ko.i18n('facets.match.only2', '2 Only')();
             } else {
-              return 'Both'
+              return ko.i18n('facets.match.both', 'Both')();
             }
           },
         },
@@ -161,31 +161,31 @@ define([
           [2, 'desc']
         ],
         Facets: [{
-            'caption': 'Match',
+            'caption': ko.i18n('facets.caption.match', 'Match'),
             'binding': d => {
               if (d.conceptIn1Only == 1) {
-                return '1 Only'
+                return ko.i18n('facets.match.only1', '1 Only');
               } else if (d.conceptIn2Only == 1) {
-                return '2 Only'
+                return ko.i18n('facets.match.only2', '2 Only');
               } else {
-                return 'Both'
+                return ko.i18n('facets.match.both', 'Both');
               }
             },
           },
           {
-            'caption': 'Class',
+            'caption': ko.i18n('facets.caption.class', 'Class'),
             'binding': d => d.conceptClassId,
           },
           {
-            'caption': 'Domain',
+            'caption': ko.i18n('facets.caption.domain', 'Domain'),
             'binding': d => d.domainId,
           },
           {
-            'caption': 'Vocabulary',
+            'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
             'binding': d => d.vocabularyId,
           },
           {
-            'caption': 'Has Records',
+            'caption': ko.i18n('facets.caption.hasRecords', 'Has Records'),
             'binding': d => {
               var val = d.recordCount;
               if (val.replace)
@@ -198,7 +198,7 @@ define([
             },
           },
           {
-            'caption': 'Has Descendant Records',
+            'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
             'binding': d => {
               var val = d.descendantRecordCount;
               if (val.replace)

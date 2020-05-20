@@ -20,22 +20,22 @@ define([
 
 		const relatedSourcecodesOptions = {
 			Facets: [{
-				'caption': ko.i18n('const.relatedSourcecodesOptions.vocabulary', 'Vocabulary'),
+				'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				}
 			}, {
-				'caption': ko.i18n('const.relatedSourcecodesOptions.invalidReason', 'Invalid Reason'),
+				'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				}
 			}, {
-				'caption': ko.i18n('const.relatedSourcecodesOptions.class', 'Class'),
+				'caption': ko.i18n('facets.caption.class', 'Class'),
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				}
 			}, {
-				'caption': ko.i18n('const.relatedSourcecodesOptions.domain', 'Domain'),
+				'caption': ko.i18n('facets.caption.domain', 'Domain'),
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				}
@@ -60,30 +60,30 @@ define([
 			orderable: false,
 			searchable: false
 		}, {
-			title:  ko.i18n('const.relatedSourcecodesColumns.id', 'Id'),
+			title:  ko.i18n('columns.id', 'Id'),
 			data: 'CONCEPT_ID'
 		}, {
-			title: ko.i18n('const.relatedSourcecodesColumns.code', 'Code'),
+			title: ko.i18n('columns.code', 'Code'),
 			data: 'CONCEPT_CODE'
 		}, {
-			title: ko.i18n('const.relatedSourcecodesColumns.name', 'Name'),
+			title: ko.i18n('columns.name', 'Name'),
 			data: 'CONCEPT_NAME',
 			render: function (s, p, d) {
 				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 			}
 		}, {
-			title: ko.i18n('const.relatedSourcecodesColumns.class', 'Class'),
+			title: ko.i18n('columns.class', 'Class'),
 			data: 'CONCEPT_CLASS_ID'
 		}, {
-			title: ko.i18n('const.relatedSourcecodesColumns.standardConceptCaption', 'Standard Concept Caption'),
+			title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 			data: 'STANDARD_CONCEPT_CAPTION',
 			visible: false
 		}, {
-			title: ko.i18n('const.relatedSourcecodesColumns.domain', 'Domain'),
+			title: ko.i18n('columns.domain', 'Domain'),
 			data: 'DOMAIN_ID'
 		}, {
-			title: ko.i18n('const.relatedSourcecodesColumns.vocabulary', 'Vocabulary'),
+			title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 			data: 'VOCABULARY_ID'
 		}];
 		

@@ -40,38 +40,38 @@ define([
 
       this.searchConceptsOptions = {
         Facets: [{
-          'caption': ko.i18n('cs.manager.includedConceptSets.vocabulary', 'Vocabulary')(),
+          'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary')(),
           'binding': function (o) {
             return o.VOCABULARY_ID;
           }
         }, {
-          'caption': ko.i18n('cs.manager.includedConceptSets.class', 'Class')(),
+          'caption': ko.i18n('facets.caption.class', 'Class')(),
           'binding': function (o) {
             return o.CONCEPT_CLASS_ID;
           }
         }, {
-          'caption': ko.i18n('cs.manager.includedConceptSets.domain', 'Domain')(),
+          'caption': ko.i18n('facets.caption.domain', 'Domain')(),
           'binding': function (o) {
             return o.DOMAIN_ID;
           }
         }, {
-          'caption': ko.i18n('cs.manager.includedConceptSets.standardConcept', 'Standard Concept')(),
+          'caption': ko.i18n('facets.caption.standardConcept', 'Standard Concept')(),
           'binding': function (o) {
             return o.STANDARD_CONCEPT_CAPTION;
           }
         }, {
-          'caption': ko.i18n('cs.manager.includedConceptSets.invalidReason', 'Invalid Reason')(),
+          'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason')(),
           'binding': function (o) {
             return o.INVALID_REASON_CAPTION;
           }
         }, {
-          'caption': ko.i18n('cs.manager.includedConceptSets.hasRecords', 'Has Records')(),
+          'caption': ko.i18n('facets.caption.hasRecords', 'Has Records')(),
           'binding': function (o) {
             return parseInt(o.RECORD_COUNT.toString()
               .replace(',', '')) > 0;
           }
         }, {
-          'caption': ko.i18n('cs.manager.includedConceptSets.hasDescendantRecords', 'Has Descendant Records')(),
+          'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records')(),
           'binding': function (o) {
             return parseInt(o.DESCENDANT_RECORD_COUNT.toString()
               .replace(',', '')) > 0;

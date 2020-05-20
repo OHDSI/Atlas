@@ -1,13 +1,12 @@
-<loading data-bind="visible: exporting" params="status: 'Exporting CSV...'"></loading>
-<loading data-bind="visible: $component.loading()" params="status: 'Loading for export...'"></loading>
+<loading data-bind="visible: exporting" params="status: ko.i18n('cs.manager.export.exportingCsv', 'Exporting CSV...')"></loading>
+<loading data-bind="visible: $component.loading()" params="status: ko.i18n('cs.manager.export.loadingForExport', 'Loading for export...')"></loading>
 <div data-bind="hidden: exporting() || $component.loading()">
   <div class="heading">
     <span data-bind="text: ko.i18n('cs.manager.export.conceptSetExpressionJSON', 'Concept Set Expression JSON')"></span>
     <button
       class="btn btn-sm btn-primary"
-      title="Copy to clipboard"
       id="btnCopyExpressionClipboard"
-      data-bind="click: copyExpressionToClipboard"
+      data-bind="click: copyExpressionToClipboard, title: ko.i18n('cs.manager.export.copyToClipboardButtonTitle', 'Copy to clipboard')"
       data-clipboard-target="#conceptSetExpression"
     >
       <i class="fa fa-clipboard" aria-hidden="true"></i>
@@ -22,9 +21,8 @@
     <span data-bind="text: ko.i18n('cs.manager.export.conceptIdentiferList', 'Concept Identifer List')"></span>
     <button
       class="btn btn-sm btn-primary"
-      title="Copy to clipboard"
       id="btnCopyIdentifierListClipboard"
-      data-bind="click: copyIdentifierListToClipboard"
+      data-bind="click: copyIdentifierListToClipboard, title: ko.i18n('cs.manager.export.copyToClipboardButtonTitle', 'Copy to clipboard')"
       data-clipboard-target="#conceptIdentifierList"
     >
       <i class="fa fa-clipboard" aria-hidden="true"></i>
@@ -39,9 +37,8 @@
     <span data-bind="text: ko.i18n('cs.manager.export.includedConceptIdentiferList', 'Included Concept Identifer List')"></span>
     <button
       class="btn btn-sm btn-primary"
-      title="Copy to clipboard"
       id="btnCopyIncludedConceptIdentifierListClipboard"
-      data-bind="click: copyIncludedConceptIdentifierListToClipboard"
+      data-bind="click: copyIncludedConceptIdentifierListToClipboard, title: ko.i18n('cs.manager.export.copyToClipboardButtonTitle', 'Copy to clipboard')"
       data-clipboard-target="#includedConceptIdentifierList"
     >
       <i class="fa fa-clipboard" aria-hidden="true"></i>

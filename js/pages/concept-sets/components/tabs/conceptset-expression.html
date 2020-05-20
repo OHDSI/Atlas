@@ -46,12 +46,12 @@
       }">
       <thead>
         <th><li class='fa fa-shopping-cart'></li></th>
-        <th data-bind="text: ko.i18n('cs.manager.expression.conceptId', 'Concept Id')"></th>
-        <th data-bind="text: ko.i18n('cs.manager.expression.conceptCode', 'Concept Code')"></th>
-        <th data-bind="text: ko.i18n('cs.manager.expression.conceptName', 'Concept Name')"></th>
-        <th data-bind="text: ko.i18n('cs.manager.expression.domain', 'Domain')"></th>
-        <th data-bind="text: ko.i18n('cs.manager.expression.standardConceptCode', 'Standard Concept Code')"></th>
-        <th data-bind="text: ko.i18n('cs.manager.expression.standardConceptCaption', 'Standard Concept Caption')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptId', 'Concept Id')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptCode', 'Concept Code')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptName', 'Concept Name')"></th>
+        <th data-bind="text: ko.i18n('columns.domain', 'Domain')"></th>
+        <th data-bind="text: ko.i18n('columns.standardConceptCode', 'Standard Concept Code')"></th>
+        <th data-bind="text: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption')"></th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
             <span data-bind="
@@ -62,7 +62,7 @@
               click: toggleExcluded
             "></span>
           <!-- /ko -->
-          <span data-bind="text: ko.i18n('cs.manager.expression.exclude', 'Exclude')"></span>
+          <span data-bind="text: ko.i18n('columns.exclude', 'Exclude')"></span>
         </th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
@@ -74,7 +74,7 @@
             click: toggleDescendants
           "></span>
           <!-- /ko -->
-          <span data-bind="text: ko.i18n('cs.manager.expression.descendants', 'Descendants')"></span>
+          <span data-bind="text: ko.i18n('columns.descendants', 'Descendants')"></span>
         </th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
@@ -86,7 +86,7 @@
               click: toggleMapped
             "></span>
           <!-- /ko -->
-          <span data-bind="text: ko.i18n('cs.manager.expression.mapped', 'Mapped')"></span>
+          <span data-bind="text: ko.i18n('columns.mapped', 'Mapped')"></span>
         </th>
       </thead>
   </table>
