@@ -1,10 +1,10 @@
 define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
 
-	function DrugEra(data, conceptSets, isEditPermitted) {
+	function DrugEra(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
-		Criteria.call(this, data, conceptSets, isEditPermitted);		
+		Criteria.call(this, data, conceptSets);		
 
 		// set up subscription to update CodesetId if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
@@ -20,7 +20,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 
 		// Verbatim fields
 		self.CodesetId = ko.observable(data.CodesetId);
-		self.isEditPermitted = isEditPermitted;
 
 		self.EraStartDate = ko.observable(data.EraStartDate && new Range(data.EraStartDate));
 		self.EraEndDate = ko.observable(data.EraEndDate && new Range(data.EraEndDate));

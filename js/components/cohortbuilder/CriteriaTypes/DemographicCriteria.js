@@ -1,6 +1,6 @@
 define(['knockout', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept'], function (ko, Range, Concept) {
 
-	function DemographicCriteria(data, isEditPermitted) {
+	function DemographicCriteria(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
@@ -17,8 +17,6 @@ define(['knockout', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept'], 
 		self.Ethnicity = ko.observable(data.Ethnicity && ko.observableArray(data.Ethnicity.map(function (d) {
 			return new Concept(d);
 		})));
-
-		self.isEditPermitted = isEditPermitted;
 
 		
 		self.OccurrenceStartDate = ko.observable(data.OccurrenceStartDate && new Range(data.OccurrenceStartDate));

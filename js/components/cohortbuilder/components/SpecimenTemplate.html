@@ -7,11 +7,11 @@
 			</colgroup>
 			<tr>
 				<td> a specimen of
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Specimen', isEditPermitted: $component.isEditPermitted"></conceptset-selector>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Specimen'"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bind="css:{ 'disabled': !$component.isEditPermitted}" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
 						</ul>
@@ -25,87 +25,87 @@
 				<col />
 			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('First') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" /></td>
 				<td>
 					<div>for the first time in the person's history</div>
 				</td>
 			</tr>
 			<tr data-bind="if: OccurrenceStartDate() != null, visible: OccurrenceStartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('OccurrenceStartDate') }" class="fa fa-times" /></td>
 				<td>
 					occurrence start is:
-					<date-range params="Range: OccurrenceStartDate, isEditPermitted: $component.isEditPermitted"></date-range>
+					<date-range params="Range: OccurrenceStartDate"></date-range>
 				</td>
 			</tr>
 
 			<tr data-bind="if: SpecimenType() != null, visible: SpecimenType() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('SpecimenType') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('SpecimenType') }" class="fa fa-times" /></td>
 				<td>
-					Specimen Type <cycle-toggle-input params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions, isEditPermitted: $component.isEditPermitted}"></cycle-toggle-input>
-					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: SpecimenType(), isEditPermitted: $component.isEditPermitted"></concept-list>
+					Specimen Type <cycle-toggle-input params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: SpecimenType()"></concept-list>
 				</td>
 			</tr>
 			<tr data-bind="if: Quantity() != null, visible: Quantity() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('Quantity') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Quantity') }" class="fa fa-times" /></td>
 				<td>
 					with Quantity
-					<numeric-range params="Range: Quantity, isEditPermitted: $component.isEditPermitted"></numeric-range>
+					<numeric-range params="Range: Quantity"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Unit() != null, visible: Unit() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }" class="fa fa-times" /></td>
 				<td>
 					<div>
 						with Unit:
-						<concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit(), isEditPermitted: $component.isEditPermitted"></concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Unit'}, ConceptList: Unit()"></concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: AnatomicSite() != null, visible: AnatomicSite() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AnatomicSite') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AnatomicSite') }" class="fa fa-times" /></td>
 				<td>
 					<div>
 						with Anatomic Site:
-						<concept-list params="PickerParams: { DefaultDomain: 'Spec Anatomic Site'}, ConceptList: AnatomicSite(), isEditPermitted: $component.isEditPermitted"></concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Spec Anatomic Site'}, ConceptList: AnatomicSite()"></concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: DiseaseStatus() != null, visible: DiseaseStatus() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('DiseaseStatus') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('DiseaseStatus') }" class="fa fa-times" /></td>
 				<td>
 					<div>
 						with Disease Status:
-						<concept-list params="PickerParams: { DefaultDomain: 'Spec Disease Status'}, ConceptList: DiseaseStatus(), isEditPermitted: $component.isEditPermitted"></concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Spec Disease Status'}, ConceptList: DiseaseStatus()"></concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: SourceId() != null, visible: SourceId() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('SourceId') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('SourceId') }" class="fa fa-times" /></td>
 				<td>
 					with Source ID
-					<text-filter-input params="Filter: SourceId, isEditPermitted: $component.isEditPermitted"></text-filter-input>
+					<text-filter-input params="Filter: SourceId"></text-filter-input>
 				</td>
 			</tr>
 			<tr data-bind="if: Age() != null, visible: Age() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('Age') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Age') }" class="fa fa-times" /></td>
 				<td>
 					with age
-					<numeric-range params="Range: Age, isEditPermitted: $component.isEditPermitted"></numeric-range>
+					<numeric-range params="Range: Age"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" /></td>
 				<td>
 					<div>
 						with a gender of:
-						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender(), isEditPermitted: $component.isEditPermitted"></concept-list>
+						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"></concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, visible: $component.isEditPermitted" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
 				<td style="background-color: white">
-					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage, isEditPermitted: $component.Criteria.isEditPermitted}"></criteria-group>
+					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
 				</td>
 			</tr>
 		</table>

@@ -4,10 +4,9 @@ define(function (require, exports, module) {
 	var Occurrence = require('./InputTypes/Occurrence');
 
 	class AdditionalCriteria extends WindowedCriteria {
-		constructor(data, conceptSets, isEditPermitted) {
-			super(data, conceptSets, isEditPermitted);
+		constructor(data, conceptSets) {
+			super(data, conceptSets);
 			this.Occurrence = new Occurrence(data.Occurrence);
-			this.isEditPermitted = isEditPermitted;
 		}
 	}
 

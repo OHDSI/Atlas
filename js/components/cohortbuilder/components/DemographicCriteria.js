@@ -7,7 +7,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./Dem
 		self.Criteria = ko.utils.unwrapObservable(params.criteria);
 		self.options = options;
 		self.formatOption = utils.formatDropDownOption;
-		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.addActions = [{
 				text: "Add Age Criteria",
 				selected: false,

@@ -5,7 +5,6 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 		var self = this;
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.LocationRegion;
-		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.options = options;
 
 		self.formatOption = function (d) {

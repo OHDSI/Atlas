@@ -25,7 +25,6 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 		self.isImportEnabled = ko.observable(false);
 		self.importValues = ko.observable("");
 		self.dtApi = ko.observable();
-		self.isEditPermitted = params.isEditPermitted;
 
 		VocabularyProvider.getDomains().then(function (domains) {
 			self.DomainOptions(domains);

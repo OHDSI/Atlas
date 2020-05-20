@@ -52,8 +52,6 @@ define([
 
             this.isViewPermitted = this.isPermittedViewResolver();
             this.isEditPermitted = params.isEditPermitted;
-            this.elementState = params.isEditPermitted() ? "enabled" : "disabled";
-            this.subgroupButtonCss = "btn btn-primary btn-sm " + this.elementState;
 
             this.cohorts = ko.computed({
                 read: () => params.design() && params.design().cohorts() || [],

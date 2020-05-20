@@ -5,7 +5,6 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 		var self = this;
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.ConditionOccurrence;
-		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.options = options;
 
 		self.formatOption = function (d) {

@@ -1,10 +1,10 @@
 define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
 
-	function ProcedureOccurrence(data, conceptSets, isEditPermitted) {
+	function ProcedureOccurrence(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
-		Criteria.call(this, data, conceptSets, isEditPermitted);
+		Criteria.call(this, data, conceptSets);
 		
 		// set up subscription to update CodesetId and ProcedureSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
@@ -22,7 +22,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 
 		// Verbatim fields
 		self.CodesetId = ko.observable(data.CodesetId);
-		self.isEditPermitted = isEditPermitted;
 
 		self.OccurrenceStartDate = ko.observable(data.OccurrenceStartDate && new Range(data.OccurrenceStartDate));
 		self.ProcedureType = ko.observable(data.ProcedureType && ko.observableArray(data.ProcedureType.map(function (d) {

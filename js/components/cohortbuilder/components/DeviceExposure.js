@@ -169,7 +169,6 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.DeviceExposure;
-		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.options = options;
 
 		self.removeCriterion = function (propertyName) {

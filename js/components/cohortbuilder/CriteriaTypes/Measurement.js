@@ -1,10 +1,10 @@
 define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
 
-	function Measurement(data, conceptSets, isEditPermitted) {
+	function Measurement(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
-		Criteria.call(this, data, conceptSets, isEditPermitted);
+		Criteria.call(this, data, conceptSets);
 		
 		// set up subscription to update CodesetId and MeasurementSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
@@ -22,7 +22,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 
 		// Verbatim fields
 		self.CodesetId = ko.observable(data.CodesetId);
-		self.isEditPermitted = isEditPermitted;
 		self.First = ko.observable(data.First || null);
 		self.OccurrenceStartDate = ko.observable(data.OccurrenceStartDate && new Range(data.OccurrenceStartDate));
 		self.MeasurementType = ko.observable(data.MeasurementType && ko.observableArray(data.MeasurementType.map(function (d) {

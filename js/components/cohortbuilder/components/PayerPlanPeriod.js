@@ -4,7 +4,6 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period',
 
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.PayerPlanPeriod;
-		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.options = options;
 
 		self.formatOption = function (d) {

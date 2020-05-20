@@ -1,12 +1,11 @@
 define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period', 'conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Period, Concept) {
-	function ObservationPeriod(data, conceptSets, isEditPermitted) {
+	function ObservationPeriod(data, conceptSets) {
 		var self = this;
 		data = data || {};
 
-		Criteria.call(this, data, conceptSets, isEditPermitted);
+		Criteria.call(this, data, conceptSets);
 		
 		self.First = ko.observable(data.First || null);
-		self.isEditPermitted = isEditPermitted;
 		self.PeriodStartDate = ko.observable(data.PeriodStartDate && new Range(data.PeriodStartDate));
 		self.PeriodEndDate = ko.observable(data.PeriodEndDate && new Range(data.PeriodEndDate));
 		self.PeriodType = ko.observable(data.PeriodType && ko.observableArray(data.PeriodType.map(function (d) {

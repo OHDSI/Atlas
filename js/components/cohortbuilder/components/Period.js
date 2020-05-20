@@ -3,7 +3,6 @@ define(['knockout', 'text!./PeriodTemplate.html'], function (ko, componentTempla
 	function PeriodViewModel(params) {
 		var self = this;
 		self.Period = params.Period; // this will be a NumericRange input type.
-		self.isEditPermitted = params.isEditPermitted;
 	};
 
 	// return compoonent definition

@@ -1,9 +1,9 @@
 define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period', 'conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Period, Concept) {
-		function PayerPlanPeriod(data, conceptSets, isEditPermitted) {
+		function PayerPlanPeriod(data, conceptSets) {
 				var self = this;
 				data = data || {};
 				
-				Criteria.call(this, data, conceptSets, isEditPermitted);
+				Criteria.call(this, data, conceptSets);
 				
 				// set up subscription to update concepts and source concepts if the item is removed from conceptSets
 				conceptSets.subscribe(function (changes) {
@@ -30,7 +30,6 @@ define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period',
 				}, null, "arrayChange");
 
 				self.First = ko.observable(data.First || null);
-				self.isEditPermitted = isEditPermitted;
 				self.PeriodStartDate = ko.observable(data.PeriodStartDate && new Range(data.PeriodStartDate));
 				self.PeriodEndDate = ko.observable(data.PeriodEndDate && new Range(data.PeriodEndDate));
 				self.UserDefinedPeriod = ko.observable(data.UserDefinedPeriod && new Period(data.UserDefinedPeriod));

@@ -4,7 +4,6 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 		var self = this;
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.Specimen;
-		self.isEditPermitted = self.Criteria.isEditPermitted();
 		self.options = options;
 		self.formatOption = function (d) {
 			return '<div class="optionText">' + d.text + '</div>' +

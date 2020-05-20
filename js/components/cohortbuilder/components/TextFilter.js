@@ -3,7 +3,6 @@ define(['knockout', 'text!./TextFilterTemplate.html'], function (ko, componentTe
 	function TextFilterViewModel(params) {
 		var self = this;
 		self.Filter = params.Filter; // this will be a Text input type.
-		self.isEditPermitted = params.isEditPermitted;
 		
 		self.operationOptions = [{
 			id: 'startsWith',
