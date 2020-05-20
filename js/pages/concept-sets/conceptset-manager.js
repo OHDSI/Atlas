@@ -62,11 +62,20 @@ define([
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
 			this.selectedConcepts = sharedState.selectedConcepts;
-			this.defaultName = globalConstants.newEntityNames.conceptSet;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(true);
+
+      // switches default name according to current locale
+			sharedState.localeSettings.subscribe((localeSettings) => {
+				if (this.currentConceptSet() && (this.currentConceptSet().name() === this.defaultName)) {
+					let name = localeSettings.const.newEntityNames.conceptSet;
+					this.currentConceptSet().name(name);
+					this.defaultName = name;
+				}
+			});
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -85,7 +94,7 @@ define([
 				return this.currentConceptSet() && this.currentConceptSet().name();
 			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.currentConceptSet().name() !== this.defaultName;
+				return this.isNameFilled() && this.currentConceptSet().name() !== ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			});
 			this.canSave = ko.computed(() => {
 				return (
@@ -103,9 +112,9 @@ define([
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.currentConceptSet()) {
 					if (this.currentConceptSet().id === 0) {
-						return ko.unwrap(this.defaultName);
+						return globalConstants.newEntityNames.conceptSet();
 					} else {
-						return ko.i18n('cs.manager.caption', 'Concept Set #')() + this.currentConceptSet().id;
+						return ko.i18nformat('cs.manager.caption', 'Concept Set #<%=id%>', {id: this.currentConceptSet().id})();
 					}
 				}
 			});
@@ -240,7 +249,7 @@ define([
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				// Create a new concept set
 				this.currentConceptSet({
-					name: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
+					name: ko.observable(ko.unwrap(globalConstants.newEntityNames.conceptSet)),
 					id: 0
 				});
 				this.loading(false);
