@@ -23,8 +23,7 @@ define([
 			this.newItemAction = params.newItemAction;
 			this.data = params.data;
 			this.columns = params.columns;
-			this.buttonState = params.isEditPermitted() ? "enabled" : "disabled";
-			this.css = "btn btn-primary btn-sm " + this.buttonState;
+			this.isEditPermitted = params.isEditPermitted;
 		}
 	}
 
