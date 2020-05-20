@@ -153,6 +153,49 @@ define([
 			title: 'Vocabulary',
 			data: 'VOCABULARY_ID'
 		}];
+		
+		const getSearchConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [{
+			render: function (s, p, d) {
+				var css = '';
+				var icon = 'fa-shopping-cart';
+				var tag = 'i';
+				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+					css = ' selected';
+				}
+				if (!context.canEditCurrentConceptSet()) {
+					css += ' readonly';
+					tag = 'span';
+				}
+				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
+			},
+			orderable: false,
+			searchable: false
+		}, {
+			data: 'CONCEPT_ID'
+		}, {
+			data: 'CONCEPT_CODE'
+		}, {
+			data: 'CONCEPT_NAME',
+			render: commonUtils.renderLink,
+		}, {
+			data: 'CONCEPT_CLASS_ID'
+		}, {
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+		}, {
+			data: 'RECORD_COUNT',
+			className: 'numeric'
+		}, {
+			data: 'DESCENDANT_RECORD_COUNT',
+			className: 'numeric'
+		}, {
+			data: 'DOMAIN_ID'
+		}, {
+			data: 'VOCABULARY_ID'
+		}, {
+			data: 'ANCESTORS',
+			render: conceptSetService.getAncestorsRenderFunction()
+		}];
 
 		const apiPaths = {
 			role: (id = '') => `${config.api.url}role/${id}`,
@@ -243,6 +286,7 @@ define([
 			relatedSourcecodesOptions,
 			getIncludedConceptsColumns,
 			getRelatedSourcecodesColumns,
+			getSearchConceptsColumns,
 			apiPaths,
 			applicationStatuses,
 			generationStatuses,
