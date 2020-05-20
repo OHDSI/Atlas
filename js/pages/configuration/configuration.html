@@ -1,4 +1,4 @@
-<heading-title params="name: 'Configuration', icon: 'cogs', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('configuration.title', 'Configuration'), icon: 'cogs', theme: 'dark'"></heading-title>
 <div data-bind="if: $component.hasPageAccess(), css: classes({ extra: 'paddedWrapper' })">
 		<loading data-bind="visible:loading()"></loading>
 		<div data-bind="if: $component.initializationCompleted() && !loading()">
@@ -18,10 +18,10 @@
 					</div>
 					<div class="right">
 						<div class="padded priority" data-bind="if:$component.canChangePriority">
-							<div class="priority-label" data-bind="text:ko.i18n('configuration.change-source-priorities', 'Change source priorities in:')"></div>
+							<div class="priority-label" data-bind="text:ko.i18n('configuration.changeSourcePriorities', 'Change source priorities in:')"></div>
 							<select class="form-control configuration__source-select" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
 						</div>
-						<span class="btn btn-sm btn-primary" data-bind="text:ko.i18n('configuration.new-source', 'New Source'), click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">
+						<span class="btn btn-sm btn-primary" data-bind="text:ko.i18n('configuration.newSource', 'New Source'), click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">
 						</span>
 					</div>
 				</div>
@@ -35,7 +35,7 @@
 							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
 						</div>
 
-						<span class="serviceName" data-bind="text:ko.i18n('configuration.execution-engine', 'Execution engine')"></span>
+						<span class="serviceName" data-bind="text:ko.i18n('configuration.executionEngine', 'Execution engine')"></span>
 					</div>
 				</div>
 				<div data-bind="if:available==false">
@@ -44,17 +44,17 @@
 				<table data-bind="if:$component.sources().length > 0" class="configureSourceTable">
 					<thead>
 						<th></th>
-						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.source-name', 'Source Name [Source Key]')"><</th>
-						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.table-qualifiers', 'Table Qualifiers')"></th>
+						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.sourceName', 'Source Name [Source Key]')"><</th>
+						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.tableQualifiers', 'Table Qualifiers')"></th>
 						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.dialect', 'Dialect')"></th>
-						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.vocabulary-version', 'Vocabulary Version')"></th>
+						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.vocabularyVersion', 'Vocabulary Version')"></th>
 						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.evidence', 'Evidence')"></th>
-						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.record-counts', 'Record Counts (RC / DRC)')"></th>
+						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.recordCounts', 'Record Counts (RC / DRC)')"></th>
 						<th  data-bind="text:ko.i18n('configuration.browser.table.columns.incidence', 'Incidence')"></th>
 						<th  data-bind="if: $component.canCheckConnection($data)">
-							<span data-bind="text:ko.i18n('configuration.browser.table.columns.check-connection', 'Check connection')"></span>
+							<span data-bind="text:ko.i18n('configuration.browser.table.columns.checkConnection', 'Check connection')"></span>
 						</th>
-                        <th  data-bind="text:ko.i18n('configuration.browser.table.columns.refresh-cache', 'Refresh cache')"> </th>
+                        <th  data-bind="text:ko.i18n('configuration.browser.table.columns.refreshCache', 'Refresh cache')"> </th>
 					</thead>
 					<tbody data-bind="foreach:$component.sources()">
 						<tr>
@@ -87,7 +87,7 @@
 								</td>
 							<!-- /ko -->
 							<!-- ko if: !$component.hasSourceAccess(sourceKey) -->
-								<td colspan="4" class="text-center" data-bind="text:ko.i18n('configuration.browser.table.access-denied', 'Access denied')"></td>
+								<td colspan="4" class="text-center" data-bind="text:ko.i18n('configuration.browser.table.accessDenied', 'Access denied')"></td>
 							<!-- /ko -->
 							<td data-bind="if: $component.canCheckConnection($data)">
 								<button data-bind="css: $component.getCheckButtonStyles($data).buttonClass, click: function(){$component.checkSourceConnection($data);}" class="connection-check-button btn btn-sm">
@@ -113,21 +113,21 @@
 			<div>
 				<div class="configuration__command-pane">
 					<div class="configuration__padded">
-						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache, text:ko.i18n('configuration.buttons.clear-configuration-cache', 'Clear Configuration Cache')"></a>
+						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache, text:ko.i18n('configuration.buttons.clearConfigurationCache', 'Clear Configuration Cache')"></a>
 					</div>
 					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasPageAccess">
 						<a href="#/roles" class="btn btn-sm btn-primary configuration__manage-btn" data-bind="css: { disabled: !canReadRoles() }">
-							<span data-bind="text:ko.i18n('configuration.buttons.manage-permissions', 'Manage Permissions')"></span>
+							<span data-bind="text:ko.i18n('configuration.buttons.managePermissions', 'Manage Permissions')"></span>
 						</a>
 					</div>
 					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
 						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">
-							<span data-bind="text:ko.i18n('configuration.buttons.import-users', 'Import Users from LDAP/AD')"></span>
+							<span data-bind="text:ko.i18n('configuration.buttons.importUsers', 'Import Users from LDAP/AD')"></span>
 						</a>
 					</div>
 					<div class="configuration__padded" data-bind="if: $component.canClearServerCache">
 						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearServerCache">
-							<span data-bind="text:ko.i18n('configuration.buttons.clear-server-cache', 'Clear Server Cache')"></span>
+							<span data-bind="text:ko.i18n('configuration.buttons.clearServerCache', 'Clear Server Cache')"></span>
 						</a>
 					</div>
 				</div>

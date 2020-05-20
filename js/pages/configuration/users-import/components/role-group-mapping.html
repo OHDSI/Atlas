@@ -1,11 +1,8 @@
 <table width="100%" cellspacing="0" data-bind="dataTable:{
-                            data: rolesMapping(),
+                            data: rolesMapping,
                             onRowClick: $component.onRolesRowClick,
                             options: {
                                         dom: 'lfiprt',
-                                        language: {
-                                            search : 'Filter:'
-                                        },
                                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                                         orderClasses: false,
                                         deferRender: true,
@@ -13,10 +10,11 @@
                                         ordering: true,
                                         order: [[ 0, 'asc' ]],
                                         columns: [
-                                                { title: ko.i18n('configuration.user-import.wizard.role-mapping.table.columns.role', 'Role'), data: 'role' },
-                                                { title: ko.i18n('configuration.user-import.wizard.role-mapping.table.columns.role', 'Group name'), render: renderGroups },
+                                                { title: ko.i18n('columns.role', 'Role'), data: 'role' },
+                                                { title: ko.i18n('columns.groupName', 'Group name'), render: renderGroups },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
+                                        language: ko.i18n('datatable.language')
                                 }
                               }, css: classes({extra: ['stripe', 'compact', 'hover']})">
 </table>

@@ -1,33 +1,33 @@
-<heading-title params="name: 'Import roles', icon: 'users', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('configuration.rolesImport.title', 'Import roles'), icon: 'users', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes(), if: isAuthenticated() && hasAccess()">
   <div data-bind="css: classes('source')">
     <div data-bind="css: classes('json-header-wrapper')">
-      <heading-title params="name: 'Roles definition JSON'"></heading-title>
-      <button class="btn btn-success" data-bind="click: doImport, enable: isJSONValid">Import</button>
+      <heading-title params="name: ko.i18n('configuration.rolesImport.rolesDefinitionJson', 'Roles definition JSON')"></heading-title>
+      <button class="btn btn-success" data-bind="click: doImport, enable: isJSONValid, text: ko.i18n('common.import', 'Import')"></button>
     </div>
     <!-- ko if: warnings().jsonIssues -->
       <div class="alert alert-danger" role="alert">
-        Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.
-        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('jsonIssues')">Fix JSON</a>
+        <span data-bind="text: ko.i18n('configuration.rolesImport.alertDanger', 'Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.')"></span>
+        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('jsonIssues'), text: ko.i18n('configuration.rolesImport.fixJson', 'Fix JSON')">Fix JSON</a>
       </div>
     <!-- /ko -->
     <!-- ko if: warnings().permissionSpecificIdsIssues -->
       <div class="alert alert-warning" role="alert">
-        Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.
-        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('permissionSpecificIdsIssues')">Remove the permissions</a>
+        <span data-bind="text: ko.i18n('configuration.rolesImport.alertWarning', 'Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.')"><</span>
+        <a href="#" class="alert-link" data-bind="click: () => $component.fixJSON('permissionSpecificIdsIssues'), text: ko.i18n('configuration.rolesImport.removeThePermissions', 'Remove the permissions')">Remove the permissions</a>
       </div>
     <!-- /ko -->
     <textarea data-bind="textInput: json"></textarea>
     <div data-bind="if: isProcessing">
-      <heading-title params="name: 'Progress'"></heading-title>
+      <heading-title params="name: ko.i18n('common.progress', 'Progress')"></heading-title>
       <div data-bind="css: classes(`results${processed() === roles().length ? '_ok' : ''}`)">
-        Created <span data-bind="text: processed"></span> of <span data-bind="text: roles().length"></span> roles.
+        <span data-bind="text: ko.i18nformat('configuration.rolesImport.processed', 'Created <%=proc> of <%=len%> roles.', {proc: processed, len: roles().length})"></span>
       </div>
     </div>
   </div>
   <div data-bind="css: classes('result')">
-    <heading-title params="name: 'Preview'"></heading-title>
+    <heading-title params="name: ko.i18n('common.preview', 'Preview')"></heading-title>
       <!-- ko ifnot: isJSONValid -->
         <div data-bind="css: classes('validation-errors'), text: validationErrors"></div>
       <!-- /ko -->
@@ -36,16 +36,17 @@
           data: roles(),
           options: {
             columns: [
-              { data: 'role', title: 'Role name' },
-              { data: 'usersList', title: 'Included users' },
-              { data: 'permissionsList', title: 'Permissions' }
+              { data: 'role', title: ko.i18n('columns.roleName', 'Role name') },
+              { data: 'usersList', title: ko.i18n('columns.includedUsers', 'Included users') },
+              { data: 'permissionsList', title: ko.i18n('columns.permission', 'Permissions') }
             ],
+            language: ko.i18n('datatable.language')
           },
         }">
         </table>
       <!-- /ko -->
       <!-- ko if: !roles() && isJSONValid() -->
-        <empty-state params="message: 'Insert JSON containig roles definitions in the textarea'"></empty-state>
+        <empty-state params="message: ko.i18n('configuration.rolesImport.emptyMessage', 'Insert JSON containig roles definitions in the textarea')"></empty-state>
       <!-- /ko -->
   </div>
 </div>

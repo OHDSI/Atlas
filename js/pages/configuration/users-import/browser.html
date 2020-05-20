@@ -1,23 +1,23 @@
-<heading-title params="name: 'Import Users from LDAP/Active Directory', icon: 'users', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('configuration.userImport.title', 'Import Users from LDAP/Active Directory'), icon: 'users', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes({ element: 'toolbar' })">
     <div data-bind="css: classes({ element: 'toolbar-btns' })">
         <button data-bind="
              css: classes({ element: 'do-import-btn', extra: 'btn btn-success btn-sm' }),
-             text: 'Import Now',
+             text: ko.i18n('configuration.userImport.importNow', 'Import Now'),
              click: $component.importNow,
              enabled: canImport
            ">
         </button>
         <button data-bind="
             css: classes({ element: 'new-entity-btn', extra: 'btn btn-primary btn-sm' }),
-            text: 'New Scheduled Import',
+            text: ko.i18n('configuration.userImport.newScheduledImport', 'New Scheduled Import'),
             click: $component.newScheduledImport,
             enabled: canCreate
         "></button>
         <button data-bind="
             css: classes({ element: 'refresh-btn', extra: 'btn btn-primary btn-sm' }),
-            text: 'Refresh',
+            text: ko.i18n('common.refresh', 'Refresh'),
             click: $component.loadJobs,
         "></button>
     </div>
@@ -26,14 +26,15 @@
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: canImport"></access-denied>
 
 <div data-bind="if: canImport, css: classes('grid')">
-    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading User Import Job list...'"></loading>
+    <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('configuration.userImport.loadingUserImportJobList', 'Loading User Import Job List...')"></loading>
 
     <div data-bind="visible: !$component.loading()">
         <faceted-datatable params="{
             order: [[5, 'desc']],
             columns: $component.gridColumns,
             options: $component.gridOptions,
-            reference: $component.data
+            reference: $component.data,
+            language: ko.i18n('datatable.language')
         }"></faceted-datatable>
     </div>
 </div>

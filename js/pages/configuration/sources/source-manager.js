@@ -160,7 +160,7 @@ define([
       ];
 
       this.sourceCaption = ko.computed(() => {
-        return (this.selectedSource() == null || this.selectedSource().key() == null) ? 'New source' : `Source ${this.selectedSource().name()}`;
+        return (this.selectedSource() == null || this.selectedSource().key() == null) ? ko.i18n('const.newEntityNames.source', 'New Source') : ko.i18nformat('configuration.viewEdit.source.title', 'Source <%=name%>', {name: this.selectedSource().name()});
       });
       this.isKrbAuth = ko.computed(() => {
           return this.impalaConnectionStringIncludes("AuthMech=1");
@@ -300,7 +300,7 @@ define([
         this.loading(false);
         const {
           payload: {
-            message = ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.save.error-message', 'Please contact your administrator to resolve this issue.'))
+            message = ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.save.errorMessage', 'Please contact your administrator to resolve this issue.'))
           } = {}
         } = data;
         alert(ko.unwrap(ko.i18nformat('configuration.viewEdit.source.alerts.save.error', 'The Source was not saved. <%= message %>', {message: message})));
@@ -333,7 +333,7 @@ define([
 
     async delete() {
       if (this.hasSelectedPriotirizableDaimons()) {
-        alert(ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.delete.has-selected-priotirizable-daimons',
+        alert(ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.delete.hasSelectedPriotirizableDaimons',
                                 'Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source')));
         return;
       }
@@ -378,7 +378,7 @@ define([
           this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedSource()));
         } catch (e) {
           console.error(e);
-          alert(ko.unwrap(ko.i18nformat('configuration.viewEdit.source.alerts.source-selected.error', 'An error occurred while attempting to get a source with id=<%=selectedSourceId%>.', {selectedSourceId: this.selectedSourceId()})));
+          alert(ko.unwrap(ko.i18nformat('configuration.viewEdit.source.alerts.sourceSelectedError', 'An error occurred while attempting to get a source with id=<%=selectedSourceId%>.', {selectedSourceId: this.selectedSourceId()})));
           commonUtils.routeTo('/configure');
         } finally {
           this.loading(false);

@@ -3,9 +3,6 @@
             data: $component.permissionItems,
             options: {
                         dom: 'lfiprt',
-                        language: {
-                            search : 'Filter:'
-                        },
                         lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
                         orderClasses: false,
                         deferRender: true,
@@ -15,10 +12,11 @@
                                 { targets: 0, width: '80px', orderable: false },
                         ],
                         columns: [
-                                { title: 'Included', class:'text-center', render: function() { return renderCheckbox('isRolePermission', $component.canEditRolePermissions()); } },
-                                { title: 'Permission', data: 'permission' },
-                                { title: 'Description', data: 'description' }
-                        ]
+                                { title: ko.i18n('columns.included', 'Included'), class:'text-center', render: function() { return renderCheckbox('isRolePermission', $component.canEditRolePermissions()); } },
+                                { title: ko.i18n('columns.permission', 'Permission'), data: 'permission' },
+                                { title: ko.i18n('columns.description', 'Description'), data: 'description' }
+                        ],
+                        language: ko.i18n('datatable.language')
                 }
         }"></table>
 </div>

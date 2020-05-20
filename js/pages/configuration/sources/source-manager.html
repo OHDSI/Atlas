@@ -10,18 +10,18 @@
 								   data-bind="textInput: selectedSource().name,
 								              enable: canEdit(),
 								              css: { emptyInput: !isNameCorrect() },
-								              attr: { placeholder: ko.i18n('configuration.viewEdit.source.new.placeholder', 'New Source')}
+								              placeholder: ko.i18n('configuration.viewEdit.source.new.placeholder', 'New Source')
 							"/>
 							<div class="input-group-btn" role="group">
 									<button class="btn btn-success"
 													data-bind="click: save, enable: dirtyFlag().isDirty() && canSave(), css: {'disabled': !dirtyFlag().isDirty, 'btn-success': dirtyFlag().isDirty},
-														       attr: { title: ko.i18n('configuration.viewEdit.source.buttons.save', 'Save')}">
+														       title: ko.i18n('common.save', 'Save')">
 											<i class="fa fa-save"></i></button>
-									<button class="btn btn-primary"  data-bind="click: close, attr: { title: ko.i18n('configuration.viewEdit.source.buttons.close', 'Close')}"><i
+									<button class="btn btn-primary"  data-bind="click: close, title: ko.i18n('common.close', 'Close')"><i
 													class="fa fa-times"></i></button>
 									<button class="btn btn-danger"
 											data-bind="click: $component.delete, enable: canDelete(),
-													   attr: { title: ko.i18n('configuration.viewEdit.source.buttons.delete', 'Delete')}"><i class="fa fa-trash-o"></i></button>
+													   title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
 							</div>
 						</div>
 						<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
@@ -38,7 +38,7 @@
 																<label for="sourceKey" data-bind="text: ko.i18n('configuration.viewEdit.source.label', 'Source Key:')"></label>
 																<div class="form-group">
 																		<input data-bind="textInput: selectedSource().key,
-																			              attr: { placeholder: ko.i18n('configuration.viewEdit.source.placeholder', 'Source key')},
+																			              placeholder: ko.i18n('configuration.viewEdit.source.placeholder', 'Source key'),
 																			   			  enable: canEdit() && canEditKey()" class="form-control" type="text" id="sourceKey"/>
 																</div>
 														</div>
@@ -49,18 +49,18 @@
 																				data-bind=" options: $component.options.dialectOptions,
 																							optionsText: 'name',
 																							optionsValue: 'id',
-																							attr: { title: ko.i18n('configuration.viewEdit.dialect.title', 'Source dialect')}
+																							title: ko.i18n('configuration.viewEdit.dialect.title', 'Source dialect'),
 																							value: $component.selectedSource().dialect, enable: canEdit()" id="dialect" />
 																</div>
 														</div>
 												</div>
 												<div class="source-row">
 													<div class="control-group" style="flex-grow: 1">
-															<label for="connectionString" data-bind="text: ko.i18n('configuration.viewEdit.connection-string.label', 'Connection string:')"></label>
+															<label for="connectionString" data-bind="text: ko.i18n('configuration.viewEdit.connectionString.label', 'Connection string:')"></label>
 															<input title="Connection string"
 																   data-bind="textInput: selectedSource().connectionString,
-																   			  attr: { placeholder: ko.i18n('configuration.viewEdit.connection-string.placeholder', 'Connection string'),
-																   			          title: ko.i18n('configuration.viewEdit.connection-string.title', 'Connection string')},
+																   			  placeholder: ko.i18n('configuration.viewEdit.connectionString.placeholder', 'Connection string'),
+																   			  title: ko.i18n('configuration.viewEdit.connectionString.title', 'Connection string'),
 																			  enable: canEdit()"
 																   class="form-control" type="text" id="connectionString"/>
 													</div>
@@ -77,11 +77,9 @@
 													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.username">
 														<label data-bind="text: ko.i18n('configuration.viewEdit.username.label', 'Username:')"></label>
 														<div class="form-group">
-															<input t
-																   data-bind="textInput: selectedSource().username,
-																   			  attr: { placeholder: ko.i18n('configuration.viewEdit.username.placeholder', 'Username'),
-																   			  		  title:       ko.i18n('configuration.viewEdit.username.title', 'Username')
-																   			  },
+															<input data-bind="textInput: selectedSource().username,
+																   			  placeholder: ko.i18n('configuration.viewEdit.username.placeholder', 'Username'),
+																   			  title: ko.i18n('configuration.viewEdit.username.title', 'Username'),
 																   			  enable: canEdit()"
 																   class="form-control" type="text"/>
 														</div>
@@ -94,20 +92,20 @@
 														<label data-bind="text: ko.i18n('configuration.viewEdit.password.label', 'Password:')"></label>
 														<div class="form-group">
 															<input data-bind="textInput: selectedSource().password,
-																							   attr: { placeholder: ko.i18n('configuration.viewEdit.password.placeholder', 'Password'),
-																							           title: ko.i18n('configuration.viewEdit.password.title', 'Password')},
-																							   enable: canEdit()"
+																			  placeholder: ko.i18n('configuration.viewEdit.password.placeholder', 'Password'),
+																			  title: ko.i18n('configuration.viewEdit.password.title', 'Password'),
+																			  enable: canEdit()"
 																   class="form-control" type="password"/>
 														</div>
 													</div>
 													<div class="source-manager__control-group control-group" data-bind="visible: fieldsVisibility.krbAuthSettings">
-														<label data-bind="text: ko.i18n('configuration.viewEdit.krb.admin-server.label', 'KrbAdminServer:')"></label>
+														<label data-bind="text: ko.i18n('configuration.viewEdit.krb.adminServer.label', 'KrbAdminServer:')"></label>
 														<div class="form-group">
 															<input
 																   data-bind="textInput: selectedSource().krbAdminServer,
-																   attr: { placeholder: ko.i18n('configuration.viewEdit.krb.admin-server.placeholder', 'KrbAdminServer'),
-																           title: ko.i18n('configuration.viewEdit.krb.admin-server.title', 'KrbAdminServer')},
-																   enable: canEdit()" class="form-control" type="text"/>
+																              placeholder: ko.i18n('configuration.viewEdit.krb.adminServer.placeholder', 'KrbAdminServer'),
+																   			  title: ko.i18n('configuration.viewEdit.krb.adminServer.title', 'KrbAdminServer'),
+																    		  enable: canEdit()" class="form-control" type="text"/>
 														</div>
 													</div>
 												</div>
@@ -116,27 +114,25 @@
 														<div class="source-manager__control-group control-group">
 															<label data-bind="text: ko.i18n('configuration.viewEdit.krb.realm.label', 'KrbRealm:')"></label>
 															<div class="form-group">
-																<input
-																	   data-bind="textInput: krbRealm, disable: true,
-																		          attr: { placeholder: ko.i18n('configuration.viewEdit.krb.realm.placeholder', 'KrbAdminServer'),
-																		          		  title: ko.i18n('configuration.viewEdit.krb.realm.title', 'KrbRealm was parsed from jdbc link')},
-																		"
+																<input data-bind="textInput: krbRealm, disable: true,
+																		          placeholder: ko.i18n('configuration.viewEdit.krb.realm.placeholder', 'KrbAdminServer'),
+																		          title: ko.i18n('configuration.viewEdit.krb.realm.title', 'KrbRealm was parsed from jdbc link')"
 																	   class="form-control" type="text"/>
 															</div>
 														</div>
 														<div class="source-manager__control-group control-group">
-															<label  data-bind="text: ko.i18n('configuration.viewEdit.krb.host-fqdn.label', 'KrbHostFQDN:')"></label>
+															<label  data-bind="text: ko.i18n('configuration.viewEdit.krb.hostFqdn.label', 'KrbHostFQDN:')"></label>
 															<div class="form-group">
 																<input
 																	   data-bind="textInput: krbHostFQDN, disable: true,
-																				  attr: { placeholder: ko.i18n('configuration.viewEdit.krb.host-fqdn.placeholder', 'KrbHostFQDN'),
-																						  title: ko.i18n('configuration.viewEdit.krb.host-fqdn.title', 'KrbHostFQDN was parsed from jdbc link')}"
+																				  placeholder: ko.i18n('configuration.viewEdit.krb.hostFqdn.placeholder', 'KrbHostFQDN'),
+																				  title: ko.i18n('configuration.viewEdit.krb.hostFqdn.title', 'KrbHostFQDN was parsed from jdbc link')"
 																	   class="form-control" type="text"/>
 															</div>
 														</div>
 													</div>
 													<div class="control-group source-manager__auth-title">
-														<label data-bind="text: ko.i18n('configuration.viewEdit.krb.authentication-method.label', 'Kerberos authentication method:')"></label>
+														<label data-bind="text: ko.i18n('configuration.viewEdit.krb.authenticationMethod.label', 'Kerberos authentication method:')"></label>
 													</div>
 													<label>
 														<input type="radio" value="keytab" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
@@ -150,15 +146,15 @@
 													 </div>
 													<label class="source-manager__pwd-label">
 														<input type="radio" value="password" data-bind="checked: selectedSource().krbAuthMethod" class="source-manager__radio-btn"/>
-														<span class="source-manager__radio-btn-label"  data-bind="text: ko.i18n('configuration.viewEdit.krb.user-password.label', 'User name and password')"></span>
+														<span class="source-manager__radio-btn-label"  data-bind="text: ko.i18n('configuration.viewEdit.krb.userPassword.label', 'User name and password')"></span>
 													</label>
 													<div class="source-manager__control-group control-group" data-bind="visible: !fieldsVisibility.showKrbKeyfile()">
 														<label data-bind="text: ko.i18n('configuration.viewEdit.krb.password.label', 'Password:')"></label>
 														<div class="form-group">
 															<input title="Password"
 																   data-bind="textInput: selectedSource().password,
-																   			   attr: { placeholder: ko.i18n('configuration.viewEdit.krb.password.placeholder', 'Password'),
-																   			   		   title: ko.i18n('configuration.viewEdit.krb.password.title', 'Password')}
+																   			  placeholder: ko.i18n('configuration.viewEdit.krb.password.placeholder', 'Password'),
+																   			  title: ko.i18n('configuration.viewEdit.krb.password.title', 'Password'),
 																   			  enable: canEdit()"
 																   class="form-control" type="password"/>
 														</div>
@@ -168,18 +164,18 @@
 											<div data-bind="visible: fieldsVisibility.bigQueryAuthSettings">
 												<div class="source-row">
 													<div data-bind="css: classes({element: 'auth-title', extra: 'control-group'})">
-														<label data-bind="text: ko.i18n('configuration.viewEdit.big-query.password.label', 'Service account key file (OAuthPvtKeyPath)')"></label>
+														<label data-bind="text: ko.i18n('configuration.viewEdit.bigQuery.password.label', 'Service account key file (OAuthPvtKeyPath)')"></label>
 													</div>
 													<div data-bind="css: classes('keytab')">
 														<input type="file" name="keyfileFile" id="keyfile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
 														<span data-bind="text: selectedSource().keyfileName, hidden: fieldsVisibility.bqFileInput()"></span>
 														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeyfile,
-																						 text: ko.i18n('configuration.viewEdit.big-query.button.remove.label', 'SRemove')"></button>
+																						 text: ko.i18n('configuration.viewEdit.bigQuery.button.remove.label', 'SRemove')"></button>
 													</div>
 												</div>
 											</div>
 											<div class="panel panel-primary">
-													<div class="panel-heading" data-bind="text: ko.i18n('configuration.viewEdit.krb.source-daimons.label', 'Source daimons')"></div>
+													<div class="panel-heading" data-bind="text: ko.i18n('configuration.viewEdit.krb.sourceDaimons.label', 'Source daimons')"></div>
 													<div class="panel-body">
 															<table class="padded">
 																	<tbody data-bind="foreach: selectedSource().daimons">
@@ -187,7 +183,7 @@
 																			<td><input type="checkbox" data-bind="checked: enabled, enable: $component.canEdit()" /></td>
 																			<td><input type="text" data-bind="
 																						textInput: tableQualifier, enable: $component.canEdit() && $data.enabled,
-																						attr: { title: daimonType + ' table qualifier' }" /></td>
+																						title: daimonType + ' table qualifier'" /></td>
 																	</tbody>
 															</table>
 													</div>

@@ -2,18 +2,18 @@
     <div data-bind="css: classes({extra: ['modal-dialog', 'modal-lg']})">
         <div data-bind="css: classes({extra: ['modal-content']})">
             <div data-bind="css: classes({extra: ['modal-header']})">
-                <span data-bind="text: ko.i18n('configuration.user-import.wizard.role-mapping.search-group.header', 'Find Group')"></span>
+                <span data-bind="text: ko.i18n('configuration.userImport.findGroup', 'Find Group')"></span>
 
             </div>
             <div data-bind="css: classes({extra: ['paddedWrapper']})">
                 <ldap-groups params="provider: importProvider, role: selectedRole, searchResults: searchResults"></ldap-groups>
                 <div data-bind="css: classes({ element: 'row', modifiers: 'footer' })">
                     <button data-bind="click: setGroupMapping, css: classes({extra: ['btn', 'btn-sm', 'btn-primary'] })">
-                        <span data-bind="text: ko.i18n('-or.configuration.user-import.wizard.role-mapping.search-group.buttons.set', 'Set')"></span>
+                        <span data-bind="text: ko.i18n('common.set', 'Set')"></span>
                     </button>
 
                     <button data-bind="click: closeModal, css: classes({extra: ['btn', 'btn-sm', 'btn-success'] })">
-                        <span data-bind="text: ko.i18n('-or.configuration.user-import.wizard.role-mapping.search-group.buttons.cancel', 'Cancel')"></span>
+                        <span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
                     </button>
                 </div>
             </div>

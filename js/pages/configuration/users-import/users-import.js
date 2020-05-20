@@ -69,7 +69,7 @@ define(['knockout',
 				this.stepMessage = ko.observable('User import from directory has started...');
 				this.isLastStep = () => this.getStep() === Const.WIZARD_STEPS.FINISH;
 				this.getNextClasses = () => ['btn', 'btn-sm', this.isLastStep() ? 'btn-success' : 'btn-primary'];
-				this.nextTitle = ko.computed(() => this.isLastStep() ? 'Start import' : 'Next' );
+				this.nextTitle = ko.computed(() => this.isLastStep() ? ko.i18n('configuration.userImport.wizard.buttons.startImport', 'Start import')() : ko.i18n('configuration.userImport.wizard.buttons.next', 'Next')());
 				this.nextClasses = ko.computed(() => this.classes({ extra: this.getNextClasses(), }));
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
@@ -83,7 +83,7 @@ define(['knockout',
 				this.linkClasses = this.classes('link');
 				this.connectionCheck = ko.observable();
 				this.showConnectionDetails = ko.observable();
-				this.detailsButtonText = ko.computed(() => "Details " + (this.showConnectionDetails() ? "<<<" : ">>>"))
+				this.detailsButtonText = ko.computed(() => ko.i18n('configuration.userImport.wizard.selectSource.buttons.details', 'Details')() + (this.showConnectionDetails() ? " <<<" : " >>>"))
 				this.infoMessageClass = ko.computed(() => {
 					const modifier = this.connectionCheck() ? String(this.connectionCheck().state).toLowerCase() : '';
 					return this.classes('info-message', modifier);
