@@ -229,7 +229,8 @@ define(function (require, exports) {
 		sharedState.selectedConcepts(conceptSetItemsToAdd);
 		sharedState.ConceptSet.current({
 			name: ko.observable(conceptset.name),
-			id: conceptset.id
+			id: conceptset.id,
+			createdBy: conceptset.createdBy,
 		});
 	}
 

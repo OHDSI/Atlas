@@ -4,6 +4,7 @@ define([
 	'utils/ChartUtils',
 	'const',
 	'services/http',
+	'services/AuthAPI',
 	'./Report',
 	'text!components/charts/datatableTemplate.html',
 	'faceted-datatable'
@@ -13,6 +14,7 @@ define([
 	ChartUtils,
 	constants,
 	httpService,
+	authApi,
 	Report,
 	datatableTemplate
 ) {
@@ -34,12 +36,18 @@ define([
 			this.byValueAsConcept = false;
 			this.byOperator = false;
 			this.byQualifier = false;
-
+			this.handleConceptClick = node => {
+				if (authApi.isPermittedViewDataSourceReportDetails(this.context.currentSource().sourceKey)) {
+					this.currentConcept(node);
+				} else {
+					alert('You have no permissions to see this report');
+				}
+			}
 			this.chartFormats = {
 				treemap: {
 					useTip: true,
 					minimumArea: 50,
-					onclick: node => this.currentConcept(node),
+					onclick: this.handleConceptClick,
 					getsizevalue: node => node.num_persons,
 					getcolorvalue: node => node.agg_value,
 					getcolorrange: () => constants.treemapGradient,
@@ -64,6 +72,7 @@ define([
 				table: {
 					order: [2, 'desc'],
 					dom: datatableTemplate,
+					onclick: this.handleConceptClick,
 					buttons: ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'],
 					autoWidth: false,
 					createdRow: function (row) {
