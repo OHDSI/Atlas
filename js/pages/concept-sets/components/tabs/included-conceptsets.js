@@ -36,7 +36,7 @@ define([
         ancestors: this.ancestors,
         ancestorsModalIsShown: this.ancestorsModalIsShown,
       });
-      this.searchConceptsColumns = globalConstants.getSearchConceptsColumns(sharedState, this, commonUtils, conceptSetService);
+      this.searchConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, this, commonUtils, conceptSetService);
 
       this.searchConceptsOptions = {
         Facets: [{

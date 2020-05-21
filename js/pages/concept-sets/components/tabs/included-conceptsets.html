@@ -1,18 +1,3 @@
-<script type="text/html" id="included-conceptsets-headers">
-  <tr>
-    <th><i class="fa fa-shopping-cart"></i></th>
-    <th data-bind="text: ko.i18n('columns.id', 'Id')"></th>
-    <th data-bind="text: ko.i18n('columns.code', 'Code')"></th>
-    <th data-bind="text: ko.i18n('columns.name', 'Name')"></th>
-    <th data-bind="text: ko.i18n('columns.class', 'Class')"></th>
-    <th data-bind="text: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption')"></th>
-    <th>RC</th>
-    <th>DRC</th>
-    <th data-bind="text: ko.i18n('columns.domain', 'Domain')"></th>
-    <th data-bind="text: ko.i18n('columns.vocabulary', 'Vocabulary')"></th>
-    <th data-bind="text: ko.i18n('columns.ancestors', 'Ancestors')"></th>
-  </tr>
-</script>
 <!-- ko if: loading -->
   <loading></loading>
 <!-- /ko -->
@@ -22,7 +7,6 @@
   options: $component.searchConceptsOptions,
   reference: $component.includedConcepts,
   rowCallback: $component.commonUtils.contextSensitiveLinkColor,
-  headersTemplateId: 'included-conceptsets-headers',
   deferRender: false,
   language: $component.datatableLanguage
 }">
