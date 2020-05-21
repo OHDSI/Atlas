@@ -124,7 +124,7 @@ define(['knockout', 'text!./conceptset-warnings.html',
         }
       };
 
-      dispose = function() {
+      dispose() {
         this.warningSubscription.dispose();
       }
     }
