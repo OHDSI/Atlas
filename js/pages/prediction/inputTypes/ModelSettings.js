@@ -109,7 +109,7 @@ define(function (require, exports) {
   exports.options = [
     {
       key: "LassoLogisticRegressionSettings",
-      name: "pages.predictions.inputTypes.lassoLogisticRegression",
+      name: "predictions.inputTypes.lassoLogisticRegression",
       defaultName: "Lasso Logistic Regression",
       editor: "lasso-logistic-regression-settings",
       action: () => {
@@ -125,7 +125,7 @@ define(function (require, exports) {
     },
     {
       key: "RandomForestSettings",
-      name: "pages.predictions.inputTypes.randomForest",
+      name: "predictions.inputTypes.randomForest",
       defaultName: "Random Forest",
       editor: "random-forest-settings",
       action: () => {
@@ -139,7 +139,7 @@ define(function (require, exports) {
     },
     {
       key: "GradientBoostingMachineSettings",
-      name: "pages.predictions.inputTypes.gradientBoostingMachine",
+      name: "predictions.inputTypes.gradientBoostingMachine",
       defaultName: "Gradient Boosting Machine",
       editor: "gradient-boosting-machine-settings",
       action: () => {
@@ -155,7 +155,7 @@ define(function (require, exports) {
     },
     {
       key: "AdaBoostSettings",
-      name: "pages.predictions.inputTypes.adaBoost",
+      name: "predictions.inputTypes.adaBoost",
       defaultName: "Ada Boost",
       editor: "ada-boost-settings",
       action: () => {
@@ -169,7 +169,7 @@ define(function (require, exports) {
     },
     {
       key: "DecisionTreeSettings",
-      name: "pages.predictions.inputTypes.decisionTree",
+      name: "predictions.inputTypes.decisionTree",
       defaultName: "Decision Tree",
       editor: "decision-tree-settings",
       action: () => {
@@ -183,7 +183,7 @@ define(function (require, exports) {
     },
     {
       key: "NaiveBayesSettings",
-      name: "pages.predictions.inputTypes.naiveBayes",
+      name: "predictions.inputTypes.naiveBayes",
       defaultName: "Naive Bayes",
       editor: "naive-bayes-settings",
       action: () => {
@@ -197,7 +197,7 @@ define(function (require, exports) {
     },
     {
       key: "MLPSettings",
-      name: "pages.predictions.inputTypes.multilayerPerceptionModel",
+      name: "predictions.inputTypes.multilayerPerceptionModel",
       defaultName: "Multilayer Perception Model",
       editor: "mlp-settings",
       action: () => {
@@ -211,7 +211,7 @@ define(function (require, exports) {
     },
     {
       key: "KNNSettings",
-      name: "pages.predictions.inputTypes.nearestNeighbors",
+      name: "predictions.inputTypes.nearestNeighbors",
       defaultName: "K Nearest Neighbors",
       editor: "knn-settings",
       action: () => {
@@ -232,11 +232,11 @@ define(function (require, exports) {
         {
           setting: "maxDepth",
           name: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.name_maxDepth",
+            "predictions.inputTypes.randomForestSettings.name_maxDepth",
             "Max depth"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.desc_maxDepth",
+            "predictions.inputTypes.randomForestSettings.desc_maxDepth",
             "Maximum number of interactions - a large value will lead to slow model training"
           ),
           defaultValue: [4, 10, 17],
@@ -244,11 +244,11 @@ define(function (require, exports) {
         {
           setting: "mtries",
           name: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.name_mtries",
+            "predictions.inputTypes.randomForestSettings.name_mtries",
             "Number of tree features"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.desc_mtries",
+            "predictions.inputTypes.randomForestSettings.desc_mtries",
             "The number of features to include in each tree (-1 defaults to square root of total features)"
           ),
           defaultValue: [-1],
@@ -256,11 +256,11 @@ define(function (require, exports) {
         {
           setting: "ntrees",
           name: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.name_ntrees",
+            "predictions.inputTypes.randomForestSettings.name_ntrees",
             "Number of tress to build"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.desc_ntrees",
+            "predictions.inputTypes.randomForestSettings.desc_ntrees",
             "The number of trees to build"
           ),
           defaultValue: [500],
@@ -268,11 +268,11 @@ define(function (require, exports) {
         {
           setting: "varImp",
           name: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.name_varImp",
+            "predictions.inputTypes.randomForestSettings.name_varImp",
             "Perform an initial variable selection"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.randomForestSettings.desc_varImp",
+            "predictions.inputTypes.randomForestSettings.desc_varImp",
             "Perform an initial variable selection prior to fitting the model to select the useful variables"
           ),
           defaultValue: [true],
@@ -289,11 +289,11 @@ define(function (require, exports) {
         {
           setting: "alpha",
           name: ko.i18n(
-            "pages.predictions.inputTypes.mlpSettings.name_alpha",
+            "predictions.inputTypes.mlpSettings.name_alpha",
             "Alpha"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.mlpSettings.desc_alpha",
+            "predictions.inputTypes.mlpSettings.desc_alpha",
             "The l2 regularisation"
           ),
           defaultValue: [0.00001],
@@ -301,11 +301,11 @@ define(function (require, exports) {
         {
           setting: "size",
           name: ko.i18n(
-            "pages.predictions.inputTypes.mlpSettings.name_size",
+            "predictions.inputTypes.mlpSettings.name_size",
             "Number of hidden nodes"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.mlpSettings.desc_size",
+            "predictions.inputTypes.mlpSettings.desc_size",
             "The number of hidden nodes"
           ),
           defaultValue: [4],
@@ -319,11 +319,11 @@ define(function (require, exports) {
         {
           setting: "k",
           name: ko.i18n(
-            "pages.predictions.inputTypes.knnSettings.name_k",
+            "predictions.inputTypes.knnSettings.name_k",
             "Number of neighbors"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.knnSettings.desc_k",
+            "predictions.inputTypes.knnSettings.desc_k",
             "The number of neighbors to consider"
           ),
           defaultValue: 1000,
@@ -336,11 +336,11 @@ define(function (require, exports) {
         {
           setting: "learnRate",
           name: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.name_learnRate",
+            "predictions.inputTypes.gradientBoostingMachineSettings.name_learnRate",
             "Boosting learn rate"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.desc_learnRate",
+            "predictions.inputTypes.gradientBoostingMachineSettings.desc_learnRate",
             "The boosting learn rate"
           ),
           defaultValue: [0.01, 0.1],
@@ -348,11 +348,11 @@ define(function (require, exports) {
         {
           setting: "maxDepth",
           name: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.name_maxDepth",
+            "predictions.inputTypes.gradientBoostingMachineSettings.name_maxDepth",
             "Maximum number of interactions"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.desc_maxDepth",
+            "predictions.inputTypes.gradientBoostingMachineSettings.desc_maxDepth",
             "Maximum number of interactions - a large value will lead to slow model training"
           ),
           defaultValue: [4, 6, 17],
@@ -360,11 +360,11 @@ define(function (require, exports) {
         {
           setting: "minRows",
           name: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.name_minRows",
+            "predictions.inputTypes.gradientBoostingMachineSettings.name_minRows",
             "Minimum number of rows"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.desc_minRows",
+            "predictions.inputTypes.gradientBoostingMachineSettings.desc_minRows",
             "The minimum number of rows required at each end node of the tree"
           ),
           defaultValue: [20],
@@ -372,11 +372,11 @@ define(function (require, exports) {
         {
           setting: "nthread",
           name: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.name_nthread",
+            "predictions.inputTypes.gradientBoostingMachineSettings.name_nthread",
             "Computer threads for computation"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.desc_nthread",
+            "predictions.inputTypes.gradientBoostingMachineSettings.desc_nthread",
             "The number of computer threads to use (how many cores do you have?)"
           ),
           defaultValue: 20,
@@ -384,11 +384,11 @@ define(function (require, exports) {
         {
           setting: "ntrees",
           name: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.name_ntrees",
+            "predictions.inputTypes.gradientBoostingMachineSettings.name_ntrees",
             "Trees to build"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.gradientBoostingMachineSettings.desc_ntrees",
+            "predictions.inputTypes.gradientBoostingMachineSettings.desc_ntrees",
             "The number of trees to build"
           ),
           defaultValue: [10, 100],
@@ -401,11 +401,11 @@ define(function (require, exports) {
         {
           setting: "classWeight",
           name: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.name_classWeight",
+            "predictions.inputTypes.decisionTreeSettings.name_classWeight",
             "Class weight"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.desc_classWeight",
+            "predictions.inputTypes.decisionTreeSettings.desc_classWeight",
             "Class weight"
           ),
           defaultValue: ["None"],
@@ -414,11 +414,11 @@ define(function (require, exports) {
           setting: "maxDepth",
 
           name: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.name_maxDepth",
+            "predictions.inputTypes.decisionTreeSettings.name_maxDepth",
             "Max depth"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.desc_maxDepth",
+            "predictions.inputTypes.decisionTreeSettings.desc_maxDepth",
             "Maximum number of interactions - a large value will lead to slow model training"
           ),
           defaultValue: [10],
@@ -426,11 +426,11 @@ define(function (require, exports) {
         {
           setting: "minImpurityDecrease",
           name: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.name_minImpurityDecrease",
+            "predictions.inputTypes.decisionTreeSettings.name_minImpurityDecrease",
             "Minimum impurity split"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.desc_minImpurityDecrease",
+            "predictions.inputTypes.decisionTreeSettings.desc_minImpurityDecrease",
             "Threshold for early stopping in tree growth. A node will split if its impurity is above the threshold, otherwise it is a leaf."
           ),
           defaultValue: [0.0000001],
@@ -438,11 +438,11 @@ define(function (require, exports) {
         {
           setting: "minSamplesLeaf",
           name: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.name_minSamplesLeaf",
+            "predictions.inputTypes.decisionTreeSettings.name_minSamplesLeaf",
             "Minimum samples per leaf"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.desc_minSamplesLeaf",
+            "predictions.inputTypes.decisionTreeSettings.desc_minSamplesLeaf",
             "The minimum number of samples per leaf"
           ),
           defaultValue: [10],
@@ -450,11 +450,11 @@ define(function (require, exports) {
         {
           setting: "minSamplesSplit",
           name: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.name_minSamplesSplit",
+            "predictions.inputTypes.decisionTreeSettings.name_minSamplesSplit",
             "Minimum samples per split"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.desc_minSamplesSplit",
+            "predictions.inputTypes.decisionTreeSettings.desc_minSamplesSplit",
             "The minimum samples per split"
           ),
           defaultValue: [2],
@@ -462,11 +462,11 @@ define(function (require, exports) {
         {
           setting: "plot",
           name: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.name_plot",
+            "predictions.inputTypes.decisionTreeSettings.name_plot",
             "Minimum samples per split"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.decisionTreeSettings.desc_plot",
+            "predictions.inputTypes.decisionTreeSettings.desc_plot",
             "The minimum samples per split"
           ),
           defaultValue: false,
@@ -479,11 +479,11 @@ define(function (require, exports) {
         {
           setting: "learningRate",
           name: ko.i18n(
-            "pages.predictions.inputTypes.adaBoostSettings.name_learningRate",
+            "predictions.inputTypes.adaBoostSettings.name_learningRate",
             "Learning rate"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.adaBoostSettings.desc_learningRate",
+            "predictions.inputTypes.adaBoostSettings.desc_learningRate",
             "Learning rate shrinks the contribution of each classifier. There is a trade-off between learning rate and nEstimators."
           ),
           defaultValue: [1],
@@ -491,11 +491,11 @@ define(function (require, exports) {
         {
           setting: "nEstimators",
           name: ko.i18n(
-            "pages.predictions.inputTypes.adaBoostSettings.name_nEstimators",
+            "predictions.inputTypes.adaBoostSettings.name_nEstimators",
             "Maximum number of estimators"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.adaBoostSettings.desc_nEstimators",
+            "predictions.inputTypes.adaBoostSettings.desc_nEstimators",
             "The maximum number of estimators at which boosting is terminated"
           ),
           defaultValue: [50],
@@ -508,11 +508,11 @@ define(function (require, exports) {
         {
           setting: "variance",
           name: ko.i18n(
-            "pages.predictions.inputTypes.lassoLogisticRegressionSettings.name",
+            "predictions.inputTypes.lassoLogisticRegressionSettings.name",
             "Starting value for the automatic lambda search"
           ),
           description: ko.i18n(
-            "pages.predictions.inputTypes.lassoLogisticRegressionSettings.desc",
+            "predictions.inputTypes.lassoLogisticRegressionSettings.desc",
             "A single value used as the starting value for the automatic lambda search"
           ),
           defaultValue: 0.01,

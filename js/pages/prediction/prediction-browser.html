@@ -1,7 +1,7 @@
-<heading-title params="name: ko.i18n('pages.predictions.title', 'Patient Level Prediction'), icon: 'heartbeat', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('predictions.title', 'Patient Level Prediction'), icon: 'heartbeat', theme: 'dark'"></heading-title>
 
 <div data-bind="if: canReadPredictions(), css: classes({ extra: 'paddedWrapper flexed' })">
-	<span data-bind="click: newPrediction, text: ko.i18n('pages.predictions.newItem', 'New Patient Level Prediction'), css: classes({
+	<span data-bind="click: newPrediction, text: ko.i18n('predictions.newItem', 'New Patient Level Prediction'), css: classes({
 		element: 'new-btn',
 		extra: `pull-right btn btn-sm btn-primary ${canCreatePrediction() ? '' : 'disabled'}`,
 	})"></span>

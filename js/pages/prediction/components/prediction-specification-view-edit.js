@@ -149,8 +149,8 @@ define([
 
 		editCovariateSettings(settings) {
 			this.editorArray = this.covariateSettings;
-			this.editorHeading(ko.i18n('pages.predictions.covariateSettingsTitle', 'Covariate Settings'));
-			this.editorDescription(ko.i18n('pages.predictions.covariateSettingsDesc', 'Add or update the covariate settings'));
+			this.editorHeading(ko.i18n('predictions.covariateSettingsTitle', 'Covariate Settings'));
+			this.editorDescription(ko.i18n('predictions.covariateSettingsDesc', 'Add or update the covariate settings'));
 			this.editorComponentName('prediction-covar-settings-editor');
 			this.editorComponentParams({
 				covariateSettings: settings, 
@@ -172,7 +172,7 @@ define([
 			}
 			this.editorArray = this.modelSettings;
 			this.editorHeading(ko.i18n(option.name, option.defaultName));
-			this.editorDescription(ko.i18n('pages.predictions.modelSettingsDesc', 'Use the options below to edit the model settings'));
+			this.editorDescription(ko.i18n('predictions.modelSettingsDesc', 'Use the options below to edit the model settings'));
 			this.editorComponentName('model-settings-editor');
 			this.editorComponentParams({ 
 				subscriptions: this.subscriptions,
@@ -192,8 +192,8 @@ define([
 
 		editPopulationSettings(settings) {
 			this.editorArray = this.populationSettings;
-			this.editorHeading(ko.unwrap(ko.i18n('pages.predictions.populationSettingsTitle', 'Population Settings')));
-			this.editorDescription(ko.unwrap(ko.i18n('pages.predictions.populationSettingsDesc', 'Add or update the population settings')));
+			this.editorHeading(ko.unwrap(ko.i18n('predictions.populationSettingsTitle', 'Population Settings')));
+			this.editorDescription(ko.unwrap(ko.i18n('predictions.populationSettingsDesc', 'Add or update the population settings')));
 			this.editorComponentName('population-settings-editor');
 			this.editorComponentParams({ 
 				populationSettings: settings,

@@ -119,9 +119,9 @@ define([
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
-						return ko.unwrap(ko.i18n('pages.predictions.newItem', 'New Patient Level Prediction'));
+						return ko.unwrap(ko.i18n('predictions.newItem', 'New Patient Level Prediction'));
 					} else {
-						return ko.unwrap(ko.i18n('pages.predictions.itemId', 'Patient Level Prediction #')) + this.selectedAnalysisId();
+						return ko.unwrap(ko.i18n('predictions.itemId', 'Patient Level Prediction #')) + this.selectedAnalysisId();
 					}
 				}
 			});
@@ -178,7 +178,7 @@ define([
 		}
 
 		close () {
-			if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('pages.predictions.confirmChanges', 'Patient level prediction changes are not saved. Would you like to continue?')))) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('predictions.confirmChanges', 'Patient level prediction changes are not saved. Would you like to continue?')))) {
 				return;
 			}
 			this.loading(true);
