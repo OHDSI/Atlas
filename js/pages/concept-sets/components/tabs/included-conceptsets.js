@@ -83,18 +83,11 @@ define([
       // while the query for full ancestors list is being executed in background
       // Per: https://github.com/OHDSI/Atlas/pull/614#issuecomment-383050990
       this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ searchConceptsColumns: this.searchConceptsColumns });
-
-      this.datatableLanguage = ko.i18n('datatable.language');
     }
 
     dispose() {
       this.ancestorsModalIsShown(false)
     }
-
-    dispose() {
-      this.ancestorsModalIsShown(false)
-    }
-
 	}
 
 	return commonUtils.build('included-conceptsets', IncludedConceptsets, view);

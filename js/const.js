@@ -62,47 +62,47 @@ define([
 				searchable: false
 			},
 			{
-				title: 'Id',
+				title: ko.i18n('columns.id', 'Id'),
 				data: 'CONCEPT_ID'
 			},
 			{
-				title: 'Code',
+				title: ko.i18n('columns.code', 'Code'),
 				data: 'CONCEPT_CODE'
 			},
 			{
-				title: 'Name',
+				title: ko.i18n('columns.name', 'Name'),
 				data: 'CONCEPT_NAME',
 				render: commonUtils.renderLink,
 			},
 			{
-				title: 'Class',
+				title: ko.i18n('columns.class', 'Class'),
 				data: 'CONCEPT_CLASS_ID'
 			},
 			{
-				title: 'Standard Concept Caption',
+				title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
 			},
 			{
-				title: 'RC',
+				title: ko.i18n('columns.rc', 'RC'),
 				data: 'RECORD_COUNT',
 				className: 'numeric'
 			},
 			{
-				title: 'DRC',
+				title: ko.i18n('columns.drc', 'DRC'),
 				data: 'DESCENDANT_RECORD_COUNT',
 				className: 'numeric'
 			},
 			{
-				title: 'Domain',
+				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'DOMAIN_ID'
 			},
 			{
-				title: 'Vocabulary',
+				title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 				data: 'VOCABULARY_ID'
 			},
 			{
-				title: 'Ancestors',
+				title: ko.i18n('columns.ancestors', 'Ancestors'),
 				data: 'ANCESTORS',
 				render: conceptSetService.getAncestorsRenderFunction()
 			}
@@ -126,7 +126,7 @@ define([
 			orderable: false,
 			searchable: false
 		}, {
-			title:  ko.i18n('columns.id', 'Id'),
+			title: ko.i18n('columns.id', 'Id'),
 			data: 'CONCEPT_ID'
 		}, {
 			title: ko.i18n('columns.code', 'Code'),

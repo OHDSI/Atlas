@@ -113,71 +113,71 @@ define([
 					orderable: false,
 					searchable: false
 				}, {
-					title: ko.i18n('search.columns.id', 'Id'),
+					title: ko.i18n('columns.id', 'Id'),
 					data: 'CONCEPT_ID'
 				}, {
-					title: ko.i18n('search.columns.code', 'Code'),
+					title: ko.i18n('columns.code', 'Code'),
 					data: 'CONCEPT_CODE'
 				}, {
-					title: ko.i18n('search.columns.name', 'Name'),
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'CONCEPT_NAME',
 					render: commonUtils.renderLink,
 				}, {
-					title: ko.i18n('search.columns.class', 'Class'),
+					title: ko.i18n('columns.class', 'Class'),
 					data: 'CONCEPT_CLASS_ID'
 				}, {
-					title: ko.i18n('search.columns.standardConceptCaption', 'Standard Concept Caption'),
+					title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 					data: 'STANDARD_CONCEPT_CAPTION',
 					visible: false
 				}, {
-					title: 'RC',
+					title: ko.i18n('columns.rc', 'RC'),
 					data: 'RECORD_COUNT',
 					className: 'numeric'
 				}, {
-					title: 'DRC',
+					title: ko.i18n('columns.drc', 'DRC'),
 					data: 'DESCENDANT_RECORD_COUNT',
 					className: 'numeric'
 				}, {
-					title: ko.i18n('search.columns.domain', 'Domain'),
+					title: ko.i18n('columns.domain', 'Domain'),
 					data: 'DOMAIN_ID'
 				}, {
-					title: ko.i18n('search.columns.vocabulary', 'Vocabulary'),
+					title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 					data: 'VOCABULARY_ID'
 				}];
 
 				this.searchOptions = {
 					Facets: [{
-						'caption': ko.i18n('search.options.vocabulary', 'Vocabulary'),
+						'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 						'binding': function (o) {
 							return o.VOCABULARY_ID;
 						}
 					}, {
-						'caption': ko.i18n('search.options.class', 'Class'),
+						'caption': ko.i18n('facets.caption.class', 'Class'),
 						'binding': function (o) {
 							return o.CONCEPT_CLASS_ID;
 						}
 					}, {
-						'caption': ko.i18n('search.options.domain', 'Domain'),
+						'caption': ko.i18n('facets.caption.domain', 'Domain'),
 						'binding': function (o) {
 							return o.DOMAIN_ID;
 						}
 					}, {
-						'caption': ko.i18n('search.options.standardConcept', 'Standard Concept'),
+						'caption': ko.i18n('facets.caption.standardConcept', 'Standard Concept'),
 						'binding': function (o) {
 							return o.STANDARD_CONCEPT_CAPTION;
 						}
 					}, {
-						'caption': ko.i18n('search.options.invalidReason', 'Invalid Reason'),
+						'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
 						'binding': function (o) {
 							return o.INVALID_REASON_CAPTION;
 						}
 					}, {
-						'caption': ko.i18n('search.options.hasRecords', 'Has Records'),
+						'caption': ko.i18n('facets.caption.hasRecords', 'Has Records'),
 						'binding': function (o) {
 							return parseInt(o.RECORD_COUNT) > 0;
 						}
 					}, {
-						'caption': ko.i18n('search.options.hasDescendantRecords', 'Has Descendant Records'),
+						'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
 						'binding': function (o) {
 							return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 						}
