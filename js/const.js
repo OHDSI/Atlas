@@ -41,6 +41,72 @@ define([
 				}
 			}]
 		};
+		
+		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
+			{
+				title: !context.canEditCurrentConceptSet() ? '<span class="fa fa-shopping-cart"></span>' : '<i class="fa fa-shopping-cart"></i>',
+				render: (s, p, d) => {
+					var css = '';
+					var icon = 'fa-shopping-cart';
+					var tag = 'i';
+					if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
+						css = ' selected';
+					}
+					if (!context.canEditCurrentConceptSet()) {
+						css += ' readonly';
+						tag = 'span';
+					}
+					return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
+				},
+				orderable: false,
+				searchable: false
+			},
+			{
+				title: ko.i18n('columns.id', 'Id'),
+				data: 'CONCEPT_ID'
+			},
+			{
+				title: ko.i18n('columns.code', 'Code'),
+				data: 'CONCEPT_CODE'
+			},
+			{
+				title: ko.i18n('columns.name', 'Name'),
+				data: 'CONCEPT_NAME',
+				render: commonUtils.renderLink,
+			},
+			{
+				title: ko.i18n('columns.class', 'Class'),
+				data: 'CONCEPT_CLASS_ID'
+			},
+			{
+				title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
+				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: ko.i18n('columns.rc', 'RC'),
+				data: 'RECORD_COUNT',
+				className: 'numeric'
+			},
+			{
+				title: ko.i18n('columns.drc', 'DRC'),
+				data: 'DESCENDANT_RECORD_COUNT',
+				className: 'numeric'
+			},
+			{
+				title: ko.i18n('columns.domain', 'Domain'),
+				data: 'DOMAIN_ID'
+			},
+			{
+				title: ko.i18n('columns.vocabulary', 'Vocabulary'),
+				data: 'VOCABULARY_ID'
+			},
+			{
+				title: ko.i18n('columns.ancestors', 'Ancestors'),
+				data: 'ANCESTORS',
+				render: conceptSetService.getAncestorsRenderFunction()
+			}
+		];
 
 		const getRelatedSourcecodesColumns = (sharedState, context) => [{
 			title: '',
@@ -60,7 +126,7 @@ define([
 			orderable: false,
 			searchable: false
 		}, {
-			title:  ko.i18n('columns.id', 'Id'),
+			title: ko.i18n('columns.id', 'Id'),
 			data: 'CONCEPT_ID'
 		}, {
 			title: ko.i18n('columns.code', 'Code'),
@@ -85,49 +151,6 @@ define([
 		}, {
 			title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 			data: 'VOCABULARY_ID'
-		}];
-		
-		const getSearchConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [{
-			render: function (s, p, d) {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				var tag = 'i';
-				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				if (!context.canEditCurrentConceptSet()) {
-					css += ' readonly';
-					tag = 'span';
-				}
-				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
-			},
-			orderable: false,
-			searchable: false
-		}, {
-			data: 'CONCEPT_ID'
-		}, {
-			data: 'CONCEPT_CODE'
-		}, {
-			data: 'CONCEPT_NAME',
-			render: commonUtils.renderLink,
-		}, {
-			data: 'CONCEPT_CLASS_ID'
-		}, {
-			data: 'STANDARD_CONCEPT_CAPTION',
-			visible: false
-		}, {
-			data: 'RECORD_COUNT',
-			className: 'numeric'
-		}, {
-			data: 'DESCENDANT_RECORD_COUNT',
-			className: 'numeric'
-		}, {
-			data: 'DOMAIN_ID'
-		}, {
-			data: 'VOCABULARY_ID'
-		}, {
-			data: 'ANCESTORS',
-			render: conceptSetService.getAncestorsRenderFunction()
 		}];
 
 		const apiPaths = {
@@ -217,8 +240,8 @@ define([
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
+			getIncludedConceptsColumns,
 			getRelatedSourcecodesColumns,
-			getSearchConceptsColumns,
 			apiPaths,
 			applicationStatuses,
 			generationStatuses,

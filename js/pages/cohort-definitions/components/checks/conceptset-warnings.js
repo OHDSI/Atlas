@@ -1,128 +1,160 @@
-define(['knockout', 'text!./conceptset-warnings.html',
-    'services/CohortDefinition',
-    './const',
-    './utils',
-    'atlas-state',
-    'databindings',
-    'faceted-datatable',
-    'css!./style.css',
-  ],
-  function (ko, view, cohortDefinitionApi, consts, utils, sharedState) {
-
-    function conceptSetWarnings(params){
-      var self = this;
+define([
+  "knockout",
+  "text!./conceptset-warnings.html",
+  "services/CohortDefinition",
+  "./const",
+  "./utils",
+  "atlas-state",
+  "utils/CommonUtils",
+  "databindings",
+  "faceted-datatable",
+  "css!./style.css",
+], function (
+  ko,
+  view,
+  cohortDefinitionApi,
+  consts,
+  utils,
+  sharedState,
+  commonUtils
+) {
+  class ConceptSetWarnings {
+    constructor(params) {
       this.currentCohortDefinition = sharedState.CohortDefinition.current;
-      self.cohortDefinitionId = this.currentCohortDefinition().id || ko.observable(-1);
-      self.count = params.count || ko.observable();
-      self.infoCount = params.infoCount || ko.observable();
-      self.warningCount = params.warningCount || ko.observable();
-      self.criticalCount = params.criticalCount || ko.observable();
-      self.onFixCallback = params.onFixCallback || function() {};
-      self.canDiagnose = params.canDiagnose || ko.observable(false);
-      self.warnings = ko.observableArray();
-      self.loading = ko.observable(false);
-      self.isFixConceptSetCalled = false;
-      self.language = ko.i18n("datatable.language");
-      self.warningsColumns = [
-        { data: 'severity', title: ko.i18n('columns.severity', 'Severity'), width: '100px', render: utils.renderSeverity, },
-        { data: 'message', title: ko.i18n('columns.message', 'Message'), width: '100%', render: utils.renderMessage, }
+      this.count = params.count || ko.observable();
+      this.infoCount = params.infoCount || ko.observable();
+      this.warningCount = params.warningCount || ko.observable();
+      this.criticalCount = params.criticalCount || ko.observable();
+      this.onFixCallback = params.onFixCallback || function () {};
+      this.canDiagnose = params.canDiagnose || ko.observable(false);
+      this.warnings = ko.observableArray();
+      this.loading = ko.observable(false);
+      this.isFixConceptSetCalled = false;
+      this.language = ko.i18n("datatable.language");
+      this.warningsColumns = [
+        {
+          data: "severity",
+          title: ko.i18n("columns.severity", "Severity"),
+          width: "100px",
+          render: utils.renderSeverity,
+        },
+        {
+          data: "message",
+          title: ko.i18n("columns.message", "Message"),
+          width: "100%",
+          render: utils.renderMessage,
+        },
       ];
-      self.warningsOptions = {
-        Facets: [{
-          'caption': ko.i18n('facets.caption.severity', 'Severity'),
-          'binding': o => o.severity,
-          defaultFacets: [
-            'WARNING', 'CRITICAL'
-          ],
-        }],
+      this.warningsOptions = {
+        Facets: [
+          {
+            caption: "Severity",
+            binding: (o) => o.severity,
+            defaultFacets: ["WARNING", "CRITICAL"],
+          },
+        ],
       };
 
-      self.drawCallback = function(settings) {
-        if (settings.aoData) {
-          const api = this.api();
-          const rows = this.api().rows({page: 'current'});
-          const data = rows.data();
-          rows.nodes().each((element, index) => {
-            const rowData = data[index];
-            const context = ko.contextFor(element);
-            ko.cleanNode(element);
-            ko.applyBindings(context, element);
-          });
-        }
-      };
+      this.warningSubscription = this.currentCohortDefinition.subscribe(() =>
+        this.getWarnings()
+      );
 
-      self.stateSaveCallback = function(settings, data){
-        if (!self.isFixConceptSetCalled){
-          self.state = data;
-        }
-      };
+      this.getWarnings();
+    }
 
-      self.stateLoadCallback = function(settings, callback) {
-        return self.state;
-      };
-
-      self.fixRedundantConceptSet = function(value, parent, event){
-        self.isFixConceptSetCalled = true;
-        event.preventDefault();
-        self.onFixCallback(value);
-        self.onDiagnose();
-        self.isFixConceptSetCalled = false;
-      };
-
-      function showWarnings(result){
-      	const count = (severity) => result.warnings.filter(w => w.severity === severity).length;
-        self.warnings(result.warnings);
-        self.infoCount(count(consts.WarningSeverity.INFO));
-        self.warningCount(count(consts.WarningSeverity.WARNING));
-        self.criticalCount(count(consts.WarningSeverity.CRITICAL));
-        self.count(result.warnings.length);
-        self.loading(false);
-      }
-
-      function handleError() {
-        self.count(0);
-        self.warnings.removeAll();
-        self.loading(false);
-      }
-
-      self.runDiagnostics = function(id, expression){
-        self.loading(true);
-        cohortDefinitionApi.runDiagnostics(id, expression)
-          .then(showWarnings, handleError);
-      };
-
-      self.getWarnings = function() {
-        if (parseInt(self.cohortDefinitionId(), 10) <= 0 || isNaN(self.cohortDefinitionId())) {
-          return false;
-        }
-        self.loading(true);
-        cohortDefinitionApi.getWarnings(self.cohortDefinitionId())
-          .then(showWarnings, handleError);
-      };
-
-      self.onDiagnose = function(){
-        const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
-          return (value === 0 || value) ?  value : undefined;
-        }, 2);
-        self.runDiagnostics(self.cohortDefinitionId(), expressionJSON);
-      };
-
-
-      self.warningSubscription = this.currentCohortDefinition.subscribe(() => self.getWarnings());
-
-      self.getWarnings();
-
-      self.dispose = function() {
-        self.warningSubscription.dispose();
+    drawCallback(settings) {
+      if (settings.aoData) {
+        const api = this.api();
+        const rows = this.api().rows({ page: "current" });
+        const data = rows.data();
+        rows.nodes().each((element, index) => {
+          const rowData = data[index];
+          const context = ko.contextFor(element);
+          ko.cleanNode(element);
+          ko.applyBindings(context, element);
+        });
       }
     }
 
-    var component = {
-      viewModel: conceptSetWarnings,
-      template: view,
-    };
+    stateSaveCallback(settings, data) {
+      if (!this.isFixConceptSetCalled) {
+        this.state = data;
+      }
+    }
 
-    ko.components.register('conceptset-warnings', component);
-    return component;
+    stateLoadCallback(settings, callback) {
+      return this.state;
+    }
+
+    fixRedundantConceptSet(value, parent, event) {
+      this.isFixConceptSetCalled = true;
+      event.preventDefault();
+      this.onFixCallback(value);
+      this.onDiagnose();
+      this.isFixConceptSetCalled = false;
+    }
+
+    showWarnings(result) {
+      const count = (severity) =>
+        result.warnings.filter((w) => w.severity === severity).length;
+      this.warnings(result.warnings);
+      this.infoCount(count(consts.WarningSeverity.INFO));
+      this.warningCount(count(consts.WarningSeverity.WARNING));
+      this.criticalCount(count(consts.WarningSeverity.CRITICAL));
+      this.count(result.warnings.length);
+      this.loading(false);
+    }
+
+    handleError() {
+      this.count(0);
+      this.warnings.removeAll();
+      this.loading(false);
+    }
+
+    runDiagnostics(id, expression) {
+      this.loading(true);
+      cohortDefinitionApi
+        .runDiagnostics(id, expression)
+        .then((result) => this.showWarnings(result.data))
+        .catch((error) => this.handleError(error));
+    }
+
+    getWarnings() {
+      if (this.currentCohortDefinition()) {
+        if (
+          parseInt(this.currentCohortDefinition().id(), 10) <= 0 ||
+          isNaN(this.currentCohortDefinition().id())
+        ) {
+          return false;
+        }
+        this.loading(true);
+        cohortDefinitionApi
+          .getWarnings(this.currentCohortDefinition().id())
+          .then((result) => this.showWarnings(result.data))
+          .catch((error) => this.handleError(error));
+      }
+    }
+
+    onDiagnose() {
+      if (this.currentCohortDefinition()) {
+        const expressionJSON = ko.toJSON(
+          this.currentCohortDefinition().expression(),
+          function (key, value) {
+            return value === 0 || value ? value : undefined;
+          },
+          2
+        );
+        this.runDiagnostics(
+          this.currentCohortDefinition().id(),
+          expressionJSON
+        );
+      }
+    }
+
+    dispose() {
+      this.warningSubscription.dispose();
+    }
   }
-);
+
+  return commonUtils.build("conceptset-warnings", ConceptSetWarnings, view);
+});
