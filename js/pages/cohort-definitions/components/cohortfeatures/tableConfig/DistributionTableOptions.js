@@ -6,7 +6,7 @@ define(function (require, exports) {
 		self.filterDef = {
 			Facets: [
 				{
-					'caption': 'Domain',
+					'caption': ko.i18n('columns.domain', 'Domain'),
 					'binding': function (o) {
 						return o.domainId;
 					}

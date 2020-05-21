@@ -6,13 +6,13 @@ define(function (require, exports) {
 		self.filterDef = {
 			Facets: [
 				{
-					'caption': 'Analysis',
+					'caption': ko.i18n('columns.analysis', 'Analysis'),
 					'binding': function (o) {
 						return o.analysisName;
 					}
 				},
 				{
-					'caption': 'Time Window',
+					'caption': ko.i18n('columns.timeWindow', 'Time Window'),
 					'binding': function (o) {
 						return o.timeWindow;
 					}

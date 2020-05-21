@@ -427,24 +427,24 @@ define([
           searchable: false,
         },
         {
-          title: "Id",
+          title: ko.i18n('columns.id', 'Id'),
           data: "CONCEPT_ID",
         },
         {
-          title: "Code",
+          title: ko.i18n('columns.code', 'Code'),
           data: "CONCEPT_CODE",
         },
         {
-          title: "Name",
+          title: ko.i18n('columns.name', 'Name'),
           data: "CONCEPT_NAME",
           render: commonUtils.renderLink,
         },
         {
-          title: "Class",
+          title: ko.i18n('columns.class', 'Class'),
           data: "CONCEPT_CLASS_ID",
         },
         {
-          title: "Standard Concept Caption",
+          title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
           data: "STANDARD_CONCEPT_CAPTION",
           visible: false,
         },
@@ -459,15 +459,15 @@ define([
           className: "numeric",
         },
         {
-          title: "Domain",
+          title: ko.i18n('columns.domain', 'Domain'),
           data: "DOMAIN_ID",
         },
         {
-          title: "Vocabulary",
+          title: ko.i18n('columns.vocabulary', 'Vocabulary'),
           data: "VOCABULARY_ID",
         },
         {
-          title: "Ancestors",
+          title: ko.i18n('columns.ancestors', 'Ancestors'),
           data: "ANCESTORS",
           render: conceptSetService.getAncestorsRenderFunction(),
         },
@@ -487,43 +487,43 @@ define([
       this.includedConceptsOptions = {
         Facets: [
           {
-            caption: "Vocabulary",
+            caption: ko.i18n('options.vocabulary', 'Vocabulary'),
             binding: (o) => {
               return o.VOCABULARY_ID;
             },
           },
           {
-            caption: "Class",
+            caption: ko.i18n('options.class', 'Class'),
             binding: (o) => {
               return o.CONCEPT_CLASS_ID;
             },
           },
           {
-            caption: "Domain",
+            caption: ko.i18n('options.domains', 'Domain'),
             binding: (o) => {
               return o.DOMAIN_ID;
             },
           },
           {
-            caption: "Standard Concept",
+            caption: ko.i18n('options.standardConcept', 'Standard Concept'),
             binding: (o) => {
               return o.STANDARD_CONCEPT_CAPTION;
             },
           },
           {
-            caption: "Invalid Reason",
+            caption: ko.i18n('options.invalidReason', 'Invalid Reason'),
             binding: (o) => {
               return o.INVALID_REASON_CAPTION;
             },
           },
           {
-            caption: "Has Records",
+            caption: ko.i18n('options.hasRecords', 'Has Records'),
             binding: (o) => {
               return parseInt(o.RECORD_COUNT) > 0;
             },
           },
           {
-            caption: "Has Descendant Records",
+            caption: ko.i18n('options.hasDescendantRecords', 'Has Descendant Records'),
             binding: (o) => {
               return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
             },
@@ -783,7 +783,7 @@ define([
 
       this.utilReportOptions = {
         reports: {
-          title: "Reports",
+          title: ko.i18n('options.reports', 'Reports'),
           options: reports,
           selectedOptions: ko.observableArray([
             reportPacks.healthcareUtilPersonAndExposureCohort.analyses,
@@ -791,12 +791,12 @@ define([
           ]),
         },
         periods: {
-          title: "Periods",
+          title: ko.i18n('options.periods', 'Periods'),
           options: costUtilConst.periods,
           selectedOptions: ko.observableArray([]),
         },
         rollups: {
-          title: "Rollups",
+          title: ko.i18n('options.rollups', 'Rollups'),
           options: costUtilConst.rollups,
           selectedOptions: ko.observableArray([]),
         },
@@ -858,7 +858,7 @@ define([
     delete() {
       if (
         !confirm(
-          "Delete cohort definition? Warning: deletion can not be undone!"
+          ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.delete', 'Delete cohort definition? Warning: deletion can not be undone!'))
         )
       )
         return;
@@ -878,7 +878,7 @@ define([
             console.log("Error: " + error);
             if (error.status == 409) {
               alert(
-                "Cohort definition cannot be deleted because it is referenced in some analysis"
+                ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.save', 'Cohort definition cannot be deleted because it is referenced in some analysis.'))
               );
               this.isDeleting(false);
             } else {
@@ -903,7 +903,7 @@ define([
         );
         if (results > 0) {
           alert(
-            "A cohort definition with this name already exists. Please choose a different name."
+            ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.saveAlert', 'A cohort definition with this name already exists. Please choose a different name.'))
           );
         } else {
           this.clearConceptSet();
@@ -932,7 +932,7 @@ define([
         );
       } catch (e) {
         alert(
-          "An error occurred while attempting to save a cohort definition."
+          ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.save', 'An error occurred while attempting to save a cohort definition.'))
         );
       } finally {
         this.isSaving(false);
@@ -943,7 +943,7 @@ define([
       if (
         this.dirtyFlag().isDirty() &&
         !confirm(
-          "Your cohort changes are not saved. Would you like to continue?"
+          ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.close', 'Your cohort changes are not saved. Would you like to continue?'))
         )
       ) {
         return;
@@ -1592,7 +1592,7 @@ define([
     }) {
       if (
         !confirm(
-          `This will run ${descr} and may take about ${duration}. Are you sure?`
+          ko.unwrap(ko.i18nformat('cohortDefinitionManager.confirms.generateAnalyses', 'This will run <%=descr%> and may take about <%=duration%>. Are you sure?', {descr: descr, duration: duration}))
         )
       ) {
         return;
@@ -1653,8 +1653,8 @@ define([
 
     generateQuickAnalysis() {
       this.generateAnalyses({
-        descr: "minimal analyses set to provide a quick overview of the cohort",
-        duration: "10 minutes",
+        descr: ko.i18n('cohortDefinitionManager.generateQuickAnalysis.descr', 'minimal analyses set to provide a quick overview of the cohort'),
+        duration: ko.i18n('cohortDefinitionManager.generateQuickAnalysis.duration', '10 minutes'),
         analysisIdentifiers: cohortReportingService.getQuickAnalysisIdentifiers(),
         runHeraclesHeel: false,
       });
@@ -1669,8 +1669,8 @@ define([
         .selectedOptions()
         .reduce((acc, ids) => [...acc, ...ids], []);
       this.generateAnalyses({
-        descr: "the Cost and Utilization analyses",
-        duration: "10-45 minutes",
+        descr: ko.i18n('cohortDefinitionManager.generateHealthcareAnalyses.descr', 'the Cost and Utilization analyses'),
+        duration: ko.i18n('cohortDefinitionManager.generateHealthcareAnalyses.duration', '10-45 minutes'),
         analysisIdentifiers: analysisIds,
         runHeraclesHeel: false,
         periods: this.utilReportOptions.periods.selectedOptions(),
@@ -1687,8 +1687,8 @@ define([
 
     generateAllAnalyses() {
       this.generateAnalyses({
-        descr: "all analyses",
-        duration: "60-90 minutes",
+        descr: ko.i18n('cohortDefinitionManager.generateAllAnalyses.descr', 'all analyses'),
+        duration: ko.i18n('cohortDefinitionManager.generateAllAnalyses.duration', '60-90 minutes'),
         analysisIdentifiers: cohortReportingService.getAnalysisIdentifiers(),
         runHeraclesHeel: true,
       });

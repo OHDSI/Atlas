@@ -12,59 +12,59 @@ define(function (require, exports) {
 				searchable: false
 			},
 			{
-				title: 'Concept Id',
+				title: ko.i18n('columns.conceptId', 'Concept Id'),
 				data: 'conceptId',
 				visible: false,
 			}, 
 			{
-				title: 'Relationship Type',
+				title: ko.i18n('columns.relationshipType', 'Relationship Type'),
 				data: 'relationshipType'
 			}, 
 			{
-				title: 'Distance',
+				title: ko.i18n('columns.distance', 'Distance'),
 				data: 'distance',
 			}, 
 			{
-				title: 'Concept Name',
+				title: ko.i18n('columns.conceptName', 'Concept Name'),
 				data: 'conceptName',
 				searchable: true,
 			}, 
 			{
-				title: 'Covariate Id',
+				title: ko.i18n('columns.covariateId', 'Covariate Id'),
 				data: 'covariateId',
 				visible: false,
 			}, 
 			{
-				title: 'Covariate Name',
+				title: ko.i18n('columns.covariateName', 'Covariate Name'),
 				data: 'covariateName',
 				visible: false,
 			}, 
 			{
-				title: 'Anaylsis Id',
+				title: ko.i18n('columns.analysisId', 'Anaylsis Id'),
 				data: 'analysisId',
 				visible: false,
 			}, 
 			{
-				title: 'Analysis Name',
+				title: ko.i18n('columns.analysisName', 'Analysis Name'),
 				data: 'analysisName',
 				visible: false,
 			}, 
 			{
-				title: 'Domain',
+				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'domainId',
 				visible: false,
 			}, 
 			{
-				title: 'Time Window',
+				title: ko.i18n('columns.timeWindow', 'Time Window'),
 				data: 'timeWindow',
 				visible: false,
 			}, 
 			{
-				title: 'Person Count',
+				title: ko.i18n('columns.countValue', 'Count Value'),
 				data: 'countValue',
 			}, 
 			{
-				title: '% of cohort',
+				title: ko.i18n('columns.perOfCohort', '% of cohort'),
 				data: d => {
 					return ((Math.ceil(d.statValue * 1000) / 1000) * 100).toFixed(2);
 				},

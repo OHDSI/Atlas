@@ -19,7 +19,7 @@ define([
 ) {
 
 	PluginRegistry.add(globalConstants.pluginTypes.COHORT_REPORT, {
-		title: 'Inclusion Report',
+		title: ko.i18n('cohortDefinitions.cohortreports.inclusionReport', 'Inclusion Report'),
 		priority: 1,
 		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId }"></cohort-report-inclusion>`
 	});

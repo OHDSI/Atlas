@@ -9,54 +9,54 @@ define(function (require, exports) {
 
 		self.columnDef = [
 			{
-				title: 'Covariate Id',
+				title: ko.i18n('columns.covariateId', 'Covariate Id'),
 				data: 'covariateId',
 				visible: false
 			},
 			{
-				title: 'Covariate Name',
+				title: ko.i18n('columns.covariateName', 'Covariate Name'),
 				data: 'covariateName',
 				visible: false
 			},
 			{
-				title: 'Name',
+				title: ko.i18n('columns.name', 'Name'),
 				data: 'conceptName'
 			},
 			{
-				title: 'Anaylsis Id',
+				title: ko.i18n('columns.analysisId', 'Anaylsis Id'),
 				data: 'analysisId',
 				visible: false
 			},
 			{
-				title: 'Analysis Name',
+				title: ko.i18n('columns.analysisName', 'Analysis Name'),
 				data: 'analysisName',
 				visible: false,
 				searchable: true
 			},
 			{
-				title: 'Domain',
+				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'domainId',
 				visible: false,
 			},
 			{
-				title: 'Time Window',
+				title: ko.i18n('columns.timeWindow', 'Time Window'),
 				data: 'timeWindow',
 				visible: false,
 			},
 			{
-				title: 'Concept Id',
+				title: ko.i18n('columns.conceptId', 'Concept Id'),
 				data: 'conceptId',
 				visible: false
 			},
 			{
-				title: 'Count',
+				title: ko.i18n('columns.countValue', 'Count Value'),
 				data: 'countValue',
 				render: function(data, type, row) {
 					return self.formattingOptions.numberWithCommas(data);
 				}
 			},
 			{
-				title: '% of cohort',
+				title: ko.i18n('columns.perOfCohort', '% of cohort'),
 				data: d => {
 					return ((Math.ceil(d.statValue * 1000) / 1000) * 100).toFixed(2);
 				},

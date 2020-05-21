@@ -9,52 +9,52 @@ define(function (require, exports) {
 
 		self.columnDef = [
 			{
-				title: 'Covariate Id',
+				title: ko.i18n('columns.covariateId', 'Covariate Id'),
 				data: 'covariateId',
 				visible: false
 			},
 			{
-				title: 'Covariate Name',
+				title: ko.i18n('columns.covariateName', 'Covariate Name'),
 				data: 'covariateName'
 			},
 			{
-				title: 'Domain',
+				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'domainId',
 				visible: true
 			},
 			{
-				title: 'Anaylsis Id',
+				title: ko.i18n('columns.analysisId', 'Anaylsis Id'),
 				data: 'analysisId',
 				visible: false
 			},
 			{
-				title: 'Analysis Name',
+				title: ko.i18n('columns.analysisName', 'Analysis Name'),
 				data: 'analysisName',
 				visible: false,
 			},
 			{
-				title: 'Count Value',
+				title: ko.i18n('columns.countValue', 'Count Value'),
 				data: 'countValue',
 				render: function(data, type, row) {
 					return self.formattingOptions.numberWithCommas(data);
 				}
 			},
 			{
-				title: 'Avg',
+				title: ko.i18n('columns.avgValue', 'Avg'),
 				data: 'avgValue',
 				render: function (data, type, row) {
 					return self.formattingOptions.formatDecimal2(data);
 				}
 			},
 			{
-				title: 'Std Dev',
+				title: ko.i18n('columns.stdevValue', 'Std Dev'),
 				data: 'stdevValue',
 				render: function (data, type, row) {
 					return self.formattingOptions.formatDecimal2(data);
 				}
 			},
 			{
-				title: 'Min',
+				title: ko.i18n('common.min', 'Min'),
 				data: 'minValue'
 			},
 			{
@@ -66,7 +66,7 @@ define(function (require, exports) {
 				data: 'p25Value'
 			},
 			{
-				title: 'Median',
+				title: ko.i18n('common.median', 'Median'),
 				data: 'medianValue'
 			},
 			{
@@ -78,7 +78,7 @@ define(function (require, exports) {
 				data: 'p90Value'
 			},
 			{
-				title: 'Max',
+				title: ko.i18n('common.max', 'Max'),
 				data: 'maxValue'
 			},
     ];

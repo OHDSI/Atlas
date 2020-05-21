@@ -1,8 +1,11 @@
 <div>
-    <div data-bind="visible: isLoading" class="loading">loading inclusion report...</div>
+    <div data-bind="visible: isLoading" class="loading">
+			<span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
+		</div>
     <!-- ko if: !isLoading() -->
 			<div class="heading">
-				Inclusion Report for <span data-bind="text: source().sourceName"></span>
+				<span dasta-bind="text: ko.i18n('cohortDefinitions.cohortreports.inclusionReportFor', 'Inclusion Report for')"></span>
+				<span data-bind="text: source().sourceName"></span>
 			</div>
 			<feasibility-report-viewer params="report: report"></feasibility-report-viewer>
     <!-- /ko -->

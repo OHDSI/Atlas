@@ -22,13 +22,14 @@ define(['knockout', 'text!./conceptset-warnings.html',
       self.warnings = ko.observableArray();
       self.loading = ko.observable(false);
       self.isFixConceptSetCalled = false;
+      self.language = ko.i18n("datatable.language");
       self.warningsColumns = [
-        { data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
-        { data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
+        { data: 'severity', title: ko.i18n('columns.severity', 'Severity'), width: '100px', render: utils.renderSeverity, },
+        { data: 'message', title: ko.i18n('columns.message', 'Message'), width: '100%', render: utils.renderMessage, }
       ];
       self.warningsOptions = {
         Facets: [{
-          'caption': 'Severity',
+          'caption': ko.i18n('facets.caption.severity', 'Severity'),
           'binding': o => o.severity,
           defaultFacets: [
             'WARNING', 'CRITICAL'

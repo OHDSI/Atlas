@@ -10,23 +10,55 @@
             <table data-bind="css: classes({ element: 'summary-table', extra: ['table', 'table-bordered', 'table-hover'] })">
                 <thead data-bind="css: classes('summary-table-head')">
                 <tr>
-                    <th data-bind="css: classes('summary-table-cell')">Person Count</th>
-                    <th data-bind="css: classes('summary-table-cell')">Person Percent</th>
-                    <th data-bind="css: classes('summary-table-cell')">Total Records</th>
-                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000</th>
-                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000 with record</th>
-                    <th data-bind="css: classes('summary-table-cell')">Records per 1,000 Per Year</th>
-                    <th data-bind="css: classes('summary-table-cell')">Total length of stay (in days)</th>
-                    <th data-bind="css: classes('summary-table-cell')">Average Length of Stay (in days)</th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.personCount', 'Person Count')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.personPercent', 'Person Percent')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.totalRecords', 'Total Records')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.recordsPer1000', 'Records per 1,000')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.recordsPer1000WithRecord', 'Records per 1,000 with record')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.recordsPer1000PerYear', 'Records per 1,000 Per Year')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.totalLengthOfStay', 'Total length of stay (in days)')"></span>
+                    </th>
+                    <th data-bind="css: classes('summary-table-cell')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.averageLengthOfStay', 'Average Length of Stay (in days)')"></span>
+                    </th>
                     <!-- ko if: $component.enableCosts -->
-                        <th data-bind="css: classes('summary-table-cell')">Allowed cost</th>
-                        <th data-bind="css: classes('summary-table-cell')">Allowed cost pmpm</th>
-                        <th data-bind="css: classes('summary-table-cell')">Charged cost</th>
-                        <th data-bind="css: classes('summary-table-cell')">Charged cost PMPM</th>
-                        <th data-bind="css: classes('summary-table-cell')">Paid cost</th>
-                        <th data-bind="css: classes('summary-table-cell')">Paid Cost PMPM</th>
-                        <th data-bind="css: classes('summary-table-cell')">Allowed/Charged</th>
-                        <th data-bind="css: classes('summary-table-cell')">Paid/Allowed</th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.allowedCost', 'Allowed cost')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.allowedCostPmpm', 'Allowed cost pmpm')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.chargedCost', 'Charged cost')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.chargedCostPMPM', 'Charged cost PMPM')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.paidCost', 'Paid cost')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.paidCostPMPM', 'Paid Cost PMPM')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.allowedCharged', 'Allowed/Charged')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.paidAllowed', 'Paid/Allowed')"></span>
+                        </th>
                     <!-- /ko -->
                 </tr>
                 </thead>
@@ -55,7 +87,7 @@
             </table>
         </div>
         <div data-bind="if: $component.dataList().length <= 0, css: classes('block')">
-            Detailed statistics are not available
+            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.costUtilizationText_1', 'Detailed statistics are not available')"></span>
         </div>
         <div data-bind="if: $component.dataList().length > 0, css: classes('block')">
             <ul class="nav nav-tabs">
@@ -65,14 +97,18 @@
                 </li>
                 <!-- /ko -->
                 <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
-                    <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+                    <a data-bind="css: classes('save-csv-link')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.costUtilizationText_1', 'Save as CSV')"></span>
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" data-bind="if: $component.currentTab() == $component.visualizationTab && !loading()">
                     <div data-bind="css: $component.classes('chart-filter-line')">
                         <div data-bind="css: $component.classes('chart-filter')">
-                            <label>Displayed charts:</label>
+                            <label>
+                                <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.displayCharts', 'Displayed charts:')"></span>
+                            </label>
                             <multi-select params="{ options: chartOptions, selectedValues: displayedCharts, multiple: true, selectedTextFormat: 'count > 10' }"/>
                         </div>
                     </div>
