@@ -47,10 +47,7 @@ define([
       this.options = {
         Facets: [
           {
-            caption: ko.i18n(
-              "components.cohort-definition-browser.facets.lastModified",
-              "Last Modified"
-            ),
+            caption: ko.i18n('components.cohort-definition-browser.facets.lastModified', 'Last Modified'),
             binding: function (o) {
               var createDate = new Date(o.createdDate);
               var modDate = new Date(o.modifiedDate);
@@ -59,10 +56,7 @@ define([
             },
           },
           {
-            caption: ko.i18n(
-              "components.cohort-definition-browser.facets.author",
-              "Author"
-            ),
+            caption: ko.i18n('components.cohort-definition-browser.facets.author', 'Author'),
             binding: function (o) {
               return o.createdBy;
             },
@@ -70,48 +64,33 @@ define([
         ],
       };
 
-      this.language = ko.i18n("datatable.language");
+      this.language = ko.i18n('datatable.language');
 
       this.columns = [
         {
-          title: ko.i18n(
-            "components.cohort-definition-browser.table.columns.id",
-            "Id"
-          ),
+          title: ko.i18n('columns.id', 'Id'),
           className: "id-column",
           data: "id",
         },
         {
-          title: ko.i18n(
-            "components.cohort-definition-browser.table.columns.name",
-            "Name"
-          ),
+          title: ko.i18n('columns.name', 'Name'),
           render: datatableUtils.getLinkFormatter((d) => ({
             label: d["name"],
             linkish: true,
           })),
         },
         {
-          title: ko.i18n(
-            "components.cohort-definition-browser.table.columns.created",
-            "Created"
-          ),
+          title: ko.i18n('columns.created', 'Created'),
           className: "date-column",
           render: datatableUtils.getDateFieldFormatter("createdDate"),
         },
         {
-          title: ko.i18n(
-            "components.cohort-definition-browser.table.columns.updated",
-            "Updated"
-          ),
+          title: ko.i18n('columns.updated', 'Updated'),
           className: "date-column",
           render: datatableUtils.getDateFieldFormatter("modifiedDate"),
         },
         {
-          title: ko.i18n(
-            "components.cohort-definition-browser.table.columns.author",
-            "Author"
-          ),
+          title: ko.i18n('columns.author', 'Author'),
           className: "author-column",
           render: datatableUtils.getCreatedByFormatter(),
         },

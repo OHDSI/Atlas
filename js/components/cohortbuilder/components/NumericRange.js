@@ -10,37 +10,31 @@ define([
     self.operationOptions = [
       {
         id: "lt",
-        name: ko.i18n("components.numericRange.lessThan", "Less Than"),
+        name: ko.i18n('components.numericRange.lessThan', 'Less Than'),
       },
       {
         id: "lte",
-        name: ko.i18n(
-          "components.numericRange.lessOrEqualTo",
-          "Less or Equal To"
-        ),
+        name: ko.i18n('components.numericRange.lessOrEqualTo', 'Less or Equal To'),
       },
       {
         id: "eq",
-        name: ko.i18n("components.numericRange.equalTo", "Equal To"),
+        name: ko.i18n('components.numericRange.equalTo', 'Equal To'),
       },
       {
         id: "gt",
-        name: ko.i18n("components.numericRange.greaterThan", "Greater Than"),
+        name: ko.i18n('components.numericRange.greaterThan', 'Greater Than'),
       },
       {
         id: "gte",
-        name: ko.i18n(
-          "components.numericRange.greaterOrEqualTo",
-          "Greater or Equal To"
-        ),
+        name: ko.i18n('components.numericRange.greaterOrEqualTo', 'Greater or Equal To'),
       },
       {
         id: "bt",
-        name: ko.i18n("components.numericRange.between", "Between"),
+        name: ko.i18n('components.numericRange.between', 'Between'),
       },
       {
         id: "!bt",
-        name: ko.i18n("components.numericRange.notBetween", "Not Between"),
+        name: ko.i18n('components.numericRange.notBetween', 'Not Between'),
       },
     ];
   }

@@ -103,7 +103,7 @@ define([
     self.buttonActionEnabled = params.buttonActionEnabled !== false;
     self.buttonActionText =
       params.buttonActionText ||
-      ko.i18n("cs.browser.newConceptSetButton", "New Concept Set");
+      ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set');
     self.repositoryConceptSetTableId =
       params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 

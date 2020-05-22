@@ -38,11 +38,11 @@ define([
 
       this.gridColumns = [
         {
-          title: ko.i18n("columns.id", "Id"),
+          title: ko.i18n('columns.id', 'Id'),
           data: "id",
         },
         {
-          title: ko.i18n("columns.name", "Name"),
+          title: ko.i18n('columns.name', 'Name'),
           data: "name",
           className: this.classes("tbl-col", "name"),
           render: datatableUtils.getLinkFormatter((d) => ({
@@ -51,17 +51,17 @@ define([
           })),
         },
         {
-          title: ko.i18n("columns.created", "Created"),
+          title: ko.i18n('columns.created', 'Created'),
           className: this.classes("tbl-col", "created"),
           render: datatableUtils.getDateFieldFormatter(),
         },
         {
-          title: ko.i18n("columns.updated", "Updated"),
+          title: ko.i18n('columns.updated', 'Updated'),
           className: this.classes("tbl-col", "updated"),
           render: datatableUtils.getDateFieldFormatter("updatedAt"),
         },
         {
-          title: ko.i18n("columns.author", "Author"),
+          title: ko.i18n('columns.author', 'Author'),
           className: this.classes("tbl-col", "author"),
           render: datatableUtils.getCreatedByFormatter(),
         },
@@ -69,15 +69,15 @@ define([
       this.gridOptions = {
         Facets: [
           {
-            caption: ko.i18n("facets.caption.created", "Created"),
+            caption: ko.i18n('facets.caption.created', 'Created'),
             binding: (o) => datatableUtils.getFacetForDate(o.createdAt),
           },
           {
-            caption: ko.i18n("facets.caption.updated", "Updated"),
+            caption: ko.i18n('facets.caption.updated', 'Updated'),
             binding: (o) => datatableUtils.getFacetForDate(o.updatedAt),
           },
           {
-            caption: ko.i18n("facets.caption.author", "Author"),
+            caption: ko.i18n('facets.caption.author', 'Author'),
             binding: datatableUtils.getFacetForCreatedBy,
           },
         ],

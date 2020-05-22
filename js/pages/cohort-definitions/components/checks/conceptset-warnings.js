@@ -30,27 +30,27 @@ define([
       this.warnings = ko.observableArray();
       this.loading = ko.observable(false);
       this.isFixConceptSetCalled = false;
-      this.language = ko.i18n("datatable.language");
+      this.language = ko.i18n('datatable.language');
       this.warningsColumns = [
         {
-          data: "severity",
-          title: ko.i18n("columns.severity", "Severity"),
-          width: "100px",
+          data: 'severity',
+          title: ko.i18n('columns.severity', 'Severity'),
+          width: '100px',
           render: utils.renderSeverity,
         },
         {
-          data: "message",
-          title: ko.i18n("columns.message", "Message"),
-          width: "100%",
+          data: 'message',
+          title: ko.i18n('columns.message', 'Message'),
+          width: '100%',
           render: utils.renderMessage,
         },
       ];
       this.warningsOptions = {
         Facets: [
           {
-            caption: "Severity",
+            caption: 'Severity',
             binding: (o) => o.severity,
-            defaultFacets: ["WARNING", "CRITICAL"],
+            defaultFacets: ['WARNING', 'CRITICAL'],
           },
         ],
       };

@@ -97,7 +97,7 @@ function (ko,
 				"featureSection": self.distSection,
 			},
 		];
-		self.language = ko.i18n("datatable.language");
+		self.language = ko.i18n('datatable.language');
 		self.getFeatureSection = function (section) {
 			return $.grep(self.featureSectionMap, function (n) {
 				return n.section == section
