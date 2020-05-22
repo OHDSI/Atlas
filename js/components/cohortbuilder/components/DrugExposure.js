@@ -217,16 +217,13 @@ define([
       self.Criteria[propertyName](null);
     };
     self.indexMessage = ko.i18nformat(
-      "cc.viewEdit.design.subgroups.add.drug-exposure.criteria.index-data.text",
-      "The index date refers to the drug exposure of <%= conceptSetName %>.",
+      'cc.viewEdit.design.subgroups.add.drug-exposure.criteria.index-data.text',
+      'The index date refers to the drug exposure of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "cc.viewEdit.design.subgroups.add.drug-exposure.criteria.default-concept-name",
-            "Any Drug"
-          )
+          ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.criteria.default-concept-name', 'Any Drug')
         ),
       }
     );

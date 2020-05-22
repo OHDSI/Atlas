@@ -146,17 +146,14 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      "cc.viewEdit.design.subgroups.add.observation.criteria.index-data.text",
-      "The index date refers to the observation of <%= conceptSetName %>.",
+      'cc.viewEdit.design.subgroups.add.observation.criteria.index-data.text',
+      'The index date refers to the observation of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name",
-            "Any Observation"
-          )
-        ),
+          ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name', 'Any Observation')
+        )
       }
     );
   }

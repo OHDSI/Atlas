@@ -143,16 +143,13 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      "cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.index-data.text",
-      "The index date refers to the condition occurrence of <%= conceptSetName %>.",
+      'cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.index-data.text',
+      'The index date refers to the condition occurrence of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.index-data.default-name",
-            "Any Condition"
-          )
+          ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.criteria.index-data.default-name', 'Any Condition')
         ),
       }
     );

@@ -166,10 +166,7 @@ define([
       self.Criteria[propertyName](null);
     };
 
-    self.indexMessage = ko.i18n(
-      "cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.default-concept-name",
-      "The index date refers to the payer plan period."
-    );
+    self.indexMessage = ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.criteria.default-concept-name', 'The index date refers to the payer plan period.');
   }
 
   return {

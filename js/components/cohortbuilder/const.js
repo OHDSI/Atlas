@@ -997,130 +997,55 @@ define(["knockout"], function (ko) {
 
   const eventsList = {
     addFirstDiagnosisCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addFirstDiagnosisCriteria.title",
-        "Add First Diagnosis Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addFirstDiagnosisCriteria.desc",
-        "Limit Condition Eras to first diagnosis era in history."
-      ),
+      title: ko.i18n('const.eventsList.addFirstDiagnosisCriteria.title', 'Add First Diagnosis Criteria'),
+      desc: ko.i18n('const.eventsList.addFirstDiagnosisCriteria.desc', 'Limit Condition Eras to first diagnosis era in history.'),
     },
     addAgeAtEraStartCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addAgeAtEraStartCriteria.title",
-        "Add Age at Era Start Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addAgeAtEraStartCriteria.desc",
-        "Filter Condition Eras by age at era start."
-      ),
+      title: ko.i18n('const.eventsList.addAgeAtEraStartCriteria.title', 'Add Age at Era Start Criteria'),
+      desc: ko.i18n('const.eventsList.addAgeAtEraStartCriteria.desc', 'Filter Condition Eras by age at era start.'),
     },
     addAgeAtEraEndCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addAgeAtEraEndCriteria.title",
-        "Add Age at Era End Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addAgeAtEraEndCriteria.desc",
-        "Filter Condition Eras by age at era end."
-      ),
+      title: ko.i18n('const.eventsList.addAgeAtEraEndCriteria.title', 'Add Age at Era End Criteria'),
+      desc: ko.i18n('const.eventsList.addAgeAtEraEndCriteria.desc', 'Filter Condition Eras by age at era end.'),
     },
     addGenderCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addGenderCriteria.title",
-        "Add Gender Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addGenderCriteria.desc",
-        "Filter Condition Eras based on Gender."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addGenderCriteria.desc_second",
-        "Filter events based on Gender."
-      ),
+      title: ko.i18n('const.eventsList.addGenderCriteria.title', 'Add Gender Criteria'),
+      desc: ko.i18n('const.eventsList.addGenderCriteria.desc', 'Filter Condition Eras based on Gender.'),
+      desc_second: ko.i18n('const.eventsList.addGenderCriteria.desc_second', 'Filter events based on Gender.'),
     },
     addStartDateCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addStartDateCriteria.title",
-        "Add Start Date Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addStartDateCriteria.desc",
-        "Filter Condition Eras by the Era Start Date."
-      ),
+      title: ko.i18n('const.eventsList.addStartDateCriteria.title', 'Add Start Date Criteria'),
+      desc: ko.i18n('const.eventsList.addStartDateCriteria.desc', 'Filter Condition Eras by the Era Start Date.'),
     },
     addEndDateCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addEndDateCriteria.title",
-        "Add End Date Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addEndDateCriteria.desc",
-        "Filter Condition Eras  by the Era End Date"
-      ),
+      title: ko.i18n('const.eventsList.addEndDateCriteria.title', 'Add End Date Criteria'),
+      desc: ko.i18n('const.eventsList.addEndDateCriteria.desc', 'Filter Condition Eras  by the Era End Date'),
     },
     addEraConditonCountCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addEraConditonCountCriteria.title",
-        "Add Era Conditon Count Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addEraConditonCountCriteria.desc",
-        "Filter Condition Eras by the Condition Count."
-      ),
+      title: ko.i18n('const.eventsList.addEraConditonCountCriteria.title', 'Add Era Conditon Count Criteria'),
+      desc: ko.i18n('const.eventsList.addEraConditonCountCriteria.desc', 'Filter Condition Eras by the Condition Count.'),
     },
     addEraLengthCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addEraLengthCriteria.title",
-        "Add Era Length Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addEraLengthCriteria.desc",
-        "Filter Condition Eras by the Era duration."
-      ),
+      title: ko.i18n('const.eventsList.addEraLengthCriteria.title', 'Add Era Length Criteria'),
+      desc: ko.i18n('const.eventsList.addEraLengthCriteria.desc', 'Filter Condition Eras by the Era duration.'),
     },
     addNestedCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addNestedCriteria.title",
-        "Add Nested Criteria..."
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addNestedCriteria.desc",
-        "Apply criteria using the condition era as the index event"
-      ),
+      title: ko.i18n('const.eventsList.addNestedCriteria.title', 'Add Nested Criteria...'),
+      desc: ko.i18n('const.eventsList.addNestedCriteria.desc', 'Apply criteria using the condition era as the index event'),
     },
     addConditionEra: {
       title: "const.eventsList.addConditionEra.title",
       defaultText: "Add Condition Era",
       desc: "const.eventsList.addConditionEra.desc",
       defaultDescription: "Find patients with specific diagosis era.",
-      desc_second: ko.i18n(
-        "const.eventsList.addConditionEra.desc_second",
-        "Exit cohort based on diagosis era."
-      ),
-      desc_third: ko.i18n(
-        "const.eventsList.addConditionEra.third_third",
-        "Find patients with specific condition era."
-      ),
+      desc_second: ko.i18n('const.eventsList.addConditionEra.desc_second', 'Exit cohort based on diagosis era.'),
+      desc_third: ko.i18n('const.eventsList.addConditionEra.third_third', 'Find patients with specific condition era.'),
     },
     addConditionOccurrence: {
-      title: ko.i18n(
-        "const.eventsList.addConditionOccurrence.title",
-        "Add Condition Occurrence"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addConditionOccurrence.desc",
-        "Find patients with specific diagnoses."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addConditionOccurrence.desc_second",
-        "Exit cohort based on  diagnoses"
-      ),
-      desc_third: ko.i18n(
-        "const.eventsList.addConditionOccurrence.desc_third",
-        "Find patients with specific conditions."
-      ),
+      title: ko.i18n('const.eventsList.addConditionOccurrence.title', 'Add Condition Occurrence'),
+      desc: ko.i18n('const.eventsList.addConditionOccurrence.desc', 'Find patients with specific diagnoses.'),
+      desc_second: ko.i18n('const.eventsList.addConditionOccurrence.desc_second', 'Exit cohort based on  diagnoses'),
+      desc_third: ko.i18n('const.eventsList.addConditionOccurrence.desc_third', 'Find patients with specific conditions.'),
     },
     addDeath: {
       title: ko.i18n('const.eventsList.addDeath.title', 'Add Death'),
