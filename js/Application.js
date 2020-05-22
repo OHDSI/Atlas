@@ -71,16 +71,16 @@ define(
 				});
 				this.appInitializationErrorMessage =  ko.computed(() => {
 					if (this.noSourcesAvailable()) {
-						return 'the current webapi has no sources defined.<br/>please add one or more on <a href="#/configure">configuration</a> page.'
+						return ko.i18n('commonErrors.noSources', 'The current WebAPI has no sources defined.<br/>Please add one or more on <a href="#/configure">configuration</a> page.')();
 					} else if (this.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable) {
-						return 'unable to connect to an instance of the webapi.<br/>please contact your administrator to resolve this issue.'
+						return ko.i18n('commonErrors.webapiConnectError', 'Unable to connect to an instance of the WebAPI.<br/>Please contact your administrator to resolve this issue.')();
 					}
 				});
 				this.pageTitle = ko.pureComputed(() => {
 					let pageTitle = "ATLAS";
 					switch (this.router.currentView()) {
 						case 'loading':
-							pageTitle = `${pageTitle}: Loading`;
+							pageTitle = `${pageTitle}: ` + ko.i18n('common.loading', 'Loading')();
 							break;
 						default:
 							pageTitle = `${pageTitle}: ${ko.unwrap(this.router.activeRoute().title)}`;
@@ -88,7 +88,7 @@ define(
 					}
 
 					if (this.hasUnsavedChanges()) {
-						pageTitle = `*${pageTitle} (unsaved)`;
+						pageTitle = `*${pageTitle} ` + ko.i18n('common.unsaved', '(unsaved)')();
 					}
 
 					return pageTitle;
@@ -159,7 +159,7 @@ define(
 					.on('click', 'th i.fa.fa-shopping-cart', function () {
 						if (self.currentConceptSet() == undefined) {
 							var newConceptSet = {
-								name: ko.observable("New Concept Set"),
+								name: ko.observable(constants.newEntityNames.conceptSet()),
 								id: 0
 							}
 							self.currentConceptSet(newConceptSet);
@@ -195,11 +195,11 @@ define(
 					.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
 						if (self.currentConceptSet() == undefined) {
 							var newConceptSet = {
-								name: ko.observable("New Concept Set"),
+								name: ko.observable(constants.newEntityNames.conceptSet()),
 								id: 0
 							}
 							self.currentConceptSet({
-								name: ko.observable('New Concept Set'),
+								name: ko.observable(constants.newEntityNames.conceptSet()),
 								id: 0
 							});
 							self.currentConceptSetSource('repository');
