@@ -1,13 +1,16 @@
 <!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
 	<span data-bind="if:!$component.loadingReport()"><i class="fa fa-area-chart"></i></span>
-	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> Cohort Reporting
+	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> 
+	<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_1', 'Cohort Reporting')"></span>
 </div>
 
 <div class="modal fade" id="cohortDefinitionChooser" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<div class="modal-header">Choose Cohort Definition</div>
+			<div class="modal-header">
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_2', 'Choose Cohort Definition')"></span>
+			</div>
 			<div class="modal-body">
 				<cohort-definition-browser params="{cohortDefinitionSelected: data => $component.reportCohortDefinitionId(data.id)}"></cohort-definition-browser>
 			</div>
@@ -49,7 +52,9 @@
 
 <div id="reportDataCompleteness" data-bind="if: $component.currentReport() == 'Data Completeness' && !$component.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> Data Completeness (<span data-bind="text:$component.reportSourceKey()"></span>)</div>
+		<div class="reportHeading"><i class="fa fa-area-chart"></i> 
+			<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_3', 'Data Completeness')"></span>
+			(<span data-bind="text:$component.reportSourceKey()"></span>)</div>
 		<faceted-datatable params="{columns: $component.dataCompletColumns, reference:$component.dataCompleteReference, options:$component.dataCompleteOptions, rowClick:$component.dataCompleteRowClick }"></faceted-datatable>
 	</div>
 	<div class="pad-10 report">
@@ -64,14 +69,18 @@
 		<table id="care_site_table" class="stripe compact hover dataTable no-footer">
 			<thead>
 				<tr>
-					<th>Care Site</th>
+					<th>
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_4', 'Care Site')"></span>
+					</th>
 				</tr>
 			</thead>
 		</table>
 	</div>
 
 	<div class=" report">
-		<div class="reportSectionHeading">Entropy by Date</div>
+		<div class="reportSectionHeading">
+			<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_5', 'Entropy by Date')"></span>
+		</div>
 		<div class="evidenceVisualization" id="entropyByDate" />
 	</div>
 </div>
@@ -80,31 +89,41 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Year of Birth <i data-bind="click:function(){ setHelpContent('year-of-birth') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_6', 'Year of Birth')"></span>
+				<i data-bind="click:function(){ setHelpContent('year-of-birth') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="hist"></div>
 			</div>
-			<div class="panel-footer">The number of people in this cohort shown with respect to their year of birth.</div>
+			<div class="panel-footer">
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_7', 'The number of people in this cohort shown with respect to their year of birth.')"></span>
+			</div>
 		</div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Demographics <i data-bind="click:function(){ setHelpContent('demographics') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_8', 'Demographics')"></span>
+				<i data-bind="click:function(){ setHelpContent('demographics') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-xs-4">
 						<div class="evidenceVisualization" id="gender"></div>
-						<div class="evidenceDescription">Gender</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_9', 'Gender')"></span>
+						</div>
 					</div>
 					<div class="col-xs-4">
 						<div class="evidenceVisualization" id="race"></div>
-						<div class="evidenceDescription">Race</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_10', 'Race')"></span>
+						</div>
 					</div>
 					<div class="col-xs-4">
 						<div class="evidenceVisualization" id="ethnicity"></div>
-						<div class="evidenceDescription">Ethnicity</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_11', 'Ethnicity')"></span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -115,10 +134,10 @@
 <!-- ko if: $component.currentReport() == 'Measurement' && !$component.loadingReport() -->
 <div class="panel panel-danger">
 	<div class="panel-heading">
-		Report Not implemented
+		<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_12', 'Report Not implemented')"></span>
 	</div>
 	<div class="panel-body">
-		This report has not been implemented.
+		<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_13', 'This report has not been implemented.)"></span>
 	</div>
 </div>
 <!-- /ko -->
@@ -127,7 +146,8 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Prevalence by Month <i data-bind="click:function(){ setHelpContent('cohort-specific-prevalence-per-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_14', 'Prevalence by Month')"></span>
+				<i data-bind="click:function(){ setHelpContent('cohort-specific-prevalence-per-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
@@ -136,7 +156,8 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Cohort Start<i data-bind="click:function(){ setHelpContent('cohort-specific-cohort-start') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_15', 'Cohort Start')"></span>
+				<i data-bind="click:function(){ setHelpContent('cohort-specific-cohort-start') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="cohort_trellisLinePlot"></div>
@@ -145,7 +166,8 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Persons in Cohort from Start to End<i data-bind="click:function(){ setHelpContent('cohort-specific-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_16', 'Persons in Cohort from Start to End')"></span>
+				<i data-bind="click:function(){ setHelpContent('cohort-specific-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="personinCohortFromStartToEnd"></div>
@@ -154,7 +176,8 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Number of Persons by Duration from Cohort Start to Cohort End<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_17', 'Number of Persons by Duration from Cohort Start to Cohort End')"></span>
+				<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="personsByDurationFromStartToEnd"></div>
@@ -163,7 +186,8 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Distribution of Age at Cohort Start by Cohort Start Year<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_18', 'Distribution of Age at Cohort Start by Cohort Start Year')"></span>
+				<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="distributionAgeCohortStartByCohortStartYear"></div>
@@ -172,17 +196,22 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Age Distributions<i data-bind="click:function(){ setHelpContent('cohort-specific-age-distributions') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_19', 'Age Distributions')"></span>
+				<i data-bind="click:function(){ setHelpContent('cohort-specific-age-distributions') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-6">
 						<div class="evidenceVisualization" id="distributionAgeCohortStartByGender"></div>
-						<div class="evidenceDescription">Distribution of Age at Cohort Start by Gender</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_20', 'Distribution of Age at Cohort Start by Gender')"></span>
+						</div>
 					</div>
 					<div class="col-sm-6">
 						<div class="evidenceVisualization" id="ageAtIndex"></div>
-						<div class="evidenceDescription">Age at Index</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_21', 'Age at Index')"></span>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -194,7 +223,8 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Tornado<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_22', 'Tornado')"></span>
+				<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body pad-5">
 				<div id="tornadoPlot" class="text-center"><svg width="1000" height="300" preserveAspectRatio></svg></div>
@@ -203,12 +233,13 @@
 	</div>
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			Sample Profiles<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+			<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_23', 'Sample Profiles')"></span>
+			<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 		</div>
 		<div class="panel-body" style="background-color:#222;">
 			<div id="tornadoProfiles" class="text-center">
 				<div style="color:#eee;" data-bind="if:$component.tornadoProfiles().length == 0">
-					Select a Bar from the Tornado Plot to view Sample Profiles for that Strata.
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_24', 'Select a Bar from the Tornado Plot to view Sample Profiles for that Strata.')"></span>
 				</div>
 				<div class="col-sm-1"></div>
 				<!-- ko foreach:$component.tornadoProfiles -->
@@ -228,13 +259,18 @@
 	<div class="pad-5 report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Prevalence<i data-bind="click:function(){ setHelpContent('conditions-by-index-condition-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_25', 'Condition Prevalence')"></span>
+				<i data-bind="click:function(){ setHelpContent('conditions-by-index-condition-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#condition-table-panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#condition-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+						</a>
 					</li>
-					<li id="treemap-tab"><a href="#condition-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					<li id="treemap-tab"><a href="#condition-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -242,7 +278,9 @@
 						<div id="condition_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
+							</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="condition-table-panel" data-bind="eventListener: { event: 'click', selector: 'tr', callback: (d,c,e) => handleGenericRowClick(e, 'condition', 'condition_table')}">
 						<table id="condition_table" class="stripe compact hover dataTable no-footer" type="condition">
@@ -270,7 +308,9 @@
 		<!-- /ko -->
 		<!-- ko if: $component.activeReportDrilldown -->
 		<div class="panel panel-primary">
-			<div class="panel-heading">Drilldown Report</div>
+			<div class="panel-heading">
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_29', 'Drilldown Report')"></span>
+			</div>
 			<div class="panel-body">
 				<div>
 					<div id="conditionDrilldownScatterplotHeading" class="reportSectionHeading">
@@ -287,13 +327,18 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Drugs by Index Date <i data-bind="click:function(){ setHelpContent('drugs-by-index') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_30', 'Drugs by Index Date ')"></span>
+				<i data-bind="click:function(){ setHelpContent('drugs-by-index') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#drugs-by-index-table-panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#drugs-by-index-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a>
 					</li>
-					<li id="treemap-tab"><a href="#drugs-by-index-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					<li id="treemap-tab"><a href="#drugs-by-index-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -301,7 +346,9 @@
 						<div id="drugindex_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
+						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="drugs-by-index-table-panel" data-bind="eventListener: { event: 'click', selector: 'tr', callback: (d,c,e) => handleGenericRowClick(e, 'drug', 'drugs-by-index-table')}">
 						<table id="drugs-by-index-table" class="stripe compact hover dataTable no-footer" type="drug">
@@ -325,7 +372,8 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i>
+			<span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
 		</div>
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div id="drugDrilldownScatterplotHeading" class="reportSectionHeading">
@@ -340,49 +388,57 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Age at First Observation <i data-bind="click:function(){ setHelpContent('observation-periods-age-at-first-observation') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_31', 'Age at First Observation')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-age-at-first-observation') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="ageatfirstobservation"></div>
 			</div>
 			<div class="panel-footer">
-				The distribution of age at first observation in the cohort.
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_32', 'The distribution of age at first observation in the cohort.')"></span>
 			</div>
 		</div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Age by Gender <i data-bind="click:function(){ setHelpContent('observation-periods-age-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_33', 'Age by Gender')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-age-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="agebygender"></div>
 			</div>
 			<div class="panel-footer">
-				The distribution of age at first observation in the cohort stratified by gender.
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_34', 'The distribution of age at first observation in the cohort stratified by gender.')"></span>
+				
 			</div>
 		</div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Length<i data-bind="click:function(){ setHelpContent('observation-periods-length') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_35', 'Observation Length')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-length') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="observationlength"></div>
 			</div>
 			<div class="panel-footer">
-				Distribution of total observation time in cohort.
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_36', 'Distribution of total observation time in cohort.')"></span>
+				
 			</div>
 		</div>
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Length by Gender<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_37', 'Observation Length by Gender')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="opbygender"></div>
 			</div>
 			<div class="panel-footer">
-				Distribution of total observation time in cohort by gender.
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_38', 'Distribution of total observation time in cohort by gender.')"></span>
+				
 			</div>
 		</div>
 
@@ -395,7 +451,9 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Length by Age Decile<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-age-decile') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_39', 'Observation Length by Age Decile')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-age-decile') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="opbyage"></div>
@@ -415,7 +473,8 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Observation Periods per Person<i data-bind="click:function(){ setHelpContent('observation-periods-per-person') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_40', 'Observation Periods per Person')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-per-person') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="opperperson"></div>
@@ -424,7 +483,9 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Persons With Continuous Observation By Month<i data-bind="click:function(){ setHelpContent('observation-periods-continuous-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_41', 'Persons With Continuous Observation By Month')"></span>
+				<i data-bind="click:function(){ setHelpContent('observation-periods-continuous-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="oppeoplebymonthsingle"></div>
@@ -438,14 +499,20 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Era Prevalence<i data-bind="click: function(){ setHelpContent('condition-era-prevalence') }"  class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_42', 'Condition Era Prevalence')"></span>
+				<i data-bind="click: function(){ setHelpContent('condition-era-prevalence') }"  class="fa fa-question-circle pull-right"></i>
 
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#conditionera-table-panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#conditionera-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a>
 					</li>
-					<li><a href="#conditionera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					<li><a href="#conditionera-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -453,7 +520,9 @@
 						<div id="conditionera_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
+						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="conditionera-table-panel" data-bind="eventListener: { event: 'click', selector: '.conditionera_table_selector', callback: handleConditionEraTableClick}">
 						<table id="conditionera_table" class="stripe compact hover dataTable no-footer">
@@ -477,12 +546,13 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i>
+			<span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
 		</div>
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Condition Era Prevalence
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_42', 'Condition Era Prevalence')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="conditionera_trellisLinePlot"></div>
@@ -490,7 +560,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Condition Era Prevalence by Month
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_43', 'Condition Era Prevalence by Month')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="conditioneraPrevalenceByMonth"></div>
@@ -499,7 +570,7 @@
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Age at First Diagnosis
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_44', 'Age at First Diagnosis')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="conditioneras_age_at_first_diagnosis"></div>
@@ -508,7 +579,8 @@
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Length of Condition Era
+					
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_45', 'Length of Condition Era')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="conditioneras_length_of_era"></div>
@@ -522,13 +594,18 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Procedure Prevalence<i data-bind="click:function(){ setHelpContent('procedure-by-index-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_46', 'Procedure Prevalence')"></span>
+				<i data-bind="click:function(){ setHelpContent('procedure-by-index-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li id="treemap-tab"><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					<li id="treemap-tab"><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
-					<li class="active"><a href="#procedure-table-panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#procedure-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -536,7 +613,10 @@
 						<div id="procedureindex_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
+						</div>
+					</div>	
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: 'tr', callback: (d,c,e) => handleGenericRowClick(e, 'procedure', 'procedure_table')}">
 						<table id="procedure_table" class="stripe compact hover dataTable no-footer" type="procedure">
@@ -558,7 +638,7 @@
 			</div>
 		</div>
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
 		</div>
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div id="procedureDrilldownScatterplotHeading" class="reportSectionHeading">
@@ -584,19 +664,27 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Condition Prevalence <i data-bind="click:function(){ setHelpContent('condition-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_47', 'Condition Prevalence')"></span>
+				<i data-bind="click:function(){ setHelpContent('condition-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#condition-table-panel" role="tab" data-toggle="tab">Table</a></li>
-					<li id="treemap-tab"><a href="#condition-treemap-panel" role="tab" data-toggle="tab">Treemap</a></li>
+					<li class="active"><a href="#condition-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a></li>
+					<li id="treemap-tab"><a href="#condition-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a></li>
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
 						<div id="condition_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
+						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="condition-table-panel" data-bind="eventListener: { event: 'click', selector: '.condition_table_selector', callback: handleConditionTableClick}">
 						<table id="condition_table" class="stripe compact hover dataTable no-footer">
@@ -619,14 +707,17 @@
 			</div>
 		</div>
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i>
+			<div class="treemap_legend">
+				<span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
+			</div>
 		</div>
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div class="heading" id="conditionDrilldown"></div>
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Condition Prevalence
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_47', 'Condition Prevalence')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="condition_trellisLinePlot"></div>
@@ -635,7 +726,8 @@
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Condition Prevalence by Month
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_48', 'Condition Prevalence by Month')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="conditionPrevalenceByMonth"></div>
@@ -644,7 +736,8 @@
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Condition Type
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_49', 'Condition Type')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="conditionsByType"></div>
@@ -653,7 +746,7 @@
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Age at First Diagnosis
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_44', 'Age at First Diagnosis')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="ageAtFirstDiagnosis"></div>
@@ -667,13 +760,19 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Drug Era Prevalence<i data-bind="click:function(){ setHelpContent('drug-era-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_50', 'Drug Era Prevalence')"></span>
+				<i data-bind="click:function(){ setHelpContent('drug-era-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#drugera-table-panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#drugera-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a>
 					</li>
-					<li><a href="#drugera-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					<li><a href="#drugera-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -681,7 +780,9 @@
 						<div id="drugera_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Length of Era (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
+					</div>	
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
 						<table id="drugera_table" class="stripe compact hover dataTable no-footer">
@@ -704,7 +805,7 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
 		</div>
 
 		<div data-bind="if:$component.activeReportDrilldown">
@@ -712,7 +813,7 @@
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Drug Era Prevalence
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_50', 'Drug Era Prevalence')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drugera_trellisLinePlot"></div>
@@ -720,7 +821,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Drug Era Prevalence by Month
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_51', 'Drug Era Prevalence by Month')"></span>
+				
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drugeraPrevalenceByMonth"></div>
@@ -728,7 +830,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Age at First Exposure by Gender
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_52', 'Age at First Exposure by Gender')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drugeras_age_at_first_exposure"></div>
@@ -736,7 +839,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Length of Era Distribution
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_53', 'Length of Era Distribution')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drugeras_length_of_era"></div>
@@ -750,13 +854,19 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Drug Exposure<i data-bind="click:function(){ setHelpContent('drug-exposure') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_54', 'Drug Exposure')"></span>
+				<i data-bind="click:function(){ setHelpContent('drug-exposure') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#drug_table_panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#drug_table_panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a>
 					</li>
-					<li id="treemap-tab"><a href="#drug_treemap_panel" role="tab" data-toggle="tab">Treemap</a>
+					<li id="treemap-tab"><a href="#drug_treemap_panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -764,7 +874,9 @@
 						<div id="drug_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
+					</div>	
 					</div>
 					<div class="tab-pane active" id="drug_table_panel" data-bind="eventListener: { event: 'click', selector: '.drug_table_selector', callback: handleDrugTableClick}">
 						<table id="drug_table" class="stripe compact hover dataTable no-footer">
@@ -788,14 +900,15 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
 		</div>
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div class="heading" id="drugExposureDrilldown"></div>
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Drug Exposure Prevalence
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_55', 'Drug Exposure Prevalence')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drug_trellisLinePlot"></div>
@@ -803,7 +916,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Drug Exposure Prevalence by Month
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_56', 'Drug Exposure Prevalence by Month')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drugPrevalenceByMonth"></div>
@@ -811,7 +925,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Age at First Exposure
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_57', 'Age at First Exposure')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="ageAtFirstExposure"></div>
@@ -819,7 +934,7 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Days Supply Distribution
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_58', 'Days Supply Distribution')"></span>
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="daysSupplyDistribution"></div>
@@ -827,7 +942,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Quantity Distribution
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_59', 'Quantity Distribution')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="quantityDistribution"></div>
@@ -835,7 +951,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Refills Distribution
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_60', 'Refills Distribution')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="refillsDistribution"></div>
@@ -843,7 +960,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Drugs by Type
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_61', 'Drugs by Type')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="drugsByType"></div>
@@ -857,13 +975,19 @@
 	<div class=" report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Procedure Prevalence<i data-bind="click:function(){ setHelpContent('procedure-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_62', 'Procedure Prevalence')"></span>
+				<i data-bind="click:function(){ setHelpContent('procedure-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<ul class="nav nav-tabs" id="myTab" role="tablist">
-					<li class="active"><a href="#procedure-table-panel" role="tab" data-toggle="tab">Table</a>
+					<li class="active"><a href="#procedure-table-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_26', 'Table')"></span>
+					</a>
 					</li>
-					<li><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">Treemap</a>
+					<li><a href="#procedure-treemap-panel" role="tab" data-toggle="tab">
+						<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_27', 'Treemap')"></span>
+					</a>
 					</li>
 				</ul>
 				<div id='content' class="tab-content">
@@ -871,7 +995,9 @@
 						<div id="procedure_treemap_container">
 							<div class="treemap_zoomtarget"></div>
 						</div>
-						<div class="treemap_legend">Box Size: Prevalence, Color: Records per Person (Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom</div>
+						<div class="treemap_legend">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
+					</div>	
 					</div>
 					<div class="tab-pane active" role="tabpanel" id="procedure-table-panel" data-bind="eventListener: { event: 'click', selector: '.procedure_table_selector', callback: handleProcedureTableClick}">
 						<table id="procedure_table" class="stripe compact hover dataTable no-footer">
@@ -894,14 +1020,15 @@
 		</div>
 
 		<div class="loader" data-bind="if:$component.loadingReportDrilldown">
-			<i class="fa fa-circle-o-notch fa-spin"></i> Loading Drilldown...
+			<i class="fa fa-circle-o-notch fa-spin"></i> <span data-bind="text: ko.i18n('common.loading', 'Loading')"></span>
 		</div>
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div class="heading" id="procedureDrilldown"></div>
 
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Procedure Prevalence
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_62', 'Procedure Prevalence')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="procedure_trellisLinePlot"></div>
@@ -909,7 +1036,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Procedure Prevalence by Month
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_63', 'Procedure Prevalence by Month')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="procedurePrevalenceByMonth"></div>
@@ -917,7 +1045,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Procedures by Type
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_64', 'Procedures by Type')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="proceduresByType"></div>
@@ -925,7 +1054,8 @@
 			</div>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					Age at First Occurrence
+					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_65', 'Age at First Occurrence')"></span>
+					
 				</div>
 				<div class="panel-body">
 					<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
@@ -939,7 +1069,9 @@
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Death Prevalence by Age, Gender, Year<i data-bind="click:function(){ setHelpContent('death-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_66', 'Death Prevalence by Age, Gender, Year')"></span>
+				<i data-bind="click:function(){ setHelpContent('death-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="death_trellisLinePlot"></div>
@@ -948,7 +1080,9 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Death Prevalence by Month<i data-bind="click:function(){ setHelpContent('death-prevalence-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_67', 'Death Prevalence by Month')"></span>
+				<i data-bind="click:function(){ setHelpContent('death-prevalence-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="evidenceVisualization" id="deathPrevalenceByMonth"></div>
@@ -957,17 +1091,23 @@
 
 		<div class="panel panel-primary">
 			<div class="panel-heading">
-				Death Details<i data-bind="click:function(){ setHelpContent('death-details') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
+				
+				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_68', 'Death Details')"></span>
+				<i data-bind="click:function(){ setHelpContent('death-details') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-6">
 						<div class="evidenceVisualization" id="ageAtDeath"></div>
-						<div class="evidenceDescription">Age at Death</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_69', 'Age at Death')"></span>
+							</div>
 					</div>
 					<div class="col-sm-6">
 						<div class="evidenceVisualization" id="deathByType"></div>
-						<div class="evidenceDescription">Death by Type</div>
+						<div class="evidenceDescription">
+							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_70', 'Death by Type')"></span>
+						</div>
 					</div>
 				</div>
 			</div>
