@@ -14,12 +14,15 @@ define([
             this.classes = classes;
         }
 
-        convertAnalysisToTabularData(analysis) {
+        convertAnalysisToTabularData(analysis, stratas = null) {
             let columns = this.getDefaultColumns(analysis);
 
             const data = new Map();
             const cohorts = Array.from(analysis.cohorts);
-            const strataNames = new Map();
+            const strataNames = (stratas && stratas.reduce((map, s) => {
+                const {strataId, strataName} = this.extractStrata(s);
+                return map.set(strataId, strataName);
+            }, new Map())) || new Map();
 
             let mapCovariate;
             mapCovariate = (stat) => {
@@ -46,13 +49,9 @@ define([
                 }
 
                 if (analysis.isComparative) {    
-                    if (stat.strataId === 0) {
-                        row.stdDiff = this.formatStdDiff(stat.diff);
-                    }
-
+                    row.stdDiff = this.formatStdDiff(stat.diff);
                     this.convertCompareFields(row, strataId, stat);
-                } else {        
-
+                } else {
                     this.convertFields(row, strataId, stat.cohortId, stat);
                 }
             };
@@ -112,7 +111,7 @@ define([
         getStdDiffColumn() {
             return {
               title: 'Std diff',
-              render: (s, p, d) => d.stdDiff,
+              render: (s, p, d) => d.stdDiff || this.formatStdDiff(0.0),
               className: this.classes('col-dist-std-diff'),
               type: 'numberAbs'
             };
