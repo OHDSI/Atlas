@@ -1123,213 +1123,87 @@ define(["knockout"], function (ko) {
       ),
     },
     addDeath: {
-      title: ko.i18n("const.eventsList.addDeath.title", "Add Death"),
-      desc: ko.i18n(
-        "const.eventsList.addDeath.desc",
-        "Find patients based on death."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addDeath.desc_second",
-        "Exit cohort based on  death."
-      ),
+      title: ko.i18n('const.eventsList.addDeath.title', 'Add Death'),
+      desc: ko.i18n('const.eventsList.addDeath.desc', 'Find patients based on death.'),
+      desc_second: ko.i18n('const.eventsList.addDeath.desc_second', 'Exit cohort based on  death.'),
     },
     addDeviceExposure: {
-      title: ko.i18n(
-        "const.eventsList.addDeviceExposure.title",
-        "Add Device Exposure"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addDeviceExposure.desc",
-        "Find patients based on device exposure."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addDeviceExposure.desc_second",
-        "Exit cohort based on  device exposure."
-      ),
+      title: ko.i18n('const.eventsList.addDeviceExposure.title', 'Add Device Exposure'),
+      desc: ko.i18n('const.eventsList.addDeviceExposure.desc', 'Find patients based on device exposure.'),
+      desc_second: ko.i18n('const.eventsList.addDeviceExposure.desc_second', 'Exit cohort based on  device exposure.'),
     },
     addDoseEra: {
-      title: ko.i18n("const.eventsList.addDoseEra.title", "Add Dose Era"),
-      desc: ko.i18n(
-        "const.eventsList.addDoseEra.desc",
-        "Find patients with dose eras."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addDoseEra.desc_second",
-        "Exit cohort based on dose eras."
-      ),
+      title: ko.i18n('const.eventsList.addDoseEra.title', 'Add Dose Era'),
+      desc: ko.i18n('const.eventsList.addDoseEra.desc', 'Find patients with dose eras.'),
+      desc_second: ko.i18n('const.eventsList.addDoseEra.desc_second', 'Exit cohort based on dose eras.'),
     },
     addDrugEra: {
-      title: ko.i18n("const.eventsList.addDrugEra.title", "Add Drug Era"),
-      desc: ko.i18n(
-        "const.eventsList.addDrugEra.desc",
-        "Find patients with with exposure to drugs over time."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addDrugEra.desc_second",
-        "Exit cohort based on drugs over time."
-      ),
+      title: ko.i18n('const.eventsList.addDrugEra.title', 'Add Drug Era'),
+      desc: ko.i18n('const.eventsList.addDrugEra.desc', 'Find patients with with exposure to drugs over time.'),
+      desc_second: ko.i18n('const.eventsList.addDrugEra.desc_second', 'Exit cohort based on drugs over time.'),
     },
     addDrugExposure: {
-      title: ko.i18n(
-        "const.eventsList.addDrugExposure.title",
-        "Add Drug Exposure"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addDrugExposure.desc",
-        "Find patients with exposure to specific drugs or drug classes."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addDrugExposure.desc_second",
-        "Exit cohort based on exposure to specific drugs or drug classes."
-      ),
+      title: ko.i18n('const.eventsList.addDrugExposure.title', 'Add Drug Exposure'),
+      desc: ko.i18n('const.eventsList.addDrugExposure.desc', 'Find patients with exposure to specific drugs or drug classes.'),
+      desc_second: ko.i18n('const.eventsList.addDrugExposure.desc_second', 'Exit cohort based on exposure to specific drugs or drug classes.'),
     },
     addMeasurement: {
-      title: ko.i18n(
-        "const.eventsList.addMeasurement.title",
-        "Add Measurement"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addMeasurement.desc",
-        "Find patients based on Measurement."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addMeasurement.desc_second",
-        "Exit cohort based on Measurement."
-      ),
+      title: ko.i18n('const.eventsList.addMeasurement.title', 'Add Measurement'),
+      desc: ko.i18n('const.eventsList.addMeasurement.desc', 'Find patients based on Measurement.'),
+      desc_second: ko.i18n('const.eventsList.addMeasurement.desc_second', 'Exit cohort based on Measurement.'),
     },
     addObservation: {
-      title: ko.i18n(
-        "const.eventsList.addObservation.title",
-        "Add Observation"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addObservation.desc",
-        "Find patients based on lab tests or other observations.."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addObservation.desc_second",
-        "Exit cohort based on lab tests or other observations."
-      ),
+      title: ko.i18n('const.eventsList.addObservation.title', 'Add Observation'),
+      desc: ko.i18n('const.eventsList.addObservation.desc', 'Find patients based on lab tests or other observations..'),
+      desc_second: ko.i18n('const.eventsList.addObservation.desc_second', 'Exit cohort based on lab tests or other observations.'),
     },
     addObservationPeriod: {
-      title: ko.i18n(
-        "const.eventsList.addObservationPeriod.title",
-        "Add Observation Period"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addObservationPeriod.desc",
-        "Find patients based on Observation Period."
-      ),
+      title: ko.i18n('const.eventsList.addObservationPeriod.title', 'Add Observation Period'),
+      desc: ko.i18n('const.eventsList.addObservationPeriod.desc', 'Find patients based on Observation Period.'),
     },
     addPayerPlanPeriod: {
-      title: ko.i18n(
-        "const.eventsList.addPayerPlanPeriod.title",
-        "Add Payer Plan Period"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addPayerPlanPeriod.desc",
-        "Find patients based on Payer Plan Period."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addPayerPlanPeriod.desc_second",
-        "Find patients based on Payer Plan Period."
-      ),
+      title: ko.i18n('const.eventsList.addPayerPlanPeriod.title', 'Add Payer Plan Period'),
+      desc: ko.i18n('const.eventsList.addPayerPlanPeriod.desc', 'Find patients based on Payer Plan Period.'),
+      desc_second: ko.i18n('const.eventsList.addPayerPlanPeriod.desc_second', 'Find patients based on Payer Plan Period.'),
     },
     addProcedureOccurrence: {
-      title: ko.i18n(
-        "const.eventsList.addProcedureOccurrence.title",
-        "Add Procedure Occurrence"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addProcedureOccurrence.desc",
-        "Find patients that experienced a specific procedure."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addProcedureOccurrence.desc_second",
-        "Exit cohort based on procedures."
-      ),
+      title: ko.i18n('const.eventsList.addProcedureOccurrence.title', 'Add Procedure Occurrence'),
+      desc: ko.i18n('const.eventsList.addProcedureOccurrence.desc', 'Find patients that experienced a specific procedure.'),
+      desc_second: ko.i18n('const.eventsList.addProcedureOccurrence.desc_second', 'Exit cohort based on procedures.'),
     },
     addSpecimen: {
-      title: ko.i18n("const.eventsList.addSpecimen.title", "Add Specimen"),
-      desc: ko.i18n(
-        "const.eventsList.addSpecimen.desc",
-        "Find patients based on Specimen."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addSpecimen.desc_second",
-        "Find patients based on Specimen."
-      ),
+      title: ko.i18n('const.eventsList.addSpecimen.title', 'Add Specimen'),
+      desc: ko.i18n('const.eventsList.addSpecimen.desc', 'Find patients based on Specimen.'),
+      desc_second: ko.i18n('const.eventsList.addSpecimen.desc_second', 'Find patients based on Specimen.'),
     },
     addVisit: {
-      title: ko.i18n("const.eventsList.addVisit.title", "Add Visit"),
-      desc: ko.i18n(
-        "const.eventsList.addVisit.desc",
-        "Find patients based on visit information."
-      ),
-      desc_second: ko.i18n(
-        "const.eventsList.addVisit.desc_second",
-        "Exit cohort based on visit information."
-      ),
+      title: ko.i18n('const.eventsList.addVisit.title', 'Add Visit'),
+      desc: ko.i18n('const.eventsList.addVisit.desc', 'Find patients based on visit information.'),
+      desc_second: ko.i18n('const.eventsList.addVisit.desc_second', 'Exit cohort based on visit information.'),
     },
     addAgeCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addAgeCriteria.title",
-        "Add Age Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addAgeCriteria.desc",
-        "Filter events based on age."
-      ),
+      title: ko.i18n('const.eventsList.addAgeCriteria.title', 'Add Age Criteria'),
+      desc: ko.i18n('const.eventsList.addAgeCriteria.desc','Filter events based on age.'),
     },
     addEventStartDateCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addEventStartDateCriteria.title",
-        "Add Event Start Date Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addEventStartDateCriteria.desc",
-        "Filter Events by Start Date."
-      ),
+      title: ko.i18n('const.eventsList.addEventStartDateCriteria.title', 'Add Event Start Date Criteria'),
+      desc: ko.i18n('const.eventsList.addEventStartDateCriteria.desc', 'Filter Events by Start Date.'),
     },
     addEventEndDateCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addEventEndDateCriteria.title",
-        "Add Event End Date Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addEventEndDateCriteria.desc",
-        "Filter Events by End Date."
-      ),
+      title: ko.i18n('const.eventsList.addEventEndDateCriteria.title', 'Add Event End Date Criteria'),
+      desc: ko.i18n('const.eventsList.addEventEndDateCriteria.desc', 'Filter Events by End Date.'),
     },
     addRaceCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addRaceCriteria.title",
-        "Add Race Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addRaceCriteria.desc",
-        "Filter events based on Gender."
-      ),
+      title: ko.i18n('const.eventsList.addRaceCriteria.title', 'Add Race Criteria'),
+      desc: ko.i18n('const.eventsList.addRaceCriteria.desc', 'Filter events based on Gender.'),
     },
     addEthnicityCriteria: {
-      title: ko.i18n(
-        "const.eventsList.addEthnicityCriteria.title",
-        "Add Ethnicity Criteria"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addEthnicityCriteria.desc",
-        "Filter events based on Ethnicity."
-      ),
+      title: ko.i18n('const.eventsList.addEthnicityCriteria.title', 'Add Ethnicity Criteria'),
+      desc: ko.i18n('const.eventsList.addEthnicityCriteria.desc', 'Filter events based on Ethnicity.'),
     },
     addDemographic: {
-      title: ko.i18n(
-        "const.eventsList.addDemographic.title",
-        "Add Demographic"
-      ),
-      desc: ko.i18n(
-        "const.eventsList.addDemographic.desc",
-        "Filter events based on demographic criteria."
-      ),
+      title: ko.i18n('const.eventsList.addDemographic.title', 'Add Demographic'),
+      desc: ko.i18n('const.eventsList.addDemographic.desc', 'Filter events based on demographic criteria.'),
     },
   };
 
@@ -1588,260 +1462,105 @@ define(["knockout"], function (ko) {
     'addEthnicity',
   ];
   const AddDemographic = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.demographic.text",
-        "Add Demographic"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.demographic.text', 'Add Demographic')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.demographic.description",
-        "Filter events based on demographic criteria."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.demographic.description', 'Filter events based on demographic criteria.')),
     type: CriteriaTypes.DEMOGRAPHIC,
   };
   const AddConditionEra = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.condition-era.text",
-        "Add Condition Era"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.text', 'Add Condition Era')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.condition-era.description",
-        "Find patients with specific condition era."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.condition-era.description', 'Find patients with specific condition era.')),
     type: CriteriaTypes.CONDITION_ERA,
   };
   const AddConditionOccurrence = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.condition-occurrence.text",
-        "Add Condition Occurrence"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.text', 'Add Condition Occurrence')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.condition-occurrence.tedescriptionxt",
-        "Find patients with specific conditions."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.condition-occurrence.tedescriptionxt','Find patients with specific conditions.')),
     type: CriteriaTypes.CONDITION_OCCURRENCE,
   };
   const AddDeath = {
-    text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.death.text", "Add Death")
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.death.text', 'Add Death')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.death.description",
-        "Find patients based on death."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.death.description', 'Find patients based on death.')),
     type: CriteriaTypes.DEATH,
   };
   const AddDeviceExposure = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.device-exposure.text",
-        "Add Device Exposure"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.text', 'Add Device Exposure')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.device-exposure.description",
-        "Find patients based on device exposure."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.description', 'Find patients based on device exposure.')),
     type: CriteriaTypes.DEVICE_EXPOSURE,
   };
   const AddDoseEra = {
-    text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.dose-era.text", "Add Dose Era")
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.dose-era.text', 'Add Dose Era')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.dose-era.description",
-        "Find patients with dose eras."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.dose-era.description', 'Find patients with dose eras.')),
     type: CriteriaTypes.DOSE_ERA,
   };
   const AddDrugEra = {
-    text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.drug-era.text", "Add Drug Era")
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.text', 'Add Drug Era')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.drug-era.description",
-        "Find patients with drug eras."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.drug-era.description', 'Find patients with drug eras.')),
     type: CriteriaTypes.DRUG_ERA,
   };
   const AddDrugExposure = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.drug-exposure.text",
-        "Add Drug Exposure"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.text', 'Add Drug Exposure')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.drug-exposure.description",
-        "Find patients with exposure to specific drugs or drug classes."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.drug-exposure.description', 'Find patients with exposure to specific drugs or drug classes.')),
     type: CriteriaTypes.DRUG_EXPOSURE,
   };
   const AddLocationRegion = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.location-region.text",
-        "Add Location Region"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.location-region.text', 'Add Location Region')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.location-region.description",
-        "Find patients within geographical area."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.location-region.description', 'Find patients within geographical area.')),
     type: CriteriaTypes.LOCATION_REGION,
   };
   const AddMeasurement = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.measurement.text",
-        "Add Measurement"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.measurement.text', 'Add Measurement')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.measurement.description",
-        "Find patients based on measurements."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.measurement.description', 'Find patients based on measurements.')),
     type: CriteriaTypes.MEASUREMENT,
   };
   const AddObservation = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.observation.text",
-        "Add Observation"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.observation.text', 'Add Observation')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.observation.description",
-        "Find patients based on observations."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.observation.description', 'Find patients based on observations.')),
     type: CriteriaTypes.OBSERVATION,
   };
   const AddObservationPeriod = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.observation-period.text",
-        "Add Observation Period"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.observation-period.text', 'Add Observation Period')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.observation-period.description",
-        "Find patients based on observation periods."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.observation-period.description', 'Find patients based on observation periods.')),
     type: CriteriaTypes.OBSERVATION_PERIOD,
   };
   const AddPayerPlanPeriod = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.payer-plan-period.text",
-        "Add Payer Plan Period"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.text', 'Add Payer Plan Period')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.payer-plan-period.description",
-        "Find patients based on Payer Plan Period."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.payer-plan-period.description', 'Find patients based on Payer Plan Period.')),
     type: CriteriaTypes.PAYER_PLAN_PERIOD,
   };
   const AddProcedureOccurrence = {
-    text: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.procedure-occurrence.text",
-        "Add Procedure Occurrence"
-      )
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.text', 'Add Procedure Occurrence')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.procedure-occurrence.description",
-        "Find patients that experienced a specific procedure."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.description', 'Find patients that experienced a specific procedure.')),
     type: CriteriaTypes.PROCEDURE_OCCURRENCE,
   };
   const AddSpecimen = {
-    text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.specimen.text", 
-      "Add Specimen")
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.specimen.text', 'Add Specimen')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.specimen.description",
-        "Find patients based on specimen."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.specimen.description', 'Find patients based on specimen.')),
     type: CriteriaTypes.SPECIMEN,
   };
   const AddVisit = {
-    text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.visit.text", 
-      "Visit")
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.visit.text', 'Visit')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.visit.description",
-        "Find patients based on visit information."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.visit.description', 'Find patients based on visit information.')),
     type: CriteriaTypes.VISIT,
   };
   const AddGroup = {
-    text: ko.unwrap(
-      ko.i18n("cc.viewEdit.design.subgroups.add.group.text", 
-      "Add Group")
-    ),
+    text: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.group.text', 'Add Group')),
     selected: false,
-    description: ko.unwrap(
-      ko.i18n(
-        "cc.viewEdit.design.subgroups.add.group.description",
-        "Add a group to combine criteria using and/or relationships."
-      )
-    ),
+    description: ko.unwrap(ko.i18n('cc.viewEdit.design.subgroups.add.group.description', 'Add a group to combine criteria using and/or relationships.')),
     type: CriteriaTypes.GROUP,
   };
 

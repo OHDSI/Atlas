@@ -143,7 +143,7 @@ define([
 		async load(id) {
 			if (this.design() && (this.design().id === id || 0 === id)) return; // this design is already loaded.
 
-			if(this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n("beforeClose", "Your changes are not saved. Would you like to continue?", this.messages))))
+			if(this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('beforeClose', 'Your changes are not saved. Would you like to continue?', this.messages))))
 				return;
 
 			if (id < 1) {
@@ -202,7 +202,7 @@ define([
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n("beforeClose", "Your changes are not saved. Would you like to continue?", this.messages))) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('beforeClose', 'Your changes are not saved. Would you like to continue?', this.messages))) {
 				return;
 			}
 			this.design(null);
