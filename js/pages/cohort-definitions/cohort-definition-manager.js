@@ -149,7 +149,7 @@ define([
       this.exitMessage = ko.observable();
       this.exporting = ko.observable();
       this.service = cohortDefinitionService;
-      this.defaultName = globalConstants.newEntityNames.cohortDefinition;
+      this.defaultName = ko.unwrap(globalConstants.newEntityNames.cohortDefinition);
       this.isReportGenerating = ko.observable(false);
       this.cdmSources = ko.computed(() => {
         return sharedState

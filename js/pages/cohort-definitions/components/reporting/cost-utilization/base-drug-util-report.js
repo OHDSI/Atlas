@@ -27,77 +27,77 @@ define(
 
         this.drugsTableColumns = [
           {
-            title: 'Persons',
+            title: ko.i18n('columns.personsCount', 'Persons'),
             data: 'personsCount',
             className: this.classes('tbl-col', 'persons-count'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records',
+            title: ko.i18n('columns.visitsCount', 'Records'),
             data: 'exposureCount',
             className: this.classes('tbl-col', 'exposure-cnt'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records/1K',
+            title: ko.i18n('columns.visitsPer1000', 'Records/1K'),
             data: 'exposuresPer1000',
             className: this.classes('tbl-col', 'exposures-per-1000'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records /1K +record',
+            title: ko.i18n('columns.visitsPer1000WithVisits', 'Records/1K +record'),
             data: 'exposurePer1000WithExposures',
             className: this.classes('tbl-col', 'records-per-1000-with-records'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records /1K /Year',
+            title: ko.i18n('columns.visitsPer1000PerYear', 'Records/1K/Year'),
             data: 'exposurePer1000PerYear',
             className: this.classes('tbl-col', 'records-per-1000-per-year'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Days of Supply',
+            title: ko.i18n('columns.daysSupplyTotal', 'Days of Supply'),
             data: 'daysSupplyTotal',
             className: this.classes('tbl-col', 'total-days-supply'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Avg. Days of Supply',
+            title: ko.i18n('columns.daysSupplyAvg', 'Avg. Days of Supply'),
             data: 'daysSupplyAvg',
             className: this.classes('tbl-col', 'avg-days-supply'),
             showInChart: true,
             render: BaseCostUtilReport.formatPreciseNumber,
           },
           {
-            title: 'Days of Supply /1K /Year',
+            title: ko.i18n('columns.daysSupplyPer1000PerYear', 'Days of Supply /1K /Year'),
             data: 'daysSupplyPer1000PerYear',
             className: this.classes('tbl-col', 'days-supply-per-1000-per-year'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Total Quantity',
+            title: ko.i18n('columns.quantityTotal', 'Total Quantity'),
             data: 'quantityTotal',
             className: this.classes('tbl-col', 'total-quantity'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Avg. Quantity',
+            title: ko.i18n('columns.quantityAvg', 'Avg. Quantity'),
             data: 'quantityAvg',
             className: this.classes('tbl-col', 'avg-quantity'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Quantity /1K /Year',
+            title: ko.i18n('columns.quantityPer1000PerYear', 'Quantity /1K /Year'),
             data: 'quantityPer1000PerYear',
             className: this.classes('tbl-col', 'quantity-per-1000-per-year'),
             showInChart: true,
@@ -112,7 +112,7 @@ define(
           costUtilConst.getPeriodTypeFilter(this.periods),
           {
             type: 'select',
-            label: 'Drug Source',
+            label: ko.i18n('options.drugSource', 'Drug Source'),
             name: DRUG_SOURCE_TYPE,
             options: ko.observableArray([]),
             selectedValue: ko.observable(null),
@@ -123,7 +123,7 @@ define(
       setupDrugSourceConceptOptions(conceptList) {
         const filter = this.filterList().find(filter => filter.name === DRUG_SOURCE_TYPE);
         filter.options([
-          { label: 'All drug sources', value: null },
+          { label: ko.i18n('options.allDrugSources', 'All drug sources'), value: null },
           ...BaseCostUtilReport.conceptsToOptions(conceptList)
         ]);
       }

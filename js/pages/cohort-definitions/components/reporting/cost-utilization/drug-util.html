@@ -3,7 +3,7 @@
     <div data-bind="visible: $component.currentMode() == $component.modes.summary, css: classes('panel')">
         <div data-bind="css: classes('panel-heading')">
             <h4 data-bind="css: classes('panel-title')">
-                Summary for all drugs
+                <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.drugUtilText_1', 'Summary for all drugs')"></span>
             </h4>
         </div>
         <div data-bind="css: classes('panel-body')">
@@ -20,7 +20,8 @@
         <div data-bind="css: classes('panel')">
             <div data-bind="css: classes('panel-heading')">
                 <h4 data-bind="css: classes('panel-title')">
-                    Detailed drug report for "<span data-bind="text: $component.drugName"></span>"
+                    <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.drugUtilText_2', 'Detailed drug report for')"></span>
+                    "<span data-bind="text: $component.drugName"></span>"
                 </h4>
             </div>
             <div data-bind="css: classes('panel-body')">

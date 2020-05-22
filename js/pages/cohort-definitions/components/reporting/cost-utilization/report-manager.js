@@ -37,7 +37,8 @@ define([
 			super(params);
 			this.config = config;
 			this.refresh = ko.observable(true);
-			this.cohortCaption = ko.observable('Click Here to Choose a Cohort');
+			this.cohortCaption = ko.observable(
+				ko.unwrap(ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_71', 'Click Here to Choose a Cohort')));
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 			this.reference = ko.observableArray();
 			this.dataCompleteReference = ko.observableArray();
