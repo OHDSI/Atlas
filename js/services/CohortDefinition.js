@@ -58,17 +58,24 @@ define(function (require, exports) {
 	}
 
 	function getCohortDefinition(id) {
-		var loadPromise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + id,
-			error: function (error) {
+		// var loadPromise = $.ajax({
+		// 	url: config.webAPIRoot + 'cohortdefinition/' + id,
+		// 	error: function (error) {
+		// 		console.log("Error: " + error);
+		// 		authApi.handleAccessDenied(error);
+		// 	}
+		// }).then(cohortDef => {
+		// 	cohortDef.expression = JSON.parse(cohortDef.expression)
+		// 	return cohortDef;
+		// });
+		// return loadPromise;
+		return httpService
+			.doGet(config.webAPIRoot + 'cohortdefinition/' + id)
+			.then(res => JSON.parse(res.expression))
+			.catch(error => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
-			}
-		}).then(cohortDef => {
-			cohortDef.expression = JSON.parse(cohortDef.expression)
-			return cohortDef;
-		});
-		return loadPromise;
+			});
 	}
 
 	function exists(name, id) {
