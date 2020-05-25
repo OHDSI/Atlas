@@ -142,20 +142,11 @@ define(function (require, exports) {
 	}
 
 	function getWarnings(cohortDefinitionId) {
-		return $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/check',
-			error: authApi.handleAccessDenied,
-		});
+		return httpService.doGet(config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/check');
 	}
 
 	function runDiagnostics(id, expression) {
-		return $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check',
-			contentType: 'application/json',
-			method: 'POST',
-			data: expression,
-			error: authApi.handleAccessDenied,
-		});
+		return httpService.doPost(config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check', expression);
 	}
 
 	function getCohortCount(sourceKey, cohortDefinitionId) {

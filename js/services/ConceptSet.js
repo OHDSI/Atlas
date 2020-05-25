@@ -229,7 +229,8 @@ define(function (require, exports) {
 		sharedState.selectedConcepts(conceptSetItemsToAdd);
 		sharedState.ConceptSet.current({
 			name: ko.observable(conceptset.name),
-			id: conceptset.id
+			id: conceptset.id,
+			createdBy: conceptset.createdBy,
 		});
 		updateHashedConceptSet({
 			conceptSetName: conceptset.name,
@@ -288,11 +289,14 @@ define(function (require, exports) {
 	// update the export panel
 	// resolve the included concepts and update the include concept set identifier list
 	function resolveConceptSetExpression(resolveAgainstServer = true) {
-		sharedState.includedConcepts.removeAll();
-		sharedState.includedSourcecodes.removeAll();
-		sharedState.conceptSetInclusionIdentifiers.removeAll();
-		sharedState.currentConceptIdentifierList(null);
-		sharedState.currentIncludedConceptIdentifierList(null);
+		let hashCode = hash(sharedState.conceptSetInclusionIdentifiers());
+		if (hashCode !== sharedState.includedHash()) {
+			sharedState.includedConcepts.removeAll();
+			sharedState.includedSourcecodes.removeAll();
+			sharedState.conceptSetInclusionIdentifiers.removeAll();
+			sharedState.currentConceptIdentifierList(null);
+			sharedState.currentIncludedConceptIdentifierList(null);
+		}
 		setConceptSetExpressionExportItems(sharedState.conceptSetExpression());
 		updateHashedConceptSet({
 			includedConcepts: sharedState.includedConcepts(),

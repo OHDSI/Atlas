@@ -98,6 +98,14 @@ define([
                 }
             });
 
+            const onCohortDefinitionChanged = sharedState.CohortCharacterization.onCohortDefinitionChanged;
+
+            sharedState.CohortCharacterization.onCohortDefinitionChanged = onCohortDefinitionChanged || sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
+                if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
+                    this.loadDesignData(this.characterizationId(), true);
+                }
+            });
+
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
 				entityIdGetter: () => this.characterizationId(),
@@ -156,9 +164,9 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
-        async loadDesignData(id) {
+        async loadDesignData(id, force = false) {
 
-        if (this.design() && (this.design().id || 0) === id) return;
+        if (!force && this.design() && (this.design().id || 0) === id) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }
