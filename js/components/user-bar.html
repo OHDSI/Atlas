@@ -51,7 +51,7 @@
 }">
 	<div data-bind="css: classes('jobs-modal-content')">
 		<div data-bind="if: jobListing().length == 0" style="padding: 5px 10px 0">
-			<span data-bind="html: ko.i18n('notifications.explanation')"></span>
+			<span data-bind="html: ko.i18n('notifications.explanation', 'Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class=\'fa fa-bell pending\'></i> if you have new notifications available.')"></span>
 		</div>
 		<div data-bind="if: jobListing().length > 0">
 			<table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
