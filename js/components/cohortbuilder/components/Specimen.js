@@ -131,16 +131,13 @@ define([
     });
 
     self.indexMessage = ko.i18nformat(
-      "cc.viewEdit.design.subgroups.add.specimen.criteria.index-data.text",
-      "The index date refers to the specimen of <%= conceptSetName %>.",
+      'cc.viewEdit.design.subgroups.add.specimen.criteria.index-data.text',
+      'The index date refers to the specimen of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "cc.viewEdit.design.subgroups.add.specimen.criteria.default-concept-name",
-            "Any Specimen"
-          )
+          ko.i18n('cc.viewEdit.design.subgroups.add.specimen.criteria.default-concept-name', 'Any Specimen')
         ),
       }
     );

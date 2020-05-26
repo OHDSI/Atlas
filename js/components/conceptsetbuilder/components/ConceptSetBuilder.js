@@ -38,7 +38,7 @@ define([
 				params.ref(this); // assign refrence to this to ref's param
 				this.rawConceptSets = params.$raw.conceptSets;
 
-				this.conceptSets = params.conceptSets.extend({sorted: conceptSetSorter});;
+				this.conceptSets = params.conceptSets.extend({sorted: conceptSetSorter});
 				this.selectedConceptSet = ko.observable();
 				this.tabWidget = ko.observable();		
 				this.isImportEnabled = ko.observable(false);

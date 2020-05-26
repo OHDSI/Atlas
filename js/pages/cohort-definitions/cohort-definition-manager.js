@@ -353,16 +353,10 @@ define([
           this.currentCohortDefinition() &&
           this.currentCohortDefinition().expression().ConceptSets().length === 0
         ) {
-          return ko.i18n(
-            "cohortDefinitions.noConceptSets",
-            "No concept sets to export"
-          );
+          return ko.i18n('cohortDefinitions.noConceptSets', 'No concept sets to export');
         }
         if (this.dirtyFlag().isDirty()) {
-          return ko.i18n(
-            "cohortDefinitions.saveDefinitionBefore",
-            "You must save the definition before you can export"
-          );
+          return ko.i18n('cohortDefinitions.saveDefinitionBefore', 'You must save the definition before you can export');
         }
       });
 

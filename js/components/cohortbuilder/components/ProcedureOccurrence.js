@@ -127,17 +127,14 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      "cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.index-data.text",
-      "The index date refers to the procedure of <%= conceptSetName %>.",
+      'cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.index-data.text',
+      'The index date refers to the procedure of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.default-concept-name",
-            "Any Procedure"
-          )
-        ),
+          ko.i18n('cc.viewEdit.design.subgroups.add.procedure-occurrence.criteria.default-concept-name', 'Any Procedure')
+        )
       }
     );
   }

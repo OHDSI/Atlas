@@ -103,7 +103,9 @@ define([
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.ccGenerationStatusOptions.COMPLETED ? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.text', 'View reports')()}</a>` : ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.empty', '-')(); // ${d.reportCount}
+						return d.status === this.ccGenerationStatusOptions.COMPLETED
+							? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.text', 'View reports')()}</a>`
+							: ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.empty', '-')(); // ${d.reportCount}
 					}
 				}
 			]);

@@ -73,7 +73,8 @@
 	</div>
 
 	<div style="padding-top:10px" data-bind="if: analysis().studyWindow() == null && isEditable()">
-		<span data-bind="text: ko.i18n('ir.editor.noStudyWindowDefined', 'No study window defined.')"></span> <button class="btn btn-sm btn-success" data-bind="click: addStudyWindow, text: ko.i18n('ir.editor.addStudyWindow', 'Add Study Window')"></button>
+		<span data-bind="text: ko.i18n('ir.editor.noStudyWindowDefined', 'No study window defined.')"></span>
+		<button class="btn btn-sm btn-success" data-bind="click: addStudyWindow, text: ko.i18n('ir.editor.addStudyWindow', 'Add Study Window')"></button>
 	</div>
 	<div class="form-inline" data-bind="if: analysis().studyWindow() != null">
 		<div class="form-group">

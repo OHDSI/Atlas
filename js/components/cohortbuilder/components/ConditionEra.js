@@ -113,14 +113,8 @@ define([
     };
 
     self.indexMessage = ko.pureComputed(() => {
-      var anyCondition = ko.i18n(
-        "components.conditionEra.anyConditionButton",
-        "Any Condition"
-      );
-      var message = ko.i18n(
-        "components.conditionEra.returnText_1",
-        "The index date refers to the condition era of"
-      );
+      var anyCondition = ko.i18n('components.conditionEra.anyConditionButton', 'Any Condition');
+      var message = ko.i18n('components.conditionEra.returnText_1', 'The index date refers to the condition era of');
       var conceptSetName = utils.getConceptSetName(
         self.Criteria.CodesetId,
         self.expression.ConceptSets,

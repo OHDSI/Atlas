@@ -36,7 +36,9 @@ define([
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
 				disabled: this.isInProgress(s) || !this.hasSourceAccess(s.source.sourceKey),
-				disabledReason: this.isInProgress(s) ? ko.i18n('ir.results.generationInProgress', 'Generation is in progress')() : !this.hasSourceAccess(s.source.sourceKey) ? ko.i18n('ir.results.accessDenied', 'Access denied')() : null,
+				disabledReason: this.isInProgress(s)
+					? ko.i18n('ir.results.generationInProgress', 'Generation is in progress')()
+					: !this.hasSourceAccess(s.source.sourceKey) ? ko.i18n('ir.results.accessDenied', 'Access denied')() : null,
 			})));
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
@@ -64,14 +66,14 @@ define([
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
-				return ko.i18n('ir.results.per', 'per')() + ' ' + multiplier  + ' ' + ko.i18n('ir.results.perYears', 'years')();
+				return ko.i18nformat('ir.results.perYears', 'per <%=multiplier%> years', {multiplier: multiplier})();
 			});
 
 			this.ipCaption = ko.pureComputed(() => {
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
-				return ko.i18n('ir.results.per', 'per')() + ' ' + multiplier  + ' ' + ko.i18n('ir.results.perPersons', 'persons')();
+				return ko.i18nformat('ir.results.perPersons', 'per <%=multiplier%> persons', {multiplier: multiplier})();
 			});
 
 			// observable subscriptions

@@ -14,15 +14,9 @@ define([
 
     self.addActions = [
       {
-        text: ko.i18n(
-          "cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.option.text",
-          "Add Start Date Criteria"
-        ),
+        text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.option.text', 'Add Start Date Criteria'),
         selected: false,
-        description: ko.i18n(
-          "cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.option.description",
-          "Filter Locations by date when Person started living there"
-        ),
+        description: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.option.description', 'Filter Locations by date when Person started living there'),
         action: function () {
           if (self.Criteria.StartDate() == null)
             self.Criteria.StartDate(
@@ -33,15 +27,9 @@ define([
         },
       },
       {
-        text: ko.i18n(
-          "cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.option.text",
-          "Add End Date Criteria"
-        ),
+        text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.option.text', 'Add End Date Criteria'),
         selected: false,
-        description: ko.i18n(
-          "cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.option.description",
-          "Filter Locations by date when Person finished living there"
-        ),
+        description: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.option.description', 'Filter Locations by date when Person finished living there'),
         action: function () {
           if (self.Criteria.EndDate() == null)
             self.Criteria.EndDate(
@@ -52,15 +40,9 @@ define([
         },
       },
       {
-        text: ko.i18n(
-          "cc.viewEdit.design.subgroups.add.location-region.criteria.correlated-criteria.option.text",
-          "Add Nested Criteria..."
-        ),
+        text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.correlated-criteria.option.text', 'Add Nested Criteria...'),
         selected: false,
-        description: ko.i18n(
-          "cc.viewEdit.design.subgroups.add.location-region.criteria.correlated-criteria.option.description",
-          "Apply criteria using the location region as the index event"
-        ),
+        description: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.correlated-criteria.option.description', 'Apply criteria using the location region as the index event'),
         action: function () {
           if (self.Criteria.CorrelatedCriteria() == null)
             self.Criteria.CorrelatedCriteria(
@@ -75,17 +57,14 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      "cc.viewEdit.design.subgroups.add.location-region.criteria.index-data.text",
-      "The index date refers to the location region of <%= conceptSetName %>.",
+      'cc.viewEdit.design.subgroups.add.location-region.criteria.index-data.text',
+      'The index date refers to the location region of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n(
-            "cc.viewEdit.design.subgroups.add.location-region.criteria.default-concept-name",
-            "Any Region"
-          )
-        ),
+          ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.default-concept-name', 'Any Region')
+        )
       }
     );
   }

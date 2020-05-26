@@ -453,20 +453,14 @@ define([
         ko.toJS(inclusionRule),
         self.expression().ConceptSets
       );
-      var copyOfTranslate = ko.i18n(
-        "components.cohortExpressionEditor.copyOf",
-        "Copy of:"
-      );
+      var copyOfTranslate = ko.i18n('components.cohortExpressionEditor.copyOf', 'Copy of:');
       copiedRule.name(copyOfTranslate + copiedRule.name());
       self.expression().InclusionRules.push(copiedRule);
       self.selectedInclusionRule(copiedRule);
     };
 
     self.addPrimaryCriteriaOptions = {
-      selectText: ko.i18n(
-        "components.cohortExpressionEditor.addInitialEvent",
-        "Add Initial Event..."
-      ),
+      selectText: ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event...'),
       width: 250,
       height: 300,
       actionOptions: self.primaryCriteriaOptions,
@@ -476,10 +470,7 @@ define([
     };
 
     self.addCensorCriteriaOptions = {
-      selectText: ko.i18n(
-        "components.cohortExpressionEditor.addCensoringEvent",
-        "Add Censoring Event..."
-      ),
+      selectText: ko.i18n('components.cohortExpressionEditor.addCensoringEvent', 'Add Censoring Event...'),
       width: 250,
       height: 300,
       actionOptions: self.censorCriteriaOptions,

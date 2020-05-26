@@ -101,7 +101,9 @@ define([
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
-						return d.status === this.pathwayGenerationStatusOptions.COMPLETED ? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(`${COLUMNS}.results.values.text`, 'View reports')()}</a>` : ko.i18n(`${COLUMNS}.results.empty`, '-')();
+						return d.status === this.pathwayGenerationStatusOptions.COMPLETED
+							? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(`${COLUMNS}.results.values.text`, 'View reports')()}</a>`
+							: ko.i18n(`${COLUMNS}.results.empty`, '-')();
 					}
 				}
 				];

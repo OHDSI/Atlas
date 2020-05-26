@@ -17,7 +17,8 @@
 			<div role="tabpanel" class="tab-pane active drilldown-enabled" id="treemap-panel">
 				<treemap params="data: treeData, format: chartFormats.treemap, aggProperty: aggProperty"></treemap>
 				<div class="treemap_legend">
-					<span data-bind="text: ko.i18n('dataSources.treemap.legend.boxSize', 'Box Size:')"></span> <span data-bind="text: ko.i18n('dataSources.prevalence', 'Prevalence')"></span>,
+					<span data-bind="text: ko.i18n('dataSources.treemap.legend.boxSize', 'Box Size:')"></span>
+					<span data-bind="text: ko.i18n('dataSources.prevalence', 'Prevalence')"></span>,
 					<span data-bind="text: ko.i18n('dataSources.treemap.legend.color', 'Color:')"></span> <span data-bind="text: aggProperty.description"></span>
 					<span data-bind="text: ko.i18n('dataSources.treemap.legend.colorExplanation', '(Light to Dark = Low to High), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
 				</div>

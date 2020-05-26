@@ -227,294 +227,167 @@ define(function (require, exports) {
 
   exports.defaultModelSettings = [
     {
-      name: "RandomForestSettings",
+      name: 'RandomForestSettings',
       modelSettings: [
         {
-          setting: "maxDepth",
-          name: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.name_maxDepth",
-            "Max depth"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.desc_maxDepth",
-            "Maximum number of interactions - a large value will lead to slow model training"
-          ),
+          setting: 'maxDepth',
+          name: ko.i18n('predictions.inputTypes.randomForestSettings.name_maxDepth', 'Max depth'),
+          description: ko.i18n('predictions.inputTypes.randomForestSettings.desc_maxDepth', 'Maximum number of interactions - a large value will lead to slow model training'),
           defaultValue: [4, 10, 17],
         },
         {
-          setting: "mtries",
-          name: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.name_mtries",
-            "Number of tree features"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.desc_mtries",
-            "The number of features to include in each tree (-1 defaults to square root of total features)"
-          ),
+          setting: 'mtries',
+          name: ko.i18n('predictions.inputTypes.randomForestSettings.name_mtries', 'Number of tree features'),
+          description: ko.i18n('predictions.inputTypes.randomForestSettings.desc_mtries', 'The number of features to include in each tree (-1 defaults to square root of total features)'),
           defaultValue: [-1],
         },
         {
-          setting: "ntrees",
-          name: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.name_ntrees",
-            "Number of tress to build"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.desc_ntrees",
-            "The number of trees to build"
-          ),
+          setting: 'ntrees',
+          name: ko.i18n('predictions.inputTypes.randomForestSettings.name_ntrees', 'Number of tress to build'),
+          description: ko.i18n('predictions.inputTypes.randomForestSettings.desc_ntrees', 'The number of trees to build'),
           defaultValue: [500],
         },
         {
-          setting: "varImp",
-          name: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.name_varImp",
-            "Perform an initial variable selection"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.randomForestSettings.desc_varImp",
-            "Perform an initial variable selection prior to fitting the model to select the useful variables"
-          ),
+          setting: 'varImp',
+          name: ko.i18n('predictions.inputTypes.randomForestSettings.name_varImp', 'Perform an initial variable selection'),
+          description: ko.i18n('predictions.inputTypes.randomForestSettings.desc_varImp', 'Perform an initial variable selection prior to fitting the model to select the useful variables'),
           defaultValue: [true],
         },
       ],
     },
     {
-      name: "NaiveBayesSettings",
+      name: 'NaiveBayesSettings',
       modelSettings: [],
     },
     {
-      name: "MLPSettings",
+      name: 'MLPSettings',
       modelSettings: [
         {
-          setting: "alpha",
-          name: ko.i18n(
-            "predictions.inputTypes.mlpSettings.name_alpha",
-            "Alpha"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.mlpSettings.desc_alpha",
-            "The l2 regularisation"
-          ),
+          setting: 'alpha',
+          name: ko.i18n('predictions.inputTypes.mlpSettings.name_alpha','Alpha'),
+          description: ko.i18n('predictions.inputTypes.mlpSettings.desc_alpha', 'The l2 regularisation'),
           defaultValue: [0.00001],
         },
         {
-          setting: "size",
-          name: ko.i18n(
-            "predictions.inputTypes.mlpSettings.name_size",
-            "Number of hidden nodes"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.mlpSettings.desc_size",
-            "The number of hidden nodes"
-          ),
+          setting: 'size',
+          name: ko.i18n('predictions.inputTypes.mlpSettings.name_size', 'Number of hidden nodes'),
+          description: ko.i18n('predictions.inputTypes.mlpSettings.desc_size', 'The number of hidden nodes'),
           defaultValue: [4],
         },
       ],
     },
     {
-      name: "KNNSettings",
+      name: 'KNNSettings',
       id: 4,
       modelSettings: [
         {
-          setting: "k",
-          name: ko.i18n(
-            "predictions.inputTypes.knnSettings.name_k",
-            "Number of neighbors"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.knnSettings.desc_k",
-            "The number of neighbors to consider"
-          ),
+          setting: 'k',
+          name: ko.i18n('predictions.inputTypes.knnSettings.name_k', 'Number of neighbors'),
+          description: ko.i18n('predictions.inputTypes.knnSettings.desc_k', 'The number of neighbors to consider'),
           defaultValue: 1000,
         },
       ],
     },
     {
-      name: "GradientBoostingMachineSettings",
+      name: 'GradientBoostingMachineSettings',
       modelSettings: [
         {
-          setting: "learnRate",
-          name: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.name_learnRate",
-            "Boosting learn rate"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.desc_learnRate",
-            "The boosting learn rate"
-          ),
+          setting: 'learnRate',
+          name: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.name_learnRate', 'Boosting learn rate'),
+          description: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.desc_learnRate', 'The boosting learn rate'),
           defaultValue: [0.01, 0.1],
         },
         {
-          setting: "maxDepth",
-          name: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.name_maxDepth",
-            "Maximum number of interactions"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.desc_maxDepth",
-            "Maximum number of interactions - a large value will lead to slow model training"
-          ),
+          setting: 'maxDepth',
+          name: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.name_maxDepth', 'Maximum number of interactions'),
+          description: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.desc_maxDepth', 'Maximum number of interactions - a large value will lead to slow model training'),
           defaultValue: [4, 6, 17],
         },
         {
-          setting: "minRows",
-          name: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.name_minRows",
-            "Minimum number of rows"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.desc_minRows",
-            "The minimum number of rows required at each end node of the tree"
-          ),
+          setting: 'minRows',
+          name: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.name_minRows', 'Minimum number of rows'),
+          description: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.desc_minRows', 'The minimum number of rows required at each end node of the tree'),
           defaultValue: [20],
         },
         {
-          setting: "nthread",
-          name: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.name_nthread",
-            "Computer threads for computation"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.desc_nthread",
-            "The number of computer threads to use (how many cores do you have?)"
-          ),
+          setting: 'nthread',
+          name: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.name_nthread', 'Computer threads for computation'),
+          description: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.desc_nthread', 'The number of computer threads to use (how many cores do you have?)'),
           defaultValue: 20,
         },
         {
-          setting: "ntrees",
-          name: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.name_ntrees",
-            "Trees to build"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.gradientBoostingMachineSettings.desc_ntrees",
-            "The number of trees to build"
-          ),
+          setting: 'ntrees',
+          name: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.name_ntrees', 'Trees to build'),
+          description: ko.i18n('predictions.inputTypes.gradientBoostingMachineSettings.desc_ntrees', 'The number of trees to build'),
           defaultValue: [10, 100],
         },
       ],
     },
     {
-      name: "DecisionTreeSettings",
+      name: 'DecisionTreeSettings',
       modelSettings: [
         {
-          setting: "classWeight",
-          name: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.name_classWeight",
-            "Class weight"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.desc_classWeight",
-            "Class weight"
-          ),
-          defaultValue: ["None"],
+          setting: 'classWeight',
+          name: ko.i18n('predictions.inputTypes.decisionTreeSettings.name_classWeight', 'Class weight'),
+          description: ko.i18n('predictions.inputTypes.decisionTreeSettings.desc_classWeight', 'Class weight'),
+          defaultValue: ['None'],
         },
         {
-          setting: "maxDepth",
-
-          name: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.name_maxDepth",
-            "Max depth"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.desc_maxDepth",
-            "Maximum number of interactions - a large value will lead to slow model training"
-          ),
+          setting: 'maxDepth',
+          name: ko.i18n('predictions.inputTypes.decisionTreeSettings.name_maxDepth', 'Max depth'),
+          description: ko.i18n('predictions.inputTypes.decisionTreeSettings.desc_maxDepth', 'Maximum number of interactions - a large value will lead to slow model training'),
           defaultValue: [10],
         },
         {
-          setting: "minImpurityDecrease",
-          name: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.name_minImpurityDecrease",
-            "Minimum impurity split"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.desc_minImpurityDecrease",
-            "Threshold for early stopping in tree growth. A node will split if its impurity is above the threshold, otherwise it is a leaf."
-          ),
+          setting: 'minImpurityDecrease',
+          name: ko.i18n('predictions.inputTypes.decisionTreeSettings.name_minImpurityDecrease', 'Minimum impurity split'),
+          description: ko.i18n('predictions.inputTypes.decisionTreeSettings.desc_minImpurityDecrease', 'Threshold for early stopping in tree growth. A node will split if its impurity is above the threshold, otherwise it is a leaf.'),
           defaultValue: [0.0000001],
         },
         {
-          setting: "minSamplesLeaf",
-          name: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.name_minSamplesLeaf",
-            "Minimum samples per leaf"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.desc_minSamplesLeaf",
-            "The minimum number of samples per leaf"
-          ),
+          setting: 'minSamplesLeaf',
+          name: ko.i18n('predictions.inputTypes.decisionTreeSettings.name_minSamplesLeaf', 'Minimum samples per leaf'),
+          description: ko.i18n('predictions.inputTypes.decisionTreeSettings.desc_minSamplesLeaf', 'The minimum number of samples per leaf'),
           defaultValue: [10],
         },
         {
-          setting: "minSamplesSplit",
-          name: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.name_minSamplesSplit",
-            "Minimum samples per split"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.desc_minSamplesSplit",
-            "The minimum samples per split"
-          ),
+          setting: 'minSamplesSplit',
+          name: ko.i18n('predictions.inputTypes.decisionTreeSettings.name_minSamplesSplit', 'Minimum samples per split'),
+          description: ko.i18n('predictions.inputTypes.decisionTreeSettings.desc_minSamplesSplit', 'The minimum samples per split'),
           defaultValue: [2],
         },
         {
-          setting: "plot",
-          name: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.name_plot",
-            "Minimum samples per split"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.decisionTreeSettings.desc_plot",
-            "The minimum samples per split"
-          ),
+          setting: 'plot',
+          name: ko.i18n('predictions.inputTypes.decisionTreeSettings.name_plot', 'Minimum samples per split'),
+          description: ko.i18n('predictions.inputTypes.decisionTreeSettings.desc_plot', 'The minimum samples per split'),
           defaultValue: false,
         },
       ],
     },
     {
-      name: "AdaBoostSettings",
+      name: 'AdaBoostSettings',
       modelSettings: [
         {
-          setting: "learningRate",
-          name: ko.i18n(
-            "predictions.inputTypes.adaBoostSettings.name_learningRate",
-            "Learning rate"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.adaBoostSettings.desc_learningRate",
-            "Learning rate shrinks the contribution of each classifier. There is a trade-off between learning rate and nEstimators."
-          ),
+          setting: 'learningRate',
+          name: ko.i18n('predictions.inputTypes.adaBoostSettings.name_learningRate', 'Learning rate'),
+          description: ko.i18n('predictions.inputTypes.adaBoostSettings.desc_learningRate', 'Learning rate shrinks the contribution of each classifier. There is a trade-off between learning rate and nEstimators.'),
           defaultValue: [1],
         },
         {
-          setting: "nEstimators",
-          name: ko.i18n(
-            "predictions.inputTypes.adaBoostSettings.name_nEstimators",
-            "Maximum number of estimators"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.adaBoostSettings.desc_nEstimators",
-            "The maximum number of estimators at which boosting is terminated"
-          ),
+          setting: 'nEstimators',
+          name: ko.i18n('predictions.inputTypes.adaBoostSettings.name_nEstimators', 'Maximum number of estimators'),
+          description: ko.i18n('predictions.inputTypes.adaBoostSettings.desc_nEstimators', 'The maximum number of estimators at which boosting is terminated'),
           defaultValue: [50],
         },
       ],
     },
     {
-      name: "LassoLogisticRegressionSettings",
+      name: 'LassoLogisticRegressionSettings',
       modelSettings: [
         {
-          setting: "variance",
-          name: ko.i18n(
-            "predictions.inputTypes.lassoLogisticRegressionSettings.name",
-            "Starting value for the automatic lambda search"
-          ),
-          description: ko.i18n(
-            "predictions.inputTypes.lassoLogisticRegressionSettings.desc",
-            "A single value used as the starting value for the automatic lambda search"
-          ),
+          setting: 'variance',
+          name: ko.i18n('predictions.inputTypes.lassoLogisticRegressionSettings.name', 'Starting value for the automatic lambda search'),
+          description: ko.i18n('predictions.inputTypes.lassoLogisticRegressionSettings.desc', 'A single value used as the starting value for the automatic lambda search'),
           defaultValue: 0.01,
         },
       ],

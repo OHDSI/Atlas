@@ -69,7 +69,9 @@ define(['knockout',
 				this.stepMessage = ko.observable('User import from directory has started...');
 				this.isLastStep = () => this.getStep() === Const.WIZARD_STEPS.FINISH;
 				this.getNextClasses = () => ['btn', 'btn-sm', this.isLastStep() ? 'btn-success' : 'btn-primary'];
-				this.nextTitle = ko.computed(() => this.isLastStep() ? ko.i18n('configuration.userImport.wizard.buttons.startImport', 'Start import')() : ko.i18n('configuration.userImport.wizard.buttons.next', 'Next')());
+				this.nextTitle = ko.computed(() => this.isLastStep()
+						? ko.i18n('configuration.userImport.wizard.buttons.startImport', 'Start import')()
+						: ko.i18n('configuration.userImport.wizard.buttons.next', 'Next')());
 				this.nextClasses = ko.computed(() => this.classes({ extra: this.getNextClasses(), }));
 				// form inputs
 				this.importProvider = ko.observable(Const.PROVIDERS.ACTIVE_DIRECTORY);
