@@ -12,8 +12,8 @@ define([
     });
 
     self.fieldOptions = [
-      { id: "StartDate", name: "start date" },
-      { id: "EndDate", name: "end date" },
+      { id: "StartDate", name: ko.i18n('options.startDate', 'start date') },
+      { id: "EndDate", name: ko.i18n('options.endDate', 'end date') },
     ];
   }
 

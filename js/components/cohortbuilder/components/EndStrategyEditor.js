@@ -44,9 +44,9 @@ define([
     }
 
     self.strategyOptions = [
-      { name: "default", text: "end of continuous observation" },
-      { name: "dateOffset", text: "fixed duration relative to initial event" },
-      { name: "customEra", text: "end of a continuous drug exposure" },
+      { name: "default", text: ko.i18n('options.endOfContinuousObservation', 'end of continuous observation') },
+      { name: "dateOffset", text: ko.i18n('options.fixedDurationRelativeToInitialEvent', 'fixed duration relative to initial event') },
+      { name: "customEra", text: ko.i18n('options.endOfContinuousDrugExposure', 'end of a continuous drug exposure') },
     ];
 
     self.strategy = params.strategy;

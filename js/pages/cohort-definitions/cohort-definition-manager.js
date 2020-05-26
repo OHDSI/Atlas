@@ -196,7 +196,7 @@ define([
       this.isNameCorrect = ko.computed(() => {
         return (
           this.isNameFilled() &&
-          this.currentCohortDefinition().name() !== this.defaultName
+          this.currentCohortDefinition().name() !== ko.unwrap(globalConstants.newEntityNames.cohortDefinition)
         );
       });
       this.isAuthenticated = ko.pureComputed(() => {
@@ -642,7 +642,7 @@ define([
       this.reportingSourceStatusLoading = ko.observable(false);
       this.reportOptionCaption = ko.pureComputed(() => {
         return this.reportingSourceStatusLoading()
-          ? "Loading Reports..."
+          ? ko.i18n('common.loading', 'Loading Reports...')
           : "Select a Report";
       });
       this.reportingSourceStatus = ko.observable();
@@ -1433,7 +1433,7 @@ define([
 
     setNewCohortDefinition() {
       this.currentCohortDefinition(
-        new CohortDefinition({ id: "0", name: "New Cohort Definition" })
+        new CohortDefinition({ id: "0", name: ko.unwrap(globalConstants.newEntityNames.cohortDefinition) })
       );
       this.currentCohortDefinitionInfo([]);
     }

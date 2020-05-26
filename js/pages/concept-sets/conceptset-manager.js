@@ -322,11 +322,11 @@ define([
 						this.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
 					} catch(e){
-						alert(ko.i18n('cs.manager.csUnableToSaveMessage', 'Unable to save concept set'));
+						alert(ko.unwrap(ko.i18n('cs.manager.csUnableToSaveMessage', 'Unable to save concept set')));
 					}
 				}
 			} catch (e) {
-				alert(ko.i18n('cs.manager.csSaveErrorMessage', 'An error occurred while attempting to save a concept set.')());
+				alert(ko.unwrap(ko.i18n('cs.manager.csSaveErrorMessage', 'An error occurred while attempting to save a concept set.')));
 			} finally {
 				this.loading(false);
 				this.isSaving(false);
@@ -345,7 +345,7 @@ define([
 
 		closeConceptSet() {
 			if (this.currentConceptSetDirtyFlag().isDirty() &&
-					!confirm(ko.i18n('cs.manager.csNotSavedConfirmMessage','Your concept set changes are not saved. Would you like to continue?')())) {
+					!confirm(ko.unwrap(ko.i18n('cs.manager.csNotSavedConfirmMessage','Your concept set changes are not saved. Would you like to continue?')))) {
 				return;
 			} else {
 				conceptSetService.clearConceptSet();
@@ -403,7 +403,7 @@ define([
 		}
 
 		delete() {
-			if (!confirm(ko.i18n('cs.manager.csDeleteConfirmMessage','Delete concept set? Warning: deletion can not be undone!')()))
+			if (!confirm(ko.unwrap(ko.i18n('cs.manager.csDeleteConfirmMessage','Delete concept set? Warning: deletion can not be undone!'))))
 				return;
 
 			this.isDeleting(true);

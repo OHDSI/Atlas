@@ -114,7 +114,7 @@ define([
 			this.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 			this.heelOptions = {
 				Facets: [{
-					'caption': 'Error Msg',
+					'caption': ko.i18n('facets.caption.errorMsg', 'Error Msg'),
 					'binding': d => {
 						if (d.attributeName < 10) {
 							return 'Person'

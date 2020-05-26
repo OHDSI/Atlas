@@ -1,5 +1,5 @@
 <div>
-	Event will persist until: 
+	<span data-bind="text: ko.i18n('eventWillPersistUntil', 'Event will persist until:')"></span> 
 	<select data-bind="options: $component.strategyOptions,
 		optionsText: function(item) { return item.text },
 		optionsValue: 'name',

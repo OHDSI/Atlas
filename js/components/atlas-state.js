@@ -143,19 +143,23 @@ define([
   state.currentConceptSetExpressionJson = ko.observable();
 
   state.CohortDefinition = {
-    current: ko.observable(null),
+    current: ko.observable(),
     info: ko.observable(),
     mode: ko.observable('definition'),
     sourceInfo: ko.observableArray(),
 		lastUpdatedId: ko.observable(),
   };
   state.CohortDefinition.dirtyFlag = ko.observable(
-    new ohdsiUtil.dirtyFlag(state.CohortDefinition.current())
+    new ohdsiUtil.dirtyFlag({
+      header: state.CohortDefinition.current
+    })
   );
   state.CohortDefinition.current.subscribe(newValue => {
     if (newValue != null) {
       state.CohortDefinition.dirtyFlag(
-        new ohdsiUtil.dirtyFlag(state.CohortDefinition.current())
+        new ohdsiUtil.dirtyFlag({
+          header: state.CohortDefinition.current
+        })
       );
     }
   });

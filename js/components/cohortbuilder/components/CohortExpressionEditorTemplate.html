@@ -1,39 +1,37 @@
 <atlas-modal params="{
 		showModal: helpCohortEventsOpened,
-		title: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEvents', 'Cohort Entry Events'),
-		data: {}
+		title: ko.i18n('components.cohortExpressionEditor.cohortEntryEvents', 'Cohort Entry Events')
 }">
-	<div data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortEntryEventsText_1', 'Events are recorded time-stamped observations for the persons, such as drug exposures, conditions, procedures, measurements and visits. All events have a start date and end date, though some events may have a start date and end date with the same value
-	(such as procedures or measurements).')"></div>
+	<span
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortEntryEventsText_1', 'Events are recorded time-stamped observations for the persons, such as drug exposures, conditions, procedures, measurements and visits. All events have a start date and end date, though some events may have a start date and end date with the same value (such as procedures or measurements).')"></span>
 </atlas-modal>
 <atlas-modal params="{
 		showModal: helpInclusionCriteriaOpened,
-		title: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.inclusionCriteria', 'Inclusion Criteria'),
-		data: {}
+		title: ko.i18n('components.cohortExpressionEditor.inclusionCriteria', 'Inclusion Criteria')
 }">
-	<div data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.inclusionCriteriaText', 'The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the
-impact of the criteria on the attrition of persons from the initial cohort.')"></div>
+	<div
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.inclusionCriteriaText', 'The qualifying cohort will be defined as all persons who have an initial event, satisfy the initial event inclusion criteria, and fulfill all additional qualifying inclusion criteria. Each qualifying inclusion criteria will be evaluated to determine the impact of the criteria on the attrition of persons from the initial cohort.')">
+	</div>
 </atlas-modal>
 <atlas-modal params="{
 		showModal: helpCohortExitOpened,
-		title: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExit', 'Cohort Exit'),
+		title: ko.i18n('components.cohortExpressionEditor.cohortExit', 'Cohort Exit'),
 		data: {}
 }">
-	<div data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitText_1', 'For all qualifying events, there must be a specification of when each event ends presence in the cohort.
-	By default, an event ends at the end of the observation period containing the qualifying initial event,
-	but event end dates may be also be specified:')">
+	<div
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_1', 'For all qualifying events, there must be a specification of when each event ends presence in the cohort. By default, an event ends at the end of the observation period containing the qualifying initial event, but event end dates may be also be specified:')">
 	</div>
 	<div class="heading strong"
-		data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitTitle_1', 'Event End Dates')">
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitTitle_1', 'Event End Dates')">
 	</div>
-	<div data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitText_2', 'The qualifying initial event can be set to end after a fixed time period relative to the event start or end date,
-	or the end date can be based on the end of a continuous exposure to a set of drugs identified by a concept set.')">
+	<div
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_2', 'The qualifying initial event can be set to end after a fixed time period relative to the event start or end date, or the end date can be based on the end of a continuous exposure to a set of drugs identified by a concept set.')">
 	</div>
 	<div class="heading strong"
-		data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitTitle_2', 'Censoring Events')">
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitTitle_2', 'Censoring Events')">
 	</div>
-	<div data-bind="text: ko.i18n('cohortDefinitions.cohort.panels.definition.cohortExpressionEditor.cohortExitText_3', 'Criteria can be used to signal the end of an event.  If a censoring event is identified between a qualifying event's start and end date,
-	the date of the censoring event will be used as the exit date.')">
+	<div
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_3', 'Criteria can be used to signal the end of an event.  If a censoring event is identified between a qualifying event's start and end date, the date of the censoring event will be used as the exit date.')">
 	</div>
 </atlas-modal>
 
@@ -53,17 +51,18 @@ impact of the criteria on the attrition of persons from the initial cohort.')"><
 					</div>
 					<div class="col-sm-8">
 						<div class="btn-group pull-right">
-									<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-										<i class="fa fa-plus"></i>
-										<span
-											data-bind="text: ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event')"></span>
-										<span class="caret"></span>
-									</button>
+							<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-plus"></i>
+								<span
+									data-bind="text: ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event')"></span>
+								<span class="caret"></span>
+							</button>
 							<ul class="dropdown-menu" data-bind="foreach:$component.primaryCriteriaOptions">
 								<li>
 									<a data-bind="click:action" href="#">
 										<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
-										<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+										<div class="optionDescription"
+											data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
 									</a>
 								</li>
 							</ul>
@@ -178,7 +177,9 @@ impact of the criteria on the attrition of persons from the initial cohort.')"><
 											data-bind="text: ($index() + 1) + '.'">
 										</td>
 										<td style="vertical-align: top;" class="inclusionRules">
-											<div data-bind="text: ((name() || '').length > 0) ? name() : ko.i18n('components.cohortExpressionEditor.unnamedCriteria', 'Unnamed Criteria')"></div>
+											<div
+												data-bind="text: ((name() || '').length > 0) ? name() : ko.i18n('components.cohortExpressionEditor.unnamedCriteria', 'Unnamed Criteria')">
+											</div>
 											<!-- ko if: (description() || '').length > 0 -->
 											<div class="description" data-bind="text: description(), attr: { title: description() }"></div>
 											<!-- /ko -->
@@ -251,7 +252,8 @@ impact of the criteria on the attrition of persons from the initial cohort.')"><
 										<li>
 											<a data-bind="click:action" href="#">
 												<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
-												<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+												<div class="optionDescription"
+													data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
 											</a>
 										</li>
 									</ul>
@@ -304,23 +306,22 @@ impact of the criteria on the attrition of persons from the initial cohort.')"><
 						data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
 					<span contenteditable="true" class="numericInputField dropdown"
 						data-bind="htmlValue: CollapseSettings.EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: CollapseSettings.EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-					<span
-						data-bind="text: ko.i18n('components.cohortExpressionEditor.days', 'days')"></span>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.days', 'days')"></span>
 				</li>
 				<!-- ko if: $component.showCensorWindow -->
 				<li>
 					<span
 						data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')"></span>
-					<input placeholder="No Censoring" class="dateField"
-						data-bind="datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+					<input class="dateField"
+						data-bind="placeholder: ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring'), datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
 					<i data-bind="visible:CensorWindow().StartDate(),  click: () => CensorWindow().StartDate(null)"
 						class="fa fa-times"></i>
 				</li>
 				<li>
 					<span
 						data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_3', 'Right censor cohort end dates to')"></span>
-					<input placeholder="No Censoring" class="dateField"
-						data-bind="datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+					<input class="dateField"
+						data-bind="placeholder: ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring'), datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
 					<i data-bind="visible:CensorWindow().EndDate(),  click: () => CensorWindow().EndDate(null)"
 						class="fa fa-times"></i>
 				</li>

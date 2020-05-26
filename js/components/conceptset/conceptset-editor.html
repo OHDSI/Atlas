@@ -15,20 +15,20 @@
 							deferRender: true,
 							autoWidth: false,
 							order: [[3, 'desc']],
+							language: ko.i18n('datatable.language'),
 							columns: [
 									{ title: '<li class=\'fa fa-shopping-cart\'></li>', render: $component.renderConceptSetItemSelector, orderable:false, searchable:false},
-									{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
-									{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-									{ title: 'Concept Name', render: $component.commonUtils.renderBoundLink},
-                                    { title: 'Domain', data: 'concept.DOMAIN_ID' },
-									{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
-									{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-									{ title: 'Exclude', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('isExcluded');} },
-									{ title: 'Descendants', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');} },
-									{ title: 'Mapped', class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');} }
+									{ title: ko.i18n('columns.conceptId', 'Concept Id'), data: 'concept.CONCEPT_ID'},
+									{ title: ko.i18n('columns.conceptCode', 'Concept Code'), data: 'concept.CONCEPT_CODE'},
+									{ title: ko.i18n('columns.conceptName', 'Concept Name'), render: $component.commonUtils.renderBoundLink},
+                                    { title: ko.i18n('columns.domain', 'Domain'), data: 'concept.DOMAIN_ID' },
+									{ title: ko.i18n('columns.standardConceptCode', 'Standard Concept Code'), data: 'concept.STANDARD_CONCEPT', visible:false },
+									{ title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'), data: 'concept.STANDARD_CONCEPT_CAPTION' },
+									{ title: ko.i18n('columns.exclude', 'Exclude'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('isExcluded');} },
+									{ title: ko.i18n('columns.descendants', 'Descendants'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');} },
+									{ title: ko.i18n('columns.mapped', 'Mapped'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');} }
               ]
-           },
-           language: ko.i18n('datatable.language')
+           }
         }">
 </table>
 
@@ -41,7 +41,7 @@
     <div class="linkLegendItem">
         <div class="swatch nonStandard">
         </div>
-        <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.nonstandard', 'Non-Standard')"></div>
+        <div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.expression.nonStandard', 'Non-Standard')"></div>
     </div>
     <div class="linkLegendItem">
         <div class="swatch classification">

@@ -9,7 +9,9 @@
 		</td>
 		<td></td>
 		<td>
-			<div class="header">Attrition Visualization</div>
+			<div class="header">
+				<span data-bind="ko.i18n('components.feasibilityAttritionReport.attritionVisualization', 'Attrition Visualization')"></span>
+			</div>
 		</td>
 	</tr>
 </table>
@@ -17,10 +19,16 @@
 	<table style="border-collapse: collapse; width:100%; max-width: 1190px; margin-left: auto;">
 		<thead>
 			<th style="width: 15px;"></th>
-			<th class="header">Inclusion Rule</th>
+			<th class="header">
+				<span data-bind="ko.i18n('components.feasibilityAttritionReport.inclusionRule', 'Inclusion Rule')"></span>
+			</th>
 			<th style="width: 100px;text-align: right" class="header">N</th>
-			<th style="width: 100px;text-align: right" class="header">% Remain</th>
-			<th style="width: 100px;text-align: right; padding-right: 25px;" class="header">% Diff</th>
+			<th style="width: 100px;text-align: right" class="header">
+				<span data-bind="ko.i18n('components.feasibilityAttritionReport.percentRemain', '% Remain')"></span>
+			</th>
+			<th style="width: 100px;text-align: right; padding-right: 25px;" class="header">
+				<span data-bind="ko.i18n('components.feasibilityAttritionReport.precentDiff', '% Diff')"></span>
+			</th>
 			<th style="width: 25px;border-left: solid 1px #eee;"></th>
 			<th style="width: 400px;text-align: center; padding-right: 25px" class="header"><div class="attritionbar" style="width:100%; background-color: #7BB209"></div></th>
 		</thead>
