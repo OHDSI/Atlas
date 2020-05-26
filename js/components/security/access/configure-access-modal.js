@@ -36,18 +36,18 @@ define([
 			this.columns = [
 				{
 					class: this.classes('access-tbl-col-id'),
-					title: 'ID',
+					title: ko.i18n('columns.id', 'ID'),
 					data: 'id'
 				},
 				{
 					class: this.classes('access-tbl-col-name'),
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'name'
 				},
 				{
 					class: this.classes('access-tbl-col-action'),
-					title: 'Action',
-					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${this.classes('revoke-link')}', click: revoke">Revoke</a>` : '-'
+					title: ko.i18n('columns.action', 'Action'),
+					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${thcohortDefinitionManager.panels.clickToClearis.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
 				}
 			];
 

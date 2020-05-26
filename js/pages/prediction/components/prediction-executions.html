@@ -46,11 +46,11 @@
                     >
                         <!-- ko if: 'STARTED' === status() -->
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-circle-o-notch fa-spin']})"></i>
-                        <span data-bind="text: ko.i18n('predictions.generating', 'Generating...'), css: classes('action-text')"></span>
+                        <span data-bind="css: classes('action-text'), text: ko.i18n('predictions.generating', 'Generating...')"></span>
                         <!-- /ko -->
                         <!-- ko if: 'COMPLETED' === status() -->
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-                        <span data-bind="text: ko.i18n('predictions.generate', 'Generate'), css: classes('action-text')"></span>
+                        <span data-bind="css: classes('action-text'), text: ko.i18n('predictions.generate', 'Generate')"></span>
                         <!-- /ko -->
                     </button>
                 </li>

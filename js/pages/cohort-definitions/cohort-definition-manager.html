@@ -122,8 +122,14 @@
 													],
 													stripeClasses : [ 'repositoryConceptSetItem' ],
 													columns: [
-															{ data: 'id', title: ko.i18n('columns.id', 'Id'), width: '25px'},
-															$component.getDataboundColumn('name', ko.i18n('columns.title', 'Title'), '100%')
+															{
+																data: 'id',
+																title: ko.i18n('columns.id', 'Id'),
+																width: '25px'
+															},
+															$component.getDataboundColumn('name',
+																ko.i18n('columns.title', 'Title'),
+																'100%')
 													],
 													language: ko.i18n('datatable.language')
 											}
@@ -184,12 +190,12 @@
 							<div class="clear"></div>
 							<div class="cohort-conceptset-button-pane pull-right">
 								<button type="button" class="btn btn-sm btn-danger"
-									data-bind="text: ko.i18n('cohortDefinitionManager.panels.deleteConceptSet', 'Delete Concept Set'), click:function() { $component.deleteConceptSet(); }">
+									data-bind="click:function() { $component.deleteConceptSet(); }, text: ko.i18n('cohortDefinitionManager.panels.deleteConceptSet', 'Delete Concept Set')">
 								</button>
 								<button type="button" class="btn btn-sm btn-success"
-									data-bind="text: ko.i18n('cohortDefinitionManager.panels.copyToConceptSetRepository', 'Copy To Concept Set Repository'), click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet"></button>
+									data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet, text: ko.i18n('cohortDefinitionManager.panels.copyToConceptSetRepository', 'Copy To Concept Set Repository')"></button>
 								<button type="button" class="btn btn-sm btn-primary"
-									data-bind="text: ko.i18n('cohortDefinitionManager.panels.closeConceptSet', 'Close Concept Set'), click: function() { $component.closeConceptSet(); }"></button>
+									data-bind="click: function() { $component.closeConceptSet(); }, text: ko.i18n('cohortDefinitionManager.panels.closeConceptSet', 'Close Concept Set')"></button>
 							</div>
 						</div>
 					</div>
@@ -293,7 +299,7 @@
 								<span
 									data-bind="text: ko.i18n('cohortDefinitionManager.panels.enterConceptIdentifiers', 'Enter Concept Identifiers')"></span>
 								(<a class="linkish"
-									data-bind="text: ko.i18n('cohortDefinitionManager.panels.clickToClear', 'click to clear'), click: function() { identifiers(''); }"></a>)
+									data-bind="click: function() { identifiers(''); }, text: ko.i18n('cohortDefinitionManager.panels.clickToClear', 'click to clear')"></a>)
 							</div>
 							<textarea class="form-control" rows="5" data-bind="value: identifiers"></textarea>
 							<a data-bind="click:function() {importConceptIdentifiers();}"
@@ -309,7 +315,7 @@
 								<span
 									data-bind="text: ko.i18n('cohortDefinitionManager.panels.enterSourceCodes', 'Enter Source Codes')"></span>
 								(<a class="linkish"
-									data-bind="text: ko.i18n('cohortDefinitionManager.panels.clickToClear', 'click to clear'), click: function() { sourcecodes(''); }"></a>)
+									data-bind="click: function() { sourcecodes(''); }, text: ko.i18n('cohortDefinitionManager.panels.clickToClear', 'click to clear')"></a>)
 							</div>
 							<textarea class="form-control" rows="5" data-bind="value: sourcecodes"></textarea>
 							<a data-bind="click:function() {importSourceCodes();}" class="btn btn-sm btn-primary pull-right"><span

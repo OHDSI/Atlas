@@ -18,8 +18,17 @@
                                         ordering: true,
                                         order: [[ 1, 'asc' ]],
                                         columns: [
-                                            { title: ko.i18n('columns.selected', 'Selected'), class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('included'); } },
-                                            { title: ko.i18n('columns.groupName', 'Group name'), width: '100%', data: 'displayName' },
+                                            {
+                                                title: ko.i18n('columns.selected', 'Selected'),
+                                                class: 'text-center',
+                                                width: '1.5rem',
+                                                render: function(){ return renderCheckbox('included'); }
+                                            },
+                                            {
+                                                title: ko.i18n('columns.groupName', 'Group name'),
+                                                width: '100%',
+                                                data: 'displayName'
+                                            },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
                                         language: ko.i18n('datatable.language')

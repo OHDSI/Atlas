@@ -29,9 +29,9 @@
                     columns: [
 						{ data: 'id', title: ko.i18n('columns.id', 'Id'), width: '25px'},
 						{ data: 'name', title: ko.i18n('columns.title', 'Title'), width: '55%' },
-						{ data: 'createdDate', title: ko.i18n('columns.created', 'Created'), width: '15%', render: $component.datatableUtils.getDateFieldFormatter('createdDate') },
-						{ data: 'modifiedDate', title: ko.i18n('columns.modified', 'Modified'), width: '15%', render: $component.datatableUtils.getDateFieldFormatter('modifiedDate') },
-						{ data: 'createdBy', title: ko.i18n('columns.author', 'Author'), width: '15%', render: $component.datatableUtils.getCreatedByFormatter() }
+						{ data: 'createdDate', width: '15%', render: $component.datatableUtils.getDateFieldFormatter('createdDate'), title: ko.i18n('columns.created', 'Created') },
+						{ data: 'modifiedDate', width: '15%', render: $component.datatableUtils.getDateFieldFormatter('modifiedDate'), title: ko.i18n('columns.modified', 'Modified') },
+						{ data: 'createdBy', width: '15%', render: $component.datatableUtils.getCreatedByFormatter(), title: ko.i18n('columns.author', 'Author') }
 					],
 					order: [3, 'desc'],
                     language: ko.i18n('datatable.language')

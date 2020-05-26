@@ -29,12 +29,12 @@ data-bind="attr: {placeholder: ko.i18n('components.conceptPicker.importConcepts'
 												order: [ 2, 'asc' ],
 												columns: [
 													'select',
-													{ data: 'CONCEPT_ID', title: 'Concept Id' },
-													{ data: 'CONCEPT_CODE', title: 'Code' },
-													{ data: 'CONCEPT_NAME', title: 'Concept Name' },
-													{ data: 'STANDARD_CONCEPT', title: 'Standard Type' },
-													{ data: 'VOCABULARY_ID', title: 'Vocabulary' },
-													{ data: 'DOMAIN_ID', title: 'Domain' }
+													{ data: 'CONCEPT_ID', title: ko.i18n('columns.conceptId', 'Concept Id') },
+													{ data: 'CONCEPT_CODE', title: ko.i18n('columns.code', 'Code') },
+													{ data: 'CONCEPT_NAME', title: ko.i18n('columns.conceptName', 'Concept Name') },
+													{ data: 'STANDARD_CONCEPT', title: ko.i18n('columns.standardType', 'Standard Type') },
+													{ data: 'VOCABULARY_ID', title: ko.i18n('columns.vocabulary', 'Vocabulary') },
+													{ data: 'DOMAIN_ID', title: ko.i18n('columns.domain', 'Domain') }
 												],
 												language: ko.i18n('datatable.language')
 											}
