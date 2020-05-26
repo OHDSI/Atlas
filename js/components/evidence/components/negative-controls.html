@@ -46,7 +46,7 @@
 							</span>
 						</div>
 						<div data-bind="visible: !$data.csToExcludeLoading() && $data.csToExclude() > 0 && $data.csToExcludeCaption() == null" class="errorInline"><i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-							<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.deletedCcMessage1', 'The concept set specified')"></span> (#<span data-bind="text: $data.csToExclude()"></span>)<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.deletedCcMessage2', 'was deleted. Please select a different concept set.')"></span>
+							<span data-bind="text: ko.i18n('cs.manager.exploreEvidence.deletedCcMessage', 'The concept set specified (<%=cs%>) was deleted. Please select a different concept set', {cs: $data.csToExclude()})"></span>
 						</div>
 					</div>
 					<div class="form-group">

@@ -495,8 +495,9 @@
 								<div class="btn btn-sm btn-primary"
 									data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
 									<i class="fa fa-eye"></i>
-									<span
-										data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey) ? ko.i18n('cohortDefinitionManager.panels.hideReports', 'Hide Reports') : ko.i18n('cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
+									<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey)
+										? ko.i18n('cohortDefinitionManager.panels.hideReports', 'Hide Reports')
+										: ko.i18n('cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
 								</div>
 							</td>
 						</tr>

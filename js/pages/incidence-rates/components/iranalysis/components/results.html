@@ -32,7 +32,8 @@
 				<span data-bind="text: ko.i18n('ir.results.proportion', 'Proportion')"></span> [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small>
 			</th>
 			<th data-bind="css: classes('tbl-th', 'time-at-risk', 'smallHeading dataCol')">
-				<span data-bind="text: ko.i18n('ir.results.timeAtRisk', 'Time At Risk')"></span><br/><small data-bind="text: ko.i18n('ir.results.timeAtRiskYears', '(years)')"></small>
+				<span data-bind="text: ko.i18n('ir.results.timeAtRisk', 'Time At Risk')"></span><br/>
+				<small data-bind="text: ko.i18n('ir.results.timeAtRiskYears', '(years)')"></small>
 			</th>
 			<th data-bind="css: classes('tbl-th', 'rate', 'smallHeading dataCol')">
 				<span data-bind="text: ko.i18n('ir.results.rate', 'Rate')"></span> [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small>
@@ -49,7 +50,7 @@
 					<!-- /ko -->
 					<!-- ko if: $component.isInProgress($data) -->
 						<a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelExecution(source.sourceKey), attr: {disabled: $component.stoppingSources()[source.sourceKey] }">
-							<i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('ir.results.cancel', 'Cancel')"></span>
+							<i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
 						</a>
 					<!-- /ko -->
 				</td>

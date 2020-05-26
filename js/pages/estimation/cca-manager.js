@@ -122,9 +122,11 @@ define([
 			this.populationCaption = ko.computed(() => {
 				if (this.estimationAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
-						return ko.i18n('const.newEntityNames.ple', 'New Population Level Effect Estimation')() + ' - ' + ko.i18n('ple.caption', 'Comparative Cohort Analysis')();
+						return ko.i18n('const.newEntityNames.ple', 'New Population Level Effect Estimation')() + ' - ' +
+							ko.i18n('ple.caption', 'Comparative Cohort Analysis')();
 					} else {
-						return ko.i18n('ple.title', 'Population Level Effect Estimation')() + ' - ' + ko.i18n('ple.captionNumber', 'Comparative Cohort Analysis #')() + this.selectedAnalysisId();
+						return ko.i18n('ple.title', 'Population Level Effect Estimation')() + ' - ' +
+							ko.i18n('ple.captionNumber', 'Comparative Cohort Analysis #')() + this.selectedAnalysisId();
 					}
 				}
 			});

@@ -64,7 +64,9 @@ define(
     }
 
     const getTimeAtRisk = (createStudyPopArgs) => {
-        return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + ko.i18n('common.daysAbbr', 'd')() + " (" + ko.i18n('common.min', 'min')() + ": " + createStudyPopArgs.minDaysAtRisk() + ko.i18n('common.daysAbbr', 'd')() + ")");
+        return (createStudyPopArgs.riskWindowStart() + "-" + createStudyPopArgs.riskWindowEnd() + ko.i18n('common.daysAbbr', 'd')() +
+          " (" + ko.i18n('common.min', 'min')() + ": " + createStudyPopArgs.minDaysAtRisk() +
+          ko.i18n('common.daysAbbr', 'd')() + ")");
     };
 
     const options = {
@@ -292,7 +294,9 @@ define(
                 render: (s, p, d) => {
                     if (d.createStudyPopArgs != null) {
                         return d.createStudyPopArgs.riskWindowStart() +
-                          "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> <span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" + ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToStart()).name);
+                          "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
+                          "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
+                          ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToStart()).name);
                     } else {
                         return '';
                     }
@@ -303,7 +307,9 @@ define(
               render: (s, p, d) => {
                     if (d.createStudyPopArgs != null) {
                         return d.createStudyPopArgs.riskWindowEnd() +
-                          "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> <span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" + ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToEnd()).name);
+                          "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
+                          "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
+                          ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.createStudyPopArgs.addExposureDaysToEnd()).name);
                     } else {
                         return '';
                     }
