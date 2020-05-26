@@ -69,22 +69,22 @@ define([
                 newItemAction: this.showFeatureBrowser,
                 columns: [
                     {
-                        title: ko.i18n('cc.viewEdit.design.fa.columns.id', 'ID'),
+                        title: ko.i18n('columns.id', 'ID'),
                         data: 'id',
                         className: this.classes('col-feature-id'),
                     },
                     {
-                        title: ko.i18n('cc.viewEdit.design.fa.columns.name', 'Name'),
+                        title: ko.i18n('columns.name', 'Name'),
                         data: 'name',
                         className: this.classes('col-feature-name'),
                     },
                     {
-                        title: ko.i18n('cc.viewEdit.design.fa.columns.description', 'Description'),
+                        title: ko.i18n('columns.description', 'Description'),
                         data: 'description',
                         className: this.classes('col-feature-descr'),
                     },
                     {
-                        title: ko.i18n('cc.viewEdit.design.fa.columns.actions', 'Actions'),
+                        title: ko.i18n('columns.actions', 'Actions'),
                         render: this.getRemoveCell('removeFeature'),
                         className: this.classes('col-feature-remove'),
                     }
@@ -96,17 +96,17 @@ define([
                 newItemAction: this.showParameterCreateModal,
                 columns: [
                     {
-                        title: ko.i18n('cc.viewEdit.design.faParams.columns.name', 'Name'),
+                        title: ko.i18n('columns.name', 'Name'),
                         data: 'name',
                         className: this.classes('col-param-name'),
                     },
                     {
-                        title: ko.i18n('cc.viewEdit.design.faParams.columns.value', 'Value'),
+                        title: ko.i18n('columns.value', 'Value'),
                         data: 'value',
                         className: this.classes('col-param-value'),
                     },
                     {
-                        title: ko.i18n('cc.viewEdit.design.faParams.columns.actions', 'Actions'),
+                        title: ko.i18n('columns.actions', 'Actions'),
                         render: this.getRemoveCell('removeParam', 'name'),
                         className: this.classes('col-param-remove'),
                     }

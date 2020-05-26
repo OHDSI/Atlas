@@ -8,35 +8,35 @@ define((require, exports) => {
 	};
 	const FeatureAnalysisFacets = [
 		{
-			'caption': ko.i18n('components.browser.facets.type', 'Type'),
+			'caption': ko.i18n('facets.caption.type', 'Type'),
 			'binding': (o) => feAnalysisTypes[o.type]
 		},
 		{
-			'caption': ko.i18n('components.browser.facets.domain', 'Domain'),
+			'caption': ko.i18n('facets.caption.domain', 'Domain'),
 			'binding': (o) => datatableUtils.getFacetForDomain(o.domain),
 		},
 		{
-			'caption': ko.i18n('components.browser.facets.created', 'Created'),
+			'caption': ko.i18n('facets.caption.created', 'Created'),
 			'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
 		},
 		{
-			'caption': ko.i18n('components.browser.facets.updated', 'Updated'),
+			'caption': ko.i18n('facets.caption.updated', 'Updated'),
 			'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
 		},
 		{
-			'caption': ko.i18n('components.browser.facets.author', 'Author'),
+			'caption': ko.i18n('facets.caption.author', 'Author'),
 			'binding': (o) => o.createdBy || 'anonymous',
 		},
 	];
 
 	const FeatureAnalysisColumns = (classes) => [
 		{
-			title: 'Id',
+			title: ko.i18n('columns.id', 'Id'),
 			data: 'id'
 		},
 		{
 			// title: 'Name',
-			title: ko.i18n('components.browser.table.columns.name', 'Name'),
+			title: ko.i18n('columns.name', 'Name'),
 			data: 'name',
 			className: classes('tbl-col', 'name'),
 			render: datatableUtils.getLinkFormatter(d => ({
@@ -45,22 +45,22 @@ define((require, exports) => {
 			})),
 		},
 		{
-			title: ko.i18n('components.browser.table.columns.description', 'Description'),
+			title: ko.i18n('columns.description', 'Description'),
 			data: 'description',
 			className: classes('tbl-col', 'descr'),
 		},
 		{
-			title: ko.i18n('components.browser.table.columns.created', 'Created'),
+			title: ko.i18n('columns.created', 'Created'),
 			className: classes('tbl-col', 'created'),
 			render: datatableUtils.getDateFieldFormatter('createdDate'),
 		},
 		{
-			title: ko.i18n('components.browser.table.columns.updated', 'Updated'),
+			title: ko.i18n('columns.updated', 'Updated'),
 			className: classes('tbl-col', 'updated'),
 			render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 		},
 		{
-			title: ko.i18n('components.browser.table.columns.author', 'Author'),
+			title: ko.i18n('columns.author', 'Author'),
 			className: classes('tbl-col', 'author'),
 			data: 'createdBy',
 		},

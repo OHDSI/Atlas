@@ -40,8 +40,6 @@ define([
 	PollService
 ) {
 
-	const COLUMNS = 'pathways.manager.executions.table.columns';
-
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
 			super();
@@ -64,12 +62,12 @@ define([
 			this.pollId = null;
 
 			this.execColumns = [{
-					title: ko.i18n(`${COLUMNS}.date`, 'Date'),
+					title: ko.i18n('columns.date', 'Date'),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 					{
-						title: ko.i18n(`${COLUMNS}.design.title`, 'Design'),
+						title: ko.i18n('columns.design', 'Design'),
 						className: this.classes('col-exec-checksum'),
 						render: (s, p, d) => {
 							let html = '';
@@ -78,18 +76,18 @@ define([
 							} else {
 								html = d.tag || '-';
 							}
-							html += currentHash() === d.hashCode ? ' ' + ko.i18n(`${COLUMNS}.design.value`, '(same as now)')() : '';
+							html += currentHash() === d.hashCode ? ' ' + ko.i18n('pathways.manager.executions.table.designValue', '(same as now)')() : '';
 							return html;
 						}
 					},
 					{
-						title: ko.i18n(`${COLUMNS}.status.title`, 'Status'),
+						title: ko.i18n('columns.status', 'Status'),
 						data: 'status',
 						className: this.classes('col-exec-status'),
 						render: datatableUtils.getExecutionStatus(),
 					},
 				{
-					title: ko.i18n(`${COLUMNS}.duration`, 'Duration'),
+					title: ko.i18n('columns.duration', 'Duration'),
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
 						const endTime = d.endTime || Date.now();
@@ -97,13 +95,13 @@ define([
 					}
 				},
 				{
-					title: ko.i18n(`${COLUMNS}.results.title`, 'Results'),
+					title: ko.i18n('columns.results', 'Results'),
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {
 						return d.status === this.pathwayGenerationStatusOptions.COMPLETED
-							? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n(`${COLUMNS}.results.values.text`, 'View reports')()}</a>`
-							: ko.i18n(`${COLUMNS}.results.empty`, '-')();
+							? `<a data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('pathways.manager.executions.table.resultValues.text', 'View reports')()}</a>`
+							: ko.i18n('pathways.manager.executions.table.resultValues.empty', '-')();
 					}
 				}
 				];
