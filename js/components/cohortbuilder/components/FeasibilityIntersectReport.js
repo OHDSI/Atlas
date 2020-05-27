@@ -56,7 +56,8 @@ define(['knockout',
 			}
 			self.pass(passed);
 			self.fail(failed);
-			self.rectSummary(size + ' people (' + percentage.toFixed(2) + '%), ' + pass_count + ' criteria passed, ' + fail_count + ' criteria failed.');
+			// self.rectSummary(size + ' people (' + percentage.toFixed(2) + '%), ' + pass_count + ' criteria passed, ' + fail_count + ' criteria failed.');
+			self.rectSummary(ko.i18nformat('components.feasibilityIntersectReport.rectSummary', '<%=size%> people (<%=percentage%>%), <%=passCount%> criteria passed, <%=failCount%> criteria failed.', {size: size, percentage: percentage.toFixed(2), passCount: pass_count, failCount: fail_count  }));
 		}
 
 		self.handleCellOver = function (data, context, event) {

@@ -15,37 +15,37 @@ define([
 			this.data = params.conceptSet.expression.items;
 			this.columns = [
 				{
-					title: 'Concept Id',
+					title: ko.i18n('columns.conceptId', 'Concept Id'),
 					data: 'concept.CONCEPT_ID',
 					className: this.classes('col-id')
 				},
 				{
-					title: 'Concept Name',
+					title: ko.i18n('columns.conceptName', 'Concept Name'),
 					data: 'concept.CONCEPT_NAME',
 					className: this.classes('col-name')
 				},
 				{
-					title: 'Domain',
+					title: ko.i18n('columns.domain', 'Domain'),
 					data: 'concept.DOMAIN_ID',
 					className: this.classes('col-domain')
 				},
 				{
-					title: 'Vocabulary',
+					title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 					data: 'concept.VOCABULARY_ID',
 					className: this.classes('col-vocab')
 				},
 				{
-					title: 'Excluded',
+					title: ko.i18n('columns.excluded', 'Excluded'),
 					render: (s, p, d) => d.isExcluded() ? 'YES' : 'NO',
 					className: this.classes('col-excluded')
 				},
 				{
-					title: 'Descendants',
+					title: ko.i18n('columns.descendants', 'Descendants'),
 					render: (s, p, d) => d.includeDescendants() ? 'YES' : 'NO',
 					className: this.classes('col-desc')
 				},
 				{
-					title: 'Mapped',
+					title: ko.i18n('columns.mapped', 'Mapped'),
 					render: (s, p, d) => d.includeMapped() ? 'YES' : 'NO',
 					className: this.classes('col-mapped')
 				}

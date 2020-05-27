@@ -1,7 +1,14 @@
 <!-- ko if: strategy() -->
-<div class="heading">Date Offset Exit Criteria</div>
+<div class="heading">
+	<span data-bind="text: ko.i18n('components.dateOffsetStrategy.customEraStrategyText_6', 'Date Offset Exit Criteria')"></span>
+</div>
 <div style="padding: 5px 0px">
-	This cohort defintion end date will be the index event's <span data-bind="text: fieldName"></span> plus
-	<span data-bind="text: strategy().Offset"></span> days
+	<span data-bind="text: ko.i18n('components.dateOffsetStrategy.customEraStrategyText_7', 'This cohort defintion end date will be the index event's ')"></span>
+	
+	<span data-bind="text: fieldName"></span>
+	<span data-bind="text: ko.i18n('components.dateOffsetStrategy.customEraStrategyText_8', 'plus')"></span> 
+	
+	<span data-bind="text: strategy().Offset"></span>
+	<span data-bind="text: ko.i18n('common.days', 'days')"></span> 
 </div>
 <!-- /ko -->

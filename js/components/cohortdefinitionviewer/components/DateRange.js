@@ -6,25 +6,25 @@ define(['knockout', 'text!./DateRangeTemplate.html'], function (ko, componentTem
 		
 		self.operationOptions = [{
 			id: 'lt',
-			name: 'before'
+			name: ko.i18n('components.dateRange.before', 'before'),
 		}, {
 			id: 'lte',
-			name: 'on or Before'
+			name: ko.i18n('components.dateRange.onOrBefore', 'on or Before'),
 		}, {
 			id: 'eq',
-			name: 'on'
+			name: ko.i18n('components.dateRange.on', 'on'),
 		}, {
 			id: 'gt',
-			name: 'after'
+			name: ko.i18n('components.dateRange.after', 'after'),
 		}, {
 			id: 'gte',
-			name: 'on or after'
+			name: ko.i18n('components.dateRange.onOrAfter', 'on or after'),
 		}, {
 			id: 'bt',
-			name: 'between'
+			name: ko.i18n('components.dateRange.between', 'between'),
 		}, {
 			id: '!bt',
-			name: 'not between'
+			name: ko.i18n('components.dateRange.notBetween', 'not between'),
 		}];
 		
 		self.rangeOpName = ko.pureComputed(function() {

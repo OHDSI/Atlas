@@ -1,19 +1,41 @@
 <!-- ko if: strategy() -->
-<div class="heading">Custom Drug Era Exit Criteria</div>
+<div class="heading">
+	<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_11', 'Custom Drug Era Exit Criteria')"></span>
+</div>
 <div>
-	This strategy creates a drug era from the codes found in the specified concept set. If the index event is found within an era, the cohort end date will use the era's end date.
-	Otherwise, it will use the observation period end date that contains the index event.
+	<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_12', 'This strategy creates a drug era from the codes found in the specified concept set. If the index event is found within an era, the cohort end date will use the era's end date. Otherwise, it will use the observation period end date that contains the index event.')"></span>
 </div>
 <div style="padding: 5px 0px">
-	Use the era end date of <conceptset-reference params="{conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets,  defaultName: '!!UNSPECIFIED!!'}"></conceptset-reference>
+	<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_13', 'Use the era end date of')"></span> 
+	<conceptset-reference params="{conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets,  defaultName: '!!UNSPECIFIED!!'}"></conceptset-reference>
 	<ul>
-		<li>allowing <span data-bind="text: strategy().GapDays" ></span> days between exposures</li>
-		<li>adding <span data-bind="text: strategy().Offset"></span> days after exposure end</li>
+		<li>
+			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_14', 'allowing')"></span> 
+			
+			<span data-bind="text: strategy().GapDays" ></span> 
+			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_15', 'days between exposures')"></span> 
+			
+		</li>
+		<li>
+			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_16', 'adding')"></span>
+			
+			<span data-bind="text: strategy().Offset"></span> 
+			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_17', 'days after exposure end')"></span>
+			
+		</li>
 		<!-- ko if: strategy().DaysSupplyOverride() == null -->
-		<li>using days supply and exposure end date for exposure duration.</li>
+		<li>
+			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_18', 'using days supply and exposure end date for exposure duration.')"></span>
+			
+		</li>
     <!-- /ko -->
 		<!-- ko ifnot: strategy().DaysSupplyOverride() == null  -->
-		<li>forcing drug exposure days suply to: <span data-bind="text: strategy().DaysSupplyOverride"/> days.</li>
+		<li>
+			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_19', 'forcing drug exposure days suply to:')"></span>
+			 
+			<span data-bind="text: strategy().DaysSupplyOverride"/> 
+			<span data-bind="text: ko.i18n('common.days', 'days.')"></span>
+		</li>
     <!-- /ko -->		
 	</ul>
 </div>

@@ -4,7 +4,7 @@ define(['components/evidence/utils'], function (utils) {
 
     options.negControlTableColumns = [
         {
-            title: 'Id',
+            title: ko.i18n('columns.id', 'Id'),
             data: d => d.conceptId,
             visible: false,
         },
@@ -18,36 +18,36 @@ define(['components/evidence/utils'], function (utils) {
             sortable: false,
         },
         {
-            title: 'Name',
+            title: ko.i18n('columns.name', 'Name'),
             render: (s, p, d) => {
                 return '<a target=\"_new\" href=\'#/concept/' + d.conceptId + '\'>' + d.conceptName + '</a>';
             },
         },
         {
-            title: 'Domain',
+            title: ko.i18n('columns.domain', 'Domain'),
             data: d => d.domainId,
             visible: false,
         },
         {
-            title: 'Suggested Negative Control',
+            title: ko.i18n('columns.suggestedNegativeControl', 'Suggested Negative Control'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.negativeControl);
             },
         },
         {
-            title: 'Sort Order',
+            title: ko.i18n('columns.sortOrder', 'Sort Order'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.sortOrder);
             },
         },
         {
-            title: 'Publication Count (Descendant Concept Match)',
+            title: ko.i18n('columns.publicationCountDescendant', 'Publication Count (Descendant Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.descendantPmidCount);
             },
         },
         {
-            title: 'Publication Count (Exact Concept Match)',
+            title: ko.i18n('columns.publicationCountExact', 'Publication Count (Exact Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.exactPmidCount);
             },
@@ -55,124 +55,124 @@ define(['components/evidence/utils'], function (utils) {
             searchable: true
         },
         {
-            title: 'Publication Count (Parent Concept Match)',
+            title: ko.i18n('columns.publicationCountParent', 'Publication Count (Parent Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.parentPmidCount);
             },
         },
         {
-            title: 'Publication Count (Ancestor Concept Match)',
+            title: ko.i18n('columns.publicationCountAncestor', 'Publication Count (Ancestor Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.ancestorPmidCount);
             },
             visible: false,
         },
         {
-            title: 'Indicated / Contraindicated',
+            title: ko.i18n('columns.indicatedContraindicated', 'Indicated / Contraindicated'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.indCi);
             },
             visible: false,
         },
         {
-            title: 'Broad Concept',
+            title: ko.i18n('columns.broadConcept', 'Broad Concept'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.tooBroad);
             },
             visible: false,
         },
         {
-            title: 'Drug Induced Concept',
+            title: ko.i18n('columns.drugInducedConcept', 'Drug Induced Concept'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.drugInduced);
             },
             visible: false,
         },
         {
-            title: 'Pregnancy Concept',
+            title: ko.i18n('columns.pregnancyConcept', 'Pregnancy Concept'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.pregnancy);
             },
             visible: false,
         },
         {
-            title: 'Product Label Count (Descendant Concept Match)',
+            title: ko.i18n('columns.productLabelCountDescendant', 'Product Label Count (Descendant Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.descendantSplicerCount);
             },
         },
         {
-            title: 'Product Label (Exact Concept Match)',
+            title: ko.i18n('columns.productLabelExact', 'Product Label (Exact Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.exactSplicerCount);
             },
         },
         {
-            title: 'Product Label (Parent Concept Match)',
+            title: ko.i18n('columns.productLabelParent', 'Product Label (Parent Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.parentSplicerCount);
             },
         },
         {
-            title: 'Product Label (Ancestor Concept Match)',
+            title: ko.i18n('columns.productLabelAncestor', 'Product Label (Ancestor Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.ancestorSplicerCount);
             },
             visible: false,
         },
         {
-            title: 'FAERS Count (Descendant Concept Match)',
+            title: ko.i18n('columns.faersCountDescendant', 'FAERS Count (Descendant Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.descendantFaersCount);
             },
         },
         {
-            title: 'FAERS Count (Exact Concept Match)',
+            title: ko.i18n('columns.faersCountExact', 'FAERS Count (Exact Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.exactFaersCount);
             },
         },
         {
-            title: 'FAERS Count (Parent Concept Match)',
+            title: ko.i18n('columns.faersCountParent', 'FAERS Count (Parent Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.parentFaersCount);
             },
         },
         {
-            title: 'FAERS Count (Ancestor Concept Match)',
+            title: ko.i18n('columns.faersCountAncestor', 'FAERS Count (Ancestor Concept Match)'),
             render: (s, p, d) => {
                 return utils.formatNumberWithCommas(d.ancestorFaersCount);
             },
             visible: false,
         },
         {
-            title: 'User Excluded',
+            title: ko.i18n('columns.userExcluded', 'User Excluded'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.userExcluded);
             },
         },
         {
-            title: 'User Included',
+            title: ko.i18n('columns.userIncluded', 'User Included'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.userIncluded);
             },
         },
         {
-            title: 'Optimized Out',
+            title: ko.i18n('columns.optimizedOut', 'Optimized Out'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.optimizedOut);
             },
             visible: false,
         },
         {
-            title: 'Not Prevalent',
+            title: ko.i18n('columns.notPrevalent', 'Not Prevalent'),
             render: (s, p, d) => {
                 return utils.formatBooleanDisplay(d.notPrevalent);
             },
             visible: false,
         },
         { 
-            title: 'Drug Label Exists',
+            title: ko.i18n('columns.drugLabelExists', 'Drug Label Exists'),
             render: (s, p, d) => {
                 return d.drugLabelExists.toString()
             },
@@ -202,79 +202,79 @@ define(['components/evidence/utils'], function (utils) {
             [5, 'desc']
         ],
         Facets: [{
-                'caption': 'Suggested Negative Control',
+                'caption': ko.i18n('facets.caption.drugLabelExists', 'Suggested Negative Control'),
                 'binding': d => {
-                    return d.negativeControl.toString() == "1" ? 'Yes' : 'No';
+                    return d.negativeControl.toString() == "1" ? ko.i18n('common.yes', 'Yes') : ko.i18n('common.no', 'No');
                 },
             },
             {
-                'caption': 'Found in Publications',
+                'caption': ko.i18n('facets.caption.foundInPublications', 'Found in Publications'),
                 'binding': d => {
                     var desc = d.descenantPmidCount;
                     var exact = d.exactPmidCount;
                     var parent = d.parentPmidCount;
                     if (exact > 0) {
-                        return 'Yes (Exact)'
+                        return ko.i18n('common.yesExact', 'Yes (Exact)')
                     } else if (desc > 0) {
-                        return 'Yes (Descendant)'
+                        return ko.i18n('common.yesDescendant', 'Yes (Descendant)')
                     } else if (parent > 0) {
-                        return 'Yes (Parent)'
+                        return ko.i18n('common.yesParent', 'Yes (Parent)')
                     } else {
-                        return 'No'
+                        return ko.i18n('common.no', 'No')
                     }
                 },
             },
             {
-                'caption': 'Found on Product Label',
+                'caption': ko.i18n('facets.caption.foundProductLabel', 'Found on Product Label'),
                 'binding': d => {
                     var desc = d.descenantSplicerCount;
                     var exact = d.exactSplicerCount;
                     var parent = d.parentSplicerCount;
                     if (exact > 0) {
-                        return 'Yes (Exact)'
+                        return ko.i18n('common.yesExact', 'Yes (Exact)')
                     } else if (desc > 0) {
-                        return 'Yes (Descendant)'
+                        return ko.i18n('common.yesDescendant', 'Yes (Descendant)')
                     } else if (parent > 0) {
-                        return 'Yes (Parent)'
+                        return ko.i18n('common.yesParent', 'Yes (Parent)')
                     } else {
-                        return 'No'
+                        return ko.i18n('common.no', 'No')
                     }
                 },
             },
             {
-                'caption': 'Found in Product Label Or Publications',
+                'caption': ko.i18n('facets.caption.foundInProductLabelOrPublications', 'Found in Product Label Or Publications'),
                 'binding': d => {
-                    return utils.hasEvidence(d) ? 'Yes' : 'No';
+                    return utils.hasEvidence(d) ? ko.i18n('common.yes', 'Yes') : ko.i18n('common.no', 'No');
                 },
             },
             {
-                'caption': 'Signal in FAERS',
+                'caption': ko.i18n('facets.caption.signalInFaers', 'Signal in FAERS'),
                 'binding': d => {
                     var desc = d.descenantFaersCount;
                     var exact = d.exactFaersCount;
                     var parent = d.parentFaersCount;
                     if (exact > 0) {
-                        return 'Yes (Exact)'
+                        return ko.i18n('common.yesExact', 'Yes (Exact)')
                     } else if (desc > 0) {
-                        return 'Yes (Descendant)'
+                        return ko.i18n('common.yesDescendant', 'Yes (Descendant)')
                     } else if (parent > 0) {
-                        return 'Yes (Parent)'
+                        return ko.i18n('common.yesParent', 'Yes (Parent)')
                     } else {
-                        return 'No'
+                        return ko.i18n('common.no', 'No')
                     }
                 },
             },
             {
-                'caption': 'User Specified',
+                'caption': ko.i18n('facets.caption.userSpecified', 'User Specified'),
                 'binding': d => {
                     var inc = d.userIncluded;
                     var exc = d.userExcluded;
                     if (inc > 0) {
-                        return 'Included'
+                        return ko.i18n('common.included', 'Included')
                     } else if (exc > 0) {
-                        return 'Excluded'
+                        return ko.i18n('common.excluded', 'Excluded')
                     } else {
-                        return 'None'
+                        return ko.i18n('common.none', 'None')
                     }
                 },
             },

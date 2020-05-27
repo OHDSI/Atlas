@@ -1,42 +1,65 @@
 <!-- ko with: Criteria -->
-cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.having-capital
-a visit occurrence of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Visit'}"></conceptset-reference>
+
+<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_1', 'a visit occurrence of')"></span>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionVisit.anyVisit', 'Any Visit')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
-	<li>for the first time in the person's history</li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_2', 'for the first time in the person\'s history')"></span>
+	</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
-	<li>occurrence start is <date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_3', 'occurrence start is:')"></span>
+		<date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(OccurrenceEndDate) != null -->
-	<li>occurrence end is <date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_4', 'occurrence end is:')"></span>
+		<date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
-	<li>visit type <cycle-toggle-input-viewer params="{value: VisitTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.visitType', 'Visit Type')"></span>
+		<cycle-toggle-input-viewer params="{value: VisitTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitSourceConcept) != null -->
-	<li>Visit Source Concept is <conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(VisitSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_5', 'Visit Source Concept is')"></span>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(VisitSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitLength) != null -->
-	<li>with visit length <numeric-range-viewer params="Range: VisitLength"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_13', 'with visit length')"></span>
+		 <numeric-range-viewer params="Range: VisitLength"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Age) != null -->
-	<li>with age <numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_7', 'with age')"></span>
+		<numeric-range-viewer params="Range: Age"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
-	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_14', 'gender is any of:')"></span>
+		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
-	<li>provider specialty is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_15', 'provider specialty is any of:')"></span>
+		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PlaceOfServiceLocation) != null -->
-	<li>with Place of Service located in <conceptset-reference params="{conceptSetId: PlaceOfServiceLocation, conceptSets: $component.expression.ConceptSets, defaultName: 'Any region'}"></conceptset-reference></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_11', 'with a Place of Service located in:')"></span>
+		<conceptset-reference params="{conceptSetId: PlaceOfServiceLocation, conceptSets: $component.expression.ConceptSets, defaultName: 'Any region'}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PlaceOfServiceDistance) != null -->
-	<li>with distance from a Place of Service to Patient <numeric-range-viewer params="Range: PlaceOfServiceDistance"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_12', 'with distance from a Place of Service to Patient')"></span>
+		<numeric-range-viewer params="Range: PlaceOfServiceDistance"></numeric-range-viewer></li>
 <!-- /ko -->
 </ul>
 <!-- /ko -->

@@ -164,7 +164,7 @@ define(['knockout',
 			this.generate = (service, event) => {
 				// Check to make sure the concept set is valid before calling the service
 				if (!this.conceptSetValid()) {
-					alert("The concept set is not marked as valid to generate results. Please make sure this concept set contains only CONDITIONS or DRUGS.");
+					alert(ko.unwrap(ko.i18n('components.evidencePairViewer.evidencePairViewerText_6', 'The concept set is not marked as valid to generate results. Please make sure this concept set contains only CONDITIONS or DRUGS.')));
 					return;
 				}
 
