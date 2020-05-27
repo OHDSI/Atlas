@@ -1,7 +1,7 @@
 <!-- ko with: Criteria -->
 
 <span data-bind="text: ko.i18n('components.conditionObservation.conditionObservationText_1', 'an observation of')"></span>
-<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Observation'}"></conceptset-reference>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionObservation.anyObservation', 'Any Observation')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>

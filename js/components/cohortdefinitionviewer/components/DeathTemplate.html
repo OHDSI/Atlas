@@ -1,6 +1,6 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_1', 'a death occurrence from')"></span>
-<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Death'}"></conceptset-reference>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
 	<li>
@@ -15,7 +15,7 @@
 <!-- ko if: ko.utils.unwrapObservable(DeathSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_3', 'Death Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(DeathSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(DeathSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Age) != null -->
 	<li>

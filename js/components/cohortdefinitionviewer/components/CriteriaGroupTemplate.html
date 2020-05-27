@@ -1,5 +1,5 @@
 <span data-bind="if: parentGroup">
-	<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And' : 'Or'"></span>
+	<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? ko.i18n('common.and', 'And') : ko.i18n('common.or', 'Or')"></span>
 		<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.having', 'having')"></span>
 
 	</span>

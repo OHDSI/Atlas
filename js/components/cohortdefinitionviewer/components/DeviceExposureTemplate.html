@@ -1,6 +1,6 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_1', 'a device exposure of')"></span>
-<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Device'}"></conceptset-reference>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>

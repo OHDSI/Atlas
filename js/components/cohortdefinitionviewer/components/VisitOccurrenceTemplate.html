@@ -26,7 +26,7 @@
 <!-- ko if: ko.utils.unwrapObservable(VisitSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_5', 'Visit Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(VisitSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(VisitSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitLength) != null -->
 	<li>

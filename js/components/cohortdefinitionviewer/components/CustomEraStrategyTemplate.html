@@ -7,7 +7,7 @@
 </div>
 <div style="padding: 5px 0px">
 	<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_13', 'Use the era end date of')"></span> 
-	<conceptset-reference params="{conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets,  defaultName: '!!UNSPECIFIED!!'}"></conceptset-reference>
+	<conceptset-reference params="{conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets,  defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference>
 	<ul>
 		<li>
 			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_14', 'allowing')"></span> 

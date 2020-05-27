@@ -1,6 +1,6 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_1', 'a specimen of')"></span>
-<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Specimen'}"></conceptset-reference>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionSpecimen.anySpecimen', 'Any Specimen')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
@@ -15,7 +15,8 @@
 <!-- ko if: ko.utils.unwrapObservable(SpecimenType) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.specimenType', 'Specimen Type')"></span>
-		<cycle-toggle-input-viewer params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(SpecimenType)"></concept-list-viewer></li>
+		<cycle-toggle-input-viewer params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> 
+		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(SpecimenType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Quantity) != null -->
 	<li>

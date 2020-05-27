@@ -1,6 +1,6 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_1', 'a procedure occurrence of')"></span>
-<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Procedure'}"></conceptset-reference>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>

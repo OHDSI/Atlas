@@ -1,6 +1,6 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_1', 'a condition occurrence of')"></span>
-<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Condition'}"></conceptset-reference>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionOccurrence.anyCondition', 'Any Condition')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
@@ -33,7 +33,7 @@
 <!-- ko if: ko.utils.unwrapObservable(ConditionSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_6', 'Condition Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(ConditionSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(ConditionSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Age) != null -->
 	<li>

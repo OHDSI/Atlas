@@ -1,4 +1,4 @@
-define(['components/evidence/utils'], function (utils) {
+define(['knockout', 'components/evidence/utils'], function (ko, utils) {
 
     var options = {};
 
