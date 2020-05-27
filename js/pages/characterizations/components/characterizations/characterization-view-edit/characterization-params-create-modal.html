@@ -3,17 +3,17 @@
         <div data-bind="css: 'modal-content'">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <div class="modal-title">Create new parameter</div>
+                <div class="modal-title" data-bind="text: ko.i18n('cc.viewEdit.design.faParams.modal.title', 'Create new parameter')"></div>
             </div>
             <div data-bind="css: classes({ element: 'modal-body', extra: 'modal-body' })">
                 <form class="form-inline">
                     <div class="form-group">
-                        <input data-bind="value: $component.paramName" type="text" class="form-control" placeholder="Name"/>
+                        <input data-bind="value: $component.paramName, placeholder: ko.i18n('cc.viewEdit.design.faParams.modal.namePlaceholder', 'Name')" type="text" class="form-control"/>
                     </div>
                     <div class="form-group">
-                        <input data-bind="value: $component.paramValue" type="text" class="form-control" placeholder="Value"/>
+                        <input data-bind="value: $component.paramValue, placeholder: ko.i18n('cc.viewEdit.design.faParams.modal.valuePlaceholder', 'Value')" type="text" class="form-control"/>
                     </div>
-                    <button data-bind="click: $component.submitParam" type="button" class="btn btn-default">Submit</button>
+                    <button data-bind="click: $component.submitParam, text: ko.i18n('cc.viewEdit.design.faParams.modal.submit', 'Submit')" type="button" class="btn btn-default"></button>
                 </form>
             </div>
         </div>

@@ -234,7 +234,7 @@ define([
         }
 
         closeCharacterization() {
-            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', "Your changes are not saved. Would you like to continue?")))) {
                 return;
             }
             this.design(null);

@@ -47,7 +47,7 @@ define([
 				{
 					class: this.classes('access-tbl-col-action'),
 					title: ko.i18n('columns.action', 'Action'),
-					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${thcohortDefinitionManager.panels.clickToClearis.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
+					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${this.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
 				}
 			];
 

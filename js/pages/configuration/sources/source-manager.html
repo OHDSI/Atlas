@@ -170,7 +170,7 @@
 														<input type="file" name="keyfileFile" id="keyfile" data-bind="event: { change: function() { uploadFile($element.files[0]) } }, visible: fieldsVisibility.bqFileInput()">
 														<span data-bind="text: selectedSource().keyfileName, hidden: fieldsVisibility.bqFileInput()"></span>
 														<button type="button" data-bind="css: classes({element: 'remove-btn', extra: 'btn btn-sm btn-danger'}), hidden: fieldsVisibility.bqFileInput(), click: removeKeyfile,
-																						 text: ko.i18n('configuration.viewEdit.bigQuery.button.remove.label', 'SRemove')"></button>
+																						 text: ko.i18n('configuration.viewEdit.bigQuery.button.remove.label', 'Remove')"></button>
 													</div>
 												</div>
 											</div>

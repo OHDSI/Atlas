@@ -6,7 +6,7 @@
             <h2 data-bind="css: classes('title')">
                 <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }, text: ko.i18n('cc.viewEdit.executions.title', 'Executions')"></a>
                 <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
-                <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', 'text: 'Reports for <%= sourceName %>', {sourceName: $component.data().sourceName})"></span>
+                <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', 'Reports for <%= sourceName %>', {sourceName: $component.data().sourceName})"></span>
             </h2>
             <div data-bind="css: classes('toolbar')">
                 <ul data-bind="css: classes('detail-list')">
@@ -47,7 +47,9 @@
     </div>
     <div data-bind="css: classes('report-section')">
         <div>
-            <button class="btn btn-sm btn-primary" type="button" data-bind="text: showEmptyResults() ? 'Hide Empty Results' : 'Show All Results', click: toggleEmptyResults"></button>
+            <button class="btn btn-sm btn-primary" type="button" data-bind="click: toggleEmptyResults, text: showEmptyResults()
+                    ? ko.i18n('cc.viewEdit.results.hideEmptyResults', 'Hide Empty Results')
+                    : ko.i18n('cc.viewEdit.results.showAllResults', 'Show All Results')"></button>
             <button class="btn btn-sm btn-primary" type="button" data-bind="enable: $component.canExportAll(), click: $component.exportAllCSV, text: ko.i18n('cc.viewEdit.results.exportAll', 'Export all')"></button>
             <i data-bind="visible: isResultDownloading('__ALL__'), css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
         </div>

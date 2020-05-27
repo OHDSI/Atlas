@@ -83,18 +83,17 @@ define([
 		}
 
 		get gridOptions() {
-			const facets = ko.i18n('pathways.browser.grid.facets');
 			return ko.observable({
 				Facets: [{
-					'caption': ko.i18n('created', 'Created', facets),
+					'caption': ko.i18n('facets.caption.created', 'Created'),
 					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
 				},
 					{
-						'caption': ko.i18n('updated', 'Updated', facets),
+						'caption': ko.i18n('facets.caption.updated', 'Updated'),
 						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
 					},
 					{
-						'caption': ko.i18n('author', 'Author', facets),
+						'caption': ko.i18n('facets.caption.author', 'Author'),
 						'binding': (o) => (o.createdBy && o.createdBy.login) || "",
 					},
 				]

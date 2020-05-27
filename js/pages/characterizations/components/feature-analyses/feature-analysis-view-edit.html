@@ -12,27 +12,25 @@
                 <div class="fe-save-btn" data-bind="tooltip: saveTooltipText">
                     <button class="btn btn-success" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
                 </div>
-                <button class="btn btn-primary" title="Close" data-bind="click: closeAnalysis, enable: !isProcessing()"><i class="fa fa-times"></i></button>
+                <button class="btn btn-primary" data-bind="click: closeAnalysis, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity -->
-                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                <button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
-                <button class="btn btn-danger" title="Delete" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
+                <button class="btn btn-danger" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
                 <!-- /ko -->
             </div>
         </div>
         <div data-bind="visible: !isNameFilled()" class="empty-name-error">
             <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-            <label>Feature Analysis name is empty.</label>
+            <label data-bind="text: ko.i18n('cc.fa.nameIsEmpty', 'Feature Analysis name is empty.')"></label>
         </div>
     </div>
 
     <div data-bind="css: classes('content'), visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
-            <div class="panel-heading">
-                Description
-            </div>
+            <div class="panel-heading" data-bind="text: ko.i18n('cc.fa.description', 'Description')"></div>
             <div data-bind="css: classes({ element: 'descr-panel-body' })">
                 <!-- ko if: $component.canEdit() -->
                     <multi-select
@@ -42,7 +40,7 @@
                 <!-- /ko -->
                 <!-- ko if: !$component.canEdit() -->
                     <div data-bind="css: classes('read-only-domain-info')">
-                        <b>Domain: </b><span data-bind="text: ($component.domains().find(o => o.value === $component.data().domain()) || {}).label"></span>
+                        <b data-bind="text: ko.i18n('cc.fa.domain', 'Domain:')"></b> <span data-bind="text: ($component.domains().find(o => o.value === $component.data().domain()) || {}).label"></span>
                     </div>
                 <!-- /ko -->
                 <textarea data-bind="
@@ -54,9 +52,7 @@
         </div>
 
         <div data-bind="css: classes({ element: 'design-panel', extra: 'panel panel-primary' })">
-            <div class="panel-heading">
-                Design
-            </div>
+            <div class="panel-heading" data-bind="text: ko.i18n('cc.fa.design', 'Design')"></div>
             <div data-bind="css: classes({ element: 'design-panel-body' })">
                 <div data-bind="css: classes('type-selector')">
                     <ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' })">
@@ -67,7 +63,7 @@
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.PRESET ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.PRESET)
                         ">
-                            <a>Preset</a>
+                            <a data-bind="text: ko.i18n('cc.fa.preset', 'Preset')"></a>
                         </li>
                         <!-- /ko -->
                         <li role="presentation"
@@ -76,7 +72,7 @@
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CRITERIA_SET ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.CRITERIA_SET)
                         ">
-                            <a>Criteria</a>
+                            <a data-bind="text: ko.i18n('cc.fa.criteria', 'Criteria')"></a>
                         </li>
                         <li role="presentation"
                             data-bind="
@@ -84,13 +80,13 @@
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CUSTOM_FE ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.CUSTOM_FE)
                         ">
-                            <a>Custom</a>
+                            <a data-bind="text: ko.i18n('cc.fa.custom', 'Custom')"></a>
                         </li>
                     </ul>
                 </div>
                 <!-- ko if: $component.isPresetFeatureTypeAvailable-->
                 <div data-bind="if: $component.data().type() === $component.featureTypes.PRESET, css: classes('design')">
-                    <span data-bind="css: classes('criteria-descr')">FeatureExtraction preset name:</span>
+                    <span data-bind="css: classes('criteria-descr'), text: ko.i18n('cc.fa.featureExtractionPresetName', 'FeatureExtraction preset name:')"></span>
                     <input data-bind="
                         css: classes({ element: 'preset-input', extra: 'form-control' }),
                         attr: { disabled: $component.canEdit() ? null : true },
@@ -102,7 +98,7 @@
                     if: $component.data().type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
                 ">
                     <div data-bind="css: classes({extra: 'panel panel-primary'})">
-                        <div data-bind="css: classes({ extra: 'panel-heading' })">Analysis type:</div>
+                        <div data-bind="css: classes({ extra: 'panel-heading' }), text: ko.i18n('cc.fa.analysisType', 'Analysis type:')"></div>
                         <div data-bind="css: classes('stat-type-selector')">
                             <multi-select
                                 data-bind="css: classes()"
@@ -111,12 +107,10 @@
                         </div>
                     </div>
                     <span data-bind="if: data().statType() === 'PREVALENCE'">
-                        <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria">
-                            Add Criteria feature
-                        </button>
+                        <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria, text: ko.i18n('cc.fa.addCriteriaFeature', 'Add Criteria feature')"></button>
                     </span>
                     <span data-bind="if: data().statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed')">
-                        <drop-down-menu params="actions: $component.windowedActions, title: 'Add New Criteria...', cssClasses: 'btn-group', formatOption: formatCriteriaOption"></drop-down-menu>
+                        <drop-down-menu params="actions: $component.windowedActions, title: ko.i18n('cc.fa.addNewCriteria', 'Add New Criteria...'), cssClasses: 'btn-group', formatOption: formatCriteriaOption"></drop-down-menu>
                     </span>
                     <!-- ko foreach: $component.data().design -->
                         <div data-bind="
@@ -128,8 +122,7 @@
                         ">
                             <div data-bind="css: $component.classes('criteria-heading')">
                                 <input
-                                        data-bind="css: $component.classes({ element: 'criteria-name', extra: 'form-control' }), textInput: $data.name"
-                                        placeholder="Criteria name"
+                                        data-bind="css: $component.classes({ element: 'criteria-name', extra: 'form-control' }), textInput: $data.name, placeholder: ko.i18n('cc.fa.criteriaName', 'Criteria name')"
                                 />
                                 <button
                                         type="button"
@@ -150,14 +143,14 @@
                 </div>
                 <div data-bind="if: $component.data().type() === $component.featureTypes.CUSTOM_FE, css: classes('design')">
                     <div data-bind="css: classes('design-section')">
-                        <span data-bind="css: classes('design-section-title')">Analysis SQL:</span>
+                        <span data-bind="css: classes('design-section-title'), text: ko.i18n('cc.fa.analysisSql', 'Analysis SQL:')"></span>
                         <button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyAnalysisSQLTemplateClipboard" data-bind="click: copyAnalysisSQLTemplateToClipboard, attr: { 'data-clipboard-text': demoCustomSqlAnalysisDesign }">
                             <i class="fa fa-clipboard" aria-hidden="true"></i>&nbsp;
-                            Copy Analysis SQL Template To Clipboard
+                            <span data-bind="text: ko.i18n('cc.fa.copySqlToClipboard', 'Copy Analysis SQL Template To Clipboard')"></span>
                         </button>&nbsp;&nbsp;
                         <span id="copyAnalysisSQLTemplateMessage" style="display:none" class="alert alert-success" role="alert">
                             <i class="fa fa-check-square-o" aria-hidden="true"></i>
-                            <strong>Copied To Clipboard!</strong>
+                            <strong data-bind="text: ko.i18n('cc.fa.copiedToClipboard', 'Copied To Clipboard!')"></strong>
                         </span>
                         <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>
                         <textarea data-bind="
@@ -168,15 +161,13 @@
                         <span data-bind="css: classes('criteria-sql')">)</span>
                     </div>
                     <div data-bind="css: classes('design-section')">
-                        <span data-bind="css: classes('design-section-title')">
-                            Available variables:
-                        </span>
+                        <span data-bind="css: classes('design-section-title'), text: ko.i18n('cc.fa.availableVariables', 'Available variables:')"></span>
                         <ul>
                             <li>@cdm_database_schema</li>
                             <li>@cohort_table</li>
                             <li>@cohort_id</li>
                             <li>@analysis_id</li>
-                            <li>all variables specified in Cohort Characterization parameters</li>
+                            <li data-bind="text: ko.i18n('cc.fa.availableVariablesNote', 'all variables specified in Cohort Characterization parameters')"></li>
                         </ul>
                     </div>
                 </div>
@@ -188,7 +179,7 @@
 <div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">Select Concept Set...</div>
+            <div class="modal-header" data-bind="text: ko.i18n('cc.fa.selectConceptSet', 'Select Concept Set...')"></div>
             <div class="paddedWrapper">
                 <cohort-concept-set-browser params="
                     onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected,
