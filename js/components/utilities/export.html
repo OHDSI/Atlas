@@ -3,20 +3,20 @@
 <div data-bind="css: classes(), visible: !loading()">
     <div data-bind="css: classes('content')">
         <!-- ko if: canExport() -->
-        <div data-bind="css: classes('copy-clipboard')">
-            <button
-                title="Copy to clipboard"
-                data-bind="attr: {'id': 'btnCopyToClipboard' + $component.exportId}, css: classes({extra: 'btn btn-default btn-sm'}), click: copyExpressionToClipboard"
-                data-clipboard-target="#exportJSON"
-            >Copy To Clipboard</button>
-        
-            <span id="copyExpressionToClipboardMessage" style="display:none" role="alert"
-                data-bind="attr: {'id': 'copyExpressionToClipboardMessage' + $component.exportId}, css: classes({element: 'export-span', extra: 'alert alert-success'})">
-                <i data-bind="css: classes({extra: 'fa fa-check-square-o'})" aria-hidden="true"></i>
-                <strong>Copied To Clipboard!</strong>
-            </span>
-        </div>
-        <textarea id="exportJSON" data-bind="css: classes('json-box'), textInput: $component.exportJSON"></textarea>
+            <div data-bind="css: classes('copy-clipboard')">
+                <button
+                    title="Copy to clipboard"
+                    data-bind="attr: {'id': 'btnCopyToClipboard' + $component.exportId}, css: classes({extra: 'btn btn-default btn-sm'}), click: copyExpressionToClipboard"
+                    data-clipboard-target="#exportJSON"
+                >Copy To Clipboard</button>
+            
+                <span id="copyExpressionToClipboardMessage" style="display:none" role="alert"
+                    data-bind="attr: {'id': 'copyExpressionToClipboardMessage' + $component.exportId}, css: classes({element: 'export-span', extra: 'alert alert-success'})">
+                    <i data-bind="css: classes({extra: 'fa fa-check-square-o'})" aria-hidden="true"></i>
+                    <strong>Copied To Clipboard!</strong>
+                </span>
+            </div>
+            <textarea id="exportJSON" data-bind="css: classes('json-box'), textInput: $component.exportJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !canExport() -->
             <div data-bind="css: classes('error-message'), text: $component.errorMessage()"></div>
