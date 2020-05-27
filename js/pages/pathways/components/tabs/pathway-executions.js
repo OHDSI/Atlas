@@ -109,7 +109,6 @@ define([
 			this.executionGroups = ko.observableArray([]);
 			this.executionDesign = ko.observable(null);
 			this.isViewGenerationsPermitted() && this.startPolling();
-			this.executionsPage = ko.i18n('pathways.manager.executions');
 		}
 
 		startPolling() {

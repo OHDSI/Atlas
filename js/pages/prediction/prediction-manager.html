@@ -16,7 +16,7 @@
             class="fa fa-times"></i></button>
         <!-- ko ifnot: isNewEntity -->
         <button class="btn btn-primary"
-          data-bind="title: ko.i18n('common.copy', 'Copy'), click: copy, enable: canCopy() && !isProcessing()"><i
+          data-bind="title: ko.i18n('common.createACopy', 'Create a copy'), click: copy, enable: canCopy() && !isProcessing()"><i
             class="fa fa-copy"></i></button>
         <button class="btn btn-primary"
           data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">

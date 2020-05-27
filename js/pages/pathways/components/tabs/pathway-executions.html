@@ -1,9 +1,7 @@
 <div data-bind="css: classes()">
 	<div class="loading" data-bind="visible: loading(), text: ko.i18n('common.loading', 'loading')"></div>
 	<div data-bind="visible: !loading()">
-		<h2 data-bind="css: classes('title'), text: ko.i18n('title', '', executionsPage)">
-			Executions
-		</h2>
+		<h2 data-bind="css: classes('title'), text: ko.i18n('pathways.manager.executions.title', 'Executions')"></h2>
 		<div data-bind="css: classes('content')">
 			<!-- ko foreach: executionGroups -->
 			<div data-bind="template: {
@@ -22,7 +20,7 @@
 </div>
 
 <atlas-modal params="showModal: $component.isExecutionDesignShown,
-										 title: ko.i18n('dialogs.design.title', 'Design', $component.executionsPage),
+										 title: ko.i18n('pathways.manager.executions.dialogs.design.title', 'Design'),
 										 data: {
 										 	executionDesign: $component.executionDesign,
 										 	classes: $component.classes
@@ -35,7 +33,7 @@
 
 <modal-exit-message params="{
         showModal: $component.isExitMessageShown,
-        title: ko.i18n('dialogs.exitMessage.title', 'Execution Exit Message', $component.executionsPage),
+        title: ko.i18n('pathways.manager.executions.dialogs.exitMessage.title', 'Execution Exit Message'),
         exitMessage: $component.exitMessage,
     }">
 </modal-exit-message>
@@ -55,13 +53,13 @@
 																			 attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) },
 																			 click: () => $component.generate(sourceKey)">
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-                            <span data-bind="css: classes('action-text'), text: ko.i18n('buttons.generate', 'Generate', $component.executionsPage)">Generate</span>
+                            <span data-bind="css: classes('action-text'), text: ko.i18n('pathways.manager.executions.buttons.generate', 'Generate')"></span>
                     </button>
                     <!-- /ko -->
                     <!-- ko if: $component.pathwayGenerationStatusOptions.STARTED === status() -->
                     <a role="button" class="btn btn-sm btn-danger"
                        data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
-                        <i class="fa fa-spinner fa-spin"></i> <span data-bind="css: classes('action-text'), text: ko.i18n('buttons.cancel', 'Cancel', $component.executionsPage)">Cancel</span>
+                        <i class="fa fa-spinner fa-spin"></i> <span data-bind="css: classes('action-text'), text: ko.i18n('common.cancel', 'Cancel')"></span>
                     </a>
                     <!-- /ko -->
                 </li>
@@ -71,7 +69,7 @@
 																			 attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
 																			 click: () => $component.goToLatestResults(sourceKey)">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
-                        <span data-bind="css: classes('action-text'), text: ko.i18n('buttons.viewLatestResult', 'View latest result', $component.executionsPage)">View latest result</span>
+                        <span data-bind="css: classes('action-text'), text: ko.i18n('pathways.manager.executions.buttons.viewLatestResult', 'View latest result')"></span>
                     </button>
                 </li>
                 <li data-bind="css: classes({ element: 'action' }),
@@ -80,7 +78,7 @@
 																			 attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
 																			 click: toggleSection">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="css: classes('action-text'), text: `${ko.i18n('buttons.allExecutions', 'All executions', $component.executionsPage)()} (${submissions().length})`"></span>
+                        <span data-bind="css: classes('action-text'), text: `${ko.i18n('pathways.manager.executions.buttons.allExecutions', 'All executions')()} (${submissions().length})`"></span>
                     </button>
                 </li>
             </ul>

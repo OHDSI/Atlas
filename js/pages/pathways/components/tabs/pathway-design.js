@@ -34,10 +34,6 @@ define([
 			return constants.maxDepthOptions;
 		}
 
-		get designPage() {
-			return ko.i18n('pathways.manager.design');
-		}
-		
 	}
 
 	return commonUtils.build('pathway-design', PathwayEditor, view);

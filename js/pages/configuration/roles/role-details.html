@@ -13,7 +13,7 @@
                 <input type="text" class="form-control" data-bind="textInput:$component.roleName, attr: { disabled: canEditRole() ? null : true}, css: { emptyInput: !$component.roleName() }, placeholder: ko.i18n('const.newEntityNames.role', 'New Role')" />
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-success" data-bind="click:$component.save, css: { disabled: !dirtyFlag().isDirty() || !canSave()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
-                    <button type="button" class="btn btn-primary" data-bind="click:$component.copy, css: { disabled: !canCreate()}, title: ko.i18n('common.copy', 'Copy')"><i class="fa fa-copy"></i></button>
+                    <button type="button" class="btn btn-primary" data-bind="click:$component.copy, css: { disabled: !canCreate()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
                     <button type="button" class="btn btn-primary" data-bind="click:$component.close, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                     <button type="button" class="btn btn-primary" data-bind="click: $component.export, title: ko.i18n('common.export', 'Export')"><i class="fa fa-download"></i></button>
                     <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>

@@ -13,7 +13,7 @@
       <div class="input-group-btn">
         <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() || isProcessing() }, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet, css: { disabled: isProcessing() }, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
-        <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() || isProcessing()}, title: ko.i18n('common.copy', 'Copy')">
+        <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() || isProcessing()}, title: ko.i18n('common.createACopy', 'Create a copy')">
           <i class="fa fa-copy"></i>
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
