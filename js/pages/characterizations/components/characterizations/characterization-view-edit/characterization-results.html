@@ -4,7 +4,7 @@
     <div data-bind="css: classes('header')">
         <div>
             <h2 data-bind="css: classes('title')">
-                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }, text: ko.i18n('cc.viewEdit.executions.title','Executions')"></a>
+                <a data-bind="attr: { href: ('#/cc/characterizations/' + $component.characterizationId() + '/executions') }, text: ko.i18n('cc.viewEdit.executions.title', 'Executions')"></a>
                 <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
                 <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', 'text: 'Reports for <%= sourceName %>', {sourceName: $component.data().sourceName})"></span>
             </h2>
@@ -20,7 +20,7 @@
                     </li>
                     <li data-bind="css: classes('detail')">
                         <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.results.label', 'Results:')">:</label>
-                        <span data-bind="css: classes('detail-value'), text: ko.i18nformat('cc.viewEdit.results.detail.results.text', '<%= reports %> reports' { reports: ($component.data().analyses || []).length })"></span>
+                        <span data-bind="css: classes('detail-value'), text: ko.i18nformat('cc.viewEdit.results.detail.results.text', '<%= reports %> reports', { reports: ($component.data().analyses || []).length })"></span>
                     </li>
                 </ul>
             </div>

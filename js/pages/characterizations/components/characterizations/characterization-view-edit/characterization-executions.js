@@ -66,12 +66,12 @@ define([
 			this.design = params.design;
 
 			this.execColumns = ko.computed(() => [{
-					title: ko.i18n('cc.viewEdit.executions.table.columns.date', 'Date'),
+					title: ko.i18n('columns.date', 'Date'),
 					className: this.classes('col-exec-date'),
 					render: datatableUtils.getDateFieldFormatter('startTime'),
 				},
 				{
-					title: ko.i18n('cc.viewEdit.executions.table.columns.design', 'Design'),
+					title: ko.i18n('columns.design', 'Design'),
 					className: this.classes('col-exec-checksum'),
 					render: (s, p, data) => {
 						let html = '';
@@ -85,13 +85,13 @@ define([
 					}
 				},
 				{
-					title: ko.i18n('cc.viewEdit.executions.table.columnsstatus', 'Status'),
+					title: ko.i18n('columns.status', 'Status'),
 					data: 'status',
 					className: this.classes('col-exec-status'),
 					render: datatableUtils.getExecutionStatus(),
 				},
 				{
-					title: ko.i18n('cc.viewEdit.executions.table.columnsduration', 'Duration'),
+					title: ko.i18n('columns.duration', 'Duration'),
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
 						const endTime = d.endTime || Date.now();
@@ -99,7 +99,7 @@ define([
 					}
 				},
 				{
-					title: ko.i18n('cc.viewEdit.executions.table.columnsresults.title', 'Results'),
+					title: ko.i18n('columns.results.title', 'Results'),
 					data: 'results',
 					className: this.classes('col-exec-results'),
 					render: (s, p, d) => {

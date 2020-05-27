@@ -1,19 +1,19 @@
-<div class="loading" data-bind="visible: loading(), text: ko.i18n('loading', 'loading', resultsPage)">loading</div>
+<div class="loading" data-bind="visible: loading(), text: ko.i18n('common.loading', 'loading')"></div>
 
 <div data-bind="css: classes(), if: !loading()">
 	<h2 data-bind="css: classes('title')">
-		<a data-bind="attr: { href: `#/pathways/${analysisId()}/executions` }, text: ko.i18n('pathways.manager.executions.title')">Executions</a>
+		<a data-bind="attr: { href: `#/pathways/${analysisId()}/executions` }, text: ko.i18n('pathways.manager.executions.title', 'Executions')"></a>
 		<i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
 		<span data-bind="text: title"></span>
 	</h2>
 	<div data-bind="css: classes('toolbar')">
 		<ul data-bind="css: classes('detail-list')">
 			<li data-bind="css: classes('detail')">
-				<label data-bind="css: classes('detail-label'), text: ko.i18n('date', '', resultsPage)">Date:</label>
+				<label data-bind="css: classes('detail-label'), text: ko.i18n('pathways.manager.executions.results.date', 'Date:')"></label>
 				<span data-bind="css: classes('detail-value'), text: formatDate(results().date)"></span>
 			</li>
 			<li data-bind="css: classes('detail')">
-				<label data-bind="css: classes('detail-label'), text: ko.i18n('design', '', resultsPage)">Design:</label>
+				<label data-bind="css: classes('detail-label'), text: ko.i18n('pathways.manager.executions.results.design', 'Design:')"></label>
 				<a data-bind="css: classes('detail-value', 'link'), text: results().designHash, click: () => $component.showExecutionDesign(executionId())">x6t21cda</a>
 			</li>
 		</ul>
@@ -24,34 +24,32 @@
 	</div>
 
 	<!-- ko with: pathwaysObserver -->
-	<h3 data-bind="css: $component.classes('analysis-name')"><span data-bind="text: ko.i18n('title', '', $component.resultsPage)">Pathways Analysis for</span> <span data-bind="text: title"></span></h3>
+	<h3 data-bind="css: $component.classes('analysis-name')"><span data-bind="text: ko.i18n('pathways.manager.executions.results.title', 'Pathways Analysis for')"></span> <span data-bind="text: title"></span></h3>
 		<div data-bind="if: !eventCodes.length && !cohortPathways.length && !eventCohorts.length">
-			<span data-bind="text: ko.i18n('noPathways', '', $component.resultsPage)">No pathways were found</span>
+			<span data-bind="text: ko.i18n('pathways.manager.executions.results.noPathways', 'No pathways were found')"></span>
 		</div>
 		<!-- ko foreach: cohortPathways -->
 			<div data-bind="css: $component.classes('report-group')">
 				<div data-bind="css: $component.classes({ element: 'legend-panel', extra: ['panel panel-primary'] })">
-					<div class="panel-heading" data-bind="text: ko.i18n('legend.title', '', $component.resultsPage)">
-						Legend
-					</div>
+					<div class="panel-heading" data-bind="text: ko.i18n('pathways.manager.executions.results.legend.title', 'Legend')"></div>
 					<div class="panel-body">
 						<div data-bind="css: $component.classes('legend-section')">
-							<h5 data-bind="text: ko.i18n('legend.targetCohort', '', $component.resultsPage)">Target Cohort</h5>
+							<h5 data-bind="text: ko.i18n('pathways.manager.executions.results.legend.targetCohort', 'Target Cohort')"></h5>
 							<div class="title" data-bind="text: targetCohortName"/>
 							<ul data-bind="css: $component.classes('legend-props-list')">
 								<li>
-									<span data-bind="text: ko.i18n('legend.targetCohortCount', '', $component.resultsPage)">Target cohort count:</span> <span data-bind="text: targetCohortCount"/>
+									<span data-bind="text: ko.i18n('pathways.manager.executions.results.legend.targetCohortCount', 'Target cohort count:')"></span> <span data-bind="text: targetCohortCount"/>
 								</li>
 								<li>
-									<span data-bind="text: ko.i18n('legend.personsCount', '', $component.resultsPage)">Persons with pathways count:</span> <span data-bind="text: personsReported"/>
+									<span data-bind="text: ko.i18n('pathways.manager.executions.results.legend.personsCount', 'Persons with pathways count:')"></span> <span data-bind="text: personsReported"/>
 								</li>
 								<li>
-									<span data-bind="text: ko.i18n('legend.personsPortion', '', $component.resultsPage)">Persons with pathways portion:</span> <span data-bind="text: personsReportedPct"/>
+									<span data-bind="text: ko.i18n('pathways.manager.executions.results.legend.personsPortion', 'Persons with pathways portion:')"></span> <span data-bind="text: personsReportedPct"/>
 								</li>
 							</ul>
 						</div>
 						<div data-bind="css: $component.classes('legend-section')">
-							<h5 data-bind="text: ko.i18n('legend.eventCohort', '', $component.resultsPage)">Event Cohorts</h5>
+							<h5 data-bind="text: ko.i18n('pathways.manager.executions.results.legend.eventCohort', 'Event Cohorts')"></h5>
 							<table data-bind="css: $component.classes('table-legend'), foreach: $component.pathwaysObserver().eventCohorts">
 								<tr>
 									<td><div data-bind="style: {'background-color' : $component.pathwaysObserver().colors(code)}" class="swatch"></div></td>
@@ -63,8 +61,8 @@
 				</div>
 
 				<div data-bind="css: $component.classes({ element: 'plot-panel', extra: ['panel panel-primary'] })">
-					<div class="panel-heading" data-bind="text: ko.i18n('diagram.title', '', $component.resultsPage)">
-						Sunburst plot
+					<div class="panel-heading" data-bind="text: ko.i18n('pathways.manager.executions.results.diagram.title', 'Sunburst plot')">
+
 					</div>
 					<div class="panel-body">
 						<sunburst data-bind="css: $component.classes('sunburst')"
@@ -82,20 +80,18 @@
 				</div>
 
 				<div data-bind="css: $component.classes({ element: 'path-details-panel', extra: ['panel panel-primary'] })">
-					<div class="panel-heading" data-bind="text: ko.i18n('details.title', '', $component.resultsPage)">
-						Path details
-					</div>
+					<div class="panel-heading" data-bind="text: ko.i18n('pathways.manager.executions.results.details.title', 'Path details')"></div>
 					<div class="panel-body">
 						<!-- ko ifnot: pathDetails -->
-							<div data-bind="text: ko.i18n('details.noPath', '', $component.resultsPage)">No path selected: click path to see details.</div>
+							<div data-bind="text: ko.i18n('pathways.manager.executions.results.details.noPath', 'No path selected: click path to see details.')"></div>
 						<!-- /ko -->
 						<!-- ko if: pathDetails -->
 							<table data-bind="css: $component.classes({ element: 'detail-table', extra: ['table'] })">
 								<thead>
 								<tr>
-									<th data-bind="text: ko.i18n('name', 'Name', $component.columns)">Name</th>
-									<th data-bind="text: ko.i18n('remain', '% Remain', $component.columns)">% Remain</th>
-									<th data-bind="text: ko.i18n('diff', '% Diff', $component.columns)">% Diff</th>
+									<th data-bind="text: ko.i18n('columns.name', 'Name')"></th>
+									<th data-bind="text: ko.i18n('columns.percentRemain', '% Remain')"></th>
+									<th data-bind="text: ko.i18n('columns.percentDiff', '% Diff')"></th>
 								</tr>
 								</thead>
 								<tbody data-bind="foreach: pathDetails().tableData">
@@ -121,9 +117,9 @@
 		<!-- /ko -->
 	<!-- /ko -->
 
-	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: ko.i18n('pathways.manager.executions.dialogs.design.title','Design'), data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">
-		<div class="loading" data-bind="visible: executionDesign() == null && !loadExecutionDesignError(), text: ko.i18n('loading', 'loading', $component.resultsPage)">loading</div>
-		<div class="loading" data-bind="visible: loadExecutionDesignError(), text: ko.i18n('pathways.manager.executions.dialogs.design.loadError')">Unable to load design</div>
+	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: ko.i18n('pathways.manager.executions.dialogs.design.title', 'Design'), data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">
+		<div class="loading" data-bind="visible: executionDesign() == null && !loadExecutionDesignError(), text: ko.i18n('common.loading', 'loading')"></div>
+		<div class="loading" data-bind="visible: loadExecutionDesignError(), text: ko.i18n('pathways.manager.executions.dialogs.design.loadError', 'Unable to load design')"></div>
 		<div data-bind="if: executionDesign() != null">
 			<textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
 		</div>

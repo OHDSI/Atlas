@@ -7,11 +7,11 @@
         <div class="input-group">
             <input type="text" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
             <div class="input-group-btn">
-                <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }"><i class="fa fa-save"></i></button>
-                <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+                <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+                <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity() -->
-                <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }, attr: { title: ko.i18n('cc.viewEdit.buttons.copy', 'Create a copy of this cohort characterization') }"><i class="fa fa-copy"></i></button>
-                <button class="btn btn-primary" data-bind="attr: {title: ko.i18n('cc.viewEdit.buttons.access', 'Configure access')}, visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }, title: , title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
                 <button type="button" class="btn btn-danger"  data-bind="click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-o"></i></button>

@@ -59,14 +59,12 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig'],
 
         const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
 
-        const COLUMNS = "executionStatus";
-
         const getExecutionStatus = () => (s, p, d) => {
-					const status = ko.i18n(`${COLUMNS}.values.${s}`, s)();
+					const status = ko.i18n(`executionStatus.values.${s}`, s)();
 					if (s === 'FAILED') {
 						return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
 					} else if (s === 'STOPPED') {
-						return ko.i18n(`${COLUMNS}.values.CANCELED`, 'CANCELED')();
+						return ko.i18n('executionStatus.values.CANCELED', 'CANCELED')();
 					} else {
 						return status;
 					}

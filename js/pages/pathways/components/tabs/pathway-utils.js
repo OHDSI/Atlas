@@ -46,8 +46,6 @@ define([
 				this.loadExportJSON();
 				console.log(`New value of analysisId: ${newVal}`);
 			}));
-
-			this.utilsPage = ko.i18n('pathways.manager.utilities');
 		}
 
 		setMode(mode) {

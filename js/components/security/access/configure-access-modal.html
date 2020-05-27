@@ -1,5 +1,5 @@
 <atlas-modal params="showModal: $component.isModalShown,
-										 title: 'Configure access',
+										 title: ko.i18n('common.configureAccess', 'Configure access'),
 										 data: {
 										    classes: classes,
 										    isLoading: isLoading,
@@ -11,13 +11,11 @@
 										    roleOptions: roleOptions,
 										    roleSearch: roleSearch
 										 }">
-    <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: 'Loading access list...'"></loading>
+    <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('common.configureAccessModal.loadingAccessList', 'Loading access list...')"></loading>
     <div data-bind="css: classes()">
         <div data-bind="if: !isLoading()">
             <div data-bind="css: classes('new-access')">
-                <label data-bind="css: classes('new-access-label')">
-                    Add write access to role:
-                </label>
+                <label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addWriteAccessToRole', 'Add write access to role:')"></label>
                 <div class="input-group"
                      data-bind="css: classes({ element: 'new-access-btn-group', extra: ['new-access-btn-group'] })">
                     <input
@@ -29,21 +27,17 @@
                             ko_autocomplete: { source: roleOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
                     >
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button" data-bind="click: grantAccess, attr: { disabled: !(roleName() && roleName().length) }">
-                            Add
-                        </button>
+                        <button class="btn btn-primary" type="button" data-bind="click: grantAccess, attr: { disabled: !(roleName() && roleName().length) }, text: ko.i18n('common.add', 'Add')"></button>
                     </span>
                 </div>
                 <div data-bind="css: classes('access-list')">
-                    <label data-bind="css: classes('access-list-label')">
-                        Roles with write access:
-                    </label>
+                    <label data-bind="css: classes('access-list-label'), text: ko.i18n('common.configureAccessModal.rolesWithWriteAccess', 'Roles with write access:')"></label>
                     <div>
                         <table data-bind="
                             css: classes({ element: 'access-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                             dataTable:{
                                 data: accessList,
-                                options: { columns: columns }
+                                options: {columns: columns, language: ko.i18n('datatable.language')},
                             }
                         "/>
                     </div>

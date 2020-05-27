@@ -49,14 +49,14 @@
 							order: [[2, 'desc']],
 							columns: [
 									'select',
-									{ title: ko.i18n('columns.conceptId', 'Concept Id'), data: 'concept.CONCEPT_ID'},
-									{ title: ko.i18n('columns.conceptCode', 'Concept Code'), data: 'concept.CONCEPT_CODE'},
-									{ title: ko.i18n('columns.conceptName', 'Concept Name'), data: 'concept.CONCEPT_NAME'},
-									{ title: ko.i18n('columns.domain', 'Domain'), data: 'concept.DOMAIN_ID' },
-									{ title: ko.i18n('columns.vocabulary', 'Vocabulary'), data: 'concept.VOCABULARY_ID' },
-									{ title: ko.i18n('columns.exclude', 'Exclude'), class:'text-center', orderable:false, render: function() { return $component.renderCheckbox('isExcluded');} },
-									{ title: ko.i18n('columns.descendants', 'Descendants'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');} },
-									{ title: ko.i18n('columns.mapped', 'Mapped'), class:'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');} }
+									{ data: 'concept.CONCEPT_ID', title: ko.i18n('columns.conceptId', 'Concept Id') },
+									{ data: 'concept.CONCEPT_CODE', title: ko.i18n('columns.conceptCode', 'Concept Code')},
+									{ data: 'concept.CONCEPT_NAME', title: ko.i18n('columns.conceptName', 'Concept Name')},
+									{ data: 'concept.DOMAIN_ID', title: ko.i18n('columns.domain', 'Domain')},
+									{ data: 'concept.VOCABULARY_ID', title: ko.i18n('columns.vocabulary', 'Vocabulary')},
+									{ class: 'text-center', orderable:false, render: function() { return $component.renderCheckbox('isExcluded');}, title: ko.i18n('columns.exclude', 'Exclude')},
+									{ class: 'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeDescendants');}, title: ko.i18n('columns.descendants', 'Descendants')},
+									{ class: 'text-center', orderable:false,render: function() { return $component.renderCheckbox('includeMapped');}, title: ko.i18n('columns.mapped', 'Mapped')}
 							],
 							language: ko.i18n('datatable.language')
 					 }
@@ -100,7 +100,7 @@
 
 <atlas-modal params="
 	showModal: isModalOpened,
-	title: 'Select Concept Set...',
+	title: ko.i18n('components.conceptSetBuilder.selectConceptSet', 'Select Concept Set...'),
 	data: { repositoryConceptsetSelected }
 ">
 	<cohort-concept-set-browser params="{onRespositoryConceptSetSelected: repositoryConceptsetSelected}"></cohort-concept-set-browser>

@@ -1,28 +1,28 @@
-<heading-title params="name: ko.i18n('home.title'), icon: 'home', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('home.title', 'Home'), icon: 'home', theme: 'dark'"></heading-title>
 
 <div class="paddedWrapper">
 	<div class="home-welcome">
-		<div class="heading" data-bind="text: ko.i18n('home.welcome')">Welcome to ATLAS.</div>
-		<div data-bind="html: ko.i18n('home.description')"> ATLAS is an open source application developed as a part of <a href="http://www.ohdsi.org" target="_new">OHDSI</a> intended to provide a unified interface to patient level data and analytics.</div>
+		<div class="heading" data-bind="text: ko.i18n('home.welcome', 'Welcome to ATLAS.')"></div>
+		<div data-bind="html: ko.i18n('home.description', 'ATLAS is an open source application developed as a part of <a href=\'http://www.ohdsi.org\' target=\'_new\'>OHDSI</a> intended to provide a unified interface to patient level data and analytics.')"></div>
 	</div>
 	<div class="home-documentation">
-		<div class="heading" data-bind="text: ko.i18n('home.documentation.title')">Documentation</div>
-		<a target="_new" href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas"><i class="fa fa-fw fa-3x fa-book" aria-hidden="true"></i></a><span data-bind="html: ko.i18n('home.documentation.text')">The ATLAS user guide can be found <a target="_new" href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas">here</a>.</span>
+		<div class="heading" data-bind="text: ko.i18n('home.documentation.title', 'Documentation')"></div>
+		<a target="_new" href="http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas"><i class="fa fa-fw fa-3x fa-book" aria-hidden="true"></i></a><span data-bind="html: ko.i18n('home.documentation.text', 'The ATLAS user guide can be found <a target=\'_new\' href=\'http://www.ohdsi.org/web/wiki/doku.php?id=documentation:software:atlas\'>here</a>.')"></span>
 	</div>
 
-	<div class="heading" data-bind="text: ko.i18n('home.gettingStarted.title')">
-		Getting Started
-	</div>
+	<div class="heading" data-bind="text: ko.i18n('home.gettingStarted.title', 'Getting Started')"></div>
 	<div class="home-getting-started">
 		<div>
-			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: currentCohortDefinition() != undefined || !canCreateCohort()}, text: ko.i18n('home.gettingStarted.newCohort.button')">Define a New Cohort</span> <span data-bind="text: ko.i18n('home.gettingStarted.newCohort.description')">Begin performing research by defining the group of people you intend to study</span>
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.newCohortDefinition, css: {disabled: currentCohortDefinition() != undefined || !canCreateCohort()}, text: ko.i18n('home.gettingStarted.newCohort.button', 'Define a New Cohort')"></span>
+			<span data-bind="text: ko.i18n('home.gettingStarted.newCohort.description', 'Begin performing research by defining the group of people you intend to study')"></span>
 		</div>
 		<div>
-			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.browseVocabulary, css: {disabled: !canSearch()}, text: ko.i18n('home.gettingStarted.vocabulary.button')">Search the Vocabulary</span> <span data-bind="text: ko.i18n('home.gettingStarted.vocabulary.description')">Search the different ontologies used to describe patient level data around the world</span>
+			<span class="btn btn-sm btn-success disabled" data-bind="click:$component.browseVocabulary, css: {disabled: !canSearch()}, text: ko.i18n('home.gettingStarted.vocabulary.button', 'Search the Vocabulary')"></span>
+			<span data-bind="text: ko.i18n('home.gettingStarted.vocabulary.description', 'Search the different ontologies used to describe patient level data around the world')"></span>
 		</div>
 	</div>
 
-	<div class="heading" data-bind="text: ko.i18n('home.releaseNotes.title')">Release Notes</div>
+	<div class="heading" data-bind="text: ko.i18n('home.releaseNotes.title', 'Release Notes')"></div>
 	<div class="release-notes">
 		<div class="paddedWrapper">
 			<a data-bind="attr: { href: atlasReleaseUrl }" target="_new">ATLAS Version <span data-bind="text: atlasVersion"></span> Release Notes</a>
@@ -31,8 +31,8 @@
 		</div>
 
 		<div data-bind="hidden: loading">
-			<div class="paddedWrapper" data-bind="html: ko.i18nformat('home.releaseNotes.issues', {issues: github_status().length})">
-				<br/>This latest release contains <strong data-bind="text:github_status().length"></strong> feature enhancements and issue resolutions:
+			<div class="paddedWrapper" data-bind="html: ko.i18nformat('home.releaseNotes.issues', 'This latest release contains <b><%=issues%></b> feature enhancements and issue resolutions:', {issues: github_status().length})">
+				<br/>
 			</div>
 
 			<div class="paddedWrapper github-issue-container" data-bind="foreach:github_status">
@@ -43,5 +43,5 @@
 			</div>
 		</div>
 	</div>
-	<loading data-bind="visible: loading" params="status: 'Loading release info'"></loading>
+	<loading data-bind="visible: loading" params="status: ko.i18n('home.releaseNotes.loadingReleaseInfo', 'Loading release info')"></loading>
 </div>

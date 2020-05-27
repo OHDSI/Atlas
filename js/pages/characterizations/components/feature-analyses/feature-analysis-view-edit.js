@@ -79,7 +79,7 @@ define([
             this.data = sharedState.FeatureAnalysis.current;
             this.domains = ko.observable([]);
             this.previousDesign = {};
-            this.defaultName = globalConstants.newEntityNames.featureAnalysis;
+            this.defaultName = ko.unwrap(globalConstants.newEntityNames.featureAnalysis);
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);

@@ -125,7 +125,7 @@ define([
             const buttons = [];
 
             buttons.push({
-                text: ko.i18n('cc.viewEdit.results.table.buttons.export', 'Export')(),
+                text: ko.i18n('common.export', 'Export')(),
                 action: ()  => this.exportCSV(analysis, false)
             });
 
