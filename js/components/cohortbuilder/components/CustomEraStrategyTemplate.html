@@ -9,7 +9,7 @@
 	<span
 		data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_3', 'Concept set containing the drug(s) of interest:')"></span>
 	<conceptset-selector
-		params="conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets, defaultText: 'Select Drug Concept Set'">
+		params="conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets, defaultText: ko.i18n('components.customEraStrategy.selectDrugConceptSet', 'Select Drug Concept Set')">
 	</conceptset-selector>
 	<ul>
 		<li>
