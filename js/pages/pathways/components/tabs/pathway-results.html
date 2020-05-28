@@ -1,4 +1,4 @@
-<div class="loading" data-bind="visible: loading(), text: ko.i18n('common.loading', 'loading')"></div>
+<div class="loading" data-bind="visible: loading(), text: ko.i18n('common.loading', 'Loading')"></div>
 
 <div data-bind="css: classes(), if: !loading()">
 	<h2 data-bind="css: classes('title')">
@@ -118,7 +118,7 @@
 	<!-- /ko -->
 
 	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: ko.i18n('pathways.manager.executions.dialogs.design.title', 'Design'), data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">
-		<div class="loading" data-bind="visible: executionDesign() == null && !loadExecutionDesignError(), text: ko.i18n('common.loading', 'loading')"></div>
+		<div class="loading" data-bind="visible: executionDesign() == null && !loadExecutionDesignError(), text: ko.i18n('common.loading', 'Loading')"></div>
 		<div class="loading" data-bind="visible: loadExecutionDesignError(), text: ko.i18n('pathways.manager.executions.dialogs.design.loadError', 'Unable to load design')"></div>
 		<div data-bind="if: executionDesign() != null">
 			<textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>

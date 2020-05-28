@@ -6,15 +6,17 @@
 		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.targetCohorts.title', 'Target Cohorts'),
 																descr: ko.i18n('pathways.manager.design.targetCohorts.description', 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.'),
 																canEditName: true,
-																data: design().targetCohorts">
+																data: design().targetCohorts,
+																isEditPermitted: isEditPermitted">
 
 		</linked-cohort-list>
 	</div>
 	<div data-bind="css: classes('linked-entities')">
 		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.eventCohorts.title', 'Event Cohorts'),
-																descr: ko.i18n('eventCohorts.description', 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.'),
+																descr: ko.i18n('pathways.manager.design.eventCohorts.description', 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.'),
 																canEditName: true,
-																data: design().eventCohorts">
+																data: design().eventCohorts,
+																isEditPermitted: isEditPermitted">
 		</linked-cohort-list>
 	</div>
 

@@ -19,10 +19,11 @@ define([
 
 			this.title = params.title;
 			this.descr = params.descr;
-			this.newItemLabel = params.newItemLabel || ko.i18n('components.linked-entity-list.defaultNewItemLabel', 'Import');
+			this.newItemLabel = params.newItemLabel || ko.i18n('components.linkedEntityList.defaultNewItemLabel', 'Import');
 			this.newItemAction = params.newItemAction;
 			this.data = params.data;
 			this.columns = params.columns;
+			this.isEditPermitted = params.isEditPermitted;
 			this.language = ko.i18n('datatable.language');
 		}
 	}

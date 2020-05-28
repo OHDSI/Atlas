@@ -13,6 +13,7 @@ define([
     'services/Vocabulary',
     'lodash',
     '../../../utils',
+    'const',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
     'components/cohort/linked-cohort-list',
@@ -36,6 +37,7 @@ define([
     VocabularyAPI,
     lodash,
     utils,
+    globalConstants
 ) {
     class CharacterizationDesign extends AutoBind(Component) {
         constructor(params) {
@@ -49,6 +51,7 @@ define([
             this.loading = ko.observable(false);
 
             this.isViewPermitted = this.isPermittedViewResolver();
+            this.isEditPermitted = params.isEditPermitted;
 
             this.cohorts = ko.computed({
                 read: () => params.design() && params.design().cohorts() || [],
@@ -67,50 +70,13 @@ define([
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
-                columns: [
-                    {
-                        title: ko.i18n('columns.id', 'ID'),
-                        data: 'id',
-                        className: this.classes('col-feature-id'),
-                    },
-                    {
-                        title: ko.i18n('columns.name', 'Name'),
-                        data: 'name',
-                        className: this.classes('col-feature-name'),
-                    },
-                    {
-                        title: ko.i18n('columns.description', 'Description'),
-                        data: 'description',
-                        className: this.classes('col-feature-descr'),
-                    },
-                    {
-                        title: ko.i18n('columns.actions', 'Actions'),
-                        render: this.getRemoveCell('removeFeature'),
-                        className: this.classes('col-feature-remove'),
-                    }
-                ],
+                columns: globalConstants.getLinkedFeatureAnalysisColumns(this),
                 data: ko.computed(() => params.design() && params.design().featureAnalyses() || [])
             };
 
             this.featureAnalysesParams = {
                 newItemAction: this.showParameterCreateModal,
-                columns: [
-                    {
-                        title: ko.i18n('columns.name', 'Name'),
-                        data: 'name',
-                        className: this.classes('col-param-name'),
-                    },
-                    {
-                        title: ko.i18n('columns.value', 'Value'),
-                        data: 'value',
-                        className: this.classes('col-param-value'),
-                    },
-                    {
-                        title: ko.i18n('columns.actions', 'Actions'),
-                        render: this.getRemoveCell('removeParam', 'name'),
-                        className: this.classes('col-param-remove'),
-                    }
-                ],
+                columns: globalConstants.getLinkedFeAParametersColumns(this),
                 data: ko.computed(() => params.design() && params.design().parameters() || [])
             };
 
@@ -192,7 +158,6 @@ define([
         }
 
         addStrata() {
-
             const strata = {
               name: ko.i18n('cc.viewEdit.design.subgroups.placeholder.new', 'New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))

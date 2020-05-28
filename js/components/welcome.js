@@ -32,7 +32,6 @@ define([
         self.isDbLoginAtt = ko.observable(false);
         self.authUrl=ko.observable();
         self.isBadCredentials=ko.observable(false);
-        self.messages = ko.i18n('components.welcome.messages');
         self.expiration = ko.computed(function () {
             var expDate = authApi.tokenExpirationDate();
             return expDate
@@ -51,13 +50,9 @@ define([
                 return self.errorMsg();
             if (self.isLoggedIn()) {
                 if (self.expiration()) {
-                    return ko.i18nformat('components.welcome.loggedInExp', 'Logged in as \'<%=login%>\' (exp: <%=expiration%>)',
-                        {login: self.login(), expiration: self.expiration()}
-                    )();
+                    return ko.i18nformat('components.welcome.loggedInExp', 'Logged in as \'<%=login%>\' (exp: <%=expiration%>)', {login: self.login(), expiration: self.expiration()})();
                 } else {
-                    return ko.i18nformat('components.welcome.loggedIn', 'Logged in as \'<%=login%>\'',
-                        {login: self.login()}
-                    )();
+                    return ko.i18nformat('components.welcome.loggedIn', 'Logged in as \'<%=login%>\'', {login: self.login()})();
                 }
             }
             return 'Not logged in';

@@ -5,12 +5,13 @@
 	newItemAction: $component.newItemAction,
 	data: $component.data,
 	columns: $component.columns,
-	removeCohort: removeCohort
+	removeCohort: removeCohort,
+	isEditPermitted: $component.isEditPermitted
 "></linked-entity-list>
 
 <atlas-modal params="
 	showModal: $component.showModal,
-	title: ko.i18n('components.linked-cohort-list.dialog.title', 'Choose a Cohort definition'),
+	title: ko.i18n('components.linkedCohortList.dialog.title', 'Choose a Cohort definition'),
 	data: {
 		cohortSelected: $component.cohortSelected,
 		classes: $component.classes,

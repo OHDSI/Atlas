@@ -71,6 +71,7 @@ define([
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
+				isEditPermitted: this.canEdit
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
@@ -84,7 +85,6 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.messages = ko.i18n('pathways.manager.messages');
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
