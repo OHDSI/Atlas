@@ -1,4 +1,4 @@
 <div data-bind="css: classes()">
     <span data-bind="attr: {id: copyMessageId}" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong data-bind="text: messageText"></strong></span>
-    <button class="btn btn-sm btn-primary" data-bind="click: copyDataToClipboard, attr: {id: copyButtonId, 'data-clipboard-target': clipboardTarget}, title: ko.i18n('components.copyToClipboard', 'Copy to clipboard')"><i class="fa fa-clipboard" aria-hidden="true"></i> <span data-bind="text: buttonText"></span></button>
+    <button class="btn btn-sm btn-primary" data-bind="click: copyDataToClipboard, attr: {id: copyButtonId, 'data-clipboard-target': clipboardTarget}, title: ko.i18n('components.copyToClipboard.title', 'Copy to clipboard')"><i class="fa fa-clipboard" aria-hidden="true"></i> <span data-bind="text: buttonText"></span></button>
 </div>

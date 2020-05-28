@@ -11,24 +11,18 @@
 				-->
 
 				<p class="text-danger" data-bind="if: isLoggedIn() && tokenExpired() && !$component.isGoogleIapAuth()">
-                    <span data-bind="text: ko.i18n('expired','',messages)">Your session has expired. Please login again.</span>
+                    <span data-bind="text: ko.i18n('components.welcome.messages.expired', 'Your session has expired. Please login again.')"></span>
 				</p>
 				<div data-bind="if: isLoggedIn() && tokenExpired() && $component.isGoogleIapAuth()">
-					<p class="text-danger" data-bind="text: ko.i18n('refresh','',messages)">
-                        Your session has expired. Please refresh a page to continue.
-					</p>
+					<p class="text-danger" data-bind="text: ko.i18n('components.welcome.messages.refresh', 'Your session has expired. Please refresh a page to continue.')"></p>
 
 					<div class="form-group">
-						<button type="button" class="btn btn-sm btn-default pull-right" data-bind="click: $component.refreshPage, text: ko.i18n('components.welcome.close')">
-							Close
-						</button>
+						<button type="button" class="btn btn-sm btn-default pull-right" data-bind="click: $component.refreshPage, text: ko.i18n('components.welcome.close', 'Close')"></button>
 					</div>
 				</div>
 
 
-				<div data-bind="visible: !!$component.authProviders.length, text: ko.i18n('components.welcome.signin-with')">
-					Sign In with:
-				</div>
+				<div data-bind="visible: !!$component.authProviders.length, text: ko.i18n('components.welcome.signinWith', 'Sign In with:')"></div>
 				<div data-bind="foreach:$component.authProviders" class="text-centered">
 					<div class="paddedWrapper">
 						<div class="btn btn-sm btn-block btn-default" data-bind="click: function() { $component.signin(name) }"><i data-bind="css:icon"></i> <span data-bind="text:name"></span></div>
@@ -36,29 +30,27 @@
 				</div>
 				<form data-bind="if: isDbLoginAtt(), submit:signinWithLoginPass" class="text-centered paddedWrapper">
 					<div class="form-group">
-						<input type="text" class="form-control" id="lg_username" placeholder="Username">
-						<input type="password" class="form-control" id="lg_password" placeholder="Password">
+						<input type="text" class="form-control" id="lg_username" data-bind="placeholder: ko.i18n('components.welcome.username', 'Username')">
+						<input type="password" class="form-control" id="lg_password" data-bind="placeholder: ko.i18n('components.welcome.password', 'Password')">
 					</div>
 					<div class="form-group">
-						<button type="submit" class="btn btn-sm btn-default" data-bind="text: ko.i18n('components.welcome.submit')">
-							Submit
-						</button>
+						<button type="submit" class="btn btn-sm btn-default" data-bind="text: ko.i18n('components.welcome.submit', 'Submit')"></button>
 					</div>
 					<div data-bind="if: isInProgress()" class="text-center">
 						<loading/>
 					</div>
 				</form>
-				<div data-bind="if: isBadCredentials() && !isInProgress()" class="error text-center"><span data-bind="text: errorMsg">Bad credentials</span></div>
+				<div data-bind="if: isBadCredentials() && !isInProgress()" class="error text-center"><span data-bind="text: errorMsg"></span></div>
 			</div>
 
 			<div data-bind="if: isLoggedIn() && !tokenExpired()">
                 <div data-bind="text: $component.status"></div>
-                <span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signout, visible: $component.token()"><i class="fa fa-sign-out"></i> <span data-bind="text: ko.i18n('components.welcome.signout')">Sign Out</span></span>
-                <span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signoutIap, visible: $component.isGoogleIapAuth()"><i class="fa fa-sign-out"></i> <span data-bind="text: ko.i18n('components.welcome.signout')">Sign Out</span></span>
+                <span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signout, visible: $component.token()"><i class="fa fa-sign-out"></i> <span data-bind="text: ko.i18n('components.welcome.signout', 'Sign Out')"></span></span>
+                <span data-bind="css: classes({ element: 'signout-btn', extra: ['btn btn-sm btn-default'] }), click: $component.signoutIap, visible: $component.isGoogleIapAuth()"><i class="fa fa-sign-out"></i> <span data-bind="text: ko.i18n('components.welcome.signout', 'Sign Out')"></span></span>
 				<div data-bind="if: isPermittedRunAs() && $component.token()">
 					<div data-bind="css: classes({element: 'runas-container', extra: 'input-group'})">
-						<input type="text" data-bind="css: classes({ element: 'runas-text', extra: 'form-control' }), value: runAsLogin, attr: {placeholder: ko.i18n('components.welcome.username')}" placeholder="Username">
-                        <span data-bind="css: classes({ element: 'runas-btn', extra: ['btn btn-sm btn-danger'] }), click: runAs"><i class="fa fa-users"></i> <span data-bind="text:ko.i18n('components.welcome.runas')">Run as</span></span>
+						<input type="text" data-bind="css: classes({ element: 'runas-text', extra: 'form-control' }), value: runAsLogin, placeholder: ko.i18n('components.welcome.username', 'Username')">
+                        <span data-bind="css: classes({ element: 'runas-btn', extra: ['btn btn-sm btn-danger'] }), click: runAs"><i class="fa fa-users"></i> <span data-bind="text:ko.i18n('components.welcome.runas', 'Run as')"></span></span>
 					</div>
 				</div>
 			</div>

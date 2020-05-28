@@ -84,7 +84,6 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.messages = ko.i18n('pathways.manager.messages');
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,

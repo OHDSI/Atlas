@@ -67,7 +67,7 @@ define([
 				this.aspectRatio = ko.observable();
 				this.config = config;
 				this.filterHighlightsText = ko.observable();
-				this.loadingStatus = ko.i18n('common.loading', 'loading');
+				this.loadingStatus = ko.i18n('common.loading', 'Loading');
 
 				this.sourceKey = ko.observable(router.routerParams().sourceKey);
 				this.personId = ko.observable(router.routerParams().personId);
@@ -267,7 +267,7 @@ define([
 					else
 						this.highlight([]);
 				});
-				this.cohortDefinitionButtonText = ko.i18n('profile.clickHereToSelectACohort', 'Click Here to Select a Cohort');
+				this.cohortDefinitionButtonText = ko.i18n('profiles.clickHereToSelectACohort', 'Click Here to Select a Cohort');
 
 				this.showSection = {
 					profileChart: ko.observable(true),

@@ -19,14 +19,14 @@
 	</div>
 	<!-- /ko -->
 
-	<loading params="status: ko.i18n('dataSources.loadingReport', 'loading report')" data-bind="visible: isReportLoading()">
+	<loading params="status: ko.i18n('dataSources.loadingReport', 'Loading report')" data-bind="visible: isReportLoading()">
 	</loading>
 
 	<div class="paddedWrapper text-center error" data-bind="visible: hasError()">
 		<div>
 			<i class="fa fa-exclamation-circle"></i>
 		</div>
-		<div data-bind="text: errorMessage() || 'Error loading report'"></div>
+		<div data-bind="text: errorMessage() || ko.i18n('dataSources.errorLoadingReport', 'Error loading report')"></div>
 	</div>
 
 	<div id="report" class="flexed" data-bind="if: currentReport() && !hasError()">

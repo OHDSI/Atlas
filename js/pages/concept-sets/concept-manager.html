@@ -29,7 +29,7 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasRCAccess"></access-denied>
 
         <!-- ko if: hasRCAccess() -->
-			<div data-bind="visible:loadingSourceCounts(), text: ko.i18n('cs.manager.loading', 'loading')" class="loading"></div>
+			<div data-bind="visible:loadingSourceCounts(), text: ko.i18n('common.loading', 'Loading')" class="loading"></div>
 
 			<div data-bind="visible:!loadingSourceCounts()">
 

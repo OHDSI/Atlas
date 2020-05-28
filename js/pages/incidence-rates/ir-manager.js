@@ -416,7 +416,7 @@ define([
 		}
 
 		removeResult(analysisResult) {
-			if (confirm(ko.i18n('ir.deleteResultConfirmation', 'Do you really want to remove result of ')() + `${analysisResult.source.sourceName}` + '?')) {
+			if (confirm(ko.i18nformat('ir.deleteResultConfirmation', 'Do you really want to remove result of <%=name%>?', {name:analysisResult.source.sourceName})())) {
 				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
 					const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 					source.info(null);

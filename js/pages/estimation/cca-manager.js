@@ -59,7 +59,7 @@ define([
 			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysisDash;
 
 			this.selectTab = this.selectTab.bind(this);
-			this.defaultLoadingMessage = ko.i18n('common.loading', 'Loading...');
+			this.defaultLoadingMessage = ko.i18n('common.loadingWithDots', 'Loading...');
 			this.estimationType = 'ComparativeCohortAnalysis';
 			this.cohortMethodAnalysisList = null;
 			this.defaultCovariateSettings = ko.observable();

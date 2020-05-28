@@ -180,7 +180,7 @@ define([
           } else {
             return (
               ko.unwrap(
-                ko.i18nformat("cohortDefinitions.cohortId", "Cohort #<%=id%>", {id: this.currentCohortDefinition().id()})
+                ko.i18nformat('cohortDefinitions.cohortId', 'Cohort #<%=id%>', {id: this.currentCohortDefinition().id()})
               )
             );
           }

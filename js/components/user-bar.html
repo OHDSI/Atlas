@@ -14,10 +14,10 @@
 		<a data-bind="click: function () { $component.jobModalOpened(true) }"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
 		<!-- /ko -->
 		<div data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
-			<div data-bind="title: ko.i18n('components.user-bar.signin', 'Sign In'), if: !isLoggedIn() || tokenExpired()">
-				<span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i><span data-bind="text: ko.i18n('components.user-bar.signin', 'Sign In')"></span></a>
+			<div data-bind="title: ko.i18n('components.userBar.signin', 'Sign In'), if: !isLoggedIn() || tokenExpired()">
+				<span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i><span data-bind="text: ko.i18n('components.userBar.signin', 'Sign In')"></span></a>
 			</div>
-			<div data-bind="title: ko.i18n('components.user-bar.signout', 'Sign Out'), if: isLoggedIn() && !tokenExpired()">
+			<div data-bind="title: ko.i18n('components.userBar.signout', 'Sign Out'), if: isLoggedIn() && !tokenExpired()">
 				<span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: fullName"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a>
 			</div>
 		</div>
@@ -30,7 +30,7 @@
 		showModal: signInOpened,
 		modifiers: ['sm'],
 		iconClass: 'fa fa-sign-in',
-		title: ko.i18n('components.user-bar.signin'),
+		title: ko.i18n('components.userBar.signin', 'Sign In'),
 }">
 	<welcome></welcome>
 </atlas-modal>

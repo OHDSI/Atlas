@@ -81,7 +81,8 @@ define([
 					if (this.loading()) {
 						entities.push(ko.i18n('search.loadingMessage.searchResults', 'search results')());
 					}
-					return ko.i18n('search.loadingMessage.loading', 'Loading')() + ` ${entities.join(', ')}`;
+					return ko.i18n('search.loadingMessage.loading', 'Loading')() +
+							` ${entities.join(', ')}`;
 				});
 				// 'colvis',
 				this.buttons = [

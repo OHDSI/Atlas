@@ -1,5 +1,5 @@
 <div data-bind="css: classes()">
-	<div class="loading" data-bind="visible: loading(), text: ko.i18n('common.loading', 'loading')"></div>
+	<div class="loading" data-bind="visible: loading(), text: ko.i18n('common.loading', 'Loading')"></div>
 	<div data-bind="visible: !loading()">
 		<h2 data-bind="css: classes('title'), text: ko.i18n('pathways.manager.executions.title', 'Executions')"></h2>
 		<div data-bind="css: classes('content')">
@@ -25,7 +25,7 @@
 										 	executionDesign: $component.executionDesign,
 										 	classes: $component.classes
 										 }">
-	<div class="loading" data-bind="visible: executionDesign() == null, text: ko.i18n('common.loading', 'loading')"></div>
+	<div class="loading" data-bind="visible: executionDesign() == null, text: ko.i18n('common.loading', 'Loading')"></div>
 	<div data-bind="if: executionDesign() != null">
 		<textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
 	</div>

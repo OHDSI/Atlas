@@ -47,7 +47,7 @@ define([
       this.options = {
         Facets: [
           {
-            caption: ko.i18n('components.cohort-definition-browser.facets.lastModified', 'Last Modified'),
+            caption: ko.i18n('facets.caption.lastModified', 'Last Modified'),
             binding: function (o) {
               var createDate = new Date(o.createdDate);
               var modDate = new Date(o.modifiedDate);
@@ -56,7 +56,7 @@ define([
             },
           },
           {
-            caption: ko.i18n('components.cohort-definition-browser.facets.author', 'Author'),
+            caption: ko.i18n('facets.caption.author', 'Author'),
             binding: function (o) {
               return o.createdBy;
             },
