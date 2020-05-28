@@ -6,7 +6,8 @@
 		<linked-cohort-list params="title: 'Target Cohorts',
 																descr: 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.',
 																canEditName: true,
-																data: design().targetCohorts">
+																data: design().targetCohorts,
+																isEditPermitted: isEditPermitted">
 
 		</linked-cohort-list>
 	</div>
@@ -14,7 +15,8 @@
 		<linked-cohort-list params="title: 'Event Cohorts',
 																descr: 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.',
 																canEditName: true,
-																data: design().eventCohorts">
+																data: design().eventCohorts,
+																isEditPermitted: isEditPermitted">
 		</linked-cohort-list>
 	</div>
 
