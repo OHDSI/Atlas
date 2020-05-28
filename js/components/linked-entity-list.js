@@ -23,6 +23,7 @@ define([
 			this.newItemAction = params.newItemAction;
 			this.data = params.data;
 			this.columns = params.columns;
+			this.isEditPermitted = params.isEditPermitted;
 			this.language = ko.i18n('datatable.language');
 		}
 	}

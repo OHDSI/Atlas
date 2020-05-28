@@ -8,9 +8,9 @@ define([
 		'../utils',
 		'../const',
 		'text!./CriteriaGroupTemplate.html',
-		'../const',
-		'components/DropDownMenu'],
-	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template, constants) {
+		'components/DropDownMenu',
+		'less!./CriteriaGroup.less'],
+	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
 
 	function CriteriaGroupViewModel(params) {
 		const self = this;
@@ -181,7 +181,7 @@ define([
 						Criteria: {
 							PayerPlanPeriod: {}
 						}
-					}, unwrappedExpression.ConceptSets));			
+					}, unwrappedExpression.ConceptSets));
 				}
 			},
 			{
@@ -241,7 +241,7 @@ define([
 		self.removeEndWindow = function (corelatedCriteria) {
 			corelatedCriteria.EndWindow(null);
 		};
-		
+
 		self.addCriteriaSettings = {
 			selectText: "Add New Criteria...",
 			width: 250,
