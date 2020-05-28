@@ -9,7 +9,10 @@
 </span>
 <span data-bind="ifnot: parentGroup">
 	<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.having-capital', 'Having')"></span>
-</span> <span data-bind="text: groupType"></span> <!-- ko if: group().Type().startsWith('AT_') --> <span data-bind="text: group().Count"></span> <!-- /ko -->
+</span> 
+<span data-bind="text: groupType"></span> 
+<!-- ko if: group().Type().startsWith('AT_') --> 
+<span data-bind="text: group().Count"></span> <!-- /ko -->
 <span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.of-the-following-criteria', 'of the following criteria:')"></span>
 <ul>
 <!-- ko foreach: group().DemographicCriteriaList -->

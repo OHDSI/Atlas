@@ -49,9 +49,10 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 		};
 		
 		self.groupType = ko.pureComputed(function() {
+			console.log(self.options.groupTypeOptions);
 			return { name } = (self.options.groupTypeOptions.find((item) =>
 				self.group() && item.id == self.group().Type()
-			) || {});
+			) || '');
 		});
 		
 		self.getOccurrenceType = function(occurenceType) {

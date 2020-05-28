@@ -1,4 +1,11 @@
 <div data-bind="css: classes('container')">
-	created <span data-bind="visible: createdBy, text: `by ${createdBy}`"></span> on <span data-bind="text: createdDate"></span> 
-	<span data-bind="visible: modifiedDate">, modified <span data-bind="visible: modifiedBy, text: `by ${modifiedBy}`"></span> on <span data-bind="text: modifiedDate"></span></span>
+	<span data-bind="text: ko.i18n('common.created', 'created')"></span>
+	<span data-bind="visible: createdBy, text: `by ${createdBy}`"></span>  
+	<span data-bind="text: ko.i18n('common.on', 'on')"></span>
+	<span data-bind="text: createdDate"></span> 
+	<span data-bind="visible: modifiedDate">, 
+	<span data-bind="text: ko.i18n('common.modified', 'modified')"></span>
+	<span data-bind="visible: modifiedBy, text: `by ${modifiedBy}`"></span>
+	<span data-bind="text: ko.i18n('common.on', 'on')"></span> 
+	<span data-bind="text: modifiedDate"></span></span>
 </div>

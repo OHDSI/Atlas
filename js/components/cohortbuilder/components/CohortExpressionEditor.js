@@ -435,7 +435,6 @@ define([
     };
 
     self.addInclusionRule = function () {
-      console.log('sdfsdfsdf')
       var newInclusionRule = new InclusionRule(
         null,
         self.expression().ConceptSets
@@ -455,7 +454,8 @@ define([
         self.expression().ConceptSets
       );
       var copyOfTranslate = ko.unwrap(ko.i18n('components.cohortExpressionEditor.copyOf', 'Copy of: '));
-      copiedRule.name(copyOfTranslate + copiedRule.name());
+      var name = copiedRule.name() || ko.unwrap(ko.i18n('components.cohortExpressionEditor.unnamedCriteria', 'Unnamed Criteria'))
+      copiedRule.name(copyOfTranslate + name);
       self.expression().InclusionRules.push(copiedRule);
       self.selectedInclusionRule(copiedRule);
     };

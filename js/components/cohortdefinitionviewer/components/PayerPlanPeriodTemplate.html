@@ -45,17 +45,17 @@
 <!-- ko if: ko.utils.unwrapObservable(PayerConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_10', 'Payer Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PayerConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PayerConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PlanConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_11', 'Plan Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PlanConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PlanConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(SponsorConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_12', 'Sponsor Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(StopReasonConcept) != null -->
 	<li><span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_13', 'Stop Reason Concept is')"></span><conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
@@ -63,22 +63,22 @@
 <!-- ko if: ko.utils.unwrapObservable(PayerSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_14', 'Payer Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PayerSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PayerSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PlanSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_15', 'Plan Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PlanSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(PlanSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(SponsorSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_16', 'Sponsor Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(StopReasonSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_17', 'Stop Reason Source Concept is')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 	<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
