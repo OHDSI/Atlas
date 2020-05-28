@@ -45,17 +45,17 @@ define([
 		const getLinkedFeAParametersColumns = (context) => {
 			return [
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'name',
 					className: context.classes('col-param-name'),
 				},
 				{
-					title: 'Value',
+					title: ko.i18n('columns.value', 'Value'),
 					data: 'value',
 					className: context.classes('col-param-value'),
 				},
 				... context.isEditPermitted() ? [{
-					title: 'Actions',
+					title: ko.i18n('columns.actions', 'Actions'),
 					render: context.getRemoveCell('removeParam', 'name'),
 					className: context.classes('col-param-remove'),
 				}] : []
@@ -65,22 +65,22 @@ define([
 		const getLinkedFeatureAnalysisColumns = (context) => {
 			return [
 				{
-					title: 'ID',
+					title: ko.i18n('columns.id', 'ID'),
 					data: 'id',
 					className: context.classes('col-feature-id'),
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'name',
 					className: context.classes('col-feature-name'),
 				},
 				{
-					title: 'Description',
+					title: ko.i18n('columns.description', 'Description'),
 					data: 'description',
 					className: context.classes('col-feature-descr'),
 				},
 				... context.isEditPermitted() ? [{
-					title: 'Actions',
+					title: ko.i18n('columns.actions', 'Actions'),
 					render: context.getRemoveCell('removeFeature'),
 					className: context.classes('col-feature-remove'),
 				}] : []
@@ -90,7 +90,7 @@ define([
 		const getLinkedCohortColumns = (context, nameCol) => {
 			return [
 				{
-					title: 'ID',
+					title: ko.i18n('columns.id', 'ID'),
 					data: 'id',
 					className: context.classes('col-cohort-id'),
 				},
