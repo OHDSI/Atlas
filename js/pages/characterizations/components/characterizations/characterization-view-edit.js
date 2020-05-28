@@ -84,6 +84,7 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                isEditPermitted: this.isEditPermitted,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
