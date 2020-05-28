@@ -19,7 +19,7 @@ define([
 			super();
 			this.params = params;
 			this.design = params.design;
-
+			this.isEditPermitted = params.isEditPermitted;
 		}
 		
 		get combinationWindowOptions() {
