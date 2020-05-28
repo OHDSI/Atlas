@@ -637,7 +637,7 @@ define([
       this.reportOptionCaption = ko.pureComputed(() => {
         return this.reportingSourceStatusLoading()
           ? ko.i18n('common.loading', 'Loading Reports...')
-          : "Select a Report";
+          : ko.i18n('cohortDefinitionManager.selectReport', 'Select a Report');
       });
       this.reportingSourceStatus = ko.observable();
       this.reportingAvailableReports = ko.observableArray();
@@ -688,7 +688,7 @@ define([
                 .done((heelResults) => {
                   if (heelResults.length > 0) {
                     reports.push({
-                      name: "Heracles Heel",
+                      name: ko.i18n('cohortDefinitionManager.heraclesHeel', 'Heracles Heel'),
                       reportKey: "Heracles Heel",
                       analyses: [],
                     });
@@ -1566,7 +1566,7 @@ define([
     showExitMessage(sourceKey) {
       const info = this.cohortDefinitionSourceInfo().find(
         (i) => i.sourceKey === sourceKey
-      ) || { failMessage: "Failed without any message" };
+      ) || { failMessage: ko.unwrap(ko.i18n('cohortDefinitionManager.failedWithoutAnyMessage', 'Failed without any message')) };
       this.exitMessage(info.failMessage);
       this.isExitMessageShown(true);
     }

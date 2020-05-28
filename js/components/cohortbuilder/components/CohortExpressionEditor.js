@@ -435,6 +435,7 @@ define([
     };
 
     self.addInclusionRule = function () {
+      console.log('sdfsdfsdf')
       var newInclusionRule = new InclusionRule(
         null,
         self.expression().ConceptSets
@@ -453,7 +454,7 @@ define([
         ko.toJS(inclusionRule),
         self.expression().ConceptSets
       );
-      var copyOfTranslate = ko.i18n('components.cohortExpressionEditor.copyOf', 'Copy of:');
+      var copyOfTranslate = ko.unwrap(ko.i18n('components.cohortExpressionEditor.copyOf', 'Copy of: '));
       copiedRule.name(copyOfTranslate + copiedRule.name());
       self.expression().InclusionRules.push(copiedRule);
       self.selectedInclusionRule(copiedRule);

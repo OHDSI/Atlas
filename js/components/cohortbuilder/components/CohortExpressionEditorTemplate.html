@@ -31,7 +31,7 @@
 		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitTitle_2', 'Censoring Events')">
 	</div>
 	<div
-		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_3', 'Criteria can be used to signal the end of an event.  If a censoring event is identified between a qualifying event's start and end date, the date of the censoring event will be used as the exit date.')">
+		data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_3', 'Criteria can be used to signal the end of an event.  If a censoring event is identified between a qualifying event\'s start and end date, the date of the censoring event will be used as the exit date.')">
 	</div>
 </atlas-modal>
 
@@ -123,7 +123,7 @@
 						data-bind="text: ko.i18n('components.cohortExpressionEditor.restrictInitialEventsTitle', 'Restrict intial events to:')"></b>
 				</div>
 				<criteria-group
-					params="{expression: $data, group: AdditionalCriteria, indexMessage: 'The index date refers to the event from the Cohort Entry criteria.'}">
+					params="{expression: $data, group: AdditionalCriteria, indexMessage: ko.i18n('components.cohortExpressionEditor.indexMessage', 'The index date refers to the event from the Cohort Entry criteria.')}">
 				</criteria-group>
 				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">
 					<span

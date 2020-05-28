@@ -4,7 +4,8 @@
 		<div class="paddedWrapper flexed">
 			<div class="row">
 				<div class="col-sm-offset-10 col-sm-1" data-bind="attr: {title: $component.newCohortButtonCaption()}">
-					<div class="btn btn-sm btn-primary" data-bind="text: ko.i18n('cohortDefinitions.newDefinition', 'New Cohort'), click:$component.newDefinition, css: {disabled: currentCohortDefinition() != undefined || !$component.canCreateCohort()}"></div>
+					<div class="btn btn-sm btn-primary" 
+					`		 data-bind="text: ko.i18n('cohortDefinitions.newDefinition', 'New Cohort'), click:$component.newDefinition, css: {disabled: currentCohortDefinition() != undefined || !$component.canCreateCohort()}"></div>
 				</div>
 			</div>
 			<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortDefinitionId(data.id)}"></cohort-definition-browser>
