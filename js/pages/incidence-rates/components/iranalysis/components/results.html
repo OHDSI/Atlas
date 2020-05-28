@@ -91,7 +91,7 @@
 							<button class="btn btn-sm btn-primary" data-bind="visible: info().executionInfo.isValid, click:$parent.selectSource, enable: $component.hasSourceAccess(source.sourceKey)">
 								<i class="fa fa-eye"></i> Reports
 							</button>
-							<button data-bind="enable: $component.hasSourceAccess(source.sourceKey)" class="btn btn-sm btn-danger removeResult">
+							<button data-bind="enable: $component.hasSourceAccess(source.sourceKey), visible: $component.isEditable()" class="btn btn-sm btn-danger removeResult">
 								<i class="fa fa-trash"></i>
 							</button>
 						</span>

@@ -53,6 +53,7 @@ define([
 			this.selectedTarget = ko.observable();
 			this.selectedOutcome = ko.observable();
 			this.isLoading = ko.observable();
+			this.isEditable = params.isEditable;
 			this.formatDateTime = function(date){
 				return momentApi.formatDateTime(new Date(date));
 			};
