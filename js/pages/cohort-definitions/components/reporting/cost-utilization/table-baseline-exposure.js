@@ -56,7 +56,7 @@ define(
             yFormat: BaseCostUtilReport.formatPercents,
           },
           {
-            title: ko.i18n('columns.exposurePct', 'Average Exposure Years per 1,000 persons'),
+            title: ko.i18n('columns.exposureAvg', 'Average Exposure Years per 1,000 persons'),
             data: 'exposureAvg',
             className: this.classes('exposure-avg'),
             render: BaseCostUtilReport.formatFullNumber,

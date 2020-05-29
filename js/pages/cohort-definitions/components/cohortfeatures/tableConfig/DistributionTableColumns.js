@@ -47,7 +47,7 @@ define(function (require, exports) {
 				}
 			},
 			{
-				title: ko.i18n('columns.stdevValue', 'Std Dev'),
+				title: ko.i18n('columns.stddev', 'Std Dev'),
 				data: 'stdevValue',
 				render: function (data, type, row) {
 					return self.formattingOptions.formatDecimal2(data);
