@@ -28,7 +28,7 @@ define(["knockout"], function (ko) {
 
     options.windowDayOptions = new Array();
     options.windowDayOptions.push({
-        label: ko.i18n('cc.viewEdit.design.subgroups.component.window-day.options.all', 'ALL'),
+        label: ko.i18n('options.all', 'ALL'),
         value: " " // ' ' is used to work around an autocomplete issue: when it's set to null or '', the autocomplete uses the label for the value instead of value (annoying)
     });
     for (i = 0; i < options.dayOptions.length; i++) {

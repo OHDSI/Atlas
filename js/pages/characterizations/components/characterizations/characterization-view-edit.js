@@ -56,7 +56,7 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.defaultName = ko.i18n('cc.defaultName', constants.newEntityNames.characterization);
+            this.defaultName = ko.unwrap(constants.newEntityNames.characterization);
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });

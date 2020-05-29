@@ -69,7 +69,7 @@
 
     <atlas-modal params="
         showModal: $component.showFeatureAnalysesBrowser,
-        title: 'Choose a Feature analyses',
+        title: ko.i18n('cc.modals.chooseAFeatureAnalyses', 'Choose a Feature analyses...'),
         dialogExtraClasses: [ $component.classes('feature-analyses-modal') ],
         data: {
             selectedAnalyses: $component.featureAnalysesSelected,
@@ -91,7 +91,7 @@
 
     <atlas-modal params="{
     showModal: showConceptSetBrowser,
-    title: 'Select Concept Set...',
+    title: ko.i18n('cc.modals.selectConceptSet', 'Select Concept Set...'),
     modifiers: ['lg'],
     data: {
         onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected

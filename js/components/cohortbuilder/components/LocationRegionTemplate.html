@@ -7,12 +7,12 @@
 			</colgroup>
 			<tr>
 				<td>
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.of', 'a location region of')"></span>
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.default-concept-name', 'Any Region')"></conceptset-selector>
+					<span data-bind="text: ko.i18n('components.locationRegion.criteria.of', 'a location region of')"></span>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('components.locationRegion.anyLocationRegion', 'Any Region')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.common.add-attribute', 'Add attribute...')"></span><span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('components.common.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
 							<li><a data-bind="click:action" href="#">
 								<div class="optionText" data-bind="text: text"></div>
@@ -32,7 +32,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('StartDate') }" class="fa fa-times" /></td>
 				<td>
 
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.start-date.text', 'start is:')"></span>
+					<span data-bind="text: ko.i18n('components.locationRegion.criteria.startDate.text', 'start is:')"></span>
 					<date-range params="Range: StartDate"></date-range>
 				</td>
 			</tr>
@@ -40,7 +40,7 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('EndDate') }" class="fa fa-times" /></td>
 				<td>
 
-					<span data-bind="text: ko.i18n('cc.viewEdit.design.subgroups.add.location-region.criteria.end-date.text', 'end is:')"></span>
+					<span data-bind="text: ko.i18n('components.locationRegion.criteria.endDate.text', 'end is:')"></span>
 					<date-range params="Range: EndDate"></date-range>
 				</td>
 			</tr>

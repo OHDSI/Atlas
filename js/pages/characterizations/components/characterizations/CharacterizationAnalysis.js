@@ -10,7 +10,7 @@ define(function(require, exports){
 			let data = design || {};
 
 			Object.assign(this, data);
-			this.defaultName = ko.unwrap(ko.i18n('cc.defaultName', constants.newEntityNames.pathway));
+			this.defaultName = ko.unwrap(constants.newEntityNames.characterization);
 			this.name = ko.observable(data.name || this.defaultName);
 			this.cohorts = ko.observableArray(data.cohorts);
 			this.featureAnalyses = ko.observableArray(data.featureAnalyses);

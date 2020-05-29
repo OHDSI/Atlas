@@ -1,15 +1,15 @@
 <!-- ko with: Criteria -->
-<span data-bind="text: ko.i18n('components.locationRegion.locationRegionText_1', 'a location area of')"></span>
+<span data-bind="text: ko.i18n('components.locationRegion.criteria.of', 'a location area of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.locationRegion.anyLocationRegion', 'Any Location region')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(StartDate) != null -->
 	<li>
-		<span data-bind="text: ko.i18n('components.locationRegion.locationRegionText_2', 'start is')"></span>
+		<span data-bind="text: ko.i18n('components.locationRegion.criteria.startDate.text', 'start is')"></span>
 		 <date-range-viewer params="Range: StartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(EndDate) != null -->
 	<li>
-		<span data-bind="text: ko.i18n('components.locationRegion.locationRegionText_3', 'end is')"></span>
+		<span data-bind="text: ko.i18n('components.locationRegion.criteria.endDate.text', 'end is')"></span>
 	 <date-range-viewer params="Range: EndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->

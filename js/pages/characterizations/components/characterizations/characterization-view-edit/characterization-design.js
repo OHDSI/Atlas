@@ -159,7 +159,7 @@ define([
 
         addStrata() {
             const strata = {
-              name: ko.i18n('cc.viewEdit.design.subgroups.placeholder.new', 'New Subgroup'),
+              name: ko.i18n('cc.viewEdit.design.subgroups.newSubgroup', 'New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
             };
             const ccDesign = this.design();
