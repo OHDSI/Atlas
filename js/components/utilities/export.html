@@ -7,8 +7,10 @@
                 <button
                     title="Copy to clipboard"
                     data-bind="attr: {'id': 'btnCopyToClipboard' + $component.uniqueId, 'data-clipboard-target': '#exportJSON' + $component.uniqueId},
-                        css: classes({extra: 'btn btn-default btn-sm'}), click: copyExpressionToClipboard"
-                >Copy To Clipboard</button>
+                        css: classes({extra: 'btn btn-sm btn-primary'}), click: copyExpressionToClipboard"
+                ><i class="fa fa-clipboard" aria-hidden="true"></i>
+                    Copy To Clipboard
+                </button>
             
                 <span style="display:none" role="alert"
                     data-bind="attr: {'id': 'copyExpressionToClipboardMessage' + $component.uniqueId}, css: classes({element: 'export-span', extra: 'alert alert-success'})">
