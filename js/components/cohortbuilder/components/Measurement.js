@@ -179,13 +179,13 @@ define([
     });
 
     self.indexMessage = ko.i18nformat(
-      'cc.viewEdit.design.subgroups.add.measurement.criteria.index-data.text',
+      'components.conditionMeasurement.indexDataText',
       'The index date refers to the measurement of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n('cc.viewEdit.design.subgroups.add.measurement.criteria.default-concept-name', 'Any Measurement')
+          ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')
         ),
       }
     );

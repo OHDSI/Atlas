@@ -146,13 +146,13 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      'cc.viewEdit.design.subgroups.add.observation.criteria.index-data.text',
+      'components.conditionObservation.indexDataText',
       'The index date refers to the observation of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n('cc.viewEdit.design.subgroups.add.observation.criteria.default-concept-name', 'Any Observation')
+          ko.i18n('components.conditionObservation.anyObservation', 'Any Observation')
         )
       }
     );

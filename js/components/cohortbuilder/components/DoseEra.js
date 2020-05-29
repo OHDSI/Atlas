@@ -109,13 +109,13 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      'cc.viewEdit.design.subgroups.add.dose-era.criteria.index-data.text',
+      'components.conditionDose.indexDataText',
       'The index date refers to the dose era of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n('cc.viewEdit.design.subgroups.add.dose-era.criteria.default-concept-name', 'Any Dose Era'))
+          ko.i18n('components.conditionDose.anyDoseEra', 'Any Dose Era'))
       }
     );
   }

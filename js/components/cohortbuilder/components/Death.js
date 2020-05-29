@@ -85,7 +85,7 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      'cc.viewEdit.design.subgroups.add.death.criteria.index-data.text',
+      'components.conditionDeath.indexDataText',
       'The index date refers to the death event of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(

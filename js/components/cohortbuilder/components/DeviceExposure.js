@@ -155,13 +155,13 @@ define([
     };
 
     self.indexMessage = ko.i18nformat(
-      'cc.viewEdit.design.subgroups.add.device-exposure.criteria.index-data.text',
+      'components.conditionDevice.indexDataText',
       'The index date refers to the device exposure of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n('cc.viewEdit.design.subgroups.add.device-exposure.criteria.default-concept-name', 'Any Device')
+          ko.i18n('components.conditionDevice.anyDevice', 'Any Device')
         ),
       }
     );
