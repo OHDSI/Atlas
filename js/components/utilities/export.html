@@ -3,7 +3,22 @@
 <div data-bind="css: classes(), visible: !loading()">
     <div data-bind="css: classes('content')">
         <!-- ko if: canExport() -->
-            <textarea data-bind="css: classes('json-box'), textInput: $component.exportJSON"></textarea>
+            <div data-bind="css: classes('copy-clipboard')">
+                <button
+                    title="Copy to clipboard"
+                    data-bind="attr: {'id': 'btnCopyToClipboard' + $component.uniqueId, 'data-clipboard-target': '#exportJSON' + $component.uniqueId},
+                        css: classes({extra: 'btn btn-sm btn-primary'}), click: copyExpressionToClipboard"
+                ><i class="fa fa-clipboard" aria-hidden="true"></i>
+                    Copy To Clipboard
+                </button>
+            
+                <span style="display:none" role="alert"
+                    data-bind="attr: {'id': 'copyExpressionToClipboardMessage' + $component.uniqueId}, css: classes({element: 'export-span', extra: 'alert alert-success'})">
+                    <i data-bind="css: classes({extra: 'fa fa-check-square-o'})" aria-hidden="true"></i>
+                    <strong>Copied To Clipboard!</strong>
+                </span>
+            </div>
+            <textarea data-bind="attr: {'id': 'exportJSON' + $component.uniqueId}, css: classes('json-box'), textInput: $component.exportJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !canExport() -->
             <div data-bind="css: classes('error-message'), text: $component.errorMessage()"></div>
