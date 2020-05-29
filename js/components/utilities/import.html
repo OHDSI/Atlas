@@ -6,7 +6,7 @@
             <button data-bind="css: classes({ element: 'import-btn', extra: 'btn btn-sm btn-primary'}),
             			attr: { 'disabled': !$component.isJSONValid() },
             			text: ko.i18n('components.import.button', 'Import'),
-                        click: doImport">Import</button>
+                        click: doImport"></button>
             <textarea data-bind="css: classes('json-box'), textInput: $component.importJSON"></textarea>
         <!-- /ko -->
         <!-- ko if: !isImportPermitted() -->

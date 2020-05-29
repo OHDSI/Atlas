@@ -9,13 +9,13 @@
                     data-bind="attr: {'id': 'btnCopyToClipboard' + $component.uniqueId, 'data-clipboard-target': '#exportJSON' + $component.uniqueId},
                         css: classes({extra: 'btn btn-sm btn-primary'}), click: copyExpressionToClipboard"
                 ><i class="fa fa-clipboard" aria-hidden="true"></i>
-                    Copy To Clipboard
+                    <span data-bind="text: ko.i18n('common.copyToClipboard', 'Copy To Clipboard')"></span>
                 </button>
             
                 <span style="display:none" role="alert"
                     data-bind="attr: {'id': 'copyExpressionToClipboardMessage' + $component.uniqueId}, css: classes({element: 'export-span', extra: 'alert alert-success'})">
                     <i data-bind="css: classes({extra: 'fa fa-check-square-o'})" aria-hidden="true"></i>
-                    <strong>Copied To Clipboard!</strong>
+                    <strong data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></strong>
                 </span>
             </div>
             <textarea data-bind="attr: {'id': 'exportJSON' + $component.uniqueId}, css: classes('json-box'), textInput: $component.exportJSON"></textarea>

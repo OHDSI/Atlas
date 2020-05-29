@@ -22,8 +22,8 @@ define([
 			const {copyButtonId = "btnCopyCohortSQLClipboard", copyMessageId = "copyCopyCohortSQLMessage"} = params;
 			this.copyButtonId = ko.observable(copyButtonId);
 			this.copyMessageId = ko.observable(copyMessageId);
-			this.buttonText = ko.i18n('components.copyToClipboard.buttonText', 'Copy To Clipboard');
-			this.messageText = ko.i18n('components.copyToClipboard.messageText', 'Copied To Clipboard!');
+			this.buttonText = ko.i18n('common.copyToClipboard', 'Copy To Clipboard');
+			this.messageText = ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!');
 			this.selectedTab = params.selectedTab;
 			this.componentParams = ko.computed(() => this.selectedTab().componentParams);
 			this.clipboardTarget = ko.computed(() => '#' + this.componentParams().clipboardTarget);
