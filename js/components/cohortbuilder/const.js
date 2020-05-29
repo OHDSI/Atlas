@@ -1,23 +1,4 @@
 define(["knockout"], function (ko) {
-  const CriteriaTypes = {
-    DEMOGRAPHIC: "Demographic",
-    CONDITION_ERA: "ConditionEra",
-    CONDITION_OCCURRENCE: "ConditionOccurrence",
-    DEATH: "Death",
-    DEVICE_EXPOSURE: "DeviceExposure",
-    DOSE_ERA: "DoseEra",
-    DRUG_ERA: "DrugEra",
-    DRUG_EXPOSURE: "DrugExposure",
-    LOCATION_REGION: "LocationRegion",
-    MEASUREMENT: "Measurement",
-    OBSERVATION: "Observation",
-    OBSERVATION_PERIOD: "ObservationPeriod",
-    PAYER_PLAN_PERIOD: "PayerPlanPeriod",
-    PROCEDURE_OCCURRENCE: "ProcedureOccurrence",
-    SPECIMEN: "Specimen",
-    VISIT: "VisitOccurrence",
-    GROUP: "Group",
-  };
 
   const criteria = {
     addConditionEra: {
@@ -1249,14 +1230,53 @@ define(["knockout"], function (ko) {
     'addRace',
     'addEthnicity',
   ];
+  const windowedpAttributesList = [
+    'addDemographic',
+    'addConditionEra',
+    'addConditionOccurrence',
+    'addDeath',
+    'addDeviceExposure',
+    'addDoseEra',
+    'addDrugEra',
+    'addDrugExposure',
+    'addLocationRegion',
+    'addMeasurement',
+    'addObservation',
+    'addObservationPeriod',
+    'addPayerPlanPeriod',
+    'addProcedureOccurrence',
+    'addSpecimen',
+    'addVisit',
+  ];
 
+  const CriteriaTypes = {
+    addDemographic: "Demographic",
+    addConditionEra: "ConditionEra",
+    addConditionOccurrence: "ConditionOccurrence",
+    addDeath: "Death",
+    addDeviceExposure: "DeviceExposure",
+    addDoseEra: "DoseEra",
+    addDrugEra: "DrugEra",
+    addDrugExposure: "DrugExposure",
+    addLocationRegion: "LocationRegion",
+    addMeasurement: "Measurement",
+    addObservation: "Observation",
+    addObservationPeriod: "ObservationPeriod",
+    addPayerPlanPeriod: "PayerPlanPeriod",
+    addProcedureOccurrence: "ProcedureOccurrence",
+    addSpecimen: "Specimen",
+    addVisit: "VisitOccurrence",
+    addGroup: "Group",
+  };
 
   const getListCriteria = setCriteria(criteria);
 
   return {
+    CriteriaTypes,
     initialEventList: getListCriteria(initialEventList, 'initial'),
     censoringEventList: getListCriteria(censoringEventList, 'censoring'),
     groupAttributes: getListCriteria(groupAttributesList, 'group'),
+    windowedAttributes: getListCriteria(windowedpAttributesList, 'group'),
     eraAttributes: getListCriteria(eraAttributesList, 'era', 'era'),
     occurrenceAttributes: getListCriteria(occurrenceAttributesList, 'occurrence', 'occurrence'),
     deathAttributes: getListCriteria(deathAttributesList, 'death', 'death'),

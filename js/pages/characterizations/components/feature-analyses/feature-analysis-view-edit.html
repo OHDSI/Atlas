@@ -110,7 +110,21 @@
                         <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria, text: ko.i18n('cc.fa.addCriteriaFeature', 'Add Criteria feature')"></button>
                     </span>
                     <span data-bind="if: data().statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed')">
-                        <drop-down-menu params="actions: $component.windowedActions, title: ko.i18n('cc.fa.addNewCriteria', 'Add New Criteria...'), cssClasses: 'btn-group', formatOption: formatCriteriaOption"></drop-down-menu>
+                        <div>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>
+                                    <span data-bind="text: ko.i18n('cc.fa.addNewCriteria', 'Add New Criteria...')"></span>
+                                    <span class="caret"></span></button>
+                                <ul class="dropdown-menu" data-bind="foreach:$component.windowedActions">
+                                    <li><a data-bind="click:action" href="#">
+                                            <div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+                                            <div class="optionDescription"
+                                                data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+                                        </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- <drop-down-menu params="actions: $component.windowedActions, title: ko.i18n('cc.fa.addNewCriteria', 'Add New Criteria...'), cssClasses: 'btn-group', formatOption: formatCriteriaOption"></drop-down-menu> -->
                     </span>
                     <!-- ko foreach: $component.data().design -->
                         <div data-bind="

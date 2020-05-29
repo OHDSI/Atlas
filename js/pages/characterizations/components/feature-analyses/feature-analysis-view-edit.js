@@ -110,7 +110,9 @@ define([
             this.statTypeOptions = ko.observableArray(statTypeOptions);
             this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
 
-            this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
+            this.windowedActions = Object.keys(cohortbuilderConsts.windowedAttributes).map(a => {
+                return {...cohortbuilderConsts.windowedAttributes[a], action: this.buildAddCriteriaAction(cohortbuilderConsts.CriteriaTypes[a]) }
+            });
             this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
@@ -324,7 +326,7 @@ define([
         }
 
         addWindowedCriteria(type) {
-            const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
+            const criteria = type === cohortbuilderConsts.CriteriaTypes.addDemographic ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
             this.data().design([...this.data().design(), criteria]);
         }
 
