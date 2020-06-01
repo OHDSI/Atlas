@@ -79,22 +79,22 @@ define([
 						$(row).addClass('table_selector');
 					},
 					columns: [{
-							title: ko.i18n('dataSources.table.conceptId', 'Concept Id'),
+							title: ko.i18n('columns.conceptId', 'Concept Id'),
 							data: 'concept_id',
 							className: 'treemap__tbl-col--narrow numeric'
 						},
 						{
-							title: ko.i18n('dataSources.table.name', 'Name'),
+							title: ko.i18n('columns.name', 'Name'),
 							data: 'name'
 						},
 						{
-							title: ko.i18n('dataSources.table.personCount', 'Person Count'),
+							title: ko.i18n('columns.personCount', 'Person Count'),
 							data: 'num_persons',
 							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
 						},
 						{
-							title: ko.i18n('dataSources.table.prevalence', 'Prevalence'),
+							title: ko.i18n('columns.prevalence', 'Prevalence'),
 							data: 'percent_persons',
 							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']

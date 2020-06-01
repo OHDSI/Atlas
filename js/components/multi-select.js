@@ -17,6 +17,8 @@ define(
       self.selectedValues = ko.observableArray(params.selectedValues && params.selectedValues());
       self.selectedValue = params.selectedValue;
       self.selectedTextFormat = params.selectedTextFormat || 'count > 2';
+      self.noneSelectedText = ko.i18n('common.noneSelectedText', 'Nothing selected');
+      self.noneResultsText = ko.i18n('common.noneResultsText', 'No matches found for {0}');
 
       self.optionVals = ko.computed(() => {
         return params.options().map(opt => opt.value);
@@ -30,7 +32,7 @@ define(
 					params.selectedValues(self.selectedValues());
 				}
 			};
-			
+
     }
 
     const component = {
