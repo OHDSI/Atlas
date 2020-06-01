@@ -1,24 +1,24 @@
 <span data-bind="if: parentGroup">
 	<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? ko.i18n('common.and', 'And') : ko.i18n('common.or', 'Or')"></span>
-		<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.having', 'having')"></span>
+		<span data-bind="text:ko.i18n('components.criteriaGroup.having', 'having')"></span>
 
 	</span>
 	<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">
-		<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.having-capital', 'Having')"></span>
+		<span data-bind="text:ko.i18n('components.criteriaGroup.havingCapital', 'Having')"></span>
 	</span>
 </span>
 <span data-bind="ifnot: parentGroup">
-	<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.having-capital', 'Having')"></span>
+	<span data-bind="text:ko.i18n('components.criteriaGroup.havingCapital', 'Having')"></span>
 </span> 
 <span data-bind="text: groupType"></span> 
 <!-- ko if: group().Type().startsWith('AT_') --> 
 <span data-bind="text: group().Count"></span> <!-- /ko -->
-<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.of-the-following-criteria', 'of the following criteria:')"></span>
+<span data-bind="text:ko.i18n('components.criteriaGroup.followingCriteria', 'of the following criteria:')"></span>
 <ul>
 <!-- ko foreach: group().DemographicCriteriaList -->
 	<li>
 		<span data-bind="if: ($index() > 0)"><span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
-		<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.with-the-following-event-criteria', 'with the following event criteria:')"></span>
+		<span data-bind="text:ko.i18n('components.criteriaGroup.withFollowingCriteria', 'with the following event criteria:')"></span>
 
 		<demographic-criteria-viewer params="criteria: $data"></demographic-criteria-viewer>
 	</li>
@@ -28,25 +28,26 @@
 		<div>
 			<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)"><span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span><span data-bind="text: $component.getOccurrenceType(Occurrence.Type())" /> 
 			<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct() ? 'distinct' : ''"></span>
-			<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.occurrence', 'occurrence')"></span>
-			<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
+			<span data-bind="text: Occurrence.Count != 1
+					? ko.i18n('components.criteriaGroup.occurrencesOf', 'occurrences of')
+					: ko.i18n('components.criteriaGroup.occurrenceOf', 'occurrence of')"></span>
 			<span data-bind="component: { 
 								name: $component.getCriteriaComponent($data.Criteria), 
 								params: {expression: $component.expression, criteria: $data.Criteria }
 							}"></span>
-			<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.where', 'where')"></span>
+			<span data-bind="text:ko.i18n('components.criteriaGroup.where', 'where')"></span>
 			<cycle-toggle-input-viewer params="{rawExpression: StartWindow, value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input-viewer>
-			<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.between ', 'between ')"></span>
+			<span data-bind="text:ko.i18n('components.criteriaGroup.between', 'between')"></span>
 			<window-input-viewer params="Window: StartWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{rawExpression: StartWindow, value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input-viewer>
 			<!-- ko if: EndWindow -->
-			<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.and', 'and')"></span>
+			<span data-bind="text:ko.i18n('components.criteriaGroup.and', 'and')"></span>
 			<cycle-toggle-input-viewer params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input-viewer>
-			<span data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.between', 'between')"></span>
+			<span data-bind="text:ko.i18n('components.criteriaGroup.between', 'between')"></span>
 			<window-input-viewer params="Window: EndWindow"></window-input-viewer> <cycle-toggle-input-viewer params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input-viewer>
 			<!-- /ko -->
 			<!-- ko if: RestrictVisit -->
 			<br/>
-			<b data-bind="text:ko.i18n('cc.viewEdit.design.subgroups.definition-viewercomponent.criteria-group-template.occurring-within-the-same-visit', 'occurring within the same visit')"></b>
+			<b data-bind="text:ko.i18n('components.criteriaGroup.occurringWithinTheSameVisit', 'occurring within the same visit')"></b>
 			<!-- /ko -->
 		</div>	
 	</li>
