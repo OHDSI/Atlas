@@ -333,8 +333,7 @@ define([
 
     async delete() {
       if (this.hasSelectedPriotirizableDaimons()) {
-        alert(ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.delete.hasSelectedPriotirizableDaimons',
-                                'Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source')));
+        alert(ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.delete.hasSelectedPriotirizableDaimons', 'Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source.')));
         return;
       }
 

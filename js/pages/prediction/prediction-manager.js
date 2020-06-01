@@ -92,7 +92,7 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.defaultName = globalConstants.newEntityNames.plp;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.plp);
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
