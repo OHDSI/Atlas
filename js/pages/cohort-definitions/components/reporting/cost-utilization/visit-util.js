@@ -144,14 +144,14 @@ define(
           costUtilConst.getPeriodTypeFilter(this.periods),
           {
             type: 'select',
-            label: ko.i18n('filters.visit', 'Visit'),
+            label: ko.i18n('cohortDefinitions.filters.visit', 'Visit'),
             name: VISIT_CONCEPT,
             options: ko.observableArray([]),
             selectedValue: ko.observable(null),
           },
           {
             type: 'select',
-            label: ko.i18n('filters.visitType', 'Visit type'),
+            label: ko.i18n('cohortDefinitions.filters.visitType', 'Visit type'),
             name: VISIT_TYPE_CONCEPT,
             options: ko.observableArray([]),
             selectedValue: ko.observable(null),
