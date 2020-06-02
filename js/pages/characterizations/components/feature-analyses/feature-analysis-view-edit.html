@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div data-bind="css: classes('content'), visible: !$component.loading()">
+    <div data-bind="css: {'content': true, 'fe-design-disabled': !$component.canEdit()}, visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
             <div class="panel-heading">
