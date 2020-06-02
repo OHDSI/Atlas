@@ -57,7 +57,6 @@ define([
           },
         ],
       };
-			this.language = ko.i18n('datatable.language')
       this.columns = [
         {
           title: ko.i18n('columns.id', 'Id'),

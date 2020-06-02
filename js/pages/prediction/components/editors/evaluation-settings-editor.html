@@ -14,11 +14,12 @@
 <div class="input-group">
     <label data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_3', 'The number of folds used in the cross validation:')"></label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> folds
+        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> 
+        <span data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_4', 'folds')"></span>
     </div>
 </div>
 <div class="input-group">
-    <label data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_4', 'The seed used to split the test/train set when using a person type testSplit (optional):')"></label>
+    <label data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_5', 'The seed used to split the test/train set when using a person type testSplit (optional):')"></label>
     <div class="input-group">
         <input class="form-control" type="text" data-bind="value: $component.splitSeed" />
     </div>

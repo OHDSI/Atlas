@@ -8,7 +8,7 @@
 
 	<faceted-datatable 
 	data-bind="visible: loading()==false" 
-	params="order: [[4, 'desc']], reference: reference, language: language, columns: columns, options: options"></faceted-datatable>
+	params="order: [[4, 'desc']], reference: reference, language: ko.i18n('datatable.language'), columns: columns, options: options"></faceted-datatable>
 
 	<loading data-bind="visible:loading()" params="status: 'retrieving predictions'"></loading>
 </div>

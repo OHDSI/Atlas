@@ -195,7 +195,7 @@ define([
 		}
 
 		async delete() {
-			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
+			if (!confirm(ko.unwrap(ko.i18n('predictions.confirmDelete', 'Delete patient level prediction specification? Warning: deletion can not be undone!'))))
 				return;
 
 			this.isDeleting(true);
@@ -230,7 +230,7 @@ define([
 			try{
 				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
 				if (results > 0) {
-					alert('A prediction analysis with this name already exists. Please choose a different name.');
+					alert(ko.unwrap(ko.i18n('predictions.confirmSave', 'A prediction analysis with this name already exists. Please choose a different name.')));
 				} else {
 					this.fullAnalysisList.removeAll();
 					const payload = this.prepForSave();
@@ -239,7 +239,7 @@ define([
 					document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save a prediction analysis.');
+				alert(ko.unwrap(ko.i18n('predictions.confirmCatchSave', 'An error occurred while attempting to save a prediction analysis.')));
 			} finally {
 				this.isSaving(false);
 				this.loading(false);

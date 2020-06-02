@@ -105,7 +105,7 @@ define([
     return textA < textB ? -1 : textA > textB ? 1 : 0;
   }
 
-  class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
+  class cohortDefinitions.cohortDefinitionManager extends AutoBind(Clipboard(Page)) {
     constructor(params) {
       super(params);
       this.pollTimeout = null;
@@ -637,7 +637,7 @@ define([
       this.reportOptionCaption = ko.pureComputed(() => {
         return this.reportingSourceStatusLoading()
           ? ko.i18n('common.loading', 'Loading Reports...')
-          : ko.i18n('cohortDefinitionManager.selectReport', 'Select a Report');
+          : ko.i18n('cohortDefinitions.cohortDefinitionManager.selectReport', 'Select a Report');
       });
       this.reportingSourceStatus = ko.observable();
       this.reportingAvailableReports = ko.observableArray();
@@ -688,7 +688,7 @@ define([
                 .done((heelResults) => {
                   if (heelResults.length > 0) {
                     reports.push({
-                      name: ko.i18n('cohortDefinitionManager.heraclesHeel', 'Heracles Heel'),
+                      name: ko.i18n('cohortDefinitions.cohortDefinitionManager.heraclesHeel', 'Heracles Heel'),
                       reportKey: "Heracles Heel",
                       analyses: [],
                     });
@@ -852,7 +852,7 @@ define([
     delete() {
       if (
         !confirm(
-          ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.delete', 'Delete cohort definition? Warning: deletion can not be undone!'))
+          ko.unwrap(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.delete', 'Delete cohort definition? Warning: deletion can not be undone!'))
         )
       )
         return;
@@ -872,7 +872,7 @@ define([
             console.log("Error: " + error);
             if (error.status == 409) {
               alert(
-                ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.save', 'Cohort definition cannot be deleted because it is referenced in some analysis.'))
+                ko.unwrap(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.save', 'Cohort definition cannot be deleted because it is referenced in some analysis.'))
               );
               this.isDeleting(false);
             } else {
@@ -897,7 +897,7 @@ define([
         );
         if (results > 0) {
           alert(
-            ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.saveAlert', 'A cohort definition with this name already exists. Please choose a different name.'))
+            ko.unwrap(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.saveAlert', 'A cohort definition with this name already exists. Please choose a different name.'))
           );
         } else {
           this.clearConceptSet();
@@ -926,7 +926,7 @@ define([
         );
       } catch (e) {
         alert(
-          ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.save', 'An error occurred while attempting to save a cohort definition.'))
+          ko.unwrap(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.save', 'An error occurred while attempting to save a cohort definition.'))
         );
       } finally {
         this.isSaving(false);
@@ -937,7 +937,7 @@ define([
       if (
         this.dirtyFlag().isDirty() &&
         !confirm(
-          ko.unwrap(ko.i18n('cohortDefinitionManager.confirms.close', 'Your cohort changes are not saved. Would you like to continue?'))
+          ko.unwrap(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.close', 'Your cohort changes are not saved. Would you like to continue?'))
         )
       ) {
         return;
@@ -1559,7 +1559,7 @@ define([
     showExitMessage(sourceKey) {
       const info = this.cohortDefinitionSourceInfo().find(
         (i) => i.sourceKey === sourceKey
-      ) || { failMessage: ko.unwrap(ko.i18n('cohortDefinitionManager.failedWithoutAnyMessage', 'Failed without any message')) };
+      ) || { failMessage: ko.unwrap(ko.i18n('cohortDefinitions.cohortDefinitionManager.failedWithoutAnyMessage', 'Failed without any message')) };
       this.exitMessage(info.failMessage);
       this.isExitMessageShown(true);
     }
@@ -1579,7 +1579,7 @@ define([
     }) {
       if (
         !confirm(
-          ko.unwrap(ko.i18nformat('cohortDefinitionManager.confirms.generateAnalyses', 'This will run <%=descr%> and may take about <%=duration%>. Are you sure?', {descr: descr, duration: duration}))
+          ko.unwrap(ko.i18nformat('cohortDefinitions.cohortDefinitionManager.confirms.generateAnalyses', 'This will run <%=descr%> and may take about <%=duration%>. Are you sure?', {descr: descr, duration: duration}))
         )
       ) {
         return;
@@ -1640,8 +1640,8 @@ define([
 
     generateQuickAnalysis() {
       this.generateAnalyses({
-        descr: ko.i18n('cohortDefinitionManager.generateQuickAnalysis.descr', 'minimal analyses set to provide a quick overview of the cohort'),
-        duration: ko.i18n('cohortDefinitionManager.generateQuickAnalysis.duration', '10 minutes'),
+        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.descr', 'minimal analyses set to provide a quick overview of the cohort'),
+        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.duration', '10 minutes'),
         analysisIdentifiers: cohortReportingService.getQuickAnalysisIdentifiers(),
         runHeraclesHeel: false,
       });
@@ -1656,8 +1656,8 @@ define([
         .selectedOptions()
         .reduce((acc, ids) => [...acc, ...ids], []);
       this.generateAnalyses({
-        descr: ko.i18n('cohortDefinitionManager.generateHealthcareAnalyses.descr', 'the Cost and Utilization analyses'),
-        duration: ko.i18n('cohortDefinitionManager.generateHealthcareAnalyses.duration', '10-45 minutes'),
+        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.descr', 'the Cost and Utilization analyses'),
+        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.duration', '10-45 minutes'),
         analysisIdentifiers: analysisIds,
         runHeraclesHeel: false,
         periods: this.utilReportOptions.periods.selectedOptions(),
@@ -1674,8 +1674,8 @@ define([
 
     generateAllAnalyses() {
       this.generateAnalyses({
-        descr: ko.i18n('cohortDefinitionManager.generateAllAnalyses.descr', 'all analyses'),
-        duration: ko.i18n('cohortDefinitionManager.generateAllAnalyses.duration', '60-90 minutes'),
+        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.descr', 'all analyses'),
+        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.duration', '60-90 minutes'),
         analysisIdentifiers: cohortReportingService.getAnalysisIdentifiers(),
         runHeraclesHeel: true,
       });
@@ -1849,7 +1849,7 @@ define([
 
   return commonUtils.build(
     "cohort-definition-manager",
-    CohortDefinitionManager,
+    cohortDefinitions.cohortDefinitionManager,
     view
   );
 });

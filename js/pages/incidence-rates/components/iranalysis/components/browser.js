@@ -31,7 +31,7 @@ define([
 							} else if (daysSinceModification < 14) {
 								return ko.i18n('facets.date.lastWeek', 'Last Week');
 							} else {
-								return ko.i18n('facets.date.other', '2+ Weeks Ago');
+								return ko.i18n('facets.date.others', '2+ Weeks Ago');
 							}
 						}
 					},

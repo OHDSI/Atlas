@@ -78,7 +78,8 @@
                         click: toggleSection
                     ">
                         <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-                        <span data-bind="text: 'All executions (' + submissions().length + ')'"></span>
+                        <span data-bind="text: ko.i18nformat('predictions.allExecutions', 'All executions (<%=length%>)', {length: submissions().length})"></span>
+                        <!-- <span data-bind="text: 'All executions (' + submissions().length + ')'"></span> -->
                     </button>
                 </li>
             </ul>

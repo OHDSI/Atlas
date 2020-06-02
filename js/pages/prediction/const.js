@@ -380,8 +380,8 @@ define(
         name: 'person',
         desc: ko.i18n('columns.person', 'Person'),
       }],
-      trueFalseOptions: [{label: "true", value: true}, {label: "false", value: false}],
-      classWeightOptions: [{label: "None", value: 'None'},{label: "Balanced", value: 'Balanced'}],
+      trueFalseOptions: [{label: ko.i18n('columns.true', 'true'), value: true}, {label: ko.i18n('columns.false', 'false'), value: false}],
+      classWeightOptions: [{label: ko.i18n('columns.none', 'None'), value: 'None'},{label: ko.i18n('columns.balanced', 'Balanced'), value: 'Balanced'}],
     };
 
     return {
