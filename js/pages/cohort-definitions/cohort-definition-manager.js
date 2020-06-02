@@ -481,43 +481,43 @@ define([
       this.includedConceptsOptions = {
         Facets: [
           {
-            caption: ko.i18n('options.vocabulary', 'Vocabulary'),
+            caption: ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
             binding: (o) => {
               return o.VOCABULARY_ID;
             },
           },
           {
-            caption: ko.i18n('options.class', 'Class'),
+            caption: ko.i18n('facets.caption.class', 'Class'),
             binding: (o) => {
               return o.CONCEPT_CLASS_ID;
             },
           },
           {
-            caption: ko.i18n('options.domains', 'Domain'),
+            caption: ko.i18n('facets.caption.domain', 'Domain'),
             binding: (o) => {
               return o.DOMAIN_ID;
             },
           },
           {
-            caption: ko.i18n('options.standardConcept', 'Standard Concept'),
+            caption: ko.i18n('facets.caption.standardConcept', 'Standard Concept'),
             binding: (o) => {
               return o.STANDARD_CONCEPT_CAPTION;
             },
           },
           {
-            caption: ko.i18n('options.invalidReason', 'Invalid Reason'),
+            caption: ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
             binding: (o) => {
               return o.INVALID_REASON_CAPTION;
             },
           },
           {
-            caption: ko.i18n('options.hasRecords', 'Has Records'),
+            caption: ko.i18n('facets.caption.hasRecords', 'Has Records'),
             binding: (o) => {
               return parseInt(o.RECORD_COUNT) > 0;
             },
           },
           {
-            caption: ko.i18n('options.hasDescendantRecords', 'Has Descendant Records'),
+            caption: ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
             binding: (o) => {
               return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
             },
