@@ -60,8 +60,11 @@ define(function (require, exports) {
 	function getCohortDefinition(id) {
 		return httpService
 			.doGet(config.webAPIRoot + 'cohortdefinition/' + id)
-			.then(res => res.data)
-			.catch(error => {
+			.then(res => {
+				const cohortDef = res.data;
+				cohortDef.expression = JSON.parse(cohortDef.expression);
+				return cohortDef;
+			}).catch(error => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			});
