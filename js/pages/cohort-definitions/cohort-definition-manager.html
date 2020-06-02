@@ -598,36 +598,36 @@
 					<div data-bind="visible: !$component.isReportGenerating()">
 						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
 							<div class="panel-heading">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_1', 'Cohort Not Generated')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_1', 'Cohort Not Generated')"></span>
 							</div>
 							<div class="panel-body">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_2', 'This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_2', 'This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.')"></span>
 							</div>
 						</div>
 						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='reports_not_generated'">
 							<div class="panel-heading ">
 								
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_3', 'Reports Not Generated')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_3', 'Reports Not Generated')"></span>
 							</div>
 							<div class="panel-body">
 								
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_4', 'Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_4', 'Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.')"></span>
 							</div>
 						</div>
 						<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
 							<div class="panel-heading ">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_5', 'Make a Selection')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_5', 'Make a Selection')"></span>
 							
 							</div>
 							<div class="panel-body">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_6', 'Please make a selection in the Report Selections panel.')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_6', 'Please make a selection in the Report Selections panel.')"></span>
 								
 							</div>
 						</div>
 						<div class="panel panel-info"
 							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
 							<div class="panel-heading ">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_7', 'Generating Reports')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_7', 'Generating Reports')"></span>
 								
 							</div>
 							<div class="panel-body">
@@ -662,10 +662,10 @@
 							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
 							<div class="panel-heading ">
 								
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_8', 'Report Unavailable')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_8', 'Report Unavailable')"></span>
 							</div>
 							<div class="panel-body">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_9', 'The report you requested is not available. Please click the generate button to generate cohort reports for this data source.')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_9', 'The report you requested is not available. Please click the generate button to generate cohort reports for this data source.')"></span>
 								
 							</div>
 						</div>
@@ -673,10 +673,10 @@
 							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
 							<div class="panel-heading ">
 								
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_10', 'Whoops')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_10', 'Whoops')"></span>
 							</div>
 							<div class="panel-body">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_11', 'The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on ')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_11', 'The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on ')"></span>
 								
 								<a href="https://www.github.com/ohdsi/atlas"><i
 										class="fa fa-github"></i> Github</a>.
@@ -689,10 +689,10 @@
 							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
 							<div class="panel-heading ">
 								
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_12', 'Create Reporting Job Failed')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_12', 'Create Reporting Job Failed')"></span>
 							</div>
 							<div class="panel-body">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_11', 'The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on ')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_11', 'The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on ')"></span>
 								<a href="https://www.github.com/ohdsi/atlas"><i
 										class="fa fa-github"></i> Github</a>.
 							</div>
@@ -702,12 +702,12 @@
 						</div>
 						<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
 							<div class="panel-heading ">
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_13', 'Please Wait')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_13', 'Please Wait')"></span>
 								
 							</div>
 							<div class="panel-body">
 								
-								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitions.cohortDefinitionManagerText_14', 'Please wait while for the report status to be loaded.')"></span>
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_14', 'Please wait while for the report status to be loaded.')"></span>
 							</div>
 						</div>
 					</div>

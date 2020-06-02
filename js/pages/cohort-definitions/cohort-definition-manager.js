@@ -105,7 +105,7 @@ define([
     return textA < textB ? -1 : textA > textB ? 1 : 0;
   }
 
-  class cohortDefinitions.cohortDefinitionManager extends AutoBind(Clipboard(Page)) {
+  class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
     constructor(params) {
       super(params);
       this.pollTimeout = null;
@@ -1849,7 +1849,7 @@ define([
 
   return commonUtils.build(
     "cohort-definition-manager",
-    cohortDefinitions.cohortDefinitionManager,
+    CohortDefinitionManager,
     view
   );
 });
