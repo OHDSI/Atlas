@@ -204,7 +204,7 @@ define(['knockout', 'components/evidence/utils'], function (ko, utils) {
         Facets: [{
                 'caption': ko.i18n('facets.caption.drugLabelExists', 'Suggested Negative Control'),
                 'binding': d => {
-                    return d.negativeControl.toString() == "1" ? ko.i18n('common.yes', 'Yes') : ko.i18n('common.no', 'No');
+                    return d.negativeControl.toString() == "1" ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No');
                 },
             },
             {
@@ -214,13 +214,13 @@ define(['knockout', 'components/evidence/utils'], function (ko, utils) {
                     var exact = d.exactPmidCount;
                     var parent = d.parentPmidCount;
                     if (exact > 0) {
-                        return ko.i18n('common.yesExact', 'Yes (Exact)')
+                        return ko.i18n('options.yesExact', 'Yes (Exact)')
                     } else if (desc > 0) {
-                        return ko.i18n('common.yesDescendant', 'Yes (Descendant)')
+                        return ko.i18n('options.yesDescendant', 'Yes (Descendant)')
                     } else if (parent > 0) {
-                        return ko.i18n('common.yesParent', 'Yes (Parent)')
+                        return ko.i18n('options.yesParent', 'Yes (Parent)')
                     } else {
-                        return ko.i18n('common.no', 'No')
+                        return ko.i18n('options.no', 'No')
                     }
                 },
             },
@@ -231,20 +231,20 @@ define(['knockout', 'components/evidence/utils'], function (ko, utils) {
                     var exact = d.exactSplicerCount;
                     var parent = d.parentSplicerCount;
                     if (exact > 0) {
-                        return ko.i18n('common.yesExact', 'Yes (Exact)')
+                        return ko.i18n('options.yesExact', 'Yes (Exact)')
                     } else if (desc > 0) {
-                        return ko.i18n('common.yesDescendant', 'Yes (Descendant)')
+                        return ko.i18n('options.yesDescendant', 'Yes (Descendant)')
                     } else if (parent > 0) {
-                        return ko.i18n('common.yesParent', 'Yes (Parent)')
+                        return ko.i18n('options.yesParent', 'Yes (Parent)')
                     } else {
-                        return ko.i18n('common.no', 'No')
+                        return ko.i18n('options.no', 'No')
                     }
                 },
             },
             {
                 'caption': ko.i18n('facets.caption.foundInProductLabelOrPublications', 'Found in Product Label Or Publications'),
                 'binding': d => {
-                    return utils.hasEvidence(d) ? ko.i18n('common.yes', 'Yes') : ko.i18n('common.no', 'No');
+                    return utils.hasEvidence(d) ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No');
                 },
             },
             {
@@ -254,13 +254,13 @@ define(['knockout', 'components/evidence/utils'], function (ko, utils) {
                     var exact = d.exactFaersCount;
                     var parent = d.parentFaersCount;
                     if (exact > 0) {
-                        return ko.i18n('common.yesExact', 'Yes (Exact)')
+                        return ko.i18n('options.yesExact', 'Yes (Exact)')
                     } else if (desc > 0) {
-                        return ko.i18n('common.yesDescendant', 'Yes (Descendant)')
+                        return ko.i18n('options.yesDescendant', 'Yes (Descendant)')
                     } else if (parent > 0) {
-                        return ko.i18n('common.yesParent', 'Yes (Parent)')
+                        return ko.i18n('options.yesParent', 'Yes (Parent)')
                     } else {
-                        return ko.i18n('common.no', 'No')
+                        return ko.i18n('options.no', 'No')
                     }
                 },
             },
@@ -270,11 +270,11 @@ define(['knockout', 'components/evidence/utils'], function (ko, utils) {
                     var inc = d.userIncluded;
                     var exc = d.userExcluded;
                     if (inc > 0) {
-                        return ko.i18n('common.included', 'Included')
+                        return ko.i18n('options.included', 'Included')
                     } else if (exc > 0) {
-                        return ko.i18n('common.excluded', 'Excluded')
+                        return ko.i18n('options.excluded', 'Excluded')
                     } else {
-                        return ko.i18n('common.none', 'None')
+                        return ko.i18n('options.none', 'None')
                     }
                 },
             },

@@ -16,7 +16,7 @@ define(function (require, exports) {
 
 			Object.assign(this, data);
 
-			this.name = ko.observable(data.name || ko.unwrap(ko.i18n('pathways.defaultName', constants.newEntityNames.pathway)));
+			this.name = ko.observable(data.name || ko.unwrap(constants.newEntityNames.pathway));
 			this.targetCohorts = ko.observableArray(data.targetCohorts && data.targetCohorts.map(observeName));
 			this.eventCohorts = ko.observableArray(data.eventCohorts && data.eventCohorts.map(observeName));
 			

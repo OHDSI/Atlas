@@ -76,11 +76,11 @@ define([
 					render: (s, p, data) => {
 						let html = '';
 						if (PermissionService.isPermittedExportGenerationDesign(data.id)) {
-							html = `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a>`;
+							html = `<a href='#' data-bind="css: $component.classes('design-link'), click: () => $component.showExecutionDesign(${data.id})">${(data.tag || '-')}</a> `;
 						} else {
 							html = data.tag || '-';
 						}
-						html += this.currentHash() === data.hashCode ? ' (same as now)' : '';
+						html += this.currentHash() === data.hashCode ? ko.i18n('cc.viewEdit.executions.table.sameAsNow', '(same as now)')() : '';
 						return html;
 					}
 				},
@@ -105,7 +105,7 @@ define([
 					render: (s, p, d) => {
 						return d.status === this.ccGenerationStatusOptions.COMPLETED
 							? `<a href='#' data-bind="css: $component.classes('reports-link'), click: $component.goToResults.bind(null, id)">${ko.i18n('cc.viewEdit.executions.table.viewReports', 'View reports')()}</a>`
-							: ko.i18n('cc.viewEdit.executions.table.columnsresults.results.values.empty', '-')(); // ${d.reportCount}
+							: ko.i18n('cc.viewEdit.executions.table.empty', '-')(); // ${d.reportCount}
 					}
 				}
 			]);
