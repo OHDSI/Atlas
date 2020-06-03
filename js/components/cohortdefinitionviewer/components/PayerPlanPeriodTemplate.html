@@ -58,7 +58,7 @@
 		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(SponsorConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(StopReasonConcept) != null -->
-	<li><span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_13', 'Stop Reason Concept is')"></span><conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+	<li><span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_13', 'Stop Reason Concept is')"></span><conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(StopReasonConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PayerSourceConcept) != null -->
 	<li>

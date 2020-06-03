@@ -65,7 +65,7 @@
 <!-- ko if: ko.utils.unwrapObservable(DrugSourceConcept) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionDrugExposure.conditionDrugExposureText_13', 'Drug Source Concept is:')"></span>
-		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(DrugSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: 'UNSPECIFIED!'}"></conceptset-reference></li>
+		<conceptset-reference params="{conceptSetId: ko.utils.unwrapObservable(DrugSourceConcept), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('common.unspecified', 'UNSPECIFIED!')}"></conceptset-reference></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Age) != null -->
 	<li>
