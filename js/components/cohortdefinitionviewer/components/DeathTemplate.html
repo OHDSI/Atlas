@@ -10,7 +10,8 @@
 <!-- ko if: ko.utils.unwrapObservable(DeathType) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionDeath.deathType', 'Death Type')"></span>
-		<cycle-toggle-input-viewer params="{value: DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DeathType)"></concept-list-viewer></li>
+		<cycle-toggle-input-viewer params="{value: DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> 
+		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DeathType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DeathSourceConcept) != null -->
 	<li>

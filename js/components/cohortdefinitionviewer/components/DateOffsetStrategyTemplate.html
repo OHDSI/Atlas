@@ -5,10 +5,10 @@
 <div style="padding: 5px 0px">
 	<span data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_7', 'This cohort definition end date will be the index event\'s')"></span>
 	
-	<span data-bind="text: fieldName"></span>
+	<span data-bind="text: ko.unwrap(fieldName)"></span>
 	<span data-bind="text: ko.i18n('components.dateOffsetStrategy.dateOffsetStrategyText_8', 'plus')"></span>
 	
-	<span data-bind="text: strategy().Offset"></span>
+	<span data-bind="text: ko.unwrap(strategy().Offset)"></span>
 	<span data-bind="text: ko.i18n('common.days', 'days')"></span> 
 </div>
 <!-- /ko -->
