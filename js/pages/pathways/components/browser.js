@@ -84,17 +84,22 @@ define([
 
 		get gridOptions() {
 			return {
-				Facets: [{
-					'caption': 'Created',
-					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
-				},
+				Facets: [
+					{
+						'caption': 'Created',
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
 					{
 						'caption': 'Updated',
-						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
 						'caption': 'Author',
-						'binding': (o) => (o.createdBy && o.createdBy.login) || "",
+						'binding': datatableUtils.getFacetForCreatedBy,
+					},
+					{
+						'caption': 'Designs',
+						'binding': datatableUtils.getFacetForDesign,
 					},
 				]
 			};

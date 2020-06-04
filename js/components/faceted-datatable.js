@@ -1,9 +1,11 @@
-define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ], function (ko, view, crossfilter) {
+define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/CommonUtils', 'colvis',], 
+	function (ko, view, crossfilter, commonUtils) {
 
 	function facetedDatatable(params) {
 		var self = this;
 		var subscriptions = [];
 
+		self.dataTableId = params.dataTableId || commonUtils.getUniqueIdentifier();
 		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
