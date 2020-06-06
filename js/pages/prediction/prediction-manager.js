@@ -93,6 +93,9 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
+			this.canEdit = ko.pureComputed(() => {
+				return PermissionService.isPermittedUpdate(this.selectedAnalysisId());
+			});
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -104,6 +107,7 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.canEdit
 			});
 
 			this.canDelete = ko.pureComputed(() => {

@@ -11,6 +11,7 @@ define([
 	'./editors/cohort-method-analysis-editor',
 	'./editors/negative-control-outcome-cohort-settings-editor',
 	'./editors/positive-control-sythesis-settings-editor',
+	'less!./cca-specification-view-edit.less',
 ], function (
 	ko, 
 	view, 
@@ -35,10 +36,11 @@ define([
 			this.editorArray = ko.observableArray();
 			this.estimationAnalysis = params.estimationAnalysis;
 			this.options = constants.options;
+			this.isEditPermitted = params.isEditPermitted;
+			this.cca = constants.getCca(this.isEditPermitted())[0];
 			this.loading = params.loading;
 			this.managerMode = ko.observable('summary');
 			this.defaultCovariateSettings = params.defaultCovariateSettings;
-			this.isEditPermitted = params.isEditPermitted;
 		}
 
 		comparisonTableRowClickHandler(data, obj, tableRow, rowIndex) {
@@ -90,6 +92,7 @@ define([
 			this.editorComponentParams({ 
 				analysis: analysis,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor')
 		}

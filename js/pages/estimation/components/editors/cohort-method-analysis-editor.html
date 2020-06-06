@@ -25,7 +25,7 @@
             <div class="panel-heading">
                 <i class="fa fa-users" aria-hidden="true"></i> Study Population
             </div>
-            <div class="panel-body">
+            <div data-bind="css:{'panel-body':true, 'div-disabled':!$component.isEditPermitted()}">
                 <div>
                     <label>Study start date - a calendar date specifying the minimum date that a cohort index can appear (leave blank to use all time):</label>
                     <div class="input-group">
@@ -103,8 +103,8 @@
                     <div class="input-group">
                         <input class="form-control" type="text" disabled data-bind="value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().name" />
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" data-bind="click:chooseIncludedCovariates"><i class="fa fa-folder-open"></i></button>
-                            <button class="btn btn-danger" data-bind="disable:$component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().id == 0,click:clearIncludedCovariates" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                            <button class="btn btn-primary" data-bind="click:chooseIncludedCovariates, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                            <button class="btn btn-danger" data-bind="disable:($component.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateConceptSet().id == 0 || !$component.isEditPermitted()),click:clearIncludedCovariates" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                         </span>
                     </div>
                     <label><i>* Concepts defined here are combined with those defined in the Comparisons section.</i></label>
@@ -115,8 +115,8 @@
                     <div class="input-group">
                         <input class="form-control" type="text" disabled data-bind="value: $component.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().name" />
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" data-bind="click:chooseExcludedCovariates"><i class="fa fa-folder-open"></i></button>
-                            <button class="btn btn-danger" data-bind="disable:$component.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().id == 0,click:clearExcludedCovariates" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                            <button class="btn btn-primary" data-bind="click:chooseExcludedCovariates, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                            <button class="btn btn-danger" data-bind="disable:($component.analysis.getDbCohortMethodDataArgs.covariateSettings.excludedCovariateConceptSet().id == 0 || !$component.isEditPermitted()),click:clearExcludedCovariates" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                         </span>
                     </div>
                     <label><i>* Concepts defined here are combined with those defined in the Comparisons section.</i></label>
@@ -129,7 +129,7 @@
             <div class="panel-heading">
                 <i class="fa fa-clock-o" aria-hidden="true"></i> Time At Risk
             </div>
-            <div class="panel-body">
+            <div data-bind="css:{'panel-body':true, 'div-disabled': !$component.isEditPermitted()}">
                 <div>
                     <label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
                     <div class="input-group">
@@ -157,58 +157,60 @@
                 <i class="fa fa-balance-scale" aria-hidden="true"></i> Propensity Score Adjustment
             </div>
             <div class="panel-body">
-                <div>
-                    <label>How do you want to trim your cohorts based on the propensity score distribution?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.trimOptions, optionsText:'name', optionsValue:'id', value: $component.trimSelection"></select>
+                <div data-bind="css:{'div-disabled': !$component.isEditPermitted()}">
+                    <div>
+                        <label>How do you want to trim your cohorts based on the propensity score distribution?</label>
+                        <div class="input-group">
+                            <select class="form-control" data-bind="options: $component.options.trimOptions, optionsText:'name', optionsValue:'id', value: $component.trimSelection"></select>
+                        </div>
                     </div>
-                </div>
-                <div data-bind="visible: $component.trimSelection() == 'byPercent'">
-                    <label>Trim Fraction (1-100%):</label>
-                    <div class="input-group">
-                        <input class="form-control" type="text" data-bind="value: $component.trimFraction" />
+                    <div data-bind="visible: $component.trimSelection() == 'byPercent'">
+                        <label>Trim Fraction (1-100%):</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" data-bind="value: $component.trimFraction" />
+                        </div>
                     </div>
-                </div>
-                <div data-bind="visible: $component.trimSelection() == 'toEquipoise'">
-                    <label>Specify the lower and upper bound on the preference score for keeping persons (specify as: min %, max %, eg: 25,75):</label>
-                    <div class="input-group">
-                        <input class="form-control" type="text" data-bind="value: $component.bounds" />
+                    <div data-bind="visible: $component.trimSelection() == 'toEquipoise'">
+                        <label>Specify the lower and upper bound on the preference score for keeping persons (specify as: min %, max %, eg: 25,75):</label>
+                        <div class="input-group">
+                            <input class="form-control" type="text" data-bind="value: $component.bounds" />
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <label>Do you want to perform matching or stratification?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.matchStratifyOptions, optionsText:'name', optionsValue:'id', value: $component.matchStratifySelection"></select>
+                    <div>
+                        <label>Do you want to perform matching or stratification?</label>
+                        <div class="input-group">
+                            <select class="form-control" data-bind="options: $component.options.matchStratifyOptions, optionsText:'name', optionsValue:'id', value: $component.matchStratifySelection"></select>
+                        </div>
                     </div>
-                </div>
-                <div data-bind="visible: $component.matchStratifySelection() == 'matchOnPs'">
-                    <match-args-editor params="matchArgs: $component.analysis.matchOnPsArgs"></match-args-editor>
-                </div>
-                <div data-bind="visible: $component.matchStratifySelection() == 'matchOnPsAndCovariates'">
-                    <match-args-editor params="matchArgs: $component.analysis.matchOnPsAndCovariatesArgs"></match-args-editor>
-                </div>
-                <div data-bind="visible: $component.matchStratifySelection() == 'stratifyByPs'">
-                    <stratify-args-editor params="stratifyArgs: $component.analysis.stratifyByPsArgs"></stratify-args-editor>
-                </div>
-                <div data-bind="visible: $component.matchStratifySelection() == 'stratifyOnPsAndCovariates'">
-                    <stratify-args-editor params="stratifyArgs: $component.analysis.stratifyByPsAndCovariatesArgs"></stratify-args-editor>
-                </div>
-                <div>
-                    <label>What is the maximum number of people to include in the propensity score model when fitting? Setting this number to 0 means no down-sampling will be applied:</label>
-                    <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.createPsArgs.maxCohortSizeForFitting, eventType:'blur', ko_autocomplete: { value: $component.analysis.createPsArgs.maxCohortSizeForFitting, source: $component.options.maxCohortSizeForFittingOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+                    <div data-bind="visible: $component.matchStratifySelection() == 'matchOnPs'">
+                        <match-args-editor params="matchArgs: $component.analysis.matchOnPsArgs"></match-args-editor>
                     </div>
-                </div>
-                <div>
-                    <label>Test each covariate for correlation with the target assignment? If any covariate has an unusually high correlation (either positive or negative), this will throw an error.</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createPsArgs.errorOnHighCorrelation"></select>
+                    <div data-bind="visible: $component.matchStratifySelection() == 'matchOnPsAndCovariates'">
+                        <match-args-editor params="matchArgs: $component.analysis.matchOnPsAndCovariatesArgs"></match-args-editor>
                     </div>
-                </div>
-                <div>
-                    <label>Use regularization when fitting the propensity model?</label>
-                    <div class="input-group">
-                        <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.useRegularization"></select>
+                    <div data-bind="visible: $component.matchStratifySelection() == 'stratifyByPs'">
+                        <stratify-args-editor params="stratifyArgs: $component.analysis.stratifyByPsArgs"></stratify-args-editor>
+                    </div>
+                    <div data-bind="visible: $component.matchStratifySelection() == 'stratifyOnPsAndCovariates'">
+                        <stratify-args-editor params="stratifyArgs: $component.analysis.stratifyByPsAndCovariatesArgs"></stratify-args-editor>
+                    </div>
+                    <div>
+                        <label>What is the maximum number of people to include in the propensity score model when fitting? Setting this number to 0 means no down-sampling will be applied:</label>
+                        <div class="input-group">
+                            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.analysis.createPsArgs.maxCohortSizeForFitting, eventType:'blur', ko_autocomplete: { value: $component.analysis.createPsArgs.maxCohortSizeForFitting, source: $component.options.maxCohortSizeForFittingOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+                        </div>
+                    </div>
+                    <div>
+                        <label>Test each covariate for correlation with the target assignment? If any covariate has an unusually high correlation (either positive or negative), this will throw an error.</label>
+                        <div class="input-group">
+                            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.analysis.createPsArgs.errorOnHighCorrelation"></select>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Use regularization when fitting the propensity model?</label>
+                        <div class="input-group">
+                            <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.useRegularization"></select>
+                        </div>
                     </div>
                 </div>
                 <div class="row" data-bind="css: classes('subsection'), visible: $component.useRegularization">
@@ -217,7 +219,7 @@
                             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleControlDisplay">
                                 <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Control Settings</span>
                             </div>
-                            <div class="panel-body collapse">
+                            <div class="panel-body collapse" data-bind="css:{'div-disabled': !$component.isEditPermitted()}">
                                 <cyclops-control-editor params="control: $component.analysis.createPsArgs.control"></cyclops-control-editor>
                             </div>
                         </div>
@@ -227,7 +229,7 @@
                             <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: togglePriorDisplay">
                                 <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Prior</span>
                             </div>
-                            <div class="panel-body collapse">
+                            <div class="panel-body collapse" data-bind="css:{'div-disabled': !$component.isEditPermitted()}">
                                 <cyclops-prior-editor params="prior: $component.analysis.createPsArgs.prior"></cyclops-prior-editor>
                             </div>
                         </div>
@@ -243,7 +245,7 @@
             </div>
             <div class="panel-body">
                 <div>
-                    <outcome-model-args-editor params="matchStratifySelection: $component.matchStratifySelection, outcomeModelArgs: $component.analysis.fitOutcomeModelArgs, subscriptions: $component.subscriptions"></outcome-model-args-editor>
+                    <outcome-model-args-editor params="isEditPermitted: $component.isEditPermitted, matchStratifySelection: $component.matchStratifySelection, outcomeModelArgs: $component.analysis.fitOutcomeModelArgs, subscriptions: $component.subscriptions"></outcome-model-args-editor>
                 </div>
             </div>
         </div>
@@ -270,7 +272,8 @@
     data: {
         covariateSettings: $component.analysis.getDbCohortMethodDataArgs.covariateSettings,
         showCovariateSelector: $component.showCovariateSelector,
+        isEditPermitted: $component.isEditPermitted
     }
 }">
-    <covar-settings-editor params="covariateSettings: covariateSettings"></covar-settings-editor>
+    <covar-settings-editor params="covariateSettings: covariateSettings, isEditPermitted: isEditPermitted"></covar-settings-editor>
 </atlas-modal>

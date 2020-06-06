@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis() && $component.estimationAnalysis().description" maxlength="1000"></textarea>
+            <textarea placeholder="enter a description here (1000 characters max)" data-bind="css: classes('description-entry'), value: $component.estimationAnalysis() && $component.estimationAnalysis().description, disable: !$component.isEditPermitted()" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
                 <div class="row">
@@ -27,15 +27,15 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                             <i class="fa fa-users"></i> Comparisons
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addComparison"><i class="fa fa-plus"></i> Add Comparison</button>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addComparison, disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Comparison</button>
                             </div>
                             <div class="panel-body">
                                 <faceted-datatable params="{ 
-                                columns: options.cca.comparisonTableColumns, 
-                                options: options.cca.comparisonTableOptions, 
-                                pageLength: options.cca.comparisonTableOptions.pageLength,
-                                lengthMenu: options.cca.comparisonTableOptions.lengthMenu,
-                                dom: options.cca.comparisonTableOptions.dom,
+                                columns: $component.cca.comparisonTableColumns, 
+                                options: $component.cca.comparisonTableOptions, 
+                                pageLength: $component.cca.comparisonTableOptions.pageLength,
+                                lengthMenu: $component.cca.comparisonTableOptions.lengthMenu,
+                                dom: $component.cca.comparisonTableOptions.dom,
                                 reference: $component.comparisons,
                                 rowClick: $component.comparisonTableRowClickHandler,
                                 }"></faceted-datatable>
@@ -57,15 +57,15 @@
                             <div class="panel panel-default">
                             <div class="panel-heading">
                                 Analysis Settings
-                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addAnalysis"><i class="fa fa-plus"></i> Add Analysis Settings</button>
+                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addAnalysis, disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Analysis Settings</button>
                             </div>
                             <div class="panel-body">
                                 <faceted-datatable params="{ 
-                                    columns: options.cca.analysisSettingsTableColumns, 
-                                    options: options.cca.analysisSettingsTableOptions, 
-                                    pageLength: options.cca.analysisSettingsTableOptions.pageLength,
-                                    lengthMenu: options.cca.analysisSettingsTableOptions.lengthMenu,
-                                    dom: options.cca.analysisSettingsTableOptions.dom,
+                                    columns: cca.analysisSettingsTableColumns, 
+                                    options: cca.analysisSettingsTableOptions, 
+                                    pageLength: cca.analysisSettingsTableOptions.pageLength,
+                                    lengthMenu: cca.analysisSettingsTableOptions.lengthMenu,
+                                    dom: cca.analysisSettingsTableOptions.dom,
                                     reference: $component.cohortMethodAnalysisList,
                                     rowClick: $component.analysisSettingsTableRowClickHandler,
                                 }"></faceted-datatable>
@@ -82,7 +82,7 @@
                     <div class="panel-heading">
                         <i class="fa fa-cogs"></i> Evaluation Settings
                     </div>
-                    <div class="panel-body">
+                    <div data-bind="css:{'settings-disabled': !$component.isEditPermitted(), 'panel-body':true}">
                         <div class="paddedWrapper">
                             <div class="panel panel-default">
                             <div class="panel-heading">
@@ -105,7 +105,7 @@
                                     </div>
                                 </div>
                                 <div data-bind="visible: $component.estimationAnalysis() && $component.estimationAnalysis().doPositiveControlSynthesis">
-                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis() && $component.estimationAnalysis().positiveControlSynthesisArgs, subscriptions: $component.subscriptions"></positive-control-synthesis-settings-editor>
+                                <positive-control-synthesis-settings-editor params="settings: $component.estimationAnalysis() && $component.estimationAnalysis().positiveControlSynthesisArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></positive-control-synthesis-settings-editor>
                                 </div>
                             </div>
                             </div>

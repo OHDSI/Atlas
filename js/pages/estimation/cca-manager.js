@@ -88,6 +88,9 @@ define([
 			this.canSave = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
+			this.canEdit = ko.pureComputed(() => {
+				return PermissionService.isPermittedUpdate(this.selectedAnalysisId());
+			});
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
@@ -100,7 +103,7 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
-				isEditPermitted: this.canSave
+				isEditPermitted: this.canEdit
 			});
 
 			this.isNameFilled = ko.computed(() => {

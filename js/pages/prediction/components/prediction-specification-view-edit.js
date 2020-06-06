@@ -13,6 +13,7 @@ define([
 	'featureextraction/components/temporal-covariate-settings-editor',
 	'components/cohort-definition-browser',
 	'faceted-datatable',
+	'less!./prediction-specification-view-edit.less',
 ], function (
 	ko, 
 	view, 
@@ -47,6 +48,11 @@ define([
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 			this.modelSettingsOptions = ModelSettings.options;
 			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
+			this.isEditPermitted = params.isEditPermitted;
+			this.cohortTableColumns = constants.getCohortTableColumns(this.isEditPermitted());
+			this.populationSettingsTableColumns = constants.getPopulationSettingsTableColumns(this.isEditPermitted());
+			this.modelSettingsTableColumns = constants.getModelSettingsTableColumns(this.isEditPermitted());
+			this.covariateSettingsTableColumns = constants.getCovariateSettingsTableColumns(this.isEditPermitted());
 		}
 
 		removeTargetCohort(data, obj, tableRow, rowIndex) {
@@ -153,7 +159,8 @@ define([
 			this.editorComponentName('prediction-covar-settings-editor');
 			this.editorComponentParams({
 				covariateSettings: settings, 
-				subscriptions: this.subscriptions,				
+				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted,
 			});
 			this.managerMode('editor');
 		}

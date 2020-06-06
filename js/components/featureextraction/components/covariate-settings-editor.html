@@ -1,4 +1,4 @@
-<div data-bind="css: classes()">
+<div data-bind="css: {'covar-settings-editor':true, 'div-disabled':!$component.isEditPermitted()}">
     <div class="table-responsive">
         <table data-bind="css: classes('covariate-selection')" class="table table-bordered">
             <thead>
