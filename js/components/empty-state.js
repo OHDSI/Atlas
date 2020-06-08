@@ -13,7 +13,7 @@ define([
 	class EmptyState extends Component {
 		constructor(params) {
 			super(params);
-			this.message = params.message || 'No data';
+			this.message = params.message || ko.i18n('common.noData', 'No data');
 
 			return this;
 		}

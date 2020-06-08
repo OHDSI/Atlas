@@ -109,7 +109,7 @@ define([
       if (isConceptSetDirty) {
         if (
           confirm(
-            "Concept set changes are not saved. Would you like to continue?"
+            ko.unwrap(ko.i18n('components.cohortDefinitionBrowser.confirmMessage', 'Concept set changes are not saved. Would you like to continue?'))
           )
         ) {
           callback();
