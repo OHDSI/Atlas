@@ -58,14 +58,14 @@
 					<select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" />
 					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskPlus', 'plus')"></span>
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.start.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskDays', 'days.')"></span>
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskStartsWithDays', 'days.')"></span>
 				</li>
 				<li>
 					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskEndsWith', 'Time at risk ends with')"></span>
 					<select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" />
 					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskPlus', 'plus')"></span>
 					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.end.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskDays', 'days.')"></span>
+					<span data-bind="text: ko.i18n('ir.editor.timeAtRiskEndsWithDays', 'days.')"></span>
 				</li>
 			</ul>
 		</div>
@@ -78,12 +78,12 @@
 	</div>
 	<div class="form-inline" data-bind="if: analysis().studyWindow() != null">
 		<div class="form-group">
-			<label for="studyWindowStartDate" data-bind="text: ko.i18n('ir.editor.studyWindowBeginsOn', 'Study window begins on')"></label>
+			<label for="studyWindowStartDate" data-bind="text: ko.i18n('ir.editor.studyWindowText1', 'Study window begins on')"></label>
 			<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowStartDate" data-bind="datepicker: analysis().studyWindow().startDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }">
 		</div>
 		<div class="form-group">
-				<label for="studyWindowEndDate" data-bind="text: ko.i18n('ir.editor.studyWindowEndsOn', 'and ends on')"></label>
-				<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowEndDate" data-bind="datepicker: analysis().studyWindow().endDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }">
+			<label for="studyWindowEndDate" data-bind="text: ko.i18n('ir.editor.studyWindowText2', 'and ends on')"></label>
+			<input placeholder="YYYY-MM-DD" autocomplete="off" class="dateField" id="studyWindowEndDate" data-bind="datepicker: analysis().studyWindow().endDate, datepickerOptions: { dateFormat: 'yy-mm-dd' }"><span data-bind="text: ko.i18n('ir.editor.studyWindowText3', '.')"></span>
 		</div>
 		<button class="btn btn-sm btn-danger" data-bind="click: function() { analysis().studyWindow(null); }, text: ko.i18n('ir.editor.removeStudyWindow', 'Remove Study Window')"></button>
 	</div>
