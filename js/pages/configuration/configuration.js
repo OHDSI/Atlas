@@ -142,7 +142,7 @@ define([
       this.isInProgress(true);
       try {
         await sourceApi.updateSourceDaimonPriority(sourceKey, daimonType);
-        sourceApi.initSourcesConfig();
+        await sourceApi.initSourcesConfig();
       } catch(err) {
         alert('Failed to update priority source daimon');
       }        
