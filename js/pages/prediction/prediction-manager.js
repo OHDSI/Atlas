@@ -227,6 +227,9 @@ define([
 			// Next check to see that a prediction analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current prediction analysis is excluded in this check.
 			try{
+				if (!globalConstants.isValidName(this.patientLevelPredictionAnalysis().name())) {
+					return;
+				}
 				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
 				if (results > 0) {
 					alert('A prediction analysis with this name already exists. Please choose a different name.');

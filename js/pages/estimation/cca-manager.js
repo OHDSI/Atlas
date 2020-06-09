@@ -168,6 +168,9 @@ define([
 			// Next check to see that an estimation analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.
 			try{
+				if (!globalConstants.isValidName(this.estimationAnalysis().name())) {
+					return;
+				}
 				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
 				if (results > 0) {
 					alert('An estimation analysis with this name already exists. Please choose a different name.');

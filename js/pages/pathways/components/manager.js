@@ -161,6 +161,9 @@ define([
 			// Next check to see that a cohort pathway with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current cohort pathway is excluded in this check.
 			try {
+				if (!constants.isValidName(this.design().name())) {
+					return;
+				}
 				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
 				if (results > 0) {
 					alert('A cohort pathway with this name already exists. Please choose a different name.');

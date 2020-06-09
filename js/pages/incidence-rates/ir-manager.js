@@ -386,6 +386,9 @@ define([
 			// Next check to see that an incidence rate with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
 			try{
+				if (!globalConstants.isValidName(this.selectedAnalysis().name())) {
+					return;
+				}
 				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
 				if (results > 0) {
 					alert('An incidence rate with this name already exists. Please choose a different name.');

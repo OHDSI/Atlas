@@ -189,6 +189,9 @@ define([
             // Next check to see that a characterization with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current characterization is excluded in this check.
             try {
+                if (!constants.isValidName(this.design().name())) {
+                    return;
+                }
                 const results = await CharacterizationService.exists(this.design().name(), ccId);
                 if (results > 0) {
                     alert('A characterization with this name already exists. Please choose a different name.');

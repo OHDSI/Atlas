@@ -355,6 +355,9 @@ define([
             // Next check to see that a feature analysis with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current feature analysis is excluded in this check.
            try{
+               if (!globalConstants.isValidName(this.data().name())) {
+                   return;
+               }
                 const results = await FeatureAnalysisService.exists(this.data().name(), this.featureId());
                 if (results > 0) {
                     alert('A feature analysis with this name already exists. Please choose a different name.');

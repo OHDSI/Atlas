@@ -300,6 +300,9 @@ define([
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
 			try{
+				if (!globalConstants.isValidName(conceptSet.name())) {
+					return;
+				}
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
 					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);

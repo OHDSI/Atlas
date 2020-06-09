@@ -669,6 +669,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				// current Cohort Definition is excluded in this check.
 
 				try {
+					if (!globalConstants.isValidName(this.currentCohortDefinition().name())) {
+						return;
+					}
 					const results = await cohortDefinitionService.exists(this.currentCohortDefinition().name(), this.currentCohortDefinition().id());
 					if (results > 0) {
 						alert('A cohort definition with this name already exists. Please choose a different name.');
