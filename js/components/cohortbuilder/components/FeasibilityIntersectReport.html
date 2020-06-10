@@ -6,14 +6,14 @@
 					<thead>
 						<th style="width: 15px;"></th>
 						<th class="header">
-							<span data-bind="ko.i18n('components.feasibilityIntersectReport.inclusionRule', 'Inclusion Rule')"></span>
+							<span data-bind="text: ko.i18n('components.feasibilityIntersectReport.inclusionRule', 'Inclusion Rule')"></span>
 						</th>
 						<th style="width: 100px;text-align: right" class="header">N</th>
 						<th style="width: 100px;text-align: right" class="header">
-							<span data-bind="ko.i18n('components.feasibilityIntersectReport.percentSatisfied', '% Satisfied')"></span>
+							<span data-bind="text: ko.i18n('components.feasibilityIntersectReport.percentSatisfied', '% Satisfied')"></span>
 						</th>
 						<th style="width: 100px;text-align: right" class="header">
-							<span data-bind="ko.i18n('components.feasibilityIntersectReport.percentToGain', '% To-Gain')"></span>
+							<span data-bind="text: ko.i18n('components.feasibilityIntersectReport.percentToGain', '% To-Gain')"></span>
 						</th>
 					</thead>
 					<tbody data-bind="foreach: report().inclusionRuleStats">
@@ -35,7 +35,7 @@
 		</td>
 		<td style="padding-left: 25px; vertical-align: top; width: 400px; border-left: solid 1px #eee;">
 			<div class="header">
-				<span data-bind="ko.i18n('components.feasibilityIntersectReport.populationVisualization', 'Population Visualization')"></span>
+				<span data-bind="text: ko.i18n('components.feasibilityIntersectReport.populationVisualization', 'Population Visualization')"></span>
 			</div>
 			<div class="visualization_container" data-bind="eventListener: [
 																								 { event: 'mouseover', selector: '.cell rect', callback: handleCellOver},

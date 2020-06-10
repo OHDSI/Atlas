@@ -302,35 +302,28 @@
 		<div data-bind="with: expression">
 			<ul>
 				<li>
-					<span
-						data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
-					<span contenteditable="true" class="numericInputField dropdown"
-						data-bind="htmlValue: CollapseSettings.EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: CollapseSettings.EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
+					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: CollapseSettings.EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: CollapseSettings.EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
 					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.days', 'days')"></span>
 				</li>
 				<!-- ko if: $component.showCensorWindow -->
 				<li>
-					<span
-						data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')"></span>
-					<input class="dateField"
-						data-bind="placeholder: ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring'), datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
-					<i data-bind="visible:CensorWindow().StartDate(),  click: () => CensorWindow().StartDate(null)"
-						class="fa fa-times"></i>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')"></span>
+					<input class="dateField" data-bind="placeholder: ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring'), datepicker: CensorWindow().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2_1', ' ')"></span>
+					<i data-bind="visible:CensorWindow().StartDate(),  click: () => CensorWindow().StartDate(null)" class="fa fa-times"></i>
 				</li>
 				<li>
-					<span
-						data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_3', 'Right censor cohort end dates to')"></span>
-					<input class="dateField"
-						data-bind="placeholder: ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring'), datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
-					<i data-bind="visible:CensorWindow().EndDate(),  click: () => CensorWindow().EndDate(null)"
-						class="fa fa-times"></i>
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_3', 'Right censor cohort end dates to')"></span>
+					<input class="dateField" data-bind="placeholder: ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring'), datepicker: CensorWindow().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_3_1', ' ')"></span>
+					<i data-bind="visible:CensorWindow().EndDate(),  click: () => CensorWindow().EndDate(null)" class="fa fa-times"></i>
 				</li>
 				<!-- /ko -->
 				<!-- ko ifnot: $component.showCensorWindow -->
 				<li>
 					<span class="linkish" data-bind="click: () => $component.showCensorWindow(!$component.showCensorWindow())">
-						<i
-							data-bind="text: ko.i18n('components.cohortExpressionEditor.addTrimmingOptions', 'add trimming options...')"></i>
+						<i data-bind="text: ko.i18n('components.cohortExpressionEditor.addTrimmingOptions', 'add trimming options...')"></i>
 					</span>
 				</li>
 				<!-- /ko -->

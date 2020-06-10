@@ -5,24 +5,24 @@
 		<th style="width: 15px;"></th>
 		<th></th>
 		<th>
-			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_1', 'Match Rate')"></span>
+			<span data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_1', 'Match Rate')"></span>
 		</th>
 		<th>
-			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_2', 'Matches')"></span>
+			<span data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_2', 'Matches')"></span>
 		</th>
 		<!-- ko if: report().summary.lostCount != 0 -->
 		<th>
-			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_3', 'Lost from censoring')"></span>
+			<span data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_3', 'Lost from censoring')"></span>
 		</th>
 		<!-- /ko -->
 		<th>
-			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_4', 'Total Events')"></span>
+			<span data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_4', 'Total Events')"></span>
 		</th>
 	</thead>
 	<tbody>
 		<td></td>
 		<td class="header">
-			<span data-bind="ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_5', 'Summary Statistics:')"></span>
+			<span data-bind="text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_5', 'Summary Statistics:')"></span>
 		</td>
 		<td data-bind="text:report().summary.percentMatched"></td>
 		<td data-bind="text:report().summary.finalCount.toLocaleString()"></td>

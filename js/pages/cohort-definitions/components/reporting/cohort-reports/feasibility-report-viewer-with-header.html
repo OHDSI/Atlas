@@ -4,8 +4,9 @@
 		</div>
     <!-- ko if: !isLoading() -->
 			<div class="heading">
-				<span dasta-bind="text: ko.i18n('cohortDefinitions.cohortreports.inclusionReportFor', 'Inclusion Report for')"></span>
+				<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.inclusionReportFor', 'Inclusion Report for')"></span>
 				<span data-bind="text: source().sourceName"></span>
+				<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.inclusionReportFor1', '')"></span>
 			</div>
 			<feasibility-report-viewer params="report: report"></feasibility-report-viewer>
     <!-- /ko -->
