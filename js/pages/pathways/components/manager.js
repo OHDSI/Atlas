@@ -23,6 +23,7 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -55,8 +56,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.design().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.design().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
 			this.canEdit = this.isEditPermittedResolver();
@@ -123,7 +133,7 @@ define([
 		}
 
 		isSavePermittedResolver() {
-				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect())
+				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect());
 		}
 
 		isDeletePermittedResolver() {
@@ -161,9 +171,6 @@ define([
 			// Next check to see that a cohort pathway with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current cohort pathway is excluded in this check.
 			try {
-				if (!constants.isValidName(this.design().name())) {
-					return;
-				}
 				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
 				if (results > 0) {
 					alert('A cohort pathway with this name already exists. Please choose a different name.');

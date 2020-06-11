@@ -33,6 +33,7 @@ define([
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -129,8 +130,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.patientLevelPredictionAnalysis().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.patientLevelPredictionAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
 			this.canSave = ko.computed(() => {
@@ -227,9 +237,6 @@ define([
 			// Next check to see that a prediction analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current prediction analysis is excluded in this check.
 			try{
-				if (!globalConstants.isValidName(this.patientLevelPredictionAnalysis().name())) {
-					return;
-				}
 				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
 				if (results > 0) {
 					alert('A prediction analysis with this name already exists. Please choose a different name.');

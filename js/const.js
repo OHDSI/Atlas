@@ -109,21 +109,6 @@ define([
 			];
 		};
 		
-		const isValidName = function(name) {
-			
-			const forbiddenSymbols = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
-			const maxFileNameLength = 100;			
-			if (forbiddenSymbols.some(symbol => name.includes(symbol))) {
-				alert('The name can\'t contain any of the following characters: \\/:*?"<>|  Please choose a different name.');
-				 return false;
-			}
-			if (name.length > maxFileNameLength) {
-				alert('The name length exceeds 100 symbols. Please choose a different name.');
-				 return false;
-			}
-			return true;
-		}
-		
 		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
 			{
 				title: !context.canEditCurrentConceptSet() ? '<span class="fa fa-shopping-cart"></span>' : '<i class="fa fa-shopping-cart"></i>',
@@ -333,8 +318,7 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
-			sqlDialects,
-			isValidName,
+			sqlDialects
     };
   }
 );

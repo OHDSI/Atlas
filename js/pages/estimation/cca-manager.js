@@ -29,6 +29,7 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -106,8 +107,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.estimationAnalysis().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.estimationAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.estimationAnalysis().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.estimationAnalysis().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});			
 
 			this.canDelete = ko.pureComputed(() => {
@@ -168,9 +178,6 @@ define([
 			// Next check to see that an estimation analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.
 			try{
-				if (!globalConstants.isValidName(this.estimationAnalysis().name())) {
-					return;
-				}
 				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
 				if (results > 0) {
 					alert('An estimation analysis with this name already exists. Please choose a different name.');

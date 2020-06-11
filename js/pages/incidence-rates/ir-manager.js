@@ -32,6 +32,7 @@ define([
 	'utilities/export',
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -157,9 +158,18 @@ define([
 			this.isNameFilled = ko.pureComputed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.selectedAnalysis().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.selectedAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name() === this.defaultName;
+			});
 			
 			this.isNameCorrect = ko.pureComputed(() => {
-				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 			
 			this.isTarValid = ko.pureComputed(() => {
@@ -386,9 +396,6 @@ define([
 			// Next check to see that an incidence rate with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
 			try{
-				if (!globalConstants.isValidName(this.selectedAnalysis().name())) {
-					return;
-				}
 				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
 				if (results > 0) {
 					alert('An incidence rate with this name already exists. Please choose a different name.');

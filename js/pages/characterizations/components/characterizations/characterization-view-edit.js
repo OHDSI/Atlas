@@ -25,6 +25,7 @@ define([
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
 	'components/security/access/configure-access-modal',
+    'components/name-validation',
 ], function (
     ko,
     CharacterizationService,
@@ -60,8 +61,17 @@ define([
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });
+            this.isNameCharactersValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+            });
+            this.isNameLengthValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+            });
+            this.isDefaultName = ko.computed(() => {
+                return this.isNameFilled() && this.design().name() === this.defaultName;
+            });
             this.isNameCorrect = ko.computed(() => {
-                return this.isNameFilled() && this.design().name() !== this.defaultName;
+                return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -189,9 +199,6 @@ define([
             // Next check to see that a characterization with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current characterization is excluded in this check.
             try {
-                if (!constants.isValidName(this.design().name())) {
-                    return;
-                }
                 const results = await CharacterizationService.exists(this.design().name(), ccId);
                 if (results > 0) {
                     alert('A characterization with this name already exists. Please choose a different name.');
