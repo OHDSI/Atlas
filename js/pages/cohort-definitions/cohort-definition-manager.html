@@ -740,17 +740,11 @@
 		data: {}
 	}">
 		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_1', 'Quick Analysis')"></b>
-		<p
-			data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_1', 'Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)')">
-		</p>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_1', 'Runs minimal analysis to provide a quick overview of this cohort\'s year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)')"></p>
 		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_2', 'Healthcare Utilization')"></b>
-		<p
-			data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_2', 'Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)')">
-		</p>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_2', 'Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)')"></p>
 		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_3', 'Full Analysis')"></b>
-		<p
-			data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_3', 'Runs a complete set of characterization reports. (estimated: 60 minutes)')">
-		</p>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_3', 'Runs a complete set of characterization reports. (estimated: 60 minutes)')"></p>
 	</atlas-modal>
 	<!-- /ko -->
 	<atlas-modal params="{
@@ -798,9 +792,9 @@
 
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,
-		title: 'Configure reports to run',
+		title: ko.i18n('cohortDefinitions.cohort.modals.configureReportsToRun.title', 'Configure reports to run'),
 		options: $component.utilReportOptions,
-		submitLabel: 'Run',
+		submitLabel: ko.i18n('cohortDefinitions.cohort.modals.configureReportsToRun.run', 'Run'),
 		submit: $component.generateHealthcareAnalyses,
 	}"></modal-pick-options>
 	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow">
