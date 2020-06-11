@@ -1,0 +1,10 @@
+<div style="padding-top: 5px">
+	Maximum Path Length: <select data-bind="options: pathLengthOptions,
+																					 value: pathLength"></select>
+</div>
+<div data-bind="if: reportData">
+	<div data-bind="foreach: reportData().cohorts">
+		<div><span style="font-size: 1.2em; font-weight: bold" data-bind="text: name"></span><button data-bind="css: $component.classes('export-button'), click: $component.exportCohortReport">Export</button></div>
+		<table data-bind="dynamicDataTable: $component.getDataTableBindingData($data)"></table>
+	</div>
+</div>
