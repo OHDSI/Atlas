@@ -18,10 +18,10 @@ define(
     options.tuneSwindle = _.range(10, 0).map(v => '' + v);
 
     options.yesNoOptions = [{
-      name: ko.i18n('common.yes', 'Yes'),
+      name: ko.i18n('options.yes', 'Yes'),
       id: true,
     }, {
-      name: ko.i18n('common.no', 'No'),
+      name: ko.i18n('options.no', 'No'),
       id: false
     }];
 

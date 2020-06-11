@@ -78,10 +78,10 @@ define(
       maxCohortSizeOptions: ['0', '1000', '5000', '10000', '50000', '100000'],
       maxCohortSizeForFittingOptions: ['250000', '150000', '100000', '50000', '10000', '5000', '0'],
       yesNoOptions: [{
-        name: ko.i18n('common.yes', 'Yes'),
+        name: ko.i18n('options.yes', 'Yes'),
         id: true,
       }, {
-        name: ko.i18n('common.no', 'No'),
+        name: ko.i18n('options.no', 'No'),
         id: false
       }],
       removeDuplicateSubjectOptions: [{
@@ -187,10 +187,10 @@ define(
           dayOptions: ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'],
           maxSubjectsForModelOptions: ['0', '1000', '5000', '10000', '50000', '100000', '150000', '200000', '250000'],
           yesNoOptions: [{
-              name: ko.i18n('common.yes', 'Yes'),
+              name: ko.i18n('options.yes', 'Yes'),
               id: true,
           }, {
-              name: ko.i18n('common.no', 'No'),
+              name: ko.i18n('options.no', 'No'),
               id: false
           }],
       },

@@ -54,7 +54,7 @@ define(function (require, exports) {
 				}
 			},
 			{
-				title: ko.i18n('common.min', 'Min'),
+				title: ko.i18n('columns.min', 'Min'),
 				data: 'minValue'
 			},
 			{
@@ -66,7 +66,7 @@ define(function (require, exports) {
 				data: 'p25Value'
 			},
 			{
-				title: ko.i18n('common.median', 'Median'),
+				title: ko.i18n('columns.median', 'Median'),
 				data: 'medianValue'
 			},
 			{
@@ -78,7 +78,7 @@ define(function (require, exports) {
 				data: 'p90Value'
 			},
 			{
-				title: ko.i18n('common.max', 'Max'),
+				title: ko.i18n('columns.max', 'Max'),
 				data: 'maxValue'
 			},
     ];
