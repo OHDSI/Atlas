@@ -14,7 +14,7 @@ define(
     }
     function getDefaultModelSettingDescriptionTranslate(defaultModelSettings, settingName) {
         const setting = defaultModelSettings.find(item => item.setting === settingName);
-        return ko.unwrap(setting.description) + " (default = " + setting.defaultValue + "):";
+        return ko.unwrap(setting.description) + ko.unwrap(ko.i18nformat('predictions.default', '(default = <%=defaultValue%>):', {defaultValue: setting.defaultValue}));
     }
 
     function getDefaultModelSettingValue(defaultModelSettings, settingName) {
