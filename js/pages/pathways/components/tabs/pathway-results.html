@@ -73,8 +73,9 @@
 					<div class="panel-body">
 						<sunburst data-bind="css: $component.classes('sunburst')"
 								  params="data: () => pathway,
-								minHeight: 300,
-								format: {
+										filename: `${targetCohortName}_sunburst.png`,
+										minHeight: 300,
+										format: {
 										tipClass: $component.classes('d3-tip'),
 										split: $component.splitPathway,
 										colors: $parent.colors,
