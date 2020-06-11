@@ -360,28 +360,28 @@ define(
       sampleSizeOptions: ['1000', '5000', '10000', '50000', '100000'],
       delCovariatesSmallCount: ['5', '10', '15', '20', '25', '50', '75', '100', '150', '200', '500'],
       yesNoOptions: [{
-        name: ko.i18n('columns.yes', 'Yes'),
+        name: ko.i18n('options.yes', 'Yes'),
         id: true,
       }, {
-        name: ko.i18n('columns.no', 'No'),
+        name: ko.i18n('options.no', 'No'),
         id: false
       }],
       yesNoIntOptions: [{
-            name: ko.i18n('columns.yes', 'Yes'),
+            name: ko.i18n('options.yes', 'Yes'),
             id: "1"
         }, {
-            name: ko.i18n('columns.no', 'No'),
+            name: ko.i18n('options.no', 'No'),
             id: "0"
 		}],
       testSplit: [{
         name: 'time',
-        desc: ko.i18n('columns.time', 'Time'),
+        desc: ko.i18n('options.time', 'Time'),
       }, {
         name: 'person',
-        desc: ko.i18n('columns.person', 'Person'),
+        desc: ko.i18n('options.person', 'Person'),
       }],
-      trueFalseOptions: [{label: ko.i18n('columns.true', 'true'), value: true}, {label: ko.i18n('columns.false', 'false'), value: false}],
-      classWeightOptions: [{label: ko.i18n('columns.none', 'None'), value: 'None'},{label: ko.i18n('columns.balanced', 'Balanced'), value: 'Balanced'}],
+      trueFalseOptions: [{label: ko.i18n('options.true', 'true'), value: true}, {label: ko.i18n('options.false', 'false'), value: false}],
+      classWeightOptions: [{label: ko.i18n('options.none', 'None'), value: 'None'},{label: ko.i18n('options.balanced', 'Balanced'), value: 'Balanced'}],
     };
 
     return {

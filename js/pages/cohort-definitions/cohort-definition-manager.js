@@ -636,8 +636,8 @@ define([
       this.reportingSourceStatusLoading = ko.observable(false);
       this.reportOptionCaption = ko.pureComputed(() => {
         return this.reportingSourceStatusLoading()
-          ? ko.i18n('common.loading', 'Loading Reports...')
-          : ko.i18n('cohortDefinitions.cohortDefinitionManager.selectReport', 'Select a Report');
+          ? ko.i18n('common.loading', 'Loading Reports...')()
+          : ko.i18n('cohortDefinitions.cohortDefinitionManager.selectReport', 'Select a Report')();
       });
       this.reportingSourceStatus = ko.observable();
       this.reportingAvailableReports = ko.observableArray();
@@ -1640,8 +1640,8 @@ define([
 
     generateQuickAnalysis() {
       this.generateAnalyses({
-        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.descr', 'minimal analyses set to provide a quick overview of the cohort'),
-        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.duration', '10 minutes'),
+        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.descr', 'minimal analyses set to provide a quick overview of the cohort')(),
+        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.duration', '10 minutes')(),
         analysisIdentifiers: cohortReportingService.getQuickAnalysisIdentifiers(),
         runHeraclesHeel: false,
       });
@@ -1656,8 +1656,8 @@ define([
         .selectedOptions()
         .reduce((acc, ids) => [...acc, ...ids], []);
       this.generateAnalyses({
-        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.descr', 'the Cost and Utilization analyses'),
-        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.duration', '10-45 minutes'),
+        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.descr', 'the Cost and Utilization analyses')(),
+        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.duration', '10-45 minutes')(),
         analysisIdentifiers: analysisIds,
         runHeraclesHeel: false,
         periods: this.utilReportOptions.periods.selectedOptions(),
@@ -1674,8 +1674,8 @@ define([
 
     generateAllAnalyses() {
       this.generateAnalyses({
-        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.descr', 'all analyses'),
-        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.duration', '60-90 minutes'),
+        descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.descr', 'all analyses')(),
+        duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.duration', '60-90 minutes')(),
         analysisIdentifiers: cohortReportingService.getAnalysisIdentifiers(),
         runHeraclesHeel: true,
       });
