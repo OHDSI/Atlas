@@ -53,6 +53,7 @@ define([
 			this.isExecutionDesignShown = ko.observable(false);
 			this.stopping = ko.observable({});
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
+			this.isEditPermitted = params.isEditPermitted;
 
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
