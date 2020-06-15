@@ -408,7 +408,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: 'New Population Level Estimation Analysis'}, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: ko.unwrap(this.defaultName)}, this.estimationType, this.defaultCovariateSettings()));
 			return new Promise(async (resolve, reject) => {
 				this.setCohortMethodAnalysisList();
 				this.resetDirtyFlag();
