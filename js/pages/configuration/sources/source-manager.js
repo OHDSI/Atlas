@@ -71,7 +71,7 @@ define([
     var data = data || {};
 
     this.sourceId = ko.observable(data.sourceId || 0);
-    this.name = ko.observable(data.sourceName || "New Source");
+    this.name = ko.observable(data.sourceName || ko.unwrap(ko.i18n('configuration.newSource', 'New Source')));
     this.key = ko.observable(data.sourceKey || null);
     this.dialect = ko.observable(data.sourceDialect || null);
     this.connectionString = ko.observable(data.connectionString || null);
