@@ -2,21 +2,21 @@
 <loading data-bind="visible: $component.loading()" params="status: ko.i18n('cs.manager.export.loadingForExport', 'Loading for export...')"></loading>
 <div data-bind="hidden: exporting() || $component.loading()">
   <div class="heading">
-    <span data-bind="text: ko.i18n('cs.manager.export.conceptSetExpressionJSON', 'Concept Set Expression JSON')"></span>
+    <span data-bind="text: ko.i18n('cs.manager.export.includedConceptIdentifierList', 'Included Concept Identifier List')"></span>
     <button
-      class="btn btn-sm btn-primary"
-      id="btnCopyExpressionClipboard"
-      data-bind="click: copyExpressionToClipboard, title: ko.i18n('common.copyToClipboard', 'Copy to clipboard')"
-      data-clipboard-target="#conceptSetExpression"
+            class="btn btn-sm btn-primary"
+            id="btnCopyIncludedConceptIdentifierListClipboard"
+            data-bind="click: copyIncludedConceptIdentifierListToClipboard, title: ko.i18n('common.copyToClipboard', 'Copy to clipboard')"
+            data-clipboard-target="#includedConceptIdentifierList"
     >
       <i class="fa fa-clipboard" aria-hidden="true"></i>
     </button>
-    <span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert">
+    <span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert">
       <i class="fa fa-check-square-o" aria-hidden="true"></i>
       <strong data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></strong>
     </span>
   </div>
-  <pre id="conceptSetExpression" data-bind="html: currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">
     <span data-bind="text: ko.i18n('cs.manager.export.conceptIdentiferList', 'Concept Identifer List')"></span>
     <button
@@ -34,21 +34,21 @@
   </div>
   <pre id="conceptIdentifierList" data-bind="html: currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
   <div class="heading">
-    <span data-bind="text: ko.i18n('cs.manager.export.includedConceptIdentifierList', 'Included Concept Identifier List')"></span>
+    <span data-bind="text: ko.i18n('cs.manager.export.conceptSetExpressionJSON', 'Concept Set Expression JSON')"></span>
     <button
-      class="btn btn-sm btn-primary"
-      id="btnCopyIncludedConceptIdentifierListClipboard"
-      data-bind="click: copyIncludedConceptIdentifierListToClipboard, title: ko.i18n('common.copyToClipboard', 'Copy to clipboard')"
-      data-clipboard-target="#includedConceptIdentifierList"
+            class="btn btn-sm btn-primary"
+            id="btnCopyExpressionClipboard"
+            data-bind="click: copyExpressionToClipboard, title: ko.i18n('common.copyToClipboard', 'Copy to clipboard')"
+            data-clipboard-target="#conceptSetExpression"
     >
       <i class="fa fa-clipboard" aria-hidden="true"></i>
     </button>
-    <span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert">
+    <span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert">
       <i class="fa fa-check-square-o" aria-hidden="true"></i>
       <strong data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></strong>
     </span>
   </div>
-  <pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+  <pre id="conceptSetExpression" data-bind="html: currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
   <br/>
   <button type="button" class="btn btn-success" data-bind="
     click: exportCSV,
