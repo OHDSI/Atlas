@@ -38,7 +38,7 @@ define([
 				},
 				{
 					class: this.classes({ element: 'col', modifiers: 'name' }),
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'source.sourceName',
 					render: (d, t, r) => `<span>${d}` + (r.source.disabledReason ? `<span class="${this.classes('disabled-reason')}">(${r.source.disabledReason})</span>` : '') + '</span>',
 				}
@@ -46,11 +46,15 @@ define([
 
 			this.buttons = [
 				{
-					text: 'Select All', action: () => this.toggleAll(true), className: this.classes({ element: 'select-all', extra: 'btn btn-sm btn-success' }),
+					text: ko.unwrap(ko.i18n('common.selectAll', 'Select All')),
+					action: () => this.toggleAll(true),
+					className: this.classes({ element: 'select-all', extra: 'btn btn-sm btn-success' }),
 					init: this.removeClass('dt-button')
 				},
 				{
-					text: 'Deselect All', action: () => this.toggleAll(false), className: this.classes({ element: 'deselect-all', extra: 'btn btn-sm btn-primary' }),
+					text: ko.unwrap(ko.i18n('common.deselectAll', 'Deselect All')),
+					action: () => this.toggleAll(false),
+					className: this.classes({ element: 'deselect-all', extra: 'btn btn-sm btn-primary' }),
 					init: this.removeClass('dt-button')
 				}
 			];
