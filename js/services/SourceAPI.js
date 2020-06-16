@@ -88,14 +88,14 @@ define(function (require, exports) {
   }
 
   function setSharedStateSources(sources, priorityDaimons) {
-    sharedState.sources([]);
-    const serviceCacheKey = getCacheKey();
+      sharedState.sources([]);
+      const serviceCacheKey = getCacheKey();
 
-		sharedState.vocabularyUrl() || (priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.vocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey)));
-		sharedState.evidenceUrl() || priorityDaimons[DAIMON_TYPE.CEM] && sharedState.evidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
-		sharedState.resultsUrl() || priorityDaimons[DAIMON_TYPE.Results] && sharedState.resultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
+      sharedState.vocabularyUrl() || (priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.vocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey)));
+      sharedState.evidenceUrl() || priorityDaimons[DAIMON_TYPE.CEM] && sharedState.evidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
+      sharedState.resultsUrl() || priorityDaimons[DAIMON_TYPE.Results] && sharedState.resultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
 
-		const sourceList = lodash.sortBy(sources.map(function (source, sourceIndex) {
+      const sourceList = lodash.sortBy(sources.map(function (source, sourceIndex) {
       source.hasVocabulary = false;
       source.hasEvidence = false;
       source.hasResults = false;
