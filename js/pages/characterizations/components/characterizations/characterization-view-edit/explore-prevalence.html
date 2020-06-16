@@ -1,6 +1,6 @@
 <div data-bind="css: classes()">
-    <loading data-bind="visible: loading()" params="status: 'Loading prevalence stats...'"></loading>
-    <div>Cohort: <span data-bind="text: cohortName"></span></div>
+    <loading data-bind="visible: loading()" params="status: ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.loadingPrevalenceStats', 'Loading prevalence stats...')"></loading>
+    <div><span data-bind="text: ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.cohort', 'Cohort:')"></span> <span data-bind="text: cohortName"></span></div>
     <div data-bind="visible: exploring() && !loading()">
         <div data-bind="css: classes('exploring-pane')">
             <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-close'})"></i>
@@ -17,6 +17,7 @@
 						columns: relations().columns,
 						buttons: $component.getButtonsConfig(),
 						dom: 'Blftipr',
+						language: ko.i18n('datatable.language')
 					}
         }
     ">

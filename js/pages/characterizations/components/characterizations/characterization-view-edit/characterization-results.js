@@ -178,7 +178,7 @@ define([
         exploreByFeature({covariateName, analysisId, covariateId, cohorts, ...o}, index) {
           const {cohortId, cohortName} = cohorts[index];
           this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
-          this.explorePrevalenceTitle('Exploring ' + covariateName);
+          this.explorePrevalenceTitle(ko.i18n('cc.viewEdit.results.exploring', 'Exploring')() + ' ' + covariateName);
           this.isExplorePrevalenceShown(true);
         }
 
@@ -463,8 +463,8 @@ define([
 
         tooltipBuilder(d) {
             return `
-                <div>Series: ${d.seriesName}</div>
-                <div>Covariate: ${d.covariateName}</div>
+                <div>${ko.i18n('cc.viewEdit.results.series', 'Series')()}: ${d.seriesName}</div>
+                <div>${ko.i18n('cc.viewEdit.results.covariate', 'Covariate')()}: ${d.covariateName}</div>
                 <div>X: ${d3.format('.2f')(d.xValue)}%</div>
                 <div>Y: ${d3.format('.2f')(d.yValue)}%</div>
             `;
