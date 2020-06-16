@@ -6,6 +6,17 @@
 
   &__content {
     padding: 1rem;
+    &--disabled {
+      pointer-events: none;
+
+      .btn {
+        opacity: 0.7;
+      }
+      .btn.btn-primary {
+        background-color: #265a88;
+        color: #999;
+      }
+    }
   }
 
   &__descr-panel, &__domain-panel, &__design-panel {
@@ -111,3 +122,4 @@
     margin-bottom: 1rem;
   }
 }
+

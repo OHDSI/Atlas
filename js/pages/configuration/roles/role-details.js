@@ -5,6 +5,8 @@ define([
     'pages/Page',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'utils/Clipboard',
+    'pages/configuration/roles/roleJsonParser',
     'services/role',
     'lodash',
     'assets/ohdsi.util',
@@ -14,7 +16,13 @@ define([
     'databindings',
     'components/ac-access-denied',
     'less!./role-details.less',
-    'components/heading'
+    'components/heading',
+    './components/users',
+    './components/permissions',
+    './components/utilities',
+    'components/tabs'
+
+
 ], function (
     ko,
     sharedState,
@@ -22,6 +30,8 @@ define([
     Page,
     AutoBind,
     commonUtils,
+    Clipboard,
+    roleJsonParser,
     roleService,
     _,
     ohdsiUtils,
@@ -30,7 +40,8 @@ define([
     fileService,
 ) {
     const defaultRoleName = "New Role";
-    class RoleDetails extends AutoBind(Page) {
+
+    class RoleDetails extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
 
@@ -41,104 +52,80 @@ define([
             this.roles = sharedState.roles;
             this.users = sharedState.users;
             this.userItems = ko.observableArray();
+            this.existingRoles = ko.observableArray();
             this.roleUserIds = [];
-
             this.permissions = ko.observableArray();
             this.permissionItems = ko.observableArray();
             this.rolePermissionIds = [];
 
-            this.loading = ko.observable();
-            this.dirtyFlag = new ohdsiUtils.dirtyFlag({
-                role: this.roleName,
-                users: this.userItems,
-                permissions: this.permissionItems
-            });
-            this.roleDirtyFlag = new ohdsiUtils.dirtyFlag({
-                role: this.roleName
-            });
 
             this.isNewRole = ko.pureComputed(() => this.roleId() === 0);
 
-            this.roleCaption = ko.computed(() => {
-                return this.isNewRole() ? 'New Role' : 'Role #' + this.roleId();
-            });
+            this.roleCaption = ko.computed(() => this.isNewRole() ? 'New Role' : 'Role #' + this.roleId());
 
             this.isAuthenticated = authApi.isAuthenticated;
-            this.canReadRoles = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
-            this.canReadRole = ko.pureComputed(() => {
-                return this.isAuthenticated() &&
-                    this.isNewRole()
+            this.canReadRoles = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedReadRoles());
+            this.canReadRole = ko.pureComputed(() =>
+                this.isAuthenticated() &&
+                this.isNewRole()
                     ? authApi.isPermittedCreateRole()
-                    : authApi.isPermittedReadRole(this.roleId());
-            });
-            this.canEditRole = ko.pureComputed(() => {
-                return this.isAuthenticated() &&
-                    this.isNewRole()
+                    : authApi.isPermittedReadRole(this.roleId()));
+            this.canEditRole = ko.pureComputed(() =>
+                this.isAuthenticated() &&
+                this.isNewRole()
                     ? authApi.isPermittedCreateRole()
-                    : authApi.isPermittedEditRole(this.roleId());
-            });
-            this.canEditRoleUsers = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRoleUsers(this.roleId())); });
-            this.canEditRolePermissions = ko.pureComputed(() => { return this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())); });
-            this.hasAccess = ko.pureComputed(() => { return this.canReadRole(); });
-            this.canDelete = ko.pureComputed(() => { return this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()); });
-            this.canSave = ko.pureComputed(() => { return (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName(); });
+                    : authApi.isPermittedEditRole(this.roleId()));
+            this.canEditRoleUsers = ko.pureComputed(() => this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRoleUsers(this.roleId())));
+            this.canEditRolePermissions = ko.pureComputed(() => this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())));
+            this.hasAccess = ko.pureComputed(() => this.canReadRole());
+            this.canDelete = ko.pureComputed(() => this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()));
+            this.canSave = ko.pureComputed(() => (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName());
             this.canCreate = authApi.isPermittedCreateRole;
 
-            this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });
+            this.areUsersSelected = ko.pureComputed(() => {
+                return !!this.userItems().find(user => user.isRoleUser());
+            });
+
+            this.loading = ko.observable();
+            this.dirtyFlag = ko.observable(new ohdsiUtils.dirtyFlag({
+                role: this.roleName,
+                users: this.userItems,
+                permissions: this.permissionItems
+            }));
+            this.roleDirtyFlag = ko.observable(new ohdsiUtils.dirtyFlag({
+                role: this.roleName
+            }));
+
+            this.initializeParamsForTabs(params);
 
         }
 
-        onRouterParamsChanged({ roleId }) {
+        initializeParamsForTabs(params) {
+            this.componentParams = params;
+
+            this.componentParams.isNewRole = this.isNewRole;
+            this.componentParams.roleId = this.roleId;
+            this.componentParams.roleName = this.roleName;
+            this.componentParams.roles = this.existingRoles;
+
+            this.componentParams.userItems = this.userItems;
+            this.componentParams.permissionItems = this.permissionItems;
+            this.componentParams.permissions = this.permissions;
+            this.componentParams.save = this.save;
+
+            this.componentParams.dirtyFlag = this.dirtyFlag;
+            this.componentParams.canReadRole = this.canReadRole;
+            this.componentParams.canReadRoles = this.canReadRoles;
+            this.componentParams.canEditRole = this.canEditRole;
+            this.componentParams.canEditRoleUsers = this.canEditRoleUsers;
+            this.componentParams.canEditRolePermissions = this.canEditRolePermissions;
+        }
+
+        onRouterParamsChanged({roleId}) {
             if (this.hasAccess()) {
                 this.roleId(roleId);
                 this.updateRole();
             }
-        }
-
-        selectAllUsers() {
-            this.userItems().forEach(user => user.isRoleUser(true));
-        }
-
-        deselectAllUsers() {
-            this.userItems().forEach(user => user.isRoleUser(false));
-        }
-
-        renderCheckbox(field, editable) {
-            return editable
-                ? '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()); } , css: { selected: ' + field + '}" class="fa fa-check"></span>'
-                : '<span data-bind="css: { selected: ' + field + '}" class="fa fa-check readonly"></span>';
-        }
-
-        async getRole() {
-            const role = await roleService.load(this.roleId());
-            this.roleName(role.role);
-        }
-
-        async getUsers() {
-            if (!this.users() || this.users().length == 0) {
-                const users = await userService.getUsers();
-                this.users(users);
-            }
-        }
-        async getRoleUsers() {
-            const roleUsers = await roleService.getRoleUsers(this.roleId());
-            roleUsers.forEach((user) => {
-                this.roleUserIds.push(user.id);
-            });
-        }
-
-        async getPermissions() {
-            if (!this.permissions() || this.permissions().length == 0) {
-                const permissions = await roleService.getPermissions();
-                this.permissions(permissions);
-            }
-        }
-
-        async getRolePermissions() {
-            const rolePermissions = await roleService.getRolePermissions(this.roleId());
-            rolePermissions.forEach((permission) => {
-                this.rolePermissionIds.push(permission.id);
-            });
         }
 
         updateUserItems() {
@@ -178,8 +165,60 @@ define([
             this.permissionItems(permissionItems);
         }
 
+        getPermissionsList() {
+            return this.permissionItems()
+                .filter(permission => permission.isRolePermission());
+        }
 
-        async updateRole () {
+        getUsersList() {
+            return this.userItems()
+                .filter(user => user.isRoleUser());
+        }
+
+        close() {
+            commonUtils.routeTo("/roles");
+        }
+
+        async getRole() {
+            const role = await roleService.load(this.roleId());
+            this.currentRole = role;
+            this.roleName(role.role);
+        }
+
+        async getRoleUsers() {
+            const roleUsers = await roleService.getRoleUsers(this.roleId());
+            roleUsers.forEach((user) => {
+                this.roleUserIds.push(user.id);
+            });
+        }
+
+        async getExistingUsers() {
+            if (!this.users() || this.users().length == 0) {
+                const users = await userService.getUsers();
+                this.users(users);
+            }
+        }
+
+        async getExistingRoles() {
+            const roles = await roleService.getList();
+            this.existingRoles(roles);
+        }
+
+        async getExistingPermissions() {
+            if (!this.permissions() || this.permissions().length == 0) {
+                const permissions = await roleService.getPermissions();
+                this.permissions(permissions);
+            }
+        }
+
+        async getRolePermissions() {
+            const rolePermissions = await roleService.getRolePermissions(this.roleId());
+            rolePermissions.forEach((permission) => {
+                this.rolePermissionIds.push(permission.id);
+            });
+        }
+
+        async updateRole() {
             this.loading(true);
             if (this.canReadRoles()) {
                 await roleService.updateRoles();
@@ -193,14 +232,16 @@ define([
                 await this.getRoleUsers();
                 await this.getRolePermissions();
             }
-            await this.getUsers();
-            this.updateUserItems();
 
-            await this.getPermissions();
+            await this.getExistingRoles();
+            await this.getExistingUsers();
+            await this.getExistingPermissions();
+
+            this.updateUserItems();
             this.updatePermissionItems()
 
-            this.roleDirtyFlag.reset();
-            this.dirtyFlag.reset();
+            this.roleDirtyFlag().reset();
+            this.dirtyFlag().reset();
             this.loading(false);
         }
 
@@ -209,49 +250,15 @@ define([
                 return await roleService.addRelations(this.roleId(), relation, ids);
             }
         }
+
         async removeRelations(ids, relation) {
             if (ids.length > 0) {
                 return await roleService.removeRelations(this.roleId(), relation, ids);
             }
         }
 
-        getPermissionsList() {
-            return this.permissionItems()
-                .filter(permission => permission.isRolePermission());
-        }
-
-        getUsersList() {
-            return this.userItems()
-                .filter(user => user.isRoleUser());
-        }
-
-        async saveUsers() {
-            if (this.canEditRoleUsers()){
-                const currentRoleUserIds = this.getUsersList().map(u => u.id);
-                var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds);
-                var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds);
-                this.roleUserIds = currentRoleUserIds;
-
-                await this.addRelations(userIdsToAdd, 'users');
-                await this.removeRelations(userIdsToRemove, 'users');
-            }
-        }
-
-        async savePermissions() {
-            if (this.canEditRolePermissions()){
-                var currentRolePermissionIds = this.getPermissionsList().map(p => p.id);
-
-                var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds);
-                var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds);
-                this.rolePermissionIds = currentRolePermissionIds;
-
-                await this.addRelations(permissionIdsToAdd, 'permissions');
-                await this.removeRelations(permissionIdsToRemove, 'permissions');
-            }
-        }
-
         async saveRole() {
-            if (!this.roleDirtyFlag.isDirty()) {
+            if (!this.roleDirtyFlag().isDirty()) {
                 return null;
             }
 
@@ -270,34 +277,41 @@ define([
             this.roleId(role.id);
         }
 
+        async saveUsers() {
+            if (this.canEditRoleUsers()) {
+                const currentRoleUserIds = this.getUsersList().map(u => u.id);
+                var userIdsToAdd = _.difference(currentRoleUserIds, this.roleUserIds);
+                var userIdsToRemove = _.difference(this.roleUserIds, currentRoleUserIds);
+                this.roleUserIds = currentRoleUserIds;
+
+                await this.addRelations(userIdsToAdd, 'users');
+                await this.removeRelations(userIdsToRemove, 'users');
+            }
+        }
+
+        async savePermissions() {
+            if (this.canEditRolePermissions()) {
+                var currentRolePermissionIds = this.getPermissionsList().map(p => p.id);
+
+                var permissionIdsToAdd = _.difference(currentRolePermissionIds, this.rolePermissionIds);
+                var permissionIdsToRemove = _.difference(this.rolePermissionIds, currentRolePermissionIds);
+                this.rolePermissionIds = currentRolePermissionIds;
+
+                await this.addRelations(permissionIdsToAdd, 'permissions');
+                await this.removeRelations(permissionIdsToRemove, 'permissions');
+            }
+        }
+
         async save() {
-            if (!this.roleName()) {
-                alert("Please, specify Role name");
+            if (!this.validate()) {
                 return;
             }
-
-            if (this.roleName() == defaultRoleName) {
-                alert("Please, change Role name");
-                return;
-            }
-
-            // check if such role already exists
-            if (this.roles()
-                .filter((role) => {
-                    return (role.id != this.roleId()
-                        && role.role == this.roleName());
-                    }).length > 0)
-            {
-                alert("Role already exists!")
-                return;
-            }
-
-            const create = this.isNewRole();
 
             this.loading(true);
+            const newRole = this.isNewRole();
             await this.saveRole();
             const roles = this.roles();
-            if (create) {
+            if (newRole) {
                 roles.push({
                     id: this.roleId(),
                     role: this.roleName()
@@ -313,40 +327,47 @@ define([
             await authApi.loadUserInfo();
             await this.saveUsers();
             await this.savePermissions();
-            this.roleDirtyFlag.reset();
-            this.dirtyFlag.reset();
+            this.roleDirtyFlag().reset();
+            this.dirtyFlag().reset();
             commonUtils.routeTo('/role/' + this.roleId());
             this.loading(false);
         }
 
-        close() {
-            commonUtils.routeTo("/roles");
-        }
+        validate() {
+            if (!this.dirtyFlag().isDirty()) {
+                alert("No changes. There is nothing to save");
+                return false;
+            }
+            if (!this.roleName()) {
+                alert("Please, specify Role name");
+                return false;
+            }
 
-        async delete() {
-            commonUtils.confirmAndDelete({
-              message: "Are you sure you want to delete the role?",
-              loading: this.loading,
-              remove: () => roleService.delete(this.roleId()),
-              redirect: () => {
-								const roles = this.roles().filter((role) => {
-									return role.id !== this.roleId();
-								});
-								sharedState.roles(roles);
-								this.close();
-								this.loading(false);
-              }
-            });
+            if (this.roleName() == defaultRoleName) {
+                alert("Please, change Role name");
+                return false;
+            }
+
+            // check if such role already exists
+            if (this.roles()
+                .filter((role) => {
+                    return (role.id != this.roleId()
+                        && role.role == this.roleName());
+                }).length > 0) {
+                alert("Role already exists!")
+                return false;
+            }
+            return true;
         }
 
         async copy() {
             let id;
             try {
-                const response = await roleService.create({ role: `${this.roleName()} copy` });
+                const response = await roleService.create({role: `${this.roleName()} copy`});
                 id = response.id;
                 await roleService.addRelations(id, 'users', this.roleUserIds);
                 await roleService.addRelations(id, 'permissions', this.rolePermissionIds);
-            } catch(er) {
+            } catch (er) {
                 if (!id) {
                     alert("Failed to copy role");
                 } else {
@@ -359,16 +380,21 @@ define([
             }
         }
 
-        export() {
-            const role = [{
-                role: this.roleName(),
-                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
-                users: this.getUsersList().map(u => ({ id: u.login })),
-            }];
-
-            fileService.saveAsJson(role);
+        async delete() {
+            commonUtils.confirmAndDelete({
+                message: "Are you sure you want to delete the role?",
+                loading: this.loading,
+                remove: () => roleService.delete(this.roleId()),
+                redirect: () => {
+                    const roles = this.roles().filter((role) => {
+                        return role.id !== this.roleId();
+                    });
+                    sharedState.roles(roles);
+                    this.close();
+                    this.loading(false);
+                }
+            });
         }
-
     }
 
     return commonUtils.build('role-details', RoleDetails, view);

@@ -67,24 +67,29 @@ define(function (require, exports) {
   };
 
   async function initSourcesConfig() {
-    try {
-		const [{data: sources}, {data: priorityDaimons}] = await Promise.all([
-			httpService.doGet(config.api.url + 'source/sources'),
-			httpService.doGet(config.api.url + 'source/daimon/priority'),
-		]);
-		config.api.available = true;
-        if (sources.length === 0) {
-            return constants.applicationStatuses.noSourcesAvailable;
-        }
-        setSharedStateSources(sources, priorityDaimons);
-        return constants.applicationStatuses.running;
-	} catch (e) {
-        if (e.status !== 403) {
-          config.api.available = false;
-          document.location = '#/configure';
-        }
-        return constants.applicationStatuses.failed;
-	}
+    if (authApi.isPermittedGetSourceDaimonPriority()) {
+      try {
+        const [{data: sources}, {data: priorityDaimons}] = await Promise.all([
+          httpService.doGet(config.api.url + 'source/sources'),
+          httpService.doGet(config.api.url + 'source/daimon/priority'),
+        ]);
+        config.api.available = true;
+            if (sources.length === 0) {
+                return constants.applicationStatuses.noSourcesAvailable;
+            }
+            setSharedStateSources(sources, priorityDaimons);
+            return constants.applicationStatuses.running;
+      } catch (e) {
+            if (e.status !== 403) {
+              config.api.available = false;
+              document.location = '#/configure';
+            }
+            return constants.applicationStatuses.failed;
+      }
+    } else {
+      console.warn('There isn\'t permission to get source daimons priorities');
+      return constants.applicationStatuses.running;
+    }
   }
 
   function setSharedStateSources(sources, priorityDaimons) {
