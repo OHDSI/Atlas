@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div data-bind="css: classes('content'), visible: !$component.loading()">
+    <div data-bind="css: editorClasses(), visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
             <div class="panel-heading" data-bind="text: ko.i18n('cc.fa.description', 'Description')"></div>

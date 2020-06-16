@@ -132,6 +132,7 @@ define([
             this.isPresetFeatureTypeAvailable = ko.pureComputed(() => {
                 return !this.isNewEntity() && this.initialFeatureType() === featureTypes.PRESET;
             });
+            this.editorClasses = ko.computed(() => this.classes({ element: 'content', modifiers: this.canEdit() ? '' : 'disabled' }))
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.FE_ANALYSIS,

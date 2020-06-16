@@ -5,7 +5,7 @@
 	<div data-bind="css: classes('linked-entities')">
 		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.targetCohorts.title', 'Target Cohorts'),
 																descr: ko.i18n('pathways.manager.design.targetCohorts.description', 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.'),
-																canEditName: true,
+																canEditName: canEditName,
 																data: design().targetCohorts,
 																isEditPermitted: isEditPermitted">
 
@@ -14,7 +14,7 @@
 	<div data-bind="css: classes('linked-entities')">
 		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.eventCohorts.title', 'Event Cohorts'),
 																descr: ko.i18n('pathways.manager.design.eventCohorts.description', 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.'),
-																canEditName: true,
+																canEditName: canEditName,
 																data: design().eventCohorts,
 																isEditPermitted: isEditPermitted">
 		</linked-cohort-list>
@@ -34,7 +34,7 @@
 										css: classes('setting-input'),
 										value: design().combinationWindow.numericValue,
 										eventType: 'blur',
-										ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+										ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 							/>
 						</td>
 						<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.combinationWindow.description', 'Window of time when two event cohorts need to overlap to be considered a combination.')"></td>
@@ -48,7 +48,7 @@
 										css: classes('setting-input'),
 										value: design().minCellCount.numericValue,
 										eventType: 'blur',
-										ko_autocomplete: { value: design().minCellCount, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+										ko_autocomplete: { value: design().minCellCount, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 						/>
 					</td>
 					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.minimumCellCount.description', 'Minimum number of subjects in the target cohort for a given event in order to be counted in the pathway.')"></td>
@@ -62,7 +62,7 @@
 										css: classes('setting-input'),
 										value: design().maxDepth.numericValue,
 										eventType: 'blur',
-										ko_autocomplete: { value: design().maxDepth, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }"
+										ko_autocomplete: { value: design().maxDepth, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 						/>
 					</td>
 					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.maximumPathLength.description', 'Maximum number of steps in a given pathway to be included in the sunburst plot.')"></td>
