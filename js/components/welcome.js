@@ -4,6 +4,7 @@ define([
     'appConfig',
     'services/AuthAPI',
 	'utils/BemHelper',
+    'atlas-state',
     'less!welcome.less'
 ],
     function (
@@ -11,7 +12,8 @@ define([
     view,
     appConfig,
     authApi,
-	BemHelper
+	BemHelper,
+    sharedState,
     ) {
     const componentName = 'welcome';
 
@@ -68,6 +70,7 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
+            sharedState.resetCurrentDataSourceScope();
             self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
