@@ -340,66 +340,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.loadConceptSet(conceptSet.id);
 			}
 
-			this.includedConceptsColumns = [
-				{
-				title: '<i class="fa fa-shopping-cart"></i>',
-					render: (s, p, d) => {
-						var css = '';
-						var icon = 'fa-shopping-cart';
-						if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-							css = ' selected';
-						}
-						return '<i class="fa ' + icon + ' ' + css + '"></i>';
-					},
-				orderable: false,
-				searchable: false
-			},
-			{
-				title: 'Id',
-				data: 'CONCEPT_ID'
-			},
-			{
-				title: 'Code',
-				data: 'CONCEPT_CODE'
-			},
-			{
-				title: 'Name',
-				data: 'CONCEPT_NAME',
-				render: commonUtils.renderLink,
-			},
-			{
-				title: 'Class',
-				data: 'CONCEPT_CLASS_ID'
-			},
-			{
-				title: 'Standard Concept Caption',
-				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'Domain',
-				data: 'DOMAIN_ID'
-			},
-			{
-				title: 'Vocabulary',
-				data: 'VOCABULARY_ID'
-			},
-			{
-				title: 'Ancestors',
-				data: 'ANCESTORS',
-				render: conceptSetService.getAncestorsRenderFunction()
-			}
-		];
+			this.includedConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService);
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
 			this.ancestors = ko.observableArray();
 			this.ancestorsModalIsShown = ko.observable(false);
@@ -771,6 +712,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							commonUtils.routeTo(constants.paths.details(definition.id()));
 						}
 					}
+					sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
 				} catch (e) {
 					alert('An error occurred while attempting to save a cohort definition.');
 				} finally {
@@ -968,21 +910,24 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showImportConceptSetModal(true);
 			};
 
-			onConceptSetRepositoryImport (newConceptSet) {
+			async onConceptSetRepositoryImport (newConceptSet) {
 				this.showImportConceptSetModal(false);
-				vocabularyApi.getConceptSetExpression(newConceptSet.id)
-					.done((result)=> {
-						var conceptSet = this.findConceptSet();
-						conceptSet.name(newConceptSet.name);
-						conceptSet.expression.items().forEach((item)=> {
-							sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
-							sharedState.selectedConcepts.remove((v)=> {
-								return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
-							});
+
+				const conceptSet = this.findConceptSet();
+				if (conceptSet.expression.items().length == 0 ||
+					confirm("Your concept set expression will be replaced with new one. Would you like to continue?")) {
+					conceptSet.name(newConceptSet.name);
+					conceptSet.expression.items().forEach((item)=> {
+						sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
+						sharedState.selectedConcepts.remove((v)=> {
+							return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
 						});
-						conceptSet.expression.items().length = 0;
-						this.importConceptSetExpressionItems(result.items);
 					});
+					conceptSet.expression.items().length = 0;
+
+					const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id);
+					this.importConceptSetExpressionItems(expression.items);
+				}
 			};
 
 			clearImportConceptSetJson () {
@@ -1142,59 +1087,61 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			async loadRequiredData(conceptSetId, sourceKey) {
-				try {
-					if (this.currentCohortDefinition().expression().ConceptSets()) {
-						const identifiers = [];
-						this.currentCohortDefinition().expression().ConceptSets().forEach((identifier) => {
-							identifier.expression.items().forEach((item) => {
-								identifiers.push(item.concept.CONCEPT_ID);
+				if (this.currentCohortDefinition()) {
+					try {
+						if (this.currentCohortDefinition().expression().ConceptSets()) {
+							const identifiers = [];
+							this.currentCohortDefinition().expression().ConceptSets().forEach((identifier) => {
+								identifier.expression.items().forEach((item) => {
+									identifiers.push(item.concept.CONCEPT_ID);
+								});
 							});
-						});
-						const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
-						let conceptsNotFound = 0;
-						const identifiersByConceptId = new Map();
-						identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
+							const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
+							let conceptsNotFound = 0;
+							const identifiersByConceptId = new Map();
+							identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
 
-						this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
-						// Update each of the concept set items
-							currentConceptSet.expression.items().forEach((item) => {
-								const selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
-								if (selectedConcept) {
-									item.concept = selectedConcept;
-								} else {
-									conceptsNotFound++;
-								}
+							this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
+							// Update each of the concept set items
+								currentConceptSet.expression.items().forEach((item) => {
+									const selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
+									if (selectedConcept) {
+										item.concept = selectedConcept;
+									} else {
+										conceptsNotFound++;
+									}
+								});
+								currentConceptSet.expression.items.valueHasMutated();
 							});
-							currentConceptSet.expression.items.valueHasMutated();
-						});
-						if (conceptsNotFound > 0) {
-							console.error("Concepts not found: " + conceptsNotFound);
+							if (conceptsNotFound > 0) {
+								console.error("Concepts not found: " + conceptsNotFound);
+							}
+							this.dirtyFlag().reset();
 						}
-						this.dirtyFlag().reset();
-					}
-					// now that we have required information lets compile them into data objects for our view
-					const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
-					let results = [];
-					for (let s = 0; s < cdmSources.length; s++) {
-						const source = cdmSources[s];
-						this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-							ready: false,
-							checking: false
-						});
-						const sourceInfo = this.getSourceInfo(source);
-						let cdsi = this.getCDSI(source, sourceInfo);
-						results.push(cdsi);
-					}
-					this.cohortDefinitionSourceInfo(results);
+						// now that we have required information lets compile them into data objects for our view
+						const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
+						let results = [];
+						for (let s = 0; s < cdmSources.length; s++) {
+							const source = cdmSources[s];
+							this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+								ready: false,
+								checking: false
+							});
+							const sourceInfo = this.getSourceInfo(source);
+							let cdsi = this.getCDSI(source, sourceInfo);
+							results.push(cdsi);
+						}
+						this.cohortDefinitionSourceInfo(results);
 
-					if (conceptSetId != null) {
-						await this.loadConceptSet(conceptSetId);
-						return;
-					} else {
-						this.reportSourceKey(sourceKey);
+						if (conceptSetId != null) {
+							await this.loadConceptSet(conceptSetId);
+							return;
+						} else {
+							this.reportSourceKey(sourceKey);
+						}
+					} catch(er) {
+						console.error(er);
 					}
-				} catch(er) {
-					console.error(er);
 				}
 			}
 

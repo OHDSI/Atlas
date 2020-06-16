@@ -74,6 +74,7 @@ define([
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
 				criticalCount: this.criticalCount,
+                isEditPermitted: this.canEdit,
 			});
 			this.warningParams = ko.observable({
 				current: sharedState.CohortPathways.current,

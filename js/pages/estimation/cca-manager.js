@@ -86,15 +86,15 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+            this.canSave = ko.pureComputed(() => {
+                return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+            });
 
 			this.isNameFilled = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && this.estimationAnalysis().name() !== this.defaultName;
-			});
-			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -329,7 +329,7 @@ define([
 
 		setAnalysis(analysis) {
 			const header = analysis.json;
-			const specification = JSON.parse(analysis.data.specification);			
+			const specification = JSON.parse(analysis.data.specification);
 			// ignore createdBy and modifiedBy
 			const { createdBy, modifiedBy, ...props } = header;
 			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...props }, this.estimationType, this.defaultCovariateSettings()));

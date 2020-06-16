@@ -87,6 +87,7 @@ define([
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
                 criticalCount: this.criticalCount,
+                isEditPermitted: this.isEditPermitted,
             });
             this.warningParams = ko.observable({
 				current: sharedState.CohortCharacterization.current,
@@ -106,6 +107,14 @@ define([
                     } else {
                         return 'Characterization #' + this.characterizationId();
                     }
+                }
+            });
+
+            const onCohortDefinitionChanged = sharedState.CohortCharacterization.onCohortDefinitionChanged;
+
+            sharedState.CohortCharacterization.onCohortDefinitionChanged = onCohortDefinitionChanged || sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
+                if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
+                    this.loadDesignData(this.characterizationId(), true);
                 }
             });
 
@@ -173,9 +182,9 @@ define([
             }
 		}
 
-        async loadDesignData(id) {
+        async loadDesignData(id, force = false) {
 
-        if (this.design() && (this.design().id || 0) === id) return;
+        if (!force && this.design() && (this.design().id || 0) === id) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }

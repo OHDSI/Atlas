@@ -58,17 +58,16 @@ define(function (require, exports) {
 	}
 
 	function getCohortDefinition(id) {
-		var loadPromise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/' + id,
-			error: function (error) {
+		return httpService
+			.doGet(config.webAPIRoot + 'cohortdefinition/' + id)
+			.then(res => {
+				const cohortDef = res.data;
+				cohortDef.expression = JSON.parse(cohortDef.expression);
+				return cohortDef;
+			}).catch(error => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
-			}
-		}).then(cohortDef => {
-			cohortDef.expression = JSON.parse(cohortDef.expression)
-			return cohortDef;
-		});
-		return loadPromise;
+			});
 	}
 
 	function exists(name, id) {
@@ -142,13 +141,7 @@ define(function (require, exports) {
 	}
 
 	function runDiagnostics(expression) {
-		return $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/check',
-			contentType: 'application/json',
-			method: 'POST',
-			data: expression,
-			error: authApi.handleAccessDenied,
-		});
+        return httpService.doPost(config.webAPIRoot + 'cohortdefinition/check', expression);
 	}
 
 	function getCohortCount(sourceKey, cohortDefinitionId) {
