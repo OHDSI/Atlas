@@ -203,7 +203,7 @@ define([
 					if (submissions.length > 0) {
 						submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
 						if (submissions[0].status !== this.ccGenerationStatusOptions.FAILED) {
-							if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
+							if (!confirm(ko.i18n('cc.viewEdit.executions.runNewGenerationConfirmation', 'No changes have been made since last execution. Do you still want to run new one?')())) {
 								return false;
 							}
 						}
@@ -228,7 +228,7 @@ define([
 
 		cancelGenerate(source) {
 			this.stopping({...this.stopping(), [source.sourceKey]: true});
-			if (confirm('Do you want to stop generation?')) {
+			if (confirm(ko.i18n('cc.viewEdit.executions.stopGenerationConfirmation', 'Do you want to stop generation?')())) {
 				CharacterizationService.cancelGeneration(this.characterizationId(), source.sourceKey);
 			}
 		}
