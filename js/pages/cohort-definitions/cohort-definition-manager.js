@@ -855,10 +855,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			diagnose() {
 				if (this.currentCohortDefinition()) {
-					const expressionJSON = ko.toJSON(this.currentCohortDefinition().expression(), function(key, value){
-						return (value === 0 || value) ?  value : undefined;
-					}, 2);
-					return cohortDefinitionService.runDiagnostics(expressionJSON);
+					return cohortDefinitionService.runDiagnostics(this.currentCohortDefinition().expression());
 				}
 			}
 

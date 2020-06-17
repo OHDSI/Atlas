@@ -95,7 +95,7 @@ function (
 			this.loading(false);
 		}
 
-		handleError() {
+		handleError(error) {
 			this.warningsTotal(0);
 			this.warnings.removeAll();
 			this.loading(false);
@@ -105,7 +105,7 @@ function (
 			this.loading(true);
 			const promise = this.diagnoseCallback();
 			if (promise) {
-				promise.then((data) => this.showWarnings(data), this.handleError);
+				promise.then((data) => this.showWarnings(data), (error) => this.handleError(error));
 			}
 		}
 

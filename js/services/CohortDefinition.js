@@ -141,7 +141,8 @@ define(function (require, exports) {
 	}
 
 	function runDiagnostics(expression) {
-        return httpService.doPost(config.webAPIRoot + 'cohortdefinition/check', expression);
+		return httpService.doPost(config.webAPIRoot + 'cohortdefinition/check', expression)
+			.then(res => res.data);
 	}
 
 	function getCohortCount(sourceKey, cohortDefinitionId) {
