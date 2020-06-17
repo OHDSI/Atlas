@@ -1,5 +1,5 @@
 <div>
-    <loading data-bind="visible: loading()" params="status: 'Loading generations...'"></loading>
+    <loading data-bind="visible: loading()" params="status: ko.i18n('predictions.loadingGenerations', 'Loading generations...')"></loading>
     <div data-bind="visible: !loading()">
         <h2 data-bind="css: classes('title')">
             <span data-bind="text: ko.i18n('predictions.generations', 'Generations')"></span> 

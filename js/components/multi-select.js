@@ -19,6 +19,7 @@ define(
       self.selectedTextFormat = params.selectedTextFormat || 'count > 2';
       self.noneSelectedText = ko.i18n('components.multiSelect.noneSelectedText', 'Nothing selected');
       self.noneResultsText = ko.i18n('components.multiSelect.noneResultsText', 'No matches found for {0}');
+      self.countSelectedText = ko.i18n('components.multiSelect.countSelectedText', '{0} items selected');
 
       self.optionVals = ko.computed(() => {
         return params.options().map(opt => opt.value);

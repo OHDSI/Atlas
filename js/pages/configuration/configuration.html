@@ -44,7 +44,7 @@
 				<table data-bind="if:$component.sources().length > 0" class="configureSourceTable">
 					<thead>
 						<th></th>
-						<th  data-bind="text:ko.i18n('columns.sourceName', 'Source Name [Source Key]')"><</th>
+						<th  data-bind="text:ko.i18n('columns.sourceNameSourceKey', 'Source Name [Source Key]')"><</th>
 						<th  data-bind="text:ko.i18n('columns.tableQualifiers', 'Table Qualifiers')"></th>
 						<th  data-bind="text:ko.i18n('columns.dialect', 'Dialect')"></th>
 						<th  data-bind="text:ko.i18n('columns.vocabularyVersion', 'Vocabulary Version')"></th>
@@ -99,7 +99,7 @@
                             <td data-bind="if: $component.canRefreshSourceCache($data)">
                                 <button data-bind="css: $component.getRefreshCacheButtonStyles($data).buttonClass, click: function(){$component.refreshSourceCache($data);}" class="connection-check-button btn btn-sm">
                                     <i data-bind="css : $component.getRefreshCacheButtonStyles($data).iconClass" class="fa"></i>
-									<span data-bind="text:ko.i18n('configuration.buttons.check', 'refresh')"> </span>
+									<span data-bind="text:ko.i18n('configuration.buttons.refresh', 'refresh')"> </span>
 
                                 </button>
                             </td>
