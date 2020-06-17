@@ -48,7 +48,7 @@ define([
       this.warningsOptions = {
         Facets: [
           {
-            caption: 'Severity',
+            caption: ko.i18n('facets.caption.severity', 'Severity'),
             binding: (o) => o.severity,
             defaultFacets: ['WARNING', 'CRITICAL'],
           },

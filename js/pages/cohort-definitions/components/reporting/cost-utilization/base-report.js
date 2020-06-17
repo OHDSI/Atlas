@@ -56,8 +56,8 @@ define(
         this.visualizationTab = 0;
         this.rawDataTab = 1;
         this.tabLabels = {
-          [this.visualizationTab]: 'Visualization',
-          [this.rawDataTab]: 'Raw data',
+          [this.visualizationTab]: ko.unwrap(ko.i18n('cohortDefinitions.costUtilization.visualization', 'Visualization')),
+          [this.rawDataTab]: ko.unwrap(ko.i18n('cohortDefinitions.costUtilization.rawData', 'Raw data')),
         };
         this.currentTab = ko.observable(this.visualizationTab);
 
