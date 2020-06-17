@@ -31,7 +31,7 @@
 	</div>
 	<div class="row">
 		<div class="col-xs-12">
-			<select class="form-control" data-bind="css : { invalid: $component.reportSourceKey()==undefined }, options:$component.sharedState.sources().filter($root.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.reportSourceKey, optionsCaption:'Select a Source'"></select>
+			<select class="form-control" data-bind="css : { invalid: $component.reportSourceKey()==undefined }, options:$component.sharedState.sources().filter($root.hasResults), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.reportSourceKey, optionsCaption: ko.i18n('dataSources.selectASource', 'Select a Source')"></select>
 		</div>
 	</div>
 	<div class="row">

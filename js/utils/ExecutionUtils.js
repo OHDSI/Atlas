@@ -9,7 +9,7 @@ define([
 		} else {
 			if (executionGroup.status() === consts.generationStatuses.STARTED) {
 				confirmPromise = new Promise((resolve, reject) => {
-					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
+					if (confirm(ko.unwrap(ko.i18n('components.executionUtils.confirmStartExecution', 'A generation for the source has already been started. Are you sure you want to start a new one in parallel?')))) {
 						resolve();
 					} else {
 						reject();
