@@ -218,6 +218,7 @@ define([
 				});
 
 				const results = {
+					executionId: this.executionId(),
 					sourceId: source.sourceId,
 					sourceName: source.sourceName,
 					date: execution.endTime,

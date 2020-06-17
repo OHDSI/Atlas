@@ -3,8 +3,9 @@ define([
 	'components/Chart',
 	'components/Component',
 	'atlascharts',
-	'text!components/charts/chart.html',
-	'utils/CommonUtils'
+	'text!./chart.html',
+	'utils/CommonUtils',
+	'less!./chart.less'
 ], function (
 	ko,
 	Chart,

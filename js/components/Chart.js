@@ -4,17 +4,22 @@ define([
 	'utils/AutoBind',
 	'utils/ChartUtils',
   'const',
+	'utils/BemHelper',	
   'components/empty-state',
+	'less!./charts/chart.less'
 ], function (
   ko,
   Component,
 	AutoBind,
 	ChartUtils,
   constants,
+	BemHelper
 ) {
   class Chart extends AutoBind(Component) {
     constructor(params, container) {
       super(params);
+			const bemHelper = new BemHelper('Chart');
+      this.chartClasses = bemHelper.run.bind(bemHelper);
       this.renderer = null; // atlascharts
       this.rawData = ko.observable();
       this.format = {};
