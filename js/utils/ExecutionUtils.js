@@ -1,6 +1,7 @@
 define([
+	'knockout',
 	'../const'
-], (consts) => {
+], (ko, consts) => {
 
 	async function StartExecution(executionGroup) {
 		let confirmPromise;
@@ -9,7 +10,7 @@ define([
 		} else {
 			if (executionGroup.status() === consts.generationStatuses.STARTED) {
 				confirmPromise = new Promise((resolve, reject) => {
-					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
+					if (confirm(ko.i18n('components.executionUtils.startNewExecutionInParallelConfirmation', 'A generation for the source has already been started. Are you sure you want to start a new one in parallel?')())) {
 						resolve();
 					} else {
 						reject();
