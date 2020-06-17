@@ -37,7 +37,7 @@
 
 <atlas-modal params="{
 		showModal: jobModalOpened,
-		title: ko.i18nformat('notifications.title', 'Notifications (last <%=length%>>)', {length: $component.jobListing().length}),
+		title: ko.i18nformat('notifications.title', 'Notifications (last <%=length%>)', {length: $component.jobListing().length}),
 		templateWrapperClass: {},
 		data: {
 			jobListing: $component.sortedJobListing,
@@ -69,7 +69,7 @@
 					</td>
 					<td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
 					<td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
-					<td data-bind="css: $parent.classes('job-status'), html: status"></td>
+					<td data-bind="css: $parent.classes('job-status'), text: ko.i18n('executionStatus.values.' + status, status)"></td>
 				</tr>
 				<!-- /ko -->
 				<td colspan="4">
