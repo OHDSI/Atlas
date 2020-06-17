@@ -203,7 +203,7 @@ define([
 					if (submissions.length > 0) {
 						submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
 						if (submissions[0].status !== this.ccGenerationStatusOptions.FAILED) {
-							if (!confirm('No changes have been made since last execution. Do you still want to run new one?')) {
+							if (!confirm(ko.unwrap(ko.i18n('cc.viewEdit.executions.messages.confirmGenerate', 'No changes have been made since last execution. Do you still want to run new one?')))) {
 								return false;
 							}
 						}
