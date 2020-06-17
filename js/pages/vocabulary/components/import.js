@@ -106,12 +106,12 @@ define([
         importConceptIdentifiers() {
             this.loading(true);
             this.error('');
-            const identifers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
-            if (identifers === null) {
+            const identifiers = $('#textImportConceptIdentifiers').val().match(/[0-9]+/g); // all numeric sequences
+            if (identifiers === null) {
                 this.error('Unable to parse Concept Identifiers');
                 this.loading(false);
             } else {
-                vocabularyProvider.getConceptsById(identifers)
+                vocabularyProvider.getConceptsById(identifiers)
                     .then(({data: items}) => {
                         this.initConceptSet(items)
                     })
