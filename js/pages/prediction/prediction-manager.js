@@ -163,7 +163,11 @@ define([
 			}
 		}
 
-        onRouterParamsChanged({ id, section, sourceId, executionId }) {
+		onRouterParamsChanged(params, prevParams) {
+			const { id: newId, section: newSection, sourceId, executionId } = params;
+			const { id: prevId, section: prevSection } = prevParams;
+			const id = newId || prevId;
+			const section = newSection || prevSection;
 			!!sourceId && this.notificationSourceId(sourceId);
 			!!executionId && this.notificationExecutionId(executionId);
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
@@ -172,12 +176,12 @@ define([
 				}
 				this.onPageCreated();
 			}
-        }
+		}
 
-        selectTab(index, { key }) {
+		selectTab(index, { key }) {
 			this.selectedTabKey(key);
-            return commonUtils.routeTo('/prediction/' + this.componentParams().analysisId() + '/' + key);
-        }
+			return commonUtils.routeTo('/prediction/' + this.componentParams().analysisId() + '/' + key);
+		}
 
 		patientLevelPredictionAnalysisForWebAPI() {
 			let definition = ko.toJS(this.patientLevelPredictionAnalysis);

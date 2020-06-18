@@ -75,7 +75,7 @@ define(['services/MomentAPI', 'xss', 'appConfig'],
 						}
 					}, 0);
 				}
-			}
+            }
         }
 
         return {

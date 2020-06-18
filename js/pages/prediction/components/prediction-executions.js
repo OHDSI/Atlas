@@ -44,7 +44,7 @@ define([
 
 		constructor(params) {
 			super(params);
-
+			
 			this.loading = ko.observable();
 			this.expandedSection = ko.observable();
 
@@ -61,7 +61,7 @@ define([
 			this.notificationSourceId = params.notificationSourceId;
 			this.isSourceListLoaded = ko.observable(false);
 			this.notificationRowId = ko.pureComputed(() => `${this.notificationSourceId()}_${this.notificationExecutionId()}`);
-			this.subscriptions.push(this.notificationRowId.subscribe(datatableUtils.highlightGeneration(this)));
+			this.subscriptions.push(this.notificationRowId.subscribe(() => datatableUtils.highlightGeneration(this)));
 			this.execColumns = [
 				{
 					title: 'Date',
