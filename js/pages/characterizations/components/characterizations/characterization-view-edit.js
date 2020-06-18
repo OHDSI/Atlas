@@ -84,6 +84,7 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                isEditPermitted: this.isEditPermitted,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -92,6 +93,14 @@ define([
                     } else {
                         return 'Characterization #' + this.characterizationId();
                     }
+                }
+            });
+
+            const onCohortDefinitionChanged = sharedState.CohortCharacterization.onCohortDefinitionChanged;
+
+            sharedState.CohortCharacterization.onCohortDefinitionChanged = onCohortDefinitionChanged || sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
+                if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
+                    this.loadDesignData(this.characterizationId(), true);
                 }
             });
 
@@ -153,9 +162,9 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
-        async loadDesignData(id) {
+        async loadDesignData(id, force = false) {
 
-        if (this.design() && (this.design().id || 0) === id) return;
+        if (!force && this.design() && (this.design().id || 0) === id) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }

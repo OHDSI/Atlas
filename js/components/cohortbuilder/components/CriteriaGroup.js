@@ -5,10 +5,11 @@ define([
 		'../InputTypes/Window',
 		'../AdditionalCriteria',
 		'../options',
-		'./utils',
-		'./const',
+		'../utils',
+		'../const',
 		'text!./CriteriaGroupTemplate.html',
-		'components/DropDownMenu'],
+		'components/DropDownMenu',
+		'less!./CriteriaGroup.less'],
 	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
 
 	function CriteriaGroupViewModel(params) {
@@ -19,6 +20,7 @@ define([
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
+		self.indexMessage = params.indexMessage;
 		self.groupCountOptions = ko.pureComputed(function () {
 			var optionsArray = ['0'];
 			for (var i = 0; i < (self.group().CriteriaList().length + self.group().Groups().length); i++) {
@@ -52,15 +54,6 @@ define([
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ConditionEra: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDoseEraCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DoseEra: {}
 				}
 			}, unwrappedExpression.ConceptSets));
 		};

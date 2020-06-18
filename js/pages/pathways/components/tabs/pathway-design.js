@@ -19,7 +19,8 @@ define([
 			super();
 			this.params = params;
 			this.design = params.design;
-
+			this.isEditPermitted = params.isEditPermitted;
+			this.canEditName = params.isEditPermitted();
 		}
 		
 		get combinationWindowOptions() {

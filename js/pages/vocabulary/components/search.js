@@ -279,7 +279,6 @@ define([
 				let query = '';
 				if (this.currentSearch() !== undefined) {
 					query = this.encodeSearchString(this.currentSearch());
-					this.currentSearch(this.encodeSpecialCharacters(this.currentSearch()));
 				}
 				this.loading(true);
 				this.data([]);

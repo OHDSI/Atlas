@@ -1,7 +1,9 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-
+	<!-- ko if: currentCohortDefinition().id() != 0 -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+	<!-- /ko -->
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 	<!-- ko if: hasAccess -->
@@ -128,7 +130,7 @@
 					</div>
 				</div>
 
-				<div class="loading" data-bind="if:$root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()">loading</div>
+					<loading data-bind="visible: $root.router.currentView() === 'loading' || loadingSourcecodes() || loadingIncluded()"></loading>
 
 				<div data-bind="visible: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.included && !loadingIncluded()">
 					<faceted-datatable params="{columns: $component.includedConceptsColumns, options: $component.includedConceptsOptions, reference: $component.includedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
@@ -141,18 +143,18 @@
 				<div id="wrapperConceptSetExport" data-bind="if: $component.conceptSetTabMode() === cohortConst.conceptSetTabModes.export">
 					<loading data-bind="visible: resolvingConceptSetExpression()" params="status: 'Loading for export...'"></loading>
 					<div data-bind="visible: !resolvingConceptSetExpression()">
+						<div class="heading">Concept Identifier List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+							<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+						</div>
+						<pre id="conceptIdentifierList" data-bind="html: currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+						<div class="heading">Included Concept Identifier List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
+							<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+						</div>
+						<pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 						<div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
 							<span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 						</div>
 						<pre id="conceptSetExpression" data-bind="html: currentConceptSetExpressionJson, selectOnFocus: {events: ['click']}"></pre>
-						<div class="heading">Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIdentifierListClipboard" data-bind="click: copyIdentifierListToClipboard" data-clipboard-target="#conceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
-							<span id="copyIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
-						</div>
-						<pre id="conceptIdentifierList" data-bind="html: currentConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
-						<div class="heading">Included Concept Identifer List&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyIncludedConceptIdentifierListClipboard" data-bind="click: copyIncludedConceptIdentifierListToClipboard" data-clipboard-target="#includedConceptIdentifierList"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
-							<span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
-						</div>
-						<pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
 					</div>
 				</div>
 
@@ -189,25 +191,6 @@
 						<div type="button" data-bind="css: {disabled: !currentConceptSet()}, click:function() { $component.importConceptSetExpression(); }" class="btn btn-sm btn-primary pull-right "><i class="fa fa-upload"></i> Import Concept Set Expression</div>
 						<div class="clear"></div>
 					</div>
-					<atlas-modal params="
-						showModal: $component.showImportConceptSetModal,
-						template: 'import-conceptset-template',
-						title: 'Import Concept Set From Repository...',
-						data: {
-							onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
-							criteriaContext: criteriaContext,
-							cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
-						}
-					"
-					></atlas-modal>
-					<script type='text/html' id="import-conceptset-template">
-						<cohort-concept-set-browser params="
-							criteriaContext: criteriaContext,
-							cohortConceptSets: cohortConceptSets,
-							onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
-							buttonActionEnabled: false
-						"></cohort-concept-set-browser>
-					</script>
 				</div>
                 <loading data-bind="visible: conceptLoading()" params="status: 'retrieving concepts'"></loading>
 				<!-- /ko -->
@@ -542,6 +525,25 @@
 		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
 		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
 	</atlas-modal>
+	<atlas-modal params="
+		showModal: $component.showImportConceptSetModal,
+		template: 'import-conceptset-template',
+		title: 'Import Concept Set From Repository...',
+		data: {
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
+			criteriaContext: criteriaContext,
+			cohortConceptSets: currentCohortDefinition().expression().ConceptSets,
+		}
+	"
+	></atlas-modal>
+	<script type='text/html' id="import-conceptset-template">
+		<cohort-concept-set-browser params="
+			criteriaContext: criteriaContext,
+			cohortConceptSets: cohortConceptSets,
+			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+			buttonActionEnabled: false
+		"></cohort-concept-set-browser>
+	</script>
 
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,

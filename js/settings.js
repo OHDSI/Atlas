@@ -139,6 +139,7 @@ const settingsObject = {
 		"bootstrap-datetimepicker": "../node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min",
 		"visibilityjs": "../node_modules/@ohdsi/visibilityjs/lib/visibility.core",
 		"ajv": "../node_modules/ajv/dist/ajv.bundle",
+		"hash-it": "../node_modules/hash-it/dist/hash-it.min"
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",

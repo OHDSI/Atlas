@@ -26,7 +26,7 @@ define(
 
         const feAnalysisTypes = {
             PRESET: 'PRESET',
-            CRITERIA: 'CRITERIA',
+            CRITERIA_SET: 'CRITERIA_SET',
             CUSTOM_FE: 'CUSTOM_FE'
         };
 

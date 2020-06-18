@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DeviceExposureTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./DeviceExposureTemplate.html'], function (ko, options, utils, Range, Text, CriteriaGroup, template) {
 
 	function DeviceExposureViewModel(params) {
 		var self = this;
@@ -29,19 +29,19 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Start Date Criteria",
 				value: 0,
 				selected: false,
-				description: "Filter Procedure Occurrences by the Procedure Start Date."
+				description: "Filter Device Exposures by the Exposure Start Date."
 			},
 			{
 				text: "Add End Date Criteria",
 				value: 1,
 				selected: false,
-				description: "Filter Device Exposure by the Procedure Start Date."
+				description: "Filter Device Exposures by the Exposure End Date."
 			},
 			{
 				text: "Add Device Type Criteria",
 				value: 2,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Type."
+				description: "Filter Device Exposures by the Exposure Type."
 			},
 			{
 				text: "Add Visit Criteria",
@@ -91,7 +91,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Nested Criteria...",
 				value: 11,
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the device exposure as the index event",
 			}
 		];
 
@@ -175,7 +175,11 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			self.Criteria[propertyName](null);
 		}
 
-
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Device');
+			return `The index date refers to the device exposure of ${conceptSetName}.`;
+		});
+		
 	}
 
 	// return compoonent definition

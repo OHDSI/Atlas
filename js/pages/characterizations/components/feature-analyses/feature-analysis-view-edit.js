@@ -7,8 +7,8 @@ define([
     'components/cohortbuilder/AdditionalCriteria',
     'components/cohortbuilder/WindowedCriteria',
     'components/cohortbuilder/CriteriaTypes/DemographicCriteria',
-    'components/cohortbuilder/components/const',
-    'components/cohortbuilder/components/utils',
+    'components/cohortbuilder/const',
+    'components/cohortbuilder/utils',
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'atlas-state',
@@ -130,6 +130,7 @@ define([
             this.isPresetFeatureTypeAvailable = ko.pureComputed(() => {
                 return !this.isNewEntity() && this.initialFeatureType() === featureTypes.PRESET;
             });
+            this.editorClasses = ko.computed(() => this.classes({ element: 'content', modifiers: this.canEdit() ? '' : 'disabled' }))
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.FE_ANALYSIS,

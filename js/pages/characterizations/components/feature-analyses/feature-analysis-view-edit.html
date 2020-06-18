@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div data-bind="css: classes('content'), visible: !$component.loading()">
+    <div data-bind="css: editorClasses(), visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
             <div class="panel-heading">
@@ -37,7 +37,7 @@
                 <!-- ko if: $component.canEdit() -->
                     <multi-select
                             data-bind="css: classes('domain-selector')"
-                            params="options: $component.domains, selectedValue: $component.data().domain, multiple: false"
+                            params="options: $component.domains, selectedValue: $component.data() && $component.data().domain, multiple: false"
                     ></multi-select>
                 <!-- /ko -->
                 <!-- ko if: !$component.canEdit() -->

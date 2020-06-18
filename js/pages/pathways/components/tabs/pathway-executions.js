@@ -44,7 +44,7 @@ define([
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
-			const currentHash = ko.pureComputed(() => params.design().hashCode);
+			const currentHash = ko.pureComputed(() => params.design() && params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 
@@ -53,6 +53,7 @@ define([
 			this.isExecutionDesignShown = ko.observable(false);
 			this.stopping = ko.observable({});
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
+			this.isEditPermitted = params.isEditPermitted;
 
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
@@ -141,7 +142,9 @@ define([
 		}
 
 		getExecutionGroupStatus(submissions) {
-			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
+			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED ||
+				s.status === this.pathwayGenerationStatusOptions.PENDING ||
+				s.status === this.pathwayGenerationStatusOptions.STARTING) ?
 				this.pathwayGenerationStatusOptions.STARTED :
 				this.pathwayGenerationStatusOptions.COMPLETED;
 		}

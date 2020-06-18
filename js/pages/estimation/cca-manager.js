@@ -87,6 +87,9 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+			this.canSave = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+			});
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
@@ -101,6 +104,7 @@ define([
 				subscriptions: this.subscriptions,
 				notificationExecutionId: this.notificationExecutionId,
 				notificationSourceId: this.notificationSourceId,
+				isEditPermitted: this.canSave,
 			});
 
 			this.isNameFilled = ko.computed(() => {
@@ -108,10 +112,7 @@ define([
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && this.estimationAnalysis().name() !== this.defaultName;
-			});
-			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
-			});
+			});			
 
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());

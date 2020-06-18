@@ -71,6 +71,7 @@ define([
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
+				isEditPermitted: this.canEdit
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {

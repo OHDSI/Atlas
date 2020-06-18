@@ -121,16 +121,6 @@ define([
 				visible: false
 			},
 			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
 			},
@@ -166,10 +156,6 @@ define([
 			self.selectedConcepts([]);
 			VocabularyAPI.resolveConceptSetExpression(self.conceptSet()).then(function (identifiers) {
 				VocabularyAPI.getMappedConceptsById(identifiers).then(function (concepts) {
-					concepts.forEach(function (concept) {
-						concept.RECORD_COUNT = 'timeout';
-						concept.DESCENDANT_RECORD_COUNT = 'timeout';
-					});
 					self.mappedConcepts(concepts);
 				})
 				.fail(function (err) {

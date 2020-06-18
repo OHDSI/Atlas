@@ -47,12 +47,12 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isGenerationPermitted(sourceKey) ? 'Not enough permissions to generate' : null,
+                    tooltip: (!$component.isGenerationPermitted(sourceKey) || !$component.isEditPermitted()) ? 'Not enough permissions to generate' : null,
                 ">
                     <!-- ko if: $component.pathwayGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
 																			 css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
-																			 attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) },
+																			 attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) || !$component.isEditPermitted() },
 																			 click: () => $component.generate(sourceKey)">
                             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
                             <span data-bind="css: classes('action-text')">Generate</span>
@@ -62,11 +62,6 @@
                     <a role="button" class="btn btn-sm btn-danger"
                        data-bind="click:$component.cancelGenerate, attr: {disabled: $component.isSourceStopping($data)}">
                         <i class="fa fa-spinner fa-spin"></i> Cancel
-                    </a>
-                    <!-- /ko -->
-                    <!-- ko if:  $component.pathwayGenerationStatusOptions.PENDING === status() -->
-                    <a role="button" class="btn btn-sm btn-warning" data-bind="attr: {disabled: true}">
-                        <i class="fa fa-spinner fa-spin"></i> Pending
                     </a>
                     <!-- /ko -->
                 </li>
