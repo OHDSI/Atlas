@@ -42,7 +42,6 @@ define([
     }
 		
 		export() {
-			console.warn('Export not implemented');
 			const svg = this.container.element.querySelector('svg');
 			ChartUtils.downloadAsPng(svg, this.filename || "untitled.png");
 		}
