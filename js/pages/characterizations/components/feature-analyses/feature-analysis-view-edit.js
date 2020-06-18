@@ -100,9 +100,7 @@ define([
             });
             this.canDelete = this.isDeletePermittedResolver();
             this.isNewEntity = this.isNewEntityResolver();
-            this.canCopy = ko.pureComputed(() => {
-                return PermissionService.isPermittedCopyFa(this.featureId());
-            });
+            this.canCopy = ko.pureComputed(() => PermissionService.isPermittedCopyFa(this.featureId()));
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
