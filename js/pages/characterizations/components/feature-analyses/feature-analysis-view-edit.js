@@ -83,6 +83,7 @@ define([
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
+            this.isCopying = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
             this.isNameFilled = ko.computed(() => {
@@ -99,6 +100,9 @@ define([
             });
             this.canDelete = this.isDeletePermittedResolver();
             this.isNewEntity = this.isNewEntityResolver();
+            this.canCopy = ko.pureComputed(() => {
+                return PermissionService.isPermittedCopyFa(this.featureId());
+            });
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
@@ -124,7 +128,7 @@ define([
             this.isSaving = ko.observable(false);
             this.isDeleting = ko.observable(false);
             this.isProcessing = ko.computed(() => {
-                return this.isSaving() || this.isDeleting();
+                return this.isSaving() || this.isDeleting() || this.isCopying();
             });
             this.initialFeatureType = ko.observable();
             this.isPresetFeatureTypeAvailable = ko.pureComputed(() => {
@@ -398,6 +402,22 @@ define([
 
         copyAnalysisSQLTemplateToClipboard() {
             this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
+        }
+
+        async copyFeatureAnalysis() {
+            this.isCopying(true);
+            this.loading(true);
+            try {
+                const { data } = await FeatureAnalysisService.copyFeatureAnalysis(this.featureId());
+                this.setupAnalysisData(data);
+                commonUtils.routeTo(`cc/feature-analyses/${data.id}`);
+            } catch(err) {
+                console.error(err);
+                alert('Failed to copy feature analysis.');
+            } finally {
+                this.isCopying(false);
+                this.loading(false);
+            }
         }
     }
 

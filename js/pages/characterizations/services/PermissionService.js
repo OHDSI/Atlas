@@ -75,6 +75,10 @@ define([
         return AuthAPI.isPermitted(`feature-analysis:${id}:delete`);
     }
 
+    function isPermittedCopyFa(id) {
+        return true //return AuthAPI.isPermitted(`feature-analysis:${id}:copy:get`);
+    }
+
     return {
         isPermittedCreateCC,
         isPermittedImportCC,
@@ -93,6 +97,7 @@ define([
         isPermittedCreateFa,
         isPermittedGetFa,
         isPermittedUpdateFa,
-        isPermittedDeleteFa
+        isPermittedDeleteFa,
+        isPermittedCopyFa,
     };
 });
