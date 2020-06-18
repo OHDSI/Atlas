@@ -36,7 +36,7 @@ define([
     }
 
     function copyFeatureAnalysis(id) {
-        return httpService.doPost(`${config.webAPIRoot}feature-analysis/${id}/copy`);
+        return httpService.doGet(`${config.webAPIRoot}feature-analysis/${id}/copy`);
     }
 
     return {

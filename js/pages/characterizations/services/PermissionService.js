@@ -76,7 +76,7 @@ define([
     }
 
     function isPermittedCopyFa(id) {
-        return true //return AuthAPI.isPermitted(`feature-analysis:${id}:copy:get`);
+        return AuthAPI.isPermitted(`feature-analysis:${id}:copy:get`);
     }
 
     return {
