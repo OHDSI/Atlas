@@ -6,6 +6,7 @@ define([
 	'xss',
 	'appConfig',
 	'text!./linked-cohort-list.html',
+	'const',
 	'components/cohort-definition-browser',
 	'less!./linked-cohort-list.less',
 	'components/linked-entity-list',
@@ -18,7 +19,8 @@ define([
 	lodash,
 	filterXSS,
 	appConfig,
-	view
+	view,
+	globalConstants
 ) {
 	class LinkedCohortList extends Component {
 		constructor(params) {
@@ -52,25 +54,8 @@ define([
 			this.newItemLabel = params.newItemLabel || 'Import';
 			this.newItemAction = params.newItemAction || this.showCohortModal;
 			this.data = params.data || ko.observable([]);
-			this.columns = params.columns || [
-				{
-					title: 'ID',
-					data: 'id',
-					className: this.classes('col-cohort-id'),
-				},
-				nameCol,
-				{
-					title: '',
-					render: this.getEditCell('editCohort'),
-					className: this.classes('col-cohort-edit'),
-				},
-				{
-					title: '',
-					render: this.getRemoveCell('removeCohort'),
-					className: this.classes('col-cohort-remove'),
-				},
-
-			];
+			this.isEditPermitted = params.isEditPermitted;
+			this.columns = params.columns || globalConstants.getLinkedCohortColumns(this, nameCol);
 
 			// Modal props
 			this.showModal = ko.observable(false);

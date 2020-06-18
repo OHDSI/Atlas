@@ -8,7 +8,8 @@ define([
 		'../utils',
 		'../const',
 		'text!./CriteriaGroupTemplate.html',
-		'components/DropDownMenu'],
+		'components/DropDownMenu',
+		'less!./CriteriaGroup.less'],
 	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
 
 	function CriteriaGroupViewModel(params) {

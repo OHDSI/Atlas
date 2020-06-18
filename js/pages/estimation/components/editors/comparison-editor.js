@@ -21,6 +21,7 @@ define([
             super(params);
 
 			this.comparison = params.comparison;
+			this.isEditPermitted = params.isEditPermitted;
 			this.currentCohort = ko.observable(null);
 			this.showCohortSelector = ko.observable(false);
 			this.showConceptSetSelector = ko.observable(false);
