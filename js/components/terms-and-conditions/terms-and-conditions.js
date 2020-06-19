@@ -45,7 +45,7 @@ define([
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {
-        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate, 10), Date.now()) > appConfig.termsAndConditions.acceptanceExpiresInDays;
+        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate, 10), Date.now()) >= appConfig.termsAndConditions.acceptanceExpiresInDays;
         return !isExpired;
       }
       return false;
