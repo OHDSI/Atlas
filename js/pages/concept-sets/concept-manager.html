@@ -246,7 +246,7 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
 
 		<!-- ko if: hasInfoAccess() -->
-		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor }"></faceted-datatable>
+		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor, language: ko.i18n('datatable.language') }"></faceted-datatable>
 		<div class="linkLegend">
 			<div class="linkLegendItem">
 				<div class="swatch standard">
