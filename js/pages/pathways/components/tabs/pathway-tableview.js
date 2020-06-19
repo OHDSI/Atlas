@@ -106,15 +106,16 @@ define([
 			let pathCols = Array(MAX_PATH_LENGTH)
 				.fill()
 				.map((v,i) => {
-					const col = columnPathBuilder(`Step ${i+1}`, i, this.pathCodeResolver);
+					const colName = ko.i18nformat('pathways.manager.executions.results.tableview.stepN', 'Step <%=i%>', {i: i+1});
+					const col = columnPathBuilder(ko.unwrap(colName), i, this.pathCodeResolver);
 					col.visible = i < pathLength;
 					return col;
 				});					
-			let statCols = [columnValueBuilder("Count", "personCount")];
+			let statCols = [columnValueBuilder(ko.i18n('columns.count', 'Count')(), "personCount")];
 			let data = this.getPathwayGroupData(pathwayGroup, pathLength);
 
-			statCols.push(columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat));
-			statCols.push(columnValueBuilder("% of Cohort", "cohortPercent", percentFormat));
+			statCols.push(columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway')(), "pathwayPercent", percentFormat));
+			statCols.push(columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort')(), "cohortPercent", percentFormat));
 
 			return {
 				data: data,
@@ -122,7 +123,8 @@ define([
 					autoWidth:true,
 					order: [[pathCols.length, 'desc']],
 					columnDefs: statCols.map((c,i) => ({width: "7%", targets: pathCols.length + i, className: 'stat'})),
-					columns :  [...pathCols, ...statCols]
+					columns :  [...pathCols, ...statCols],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}
@@ -189,12 +191,13 @@ define([
 					autoWidth:true,
 					order: [[2, 'desc']],
 					columns : [
-						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver),
-						columnValueBuilder("Rank", "rank"),
-						columnValueBuilder("Count", "personCount"),
-						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
-						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
-					]
+						columnValueBuilder(ko.i18n('columns.eventCohort', 'Event Cohort'), "code", this.pathCodeResolver),
+						columnValueBuilder(ko.i18n('columns.rank', 'Rank'), "rank"),
+						columnValueBuilder(ko.i18n('columns.Count', 'Count'), "personCount"),
+						columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway'), "pathwayPercent", percentFormat),
+						columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort'), "cohortPercent", percentFormat)
+					],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}
@@ -258,11 +261,12 @@ define([
 					autoWidth:true,
 					order: [[1, 'desc']],
 					columns : [
-						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver),
-						columnValueBuilder("Count", "personCount"),
-						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
-						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
-					]
+						columnValueBuilder(ko.i18n('columns.eventCohort', 'Event Cohort'), "code", this.pathCodeResolver),
+						columnValueBuilder(ko.i18n('columns.Count', 'Count'), "personCount"),
+						columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway'), "pathwayPercent", percentFormat),
+						columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort'), "cohortPercent", percentFormat)
+					],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}
@@ -329,11 +333,12 @@ define([
 					autoWidth:true,
 					order: [[1, 'desc']],
 					columns : [
-						columnValueBuilder("Distinct Event Cohorts", "eventCohorts", (v) => `Exactly ${v}`),
-						columnValueBuilder("Count", "personCount"),
-						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
-						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
-					]
+						columnValueBuilder(ko.i18n('columns.distinctEventCohorts', 'Distinct Event Cohorts'), "eventCohorts", (v) => ko.i18nformat('pathways.manager.executions.results.tableview.exactly', 'Exactly <%=v%>', {v: v})()),
+						columnValueBuilder(ko.i18n('columns.count', 'Count'), "personCount"),
+						columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway'), "pathwayPercent", percentFormat),
+						columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort'), "cohortPercent", percentFormat)
+					],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}		

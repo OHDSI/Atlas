@@ -36,8 +36,8 @@ define([
 	const percentFormat = d3.format(".1%");
 	const numberFormat = d3.format(",");
 	const pills = [
-		{ name: "Visualization", key: "viz"},
-		{ name: "Tabular", key: "table"}
+		{ name: ko.i18n('pathways.manager.executions.results.visualization', 'Visualization'), key: "viz"},
+		{ name: ko.i18n('pathways.manager.executions.results.tabular', 'Tabular'), key: "table"}
 	];
 
 
