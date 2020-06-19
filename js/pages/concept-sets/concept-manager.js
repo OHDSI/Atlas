@@ -122,42 +122,42 @@ define([
 				orderable: false,
 				searchable: false
 			}, {
-				title: ko.i18n('colunms.id', 'Id'),
+				title: ko.i18n('columns.id', 'Id'),
 				data: 'CONCEPT_ID'
 			}, {
-				title: ko.i18n('colunms.code', 'Code'),
+				title: ko.i18n('columns.code', 'Code'),
 				data: 'CONCEPT_CODE'
 			}, {
-				title: ko.i18n('colunms.name', 'Name'),
+				title: ko.i18n('columns.name', 'Name'),
 				data: 'CONCEPT_NAME',
 				render: commonUtils.renderLink,
 			}, {
-				title: ko.i18n('colunms.class', 'Class'),
+				title: ko.i18n('columns.class', 'Class'),
 				data: 'CONCEPT_CLASS_ID'
 			}, {
-				title: ko.i18n('colunms.standardConceptCaption', 'Standard Concept Caption'),
+				title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
 			}, {
-				title: ko.i18n('colunms.rc', 'RC'),
+				title: ko.i18n('columns.rc', 'RC'),
 				data: 'RECORD_COUNT',
 				className: 'numeric'
 			}, {
-				title: ko.i18n('colunms.drc', 'DRC'),
+				title: ko.i18n('columns.drc', 'DRC'),
 				data: 'DESCENDANT_RECORD_COUNT',
 				className: 'numeric'
 			}, {
-				title: ko.i18n('colunms.distance', 'Distance'),
+				title: ko.i18n('columns.distance', 'Distance'),
 				data: function (d) {
 					return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {
 						return o.RELATIONSHIP_DISTANCE;
 					}))
 				}
 			}, {
-				title: ko.i18n('colunms.domain', 'Domain'),
+				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'DOMAIN_ID'
 			}, {
-				title: ko.i18n('colunms.vocabulary', 'Vocabulary'),
+				title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 				data: 'VOCABULARY_ID'
 			}];
 
