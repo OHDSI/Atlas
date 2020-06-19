@@ -7,7 +7,6 @@ define([
   'services/MomentAPI',
   'services/AuthAPI',
   'pages/Router',
-  'moment',
   'appConfig',
   'less!./terms-and-conditions.less',
   'components/modal'
@@ -20,7 +19,6 @@ define([
   momentApi,
   authApi,
   router,
-  momentjs,
   appConfig,
 ) {
 	class TermsAndConditions extends AutoBind(Component) {
@@ -47,7 +45,7 @@ define([
     checkAcceptance() {
       const acceptanceDate = localStorage.getItem('terms-and-conditions-acceptance-date');
       if (acceptanceDate !== null) {
-        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate, 10), momentjs().add(appConfig.termsAndConditions.acceptanceExpiresInDays, 'days')) <= 0;
+        const isExpired = momentApi.diffInDays(parseInt(acceptanceDate), Date.now()) > appConfig.termsAndConditions.acceptanceExpiresInDays;
         return !isExpired;
       }
       return false;
