@@ -10,7 +10,6 @@ define([
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'lodash',
-	'services/Poll',
 	'const',
 	'less!./user-bar.less'
 ], function (ko,
@@ -24,7 +23,6 @@ define([
 						 jobDetailsService,
 						 momentApi,
 						 lodash,
-						 PollService,
 						 constants
 ) {
 	class UserBar extends Component {
@@ -118,14 +116,14 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = state.pollService.add({
 				callback: () => this.updateJobStatus(),
 				interval: appConfig.pollInterval,
 			});
 		}
 
 		stopPolling() {
-			PollService.stop(this.pollId);
+			state.pollService.stop(this.pollId);
 		}
 
 		getExisting(n) {

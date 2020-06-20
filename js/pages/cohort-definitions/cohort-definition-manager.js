@@ -25,7 +25,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
-	'services/Poll',
+	'services/JobPoll',
 	'services/file',
 	'services/http',
 	'const',
@@ -80,7 +80,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	commonUtils,
 	costUtilConst,
 	authApi,
-	PollService,
+	JobPoll,
 	FileService,
 	httpService,
 	globalConstants,
@@ -400,7 +400,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 								// only bother updating those sources that we know are running
 									if (this.isSourceRunning(source)) {
 										if(source.status() !== info.status) {
-										  PollService.isJobListMutated(true);
+										  JobPoll.isJobListMutated(true);
 										}
 									source.status(info.status);
 									source.includeFeatures(info.includeFeatures);
@@ -469,7 +469,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.pollId = null;
 			this.shouldUpdateJobs = ko.computed(() => {
 				if (this.generateReportsEnabled()) {
-				  PollService.isJobListMutated(true);
+				  JobPoll.isJobListMutated(true);
 				}
 			});
 
@@ -607,7 +607,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentConceptSetSource = sharedState.ConceptSet.source;
 
 			this.reportSourceKeySub = this.reportSourceKey.subscribe(source => {
-				PollService.stop(this.pollId);
+				sharedState.pollService.stop(this.pollId);
 				this.reportReportName(null);
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
@@ -628,7 +628,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			// METHODS
 
 		startPolling(cd, source) {
-			this.pollId = PollService.add({
+			this.pollId = sharedState.pollService.add({
 				callback: () => this.queryHeraclesJob(cd, source),
 				interval: 10000,
 			});
@@ -1353,7 +1353,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportSourceKeySub.dispose();
 				sharedState.includedHash(null);
 				this.ancestorsModalIsShown(false);
-				PollService.stop(this.pollId);
+				sharedState.pollService.stop(this.pollId);
 			}
 
 			getCriteriaIndexComponent (data) {

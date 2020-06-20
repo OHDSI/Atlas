@@ -11,7 +11,6 @@ define(['knockout',
 		'utils/Renderers',
 		'./const',
 		'./services/JobService',
-		'services/Poll',
 		'./components/step-header',
 		'./components/ldap-groups',
 		'./components/atlas-roles',
@@ -35,7 +34,6 @@ define(['knockout',
 		renderers,
 		Const,
 		jobService,
-		PollService,
 	) {
 
 		class UsersImport extends AutoBind(Component) {
@@ -159,7 +157,7 @@ define(['knockout',
 			}
 
 			startPolling(jobId) {
-				this.pollId = PollService.add({
+				this.pollId = sharedState.pollService.add({
 					callback: () => this.updateJobStatus(jobId),
 					interval: config.pollInterval,
 				});
@@ -167,7 +165,7 @@ define(['knockout',
 
 			stopPolling() {
 				if (this.pollId != null) {
-					PollService.stop(this.pollId);
+					sharedState.pollService.stop(this.pollId);
 				}
 			};
 

@@ -9,7 +9,7 @@ define([
 	'../PermissionService',
 	'services/Estimation',
 	'services/Source',
-	'services/Poll',
+	'atlas-state',
 	'services/file',
 	'services/MomentAPI',
 	'../const',
@@ -28,7 +28,7 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
-	PollService,
+	sharedState,
 	FileService,
 	momentApi,
 	consts,
@@ -89,7 +89,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = sharedState.pollService.add({
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -97,7 +97,7 @@ define([
 		}
 
 		dispose() {
-			PollService.stop(this.pollId);
+			sharedState.pollService.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {
