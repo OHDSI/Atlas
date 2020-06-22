@@ -9,6 +9,7 @@ define(function (require) {
 	var datePicker = require("./datepickerBinding");
 	var dateTimePicker = require("./dateTimePickerBinding");
 	var dataTable = require("./datatableBinding");
+	var dynamicDataTable = require("./dynamicDatatableBinding");
 	var eventListener = require("./eventListenerBinding");
 	var selectOnFocus = require("./knockout.selectOnFocus");
 	var sortExtender = require("./sortExtender");

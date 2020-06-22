@@ -14,6 +14,8 @@ define([
 	'components/visualizations/filter-panel/utils',
 	'components/visualizations/filter-panel/filter-panel',
 	'components/charts/sunburst',
+	'components/nav-pills',
+	'./pathway-tableview',
 	'less!./pathway-results.less'
 ], function(
 	ko,
@@ -33,6 +35,11 @@ define([
 
 	const percentFormat = d3.format(".1%");
 	const numberFormat = d3.format(",");
+	const pills = [
+		{ name: ko.i18n('pathways.manager.executions.results.visualization', 'Visualization'), key: "viz"},
+		{ name: ko.i18n('pathways.manager.executions.results.tabular', 'Tabular'), key: "table"}
+	];
+
 
 	class PathwayResults extends AutoBind(Component) {
 
@@ -50,10 +57,16 @@ define([
 			this.isExecutionDesignShown = ko.observable(false);
 			this.executionDesign = ko.observable(null);
 			this.loadExecutionDesignError = ko.observable(false);
-			this.pathwaysObserver = ko.computed(() => this.prepareResultData(this.results(), this.filterList()));
+			this.pathwaysObserver = ko.pureComputed(() => this.prepareResultData(this.results(), this.filterList()));
 
 			this.executionId.subscribe(id => id && this.loadData());
 			this.title = ko.computed(() => ko.unwrap(ko.i18n('pathways.manager.executions.results.title', 'Pathway Report for')) + ' ' + (this.results() && this.results().sourceName));
+
+			this.pills = pills;
+			this.MODE_VISUALIZATION = pills[0].key;
+			this.MODE_TABULAR = pills[1].key;
+
+			this.mode = ko.observable(pills[0].key);  // default to first pill
 
 			this.loadData();
 		}
@@ -206,6 +219,7 @@ define([
 				});
 
 				const results = {
+					executionId: this.executionId(),
 					sourceId: source.sourceId,
 					sourceName: source.sourceName,
 					date: execution.endTime,

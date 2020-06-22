@@ -1,0 +1,33 @@
+<div data-bind="css: classes(), if: reportData">
+	<div data-bind="foreach: reportData().cohorts">
+		<div data-bind="css: $component.classes('cohort-title')"><span data-bind="text: ko.i18nformat('pathways.manager.executions.results.tableview.cohortName', 'Cohort: <%=name%>', {name: name})"></span></div>
+		<hr>
+		<div data-bind="css: $component.classes('table-title')"><span data-bind="text: ko.i18nformat('pathways.manager.executions.results.tableview.allPathwaysTitle', 'Table <%=index%>a: All Pathways', {index: $index()+1})"></span></div>
+		<div> 
+			<span data-bind="text: ko.i18n('pathways.manager.executions.results.tableview.maximumPathLength', 'Maximum Path Length:')"></span> <select data-bind="options: $component.pathLengthOptions, value: $component.pathLength"></select>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportPathwayReport, text: ko.i18n('common.export', 'Export')"></button>
+		</div>		
+		<table data-bind="dynamicDataTable: $component.getPathwayGroupDatatable($data, $component.pathLength())"></table>
+
+		<div>
+			<span data-bind="css: $component.classes('table-title'), text: ko.i18nformat('pathways.manager.executions.results.tableview.eventCohortCountsByRank', 'Table <%=index%>b: Event Cohort Counts by Rank', {index: $index()+1})"></span>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportCountsByRank, text: ko.i18n('common.export', 'Export')"></button>
+		</div>
+		<table data-bind="dataTable: $component.getEventCohortByRankDatatable($data)"></table>
+		
+		<div>
+			<span data-bind="css: $component.classes('table-title'), text: ko.i18nformat('pathways.manager.executions.results.tableview.eventCohortCounts', 'Table <%=index%>c: Event Cohort Counts', {index: $index()+1})"></span>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportEventCohortCounts, text: ko.i18n('common.export', 'Export')"></button>
+		</div>
+		<table data-bind="dataTable: $component.getEventCohortCountsDatatable($data)"></table>
+		
+		<div>
+			<span data-bind="css: $component.classes('table-title'), text: ko.i18nformat('pathways.manager.executions.results.tableview.distinctEventCohorts', 'Table <%=index%>d: Distinct Event Cohorts', {index: $index()+1})"></span>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportDistinctEventCohortCounts, text: ko.i18n('common.export', 'Export')"></button>
+		</div>
+		<table data-bind="dataTable: $component.getDistinctEventCohortCountsDatatable($data)"></table>
+		
+		<hr>
+		
+	</div>
+</div>

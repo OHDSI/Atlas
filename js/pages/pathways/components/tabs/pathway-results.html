@@ -23,8 +23,12 @@
 		<visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
 	</div>
 
+	<h3 data-bind="css: $component.classes('analysis-name')"><span data-bind="text: ko.i18n('pathways.manager.executions.results.title', 'Pathways Analysis for')"></span> <span data-bind="text: pathwaysObserver().title"></span></h3>
+
+	<nav-pills params="{ pills: $component.pills, selected: $component.mode}"></nav-pills>
+
 	<!-- ko with: pathwaysObserver -->
-	<h3 data-bind="css: $component.classes('analysis-name')"><span data-bind="text: ko.i18n('pathways.manager.executions.results.title', 'Pathways Analysis for')"></span> <span data-bind="text: title"></span></h3>
+	<div data-bind="if: $component.mode() == $component.MODE_VISUALIZATION, css: $component.classes('content')">
 		<div data-bind="if: !eventCodes.length && !cohortPathways.length && !eventCohorts.length">
 			<span data-bind="text: ko.i18n('pathways.manager.executions.results.noPathways', 'No pathways were found')"></span>
 		</div>
@@ -49,7 +53,7 @@
 							</ul>
 						</div>
 						<div data-bind="css: $component.classes('legend-section')">
-							<h5 data-bind="text: ko.i18n('pathways.manager.executions.results.legend.eventCohort', 'Event Cohorts')"></h5>
+							<h5 data-bind="text: ko.i18n('pathways.manager.executions.results.legend.eventCohorts', 'Event Cohorts')"></h5>
 							<table data-bind="css: $component.classes('table-legend'), foreach: $component.pathwaysObserver().eventCohorts">
 								<tr>
 									<td><div data-bind="style: {'background-color' : $component.pathwaysObserver().colors(code)}" class="swatch"></div></td>
@@ -67,8 +71,9 @@
 					<div class="panel-body">
 						<sunburst data-bind="css: $component.classes('sunburst')"
 								  params="data: () => pathway,
-								minHeight: 300,
-								format: {
+										filename: `${targetCohortName}_sunburst.png`,
+										minHeight: 300,
+										format: {
 										tipClass: $component.classes('d3-tip'),
 										split: $component.splitPathway,
 										colors: $parent.colors,
@@ -115,6 +120,13 @@
 				</div>
 			</div>
 		<!-- /ko -->
+	</div>
+	<!-- /ko -->
+
+	<!-- ko with: results -->
+	<div data-bind="if: $component.mode() == $component.MODE_TABULAR, css: $component.classes('content')">
+		<pathway-tableview params="{ results: $data, filterList: $component.filterList()[0] }"></pathway-tableview>
+	</div>
 	<!-- /ko -->
 
 	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: ko.i18n('pathways.manager.executions.dialogs.design.title', 'Design'), data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">
