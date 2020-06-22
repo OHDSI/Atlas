@@ -10,7 +10,7 @@
 
 	<faceted-datatable data-bind="visible: loading()==false" params="orderColumn: 4, reference: reference, columns: columns, options: options, language: ko.i18n('datatable.language')"></faceted-datatable>
 
-	<loading data-bind="visible:loading()" params="status: 'retrieving estimations'"></loading>
+	<loading data-bind="visible:loading()" params="status: ko.i18n('ple.retrievingEstimations', 'retrieving estimations')"></loading>
 </div>
 
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
