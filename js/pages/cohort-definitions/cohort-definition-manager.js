@@ -105,7 +105,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
-			this.pollTimeout = null;
+			this.pollTimeoutId = null;
 			this.authApi = authApi;
 			this.config = config;
 			this.selectedConcepts = sharedState.selectedConcepts;
@@ -379,14 +379,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 
 			this.pollForInfoPeriodically = () => {
-				if (this.pollTimeout) {
-					clearTimeout(this.pollTimeout);
-					this.pollTimeout = null;
-				}			
-				this.pollForInfo();	
-				this.pollTimeout = setTimeout(() => {
-					this.pollForInfoPeriodically();
-				}, 10000);
+				this.pollTimeoutId = PollService.add({
+					callback: () => this.pollForInfo(),
+					interval: 10000,
+				});
 			}
 
 			this.pollForInfo = () => {
@@ -647,7 +643,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					cohortDefinitionService.deleteCohortDefinition(this.currentCohortDefinition().id()).
                     then( (result) => {
 						this.currentCohortDefinition(null);
-						clearTimeout(this.pollTimeout);
+						PollService.stop(this.pollTimeoutId);
 						document.location = "#/cohortdefinitions"
 					}, (error) => {
 						console.log("Error: " + error);
@@ -718,7 +714,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				// reset view after save
 				try {
 					const result = await cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id());
-					clearTimeout(this.pollTimeout);
+					PollService.stop(this.pollTimeoutId);
 					document.location = "#/cohortdefinition/" + result.id;
 				} finally {
 					this.isCopying(false);
@@ -743,11 +739,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			isCancelDisabled(source) {
-				return this.isSourceStopping(source)() || this.processedByAnotherUser(source);
+				return this.isSourceStopping(source)() || this.isProcessingByAnother(source);
 			}
 
-			processedByAnotherUser(source) {
-				return !this.isMine(source) && source.status() != "COMPLETE" && source.status() != "FAILED";
+			isProcessingByAnother(source) {
+				return !this.isMine(source) && source.status() !== "COMPLETE" && source.status() !== "FAILED";
 			}
 	
 			isMine(source) {
@@ -780,11 +776,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					.catch(this.authApi.handleAccessDenied)
 					.then(({data}) => {
 						jobDetailsService.createJob(data);
-						setTimeout( () => {
-							if (!this.pollTimeout) {
-								this.pollForInfo();
-							}
-						}, 3000);
 					});
 			}
 
