@@ -15,7 +15,7 @@ define([
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
-	'services/JobPoll',
+	'services/JobPollService',
 	'services/MomentAPI',
 	'less!./characterization-executions.less',
 	'./characterization-results',
@@ -38,7 +38,7 @@ define([
 	SourceService,
 	lodash,
 	jobDetailsService,
-	JobPoll,
+	JobPollService,
 	momentApi,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
@@ -122,7 +122,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = JobPoll.add(true, {
+			this.pollId = JobPollService.add({
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true
@@ -130,7 +130,7 @@ define([
 		}
 
 		dispose() {
-			JobPoll.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {

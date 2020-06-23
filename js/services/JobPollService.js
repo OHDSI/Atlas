@@ -1,27 +1,27 @@
 define([
   'knockout',
   'services/Poll',
+  'atlas-state',
 ], function (
   ko,
-  PollService
+  PollService,
+  sharedState,
 ) {
-  class JobPoll extends PollService {
-  
+  class JobPollService extends PollService {
+
     constructor() {
       super();
       this.isJobListMutated = ko.observable();
       this.isJobListMutated.extend({ notify: 'always' });
-      this.shouldMutateJobList = false;
     }
-  
-    add(shouldMutateJobList, opts = {}, ...args) {  
-      this.shouldMutateJobList = shouldMutateJobList;
+
+    add(opts = {}, ...args) {
       return super.add(opts, args);
     }
 
     extraActionsAfterCallback() {
-      this.isJobListMutated(this.shouldMutateJobList);
+      sharedState.jobListing.valueHasMutated();
     }
   }
-    return new JobPoll();
+    return new JobPollService();
 });

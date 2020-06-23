@@ -55,7 +55,7 @@ define([
 						this.jobListing().forEach(j => {
 							j.viewed(true);
 						});
-						jobDetailsService.setJobListMutated();
+						state.jobListing.valueHasMutated();
 					} else {
 						this.lastViewedTime = Date.now();
 					}

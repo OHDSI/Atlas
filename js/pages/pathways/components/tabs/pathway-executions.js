@@ -15,7 +15,7 @@ define([
 	'lodash',
 	'services/JobDetailsService',
 	'services/MomentAPI',
-	'services/JobPoll',
+	'services/JobPollService',
 	'less!./pathway-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -35,7 +35,7 @@ define([
 	lodash,
 	jobDetailsService,
 	momentApi,
-	JobPoll
+	JobPollService
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -115,7 +115,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = JobPoll.add(true, {
+			this.pollId = JobPollService.add( {
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true
@@ -123,7 +123,7 @@ define([
 		}
 
 		dispose() {
-			JobPoll.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {
