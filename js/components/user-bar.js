@@ -13,17 +13,17 @@ define([
 	'const',
 	'less!./user-bar.less'
 ], function (ko,
-						 view,
-						 AutoBind,
-						 appConfig,
-						 state,
-						 Component,
-						 commonUtils,
-						 authApi,
-						 jobDetailsService,
-						 momentApi,
-						 lodash,
-						 constants
+			 view,
+			 AutoBind,
+			 appConfig,
+			 state,
+			 Component,
+			 commonUtils,
+			 authApi,
+			 jobDetailsService,
+			 momentApi,
+			 lodash,
+			 constants
 ) {
 	class UserBar extends Component {
 		constructor(params) {
