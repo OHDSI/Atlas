@@ -28,7 +28,7 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
-    PollService,
+	PollService,
 	FileService,
 	momentApi,
 	consts,
