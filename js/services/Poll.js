@@ -47,7 +47,7 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
       }
     }
 
-    extraActionsAfterCallback() {      
+    extraActionsAfterCallback() {
     }
 
     stop(id) {
@@ -61,5 +61,8 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
     }
   }
 
-  return PollService;
+  return {
+    instance: new PollService(),
+    PollServiceClass: PollService,
+  };
 });

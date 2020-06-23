@@ -4,19 +4,15 @@ define([
   'atlas-state',
 ], function (
   ko,
-  PollService,
+  Poll,
   sharedState,
 ) {
-  class JobPollService extends PollService {
+  class JobPollService extends Poll.PollServiceClass {
 
     constructor() {
       super();
       this.isJobListMutated = ko.observable();
       this.isJobListMutated.extend({ notify: 'always' });
-    }
-
-    add(opts = {}, ...args) {
-      return super.add(opts, args);
     }
 
     extraActionsAfterCallback() {

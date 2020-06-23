@@ -10,7 +10,8 @@ define([
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'lodash',
-	'const',
+    'services/Poll',
+    'const',
 	'less!./user-bar.less'
 ], function (ko,
 			 view,
@@ -23,6 +24,7 @@ define([
 			 jobDetailsService,
 			 momentApi,
 			 lodash,
+             PollService,
 			 constants
 ) {
 	class UserBar extends Component {
@@ -44,7 +46,7 @@ define([
 			this.jobListing.subscribe(() => {
 				if (this.shouldUpdateJobStatus) {
 					this.updateJobStatus();
-				}				
+				}
 			});
 
 			this.jobModalOpened = ko.observable(false);
@@ -55,7 +57,7 @@ define([
 						this.jobListing().forEach(j => {
 							j.viewed(true);
 						});
-						state.jobListing.valueHasMutated();
+                        this.jobListing.valueHasMutated();
 					} else {
 						this.lastViewedTime = Date.now();
 					}
@@ -82,8 +84,8 @@ define([
 
 			this.hideCompleted = ko.computed({
 				owner: ko.observable(localStorage.getItem("jobs-hide-statuses")),
-				read: function() { 
-					return this(); 
+				read: function() {
+					return this();
 				},
 				write: function( newValue ) {
 					localStorage.setItem("jobs-hide-statuses", newValue);
@@ -94,7 +96,7 @@ define([
 			this.toggleCompletedFilter = () => {
 				const value = this.hideCompleted();
 				this.hideCompleted(!value);
-				
+
 				this.stopPolling();
 				this.startPolling();
 			};
@@ -116,14 +118,14 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = state.pollService.add({
+			this.pollId = PollService.instance.add({
 				callback: () => this.updateJobStatus(),
 				interval: appConfig.pollInterval,
 			});
 		}
 
 		stopPolling() {
-			state.pollService.stop(this.pollId);
+            PollService.instance.stop(this.pollId);
 		}
 
 		getExisting(n) {

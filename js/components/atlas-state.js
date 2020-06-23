@@ -1,9 +1,8 @@
-define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', 'services/Poll', 'const'], function (ko, cache, jobDetail, ohdsiUtil, PollService, constants) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
 	state.evidenceUrl = ko.observable();
-	state.pollService = new PollService();
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();

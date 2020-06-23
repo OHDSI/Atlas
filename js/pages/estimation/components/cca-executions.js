@@ -9,6 +9,7 @@ define([
 	'../PermissionService',
 	'services/Estimation',
 	'services/Source',
+    'services/Poll',
 	'atlas-state',
 	'services/file',
 	'services/MomentAPI',
@@ -28,6 +29,7 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
+    PollService,
 	sharedState,
 	FileService,
 	momentApi,
@@ -89,7 +91,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = sharedState.pollService.add({
+			this.pollId = PollService.instance.add({
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
