@@ -9,8 +9,7 @@ define([
 	'../PermissionService',
 	'services/Prediction',
 	'services/Source',
-    'services/Poll',
-	'atlas-state',
+	'services/Poll',
 	'services/file',
 	'services/MomentAPI',
 	'utils/ExecutionUtils',
@@ -29,8 +28,7 @@ define([
 	PermissionService,
 	PredictionService,
 	SourceService,
-    PollService,
-	sharedState,
+	PollService,
 	FileService,
 	momentApi,
 	ExecutionUtils,
@@ -100,7 +98,7 @@ define([
 		}
 
 		dispose() {
-		    PollService.instance.stop(this.pollId);
+			PollService.instance.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {

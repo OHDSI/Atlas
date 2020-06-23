@@ -11,7 +11,7 @@ define(['knockout',
 		'utils/Renderers',
 		'./const',
 		'./services/JobService',
-        'services/Poll',
+		'services/Poll',
 		'./components/step-header',
 		'./components/ldap-groups',
 		'./components/atlas-roles',
@@ -35,7 +35,7 @@ define(['knockout',
 		renderers,
 		Const,
 		jobService,
-        PollService,
+		PollService,
 	) {
 
 		class UsersImport extends AutoBind(Component) {
@@ -167,7 +167,7 @@ define(['knockout',
 
 			stopPolling() {
 				if (this.pollId != null) {
-				    PollService.instance.stop(this.pollId);
+						PollService.instance.stop(this.pollId);
 				}
 			};
 

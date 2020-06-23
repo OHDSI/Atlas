@@ -9,8 +9,7 @@ define([
 	'../PermissionService',
 	'services/Estimation',
 	'services/Source',
-    'services/Poll',
-    'atlas-state',
+	'services/Poll',
 	'services/file',
 	'services/MomentAPI',
 	'../const',
@@ -30,7 +29,6 @@ define([
 	EstimationService,
 	SourceService,
     PollService,
-	sharedState,
 	FileService,
 	momentApi,
 	consts,
@@ -99,7 +97,7 @@ define([
 		}
 
 		dispose() {
-			sharedState.pollService.stop(this.pollId);
+			PollService.instance.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {

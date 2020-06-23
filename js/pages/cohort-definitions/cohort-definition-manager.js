@@ -609,7 +609,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentConceptSetSource = sharedState.ConceptSet.source;
 
 			this.reportSourceKeySub = this.reportSourceKey.subscribe(source => {
-			    PollService.instance.stop(this.pollId);
+				PollService.instance.stop(this.pollId);
 				this.reportReportName(null);
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
@@ -1478,7 +1478,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				}
 			}
-
+			
 			getAuthorship() {
 				const cohortDef = this.currentCohortDefinition();
 				return {
