@@ -8,25 +8,25 @@ define([
 	'utils/CommonUtils',
 	'services/AuthAPI',
 	'services/JobDetailsService',
-	'services/MomentAPI', 
-    'lodash', 
-    'services/Poll', 
-    'const',
+	'services/MomentAPI',
+	'lodash',
+	'services/Poll',
+	'const',
 	'less!./user-bar.less'
 ], function (ko,
-             view,
-             AutoBind,
-             appConfig,
-             state,
-             Component,
-             commonUtils,
-             authApi,
-             jobDetailsService,
-             momentApi,
-             lodash,
-             PollService,
-             constants
-) {
+			view,
+			AutoBind,
+			appConfig,
+			state,
+			Component,
+			commonUtils,
+			authApi,
+			jobDetailsService,
+			momentApi,
+			lodash,
+			PollService,
+			constants
+		) {
 	class UserBar extends Component {
 		constructor(params) {
 			super(params);
@@ -84,8 +84,8 @@ define([
 
 			this.hideCompleted = ko.computed({
 				owner: ko.observable(localStorage.getItem("jobs-hide-statuses")),
-                read: function() {
-				    return this();
+				read: function() { 
+					return this(); 
 				},
 				write: function( newValue ) {
 					localStorage.setItem("jobs-hide-statuses", newValue);
@@ -96,7 +96,7 @@ define([
 			this.toggleCompletedFilter = () => {
 				const value = this.hideCompleted();
 				this.hideCompleted(!value);
-
+				
 				this.stopPolling();
 				this.startPolling();
 			};
@@ -125,7 +125,7 @@ define([
 		}
 
 		stopPolling() {
-		    PollService.instance.stop(this.pollId);
+			PollService.instance.stop(this.pollId);
 		}
 
 		getExisting(n) {
