@@ -100,7 +100,7 @@ define([
 		}
 
 		dispose() {
-            PollService.instance.stop(this.pollId);
+		    PollService.instance.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {

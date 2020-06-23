@@ -26,7 +26,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
     'services/Poll',
-	'services/JobPollService',
+    'services/JobPollService',
 	'services/file',
 	'services/http',
 	'const',
@@ -82,7 +82,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	costUtilConst,
 	authApi,
     PollService,
-	JobPollService,
+    JobPollService,
 	FileService,
 	httpService,
 	globalConstants,
@@ -609,7 +609,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentConceptSetSource = sharedState.ConceptSet.source;
 
 			this.reportSourceKeySub = this.reportSourceKey.subscribe(source => {
-                PollService.instance.stop(this.pollId);
+			    PollService.instance.stop(this.pollId);
 				this.reportReportName(null);
 				this.reportingSourceStatusAvailable(false);
 				this.reportingAvailableReports.removeAll();
@@ -1355,7 +1355,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportSourceKeySub.dispose();
 				sharedState.includedHash(null);
 				this.ancestorsModalIsShown(false);
-                PollService.instance.stop(this.pollId);
+				PollService.instance.stop(this.pollId);
 			}
 
 			getCriteriaIndexComponent (data) {

@@ -10,7 +10,7 @@ define([
 	'services/Estimation',
 	'services/Source',
     'services/Poll',
-	'atlas-state',
+    'atlas-state',
 	'services/file',
 	'services/MomentAPI',
 	'../const',

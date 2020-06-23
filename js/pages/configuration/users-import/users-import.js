@@ -167,7 +167,7 @@ define(['knockout',
 
 			stopPolling() {
 				if (this.pollId != null) {
-                    PollService.instance.stop(this.pollId);
+				    PollService.instance.stop(this.pollId);
 				}
 			};
 
