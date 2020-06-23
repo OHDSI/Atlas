@@ -8,9 +8,9 @@ define([
 	'utils/CommonUtils',
 	'services/AuthAPI',
 	'services/JobDetailsService',
-	'services/MomentAPI',
-    'lodash',
-    'services/Poll',
+	'services/MomentAPI', 
+    'lodash', 
+    'services/Poll', 
     'const',
 	'less!./user-bar.less'
 ], function (ko,
