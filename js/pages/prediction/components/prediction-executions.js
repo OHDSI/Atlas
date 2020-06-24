@@ -28,7 +28,7 @@ define([
 	PermissionService,
 	PredictionService,
 	SourceService,
-    {PollService},
+	{PollService},
 	FileService,
 	momentApi,
 	ExecutionUtils,

@@ -24,7 +24,7 @@ define([
 			jobDetailsService,
 			momentApi,
 			lodash,
-             {PollService},
+			{PollService},
 			constants
 		) {
 	class UserBar extends Component {

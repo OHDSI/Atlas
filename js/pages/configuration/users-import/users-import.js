@@ -35,7 +35,7 @@ define(['knockout',
 		renderers,
 		Const,
 		jobService,
-        {PollService},
+		{PollService},
 	) {
 
 		class UsersImport extends AutoBind(Component) {
