@@ -62,7 +62,7 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
   }
 
   return {
-    instance: new PollService(),
+    PollService: new PollService(),
     PollServiceClass: PollService,
   };
 });

@@ -35,7 +35,7 @@ define(['knockout',
 		renderers,
 		Const,
 		jobService,
-		PollService,
+        {PollService},
 	) {
 
 		class UsersImport extends AutoBind(Component) {
@@ -159,7 +159,7 @@ define(['knockout',
 			}
 
 			startPolling(jobId) {
-				this.pollId = PollService.instance.add({
+				this.pollId = PollService.add({
 					callback: () => this.updateJobStatus(jobId),
 					interval: config.pollInterval,
 				});
@@ -167,7 +167,7 @@ define(['knockout',
 
 			stopPolling() {
 				if (this.pollId != null) {
-						PollService.instance.stop(this.pollId);
+						PollService.stop(this.pollId);
 				}
 			};
 

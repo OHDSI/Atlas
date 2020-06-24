@@ -24,7 +24,7 @@ define([
 			jobDetailsService,
 			momentApi,
 			lodash,
-			PollService,
+             {PollService},
 			constants
 		) {
 	class UserBar extends Component {
@@ -118,14 +118,14 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.instance.add({
+			this.pollId = PollService.add({
 				callback: () => this.updateJobStatus(),
 				interval: appConfig.pollInterval,
 			});
 		}
 
 		stopPolling() {
-			PollService.instance.stop(this.pollId);
+			PollService.stop(this.pollId);
 		}
 
 		getExisting(n) {

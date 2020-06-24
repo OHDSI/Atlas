@@ -28,7 +28,7 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
-	PollService,
+    {PollService},
 	FileService,
 	momentApi,
 	consts,
@@ -89,7 +89,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.instance.add({
+			this.pollId = PollService.add({
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -97,7 +97,7 @@ define([
 		}
 
 		dispose() {
-			PollService.instance.stop(this.pollId);
+			PollService.stop(this.pollId);
 		}
 
 		isDownloadInProgress(id) {
