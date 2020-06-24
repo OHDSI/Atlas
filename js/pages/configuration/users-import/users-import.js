@@ -166,9 +166,7 @@ define(['knockout',
 			};
 
 			stopPolling() {
-				if (this.pollId != null) {
-						PollService.stop(this.pollId);
-				}
+					PollService.stop(this.pollId);
 			};
 
 			async updateJobStatus(jobId) {
