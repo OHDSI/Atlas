@@ -1,4 +1,4 @@
-define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
 	state.resultsUrl = ko.observable();
 	state.vocabularyUrl = ko.observable();
