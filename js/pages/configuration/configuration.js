@@ -10,7 +10,7 @@ define([
   'atlas-state',
   'const',
   'services/JobDetailsService',
-  'services/Poll',
+  'services/JobPollService',
   'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
@@ -26,7 +26,7 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService,
+  JobPollService,
   cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
@@ -76,14 +76,14 @@ define([
         return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
       });
 
-      this.intervalId = PollService.add({
+      this.intervalId = JobPollService.add({
         callback: () => this.checkJobs(),
-        interval: 5000,
+        interval: 5000
       });
     }
 
     dispose() {
-      PollService.stop(this.intervalId);
+      JobPollService.stop(this.intervalId);
     }
 
     getSource(job) {

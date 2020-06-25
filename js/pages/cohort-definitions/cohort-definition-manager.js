@@ -1,94 +1,93 @@
-define([
-  "jquery",
-  "knockout",
-  "text!./cohort-definition-manager.html",
-  "appConfig",
-  "components/cohortbuilder/CohortDefinition",
-  "services/CohortDefinition",
-  "services/MomentAPI",
-  "services/ConceptSet",
-  "services/Permission",
-  "components/conceptset/utils",
-  "utils/DatatableUtils",
-  "components/cohortbuilder/CohortExpression",
-  "conceptsetbuilder/InputTypes/ConceptSet",
-  "services/CohortReporting",
-  "services/VocabularyProvider",
-  "utils/ExceptionUtils",
-  "atlas-state",
-  "clipboard",
-  "d3",
-  "services/Jobs",
-  "services/job/jobDetail",
-  "services/JobDetailsService",
-  "pages/cohort-definitions/const",
-  "pages/Page",
-  "utils/AutoBind",
-  "utils/Clipboard",
-  "utils/CommonUtils",
-  "pages/cohort-definitions/const",
-  "services/AuthAPI",
-  "services/Poll",
-  "services/file",
-  "services/http",
-  "const",
-  "./const",
-  "components/security/access/const",
-  "components/cohortbuilder/components/FeasibilityReportViewer",
-  "databindings",
-  "faceted-datatable",
-  "databindings/expressionCartoonBinding",
-  "./components/cohortfeatures/main",
-  "./components/checks/conceptset-warnings",
-  "conceptset-modal",
-  "css!./cohort-definition-manager.css",
-  "assets/ohdsi.util",
-  "components/cohortbuilder/InclusionRule",
-  "components/modal-pick-options",
-  "components/heading",
-  "components/conceptsetInclusionCount/conceptsetInclusionCount",
-  "components/modal",
-  "components/modal-exit-message",
-  "./components/reporting/cohort-reports/cohort-reports",
-  "components/security/access/configure-access-modal",
-  "components/authorship",
-  "utilities/sql",
+define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
+	'appConfig',
+	'components/cohortbuilder/CohortDefinition',
+	'services/CohortDefinition',
+	'services/MomentAPI',
+	'services/ConceptSet',
+	'services/Permission',
+	'components/conceptset/utils',
+	'utils/DatatableUtils',
+	'components/cohortbuilder/CohortExpression',
+	'conceptsetbuilder/InputTypes/ConceptSet',
+	'services/CohortReporting',
+	'services/VocabularyProvider',
+	'utils/ExceptionUtils',
+	'atlas-state',
+	'clipboard',
+	'd3',
+	'services/Jobs',
+	'services/job/jobDetail',
+	'services/JobDetailsService',
+	'pages/cohort-definitions/const',
+	'pages/Page',
+	'utils/AutoBind',
+	'utils/Clipboard',
+	'utils/CommonUtils',
+	'pages/cohort-definitions/const',
+	'services/AuthAPI',
+	'services/Poll',
+	'services/JobPollService',
+	'services/file',
+	'services/http',
+	'const',
+	'./const',
+	'components/security/access/const',
+	'components/cohortbuilder/components/FeasibilityReportViewer',
+	'databindings',
+	'faceted-datatable',
+	'databindings/expressionCartoonBinding',
+	'./components/cohortfeatures/main',
+	'./components/checks/conceptset-warnings',
+	'conceptset-modal',
+	'css!./cohort-definition-manager.css',
+	'assets/ohdsi.util',
+	'components/cohortbuilder/InclusionRule',
+	'components/modal-pick-options',
+	'components/heading',
+	'components/conceptsetInclusionCount/conceptsetInclusionCount',
+	'components/modal',
+	'components/modal-exit-message',
+	'./components/reporting/cohort-reports/cohort-reports',
+	'components/security/access/configure-access-modal',
+	'components/authorship',
+	'utilities/sql',
 ], function (
-  $,
-  ko,
-  view,
-  config,
-  CohortDefinition,
-  cohortDefinitionService,
-  momentApi,
-  conceptSetService,
-  PermissionService,
-  conceptSetUitls,
-  datatableUtils,
-  CohortExpression,
-  ConceptSet,
-  cohortReportingService,
-  vocabularyApi,
-  exceptionUtils,
-  sharedState,
-  clipboard,
-  d3,
-  jobService,
-  jobDetail,
-  jobDetailsService,
-  cohortConst,
-  Page,
-  AutoBind,
-  Clipboard,
-  commonUtils,
-  costUtilConst,
-  authApi,
-  PollService,
-  FileService,
-  httpService,
-  globalConstants,
-  constants,
-  { entityType }
+	$,
+	ko,
+	view,
+	config,
+	CohortDefinition,
+	cohortDefinitionService,
+	momentApi,
+	conceptSetService,
+	PermissionService,
+	conceptSetUitls,
+	datatableUtils,
+	CohortExpression,
+	ConceptSet,
+	cohortReportingService,
+	vocabularyApi,
+	exceptionUtils,
+	sharedState,
+	clipboard,
+	d3,
+	jobService,
+	jobDetail,
+	jobDetailsService,
+	cohortConst,
+	Page,
+	AutoBind,
+	Clipboard,
+	commonUtils,
+	costUtilConst,
+	authApi,
+	{PollService},
+	JobPollService,
+	FileService,
+	httpService,
+	globalConstants,
+	constants,
+	{ entityType }
 ) {
   const includeKeys = ["UseEventEnd"];
   function pruneJSON(key, value) {
@@ -556,18 +555,19 @@ define([
                 return sourceId === info.id.sourceId;
               })[0];
 
-              if (source) {
-                // only bother updating those sources that we know are running
-                if (this.isSourceRunning(source)) {
-                  source.status(info.status);
-                  source.includeFeatures(info.includeFeatures);
-                  source.isValid(info.isValid);
-                  source.startTime(
-                    momentApi.formatDateTime(new Date(info.startTime))
-                  );
-                  source.executionDuration("...");
-                  source.personCount("...");
-                  source.recordCount("...");
+							if (source) {
+								// only bother updating those sources that we know are running
+									if (this.isSourceRunning(source)) {
+										if(source.status() !== info.status) {
+											JobPollService.isJobListMutated(true);
+										}
+									source.status(info.status);
+									source.includeFeatures(info.includeFeatures);
+									source.isValid(info.isValid);
+									source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
+									source.executionDuration('...');
+									source.personCount('...');
+									source.recordCount('...');
 
                   if (info.status != "COMPLETE" && info.status != "FAILED") {
                     hasPending = true;
@@ -642,14 +642,19 @@ define([
       this.reportingSourceStatus = ko.observable();
       this.reportingAvailableReports = ko.observableArray();
 
-      this.pollId = null;
+			this.pollId = null;
+			this.shouldUpdateJobs = ko.computed(() => {
+				if (this.generateReportsEnabled()) {
+					JobPollService.isJobListMutated(true);
+				}
+			});
 
-      this.reportingState = ko.computed(() => {
-        // require a data source selection
-        if (this.reportSourceKey() == undefined) {
-          this.generateReportsEnabled(false);
-          return "awaiting_selection";
-        }
+			this.reportingState = ko.computed(() => {
+				// require a data source selection
+					if (this.reportSourceKey() == undefined) {
+						this.generateReportsEnabled(false);
+					return "awaiting_selection";
+				}
 
         // check if the cohort has been generated
         var sourceInfo = this.cohortDefinitionSourceInfo().find(
