@@ -47,7 +47,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.pageLength = params.pageLength || 15;
 		self.lengthMenu = params.lengthMenu || [
 			[15, 30, 45, 100, -1],
-			[15, 30, 45, 100, 'All']
+			[15, 30, 45, 100, ko.i18n('datatable.language.all', 'All')()]
 		];
 		self.order = params.order || [
 			[1, 'desc']
