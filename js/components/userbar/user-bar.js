@@ -12,7 +12,9 @@ define([
 	'lodash',
 	'services/Poll',
 	'const',
-	'less!./user-bar.less'
+	'less!./user-bar.less',
+	'components/tabs',
+	'components/userbar/tabs/user-bar-jobs',
 ], function (ko,
 			view,
 			AutoBind,
@@ -39,7 +41,45 @@ define([
 			this.loading = state.loading;
 			this.signInOpened = authApi.signInOpened;
 			this.jobListing = state.jobListing;
-			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
+			this.userJobParams = {
+				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
+					.filter( j => j.ownerType === constants.jobTypes.USER_JOB.ownerType)),
+				jobNameClick: this.jobNameClick,
+			};
+			this.systemJobParams = {
+				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
+					.filter( j => j.ownerType === constants.jobTypes.SYSTEM_JOB.ownerType)),
+				jobNameClick: this.jobNameClick,
+			};
+			this.tabs = [];
+			if (this.appConfig.userAuthenticationEnabled) {
+				this.tabs.push({
+					title: 'User jobs',
+					key: constants.jobTypes.USER_JOB.title,
+					componentName: 'user-bar-jobs',
+					componentParams: this.userJobParams,
+				});
+				this.selectedTabKey = ko.observable(constants.jobTypes.USER_JOB.title);
+				this.jobNotificationsPending = ko.computed(() => this.userJobParams.jobListing().filter(j => !j.viewed()).length);
+			} else {
+				this.selectedTabKey = ko.observable(constants.jobTypes.SYSTEM_JOB.title);
+				this.jobNotificationsPending = ko.computed(() => this.systemJobParams.jobListing().filter(j => !j.viewed()).length);
+			}
+			this.tabs.push({
+				title: 'System jobs',
+				key: constants.jobTypes.SYSTEM_JOB.title,
+				componentName: 'user-bar-jobs',
+				componentParams: this.systemJobParams,
+			});
+			this.jobsCount = ko.computed(() => {
+				if (this.selectedTabKey() === constants.jobTypes.USER_JOB.title) {
+					return this.userJobParams.jobListing().length;
+				}
+				if (this.selectedTabKey() === constants.jobTypes.SYSTEM_JOB.title) {
+					return this.systemJobParams.jobListing().length;
+				}
+				return 0;
+			})
 			this.lastViewedTime=null;
 			this.permissionCheckWarningShown = false;
 			this.shouldUpdateJobStatus = true;
@@ -65,8 +105,6 @@ define([
 					console.warn('There isn\'t permission to post viewed notification');
 				}
 			});
-
-			this.jobNotificationsPending = ko.computed(() => this.jobListing().filter(j => !j.viewed()).length);
 
 			this.isLoggedIn = ko.computed(() => authApi.isAuthenticated());
 			this.isLoggedIn.subscribe((isLoggedIn) => {
@@ -160,6 +198,7 @@ define([
 							}),
 							duration,
 							endDate: displayedEndDate,
+							ownerType: n.ownerType,
 						};
 						return job;
 					});
@@ -177,9 +216,21 @@ define([
 			}
 		}
 
-		jobNameClick(j) {
+		jobNameClick = (j) => {
 			this.jobModalOpened(false);
 			window.location = '#/' + j.url;
+		}
+
+		selectTab = (tab) => {
+			switch (tab) {
+				default:
+				case 0:
+					this.selectedTabKey(constants.jobTypes.USER_JOB.title);
+					break;
+				case 1:
+					this.selectedTabKey(constants.jobTypes.SYSTEM_JOB.title);
+					break;
+			}
 		}
 	}
 

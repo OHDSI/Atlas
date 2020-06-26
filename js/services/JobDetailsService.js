@@ -12,6 +12,7 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		job.url(getJobURL(updated));
 		job.duration = ko.observable('');
 		job.endDate = ko.observable('');
+        job.ownerType = 'USER_JOB'
 		queue(job);
 	}
 

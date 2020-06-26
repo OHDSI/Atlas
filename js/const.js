@@ -302,6 +302,17 @@ define([
 			},
 		};
 
+		const jobTypes = {
+			USER_JOB: {
+				title: 'userJob',
+				ownerType: 'USER_JOB',
+			},
+			SYSTEM_JOB: {
+				title: 'systemJob',
+				ownerType: 'SYSTEM_JOB',
+			},
+		};
+
 		return {
 			minChartHeight,
 			treemapGradient,
@@ -319,6 +330,7 @@ define([
 			newEntityNames,
 			pluginTypes,
 			sqlDialects,
+			jobTypes,
     };
   }
 );
