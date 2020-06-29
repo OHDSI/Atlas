@@ -37,14 +37,14 @@ define([
 		constructor(params) {
 			super(params);
 			this.conceptSets = params.conceptSets;
-			this.conceptSetSource = params.conceptSetSource;
+			this.currentConceptSetSource = params.conceptSetSource;
+			this.conceptSetStoreKey = `${this.currentConceptSetSource}ConceptSet`;
 			this.canEdit = params.canEdit || (() => false);
 			this.exportConceptSets = params.exportConceptSets || (() => false);
-			this.currentConceptSet = sharedState.ConceptSet.current;
-			this.currentConceptSetSource = sharedState.activeConceptSetSource;
-			this.selectedConcepts = sharedState.selectedConcepts;
+			this.currentConceptSet = sharedState[this.conceptSetStoreKey].current;
+			this.selectedConcepts = sharedState[this.conceptSetStoreKey].selectedConcepts;
 			this.showImportConceptSetModal = ko.observable();
-			this.includedHash = sharedState.includedHash;
+			this.includedHash = sharedState[this.conceptSetStoreKey].includedHash;
 			this.exporting = ko.observable();
 			this.importing = ko.observable();
 			this.disableConceptSetExport = ko.observable(); //TODO implement export
@@ -80,6 +80,7 @@ define([
 				...params,
 				conceptSetListTableApi: this.tableApi,
 				currentConceptSet: this.currentConceptSet,
+				currentConceptSetSource: this.currentConceptSetSource,
 				selectedConcepts: this.selectedConcepts,
 				loadConceptSet: this.loadConceptSet,
 				loading: this.loading,
@@ -119,7 +120,6 @@ define([
 					componentParams: tabParams,
 				}
 			];
-			sharedState.activeConceptSetSource.valueHasMutated();
 			this.subscriptions.push(this.tableApi.subscribe(() => {
 				this.currentConceptSet() && this.markConceptSetSelected(this.currentConceptSet());
 			}));
@@ -148,7 +148,6 @@ define([
 
 		async loadConceptSet(conceptSetId) {
 			this.selectedTabKey(ConceptSetTabKeys.EXPRESSION);
-			this.currentConceptSetSource(ko.unwrap(this.conceptSetSource));
 			const conceptSet = this.conceptSets().find(item => item.id === conceptSetId);
 			if (!conceptSet) {
 				return;
@@ -163,19 +162,14 @@ define([
 				data.forEach((item, index) => conceptSet.expression.items()[index].concept = item);
 				conceptSet.expression.items.valueHasMutated();
 			}
-			items.forEach(item => sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1);
+			conceptSetService.addToConceptSetIdsMap({ concepts: items, source: this.currentConceptSetSource });
 			this.selectedConcepts(items);
-			this.currentConceptSet({
+			const c = {
 				name: conceptSet.name,
 				id: conceptSet.id,
-			});
-			
-			conceptSetService.updateHashedConceptSet({
-				selectedConcepts: items,
-				conceptSetName: ko.unwrap(conceptSet.name),
-				conceptSetId: conceptSet.id,
-			});
-			conceptSetService.resolveConceptSetExpression();
+			}
+			this.currentConceptSet(c);
+			conceptSetService.resolveConceptSetExpression({ source: this.currentConceptSetSource });
 		}
 
 		createConceptSet() {
@@ -211,6 +205,7 @@ define([
 			await this.prepareConceptSet(conceptSet);
 			this.selectedTabKey(ConceptSetTabKeys.IMPORT);
 			this.markConceptSetSelected(conceptSet);
+			
 		};
 
 		async selectTab(tab) {
@@ -218,7 +213,7 @@ define([
 			this.selectedTabKey(key);
 			this.loading(true);
 			try {
-				await conceptSetService.onCurrentConceptSetModeChanged(key);
+				await conceptSetService.onCurrentConceptSetModeChanged({ mode: key, source: this.currentConceptSetSource });
 			} finally {
 				this.loading(false);
 			}

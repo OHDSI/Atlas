@@ -23,13 +23,13 @@ define([
 	class ConceptsetExport extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.currentConceptSet = sharedState.ConceptSet.current;
-			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-			this.currentIncludedConceptIdentifierList = sharedState.currentIncludedConceptIdentifierList;
-			this.currentConceptIdentifierList = sharedState.currentConceptIdentifierList;
-			this.currentConceptSetExpressionJson = sharedState.currentConceptSetExpressionJson;
+			this.currentConceptSet = sharedState.repositoryConceptSet.current;
+			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag; // TODO
+			this.currentIncludedConceptIdentifierList = sharedState.repositoryConceptSet.currentIncludedConceptIdentifierList;
+			this.currentConceptIdentifierList = sharedState.repositoryConceptSet.currentConceptIdentifierList;
+			this.currentConceptSetExpressionJson = sharedState.repositoryConceptSet.currentConceptSetExpressionJson;
 			this.exporting = ko.observable(false);
-			this.loading = sharedState.resolvingConceptSetExpression;
+			this.loading = sharedState.repositoryConceptSet.resolvingConceptSetExpression;
     }
 
     copyToClipboard(clipboardButtonId, clipboardButtonMessageId) {
@@ -65,8 +65,8 @@ define([
     async exportCSV() {
 			this.exporting(true);
 			try {
-				await FileService.loadZip(constants.paths.export(this.currentConceptSet().id),
-					`conceptset-${this.currentConceptSet().id}.zip`);
+				await FileService.loadZip(constants.paths.export(this.currentConceptSet.id),
+					`conceptset-${this.currentConceptSet.id}.zip`);
 			}finally {
 				this.exporting(false);
 			}

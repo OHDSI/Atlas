@@ -4,23 +4,26 @@ define([
 	'components/Component',
 	'utils/AutoBind',
   'utils/CommonUtils',
+  'utils/Renderers',
   'services/ConceptSet',
   'atlas-state',
+  'const',
 ], function (
 	ko,
 	view,
 	Component,
   AutoBind,
   commonUtils,
+  renderers,
   conceptSetService,
   sharedState,
+  globalConstants,
 ) {
 	class ConceptsetExpression extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.selectedConcepts = sharedState.selectedConcepts;
+			this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
       this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
-      this.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
       this.commonUtils = commonUtils;
       this.allExcludedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.isExcluded()) === undefined;
@@ -31,31 +34,78 @@ define([
       this.allMappedChecked = ko.pureComputed(() => {
         return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
       });
+
+      this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isCheckedForRemoval()).length);
+      this.data = ko.observable(this.normalizeData());
+      this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
+      this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
+
+      this.columns = [
+        {
+          class: 'text-center',
+          orderable: false,
+          render: () => renderers.renderCheckbox('isCheckedForRemoval'),
+        },
+        {
+          data: 'concept.CONCEPT_ID',
+        },
+        {
+          data: 'concept.CONCEPT_CODE',
+        },
+        {
+          render: commonUtils.renderBoundLink,
+        },
+        {
+          data: 'concept.DOMAIN_ID',
+        },
+        {
+          data: 'concept.STANDARD_CONCEPT',
+          visible: false,
+        },
+        {
+          data: 'concept.STANDARD_CONCEPT_CAPTION',
+        },
+        {
+          class: 'text-center',
+          orderable: false,
+          render: () => this.renderCheckbox('isExcluded'),
+        },
+        {
+          class: 'text-center',
+          orderable: false,
+          render: () => this.renderCheckbox('includeDescendants'),
+        },
+        {
+          class: 'text-center',
+          orderable: false,
+          render: () => this.renderCheckbox('includeMapped'),
+        },
+      ];
     }
 
     toggleExcluded() {
-      this.selectAllConceptSetItems(
-        !this.allExcludedChecked(),
-        this.allDescendantsChecked(),
-        this.allMappedChecked()
-      );
+      this.selectAllConceptSetItems('isExcluded', this.allExcludedChecked());
     }
 
     toggleDescendants() {
-      this.selectAllConceptSetItems(
-        this.allExcludedChecked(),
-        !this.allDescendantsChecked(),
-        this.allMappedChecked()
-      );
+      this.selectAllConceptSetItems('includeDescendants', this.allDescendantsChecked());
+    }
+
+    toggleMapped() {
+      this.selectAllConceptSetItems('includeMapped', this.allMappedChecked());
+    }
+
+    normalizeData() {
+      return this.selectedConcepts().map(concept => ({ ...concept, isCheckedForRemoval: ko.observable(!!concept.isCheckedForRemoval) }));
     }
 
     toggleCheckbox(d, field) {
 			commonUtils.toggleConceptSetCheckbox(
 				this.canEditCurrentConceptSet,
-				sharedState.selectedConcepts,
+				this.selectedConcepts,
 				d,
 				field,
-				conceptSetService.resolveConceptSetExpression
+				() => conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository })
 			);
     }
 
@@ -63,31 +113,30 @@ define([
       return commonUtils.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
     }
 
-
-    toggleMapped() {
-      this.selectAllConceptSetItems(
-        this.allExcludedChecked(),
-        this.allDescendantsChecked(),
-        !this.allMappedChecked()
-      );
+    toggleSelectedConceptsForRemoval() {
+        const areAllConceptsCheckedForRemoval = this.areAllConceptsCheckedForRemoval();
+        this.data().forEach(concept => concept.isCheckedForRemoval(!areAllConceptsCheckedForRemoval));
     }
 
-		selectAllConceptSetItems(isExcluded = null, includeDescendants = null, includeMapped = null) {
+    removeConceptsFromConceptSet() {
+      const conceptsForRemoval = this.data().filter(concept => concept.isCheckedForRemoval());
+      const idsForRemoval = conceptsForRemoval.map(({ concept }) => concept.CONCEPT_ID);
+      conceptSetService.removeConceptsFromConceptSet({
+        concepts: conceptsForRemoval,
+        source: globalConstants.conceptSetSources.repository
+      });
+      const data = this.data().filter(({ concept}) => !idsForRemoval.includes(concept.CONCEPT_ID));
+      this.data(data);
+    }
+
+		selectAllConceptSetItems(key, areAllSelected) {
 			if (!this.canEditCurrentConceptSet()) {
 				return;
-			}
-			this.selectedConcepts().forEach((conceptSetItem) => {
-				if (isExcluded !== null) {
-					conceptSetItem.isExcluded(isExcluded);
-				}
-				if (includeDescendants !== null) {
-					conceptSetItem.includeDescendants(includeDescendants);
-				}
-				if (includeMapped !== null) {
-					conceptSetItem.includeMapped(includeMapped);
-				}
-			});
-			conceptSetService.resolveConceptSetExpression();
+      }
+      this.selectedConcepts().forEach(concept => {
+        concept[key](!areAllSelected);
+      })
+			conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
     }
 
 	}

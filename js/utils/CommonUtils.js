@@ -214,6 +214,9 @@ define([
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
 
+	const getSelectedConcepts = (concepts = []) =>
+		concepts.filter(concept => concept.isExcluded() || concept.includeDescendants() || concept.includeMapped());
+
 	return {
 		build,
 		confirmAndDelete,
@@ -236,5 +239,6 @@ define([
 		toggleConceptSetCheckbox,
 		escapeTooltip,
 		highlightRow,
+		getSelectedConcepts,
 	};
 });

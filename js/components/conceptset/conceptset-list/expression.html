@@ -4,7 +4,7 @@
         Name:
     </div>
     <div class="divtext" placeholder="Concept Set Name" data-bind="attr: { contenteditable:canEdit() }, htmlValue:currentConceptSet().name"></div>
-    <conceptset-editor params="conceptSets:selectedConcepts, canEditCurrentConceptSet: canEdit"></conceptset-editor>
+    <conceptset-editor params="conceptSets:selectedConcepts, canEditCurrentConceptSet: canEdit, currentConceptSetSource: currentConceptSetSource"></conceptset-editor>
 
     <div class="clear"></div>
     <div data-bind="css: classes({element: 'button-pane', extra: 'pull-right'})">

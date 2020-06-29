@@ -1,7 +1,17 @@
 <div class="paddedWrapper">
+  <div class="row">
+    <button 
+      class="btn btn-danger btn-sm" 
+      data-bind="
+        click: removeConceptsFromConceptSet, 
+        css: { disabled: conceptsForRemovalLength() === 0 },
+        text: conceptsForRemovalLength() === 1 ? 'Remove selected concept from Concept Set' : 'Remove selected concepts from Concept Set',
+      "
+    ></button>
+  </div>
   <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
         xssSafe: true,
-        data: selectedConcepts(),
+        data: data(),
         options: {
           dom: 'Clfiprt',
           colVis: {
@@ -17,34 +27,21 @@
           deferRender: true,
           autoWidth: false,
           order: [[3, 'desc']],
-          columns: [
-            { render: $component.renderConceptSetItemSelector, orderable:false, searchable:false},
-            { data: 'concept.CONCEPT_ID'},
-            { data: 'concept.CONCEPT_CODE'},
-            { render: commonUtils.renderBoundLink},
-            { data: 'concept.DOMAIN_ID' },
-            { data: 'concept.STANDARD_CONCEPT', visible:false },
-            { data: 'concept.STANDARD_CONCEPT_CAPTION' },
-            {
-              class: 'text-center',
-              orderable: false,
-              render: function() { return $component.renderCheckbox('isExcluded');}
-            },
-            {
-              class: 'text-center',
-              orderable: false,
-              render: function() { return $component.renderCheckbox('includeDescendants');}
-            },
-            {
-              class: 'text-center',
-              orderable: false,
-              render: function() { return $component.renderCheckbox('includeMapped');}
-            }
-          ]
+          columns: columns,
         }
       }">
       <thead>
-        <th><li class='fa fa-shopping-cart'></li></th>
+        <th>
+          <!-- ko if: canEditCurrentConceptSet -->
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${areAllConceptsCheckedForRemoval() ? 'selected' : ''}`
+              }),
+              click: toggleSelectedConceptsForRemoval
+            "></span>
+          <!-- /ko -->
+      </th>
         <th>Concept Id</th>
         <th>Concept Code</th>
         <th>Concept Name</th>

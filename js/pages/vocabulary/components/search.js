@@ -4,6 +4,7 @@ define([
 	'text!./search.html',
 	'appConfig',
 	'services/AuthAPI',
+	'services/ConceptSet',
 	'../PermissionService',
 	'components/Component',
 	'utils/AutoBind',
@@ -22,6 +23,7 @@ define([
 	view,
 	config,
 	authApi,
+	ConceptSetService,
 	PermissionService,
 	Component,
 	AutoBind,
@@ -51,11 +53,15 @@ define([
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
 			this.params = params;
-			this.hasActiveConcepts = ko.computed(() => !!Object.keys(sharedState.activeConceptSets()).length);
-			this.activeConceptSets = ko.computed(() => {
-				const activeConceptSets = sharedState.HashedConceptSets;
-				return Object.keys(activeConceptSets).map(key => activeConceptSets[key]);
+			this.activeConceptSets = sharedState.activeConceptSets;
+			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
+			this.currentlyActiveConceptSetName = ko.computed(() => {
+				if (sharedState.activeConceptSet() && sharedState.activeConceptSet().current()) {
+					return sharedState.activeConceptSet().current().name();
+				}
+				return '';
 			});
+			console.log(this);
 			this.currentlyActiveConceptSet = ko.computed(() => {
 				return sharedState.HashedConceptSets[sharedState.activeConceptSetSource()] || null;
 			});
@@ -91,17 +97,8 @@ define([
 					}
 					return `Loading ${entities.join(', ')}`;
 				});
-				// 'colvis',
 				this.buttons = [
-					{
-						extend: 'colvis',
-						columnText: (dt, idx, title) => {
-							if (idx === 0) {
-								return '<i class="fa fa-shopping-cart"></i>';
-							}
-							return title;
-						}
-					},
+					'colvis',
 					'copyHtml5',
 					'excelHtml5',
 					'csvHtml5',
@@ -109,18 +106,6 @@ define([
 				];
 
 				this.searchColumns = [{
-					title: '<i class="fa fa-shopping-cart"></i>',
-					render: function (s, p, d) {
-						var css = '';
-						var icon = 'fa-shopping-cart';
-						if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-							css = ' selected';
-						}
-						return '<i class="fa ' + icon + ' ' + css + '"></i>';
-					},
-					orderable: false,
-					searchable: false
-				}, {
 					title: 'Id',
 					data: 'CONCEPT_ID'
 				}, {
@@ -151,6 +136,15 @@ define([
 				}, {
 					title: 'Vocabulary',
 					data: 'VOCABULARY_ID'
+				}, {
+					title: 'Descendants',
+					render: (s, p, d) => this.renderCheckbox('includeDescendants'),
+				}, {
+					title: 'Exclude',
+					render: (s, p, d) => this.renderCheckbox('isExcluded'),
+				}, {
+					title: 'Mapped',
+					render: (s, p, d) => this.renderCheckbox('includeMapped'),
 				}];
 
 				this.searchOptions = {
@@ -199,6 +193,14 @@ define([
 					this.getDomains();
 					this.getVocabularies();
 				}
+			}
+
+			renderCheckbox(field) {
+				return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
+				// if (this.canEdit()) {
+				// } else {
+				// 	return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
+				// }
 			}
 
 			encodeSpecialCharacters(str) {
@@ -328,6 +330,25 @@ define([
 					});
 			}
 
+			getCheckBoxState(conceptId, key) {
+				const { selectedConceptsIndex, selectedConcepts } = sharedState;
+				const isConceptSelected = selectedConceptsIndex[conceptId];
+				if (isConceptSelected) {
+					const selectedConcept = selectedConcepts().find(item => item.concept.CONCEPT_ID === conceptId);
+					return selectedConcept[key];
+				}
+				return ko.observable(false);
+			}
+
+			normalizeSearchResults(searchResults) {
+				return searchResults.map(item => ({
+					...item,
+					includeDescendants: this.getCheckBoxState(item.CONCEPT_ID, 'includeDescendants'),
+					includeMapped: this.getCheckBoxState(item.CONCEPT_ID, 'includeMapped'),
+					isExcluded: this.getCheckBoxState(item.CONCEPT_ID, 'isExcluded'),
+				}));
+			}
+
 			handleSearchResults(results) {
 				if (results.length === 0) {
 					throw { message: 'No results found', results };
@@ -335,10 +356,16 @@ define([
 
 				const promise = vocabularyProvider.loadDensity(results);
 				promise.then(() => {
-					this.data(results);
+					this.data(this.normalizeSearchResults(results));
 				});
 
 				return promise;
+			}
+
+			addConceptsToConceptSet(source) {
+				sharedState.activeConceptSet(sharedState[`${source}ConceptSet`]);
+				const conceptsToAdd = this.data().filter(item => item.isExcluded() || item.includeDescendants() || item.includeMapped());
+				ConceptSetService.addConceptsToConceptSet({ concepts: conceptsToAdd, source });
 			}
 
 			getVocabularies() {

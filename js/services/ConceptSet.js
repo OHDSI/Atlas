@@ -6,6 +6,8 @@ define(function (require, exports) {
 	const authApi = require('services/AuthAPI');
 	const vocabularyService = require('services/Vocabulary');
 	const commonUtils = require('utils/CommonUtils');
+	const globalConstants = require('const');
+	const _ = require('lodash');
 	const hash = require('hash-it').default;
 	function getIncludedConceptSetDrawCallback({ searchConceptsColumns }) {
 		return async function (settings) {
@@ -32,9 +34,9 @@ define(function (require, exports) {
 		}
 	}
 
-	function getAncestorsModalHandler({ sharedState, ancestors, ancestorsModalIsShown }) {
+	function getAncestorsModalHandler({ sharedState, ancestors, ancestorsModalIsShown, source }) {
 		return function(conceptId) {
-			ancestors(sharedState.includedConcepts()
+			ancestors(sharedState[`${source}ConceptSet`].includedConcepts()
 				.find(v => v.CONCEPT_ID === conceptId)
 				.ANCESTORS
 				.map(v => ({concept: v})));
@@ -121,44 +123,54 @@ define(function (require, exports) {
 			.then(({ data }) => data);
 	}
 
-	async function loadSourcecodes() {
-		sharedState.loadingSourcecodes(true);
+	async function loadSourcecodes({ source }) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		currentConceptSet.loadingSourcecodes(true);
 
 		// load mapped
 		let identifiers = [];
-		let concepts = sharedState.includedConcepts();
+		let concepts = currentConceptSet.includedConcepts();
 		for (var i = 0; i < concepts.length; i++) {
 			identifiers.push(concepts[i].CONCEPT_ID);
 		}
 		try {
 			const { data } = await httpService.doPost(`${sharedState.vocabularyUrl()}lookup/mapped`, identifiers);
-			sharedState.includedSourcecodes(data);
+			const normalizedData = data.map(item => ({
+				...item, 
+				isExcluded: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].isExcluded : ko.observable(false),
+				includeDescendants: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeDescendants : ko.observable(false),
+				includeMapped: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeMapped : ko.observable(false),
+			}))
+			currentConceptSet.includedSourcecodes(normalizedData);
 			return data;
 		} catch (err) {
 			console.error(err);
 		} finally {
-			sharedState.loadingSourcecodes(false);
+			currentConceptSet.loadingSourcecodes(false);
 		}
 	}
 
-	async function onCurrentConceptSetModeChanged(newMode) {
+	async function onCurrentConceptSetModeChanged({ mode, source }) {
+		console.log(mode, source);
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
 		let hashcode;
 		const loadIncludedWithHash = async function() {
-			hashcode = hash(sharedState.conceptSetInclusionIdentifiers());
-			if (hashcode !== sharedState.includedHash()) {
-				await loadIncluded();
-				sharedState.includedHash(hashcode);
-			}
+			hashcode = hash(currentConceptSet.conceptSetInclusionIdentifiers());
+			// if (hashcode !== currentConceptSet.includedHash()) { TODO
+				await loadIncluded({ source });
+				currentConceptSet.includedHash(hashcode);
+			// }
 		};
-		switch (newMode) {
+		switch (mode) {
 			case 'included-conceptsets':
 			case 'included':
+				console.log('loadincluded')
 				await loadIncludedWithHash();
 				break;
 			case 'included-sourcecodes':
 				await loadIncludedWithHash();
-				if (sharedState.includedSourcecodes().length === 0) {
-					await loadSourcecodes();
+				if (currentConceptSet.includedSourcecodes().length === 0) {
+					await loadSourcecodes({ source });
 				}
 				break;
 		}
@@ -169,24 +181,25 @@ define(function (require, exports) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers/ancestors', data);
 	}
 
-	function loadAndApplyAncestors(data) {
-		const selectedConceptIds = sharedState.selectedConcepts().filter(v => !ko.unwrap(v.isExcluded)).map(v => v.concept.CONCEPT_ID);
+	function loadAndApplyAncestors({ data, source }) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		const selectedConceptIds = currentConceptSet.selectedConcepts().filter(v => !ko.unwrap(v.isExcluded)).map(v => v.concept.CONCEPT_ID);
 		const ids = [];
 		$.each(data, idx => {
 			const element = data[idx];
-			if (_.isEmpty(element.ANCESTORS) && sharedState.selectedConceptsIndex[element.CONCEPT_ID] !== 1) {
+			if (_.isEmpty(element.ANCESTORS) && !currentConceptSet.selectedConceptsIndex[element.CONCEPT_ID]) {
 				ids.push(element.CONCEPT_ID);
 			}
 		});
 		return new Promise((resolve, reject) => {
 			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
 				loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
-					const map = sharedState.includedConceptsMap();
+					const map = currentConceptSet.includedConceptsMap();
 					$.each(data, idx => {
 						const line = data[idx];
 						const ancArray = ancestors[line.CONCEPT_ID];
 						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
-							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]);
+							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]).filter(Boolean);
 						}
 					});
 					resolve();
@@ -197,75 +210,73 @@ define(function (require, exports) {
 		});
 	};
 
-	async function loadIncluded(identifiers) {
-		const data = identifiers || sharedState.conceptSetInclusionIdentifiers();
+	async function loadIncluded({
+		identifiers,
+		source,
+	}) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		const data = identifiers || currentConceptSet.conceptSetInclusionIdentifiers();
 		try {
-			sharedState.loadingIncluded(true);
+			currentConceptSet.loadingIncluded(true);
 			const response = await httpService.doPost(`${sharedState.vocabularyUrl()}lookup/identifiers`, data);
 			await vocabularyService.loadDensity(response.data);
-			sharedState.includedConcepts((response.data || []).map(v => ({...v, ANCESTORS: []})));
+			currentConceptSet.includedConcepts((response.data || []).map(item => ({
+				...item,
+				ANCESTORS: [],
+				isExcluded: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].isExcluded : ko.observable(false),
+				includeDescendants: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeDescendants : ko.observable(false),
+				includeMapped: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeMapped : ko.observable(false),
+			})));
 			const map = response.data.reduce((result, item) => {
 				result[item.CONCEPT_ID] = item;
 				return result;
 			}, {});
-			sharedState.includedConceptsMap(map);
-			await loadAndApplyAncestors(sharedState.includedConcepts());
+			currentConceptSet.includedConceptsMap(map);
+			await loadAndApplyAncestors({
+				data: currentConceptSet.includedConcepts(),
+				source,
+			});
 		} catch (err) {
 			console.error(err);
 		} finally {
-			sharedState.loadingIncluded(false);
+			currentConceptSet.loadingIncluded(false);
 		}
 	}
 
 	function setConceptSet(conceptset, expressionItems, source) {
-		var conceptSetItemsToAdd = [];
-		expressionItems.forEach((conceptSet) => {
+		let conceptSetItemsToAdd = [];
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		expressionItems.forEach(conceptSet => {
 			const conceptSetItem = enhanceConceptSet(conceptSet);
-
-			sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = 1;
+			currentConceptSet.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = {
+				isExcluded: conceptSetItem.isExcluded,
+				includeDescendants: conceptSetItem.includeDescendants,
+				includeMapped: conceptSetItem.includeMapped,
+			};
 			conceptSetItemsToAdd.push(conceptSetItem);
 		});
-
-		sharedState.selectedConcepts(conceptSetItemsToAdd);
-		sharedState.ConceptSet.current({
+		currentConceptSet.selectedConcepts(conceptSetItemsToAdd);
+		currentConceptSet.current({
 			name: ko.observable(conceptset.name),
 			id: conceptset.id,
 			createdBy: conceptset.createdBy,
 		});
-		updateHashedConceptSet({
-			conceptSetName: conceptset.name,
-			conceptSetId: conceptset.id,
-			selectedConcepts: conceptSetItemsToAdd,
-			selectedConceptsIndex: sharedState.selectedConceptsIndex,
-		})
 	}
 
-	function setConceptSetExpressionExportItems() {
-		var highlightedJson = commonUtils.syntaxHighlight(sharedState.conceptSetExpression());
-		sharedState.currentConceptSetExpressionJson(highlightedJson);
-		var conceptIdentifierList = [];
-		for (var i = 0; i < sharedState.selectedConcepts().length; i++) {
-			conceptIdentifierList.push(sharedState.selectedConcepts()[i].concept.CONCEPT_ID);
+	function setConceptSetExpressionExportItems({
+		source,
+	}) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		const conceptSetExpression = { items: currentConceptSet.selectedConcepts() };
+		const highlightedJson = commonUtils.syntaxHighlight(conceptSetExpression);
+		currentConceptSet.currentConceptSetExpressionJson(highlightedJson);
+		let conceptIdentifierList = [];
+		for (let i = 0; i < currentConceptSet.selectedConcepts().length; i++) {
+			conceptIdentifierList.push(currentConceptSet.selectedConcepts()[i].concept.CONCEPT_ID);
 		}
-		sharedState.currentConceptIdentifierList(conceptIdentifierList.join(','));
-		updateHashedConceptSet({
-			currentConceptIdentifierList: sharedState.currentConceptIdentifierList(),
-			currentConceptSetExpressionJson: highlightedJson,
-		})
+		currentConceptSet.currentConceptIdentifierList(conceptIdentifierList.join(','));
 	}
 
-	function updateHashedConceptSet(data) {
-		const activeConceptSetSource = sharedState.activeConceptSetSource();
-		console.log('updateHashedConceptSet', activeConceptSetSource, data)
-		if (activeConceptSetSource) {
-			const conceptToUpdate = sharedState.HashedConceptSets[activeConceptSetSource] || {};
-			sharedState.HashedConceptSets[activeConceptSetSource] = {
-				...conceptToUpdate,
-				...data,
-				source: activeConceptSetSource,
-			}
-		}
-	}
 
 	function setCurrentConceptSet() {
 		const concept = sharedState.HashedConceptSets[sharedState.activeConceptSetSource()];
@@ -288,94 +299,133 @@ define(function (require, exports) {
 	// for the current selected concepts:
 	// update the export panel
 	// resolve the included concepts and update the include concept set identifier list
-	function resolveConceptSetExpression(resolveAgainstServer = true) {
-		let hashCode = hash(sharedState.conceptSetInclusionIdentifiers());
-		if (hashCode !== sharedState.includedHash()) {
-			sharedState.includedConcepts.removeAll();
-			sharedState.includedSourcecodes.removeAll();
-			sharedState.conceptSetInclusionIdentifiers.removeAll();
-			sharedState.currentConceptIdentifierList(null);
-			sharedState.currentIncludedConceptIdentifierList(null);
-		}
-		setConceptSetExpressionExportItems(sharedState.conceptSetExpression());
-		updateHashedConceptSet({
-			includedConcepts: sharedState.includedConcepts(),
-			includedSourcecodes: sharedState.includedSourcecodes(),
-			currentConceptIdentifierList: sharedState.currentConceptIdentifierList(),
-			currentIncludedConceptIdentifierList: sharedState.currentIncludedConceptIdentifierList(),
-		})
-		return resolveAgainstServer ? resolveConceptSetExpressionSimple(sharedState.conceptSetExpression()) : null;
+	function resolveConceptSetExpression({
+		resolveAgainstServer = true,
+		source,
+	}) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		console.log(currentConceptSet);
+		['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
+			.forEach(key => currentConceptSet[key].removeAll());
+		['currentConceptIdentifierList', 'currentIncludedConceptIdentifierList']
+			.forEach(key => currentConceptSet[key](null));
+		
+		setConceptSetExpressionExportItems({ source });
+		return resolveAgainstServer
+			? resolveConceptSetExpressionSimple({ source })
+			: null;
 	}
 
-	function resolveConceptSetExpressionSimple(expression, success) {
-		const callback = typeof success === 'function'
+	function resolveConceptSetExpressionSimple({
+		successCallback,
+		source,
+	}) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		const callback = typeof successCallback === 'function'
 			? success
 			: ({ data }) => {
 				let info = data;
 				if (!Array.isArray(info)) {
 					throw new Error();
 				}
-				sharedState.conceptSetInclusionIdentifiers(info);
-				sharedState.currentIncludedConceptIdentifierList(info.join(','));
-				updateHashedConceptSet({
-					conceptSetInclusionIdentifiers: info,
-					currentIncludedConceptIdentifierList: info.join(','),
-				});
+				currentConceptSet.conceptSetInclusionIdentifiers(info);
+				currentConceptSet.currentIncludedConceptIdentifierList(info.join(','));
 			};
-		sharedState.resolvingConceptSetExpression(true);
-		const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', expression)
-			.then(callback)
-			.then(() => sharedState.resolvingConceptSetExpression(false))
-
-		return resolvingPromise;
+			currentConceptSet.resolvingConceptSetExpression(true);
+			const conceptSetExpression = { items: currentConceptSet.selectedConcepts() };
+			const resolvingPromise = httpService.doPost(sharedState.vocabularyUrl() + 'resolveConceptSetExpression', conceptSetExpression)
+				.then(callback)
+				.then(() => currentConceptSet.resolvingConceptSetExpression(false));
+			
+			return resolvingPromise;
 	}
 
-	function clearConceptSet() {
-		sharedState.ConceptSet.current(null);
-		sharedState.clearSelectedConcepts();
-		resolveConceptSetExpression(false);
-		sharedState.ConceptSet.dirtyFlag().reset();
+	function clearConceptSet({ source }) {
+		const conceptSetKey = `${source}ConceptSet`;
+		sharedState[conceptSetKey].current(null);
+		sharedState.clearSelectedConcepts({ source });
+		resolveConceptSetExpression({ resolveAgainstServer: false, source });
+		sharedState[conceptSetKey].dirtyFlag().reset();
 	}
 
+	function addToConceptSetIdsMap({ concepts = [], source }) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		const selectedConceptsIndex = concepts.reduce((p, c) => ({ ...p, [c.concept.CONCEPT_ID]: {
+			includeDescendants: c.includeDescendants,
+			includeMapped: c.includeMapped,
+			isExcluded: c.isExcluded,
+		} }), {});
+		currentConceptSet.selectedConceptsIndex = {
+			...currentConceptSet.selectedConceptsIndex,
+			...selectedConceptsIndex,
+		};
+	}
 
-	
+	function createNewConceptSet(currentConceptSet) {
+		console.log(currentConceptSet);
+		const conceptSet = {
+			id: 0,
+			name: ko.observable("New Concept Set"),
+		};
+		currentConceptSet.current(conceptSet);
+	}
 
-	function savePreviousConceptSet() {
-		return true;
-		const {
-			ConceptSet,
-			currentConceptIdentifierList,
-			resolvingConceptSetExpression,
-			currentConceptSetExpressionJson,
-			includedConceptsMap,
-			includedSourcecodes,
-			currentConceptSetMode,
-			includedHash,
-			selectedConcepts,
-			activeConceptSetSource,
-		} = sharedState;
-		if (activeConceptSetSource()) {
-			sharedState.HashedConceptSets = {
-				...sharedState.HashedConceptSets,
-				[sharedState.activeConceptSetSource()]: {
-					ConceptSet,
-					currentConceptIdentifierList,
-					resolvingConceptSetExpression,
-					currentConceptSetExpressionJson,
-					includedConceptsMap,
-					includedSourcecodes,
-					currentConceptSetMode,
-					includedHash,
-					selectedConcepts,
-				}
-			}
+	function removeConceptsFromConceptSet({
+		concepts = [],
+		source,
+	}) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		const ids = concepts.map(({ concept }) => concept.CONCEPT_ID);
+
+		ids.forEach(id => delete currentConceptSet.selectedConceptsIndex[id]);
+		const selectedConcepts = currentConceptSet.selectedConcepts().filter(({ concept }) => !ids.includes(concept.CONCEPT_ID));
+
+		currentConceptSet.selectedConcepts(selectedConcepts);
+		// currentConceptSet.selectedConcepts.valueHasMutated();
+		resolveConceptSetExpression({ source });
+	}
+
+	function createConceptSetItem(concept) {
+		return {
+			concept: {
+				CONCEPT_ID: concept.CONCEPT_ID,
+				CONCEPT_NAME: concept.CONCEPT_NAME,
+				STANDARD_CONCEPT: concept.STANDARD_CONCEPT,
+				STANDARD_CONCEPT_CAPTION: concept.STANDARD_CONCEPT_CAPTION,
+				INVALID_REASON: concept.INVALID_REASON,
+				CONCEPT_CODE: concept.CONCEPT_CODE,
+				DOMAIN_ID: concept.DOMAIN_ID,
+				VOCABULARY_ID: concept.VOCABULARY_ID,
+				CONCEPT_CLASS_ID: concept.CONCEPT_CLASS_ID,
+			},
+			isExcluded: concept.isExcluded,
+			includeDescendants: concept.includeDescendants,
+			includeMapped: concept.includeMapped,
 		}
 	}
 
+
+	function addConceptsToConceptSet({ concepts = [], source }) {
+		const currentConceptSet = sharedState[`${source}ConceptSet`];
+		if (!currentConceptSet.current()) {
+			createNewConceptSet(currentConceptSet);
+		}
+		console.log(concepts);
+		const normalizedConcepts = concepts.map(concept => createConceptSetItem(concept));
+		addToConceptSetIdsMap({ concepts: normalizedConcepts, source });
+		currentConceptSet.selectedConcepts(_.uniqBy([
+			...currentConceptSet.selectedConcepts(),
+			...normalizedConcepts
+		], 'concept.CONCEPT_ID'));
+		currentConceptSet.selectedConcepts.valueHasMutated();
+		setConceptSetExpressionExportItems({ source });
+	}
+
 	const api = {
-		updateHashedConceptSet,
+		addConceptsToConceptSet,
+		addToConceptSetIdsMap,
+		removeConceptsFromConceptSet,
 		setCurrentConceptSet,
-		savePreviousConceptSet,
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,

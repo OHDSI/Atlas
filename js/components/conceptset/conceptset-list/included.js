@@ -4,6 +4,7 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/Renderers',
 	'atlas-state',
 	'services/ConceptSet',
 ], function (
@@ -12,6 +13,7 @@ define([
 	Component,
 	AutoBind,
 	commonUtils,
+	renderers,
 	sharedState,
 	conceptSetService,
 ) {
@@ -19,23 +21,11 @@ define([
 	class IncludedConcepts extends AutoBind(Component){
 		constructor(params) {
 			super(params);
-			this.includedConcepts = sharedState.includedConcepts;
+			this.currentConceptSetSource = params.currentConceptSetSource;
+			this.includedConcepts = sharedState[`${this.currentConceptSetSource}ConceptSet`].includedConcepts;
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;
 			this.includedConceptsColumns = [
-				{
-					title: '<i class="fa fa-shopping-cart"></i>',
-					render: (s, p, d) => {
-						let css = '';
-						let icon = 'fa-shopping-cart';
-						if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] === 1) {
-							css = ' selected';
-						}
-						return '<i class="fa ' + icon + ' ' + css + '"></i>';
-					},
-					orderable: false,
-					searchable: false
-				},
 				{
 					title: 'Id',
 					data: 'CONCEPT_ID'
@@ -80,7 +70,28 @@ define([
 					title: 'Ancestors',
 					data: 'ANCESTORS',
 					render: conceptSetService.getAncestorsRenderFunction()
-				}
+				},
+				{
+					title: 'Excluded',
+					render: () => renderers.renderCheckbox('isExcluded'),
+					orderable: false,
+					searchable: false,
+					className: 'text-center',
+				},
+				{
+					title: 'Descendants',
+					render: () => renderers.renderCheckbox('includeDescendants'),
+					orderable: false,
+					searchable: false,
+					className: 'text-center',
+				},
+				{
+					title: 'Mapped',
+					render: () => renderers.renderCheckbox('includeMapped'),
+					orderable: false,
+					searchable: false,
+					className: 'text-center',
+				},
 			];
 			this.includedConceptsOptions = {
 				Facets: [

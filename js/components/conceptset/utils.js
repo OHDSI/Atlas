@@ -9,7 +9,7 @@ define(['knockout'], function(ko){
         conceptId: item.concept.CONCEPT_ID,
         isExcluded: +ko.unwrap(item.isExcluded),
         includeDescendants: +ko.unwrap(item.includeDescendants),
-        includeMapped: +ko.unwrap(item.includeMapped)
+        includeMapped: +ko.unwrap(item.includeMapped),
       });
     }
     return conceptSetItems;

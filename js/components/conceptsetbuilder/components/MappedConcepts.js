@@ -4,6 +4,7 @@ define([
 	'text!./MappedConcepts.html',
 	'services/VocabularyProvider',
 	'utils/CommonUtils',
+	'utils/Renderers',
 	'faceted-datatable'
 ], function (
 		$,
@@ -11,6 +12,7 @@ define([
 		template,
 		VocabularyAPI,
 		commonUtils,
+		renderers,
 		) {
 	
 	function MappedConcepts(params) {
@@ -27,7 +29,11 @@ define([
 		self.selectedConceptsIndex = ko.pureComputed(function () {
 			var index = {};
 			self.selectedConcepts().forEach(function (item) {
-				index[item.CONCEPT_ID] = 1;	
+				index[item.CONCEPT_ID] = {
+					isExcluded: ko.observable(item.isExcluded),
+					includeDescendants: ko.observable(item.includeDescendants),
+					includeMapped: ko.observable(item.includeMapped),
+				};
 			});
 			return index;
 		});
@@ -85,20 +91,6 @@ define([
 
 		self.tableColumns = [
 			{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-
-					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			},
-			{
 				title: 'Id',
 				data: 'CONCEPT_ID'
 			},
@@ -127,7 +119,28 @@ define([
 			{
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-			}
+			},
+			{
+				title: 'Excluded',
+				render: () => renderers.renderCheckbox('isExcluded', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Descendants',
+				render: () => renderers.renderCheckbox('includeDescendants', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Mapped',
+				render: () => renderers.renderCheckbox('includeMapped', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
 		];
 	
 		self.contextSensitiveLinkColor = function (row, data) {

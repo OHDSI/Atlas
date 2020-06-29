@@ -26,7 +26,8 @@ define([
       this.isModalShown = ko.observable(false);
       this.saveConceptSetFn = params.saveConceptSetFn;
       this.saveConceptSetShow = params.saveConceptSetShow;
-      this.currentConceptSet = sharedState.ConceptSet.current;
+      this.currentConceptSet = sharedState.repositoryConceptSet.current;
+      this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
       this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
       this.criteriaContext = sharedState.criteriaContext;
       this.compareCS1Id = ko.observable(this.currentConceptSet().id); // Init to the currently loaded cs
@@ -34,7 +35,7 @@ define([
       this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());
       this.compareCS1ConceptSetExpression = ko.pureComputed(() => {
         if (this.currentConceptSet() && this.compareCS1Id === this.currentConceptSet().id) {
-          return ko.toJS(sharedState.selectedConcepts());
+          return ko.toJS(this.selectedConcepts());
         } else {
           return ko.toJS(this.compareCS1ConceptSet);
         }
@@ -44,7 +45,7 @@ define([
       this.compareCS2ConceptSet = ko.observable(null);
       this.compareCS2ConceptSetExpression = ko.pureComputed(() => {
         if (this.currentConceptSet() && this.compareCS2Id === this.currentConceptSet().id) {
-          return ko.toJS(sharedState.selectedConcepts());
+          return ko.toJS(this.selectedConcepts());
         } else {
           return ko.toJS(this.compareCS2ConceptSet);
         }
@@ -312,7 +313,7 @@ define([
 					concept: concept,
 					isExcluded: ko.observable(false),
 					includeDescendants: ko.observable(false),
-					includeMapped: ko.observable(false),
+          includeMapped: ko.observable(false),
 				};
 				selectedConcepts.push(newItem);
 			});

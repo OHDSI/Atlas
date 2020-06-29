@@ -2,12 +2,15 @@
   <loading></loading>
 <!-- /ko -->
 <!-- ko ifnot: loading -->
+<div class="row">
+  <button class="btn btn-sm btn-success" data-bind="click: addToConceptSetExpression">Add to Concept Set Expression</button>
+</div>
 <faceted-datatable params="{
   columns: $component.searchConceptsColumns,
   options: $component.searchConceptsOptions,
   reference: $component.includedConcepts,
   rowCallback: $component.commonUtils.contextSensitiveLinkColor,
-  deferRender: false,
+  deferRender: true,
 }">
 </faceted-datatable>
 <div class="linkLegend">

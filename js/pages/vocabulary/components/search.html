@@ -45,26 +45,42 @@
 				}),
 				" />
 			<div class="input-group-btn">
-				<button class="pull-right btn btn-primary" title="Search" type="submit"><i class="fa fa-search"></i></button>
+				<button class="btn btn-primary" title="Search" type="submit"><i class="fa fa-search"></i></button>
+				<button data-bind="click: toggleAdvanced" class="btn btn-primary">Advanced Options</button>
 			</div>
 		</div>
 	</form>
+	<!-- ko if: searchExecuted() && data().length > 0 -->
 	<div class="row">
-		<!-- ko if: activeConceptSets().length > 0 -->
 		<div class="pull-left">
-			<div class="btn-group">
-				<div type="button" class="btn btn-sm btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					Active Concept Set: <span data-bind="text: currentlyActiveConceptSet().conceptSetName"></span>&nbsp;
+			<!-- ko if: hasActiveConceptSets() -->
+			<div class="dropdown">
+				<button
+					class="btn btn-primary dropdown-toggle"
+					type="button"
+					id="dropdownMenu1"
+					data-toggle="dropdown"
+					aria-haspopup="true"
+					aria-expanded="true"
+					
+				>
+					<span data-bind="text: $component.currentlyActiveConceptSetName()"></span>
 					<span class="caret"></span>
-				</div>
-				<ul class="dropdown-menu" data-bind="foreach: activeConceptSets()">
-						<li data-bind="text: $data.conceptSetName, click: () => $component.setVocabularyActiveConceptSet($data)"></li>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+					<!-- ko foreach: $component.activeConceptSets() -->
+						<li><a data-bind="click: () => $component.addConceptsToConceptSet($data.source), text: $data.current().name()"></a></li>
+					<!-- /ko -->
 				</ul>
-			</div>
+				  </div>
+			<!-- /ko -->
+			<!-- ko ifnot: hasActiveConceptSets() -->
+				<button class="btn btn-primary" data-bind="click: () => addConceptsToConceptSet('repository')">Add to New Concept Set</button>
+
+			<!-- /ko -->
 		</div>
-		<!-- /ko -->
-		<div data-bind="click: toggleAdvanced" class="pull-right btn btn-sm btn-link">Advanced Options</div>
 	</div>
+	<!-- /ko -->
 	<!-- ko if: isInProgress() || loading() -->
 		<loading params="status: loadingMessage"></loading>
 	<!-- /ko -->

@@ -32,8 +32,10 @@ define([
 			this.canEdit = params.canEdit || (() => false);
 			this.conceptSets = params.conceptSets;
 			this.currentConceptSet = params.currentConceptSet;
+			this.currentConceptSetSource = params.currentConceptSetSource;
+			this.currentConceptSetStoreKey = `${this.currentConceptSetSource}ConceptSet`;
 			this.loading = params.loading;
-			this.selectedConcepts = sharedState.selectedConcepts;
+			this.selectedConcepts = sharedState[this.currentConceptSetStoreKey].selectedConcepts;
 			this.authApi = authApi;
 			this.canCreateConceptSet = ko.computed( () => {
 				return ((this.authApi.isAuthenticated() && this.authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
@@ -44,7 +46,7 @@ define([
 
 		closeConceptSet() {
 			const currentId = this.currentConceptSet() && this.currentConceptSet().id;
-			conceptSetService.clearConceptSet();
+			conceptSetService.clearConceptSet({ source: this.currentConceptSetSource });
 			this.conceptSetListTableApi() && this.conceptSetListTableApi()
 				.getRows((idx, data) => data.id === currentId).deselect();
 		}

@@ -210,9 +210,13 @@ define([
             });
             this.currentConceptSetSource('repository');
             for (let i = 0; i < conceptSetItems.length; i++) {
-                if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
-                    sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                if (!sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID]) {
                     let conceptSetItem = commonUtils.createConceptSetItem(conceptSetItems[i]);
+                    sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = {
+                        isExcluded: conceptSetItem.isExcluded,
+                        includeDescendants: conceptSetItem.includeDescendants,
+                        includeMapped: conceptSetItem.includeMapped,
+                    };
                     sharedState.selectedConcepts.push(conceptSetItem);
                 }
             }

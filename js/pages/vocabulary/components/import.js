@@ -95,7 +95,11 @@ define([
 				conceptSetItem.includeDescendants = ko.observable(items[i].includeDescendants);
 				conceptSetItem.includeMapped = ko.observable(items[i].includeMapped);
 
-				sharedState.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = 1;
+				sharedState.selectedConceptsIndex[items[i].concept.CONCEPT_ID] = {
+					isExcluded: conceptSetItem.isExcluded,
+					includeDescendants: conceptSetItem.includeDescendants,
+					includeMapped: conceptSetItem.includeMapped,
+				};
 				sharedState.selectedConcepts.push(conceptSetItem);
 			}
 
@@ -153,9 +157,14 @@ define([
 
 					var conceptSetItemsToAdd = sharedState.selectedConcepts();
 					for (var i = 0; i < conceptSetItems.length; i++) {
-						if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] != 1) {
-							sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
-							conceptSetItemsToAdd.push(commonUtils.createConceptSetItem(conceptSetItems[i]));
+						if (!sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID]) {
+							const conceptSetItem = commonUtils.createConceptSetItem(conceptSetItems[i])
+							sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = {
+								includeDescendants: conceptSetItem.includeDescendants,
+								includeMapped: conceptSetItem.includeMapped,
+								isExcluded: conceptSetItem.isExcluded,
+							};
+							conceptSetItemsToAdd.push(conceptSetItem);
 						}
 					}
 					sharedState.selectedConcepts(conceptSetItemsToAdd);

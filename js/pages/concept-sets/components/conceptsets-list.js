@@ -9,6 +9,7 @@ define([
 	'atlas-state',
 	'../const',
   'appConfig',
+  'const',
   'components/tabs',
   'circe'
 ], function (
@@ -22,11 +23,12 @@ define([
 	sharedState,
 	constants,
 	config,
+	globalConstants,
 ) {
 	class ConceptsetList extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSet = sharedState.repositoryConceptSet.current;
 			this.currentConceptSetSource = sharedState.ConceptSet.source;
 			this.currentCohortDefinition = sharedState.CohortDefinition.current;
 			this.currentCohortDefinitionSourceInfo = sharedState.CohortDefinition.sourceInfo;
@@ -50,7 +52,7 @@ define([
 		}
 
 		clearCohortDefinition() {
-			conceptSetService.clearConceptSet();
+			conceptSetService.clearConceptSet({ source: globalConstants.conceptSetSources.repository });
 			this.currentCohortDefinitionSourceInfo(null);
 			this.currentCohortDefinition(null);
 		}

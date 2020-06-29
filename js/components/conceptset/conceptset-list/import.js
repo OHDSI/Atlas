@@ -30,7 +30,9 @@ define([
 			this.loadConceptSet = params.loadConceptSet;
 			this.importing = params.importing;
 			this.criteriaContext = sharedState.criteriaContext;
-			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSetSource = params.currentConceptSetSource;
+			this.currentConceptSetStoreKey = `${this.currentConceptSetSource}ConceptSet`;
+			this.currentConceptSet = params.currentConceptSet;
 			this.tabParams = {
 				...params,
 				appendConcepts: this.appendConcepts,
@@ -87,8 +89,8 @@ define([
 			}
 			conceptSet.name(newConceptSet.name);
 			conceptSet.expression.items().forEach((item)=> {
-				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 0;
-				sharedState.selectedConcepts.remove((v)=> {
+				delete sharedState[this.currentConceptSetStoreKey].selectedConceptsIndex[item.concept.CONCEPT_ID];
+				sharedState[this.currentConceptSetStoreKey].selectedConcepts.remove((v)=> {
 					return v.concept.CONCEPT_ID === item.concept.CONCEPT_ID;
 				});
 			});
@@ -103,7 +105,7 @@ define([
 				return;
 			}
 
-			const conceptSetItemsToAdd = sharedState.selectedConcepts();
+			const conceptSetItemsToAdd = sharedState[this.currentConceptSetStoreKey].selectedConcepts();
 			items.forEach((item)=> {
 				const conceptSetItem = {};
 				conceptSetItem.concept = item.concept;
@@ -111,24 +113,33 @@ define([
 				conceptSetItem.includeDescendants = ko.observable(item.includeDescendants);
 				conceptSetItem.includeMapped = ko.observable(item.includeMapped);
 
-				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
+				sharedState[this.currentConceptSetStoreKey].selectedConceptsIndex[item.concept.CONCEPT_ID] = {
+					isExcluded: conceptSetItem.isExcluded,
+					includeDescendants: conceptSetItem.includeDescendants,
+					includeMapped: conceptSetItem.includeMapped,
+				};
 				conceptSetItemsToAdd.push(conceptSetItem);
 			});
-			sharedState.selectedConcepts(conceptSetItemsToAdd);
+			sharedState[this.currentConceptSetStoreKey].selectedConcepts(conceptSetItemsToAdd);
 			await this.loadConceptSet(conceptSet.id);
 		}
 
 		appendConcepts(concepts) {
-			const conceptSetItemsToAdd = sharedState.selectedConcepts();
-			sharedState.clearSelectedConcepts();
+			const conceptSetItemsToAdd = sharedState[this.currentConceptSetStoreKey].selectedConcepts();
+			sharedState.clearSelectedConcepts({ source: this.currentConceptSetSource });
 			concepts.forEach((item) => {
-				if (sharedState.selectedConceptsIndex[item.CONCEPT_ID] !== 1) {
-					sharedState.selectedConceptsIndex[item.CONCEPT_ID] = 1;
-					conceptSetItemsToAdd.push(commonUtils.createConceptSetItem(item));
+				if (!sharedState[this.currentConceptSetStoreKey].selectedConceptsIndex[item.CONCEPT_ID]) {
+					const conceptSetItem = commonUtils.createConceptSetItem(item);
+					sharedState[this.currentConceptSetStoreKey].selectedConceptsIndex[item.CONCEPT_ID] = {
+						isExcluded: conceptSetItem.isExcluded,
+						includeDescendants: conceptSetItem.includeDescendants,
+						includeMapped: conceptSetItem.includeMapped,
+					};
+					conceptSetItemsToAdd.push(conceptSetItem);
 				}
 			});
-			sharedState.selectedConcepts(conceptSetItemsToAdd);
-			conceptSetService.resolveConceptSetExpression(true);
+			sharedState[this.currentConceptSetStoreKey].selectedConcepts(conceptSetItemsToAdd);
+			conceptSetService.resolveConceptSetExpression({ source: this.currentConceptSetSource });
 			if (this.conceptSets()) {
 				const conceptSet = this.conceptSets()
 					.find( (item) => {

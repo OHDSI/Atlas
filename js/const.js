@@ -1,10 +1,12 @@
 define([
 	'knockout',
 	'appConfig',
+	'utils/Renderers',
 	],
 	(
 		ko,
 		config,
+		renderers,
 	) => {
 
 		const minChartHeight = 300;
@@ -42,26 +44,32 @@ define([
 				}
 			}]
 		};
+
+		const getInclusionCheckboxesColumns = (canEdit = true) => [
+			{
+				title: 'Exclude',
+				render: () => renderers.renderCheckbox('isExcluded', ko.unwrap(canEdit)),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Descendants',
+				render: () => renderers.renderCheckbox('includeDescendants', ko.unwrap(canEdit)),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Mapped',
+				render: () => renderers.renderCheckbox('includeMapped', ko.unwrap(canEdit)),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+		];
 		
 		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
-			{
-				title: !context.canEditCurrentConceptSet() ? '<span class="fa fa-shopping-cart"></span>' : '<i class="fa fa-shopping-cart"></i>',
-				render: (s, p, d) => {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-					var tag = 'i';
-					if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					if (!context.canEditCurrentConceptSet()) {
-						css += ' readonly';
-						tag = 'span';
-					}
-					return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
-				},
-				orderable: false,
-				searchable: false
-			},
 			{
 				title: 'Id',
 				data: 'CONCEPT_ID'
@@ -106,53 +114,46 @@ define([
 				title: 'Ancestors',
 				data: 'ANCESTORS',
 				render: conceptSetService.getAncestorsRenderFunction()
-			}
+			},
+			...getInclusionCheckboxesColumns(context.canEditCurrentConceptSet()),
 		];
 
-		const getRelatedSourcecodesColumns = (sharedState, context) => [{
-			title: '',
-			render: (s, p, d) => {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				var tag = 'i'
-				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				if (!context.canEditCurrentConceptSet()) {
-					css += ' readonly';
-					tag = 'span';
-				}
-				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
+		const getRelatedSourcecodesColumns = (sharedState, context) => [
+			{
+				title: 'Id',
+				data: 'CONCEPT_ID'
 			},
-			orderable: false,
-			searchable: false
-		}, {
-			title: 'Id',
-			data: 'CONCEPT_ID'
-		}, {
-			title: 'Code',
-			data: 'CONCEPT_CODE'
-		}, {
-			title: 'Name',
-			data: 'CONCEPT_NAME',
-			render: function (s, p, d) {
-				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-			}
-		}, {
-			title: 'Class',
-			data: 'CONCEPT_CLASS_ID'
-		}, {
-			title: 'Standard Concept Caption',
-			data: 'STANDARD_CONCEPT_CAPTION',
-			visible: false
-		}, {
-			title: 'Domain',
-			data: 'DOMAIN_ID'
-		}, {
-			title: 'Vocabulary',
-			data: 'VOCABULARY_ID'
-		}];
+			{
+				title: 'Code',
+				data: 'CONCEPT_CODE'
+			},
+			{
+				title: 'Name',
+				data: 'CONCEPT_NAME',
+				render: function (s, p, d) {
+					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+				}
+			},
+			{
+				title: 'Class',
+				data: 'CONCEPT_CLASS_ID'
+			},
+			{
+				title: 'Standard Concept Caption',
+				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: 'Domain',
+				data: 'DOMAIN_ID'
+			},
+			{
+				title: 'Vocabulary',
+				data: 'VOCABULARY_ID'
+			}, 
+			...getInclusionCheckboxesColumns(context.canEditCurrentConceptSet()),
+		];
 
 		const apiPaths = {
 			role: (id = '') => `${config.api.url}role/${id}`,
@@ -241,13 +242,10 @@ define([
 		};
 
 		const conceptSetSources = {
-			featureAnalysis: 'feature-analysis',
-		};
-
-		const activeConceptSetSources = {
-			featureAnalyses: 'feature_analyses',
-			conceptSets: 'concept_sets',
-			characterizations: 'characterizations',
+			featureAnalysis: 'featureAnalysis',
+			repository: 'repository',
+			cohortDefinition: 'cohortDefinition',
+			characterization: 'characterization',
 		};
 
 		return {
@@ -255,6 +253,7 @@ define([
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
+			getInclusionCheckboxesColumns,
 			getIncludedConceptsColumns,
 			getRelatedSourcecodesColumns,
 			apiPaths,
@@ -266,7 +265,6 @@ define([
 			sqlDialects,
 			eventTypes,
 			conceptSetSources,
-			activeConceptSetSources,
     };
   }
 );

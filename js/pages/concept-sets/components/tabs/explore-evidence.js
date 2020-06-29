@@ -16,11 +16,11 @@ define([
 	class ExploreEvidence extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-      this.selectedConcepts = sharedState.selectedConcepts;
-      this.currentConceptSet = sharedState.ConceptSet.current;
-      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-      this.currentConceptSetNegativeControls = sharedState.ConceptSet.negativeControls;
-      this.conceptSetInclusionIdentifiers = sharedState.conceptSetInclusionIdentifiers;
+      this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
+      this.currentConceptSet = sharedState.repositoryConceptSet.current;
+      this.currentConceptSetDirtyFlag = sharedState.repositoryConceptSet.dirtyFlag;
+      this.currentConceptSetNegativeControls = sharedState.repositoryConceptSet.negativeControls;
+      this.conceptSetInclusionIdentifiers = sharedState.repositoryConceptSet.conceptSetInclusionIdentifiers;
       this.resultsUrl = sharedState.resultsUrl;
       this.saveConceptSetFn = params.saveConceptSet;
     }

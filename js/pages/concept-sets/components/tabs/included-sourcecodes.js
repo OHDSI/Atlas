@@ -18,13 +18,22 @@ define([
 	class IncludedSourcecodes extends Component {
 		constructor(params) {
 			super(params);
+			this.currentConceptSet = sharedState.repositoryConceptSet;
 			this.loading = ko.pureComputed(() => {
-				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded();
+				return this.currentConceptSet.loadingSourcecodes() || this.currentConceptSet.loadingIncluded();
 			});
-			this.includedSourcecodes = sharedState.includedSourcecodes;
+			this.includedSourcecodes = this.currentConceptSet.includedSourcecodes;
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, this);
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
+		}
+
+		addToConceptSetExpression() {
+			const concepts = commonUtils.getSelectedConcepts(this.includedSourcecodes());
+			conceptSetService.addConceptsToConceptSet({
+				concepts,
+				source: globalConstants.conceptSetSources.repository,
+			});
 		}
 
 	}

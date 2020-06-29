@@ -5,6 +5,8 @@ define([
 	'utils/AutoBind',
 	'services/Vocabulary',
 	'utils/CommonUtils',
+	'services/ConceptSet',
+	'utils/Renderers',
 	'atlas-state',
 	'services/http',
 	'./const',
@@ -20,6 +22,8 @@ define([
 	AutoBind,
 	vocabularyProvider,
 	commonUtils,
+	conceptSetService,
+	renderers,
 	sharedState,
 	httpService,
 	constants,
@@ -35,6 +39,7 @@ define([
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
 			this.commonUtils = commonUtils;
+			this.renderers = renderers;
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
@@ -43,6 +48,7 @@ define([
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
+			this.isCurrentConceptAddButtonActive = ko.pureComputed(() => this.currentConcept() && (this.currentConcept().includeDescendants() || this.currentConcept().includeMapped() || this.currentConcept().isExcluded()));
 			this.subscriptions.push(
 				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
@@ -108,18 +114,6 @@ define([
 			};
 
 			this.relatedConceptsColumns = [{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-					if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			}, {
 				title: 'Id',
 				data: 'CONCEPT_ID'
 			}, {
@@ -157,6 +151,27 @@ define([
 			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
+			},
+			{
+				title: 'Excluded',
+				render: () => renderers.renderCheckbox('isExcluded'),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Descendants',
+				render: () => renderers.renderCheckbox('includeDescendants'),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Mapped',
+				render: () => renderers.renderCheckbox('includeMapped'),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
 			}];
 
 			this.hierarchyConceptsOptions = {
@@ -253,6 +268,42 @@ define([
 			return false;
 		}
 
+		enhanceConcept(concept) {
+			const selectedConceptsIndex = sharedState.repositoryConceptSet.selectedConceptsIndex;
+			const selectedConcept = selectedConceptsIndex[concept.CONCEPT_ID];
+			if (selectedConcept) {
+				const { includeDescendants, includeMapped, isExcluded } = selectedConcept;
+				return {
+					...concept,
+					includeDescendants,
+					includeMapped,
+					isExcluded,
+				}
+			}
+			return {
+				...concept,
+				includeDescendants: ko.observable(false),
+				includeMapped: ko.observable(false),
+				isExcluded: ko.observable(false),
+			};
+		}
+
+		addToConceptSetExpression(data, currentConcept = false) {
+			const concepts = commonUtils.getSelectedConcepts(ko.unwrap(data));
+			conceptSetService.addConceptsToConceptSet(concepts);
+			if (currentConcept) {
+				const newCurrentConceptObject = {
+					...this.currentConceptArray()[0],
+					...data[0],
+				};
+				this.currentConceptArray([newCurrentConceptObject]);
+			}
+		}
+
+		toggleCurrentConcept(field) {
+			this.currentConcept()[field](!this.currentConcept()[field]());
+		}
+
 		metagorize(metarchy, related) {
 			if (this.hasRelationship(related, constants.defaultConceptHierarchyRelationships.childRelationships)) {
 				metarchy.children.push(related);
@@ -270,7 +321,7 @@ define([
 			}
 
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
-			this.currentConcept(data);
+			this.currentConcept(this.enhanceConcept(data));
 			this.isLoading(false);
 			// load related concepts once the concept is loaded
 			this.loadingRelated(true);
@@ -281,18 +332,19 @@ define([
 			};
 
 			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');
-			for (var i = 0; i < related.length; i++) {
-				this.metagorize(this.metarchy, related[i]);
+			const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
+			for (var i = 0; i < relatedConcepts.length; i++) {
+				this.metagorize(this.metarchy, relatedConcepts[i]);
 			}
 
-			await vocabularyProvider.loadDensity(related);
-			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
+			await vocabularyProvider.loadDensity(relatedConcepts);
+			var currentConceptObject = _.find(relatedConcepts, c => c.CONCEPT_ID == this.currentConceptId());
 			if (currentConceptObject !== undefined){
 			    this.currentConceptArray([currentConceptObject]);
 			} else {
 				this.currentConceptArray([]);
 			}
-			this.relatedConcepts(related);
+			this.relatedConcepts(relatedConcepts);
 
 			this.loadingRelated(false);
 		}

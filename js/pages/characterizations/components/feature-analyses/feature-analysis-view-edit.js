@@ -87,11 +87,6 @@ define([
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
             sharedState.activeConceptSetSource(globalConstants.conceptSetSources.featureAnalysis);
-            EventEmitter.on(globalConstants.eventTypes.conceptSetChanged, (conceptSetSource) => {
-                if( conceptSetSource === globalConstants.conceptSetSources.featureAnalysis ) {
-                    this.data().conceptSets.valueHasMutated();
-                }
-            })
             this.canEdit = this.isUpdatePermittedResolver();
             this.isNameFilled = ko.computed(() => {
                 return this.data() && this.data().name();

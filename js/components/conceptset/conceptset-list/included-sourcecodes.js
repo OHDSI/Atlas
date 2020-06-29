@@ -21,9 +21,11 @@ define([
 			super(params);
 			this.loading = params.loading;
 			this.canEdit = params.canEdit;
+			this.currentConceptSetSource = params.currentConceptSetSource;
+			
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
-			this.includedSourcecodes = sharedState.includedSourcecodes;
+			this.includedSourcecodes = sharedState[`${this.currentConceptSetSource}ConceptSet`].includedSourcecodes;
 		}
 	}
 

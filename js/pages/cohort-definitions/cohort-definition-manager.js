@@ -107,14 +107,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.pollTimeout = null;
 			this.authApi = authApi;
 			this.config = config;
-			this.selectedConcepts = sharedState.selectedConcepts;
-			this.loadingIncluded = sharedState.loadingIncluded;
-			this.loadingSourcecodes = sharedState.loadingSourcecodes;
+			this.selectedConcepts = sharedState.cohortDefinitionConceptSet.selectedConcepts;
+			this.loadingIncluded = sharedState.cohortDefinitionConceptSet.loadingIncluded;
+			this.loadingSourcecodes = sharedState.cohortDefinitionConceptSet.loadingSourcecodes;
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.commonUtils = commonUtils;
-			this.includedConcepts = sharedState.includedConcepts;
-			this.includedSourcecodes = sharedState.includedSourcecodes;
-			this.currentIncludedConceptIdentifierList = sharedState.currentIncludedConceptIdentifierList;
+			this.includedConcepts = sharedState.cohortDefinitionConceptSet.includedConcepts;
+			this.includedSourcecodes = sharedState.cohortDefinitionConceptSet.includedSourcecodes;
+			this.currentIncludedConceptIdentifierList = sharedState.cohortDefinitionConceptSet.currentIncludedConceptIdentifierList;
 			this.isLoading = ko.observable(false);
 			this.currentCohortDefinition = sharedState.CohortDefinition.current;
 			this.currentCohortDefinitionMode = sharedState.CohortDefinition.mode;
@@ -128,8 +128,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.reportReportName = ko.observable();
 			this.loadingReport = ko.observable(false);
 			this.reportTriggerRun = ko.observable(false);
-			this.currentConceptIdentifierList = sharedState.currentConceptIdentifierList;
-			this.resolvingConceptSetExpression = sharedState.resolvingConceptSetExpression;
+			this.currentConceptIdentifierList = sharedState.cohortDefinitionConceptSet.currentConceptIdentifierList;
+			this.resolvingConceptSetExpression = sharedState.cohortDefinitionConceptSet.resolvingConceptSetExpression;
 			this.tabMode = sharedState.CohortDefinition.mode;
 			this.warningsTotals = ko.observable(0);
 			this.warningCount = ko.observable(0);
@@ -243,7 +243,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.exportTabMode = ko.observable('printfriendly');
 			this.importTabMode = ko.observable(cohortConst.importTabModes.identifiers);
 			this.conceptSetTabMode = sharedState.currentConceptSetMode;
-			this.onConceptSetTabMode = this.conceptSetTabMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged)
+			this.onConceptSetTabMode = this.conceptSetTabMode.subscribe(mode => conceptSetService.onCurrentConceptSetModeChanged({ mode, source: globalConstants.conceptSetSources.cohortDefinition }))
 			this.showImportConceptSetModal = ko.observable(false);
 			this.sharedState = sharedState;
 			this.identifiers = ko.observable();
@@ -323,6 +323,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				sharedState,
 				ancestors: this.ancestors,
 				ancestorsModalIsShown: this.ancestorsModalIsShown,
+				source: globalConstants.conceptSetSources.cohortDefinition,
 			});
 
 			this.includedConceptsOptions = {
@@ -665,7 +666,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					if (results > 0) {
 						alert('A cohort definition with this name already exists. Please choose a different name.');
 					} else {
-						this.clearConceptSet();
+						this.clearConceptSet({ source: globalConstants.conceptSetSources.cohortDefinition });
 
 						// If we are saving a new cohort definition (id === 0) then clear
 						// the id field before saving
@@ -981,7 +982,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			clearConceptSet() {
-				conceptSetService.clearConceptSet();
+				conceptSetService.clearConceptSet({ source: globalConstants.conceptSetSources.cohortDefinition });
 			}
 
 			checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey) {
@@ -1028,14 +1029,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					.then(() => {
 						// Reconstruct the expression items
 						for (var i = 0; i < conceptSet.expression.items().length; i++) {
-							sharedState.selectedConceptsIndex[conceptSet.expression.items()[i].concept.CONCEPT_ID] = 1;
+							const item = conceptSet.expression.items()[i];
+							sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = {
+								isExcluded: item.isExcluded,
+								includeDescendants: item.includeDescendants,
+								includeMapped: item.includeMapped,
+							};
 						}
 						sharedState.selectedConcepts(conceptSet.expression.items());
 						this.currentConceptSet({
 							name: conceptSet.name,
 							id: conceptSet.id
 						});
-						conceptSetService.resolveConceptSetExpression();
+						conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.cohortDefinition });
 					});
 			}
 

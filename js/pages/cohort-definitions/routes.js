@@ -2,6 +2,7 @@ define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     const sharedState = require('atlas-state');
+    const globalConstants = require('const');
     function routes(router) {
       return {
         '/cohortdefinitions': new AuthorizedRoute(() => {
@@ -25,7 +26,8 @@ define(
             'explore-cohort',
           ], function () {
             sharedState.CohortDefinition.mode('conceptsets');
-            sharedState.ConceptSet.source('cohort-definition');
+            sharedState.ConceptSet.source(globalConstants.conceptSetSources.cohortDefinition);
+            sharedState.activeConceptSetSource(globalConstants.conceptSetSources.cohortDefinition);
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
               mode: 'conceptsets',
@@ -59,7 +61,8 @@ define(
               mode: 'definition',
               sourceKey,
             });
-            sharedState.ConceptSet.source('cohort-definition');
+            sharedState.ConceptSet.source(globalConstants.conceptSetSources.cohortDefinition);
+            sharedState.activeConceptSetSource(globalConstants.conceptSetSources.cohortDefinition);
             sharedState.CohortDefinition.mode(view);
           });
         }),

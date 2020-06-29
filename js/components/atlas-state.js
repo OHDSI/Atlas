@@ -23,9 +23,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
-	state.clearSelectedConcepts = function () {
-		this.selectedConceptsIndex = {};
-		this.selectedConcepts([]);
+	state.clearSelectedConcepts = function ({ source } = {}) {
+		conceptSetKey = `${source}ConceptSet`;
+		this[conceptSetKey].selectedConceptsIndex = {};
+		this[conceptSetKey].selectedConcepts([]);
 	}
 
 	state.IRAnalysis = {
@@ -107,6 +108,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		details: state.selectedConcepts,
 	}));
 	state.ConceptSet.current.subscribe((newValue) => {
+		console.log('---nW', newValue);
 		if (newValue != null) {
 			state.ConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag({
 				header: state.ConceptSet.current,
@@ -139,44 +141,123 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 
 	state.activeConceptSetSource = ko.observable();
 
-	state.activeConceptSetSource.subscribe(newValue => {
-		if (!newValue) return;
+	ko.subscribable.fn.subscribeChanged = function (callback, context) {
+		var savedValue = this.peek();
+		return this.subscribe(function (latestValue) {
+			var oldValue = savedValue;
+			savedValue = latestValue;
+			callback.call(context, latestValue, oldValue);
+		});
+	};
+	
+
+	state.activeConceptSetSource.subscribeChanged((newValue, oldValue) => {
+		console.log('state.activeConceptSetSource.subscribeChanged',newValue, oldValue);
+	// 	if (!newValue) return;
 		const concept = state.HashedConceptSets[state.activeConceptSetSource()];
-		if (!!concept) {
-			state.ConceptSet.current = ko.observable();
-			state.clearSelectedConcepts();
-			console.log('HAS HASHED CONCEPT', concept.selectedConcepts)
-			const { 
-				includedConcepts,
-				includedSourcecodes,
-				currentConceptIdentifierList,
-				currentIncludedConceptIdentifierList,
-				selectedConcepts,
-				conceptSetName,
-				conceptSetId,
-			 } = concept;
-			state.includedConcepts(includedConcepts);
-			state.includedSourcecodes(includedSourcecodes);
-			state.currentConceptIdentifierList(currentConceptIdentifierList);
-			state.currentIncludedConceptIdentifierList(currentIncludedConceptIdentifierList);
-			state.selectedConcepts(selectedConcepts);
-			state.ConceptSet.current({
-				id: conceptSetId,
-				name: ko.observable(conceptSetName),
-			})
-		} else {
-			state.HashedConceptSets[state.activeConceptSetSource()] = {
-				includedConcepts: state.includedConcepts(),
-				includedSourcecodes: state.includedSourcecodes(),
-				currentConceptIdentifierList: state.currentConceptIdentifierList(),
-				currentIncludedConceptIdentifierList: state.currentIncludedConceptIdentifierList(),
-				selectedConcepts: state.selectedConcepts(),
-			}
-		}
+		console.log(concept);
+	// 	if (!!concept) {
+	// 		state.ConceptSet.current = ko.observable();
+	// 		state.clearSelectedConcepts();
+	// 		console.log('HAS HASHED CONCEPT', concept.selectedConcepts)
+	// 		const { 
+	// 			includedConcepts,
+	// 			includedSourcecodes,
+	// 			currentConceptIdentifierList,
+	// 			currentIncludedConceptIdentifierList,
+	// 			selectedConcepts,
+	// 			conceptSetName,
+	// 			conceptSetId,
+	// 		 } = concept;
+	// 		state.includedConcepts(includedConcepts);
+	// 		state.includedSourcecodes(includedSourcecodes);
+	// 		state.currentConceptIdentifierList(currentConceptIdentifierList);
+	// 		state.currentIncludedConceptIdentifierList(currentIncludedConceptIdentifierList);
+	// 		state.selectedConcepts(selectedConcepts);
+	// 		state.ConceptSet.current({
+	// 			id: conceptSetId,
+	// 			name: ko.observable(conceptSetName),
+	// 		})
+	// 	} else {
+	// 		state.HashedConceptSets[state.activeConceptSetSource()] = {
+	// 			includedConcepts: state.includedConcepts(),
+	// 			includedSourcecodes: state.includedSourcecodes(),
+	// 			currentConceptIdentifierList: state.currentConceptIdentifierList(),
+	// 			currentIncludedConceptIdentifierList: state.currentIncludedConceptIdentifierList(),
+	// 			selectedConcepts: state.selectedConcepts(),
+	// 		}
+	// 	}
 	});
 
 	state.HashedConceptSets = {};
 
 
+	state.cohortDefinitionConceptSet = {
+		current: ko.observable(),
+		selectedConcepts: ko.observableArray([]),
+	};
+
+	// state.repositoryConceptSet = {
+	// 	current: ko.observable(),
+	// 	negativeControls: ko.observable(),
+	// 	selectedConcepts: ko.observableArray([]),
+	// 	selectedConceptsIndex: {},
+	// 	includedConcepts: ko.observableArray([]),
+	// 	includedConceptsMap: ko.observable({}),
+	// 	includedSourcecodes: ko.observableArray([]),
+	// 	conceptSetInclusionIdentifiers: ko.observableArray([]),
+	// 	currentConceptIdentifierList: ko.observable(),
+	// 	currentIncludedConceptIdentifierList: ko.observable(),
+	// 	currentConceptSetExpressionJson: ko.observable(),
+	// 	includedHash: ko.observable(),
+	// 	resolvingConceptSetExpression: ko.observable(false),
+	// 	loadingSourcecodes: ko.observable(false),
+	// 	loadingIncluded: ko.observable(false),
+	// }
+
+	// Define ConceptSetStore for each module with conceptSet tab
+	Object.keys(constants.conceptSetSources).forEach(k => {
+		const conceptSetStoreKey = `${k}ConceptSet`
+		state[conceptSetStoreKey] = {
+			current: ko.observable(),
+			negativeControls: ko.observable(),
+			selectedConcepts: ko.observableArray([]),
+			selectedConceptsIndex: {},
+			includedConcepts: ko.observableArray([]),
+			includedConceptsMap: ko.observable({}),
+			includedSourcecodes: ko.observableArray([]),
+			conceptSetInclusionIdentifiers: ko.observableArray([]),
+			currentConceptIdentifierList: ko.observable(),
+			currentIncludedConceptIdentifierList: ko.observable(),
+			currentConceptSetExpressionJson: ko.observable(),
+			includedHash: ko.observable(),
+			resolvingConceptSetExpression: ko.observable(false),
+			loadingSourcecodes: ko.observable(false),
+			loadingIncluded: ko.observable(false),
+			source: k,
+		};
+
+		state[conceptSetStoreKey].dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
+			header: state[conceptSetStoreKey].current,
+			details: state[conceptSetStoreKey].selectedConcepts,
+		}));
+
+		state[conceptSetStoreKey].current.subscribe((newValue) => {
+			if (newValue != null) {
+				state[conceptSetStoreKey].dirtyFlag(new ohdsiUtil.dirtyFlag({
+					header: state[conceptSetStoreKey].current,
+					details: state[conceptSetStoreKey].selectedConcepts,
+				}));
+			}
+		});
+	});
+
+	state.activeConceptSets = ko.pureComputed(() => {
+		const activeConceptSetSources = Object.keys(constants.conceptSetSources).filter(key => !!state[`${key}ConceptSet`].current());
+		return activeConceptSetSources.map(source => state[`${source}ConceptSet`]);
+	})
+
+	state.activeConceptSet = ko.observable();
+	
 	return state;
 });

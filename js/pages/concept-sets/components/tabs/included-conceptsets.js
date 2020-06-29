@@ -25,16 +25,18 @@ define([
       this.commonUtils = commonUtils;
       this.ancestorsModalIsShown = ko.observable(false);
       this.ancestors = ko.observableArray([]);
-      this.includedConcepts = sharedState.includedConcepts;
+      this.currentConceptSet = sharedState.repositoryConceptSet;
+      this.includedConcepts = this.currentConceptSet.includedConcepts;
       this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
       this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.loading = ko.pureComputed(() => {
-				return sharedState.loadingSourcecodes() || sharedState.loadingIncluded() || sharedState.resolvingConceptSetExpression();
+				return this.currentConceptSet.loadingSourcecodes() || this.currentConceptSet.loadingIncluded() || this.currentConceptSet.resolvingConceptSetExpression();
       });
       this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
         sharedState: sharedState,
         ancestors: this.ancestors,
         ancestorsModalIsShown: this.ancestorsModalIsShown,
+        source: globalConstants.conceptSetSources.repository,
       });
       this.searchConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, this, commonUtils, conceptSetService);
 
@@ -83,6 +85,14 @@ define([
       // while the query for full ancestors list is being executed in background
       // Per: https://github.com/OHDSI/Atlas/pull/614#issuecomment-383050990
       this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ searchConceptsColumns: this.searchConceptsColumns });
+    }
+
+    addToConceptSetExpression() {
+      const concepts = commonUtils.getSelectedConcepts(this.includedConcepts());
+      conceptSetService.addConceptsToConceptSet({
+        concepts,
+        source: globalConstants.conceptSetSources.repository,
+      });
     }
 
     dispose() {

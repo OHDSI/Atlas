@@ -56,12 +56,12 @@ define([
 			super(params);
 			this.componentParams = params;
 			this.commonUtils = commonUtils;
-			this.currentConceptSet = sharedState.ConceptSet.current;
+			this.currentConceptSet = sharedState.repositoryConceptSet.current;
 			this.currentConceptSetSource = sharedState.ConceptSet.source;
-			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
+			this.currentConceptSetDirtyFlag = sharedState.repositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
-			this.selectedConcepts = sharedState.selectedConcepts;
+			this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
 			this.defaultName = globalConstants.newEntityNames.conceptSet;
 			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
@@ -114,7 +114,7 @@ define([
 					return true;
 
 				if (this.currentConceptSetSource() == 'repository') {
-					return sharedState.ConceptSet.current() && authApi.isPermittedDeleteConceptset(sharedState.ConceptSet.current().id);
+					return sharedState.repositoryConceptSet.current() && authApi.isPermittedDeleteConceptset(sharedState.repositoryConceptSet.current().id);
 				} else {
 					return false;
 				}
@@ -123,7 +123,7 @@ define([
 				return (
 					this.currentConceptSet()
 					&& this.currentConceptSet().id != 0
-					&& sharedState.selectedConcepts().length > 1
+					&& sharedState.repositoryConceptSet.selectedConcepts().length > 1
 					&& this.canCreate()
 					&& this.canEdit()
 				);
@@ -202,7 +202,9 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			this.onConceptSetModeChanged = sharedState.currentConceptSetMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged);
+			this.onConceptSetModeChanged = sharedState.currentConceptSetMode
+				.subscribe(mode => conceptSetService.onCurrentConceptSetModeChanged({ mode, source: globalConstants.conceptSetSources.repository }));
+			console.log(this);
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -250,7 +252,6 @@ define([
 				&& this.currentConceptSet().id === conceptSetId
 			) {
 				this.currentConceptSetSource('repository');
-				sharedState.activeConceptSetSource('repository');
 				this.loading(false);
 				return;
 			}
@@ -258,13 +259,12 @@ define([
 				const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
 				const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
 				const expression = _.isEmpty(data) ? { items: [] } : data;
-				sharedState.activeConceptSetSource('repository');
-				conceptSetService.setConceptSet(conceptset, expression.items);
-				await conceptSetService.resolveConceptSetExpression();
-				this.currentConceptSetSource('repository');
+				conceptSetService.setConceptSet(conceptset, expression.items, globalConstants.conceptSetSources.repository);
+				await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
+				// this.currentConceptSetSource('repository');
 			} catch(err) {
 				console.error(err);
-				sharedState.resolvingConceptSetExpression(false);
+				sharedState.repositoryConceptSet.resolvingConceptSetExpression(false);
 			}
 			this.loading(false);
 		}
@@ -310,7 +310,7 @@ define([
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-						await conceptSetService.resolveConceptSetExpression();
+						await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
 						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.currentConceptSetDirtyFlag().reset();
 						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
@@ -340,7 +340,7 @@ define([
 			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
-				conceptSetService.clearConceptSet();
+				conceptSetService.clearConceptSet({ source: globalConstants.conceptSetSources.repository });
 				document.location = "#/conceptsets";
 			}
 		}
@@ -368,7 +368,7 @@ define([
 					concept: item.concept,
 					isExcluded: +item.isExcluded(),
 					includeDescendants: +item.includeDescendants(),
-					includeMapped: +item.includeMapped()
+					includeMapped: +item.includeMapped(),
 				});
 			}
 
@@ -402,7 +402,7 @@ define([
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.currentConceptSet().id)
 				.then(() => {
-					conceptSetService.clearConceptSet();
+					conceptSetService.clearConceptSet({ source: globalConstants.conceptSetSources.repository });
 					document.location = "#/conceptsets"
 				});
 		}
@@ -431,17 +431,24 @@ define([
 		}
 
 		async overwriteConceptSet() {
-			sharedState.clearSelectedConcepts();
+			sharedState.clearSelectedConcepts({ source: globalConstants.conceptSetSources.repository });
 			const newConceptSet = this.optimalConceptSet().map((item) => {
-				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
+				sharedState.repositoryConceptSet.selectedConceptsIndex[item.concept.CONCEPT_ID] = {
+					isExcluded: ko.observable(!!item.isExcluded),
+					includeDescendants: ko.observable(!!item.isExcluded),
+					includeMapped: ko.observable(!!item.includeMapped),
+				};
 				return item;
 			});
-			sharedState.selectedConcepts(newConceptSet);
+			sharedState.repositoryConceptSet.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
-			sharedState.includedConcepts.valueHasMutated();
-			sharedState.includedSourcecodes.valueHasMutated();
-			await conceptSetService.resolveConceptSetExpression();
-			await conceptSetService.onCurrentConceptSetModeChanged(sharedState.currentConceptSetMode());
+			sharedState.repositoryConceptSet.includedConcepts.valueHasMutated();
+			sharedState.repositoryConceptSet.includedSourcecodes.valueHasMutated();
+			await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
+			await conceptSetService.onCurrentConceptSetModeChanged({
+				mode: sharedState.currentConceptSetMode(),
+				source: globalConstants.conceptSetSources.repository,
+			});
 		}
 
 		copyOptimizedConceptSet () {
