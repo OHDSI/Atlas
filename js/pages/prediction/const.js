@@ -221,13 +221,19 @@ define(
         {
             title: ko.i18n('columns.riskWindowStart', 'Risk Window Start'),
             render: (s, p, d) => {
-                return d.riskWindowStart().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
+                return d.riskWindowStart().toString() +
+                  "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
+                  "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
+                  ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name);
             },
         },
         {
             title: ko.i18n('columns.riskWindowEnd', 'Risk Window End'),
             render: (s, p, d) => {
-                return d.riskWindowEnd().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
+                return d.riskWindowEnd().toString() +
+                  "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
+                  "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
+                  ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name);
             },
         },
         {
