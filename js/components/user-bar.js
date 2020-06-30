@@ -24,7 +24,7 @@ define([
 			jobDetailsService,
 			momentApi,
 			lodash,
-			PollService,
+			{PollService},
 			constants
 		) {
 	class UserBar extends Component {
@@ -42,6 +42,12 @@ define([
 			this.sortedJobListing = ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId));
 			this.lastViewedTime=null;
 			this.permissionCheckWarningShown = false;
+			this.shouldUpdateJobStatus = true;
+			this.jobListing.subscribe(() => {
+				if (this.shouldUpdateJobStatus) {
+					this.updateJobStatus();
+				}
+			});
 
 			this.jobModalOpened = ko.observable(false);
 			this.jobModalOpened.subscribe(show => {
@@ -136,7 +142,7 @@ define([
 					}
 					const notifications = await jobDetailsService.list(hideStatuses);
 					const jobs = notifications.data.map(n => {
-						const previousJob = this.jobListing().find(j => j.executionId === n.executionId);
+						const previousJob = this.getExisting(n);
 
 						const endDate = (n.endDate ? n.endDate : Date.now());
 						const duration = n.startDate ? momentApi.formatDuration(endDate - n.startDate) : '';
@@ -157,7 +163,9 @@ define([
 						};
 						return job;
 					});
+					this.shouldUpdateJobStatus = false;
 					this.jobListing(jobs);
+					this.shouldUpdateJobStatus = true;
 				} catch (e) {
 					console.warn('The server error occurred while getting all notifications');
 				} finally {

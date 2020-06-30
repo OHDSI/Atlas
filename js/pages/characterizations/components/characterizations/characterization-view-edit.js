@@ -87,6 +87,7 @@ define([
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
                 conceptSets: ko.computed(() => this.design() && this.design().strataConceptSets),
+                isEditPermitted: this.isEditPermitted,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {

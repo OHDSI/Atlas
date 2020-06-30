@@ -75,11 +75,11 @@ define(
         return output;
       }
 
-      static saveAsCsv(objArray, sDelimiter, cDelimiter) {
+      static saveAsCsv(objArray, fileName, sDelimiter, cDelimiter) {
         const csvText = CsvUtils.toCsv(objArray, sDelimiter, cDelimiter);
 
         const blob = new Blob([csvText], {type: "text/csv;charset=utf-8"});
-        saveAs(blob, 'data.csv');
+        saveAs(blob, fileName || 'data.csv');
       }
     }
 
