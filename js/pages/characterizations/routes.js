@@ -2,6 +2,7 @@ define(
 	(require, factory) => {
 		const ko = require('knockout');
 		const globalConstants = require('const');
+		const sharedState = require('atlas-state');
 	   const {
 		   AuthorizedRoute
 	   } = require('pages/Route');
