@@ -110,8 +110,7 @@ define([
 					}] : []
 			];
 		};
-
-
+		
 		const getInclusionCheckboxesColumns = (canEdit = true) => [
 			{
 				title: 'Exclude',

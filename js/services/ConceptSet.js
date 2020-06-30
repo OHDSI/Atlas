@@ -360,7 +360,7 @@ define(function (require, exports) {
 		const selectedConcepts = currentConceptSet.selectedConcepts().filter(({ concept }) => !ids.includes(concept.CONCEPT_ID));
 
 		currentConceptSet.selectedConcepts(selectedConcepts);
-		// currentConceptSet.selectedConcepts.valueHasMutated();
+		currentConceptSet.selectedConcepts.valueHasMutated();
 		resolveConceptSetExpression({ source });
 	}
 
