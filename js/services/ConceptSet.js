@@ -151,7 +151,6 @@ define(function (require, exports) {
 	}
 
 	async function onCurrentConceptSetModeChanged({ mode, source }) {
-		console.log(mode, source);
 		const currentConceptSet = sharedState[`${source}ConceptSet`];
 		let hashcode;
 		const loadIncludedWithHash = async function() {
@@ -164,7 +163,6 @@ define(function (require, exports) {
 		switch (mode) {
 			case 'included-conceptsets':
 			case 'included':
-				console.log('loadincluded')
 				await loadIncludedWithHash();
 				break;
 			case 'included-sourcecodes':
@@ -278,23 +276,6 @@ define(function (require, exports) {
 	}
 
 
-	function setCurrentConceptSet() {
-		const concept = sharedState.HashedConceptSets[sharedState.activeConceptSetSource()];
-		if (!!concept) {
-			const { 
-				includedConcepts,
-				includedSourcecodes,
-				currentConceptIdentifierList,
-				currentIncludedConceptIdentifierList,
-				selectedConcepts,
-			 } = concept;
-			sharedState.includedConcepts(includedConcepts);
-			sharedState.includedSourcecodes(includedSourcecodes);
-			sharedState.currentConceptIdentifierList(currentConceptIdentifierList);
-			sharedState.currentIncludedConceptIdentifierList(currentIncludedConceptIdentifierList);
-			sharedState.selectedConcepts(selectedConcepts);
-		}
-	}
 
 	// for the current selected concepts:
 	// update the export panel
@@ -304,7 +285,6 @@ define(function (require, exports) {
 		source,
 	}) {
 		const currentConceptSet = sharedState[`${source}ConceptSet`];
-		console.log(currentConceptSet);
 		['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
 			.forEach(key => currentConceptSet[key].removeAll());
 		['currentConceptIdentifierList', 'currentIncludedConceptIdentifierList']
@@ -362,7 +342,6 @@ define(function (require, exports) {
 	}
 
 	function createNewConceptSet(currentConceptSet) {
-		console.log(currentConceptSet);
 		const conceptSet = {
 			id: 0,
 			name: ko.observable("New Concept Set"),
@@ -410,22 +389,23 @@ define(function (require, exports) {
 		if (!currentConceptSet.current()) {
 			createNewConceptSet(currentConceptSet);
 		}
-		console.log(concepts);
 		const normalizedConcepts = concepts.map(concept => createConceptSetItem(concept));
 		addToConceptSetIdsMap({ concepts: normalizedConcepts, source });
-		currentConceptSet.selectedConcepts(_.uniqBy([
+		const arr = [
 			...currentConceptSet.selectedConcepts(),
 			...normalizedConcepts
-		], 'concept.CONCEPT_ID'));
+		];
+		const selectedConcepts = _.uniqBy(arr, 'concept.CONCEPT_ID');
+		currentConceptSet.selectedConcepts(selectedConcepts);
 		currentConceptSet.selectedConcepts.valueHasMutated();
 		setConceptSetExpressionExportItems({ source });
+		sharedState.activeConceptSet(sharedState[`${source}ConceptSet`]);
 	}
 
 	const api = {
 		addConceptsToConceptSet,
 		addToConceptSetIdsMap,
 		removeConceptsFromConceptSet,
-		setCurrentConceptSet,
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,

@@ -45,18 +45,18 @@ define(
 				this.EventBus = EventBus;
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
-				this.currentConceptSet = sharedState.ConceptSet.current;
-				this.currentConceptSetSource = sharedState.ConceptSet.source;
+				this.activeConceptSetSource = sharedState.activeConceptSetSource;
 				this.currentCohortDefinition = sharedState.CohortDefinition.current;
-				window.sharedState = sharedState; // TODO: Remove
+				this.repositoryConceptSet = sharedState.repositoryConceptSet.current;
+				this.cohortDefinitionConceptSet = sharedState.cohortDefinitionConceptSet.current;
 				this.hasUnsavedChanges = ko.pureComputed(() => {
 					return (sharedState.CohortDefinition.dirtyFlag().isDirty()
-						|| sharedState.ConceptSet.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
 						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
+						|| sharedState.activeConceptSets().some(cs => cs.dirtyFlag().isDirty())
 					);
 				});
 				this.initializationComplete = ko.pureComputed(() => {

@@ -2,6 +2,7 @@ define(
 	(require, factory) => {
     const { AuthorizedRoute } = require('pages/Route');
     const globalConstants = require('const');
+    const sharedState = require('atlas-state');
     function routes(router) {
       const detailsRoute = new AuthorizedRoute((conceptSetId, mode = 'conceptset-expression') => {
         require(['./conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {

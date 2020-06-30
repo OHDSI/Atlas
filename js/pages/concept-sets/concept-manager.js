@@ -12,6 +12,7 @@ define([
 	'./const',
 	'services/AuthAPI',
 	'./PermissionService',
+	'const',
 	'faceted-datatable',
 	'components/heading',
 	'less!./concept-manager.less',
@@ -28,13 +29,22 @@ define([
 	httpService,
 	constants,
 	authApi,
-	PermissionService
+	PermissionService,
+	globalConstants,
 ) {
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.currentConceptId = ko.observable();
 			this.currentConcept = ko.observable();
+			this.activeConceptSets = sharedState.activeConceptSets;
+			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
+			this.currentlyActiveConceptSetName = ko.computed(() => {
+				if (sharedState.activeConceptSet() && sharedState.activeConceptSet().current()) {
+					return sharedState.activeConceptSet().current().name();
+				}
+				return 'Select Conceptset';
+			});
 			this.currentConceptMode = ko.observable('details');
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
@@ -288,9 +298,9 @@ define([
 			};
 		}
 
-		addToConceptSetExpression(data, currentConcept = false) {
+		addToConceptSetExpression(data, currentConcept = false, source = 'repository') {
 			const concepts = commonUtils.getSelectedConcepts(ko.unwrap(data));
-			conceptSetService.addConceptsToConceptSet(concepts);
+			conceptSetService.addConceptsToConceptSet({ concepts, source });
 			if (currentConcept) {
 				const newCurrentConceptObject = {
 					...this.currentConceptArray()[0],

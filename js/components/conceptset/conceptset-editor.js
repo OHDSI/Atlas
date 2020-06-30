@@ -25,7 +25,6 @@ define([
 			this.conceptSets = params.$raw.conceptSets();
 			this.conceptSetId = params.$raw.conceptSetId;
 			this.currentConceptSetSource = params.currentConceptSetSource;
-			console.log(params);
 			this.selectedConcepts = sharedState[`${this.currentConceptSetSource}ConceptSet`].selectedConcepts;
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.commonUtils = commonUtils;

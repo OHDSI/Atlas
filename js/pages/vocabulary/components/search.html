@@ -51,10 +51,10 @@
 		</div>
 	</form>
 	<!-- ko if: searchExecuted() && data().length > 0 -->
-	<div class="row">
+	<div class="row add-concept-buttons-container">
 		<div class="pull-left">
 			<!-- ko if: hasActiveConceptSets() -->
-			<div class="dropdown">
+			<div class="btn-group">
 				<button
 					class="btn btn-primary dropdown-toggle"
 					type="button"
@@ -76,7 +76,6 @@
 			<!-- /ko -->
 			<!-- ko ifnot: hasActiveConceptSets() -->
 				<button class="btn btn-primary" data-bind="click: () => addConceptsToConceptSet('repository')">Add to New Concept Set</button>
-
 			<!-- /ko -->
 		</div>
 	</div>

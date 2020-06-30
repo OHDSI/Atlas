@@ -11,7 +11,30 @@
 				<span data-bind="click: () =>  $component.toggleCurrentConcept('isExcluded'), css: { selected: isExcluded() }" class="fa fa-check"></span> Exclude
 				<span data-bind="click: () =>  $component.toggleCurrentConcept('includeDescendants'), css: { selected: includeDescendants() }" class="fa fa-check"></span> Descendants
 				<span data-bind="click: () =>  $component.toggleCurrentConcept('includeMapped'), css: { selected: includeMapped() }" class="fa fa-check"></span> Mapped
-				<button class="btn btn-sm btn-success" data-bind="click: () => $component.addToConceptSetExpression([$component.currentConcept()], true), css: { disabled: !$component.isCurrentConceptAddButtonActive() }">Add to ConceptSet</button>
+				<!-- ko if: $component.hasActiveConceptSets() -->
+					<div class="btn-group">
+						<button
+							class="btn btn-sm btn-success dropdown-toggle"
+							type="button"
+							id="dropdownMenu1"
+							data-toggle="dropdown"
+							aria-haspopup="true"
+							aria-expanded="true"
+							data-bind="css: { disabled: !$component.isCurrentConceptAddButtonActive()"
+						>
+							<span data-bind="text: $component.currentlyActiveConceptSetName()"></span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<!-- ko foreach: $component.activeConceptSets() -->
+								<li><a data-bind="click: () => $component.addToConceptSetExpression([$component.currentConcept()], true, $data.source), text: $data.current().name()"></a></li>
+							<!-- /ko -->
+						</ul>
+							</div>
+					<!-- /ko -->
+					<!-- ko ifnot: $component.hasActiveConceptSets() -->
+						<button class="btn btn-sm btn-success" data-bind="click: () => $component.addToConceptSetExpression([$component.currentConcept()], true, 'repository'), css: { disabled: !$component.isCurrentConceptAddButtonActive()">Add to New Concept Set</button>
+					<!-- /ko -->
 			</div>
 		  </div>
 	</div>

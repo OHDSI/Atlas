@@ -204,7 +204,6 @@ define([
 
 			this.onConceptSetModeChanged = sharedState.currentConceptSetMode
 				.subscribe(mode => conceptSetService.onCurrentConceptSetModeChanged({ mode, source: globalConstants.conceptSetSources.repository }));
-			console.log(this);
 		}
 
 		onRouterParamsChanged(params, newParams) {

@@ -59,11 +59,7 @@ define([
 				if (sharedState.activeConceptSet() && sharedState.activeConceptSet().current()) {
 					return sharedState.activeConceptSet().current().name();
 				}
-				return '';
-			});
-			console.log(this);
-			this.currentlyActiveConceptSet = ko.computed(() => {
-				return sharedState.HashedConceptSets[sharedState.activeConceptSetSource()] || null;
+				return 'Select Conceptset';
 			});
 
 				this.isInProgress = ko.computed(() => {
@@ -262,11 +258,6 @@ define([
 					return true;
 				}
 			}
-
-			setVocabularyActiveConceptSet(conceptSet) {
-				sharedState.activeConceptSetSource(conceptSet.source);
-			}
-
 			executeSearch() {
 				if (!this.currentSearch() && !this.showAdvanced()) {
 					this.data([]);
@@ -359,7 +350,6 @@ define([
 			}
 
 			addConceptsToConceptSet(source) {
-				sharedState.activeConceptSet(sharedState[`${source}ConceptSet`]);
 				const conceptsToAdd = this.data().filter(item => item.isExcluded() || item.includeDescendants() || item.includeMapped());
 				ConceptSetService.addConceptsToConceptSet({ concepts: conceptsToAdd, source });
 			}

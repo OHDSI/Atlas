@@ -108,7 +108,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		details: state.selectedConcepts,
 	}));
 	state.ConceptSet.current.subscribe((newValue) => {
-		console.log('---nW', newValue);
 		if (newValue != null) {
 			state.ConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag({
 				header: state.ConceptSet.current,
@@ -135,11 +134,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
-
-	state.activeConceptSets = ko.observable({});
-	state.vocabularyActiveConceptSet = ko.observable();
-
-	state.activeConceptSetSource = ko.observable();
 
 	ko.subscribable.fn.subscribeChanged = function (callback, context) {
 		var savedValue = this.peek();
@@ -198,7 +192,8 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		return activeConceptSetSources.map(source => state[`${source}ConceptSet`]);
 	})
 
+	state.activeConceptSetSource = ko.observable();
 	state.activeConceptSet = ko.observable();
-	
+
 	return state;
 });
