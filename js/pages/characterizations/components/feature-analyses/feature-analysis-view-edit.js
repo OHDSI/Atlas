@@ -12,7 +12,6 @@ define([
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'atlas-state',
-    'services/EventEmitter',
     'services/AuthAPI',
     'services/Vocabulary',
 	'services/Permission',
@@ -49,7 +48,6 @@ define([
     view,
     config,
     sharedState,
-    EventEmitter,
     authApi,
     VocabularyAPI,
 	GlobalPermissionService,
@@ -273,7 +271,6 @@ define([
               createdBy: ko.observable(),
             };
             data.conceptSets(conceptSets.map(s => new ConceptSet(s)));
-//            data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {

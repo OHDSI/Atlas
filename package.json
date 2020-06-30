@@ -64,7 +64,6 @@
     "datatables.net-select": "^1.3.1",
     "director": "^1.2.8",
     "eonasdan-bootstrap-datetimepicker": "^4.17.47",
-    "eventemitter3": "4.0.0",
     "facets": "^0.1.1",
     "file-saver": "^1.3.8",
     "hash-it": "~4.0.4",

@@ -197,10 +197,6 @@ define([
 
 			renderCheckbox(field) {
 				return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
-				// if (this.canEdit()) {
-				// } else {
-				// 	return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
-				// }
 			}
 
 			encodeSpecialCharacters(str) {

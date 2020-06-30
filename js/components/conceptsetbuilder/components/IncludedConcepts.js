@@ -27,14 +27,6 @@ define([
 
 		self.selectedConcepts = ko.observableArray();
 
-		self.selectedConceptsIndex = ko.pureComputed(function () {
-			var index = {};
-			self.selectedConcepts().forEach(function (item) {
-				console.log(item);
-				// index[item.CONCEPT_ID] = 
-			});
-			return index;
-		});
 
 		self.includedConcepts = ko.observableArray();
 		if (params.widget)

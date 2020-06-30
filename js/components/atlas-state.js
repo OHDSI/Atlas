@@ -151,69 +151,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	};
 	
 
-	state.activeConceptSetSource.subscribeChanged((newValue, oldValue) => {
-		console.log('state.activeConceptSetSource.subscribeChanged',newValue, oldValue);
-	// 	if (!newValue) return;
-		const concept = state.HashedConceptSets[state.activeConceptSetSource()];
-		console.log(concept);
-	// 	if (!!concept) {
-	// 		state.ConceptSet.current = ko.observable();
-	// 		state.clearSelectedConcepts();
-	// 		console.log('HAS HASHED CONCEPT', concept.selectedConcepts)
-	// 		const { 
-	// 			includedConcepts,
-	// 			includedSourcecodes,
-	// 			currentConceptIdentifierList,
-	// 			currentIncludedConceptIdentifierList,
-	// 			selectedConcepts,
-	// 			conceptSetName,
-	// 			conceptSetId,
-	// 		 } = concept;
-	// 		state.includedConcepts(includedConcepts);
-	// 		state.includedSourcecodes(includedSourcecodes);
-	// 		state.currentConceptIdentifierList(currentConceptIdentifierList);
-	// 		state.currentIncludedConceptIdentifierList(currentIncludedConceptIdentifierList);
-	// 		state.selectedConcepts(selectedConcepts);
-	// 		state.ConceptSet.current({
-	// 			id: conceptSetId,
-	// 			name: ko.observable(conceptSetName),
-	// 		})
-	// 	} else {
-	// 		state.HashedConceptSets[state.activeConceptSetSource()] = {
-	// 			includedConcepts: state.includedConcepts(),
-	// 			includedSourcecodes: state.includedSourcecodes(),
-	// 			currentConceptIdentifierList: state.currentConceptIdentifierList(),
-	// 			currentIncludedConceptIdentifierList: state.currentIncludedConceptIdentifierList(),
-	// 			selectedConcepts: state.selectedConcepts(),
-	// 		}
-	// 	}
-	});
-
-	state.HashedConceptSets = {};
-
-
 	state.cohortDefinitionConceptSet = {
 		current: ko.observable(),
 		selectedConcepts: ko.observableArray([]),
 	};
-
-	// state.repositoryConceptSet = {
-	// 	current: ko.observable(),
-	// 	negativeControls: ko.observable(),
-	// 	selectedConcepts: ko.observableArray([]),
-	// 	selectedConceptsIndex: {},
-	// 	includedConcepts: ko.observableArray([]),
-	// 	includedConceptsMap: ko.observable({}),
-	// 	includedSourcecodes: ko.observableArray([]),
-	// 	conceptSetInclusionIdentifiers: ko.observableArray([]),
-	// 	currentConceptIdentifierList: ko.observable(),
-	// 	currentIncludedConceptIdentifierList: ko.observable(),
-	// 	currentConceptSetExpressionJson: ko.observable(),
-	// 	includedHash: ko.observable(),
-	// 	resolvingConceptSetExpression: ko.observable(false),
-	// 	loadingSourcecodes: ko.observable(false),
-	// 	loadingIncluded: ko.observable(false),
-	// }
 
 	// Define ConceptSetStore for each module with conceptSet tab
 	Object.keys(constants.conceptSetSources).forEach(k => {

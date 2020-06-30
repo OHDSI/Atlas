@@ -8,7 +8,6 @@ define(
 		'lscache',
 		'atlas-state',
 		'jquery',
-		'services/EventEmitter',
 		'services/Execution',
 		'services/SourceAPI',
 		'services/EventBus',
@@ -28,7 +27,6 @@ define(
 		lscache,
 		sharedState,
 		$, // TODO: get rid of jquery
-		EventEmitter,
 		executionService,
 		sourceApi,
 		EventBus,
@@ -148,39 +146,6 @@ define(
 
 			attachGlobalEventListeners() {
 				const self = this;
-						// If we are updating a concept set that is part of a cohort definition
-						// then we need to notify any dependent observables about this change in the concept set
-						// if (self.currentCohortDefinition() && self.currentConceptSetSource() === "cohort") {
-						// 	var conceptSet = self.currentCohortDefinition()
-						// 		.expression()
-						// 		.ConceptSets()
-						// 		.find(function (item) {
-						// 			return item.id === self.currentConceptSet().id;
-						// 		});
-						// 	if (!$(this).hasClass("selected")) {
-						// 		conceptSet.expression.items.remove(function (i) {
-						// 			return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
-						// 		});
-						// 	}
-						// 	conceptSet.expression.items.valueHasMutated();
-						// 	conceptSetService.resolveConceptSetExpressionSimple(conceptSet.expression);
-						// }
-
-				// concept set selector handling
-				// $(document)
-				// 	.on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
-				// 		$(this)
-				// 			.toggleClass('selected');
-				// 		var conceptSetItem = ko.contextFor(this)
-				// 			.$data;
-				// 		delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-				// 		sharedState.selectedConcepts.remove(function (i) {
-				// 			return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
-				// 		});
-				// 		self.currentCohortDefinition() && self.currentCohortDefinition().expression().ConceptSets.valueHasMutated();
-				// 		conceptSetService.resolveConceptSetExpression();
-				// 	});
-
 				$(window)
 					.bind('beforeunload', function () {
 						if (self.hasUnsavedChanges())
