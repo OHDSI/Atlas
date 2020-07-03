@@ -5,12 +5,12 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.roles = ko.observableArray();
 	state.sources = ko.observableArray([]);
 
-	state.vocabularyUrl = ko.observable(localStorage.vocabularyUrl);
-	state.evidenceUrl = ko.observable(localStorage.evidenceUrl)
-	state.resultsUrl = ko.observable(localStorage.resultsUrl);
-	state.vocabularyUrl.subscribe(value => localStorage.vocabularyUrl = value)
-	state.evidenceUrl.subscribe(value => localStorage.evidenceUrl = value)
-	state.resultsUrl.subscribe(value => localStorage.resultsUrl = value)
+	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
+	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
+	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
+	state.vocabularyUrl.subscribe(value => sessionStorage.vocabularyUrl = value);
+	state.evidenceUrl.subscribe(value => sessionStorage.evidenceUrl = value);
+	state.resultsUrl.subscribe(value => sessionStorage.resultsUrl = value);
 
 	state.resetCurrentDataSourceScope = function() {
 		state.resultsUrl(null);

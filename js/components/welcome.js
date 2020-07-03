@@ -12,7 +12,7 @@ define([
     view,
     appConfig,
     authApi,
-	BemHelper,
+    BemHelper,
     sharedState,
     ) {
     const componentName = 'welcome';
