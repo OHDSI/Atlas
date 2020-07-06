@@ -11,6 +11,7 @@ define([
 	'pages/Router',
 	'./PermissionService',
 	'services/Permission',
+	'services/MomentAPI',
 	'components/security/access/const',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
@@ -29,6 +30,7 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -42,6 +44,7 @@ define([
 	router,
 	PermissionService,
 	GlobalPermissionService,
+	momentApi,
 	{ entityType },
 	EstimationService,
 	EstimationAnalysis,
@@ -125,6 +128,7 @@ define([
 					if (this.selectedAnalysisId() === '0') {
 						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
 					} else {
+						// return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
 						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
 					}
 				}
@@ -459,6 +463,19 @@ define([
 					propertyName: propertyName
 				})
 			);
+		}
+
+		formatDate(date) {
+			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
+		}
+
+		getAuthorship() {
+			return {
+					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy.name'),
+					createdDate: this.formatDate(this.estimationAnalysis().createdDate),
+					modifiedBy: lodash.get(this.estimationAnalysis(), 'createdBy.modifiedBy'),
+					modifiedDate: this.formatDate(this.estimationAnalysis().modifiedDate),
+			}
 		}
 	}
 

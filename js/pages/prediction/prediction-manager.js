@@ -20,6 +20,7 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
+	'services/MomentAPI',
 	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
@@ -33,6 +34,7 @@ define([
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -55,6 +57,7 @@ define([
 	ConceptSet,
 	ConceptSetCrossReference,
 	authAPI,
+	momentApi,
 	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
@@ -115,12 +118,12 @@ define([
 			});
 
 			this.isNewEntity = this.isNewEntityResolver();
-
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
 						return 'New Patient Level Prediction';
 					} else {
+						// return `Patient Level Prediction #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
 						return 'Patient Level Prediction #' + this.selectedAnalysisId();
 					}
 				}
@@ -378,6 +381,19 @@ define([
 			this.covariateSettings = this.patientLevelPredictionAnalysis().covariateSettings;
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
+		}
+
+		formatDate(date) {
+			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
+		}
+
+		getAuthorship() {
+			return {
+					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.name'),
+					createdDate: this.formatDate(this.patientLevelPredictionAnalysis().createdDate),
+					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.modifiedBy'),
+					modifiedDate: this.formatDate(this.patientLevelPredictionAnalysis().modifiedDate),
+			}
 		}
 	}
 

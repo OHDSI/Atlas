@@ -15,6 +15,7 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'services/AuthAPI',
+	'services/MomentAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -32,7 +33,8 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -50,6 +52,7 @@ define([
 	sharedState,
 	conceptSetService,
 	authApi,
+	momentApi,
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -105,7 +108,7 @@ define([
 					if (this.currentConceptSet().id === 0) {
 						return this.defaultName;
 					} else {
-						return 'Concept Set #' + this.currentConceptSet().id;
+						return `Concept Set #${this.currentConceptSet().id} ${this.canEdit() ? '' : '(Read only)'}`;
 					}
 				}
 			});
@@ -132,6 +135,7 @@ define([
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
 			this.optimizerSavingNewName = ko.observable();
+			console.log(this);
 			this.optimizerFoundSomething = ko.pureComputed(() => {
 				var returnVal = false;
 				if (this.optimalConceptSet() &&
@@ -464,6 +468,19 @@ define([
 		cancelSaveNewOptimizedConceptSet() {
 			this.optimizerSavingNew(false);
 		}
+
+		formatDate(date) {
+			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
+	 }
+
+	 getAuthorship() {
+			 return {
+					 createdBy: this.currentConceptSet().createdBy,
+					 createdDate: this.formatDate(this.currentConceptSet().createdDate),
+					 modifiedBy: this.currentConceptSet().modifiedBy,
+					 modifiedDate: this.formatDate(this.currentConceptSet().modifiedDate),
+			 }
+	 }
 
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);

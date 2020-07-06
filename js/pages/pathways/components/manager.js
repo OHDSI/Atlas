@@ -9,6 +9,7 @@ define([
 	'atlas-state',
 	'appConfig',
 	'services/AuthAPI',
+	'services/MomentAPI',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -23,6 +24,7 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -34,6 +36,7 @@ define([
 	sharedState,
 	config,
 	authApi,
+	momentApi,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -75,7 +78,7 @@ define([
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return 'Cohort Pathway #' + this.design().id;
+					return `Cohort Pathway #${this.design().id} ${this.canEdit() ? '' : '(Read only)'}`;
 				}
 				return this.defaultName;
 			});
@@ -209,6 +212,19 @@ define([
 			this.dirtyFlag().reset();
 
 			commonUtils.routeTo('/pathways');
+		}
+
+		formatDate(date) {
+			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
+		}
+
+		getAuthorship() {
+			return {
+					createdBy: lodash.get(this.design(), 'createdBy.name'),
+					createdDate: this.formatDate(this.design().createdDate),
+					modifiedBy: lodash.get(this.design(), 'createdBy.modifiedBy'),
+					modifiedDate: this.formatDate(this.design().modifiedDate),
+			}
 		}
 
 	}

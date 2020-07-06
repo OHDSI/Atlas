@@ -5,6 +5,9 @@
 <!-- ko if:data -->
 <div data-bind="css: classes()">
     <heading-title params="name: featureCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <!-- ko if: !!data().id -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
     <div class="asset-heading">
         <div class="input-group">
             <input type="text" placeholder="New Feature Analysis" class="form-control" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: $component.data().name, css: { emptyInput: !isNameFilled() }" />

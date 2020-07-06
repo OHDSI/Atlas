@@ -5,6 +5,7 @@ define(function (require, exports) {
   const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm A';
   const DATE_FORMAT = 'MM/DD/YYYY';
   const DURATION_FORMAT = 'HH:mm:ss';
+  const DESIGN_DATE_TIME_FORMAT = 'YYYY-MM-DD H:mm';
   const EMPTY_DATE = '';
 
   function formatDateTime(date) {
@@ -50,6 +51,7 @@ define(function (require, exports) {
     DATE_TIME_FORMAT,
     DATE_FORMAT,
     DURATION_FORMAT,
+    DESIGN_DATE_TIME_FORMAT,
   };
 
   return api;

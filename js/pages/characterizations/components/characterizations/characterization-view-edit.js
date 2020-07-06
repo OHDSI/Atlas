@@ -24,7 +24,8 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
-	'components/security/access/configure-access-modal',
+    'components/security/access/configure-access-modal',
+    'components/authorship',
 ], function (
     ko,
     CharacterizationService,
@@ -91,7 +92,7 @@ define([
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
                     } else {
-                        return 'Characterization #' + this.characterizationId();
+                        return `Cohort #${this.characterizationId()} ${this.isEditPermitted() ? '' : '(Read only)'}`;
                     }
                 }
             });
@@ -241,6 +242,15 @@ define([
             this.design(null);
             this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');
+        }
+
+        getAuthorship() {
+            return {
+                createdBy: (this.design().createdBy || {}).name,
+                createdDate: this.design().createdAt,
+                modifiedBy: (this.design().modifiedBy || {}).name,
+                modifiedDate: this.design().updatedAt,
+            }
         }
     }
 
