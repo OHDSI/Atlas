@@ -9,7 +9,6 @@ define([
 	'atlas-state',
 	'appConfig',
 	'services/AuthAPI',
-	'services/MomentAPI',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -36,7 +35,6 @@ define([
 	sharedState,
 	config,
 	authApi,
-	momentApi,
 	Page,
 	AutoBind,
 	commonUtils,
@@ -214,16 +212,14 @@ define([
 			commonUtils.routeTo('/pathways');
 		}
 
-		formatDate(date) {
-			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
-		}
-
 		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
 			return {
 					createdBy: lodash.get(this.design(), 'createdBy.name'),
-					createdDate: this.formatDate(this.design().createdDate),
+					createdDate,
 					modifiedBy: lodash.get(this.design(), 'createdBy.modifiedBy'),
-					modifiedDate: this.formatDate(this.design().modifiedDate),
+					modifiedDate,
 			}
 		}
 

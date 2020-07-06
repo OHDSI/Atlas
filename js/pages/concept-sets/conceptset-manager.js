@@ -15,7 +15,6 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'services/AuthAPI',
-	'services/MomentAPI',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -52,7 +51,6 @@ define([
 	sharedState,
 	conceptSetService,
 	authApi,
-	momentApi,
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -469,16 +467,14 @@ define([
 			this.optimizerSavingNew(false);
 		}
 
-		formatDate(date) {
-			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
-	 }
-
 	 getAuthorship() {
+		const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
 			 return {
 					 createdBy: this.currentConceptSet().createdBy,
-					 createdDate: this.formatDate(this.currentConceptSet().createdDate),
+					 createdDate,
 					 modifiedBy: this.currentConceptSet().modifiedBy,
-					 modifiedDate: this.formatDate(this.currentConceptSet().modifiedDate),
+					 modifiedDate,
 			 }
 	 }
 

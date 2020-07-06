@@ -15,7 +15,6 @@ define([
     'services/AuthAPI',
     'services/Vocabulary',
     'services/Permission',
-    'services/MomentAPI',
 	'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'pages/Page',
@@ -50,7 +49,6 @@ define([
     authApi,
     VocabularyAPI,
     GlobalPermissionService,
-    momentApi,
 	{ entityType },
     ConceptSet,
     Page,
@@ -409,16 +407,14 @@ define([
             this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
         }
 
-        formatDate(date) {
-           return date() ? momentApi.formatDateTimeWithFormat(date(), momentApi.DESIGN_DATE_TIME_FORMAT) : '';
-        }
-
         getAuthorship() {
+            const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
+            const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
             return {
                 createdBy: this.data().createdBy(),
-                createdDate: this.formatDate(this.data().createdDate),
+                createdDate,
                 modifiedBy: this.data().modifiedBy(),
-                modifiedDate: this.formatDate(this.data().modifiedDate),
+                modifiedDate,
             }
         }
     }

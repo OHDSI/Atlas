@@ -20,7 +20,6 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
-	'services/MomentAPI',
 	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
@@ -57,7 +56,6 @@ define([
 	ConceptSet,
 	ConceptSetCrossReference,
 	authAPI,
-	momentApi,
 	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
@@ -383,16 +381,14 @@ define([
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 		}
 
-		formatDate(date) {
-			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
-		}
-
 		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().modifiedDate);
 			return {
 					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.name'),
-					createdDate: this.formatDate(this.patientLevelPredictionAnalysis().createdDate),
+					createdDate,
 					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.modifiedBy'),
-					modifiedDate: this.formatDate(this.patientLevelPredictionAnalysis().modifiedDate),
+					modifiedDate,
 			}
 		}
 	}

@@ -11,7 +11,6 @@ define([
 	'pages/Router',
 	'./PermissionService',
 	'services/Permission',
-	'services/MomentAPI',
 	'components/security/access/const',
 	'services/Estimation',
     './inputTypes/EstimationAnalysis',
@@ -44,7 +43,6 @@ define([
 	router,
 	PermissionService,
 	GlobalPermissionService,
-	momentApi,
 	{ entityType },
 	EstimationService,
 	EstimationAnalysis,
@@ -465,16 +463,14 @@ define([
 			);
 		}
 
-		formatDate(date) {
-			return date ? momentApi.formatDateTimeWithFormat(date, momentApi.DESIGN_DATE_TIME_FORMAT) : '';
-		}
-
 		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().modifiedDate);
 			return {
 					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy.name'),
-					createdDate: this.formatDate(this.estimationAnalysis().createdDate),
+					createdDate,
 					modifiedBy: lodash.get(this.estimationAnalysis(), 'createdBy.modifiedBy'),
-					modifiedDate: this.formatDate(this.estimationAnalysis().modifiedDate),
+					modifiedDate,
 			}
 		}
 	}
