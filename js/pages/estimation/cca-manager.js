@@ -469,7 +469,7 @@ define([
 			return {
 					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy.name'),
 					createdDate,
-					modifiedBy: lodash.get(this.estimationAnalysis(), 'createdBy.modifiedBy'),
+					modifiedBy: lodash.get(this.estimationAnalysis(), 'modifiedBy.name'),
 					modifiedDate,
 			}
 		}

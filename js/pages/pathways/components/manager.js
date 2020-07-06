@@ -218,7 +218,7 @@ define([
 			return {
 					createdBy: lodash.get(this.design(), 'createdBy.name'),
 					createdDate,
-					modifiedBy: lodash.get(this.design(), 'createdBy.modifiedBy'),
+					modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
 					modifiedDate,
 			}
 		}

@@ -387,7 +387,7 @@ define([
 			return {
 					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.name'),
 					createdDate,
-					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.modifiedBy'),
+					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'modifiedBy.name'),
 					modifiedDate,
 			}
 		}

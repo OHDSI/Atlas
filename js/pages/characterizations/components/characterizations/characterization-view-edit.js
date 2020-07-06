@@ -246,9 +246,9 @@ define([
 
         getAuthorship() {
             return {
-                createdBy: (this.design().createdBy || {}).name,
+                createdBy: lodash.get(this.design(), 'createdBy.name'),
                 createdDate: this.design().createdAt,
-                modifiedBy: (this.design().modifiedBy || {}).name,
+                modifiedBy: lodash.get(this.design(), 'updatedBy.name'),
                 modifiedDate: this.design().updatedAt,
             }
         }
