@@ -107,6 +107,8 @@ define([
 				subscriptions: this.subscriptions,
 			});
 
+			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
 			});
@@ -121,8 +123,7 @@ define([
 					if (this.selectedAnalysisId() === '0') {
 						return 'New Patient Level Prediction';
 					} else {
-						// return `Patient Level Prediction #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
-						return 'Patient Level Prediction #' + this.selectedAnalysisId();
+						return `Patient Level Prediction #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
 					}
 				}
 			});
@@ -135,7 +136,7 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
 
 			GlobalPermissionService.decorateComponent(this, {

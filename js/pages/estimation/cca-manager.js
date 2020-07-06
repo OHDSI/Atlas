@@ -86,8 +86,9 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
@@ -126,8 +127,7 @@ define([
 					if (this.selectedAnalysisId() === '0') {
 						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
 					} else {
-						// return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
-						return 'Population Level Effect Estimation - Comparative Cohort Analysis #' + this.selectedAnalysisId();
+						return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
 					}
 				}
 			});
