@@ -160,7 +160,7 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => EstimationService.generate(this.analysisId(), sourceKey))
-				.then(({data}) => {
+				.then((data) => {
 					jobDetailsService.createJob(data);
 					this.loadData()
 				})

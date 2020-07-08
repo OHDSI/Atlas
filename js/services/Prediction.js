@@ -57,9 +57,7 @@ define(function (require, exports) {
 
 	function generate(id, source) {
     	return httpService.doPost(config.webAPIRoot + predictionEndpoint + id + '/generation/' + source)
-				.then(res => {
-					return res.data;
-				})
+				.then(res => res.data)
 				.catch(error => authApi.handleAccessDenied(error));
 	}
 

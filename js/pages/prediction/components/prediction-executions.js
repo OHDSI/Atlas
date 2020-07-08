@@ -178,16 +178,16 @@ define([
 		generate(sourceKey) {
 
 			const executionGroup = this.executionGroups().find(g => g.sourceKey === sourceKey);
+
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
-				.then(({data}) => {
+				.then((data) => {
 					jobDetailsService.createJob(data);
 					this.loadData()
 				})
 				.catch(() => {});
 		}
-
 
 		toggleSection(idx) {
 			this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
