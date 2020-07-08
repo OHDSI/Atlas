@@ -37,7 +37,10 @@ define([
 			super(params);
 			this.currentConceptId = ko.observable();
 			this.currentConcept = ko.observable();
-			this.activeConceptSets = sharedState.activeConceptSets;
+			this.activeConceptSets = ko.pureComputed(() => {
+				const activeConceptSetSources = Object.keys(globalConstants.conceptSetSources).filter(key => !!sharedState[`${key}ConceptSet`].current());
+				return activeConceptSetSources.map(source => sharedState[`${source}ConceptSet`]);
+			});
 			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
 			this.currentlyActiveConceptSetName = ko.computed(() => {
 				if (sharedState.activeConceptSet() && sharedState.activeConceptSet().current()) {

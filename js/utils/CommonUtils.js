@@ -221,6 +221,25 @@ define([
 		return ([1e7]+1e3+4e3+8e3+1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15 >> c/4).toString(16));
 	}
 
+	const clearConceptSetBySource = ({ source }) => {
+		const conceptSet = sharedState[`${source}ConceptSet`];
+		conceptSet.current(undefined);
+		conceptSet.negativeControls(undefined);
+		conceptSet.selectedConcepts([]);
+		conceptSet.selectedConceptsIndex = {};
+		conceptSet.includedConcepts([]);
+		conceptSet.includedConceptsMap({});
+		conceptSet.includedSourcecodes([]);
+		conceptSet.conceptSetInclusionIdentifiers([]);
+		conceptSet.currentConceptIdentifierList(undefined);
+		conceptSet.currentIncludedConceptIdentifierList(undefined);
+		conceptSet.currentConceptSetExpressionJson(undefined);
+		conceptSet.includedHash(undefined);
+		conceptSet.resolvingConceptSetExpression(false);
+		conceptSet.loadingSourcecodes(false);
+		conceptSet.loadingIncluded(false);
+	}
+
 	return {
 		build,
 		confirmAndDelete,
@@ -245,5 +264,6 @@ define([
 		highlightRow,
 		getSelectedConcepts,
 		getUniqueIdentifier,
+		clearConceptSetBySource,
 	};
 });

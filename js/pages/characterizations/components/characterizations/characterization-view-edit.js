@@ -243,6 +243,7 @@ define([
             }
             this.design(null);
             this.designDirtyFlag().reset();
+            commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.characterization });
             commonUtils.routeTo('/cc/characterizations');
         }
     }

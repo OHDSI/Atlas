@@ -1,129 +1,180 @@
 <script type="text/html" id="vocabulary-vocab-list">
-	<div class="checkboxListing row">
-			<!-- ko if: vocabulariesLoading -->
-				<loading></loading>
-			<!-- /ko -->
-			<!-- ko if: vocabularies().length === 0 && !vocabulariesLoading() -->
-				<empty-state params="message: 'No vocabularies available'"></empty-state>
-			<!-- /ko -->
-			<!-- ko foreach: vocabularies() -->
-			<div class="col-sm-6">
-				<input
-					type="checkbox"
-					data-bind="value: VOCABULARY_ID, event: { change: (e) => $parent.toggleVocabulary(VOCABULARY_ID) }"
-				> <span data-bind="text: VOCABULARY_ID + ': ' + VOCABULARY_NAME"></span>
-			</div>
-			<!-- /ko -->
-		</div>
+  <div class="checkboxListing row">
+    <!-- ko if: vocabulariesLoading -->
+      <loading></loading>
+    <!-- /ko -->
+    <!-- ko if: vocabularies().length === 0 && !vocabulariesLoading() -->
+      <empty-state params="message: 'No vocabularies available'"></empty-state>
+    <!-- /ko -->
+    <!-- ko foreach: vocabularies() -->
+      <div class="col-sm-6">
+        <input
+          type="checkbox"
+          data-bind="value: VOCABULARY_ID, event: { change: (e) => $parent.toggleVocabulary(VOCABULARY_ID) }"
+        >
+        <span data-bind="text: VOCABULARY_ID + ': ' + VOCABULARY_NAME"></span>
+      </div>
+    <!-- /ko -->
+  </div>
 </script>
 <script type="text/html" id="vocabulary-domain-list">
-	<div class="checkboxListing row">
-		<!-- ko if: domainsLoading -->
-			<loading></loading>
-		<!-- /ko -->
-		<!-- ko if: domains().length === 0 && !domainsLoading() -->
-			<empty-state params="message: 'No domains available'"></empty-state>
-		<!-- /ko -->
-		<!-- ko foreach: domains() -->
-		<div class="col-sm-6">
-			<input
-				type="checkbox"
-				data-bind="value: DOMAIN_ID, event: { change: (e) => $parent.toggleDomain(DOMAIN_ID) }"
-			> <span data-bind="text: DOMAIN_NAME"></span>
-		</div>
-		<!-- /ko -->
-	</div>
+  <div class="checkboxListing row">
+    <!-- ko if: domainsLoading -->
+      <loading></loading>
+    <!-- /ko -->
+    <!-- ko if: domains().length === 0 && !domainsLoading() -->
+      <empty-state params="message: 'No domains available'"></empty-state>
+    <!-- /ko -->
+    <!-- ko foreach: domains() -->
+      <div class="col-sm-6">
+        <input
+          type="checkbox"
+          data-bind="value: DOMAIN_ID, event: { change: (e) => $parent.toggleDomain(DOMAIN_ID) }"
+        >
+        <span data-bind="text: DOMAIN_NAME"></span>
+      </div>
+    <!-- /ko -->
+  </div>
 </script>
 
-<div class="vocabulary-search-tab" data-bind="if: isAuthenticated() && hasAccess()">
-	<form data-bind="submit: searchClick">
-		<div class="input-group">
-			<input placeholder="Type your search here" type="text" data-bind="textInput: currentSearch,
+<div
+  class="vocabulary-search-tab"
+  data-bind="if: isAuthenticated() && hasAccess()"
+>
+  <form data-bind="submit: searchClick">
+    <div class="input-group">
+      <input
+        placeholder="Type your search here"
+        type="text"
+        data-bind="textInput: currentSearch,
 				css: classes({
 					element: 'input',
 					extra: 'form-control'
 				}),
-				" />
-			<div class="input-group-btn">
-				<button class="btn btn-primary" title="Search" type="submit"><i class="fa fa-search"></i></button>
-				<button data-bind="click: toggleAdvanced" class="btn btn-primary">Advanced Options</button>
-			</div>
-		</div>
-	</form>
-	<!-- ko if: searchExecuted() && data().length > 0 -->
-	<div class="row add-concept-buttons-container">
-		<div class="pull-left">
-			<!-- ko if: hasActiveConceptSets() -->
-			<div class="btn-group">
-				<button
-					class="btn btn-primary dropdown-toggle"
-					type="button"
-					id="dropdownMenu1"
-					data-toggle="dropdown"
-					aria-haspopup="true"
-					aria-expanded="true"
-					
-				>
-					<span data-bind="text: $component.currentlyActiveConceptSetName()"></span>
-					<span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-					<!-- ko foreach: $component.activeConceptSets() -->
-						<li><a data-bind="click: () => $component.addConceptsToConceptSet($data.source), text: $data.current().name()"></a></li>
-					<!-- /ko -->
-				</ul>
-				  </div>
-			<!-- /ko -->
-			<!-- ko ifnot: hasActiveConceptSets() -->
-				<button class="btn btn-primary" data-bind="click: () => addConceptsToConceptSet('repository')">Add to New Concept Set</button>
-			<!-- /ko -->
-		</div>
-	</div>
-	<!-- /ko -->
-	<!-- ko if: isInProgress() || loading() -->
-		<loading params="status: loadingMessage"></loading>
-	<!-- /ko -->
-	<div class="advanced-options" data-bind="visible: showAdvanced">
-		<div data-bind="css: classes({ element: 'clear-btn', extra: 'row' })">
-			<div class="btn btn-success btn-sm pull-right" data-bind="click: clearAllAdvanced">
-				<i class="fa fa-eraser"></i> Clear All Selections
-			</div>
-		</div>
+				"
+      />
+      <div class="input-group-btn">
+        <button class="btn btn-primary" title="Search" type="submit">
+          <i class="fa fa-search"></i>
+        </button>
+        <button data-bind="click: toggleAdvanced" class="btn btn-primary">
+          Advanced Options
+        </button>
+      </div>
+    </div>
+  </form>
+  <!-- ko if: searchExecuted() && data().length > 0 -->
+  <div class="row add-concept-buttons-container">
+    <div class="pull-left actions-container">
+      <!-- ko if: hasActiveConceptSets() -->
+      <div class="concept-set-dropdown-container">
+        <span class="text">Select Concept Set: </span>
+        <div class="btn-group">
+          <button
+            class="btn btn-primary dropdown-toggle"
+            type="button"
+            id="dropdownMenu1"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="true"
+          >
+            <span data-bind="text: $component.activeConceptSetName()"></span>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <!-- ko foreach: $component.activeConceptSets() -->
+            <li>
+              <a
+                data-bind="click: () => $component.setActiveConceptSet($data), text: $data.current().name()"
+              ></a>
+            </li>
+            <!-- /ko -->
+          </ul>
+        </div>
+      </div>
+      <!-- /ko -->
+      <div class="options-container">
+        <div class="option" data-bind="css: { disabled: !$component.canAddConcepts() }">
+          <span
+            data-bind="click: () =>  $component.toggleSelectionOption('isExcluded'), css: { selected: selectionOptions().isExcluded()}"
+            class="fa fa-check"
+          ></span>
+          Exclude
+        </div>
+        <div class="option" data-bind="css: { disabled: !$component.canAddConcepts() }">
+          <span
+            data-bind="click: () =>  $component.toggleSelectionOption('includeDescendants'), css: { selected: selectionOptions().includeDescendants()}"
+            class="fa fa-check"
+          ></span>
+          Descendants
+        </div>
+        <div class="option" data-bind="css: { disabled: !$component.canAddConcepts() }">
+          <span
+            data-bind="click: () =>  $component.toggleSelectionOption('includeMapped'), css: { selected: selectionOptions().includeMapped()}"
+            class="fa fa-check"
+          ></span>
+          Mapped
+        </div>
+      </div>
+      <button
+        class="btn btn-success"
+        data-bind="click: () => addConceptsToConceptSet(), text: hasActiveConceptSets() ? 'Add Concepts' : 'Add Concepts to New Concept Set', css: { disabled: !$component.canAddConcepts() }"
+      ></button>
+    </div>
+  </div>
+  <!-- /ko -->
+  <!-- ko if: isInProgress() || loading() -->
+  <loading params="status: loadingMessage"></loading>
+  <!-- /ko -->
+  <div class="advanced-options" data-bind="visible: showAdvanced">
+    <div data-bind="css: classes({ element: 'clear-btn', extra: 'row' })">
+      <div
+        class="btn btn-success btn-sm pull-right"
+        data-bind="click: clearAllAdvanced"
+      >
+        <i class="fa fa-eraser"></i> Clear All Selections
+      </div>
+    </div>
 
-		<panel params="title: 'Domains', templateId: 'vocabulary-domain-list', context: $data"></panel>
-		<panel params="title: 'Vocabularies', templateId: 'vocabulary-vocab-list', context: $data"></panel>
-	</div>
-	<!-- ko if: searchExecuted() && data().length === 0 -->
-		<empty-state params="message: noResultsFoundMessage()"></empty-state>
-	<!-- /ko -->
-	<div data-bind="visible: data().length > 0">
-		<faceted-datatable params="{
+    <panel
+      params="title: 'Domains', templateId: 'vocabulary-domain-list', context: $data"
+    ></panel>
+    <panel
+      params="title: 'Vocabularies', templateId: 'vocabulary-vocab-list', context: $data"
+    ></panel>
+  </div>
+  <!-- ko if: searchExecuted() && data().length === 0 -->
+  <empty-state params="message: noResultsFoundMessage()"></empty-state>
+  <!-- /ko -->
+  <div data-bind="visible: data().length > 0">
+    <faceted-datatable
+      params="{
 			orderColumn: 7,
 			columns: searchColumns,
 			options: searchOptions,
 			reference: data,
 			buttons: buttons
 			rowCallback: commonUtils.contextSensitiveLinkColor
-		}"></faceted-datatable>
-		<div class="linkLegend">
-			<div class="linkLegendItem">
-				<div class="swatch standard">
-				</div>
-				<div class="linkLegendTitle">Standard</div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch nonStandard">
-				</div>
-				<div class="linkLegendTitle">Non-Standard</div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch classification">
-				</div>
-				<div class="linkLegendTitle">Classification</div>
-			</div>
-		</div>
-		<div class="clear"></div>
-	</div>
+		}"
+    ></faceted-datatable>
+    <div class="linkLegend">
+      <div class="linkLegendItem">
+        <div class="swatch standard"></div>
+        <div class="linkLegendTitle">Standard</div>
+      </div>
+      <div class="linkLegendItem">
+        <div class="swatch nonStandard"></div>
+        <div class="linkLegendTitle">Non-Standard</div>
+      </div>
+      <div class="linkLegendItem">
+        <div class="swatch classification"></div>
+        <div class="linkLegendTitle">Classification</div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
 </div>
 
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+<access-denied
+  params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"
+></access-denied>

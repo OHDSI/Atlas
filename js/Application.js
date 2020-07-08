@@ -45,10 +45,6 @@ define(
 				this.EventBus = EventBus;
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
-				this.activeConceptSetSource = sharedState.activeConceptSetSource;
-				this.currentCohortDefinition = sharedState.CohortDefinition.current;
-				this.repositoryConceptSet = sharedState.repositoryConceptSet.current;
-				this.cohortDefinitionConceptSet = sharedState.cohortDefinitionConceptSet.current;
 				this.hasUnsavedChanges = ko.pureComputed(() => {
 					return (sharedState.CohortDefinition.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
@@ -56,7 +52,6 @@ define(
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
 						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
-						|| sharedState.activeConceptSets().some(cs => cs.dirtyFlag().isDirty())
 					);
 				});
 				this.initializationComplete = ko.pureComputed(() => {

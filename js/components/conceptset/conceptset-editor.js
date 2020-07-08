@@ -5,6 +5,7 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/Renderers',
 	'services/ConceptSet',
 	'databindings',
 	'bootstrap',
@@ -16,6 +17,7 @@ define([
 	Component,
 	AutoBind,
 	commonUtils,
+	renderers,
 	conceptSetService,
 ) {
 	class ConceptSetEditor extends AutoBind(Component) {
@@ -29,6 +31,7 @@ define([
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.commonUtils = commonUtils;
 			this.columns = [
+				{ title: '', orderable:false, render: () => renderers.renderCheckbox('isSelected')  },
 				{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
 				{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
 				{ title: 'Concept Name', render: commonUtils.renderBoundLink},

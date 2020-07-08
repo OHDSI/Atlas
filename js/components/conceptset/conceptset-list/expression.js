@@ -42,7 +42,14 @@ define([
 			});
 			this.newConceptSetName = ko.observable();
 			this.saveConceptSetShow = ko.observable();
+			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
+      this.data = ko.observable(this.normalizeData());
+      this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
 		}
+
+		normalizeData() {
+      return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) }));
+    }
 
 		closeConceptSet() {
 			const currentId = this.currentConceptSet() && this.currentConceptSet().id;
@@ -61,6 +68,21 @@ define([
 		showSaveConceptSet() {
 			this.newConceptSetName(this.currentConceptSet().name());
 			this.saveConceptSetShow(true);
+		}
+
+		addConcepts() {
+			sharedState.activeConceptSet(sharedState[this.currentConceptSetStoreKey]);
+			commonUtils.routeTo('#/search');
+		}
+
+		deleteConcepts() {
+			const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
+      conceptSetService.removeConceptsFromConceptSet({
+        concepts: conceptsForRemoval,
+        source: this.currentConceptSetSource,
+      });
+      const data = this.data().filter(({ concept}) => !idsForRemoval.includes(concept.CONCEPT_ID));
+      this.data(data);
 		}
 
 		async saveConceptSet() {

@@ -187,10 +187,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		});
 	});
 
-	state.activeConceptSets = ko.pureComputed(() => {
-		const activeConceptSetSources = Object.keys(constants.conceptSetSources).filter(key => !!state[`${key}ConceptSet`].current());
-		return activeConceptSetSources.map(source => state[`${source}ConceptSet`]);
-	})
 
 	state.activeConceptSetSource = ko.observable();
 	state.activeConceptSet = ko.observable();

@@ -397,6 +397,7 @@ define([
             this.data(null);
             this.featureId(null);
             this.dataDirtyFlag().reset();
+            commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.featureAnalysis });
             commonUtils.routeTo('/cc/feature-analyses');
         }
     }

@@ -355,9 +355,9 @@ define(function (require, exports) {
 	}) {
 		const currentConceptSet = sharedState[`${source}ConceptSet`];
 		const ids = concepts.map(({ concept }) => concept.CONCEPT_ID);
-
+		const indexesFormRemoval = concepts.map(concept => concept.idx);
 		ids.forEach(id => delete currentConceptSet.selectedConceptsIndex[id]);
-		const selectedConcepts = currentConceptSet.selectedConcepts().filter(({ concept }) => !ids.includes(concept.CONCEPT_ID));
+		const selectedConcepts = currentConceptSet.selectedConcepts().filter(({ concept }, idx) => !indexesFormRemoval.includes(idx));
 
 		currentConceptSet.selectedConcepts(selectedConcepts);
 		currentConceptSet.selectedConcepts.valueHasMutated();
@@ -391,11 +391,10 @@ define(function (require, exports) {
 		}
 		const normalizedConcepts = concepts.map(concept => createConceptSetItem(concept));
 		addToConceptSetIdsMap({ concepts: normalizedConcepts, source });
-		const arr = [
+		const selectedConcepts = [
 			...currentConceptSet.selectedConcepts(),
 			...normalizedConcepts
 		];
-		const selectedConcepts = _.uniqBy(arr, 'concept.CONCEPT_ID');
 		currentConceptSet.selectedConcepts(selectedConcepts);
 		currentConceptSet.selectedConcepts.valueHasMutated();
 		setConceptSetExpressionExportItems({ source });

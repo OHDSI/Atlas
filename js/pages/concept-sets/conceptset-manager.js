@@ -339,8 +339,8 @@ define([
 			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
-				conceptSetService.clearConceptSet({ source: globalConstants.conceptSetSources.repository });
-				document.location = "#/conceptsets";
+				commonUtils.routeTo('#/conceptsets');
+				commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.repository });
 			}
 		}
 

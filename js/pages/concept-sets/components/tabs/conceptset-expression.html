@@ -1,14 +1,4 @@
 <div class="paddedWrapper">
-  <div class="row">
-    <button 
-      class="btn btn-danger btn-sm" 
-      data-bind="
-        click: removeConceptsFromConceptSet, 
-        css: { disabled: conceptsForRemovalLength() === 0 },
-        text: conceptsForRemovalLength() === 1 ? 'Remove selected concept from Concept Set' : 'Remove selected concepts from Concept Set',
-      "
-    ></button>
-  </div>
   <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
         xssSafe: true,
         data: data(),
@@ -100,5 +90,21 @@
       </div>
       <div class="linkLegendTitle">Classification</div>
     </div>
+  </div>
+  <div class="row">
+    <button 
+      class="btn btn-danger btn-sm" 
+      data-bind="
+        click: removeConceptsFromConceptSet, 
+        css: { disabled: conceptsForRemovalLength() === 0 },
+        text: conceptsForRemovalLength() === 1 ? 'Remove selected concept' : 'Remove selected concepts',
+      "
+    ></button>
+    <button 
+      class="btn btn-success btn-sm" 
+      data-bind="
+        click: navigateToSearchPage, 
+      "
+    >Add concepts</button>
   </div>
 </div>

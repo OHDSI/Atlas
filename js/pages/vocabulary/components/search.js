@@ -12,6 +12,7 @@ define([
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
 	'services/Vocabulary',
+	'const',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
@@ -30,7 +31,8 @@ define([
 	httpService,
 	constants,
 	commonUtils,
-	vocabularyProvider
+	vocabularyProvider,
+	globalConstants,
 ) {
 	class Search extends AutoBind(Component) {
 		constructor(params) {
@@ -44,6 +46,12 @@ define([
 			this.showAdvanced = ko.observable(false);
 			this.domains = ko.observableArray();
 			this.vocabularies = ko.observableArray();
+			this.defaultSelectionOptions = {
+				includeDescendants: ko.observable(false),
+				includeMapped: ko.observable(false),
+				isExcluded: ko.observable(false),
+			};
+			this.selectionOptions = ko.observable(this.defaultSelectionOptions);
 			this.selected = {
 				domains: new Set(),
 				vocabularies: new Set(),
@@ -53,14 +61,19 @@ define([
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
 			this.params = params;
-			this.activeConceptSets = sharedState.activeConceptSets;
-			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
-			this.currentlyActiveConceptSetName = ko.computed(() => {
-				if (sharedState.activeConceptSet() && sharedState.activeConceptSet().current()) {
-					return sharedState.activeConceptSet().current().name();
-				}
-				return 'Select Conceptset';
+			this.activeConceptSets = ko.pureComputed(() => {
+				const activeConceptSetSources = Object.keys(globalConstants.conceptSetSources).filter(key => !!sharedState[`${key}ConceptSet`].current());
+				return activeConceptSetSources.map(source => sharedState[`${source}ConceptSet`]);
 			});
+			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
+			this.activeConceptSet = sharedState.activeConceptSet;
+			this.activeConceptSetName = ko.pureComputed(() => {
+				if (this.activeConceptSet() && this.activeConceptSet().current()) {
+					return this.activeConceptSet().current().name(); 
+				}
+				return 'Select Concept Set';
+			});
+			this.canAddConcepts = ko.pureComputed(() => this.data().some(item => item.isSelected()) && (this.activeConceptSet() || !this.hasActiveConceptSets()));
 
 				this.isInProgress = ko.computed(() => {
 					return this.domainsLoading() === true && this.vocabulariesLoading() === true;
@@ -102,6 +115,9 @@ define([
 				];
 
 				this.searchColumns = [{
+					title: '',
+					render: (s, p, d) => this.renderCheckbox('isSelected'),
+				},{
 					title: 'Id',
 					data: 'CONCEPT_ID'
 				}, {
@@ -132,15 +148,6 @@ define([
 				}, {
 					title: 'Vocabulary',
 					data: 'VOCABULARY_ID'
-				}, {
-					title: 'Descendants',
-					render: (s, p, d) => this.renderCheckbox('includeDescendants'),
-				}, {
-					title: 'Exclude',
-					render: (s, p, d) => this.renderCheckbox('isExcluded'),
-				}, {
-					title: 'Mapped',
-					render: (s, p, d) => this.renderCheckbox('includeMapped'),
 				}];
 
 				this.searchOptions = {
@@ -224,6 +231,14 @@ define([
 
 			toggleAdvanced() {
 				this.showAdvanced(!this.showAdvanced());
+			}
+
+			toggleSelectionOption(option) {
+				const options = this.selectionOptions();
+				this.selectionOptions({
+					...options,
+					[option]: ko.observable(!options[option]()),
+				});
 			}
 
 			toggleVocabulary(id) {
@@ -330,6 +345,7 @@ define([
 			normalizeSearchResults(searchResults) {
 				return searchResults.map(item => ({
 					...item,
+					isSelected: ko.observable(false),
 					includeDescendants: this.getCheckBoxState(item.CONCEPT_ID, 'includeDescendants'),
 					includeMapped: this.getCheckBoxState(item.CONCEPT_ID, 'includeMapped'),
 					isExcluded: this.getCheckBoxState(item.CONCEPT_ID, 'isExcluded'),
@@ -349,9 +365,29 @@ define([
 				return promise;
 			}
 
-			addConceptsToConceptSet(source) {
-				const conceptsToAdd = this.data().filter(item => item.isExcluded() || item.includeDescendants() || item.includeMapped());
+			setActiveConceptSet(conceptSet) {
+				this.activeConceptSet(conceptSet);
+			}
+
+			clearCheckboxes() {
+				const data = this.data().map(item => item.isSelected(false));
+				this.data(data);
+				this.selectionOptions(this.defaultSelectionOptions);
+			}
+
+			addConceptsToConceptSet() {
+				const source = this.activeConceptSet() ? this.activeConceptSet().source : globalConstants.conceptSetSources.repository;
+				sharedState.activeConceptSetSource(globalConstants.conceptSetSources[source]);
+				const conceptsToAdd = this.data()
+					.filter(item => item.isSelected())
+					.map(({ isSelected, ...i }) => ({
+						...i,
+						includeDescendants: this.selectionOptions().includeDescendants,
+						includeMapped: this.selectionOptions().includeMapped,
+						isExcluded: this.selectionOptions().isExcluded,
+					}));
 				ConceptSetService.addConceptsToConceptSet({ concepts: conceptsToAdd, source });
+				this.clearCheckboxes();
 			}
 
 			getVocabularies() {

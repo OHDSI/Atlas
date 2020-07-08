@@ -713,6 +713,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.reportCohortDefinitionId(null);
 					this.reportReportName(null);
 					this.reportSourceKey(null);
+					commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.cohortDefinition });
 				}
 			}
 

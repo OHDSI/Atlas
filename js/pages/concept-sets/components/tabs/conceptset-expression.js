@@ -35,7 +35,7 @@ define([
         return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
       });
 
-      this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isCheckedForRemoval()).length);
+      this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
       this.data = ko.observable(this.normalizeData());
       this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
       this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
@@ -44,7 +44,7 @@ define([
         {
           class: 'text-center',
           orderable: false,
-          render: () => renderers.renderCheckbox('isCheckedForRemoval'),
+          render: () => renderers.renderCheckbox('isSelected'),
         },
         {
           data: 'concept.CONCEPT_ID',
@@ -96,7 +96,7 @@ define([
     }
 
     normalizeData() {
-      return this.selectedConcepts().map(concept => ({ ...concept, isCheckedForRemoval: ko.observable(!!concept.isCheckedForRemoval) }));
+      return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) }));
     }
 
     toggleCheckbox(d, field) {
@@ -115,17 +115,17 @@ define([
 
     toggleSelectedConceptsForRemoval() {
         const areAllConceptsCheckedForRemoval = this.areAllConceptsCheckedForRemoval();
-        this.data().forEach(concept => concept.isCheckedForRemoval(!areAllConceptsCheckedForRemoval));
+        this.data().forEach(concept => concept.isSelected(!areAllConceptsCheckedForRemoval));
     }
 
     removeConceptsFromConceptSet() {
-      const conceptsForRemoval = this.data().filter(concept => concept.isCheckedForRemoval());
-      const idsForRemoval = conceptsForRemoval.map(({ concept }) => concept.CONCEPT_ID);
+      const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
+      const indexesForRemoval = conceptsForRemoval.map(concept => concept.idx);
       conceptSetService.removeConceptsFromConceptSet({
         concepts: conceptsForRemoval,
         source: globalConstants.conceptSetSources.repository
       });
-      const data = this.data().filter(({ concept}) => !idsForRemoval.includes(concept.CONCEPT_ID));
+      const data = this.data().filter((concept) => !indexesForRemoval.includes(concept.idx));
       this.data(data);
     }
 
@@ -137,6 +137,11 @@ define([
         concept[key](!areAllSelected);
       })
 			conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
+    }
+
+    navigateToSearchPage() {
+      sharedState.activeConceptSet(sharedState.repositoryConceptSet);
+      commonUtils.routeTo('#/search');
     }
 
 	}
