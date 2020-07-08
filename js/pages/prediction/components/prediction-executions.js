@@ -15,6 +15,7 @@ define([
 	'utils/ExecutionUtils',
 	'../const',
 	'lodash',
+	'services/JobDetailsService',
 	'less!./prediction-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -34,6 +35,7 @@ define([
 	ExecutionUtils,
 	consts,
 	lodash,
+	jobDetailsService
 ){
 
 	class PredictionGeneration extends AutoBind(Component) {
@@ -182,7 +184,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 
