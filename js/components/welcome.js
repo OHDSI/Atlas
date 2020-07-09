@@ -3,7 +3,8 @@ define([
     'text!./welcome.html',
     'appConfig',
     'services/AuthAPI',
-	'utils/BemHelper',
+	  'utils/BemHelper',
+    'atlas-state',
     'services/MomentAPI',
     'less!welcome.less'
 ],
@@ -12,8 +13,9 @@ define([
     view,
     appConfig,
     authApi,
-	BemHelper,
-		momentApi,
+    BemHelper,
+    sharedState,
+    momentApi,
     ) {
     const componentName = 'welcome';
 
@@ -70,6 +72,7 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
+            sharedState.resetCurrentDataSourceScope();
             self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
