@@ -33,22 +33,12 @@ define([
 		}
 
 		addConcepts = (options) => {
-      const concepts = this.includedConcepts()
-        .filter(concept => concept.isSelected())
-        .map(concept => ({
-          ...concept,
-          ...options,
-        }));
-        conceptSetService.addConceptsToConceptSet({
-          concepts,
-          source: globalConstants.conceptSetSources[this.currentConceptSetSource],
-        });
-        this.clearCheckboxes();
-    }
-
-    clearCheckboxes() {
-      const concepts = this.includedConcepts().map(concept => concept.isSelected(false));
-      this.includedConcepts(concepts);
+      const concepts = commonUtils.getSelectedConcepts(this.includedConcepts, options);
+			conceptSetService.addConceptsToConceptSet({
+				concepts,
+				source: globalConstants.conceptSetSources[this.currentConceptSetSource],
+			});
+			commonUtils.clearConceptsSelectionState(this.includedConcepts);
     }
 	}
 

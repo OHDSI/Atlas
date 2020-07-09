@@ -218,14 +218,6 @@ define([
 				this.showAdvanced(!this.showAdvanced());
 			}
 
-			toggleSelectionOption(option) {
-				const options = this.selectionOptions();
-				this.selectionOptions({
-					...options,
-					[option]: ko.observable(!options[option]()),
-				});
-			}
-
 			toggleVocabulary(id) {
 				this.selected.vocabularies.has(id)
 					? this.selected.vocabularies.delete(id)
@@ -350,21 +342,11 @@ define([
 				return promise;
 			}
 
-			clearCheckboxes() {
-				const data = this.data().map(item => item.isSelected(false));
-				this.data(data);
-			}
-
 			addConcepts = (options, source = globalConstants.conceptSetSources.repository) => {
 				sharedState.activeConceptSetSource(globalConstants.conceptSetSources[source]);
-				const conceptsToAdd = this.data()
-					.filter(item => item.isSelected())
-					.map(({ isSelected, ...i }) => ({
-						...i,
-						...options,
-					}));
+				const conceptsToAdd = commonUtils.getSelectedConcepts(this.data, options);
 				ConceptSetService.addConceptsToConceptSet({ concepts: conceptsToAdd, source });
-				this.clearCheckboxes();
+				commonUtils.clearConceptsSelectionState(this.data);
 			}
 
 			getVocabularies() {

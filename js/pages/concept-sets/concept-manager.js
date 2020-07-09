@@ -1,3 +1,5 @@
+const { select } = require('d3');
+
 define([
 	'knockout',
 	'text!./concept-manager.html',
@@ -16,6 +18,7 @@ define([
 	'faceted-datatable',
 	'components/heading',
 	'components/conceptLegend/concept-legend',
+	'components/conceptAddBox/concept-add-box',
 	'less!./concept-manager.less',
 ], function (
 	ko,
@@ -128,6 +131,12 @@ define([
 			};
 
 			this.relatedConceptsColumns = [{
+				title: '',
+				render: () => renderers.renderCheckbox('isSelected'),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},{
 				title: 'Id',
 				data: 'CONCEPT_ID'
 			}, {
@@ -165,27 +174,6 @@ define([
 			}, {
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-			},
-			{
-				title: 'Excluded',
-				render: () => renderers.renderCheckbox('isExcluded'),
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
-			},
-			{
-				title: 'Descendants',
-				render: () => renderers.renderCheckbox('includeDescendants'),
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
-			},
-			{
-				title: 'Mapped',
-				render: () => renderers.renderCheckbox('includeMapped'),
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
 			}];
 
 			this.hierarchyConceptsOptions = {
@@ -269,6 +257,21 @@ define([
 			this.sourceCounts(sourceData);
 		}
 
+		addConcepts = (options, source = globalConstants.conceptSetSources.repository) => (conceptsArr = [], isCurrentConcept = false) => {
+			let concepts = [];
+			if (isCurrentConcept) {
+				concepts.push({
+					...conceptsArr[0],
+					...options,
+				});
+			} else {
+				const selectedConcepts = commonUtils.getSelectedConcepts(conceptsArr, options);
+				concepts = concepts.concat(selectedConcepts);
+			}
+			conceptSetService.addConceptsToConceptSet({ concepts, source });
+			commonUtils.clearConceptsSelectionState(conceptsArr);
+		}
+
 		hasRelationship(concept, relationships) {
 			for (var r = 0; r < concept.RELATIONSHIPS.length; r++) {
 				for (var i = 0; i < relationships.length; i++) {
@@ -283,22 +286,9 @@ define([
 		}
 
 		enhanceConcept(concept) {
-			const selectedConceptsIndex = sharedState.repositoryConceptSet.selectedConceptsIndex;
-			const selectedConcept = selectedConceptsIndex[concept.CONCEPT_ID];
-			if (selectedConcept) {
-				const { includeDescendants, includeMapped, isExcluded } = selectedConcept;
-				return {
-					...concept,
-					includeDescendants,
-					includeMapped,
-					isExcluded,
-				}
-			}
 			return {
 				...concept,
-				includeDescendants: ko.observable(false),
-				includeMapped: ko.observable(false),
-				isExcluded: ko.observable(false),
+				isSelected: ko.observable(false),
 			};
 		}
 

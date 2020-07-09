@@ -4,39 +4,12 @@
 
 <!-- ko if: !isLoading() -->
 	<heading-title params="name: 'Vocabulary > Concept', icon: 'search', theme: 'dark'"></heading-title>
-	<div class="asset-heading" data-bind="with:currentConcept()">
+	<div class="asset-heading concept-manager-heading-container" data-bind="with:currentConcept()">
 		<span data-bind="css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}, text:CONCEPT_NAME"></span>
-		<div class="panel panel-default" data-bind="css: $component.classes('checkboxes-panel')">
-			<div class="panel-body">
-				<span data-bind="click: () =>  $component.toggleCurrentConcept('isExcluded'), css: { selected: isExcluded() }" class="fa fa-check"></span> Exclude
-				<span data-bind="click: () =>  $component.toggleCurrentConcept('includeDescendants'), css: { selected: includeDescendants() }" class="fa fa-check"></span> Descendants
-				<span data-bind="click: () =>  $component.toggleCurrentConcept('includeMapped'), css: { selected: includeMapped() }" class="fa fa-check"></span> Mapped
-				<!-- ko if: $component.hasActiveConceptSets() -->
-					<div class="btn-group">
-						<button
-							class="btn btn-sm btn-success dropdown-toggle"
-							type="button"
-							id="dropdownMenu1"
-							data-toggle="dropdown"
-							aria-haspopup="true"
-							aria-expanded="true"
-							data-bind="css: { disabled: !$component.isCurrentConceptAddButtonActive()"
-						>
-							<span data-bind="text: $component.currentlyActiveConceptSetName()"></span>
-							<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-							<!-- ko foreach: $component.activeConceptSets() -->
-								<li><a data-bind="click: () => $component.addToConceptSetExpression([$component.currentConcept()], true, $data.source), text: $data.current().name()"></a></li>
-							<!-- /ko -->
-						</ul>
-							</div>
-					<!-- /ko -->
-					<!-- ko ifnot: $component.hasActiveConceptSets() -->
-						<button class="btn btn-sm btn-success" data-bind="click: () => $component.addToConceptSetExpression([$component.currentConcept()], true, 'repository'), css: { disabled: !$component.isCurrentConceptAddButtonActive()">Add to New Concept Set</button>
-					<!-- /ko -->
-			</div>
-		  </div>
+		<concept-add-box params="{
+			canSelectSource: true,
+			onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+		}"></concept-add-box>
 	</div>
 
 	<ul class="nav nav-tabs">
@@ -120,9 +93,6 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<i class="fa fa-arrow-up"></i> Parents&nbsp;
-							<!-- ko if: $component.metarchy.parents().length > 0 -->
-								<button class="btn btn-xs btn-success" data-bind="click: () => addToConceptSetExpression($component.metarchy.parents)">Add to Concept Set Expression</button>
-							<!-- /ko -->
 						</div>
 						<div class="panel-body">
 							<!-- ko if: $component.metarchy.parents().length == 0 -->
@@ -143,13 +113,20 @@
 							}"></faceted-datatable>
 							<!-- /ko -->
 						</div>
+							<!-- ko if: $component.metarchy.parents().length > 0 -->
+							<div class="panel-footer">
+								<concept-add-box params="{
+									canSelectSource: true,
+									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.parents),
+								}"></concept-add-box>
+							</div>
+							<!-- /ko -->
 					</div>
                 </div>
                 <div id="wrapperHierarchyAnchor" data-bind="visible: ['all', 'current'].includes($component.hierarchyPillMode())">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<i class="fa fa-arrow-right"></i> Current Concept&nbsp;
-							<button class="btn btn-xs btn-success" data-bind="click: () => addToConceptSetExpression($component.currentConceptArray)">Add to Concept Set Expression</button>
 						</div>
 						<div class="panel-body">
 								<faceted-datatable params="{
@@ -164,15 +141,18 @@
 									deferRender: true,
 								}"></faceted-datatable>
 						</div>
+						<div class="panel-footer">
+							<concept-add-box params="{
+								canSelectSource: true,
+								onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+							}"></concept-add-box>
+						</div>
 					</div>
                 </div>
                 <div id="wrapperChildren" data-bind="visible: ['all', 'children'].includes($component.hierarchyPillMode())">
 						<div class="panel panel-default">
 							<div class="panel-heading">
 								<i class="fa fa-arrow-down"></i> Children&nbsp;
-								<!-- ko if: $component.metarchy.children().length > 0 -->
-								<button class="btn btn-xs btn-success" data-bind="click: () => addToConceptSetExpression($component.metarchy.children)">Add to Concept Set Expression</button>
-							<!-- /ko -->
 							</div>
 							<div class="panel-body">
 								<!-- ko if: $component.metarchy.children().length == 0 -->
@@ -192,6 +172,14 @@
 								}"></faceted-datatable>
 								<!-- /ko -->
 							</div>
+							<!-- ko if: $component.metarchy.children().length > 0 -->
+							<div class="panel-footer">
+								<concept-add-box params="{
+									canSelectSource: true,
+									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.children),
+								}"></concept-add-box>
+							</div>
+							<!-- /ko -->
 						</div>
                 </div>
             <!-- /ko -->
@@ -251,12 +239,18 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
 
 		<!-- ko if: hasInfoAccess() -->
-		<div class="row">
-			<button class="btn btn-sm btn-success" data-bind="click: () => addToConceptSetExpression($component.relatedConcepts)">Add to Concept Set Expression</button>
-		</div>
 		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, deferRender: true, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor }"></faceted-datatable>
 		<concept-legend></concept-legend>
 		<div class="clear"></div>
+		<div class="row">
+			<div class="col-lg-12">
+				<concept-add-box params="{
+					canSelectSource: true,
+					onSubmit: (options, source) => $component.addConcepts(options, source)($component.relatedConcepts),
+				}"></concept-add-box>
+			</div>
+		</div>
+		
 		<!-- /ko -->
 	</div>
 <!-- /ko -->

@@ -31,24 +31,13 @@ define([
 		}
 
 		addConcepts = (options) => {
-      const concepts = this.includedSourcecodes()
-        .filter(concept => concept.isSelected())
-        .map(concept => ({
-          ...concept,
-          ...options,
-        }));
-        conceptSetService.addConceptsToConceptSet({
-          concepts,
-          source: globalConstants.conceptSetSources.repository,
-        });
-        this.clearCheckboxes();
+			const concepts = commonUtils.getSelectedConcepts(this.includedSourcecodes, options);
+			conceptSetService.addConceptsToConceptSet({
+				concepts,
+				source: globalConstants.conceptSetSources.repository,
+			});
+			commonUtils.clearConceptsSelectionState(this.includedSourcecodes);
     }
-
-    clearCheckboxes() {
-      const concepts = this.includedSourcecodes().map(concept => concept.isSelected(false));
-      this.includedSourcecodes(concepts);
-    }
-
 	}
 
 	return commonUtils.build('included-sourcecodes', IncludedSourcecodes, view);

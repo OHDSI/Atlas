@@ -17,9 +17,9 @@ define([
   class ConceptAddBox extends Component {
     constructor(params) {
       super(params);
-      this.isActive = params.isActive;
+      this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
-      this.canSelectSource = params.canSelectSource;
+      this.canSelectSource = params.canSelectSource || false;
       this.defaultSelectionOptions = {
         includeDescendants: ko.observable(false),
         includeMapped: ko.observable(false),
@@ -38,11 +38,18 @@ define([
 					return this.activeConceptSet().current().name(); 
 				}
 				return 'Select Concept Set';
-			});
+      });
+      this.canAddConcepts = ko.pureComputed(() => {
+        if (this.canSelectSource) {
+          return this.hasActiveConceptSets() ? (this.activeConceptSet() && this.activeConceptSet().source && this.isActive()) : this.isActive();
+        }
+        return this.isActive();
+      });
     }
     
     handleSubmit() {
       const source = this.canSelectSource && this.activeConceptSet() ? this.activeConceptSet().source : undefined;
+      console.log('--handleSubmit')
       this.onSubmit(this.selectionOptions(), source);
       this.selectionOptions(this.defaultSelectionOptions);
     }
