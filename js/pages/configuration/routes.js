@@ -56,7 +56,7 @@ define(
         '/source/:id': new AuthorizedRoute((id) => {
           appModel.activePage(this.title);
           require(['./sources/source-manager'], function () {
-            appModel.selectedSourceId(id !== 'new' ? id : null);
+            appModel.selectedSourceId(id !== '0' ? id : null);
             router.setCurrentView('source-manager');
           });
         }),
