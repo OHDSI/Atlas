@@ -255,23 +255,7 @@
 			<button class="btn btn-sm btn-success" data-bind="click: () => addToConceptSetExpression($component.relatedConcepts)">Add to Concept Set Expression</button>
 		</div>
 		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, deferRender: true, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor }"></faceted-datatable>
-		<div class="linkLegend">
-			<div class="linkLegendItem">
-				<div class="swatch standard">
-				</div>
-				<div class="linkLegendTitle">Standard</div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch nonStandard">
-				</div>
-				<div class="linkLegendTitle">Non-Standard</div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch classification">
-				</div>
-				<div class="linkLegendTitle">Classification</div>
-			</div>
-		</div>
+		<concept-legend></concept-legend>
 		<div class="clear"></div>
 		<!-- /ko -->
 	</div>

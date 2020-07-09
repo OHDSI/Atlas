@@ -4,142 +4,52 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
-	'utils/Renderers',
 	'atlas-state',
 	'services/ConceptSet',
+	'const',
+	'components/conceptAddBox/concept-add-box',
 ], function (
 	ko,
 	view,
 	Component,
 	AutoBind,
 	commonUtils,
-	renderers,
 	sharedState,
 	conceptSetService,
+	globalConstants,
 ) {
 
 	class IncludedConcepts extends AutoBind(Component){
 		constructor(params) {
 			super(params);
+			this.canEdit = params.canEdit;
 			this.currentConceptSetSource = params.currentConceptSetSource;
 			this.includedConcepts = sharedState[`${this.currentConceptSetSource}ConceptSet`].includedConcepts;
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;
-			this.includedConceptsColumns = [
-				{
-					title: 'Id',
-					data: 'CONCEPT_ID'
-				},
-				{
-					title: 'Code',
-					data: 'CONCEPT_CODE'
-				},
-				{
-					title: 'Name',
-					data: 'CONCEPT_NAME',
-					render: commonUtils.renderLink,
-				},
-				{
-					title: 'Class',
-					data: 'CONCEPT_CLASS_ID'
-				},
-				{
-					title: 'Standard Concept Caption',
-					data: 'STANDARD_CONCEPT_CAPTION',
-					visible: false
-				},
-				{
-					title: 'RC',
-					data: 'RECORD_COUNT',
-					className: 'numeric'
-				},
-				{
-					title: 'DRC',
-					data: 'DESCENDANT_RECORD_COUNT',
-					className: 'numeric'
-				},
-				{
-					title: 'Domain',
-					data: 'DOMAIN_ID'
-				},
-				{
-					title: 'Vocabulary',
-					data: 'VOCABULARY_ID'
-				},
-				{
-					title: 'Ancestors',
-					data: 'ANCESTORS',
-					render: conceptSetService.getAncestorsRenderFunction()
-				},
-				{
-					title: 'Excluded',
-					render: () => renderers.renderCheckbox('isExcluded'),
-					orderable: false,
-					searchable: false,
-					className: 'text-center',
-				},
-				{
-					title: 'Descendants',
-					render: () => renderers.renderCheckbox('includeDescendants'),
-					orderable: false,
-					searchable: false,
-					className: 'text-center',
-				},
-				{
-					title: 'Mapped',
-					render: () => renderers.renderCheckbox('includeMapped'),
-					orderable: false,
-					searchable: false,
-					className: 'text-center',
-				},
-			];
-			this.includedConceptsOptions = {
-				Facets: [
-					{
-						'caption': 'Vocabulary',
-						'binding': (o) => {
-							return o.VOCABULARY_ID;
-						}
-					},
-					{
-						'caption': 'Class',
-						'binding': (o) => {
-							return o.CONCEPT_CLASS_ID;
-						}
-					},
-					{
-						'caption': 'Domain',
-						'binding': (o) => {
-							return o.DOMAIN_ID;
-						}
-					},
-					{
-						'caption': 'Standard Concept',
-						'binding': (o) => {
-							return o.STANDARD_CONCEPT_CAPTION;
-						}
-					},
-					{
-						'caption': 'Invalid Reason',
-						'binding': (o) => {
-							return o.INVALID_REASON_CAPTION;
-						}
-					},
-					{
-						'caption': 'Has Records',
-						'binding': (o) => {
-							return parseInt(o.RECORD_COUNT) > 0;
-						}
-					},
-					{
-						'caption': 'Has Descendant Records',
-						'binding': (o) => {
-							return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
-						}
-					},
-				]
-			};
+			this.includedConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService);
+			this.includedConceptsOptions = globalConstants.includedConceptsOptions;
+			this.canAddConcepts = ko.pureComputed(() => this.includedConcepts().some(item => item.isSelected()));
 		}
+
+		addConcepts = (options) => {
+      const concepts = this.includedConcepts()
+        .filter(concept => concept.isSelected())
+        .map(concept => ({
+          ...concept,
+          ...options,
+        }));
+        conceptSetService.addConceptsToConceptSet({
+          concepts,
+          source: globalConstants.conceptSetSources[this.currentConceptSetSource],
+        });
+        this.clearCheckboxes();
+    }
+
+    clearCheckboxes() {
+      const concepts = this.includedConcepts().map(concept => concept.isSelected(false));
+      this.includedConcepts(concepts);
+    }
 	}
 
 	return commonUtils.build('conceptset-list-included', IncludedConcepts, view);

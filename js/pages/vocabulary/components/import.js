@@ -11,6 +11,7 @@ define([
 	'../PermissionService',
 	'../const',
 	'less!./import.less',
+	'components/conceptLegend/concept-legend',
 ], function (
 	ko,
 	view,

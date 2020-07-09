@@ -9,7 +9,8 @@ define([
 	'services/ConceptSet',
 	'databindings',
 	'bootstrap',
-	'faceted-datatable'
+	'faceted-datatable',
+	'components/conceptLegend/concept-legend',
 ], function (
 	ko,
 	view,

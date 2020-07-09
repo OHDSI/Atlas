@@ -63,66 +63,7 @@
       </div>
     </div>
   </form>
-  <!-- ko if: searchExecuted() && data().length > 0 -->
-  <div class="row add-concept-buttons-container">
-    <div class="pull-left actions-container">
-      <!-- ko if: hasActiveConceptSets() -->
-      <div class="concept-set-dropdown-container">
-        <span class="text">Select Concept Set: </span>
-        <div class="btn-group">
-          <button
-            class="btn btn-primary dropdown-toggle"
-            type="button"
-            id="dropdownMenu1"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="true"
-          >
-            <span data-bind="text: $component.activeConceptSetName()"></span>
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <!-- ko foreach: $component.activeConceptSets() -->
-            <li>
-              <a
-                data-bind="click: () => $component.setActiveConceptSet($data), text: $data.current().name()"
-              ></a>
-            </li>
-            <!-- /ko -->
-          </ul>
-        </div>
-      </div>
-      <!-- /ko -->
-      <div class="options-container">
-        <div class="option" data-bind="css: { disabled: !$component.canAddConcepts() }">
-          <span
-            data-bind="click: () =>  $component.toggleSelectionOption('isExcluded'), css: { selected: selectionOptions().isExcluded()}"
-            class="fa fa-check"
-          ></span>
-          Exclude
-        </div>
-        <div class="option" data-bind="css: { disabled: !$component.canAddConcepts() }">
-          <span
-            data-bind="click: () =>  $component.toggleSelectionOption('includeDescendants'), css: { selected: selectionOptions().includeDescendants()}"
-            class="fa fa-check"
-          ></span>
-          Descendants
-        </div>
-        <div class="option" data-bind="css: { disabled: !$component.canAddConcepts() }">
-          <span
-            data-bind="click: () =>  $component.toggleSelectionOption('includeMapped'), css: { selected: selectionOptions().includeMapped()}"
-            class="fa fa-check"
-          ></span>
-          Mapped
-        </div>
-      </div>
-      <button
-        class="btn btn-success"
-        data-bind="click: () => addConceptsToConceptSet(), text: hasActiveConceptSets() ? 'Add Concepts' : 'Add Concepts to New Concept Set', css: { disabled: !$component.canAddConcepts() }"
-      ></button>
-    </div>
-  </div>
-  <!-- /ko -->
+  
   <!-- ko if: isInProgress() || loading() -->
   <loading params="status: loadingMessage"></loading>
   <!-- /ko -->
@@ -157,22 +98,16 @@
 			rowCallback: commonUtils.contextSensitiveLinkColor
 		}"
     ></faceted-datatable>
-    <div class="linkLegend">
-      <div class="linkLegendItem">
-        <div class="swatch standard"></div>
-        <div class="linkLegendTitle">Standard</div>
-      </div>
-      <div class="linkLegendItem">
-        <div class="swatch nonStandard"></div>
-        <div class="linkLegendTitle">Non-Standard</div>
-      </div>
-      <div class="linkLegendItem">
-        <div class="swatch classification"></div>
-        <div class="linkLegendTitle">Classification</div>
-      </div>
-    </div>
+    <concept-legend></concept-legend>
     <div class="clear"></div>
   </div>
+  <!-- ko if: searchExecuted() && data().length > 0 -->
+  <concept-add-box params="{
+    isActive: $component.canAddConcepts,
+    onSubmit: addConcepts,
+    canSelectSource: true,
+  }"></concept-add-box>
+<!-- /ko -->
 </div>
 
 <access-denied

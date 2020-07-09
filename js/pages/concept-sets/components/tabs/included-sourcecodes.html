@@ -2,13 +2,14 @@
   <loading></loading>
 <!-- /ko -->
 <!-- ko ifnot: loading -->
-<div class="row">
-  <button class="btn btn-sm btn-success" data-bind="click: addToConceptSetExpression">Add to Concept Set Expression</button>
-</div>
 <faceted-datatable params="{
   columns: $component.relatedSourcecodesColumns,
   options: $component.relatedSourcecodesOptions,
   reference: $component.includedSourcecodes,
   deferRender: true,
 }"></faceted-datatable>
+<concept-add-box params="{
+  isActive: canAddConcepts,
+  onSubmit: addConcepts
+}"></concept-add-box>
 <!-- /ko -->

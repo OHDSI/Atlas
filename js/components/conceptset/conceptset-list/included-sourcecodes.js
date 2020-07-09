@@ -6,6 +6,8 @@ define([
 	'utils/CommonUtils',
 	'atlas-state',
 	'const',
+	'services/ConceptSet',
+	'components/conceptAddBox/concept-add-box',
 ], function(
 	ko,
 	view,
@@ -14,6 +16,7 @@ define([
 	commonUtils,
 	sharedState,
 	globalConstants,
+	conceptSetService,
 ){
 
 	class IncludedSourcecodes extends AutoBind(Component) {
@@ -26,7 +29,27 @@ define([
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.includedSourcecodes = sharedState[`${this.currentConceptSetSource}ConceptSet`].includedSourcecodes;
+			this.canAddConcepts = ko.pureComputed(() => this.includedSourcecodes().some(item => item.isSelected()));
 		}
+
+		addConcepts = (options) => {
+      const concepts = this.includedSourcecodes()
+        .filter(concept => concept.isSelected())
+        .map(concept => ({
+          ...concept,
+          ...options,
+        }));
+        conceptSetService.addConceptsToConceptSet({
+          concepts,
+          source: globalConstants.conceptSetSources[this.currentConceptSetSource],
+        });
+        this.clearCheckboxes();
+    }
+
+    clearCheckboxes() {
+      const concepts = this.includedSourcecodes().map(concept => concept.isSelected(false));
+      this.includedSourcecodes(concepts);
+    }
 	}
 
 	return commonUtils.build('conceptset-list-included-sourcecodes', IncludedSourcecodes, view);

@@ -8,6 +8,7 @@ define([
   'services/ConceptSet',
   'atlas-state',
   'const',
+  'components/conceptLegend/concept-legend',
 ], function (
 	ko,
 	view,

@@ -1,0 +1,58 @@
+<div class="row concept-add-box-container">
+  <!-- ko if: canSelectSource -->
+    <!-- ko if: hasActiveConceptSets() -->
+    <div class="concept-set-dropdown-container">
+      <span class="text">Select Concept Set: </span>
+      <div class="btn-group">
+        <button
+          class="btn btn-primary dropdown-toggle"
+          type="button"
+          id="dropdownMenu1"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="true"
+        >
+          <span data-bind="text: $component.activeConceptSetName()"></span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+          <!-- ko foreach: $component.activeConceptSets() -->
+          <li>
+            <a
+              data-bind="click: () => $component.setActiveConceptSet($data), text: $data.current().name()"
+            ></a>
+          </li>
+          <!-- /ko -->
+        </ul>
+      </div>
+    </div>
+    <!-- /ko -->
+  <!-- /ko -->
+  <div class="options-container">
+    <div class="option" data-bind="{ css: { 'disabled': !isActive() } }">
+      <span
+          data-bind="click: () =>  $component.toggleSelectionOption('isExcluded'), css: { selected: selectionOptions().isExcluded() }"
+          class="fa fa-check"
+        ></span>
+        Exclude
+    </div>
+    <div class="option" data-bind="{ css: { 'disabled': !isActive() } }">
+      <span
+          data-bind="click: () =>  $component.toggleSelectionOption('includeDescendants'), css: { selected: selectionOptions().includeDescendants() }"
+          class="fa fa-check"
+        ></span>
+        Descendants
+    </div>
+    <div class="option" data-bind="{ css: { 'disabled': !isActive() } }">
+      <span
+          data-bind="click: () =>  $component.toggleSelectionOption('includeMapped'), css: { selected: selectionOptions().includeMapped() }"
+          class="fa fa-check"
+        ></span>
+        Mapped
+    </div>
+  </div>
+  <button
+      class="btn btn-success"
+      data-bind="click: handleSubmit, css: { disabled: !isActive() }"
+    >Add to Concept Set</button>
+</div>

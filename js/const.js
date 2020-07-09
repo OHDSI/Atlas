@@ -45,6 +45,53 @@ define([
 			}]
 		};
 
+		const includedConceptsOptions = {
+			Facets: [
+				{
+					'caption': 'Vocabulary',
+					'binding': (o) => {
+						return o.VOCABULARY_ID;
+					}
+				},
+				{
+					'caption': 'Class',
+					'binding': (o) => {
+						return o.CONCEPT_CLASS_ID;
+					}
+				},
+				{
+					'caption': 'Domain',
+					'binding': (o) => {
+						return o.DOMAIN_ID;
+					}
+				},
+				{
+					'caption': 'Standard Concept',
+					'binding': (o) => {
+						return o.STANDARD_CONCEPT_CAPTION;
+					}
+				},
+				{
+					'caption': 'Invalid Reason',
+					'binding': (o) => {
+						return o.INVALID_REASON_CAPTION;
+					}
+				},
+				{
+					'caption': 'Has Records',
+					'binding': (o) => {
+						return parseInt(o.RECORD_COUNT) > 0;
+					}
+				},
+				{
+					'caption': 'Has Descendant Records',
+					'binding': (o) => {
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
+					}
+				},
+			]
+		}
+
 		const getLinkedFeAParametersColumns = (context) => {
 			return [
 				{
@@ -110,32 +157,15 @@ define([
 					}] : []
 			];
 		};
-		
-		const getInclusionCheckboxesColumns = (canEdit = true) => [
-			{
-				title: 'Exclude',
-				render: () => renderers.renderCheckbox('isExcluded', ko.unwrap(canEdit)),
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
-			},
-			{
-				title: 'Descendants',
-				render: () => renderers.renderCheckbox('includeDescendants', ko.unwrap(canEdit)),
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
-			},
-			{
-				title: 'Mapped',
-				render: () => renderers.renderCheckbox('includeMapped', ko.unwrap(canEdit)),
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
-			},
-		];
-		
+				
 		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
+			{
+				title: '',
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+			},
 			{
 				title: 'Id',
 				data: 'CONCEPT_ID'
@@ -181,10 +211,16 @@ define([
 				data: 'ANCESTORS',
 				render: conceptSetService.getAncestorsRenderFunction()
 			},
-			...getInclusionCheckboxesColumns(context.canEditCurrentConceptSet()),
 		];
 
 		const getRelatedSourcecodesColumns = (sharedState, context) => [
+			{
+				title: '',
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+			},
 			{
 				title: 'Id',
 				data: 'CONCEPT_ID'
@@ -218,7 +254,6 @@ define([
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
 			}, 
-			...getInclusionCheckboxesColumns(context.canEditCurrentConceptSet()),
 		];
 
 		const apiPaths = {
@@ -319,7 +354,7 @@ define([
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
-			getInclusionCheckboxesColumns,
+			includedConceptsOptions,
 			getIncludedConceptsColumns,
 			getLinkedFeAParametersColumns,
 			getLinkedFeatureAnalysisColumns,

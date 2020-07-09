@@ -15,6 +15,7 @@ define([
 	'const',
 	'faceted-datatable',
 	'components/heading',
+	'components/conceptLegend/concept-legend',
 	'less!./concept-manager.less',
 ], function (
 	ko,

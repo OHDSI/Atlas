@@ -6,6 +6,7 @@ define([
 	'services/ConceptSet',
 	'atlas-state',
 	'const',
+  'components/conceptAddBox/concept-add-box',
 ], function (
 	ko,
 	view,
@@ -26,15 +27,27 @@ define([
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, this);
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
+			this.canAddConcepts = ko.pureComputed(() => this.includedSourcecodes().some(item => item.isSelected()));
 		}
 
-		addToConceptSetExpression() {
-			const concepts = commonUtils.getSelectedConcepts(this.includedSourcecodes());
-			conceptSetService.addConceptsToConceptSet({
-				concepts,
-				source: globalConstants.conceptSetSources.repository,
-			});
-		}
+		addConcepts = (options) => {
+      const concepts = this.includedSourcecodes()
+        .filter(concept => concept.isSelected())
+        .map(concept => ({
+          ...concept,
+          ...options,
+        }));
+        conceptSetService.addConceptsToConceptSet({
+          concepts,
+          source: globalConstants.conceptSetSources.repository,
+        });
+        this.clearCheckboxes();
+    }
+
+    clearCheckboxes() {
+      const concepts = this.includedSourcecodes().map(concept => concept.isSelected(false));
+      this.includedSourcecodes(concepts);
+    }
 
 	}
 

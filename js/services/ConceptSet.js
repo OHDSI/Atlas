@@ -137,9 +137,7 @@ define(function (require, exports) {
 			const { data } = await httpService.doPost(`${sharedState.vocabularyUrl()}lookup/mapped`, identifiers);
 			const normalizedData = data.map(item => ({
 				...item, 
-				isExcluded: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].isExcluded : ko.observable(false),
-				includeDescendants: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeDescendants : ko.observable(false),
-				includeMapped: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeMapped : ko.observable(false),
+				isSelected: ko.observable(false),
 			}))
 			currentConceptSet.includedSourcecodes(normalizedData);
 			return data;
@@ -221,9 +219,7 @@ define(function (require, exports) {
 			currentConceptSet.includedConcepts((response.data || []).map(item => ({
 				...item,
 				ANCESTORS: [],
-				isExcluded: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].isExcluded : ko.observable(false),
-				includeDescendants: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeDescendants : ko.observable(false),
-				includeMapped: currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID] ? currentConceptSet.selectedConceptsIndex[item.CONCEPT_ID].includeMapped : ko.observable(false),
+				isSelected: ko.observable(false)
 			})));
 			const map = response.data.reduce((result, item) => {
 				result[item.CONCEPT_ID] = item;
