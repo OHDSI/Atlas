@@ -214,11 +214,15 @@ define([
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
 
-	const getSelectedConcepts = (concepts, options) =>
-		ko.unwrap(concepts).filter(concept => concept.isSelected()).map(({ isSelected, ...concept }) => ({
+	const getSelectedConcepts = (concepts, options) => {
+		const { isExcluded, includeMapped, includeDescendants } = ko.toJS(options);
+		return ko.unwrap(concepts).filter(concept => concept.isSelected()).map(({ isSelected, ...concept }) => ({
 			...concept,
-			...options,
+			isExcluded: ko.observable(isExcluded),
+			includeMapped: ko.observable(includeMapped),
+			includeDescendants: ko.observable(includeDescendants),
 		}));
+	}
 
 	const clearConceptsSelectionState = concepts => ko.unwrap(concepts).forEach(concept => concept.isSelected && concept.isSelected(false));
 		
