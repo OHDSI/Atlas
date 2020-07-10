@@ -120,6 +120,7 @@ define([
 				conceptSetItemsToAdd.push(conceptSetItem);
 			});
 			sharedState[this.currentConceptSetStoreKey].selectedConcepts(conceptSetItemsToAdd);
+			conceptSet.expression.items(conceptSetItemsToAdd);
 			await this.loadConceptSet(conceptSet.id);
 		}
 
