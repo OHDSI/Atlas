@@ -363,7 +363,7 @@ define([
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-			commonUtils.clearConceptSetBySource({ source: constants.conceptSetSources.incidenceRates });
+			commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.incidenceRates });
 
 			this.sources().forEach(function (source) {
 				source.info(null);
