@@ -25,7 +25,7 @@
                                  hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
     </div>
 
-    <div data-bind="css: classes('content'), visible: !$component.loading()">
+    <div data-bind="css: editorClasses(), visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
             <div class="panel-heading">

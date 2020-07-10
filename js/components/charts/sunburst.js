@@ -3,8 +3,9 @@ define([
 	'components/Chart',
 	'components/Component',
 	'atlascharts',
-	'text!components/charts/chart.html',
-	'utils/CommonUtils'
+	'text!./chart.html',
+	'utils/CommonUtils',
+	'less!./chart.less'
 ], function (
 	ko,
 	Chart,
@@ -14,8 +15,8 @@ define([
 	commonUtils
 ) {
 	class Sunburst extends Chart {
-		constructor(params) {
-			super(params);
+		constructor(params, element) {
+			super(params, element);
 			this.renderer = new atlascharts.sunburst();
 		}
 	}

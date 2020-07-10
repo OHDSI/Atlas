@@ -13,7 +13,7 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
-	'services/Poll',
+	'services/JobPollService',
 	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
@@ -48,7 +48,7 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
-	PollService,
+	JobPollService,
 	{ isPermittedExportSQL },
 	GlobalPermissionService,
 	{ entityType },
@@ -335,7 +335,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = JobPollService.add({
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -536,7 +536,7 @@ define([
 		dispose() {
 			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
-			PollService.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 	}
 

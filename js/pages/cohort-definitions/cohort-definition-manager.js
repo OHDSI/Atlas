@@ -25,7 +25,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
-	'services/Poll',
+    'services/Poll',
+    'services/JobPollService',
 	'services/file',
 	'services/http',
 	'const',
@@ -81,7 +82,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	commonUtils,
 	costUtilConst,
 	authApi,
-	PollService,
+	{PollService},
+	JobPollService,
 	FileService,
 	httpService,
 	globalConstants,
@@ -409,6 +411,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							if (source) {
 								// only bother updating those sources that we know are running
 									if (this.isSourceRunning(source)) {
+										if(source.status() !== info.status) {
+										  JobPollService.isJobListMutated(true);
+										}
 									source.status(info.status);
 									source.includeFeatures(info.includeFeatures);
 									source.isValid(info.isValid);
@@ -474,7 +479,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.reportingAvailableReports = ko.observableArray();
 
 			this.pollId = null;
-
+			this.shouldUpdateJobs = ko.computed(() => {
+				if (this.generateReportsEnabled()) {
+				  JobPollService.isJobListMutated(true);
+				}
+			});
 
 			this.reportingState = ko.computed(() => {
 				// require a data source selection
