@@ -317,7 +317,7 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
-			sqlDialects,
+			sqlDialects
     };
   }
 );

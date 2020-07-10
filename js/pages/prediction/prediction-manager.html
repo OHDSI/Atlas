@@ -2,37 +2,34 @@
 <div data-bind="if:!loading()">
   <heading-title params="name: predictionCaption(), icon: 'heartbeat', theme: 'dark'"></heading-title>
   <div class="asset-heading">
-    <div class="input-group">
-      <input type="text" class="form-control" data-bind="
-        placeholder: ko.i18n('predictions.newItemPlaceholder', 'New Patient Level Prediction Analysis'),
-        textInput: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().name, 
-        css: { emptyInput: !isNameFilled() }" />
-      <div class="input-group-btn" role="group">
-        <button class="btn btn-success"
-          data-bind="title: ko.i18n('common.save', 'Save'), click: save, enable: canSave() && !isProcessing()"><i
-            class="fa fa-save"></i></button>
-        <button class="btn btn-primary"
-          data-bind="title: ko.i18n('common.close', 'Close'), click: close, enable: !isProcessing()"><i
-            class="fa fa-times"></i></button>
-        <!-- ko ifnot: isNewEntity -->
-        <button class="btn btn-primary"
-          data-bind="title: ko.i18n('common.createACopy', 'Create a copy'), click: copy, enable: canCopy() && !isProcessing()"><i
-            class="fa fa-copy"></i></button>
-        <button class="btn btn-primary"
-          data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
-          <i class="fa fa-lock"></i>
-        </button>
-        <button class="btn btn-danger"
-          data-bind="title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
-            class="fa fa-trash-o"></i></button>
-        <!-- /ko -->
+      <div class="input-group">
+          <input type="text" class="form-control" data-bind="
+            placeholder: ko.i18n('predictions.newItemPlaceholder', 'New Patient Level Prediction Analysis'),
+            textInput: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().name,
+            css: { emptyInput: !isNameFilled() }" />
+          <div class="input-group-btn" role="group">
+              <button class="btn btn-success"
+                      data-bind="title: ko.i18n('common.save', 'Save'), click: save, enable: canSave() && !isProcessing()"><i
+                      class="fa fa-save"></i></button>
+              <button class="btn btn-primary"
+                      data-bind="title: ko.i18n('common.close', 'Close'), click: close, enable: !isProcessing()"><i
+                      class="fa fa-times"></i></button>
+              <!-- ko ifnot: isNewEntity -->
+              <button class="btn btn-primary"
+                      data-bind="title: ko.i18n('common.createACopy', 'Create a copy'), click: copy, enable: canCopy() && !isProcessing()"><i
+                      class="fa fa-copy"></i></button>
+              <button class="btn btn-primary"
+                      data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                  <i class="fa fa-lock"></i>
+              </button>
+              <button class="btn btn-danger"
+                      data-bind="title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
+                      class="fa fa-trash-o"></i></button>
+              <!-- /ko -->
+          </div>
       </div>
-    </div>
-    <div data-bind="visible: !isNameFilled()" class="empty-name-error">
-      <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-      <label
-        data-bind="text: ko.i18n('predictions.emptyMessageTitle', 'Patient Level Prediction name is empty.')"></label>
-    </div>
+      <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
   </div>
 
   <tabs data-bind="visible: !$component.loading()" params="

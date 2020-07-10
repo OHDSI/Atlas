@@ -5,7 +5,7 @@
 	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
 	<div class="asset-heading"">
 		<div class="input-group">
-			<input type="text" class="form-control" 
+			<input type="text" class="form-control"
 			data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
 			<div class="input-group-btn">
 				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
@@ -16,10 +16,8 @@
 				<!-- /ko -->
 			</div>
 		</div>
-		<div data-bind="visible: !isNameFilled()" class="empty-name-error">
-			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-			<label data-bind="text: ko.i18n('pathways.manager.messages.nameIsEmpty', 'Cohort Pathway name is empty.')"></label>
-		</div>
+		<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 	</div>
 
 	<tabs data-bind="visible: !$component.loading()" params="

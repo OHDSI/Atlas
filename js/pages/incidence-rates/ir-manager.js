@@ -32,6 +32,7 @@ define([
 	'utilities/export',
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -158,9 +159,18 @@ define([
 			this.isNameFilled = ko.pureComputed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.selectedAnalysis().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.selectedAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name() === this.defaultName;
+			});
 
 			this.isNameCorrect = ko.pureComputed(() => {
-				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
 			this.isTarValid = ko.pureComputed(() => {

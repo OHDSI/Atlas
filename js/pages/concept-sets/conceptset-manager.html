@@ -8,7 +8,7 @@
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
     <div class="input-group">
-      <input class="form-control" id="txtConceptSetName" type="text" 
+      <input class="form-control" id="txtConceptSetName" type="text"
       data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }, placeholder: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set')"/>
       <div class="input-group-btn">
         <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() || isProcessing() }, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
@@ -25,10 +25,8 @@
         <!-- /ko -->
       </div>
     </div>
-    <div data-bind="visible: !isNameFilled()" class="empty-name-error">
-      <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-      <label data-bind="text: ko.i18n('cs.manager.nameEmptyWarning', 'Concept Set name is empty.')"></label>
-    </div>
+    <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+                            hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
   </div>
   <tabs params="
     componentParams: $component.componentParams,
