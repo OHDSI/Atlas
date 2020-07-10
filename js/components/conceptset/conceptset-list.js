@@ -156,8 +156,8 @@ define([
 			const items = ko.unwrap(conceptSet.expression.items);
 			if (items && items.length > 0 && items[0].concept && !items[0].concept.STANDARD_CONCEPT) {
 				const identifiers = Array.from(conceptSet.expression.items())
-					.map(() => {
-						return this.concept.CONCEPT_ID;
+					.map((item) => {
+						return item.concept.CONCEPT_ID;
 					});
 				const { data } = await conceptSetService.lookupIdentifiers(identifiers);
 				data.forEach((item, index) => conceptSet.expression.items()[index].concept = item);

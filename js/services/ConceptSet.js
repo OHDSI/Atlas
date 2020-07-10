@@ -71,7 +71,7 @@ define(function (require, exports) {
 	}
 
 	function lookupIdentifiers(identifiers) {
-		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', JSON.stringify(identifiers));
+		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 	}
 
 	function getInclusionCount(expression) {
