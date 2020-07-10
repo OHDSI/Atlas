@@ -450,6 +450,10 @@ define(function(require, exports) {
         return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
     }
 
+    const isPermittedClearServerCache = function (sourceKey) {
+        return isPermitted(`cache:clear:get`);
+    };
+
 	const isPermittedRunAs = () => isPermitted('user:runas:post');
 
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
@@ -556,6 +560,7 @@ define(function(require, exports) {
         isPermittedImportUsers,
         hasSourceAccess,
         isPermittedRunAs,
+        isPermittedClearServerCache,
 
         loadUserInfo,
         TOKEN_HEADER,

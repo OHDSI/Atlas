@@ -1,12 +1,22 @@
 define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
-	state.resultsUrl = ko.observable();
-	state.vocabularyUrl = ko.observable();
-	state.evidenceUrl = ko.observable();
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
 	state.sources = ko.observableArray([]);
+
+	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
+	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
+	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
+	state.vocabularyUrl.subscribe(value => sessionStorage.vocabularyUrl = value);
+	state.evidenceUrl.subscribe(value => sessionStorage.evidenceUrl = value);
+	state.resultsUrl.subscribe(value => sessionStorage.resultsUrl = value);
+
+	state.resetCurrentDataSourceScope = function() {
+		state.resultsUrl(null);
+		state.vocabularyUrl(null);
+		state.evidenceUrl(null);
+	}
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
