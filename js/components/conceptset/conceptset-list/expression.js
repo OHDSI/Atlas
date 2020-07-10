@@ -43,13 +43,25 @@ define([
 			this.newConceptSetName = ko.observable();
 			this.saveConceptSetShow = ko.observable();
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
-      this.data = ko.observable(this.normalizeData());
-      this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
+			this.data = ko.observable(this.normalizeData());
+			this.data.subscribe(this.addItemsToConceptSet);
+			this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
 		}
 
 		normalizeData() {
-      return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) }));
-    }
+      return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!ko.unwrap(concept.isSelected)) }));
+		}
+		
+		addItemsToConceptSet(items) {
+			if (this.currentConceptSet()) {
+				const conceptSet = this.conceptSets().find(cs => cs.id === this.currentConceptSet().id);
+				conceptSet && conceptSet.expression.items(items);
+			}
+		}
+
+		findConceptSet() {
+			return this.conceptSets().find(cs => cs.id === this.currentConceptSet().id);
+		}
 
 		closeConceptSet() {
 			const currentId = this.currentConceptSet() && this.currentConceptSet().id;

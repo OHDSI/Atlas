@@ -58,13 +58,11 @@
 					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
-				<!-- ko with: selectedAnalysis().expression -->
 				<incidence-rates-conceptset params="{
-					data: ConceptSets,
+					data: $component.selectedAnalysis().expression().ConceptSets,
 					canEdit: $component.isEditable,
 					irAnalysisId: $component.selectedAnalysis().id
 				}"></incidence-rates-conceptset>
-				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },
 																			eventListener: [
