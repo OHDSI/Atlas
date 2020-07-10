@@ -55,7 +55,8 @@ define([
 		addItemsToConceptSet(items) {
 			if (this.currentConceptSet()) {
 				const conceptSet = this.conceptSets().find(cs => cs.id === this.currentConceptSet().id);
-				conceptSet && conceptSet.expression.items(items);
+				const concepts = items.map(({ isSelected, idx, ...item }) => item);
+				conceptSet && conceptSet.expression.items(concepts);
 			}
 		}
 
