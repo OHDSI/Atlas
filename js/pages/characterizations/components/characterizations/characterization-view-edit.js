@@ -25,6 +25,7 @@ define([
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
 	'components/security/access/configure-access-modal',
+    'components/name-validation',
 ], function (
     ko,
     CharacterizationService,
@@ -60,8 +61,17 @@ define([
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });
+            this.isNameCharactersValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+            });
+            this.isNameLengthValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+            });
+            this.isDefaultName = ko.computed(() => {
+                return this.isNameFilled() && this.design().name() === this.defaultName;
+            });
             this.isNameCorrect = ko.computed(() => {
-                return this.isNameFilled() && this.design().name() !== this.defaultName;
+                return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();

@@ -35,7 +35,7 @@ define(['knockout',
 		renderers,
 		Const,
 		jobService,
-		PollService,
+		{PollService},
 	) {
 
 		class UsersImport extends AutoBind(Component) {
@@ -166,9 +166,7 @@ define(['knockout',
 			};
 
 			stopPolling() {
-				if (this.pollId != null) {
 					PollService.stop(this.pollId);
-				}
 			};
 
 			async updateJobStatus(jobId) {

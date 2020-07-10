@@ -228,6 +228,16 @@ define([
 	const getUniqueIdentifier = () => {
 		return ([1e7]+1e3+4e3+8e3+1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15 >> c/4).toString(16));
 	}
+		
+	const isNameLengthValid = function(name) {
+		const maxFileNameLength = 100;
+		return name.length <= maxFileNameLength;
+	}
+
+	const isNameCharactersValid = function(name) {
+		const forbiddenSymbols = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
+		return !forbiddenSymbols.some(symbol => name.includes(symbol));
+	}
 
 	return {
 		build,
@@ -252,5 +262,7 @@ define([
 		selectAllFilteredItems,
 		escapeTooltip,
 		getUniqueIdentifier,
+		isNameCharactersValid,
+		isNameLengthValid,
 	};
 });
