@@ -24,8 +24,8 @@ define([
 	'./const',
 	'const',
 	'./components/iranalysis/main',
+	'./components/iranalysis/components/ir-conceptset',
 	'databindings',
-	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
 	'utilities/import',
@@ -116,7 +116,6 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
-			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
 
@@ -134,7 +133,6 @@ define([
 				}
 				return analysisCohorts;
 			});
-
 			this.showConceptSetBrowser = ko.observable(false);
 			this.criteriaContext = ko.observable();
 			this.generateActionsSettings = {

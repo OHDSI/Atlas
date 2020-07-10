@@ -26,7 +26,19 @@ define([
         isExcluded: ko.observable(false),
       };
       this.selectionOptions = ko.observable(this.defaultSelectionOptions);
-
+      this.conceptSetType = {
+        [globalConstants.conceptSetSources.repository]: 'Repository',
+        [globalConstants.conceptSetSources.featureAnalysis]: 'Feature Analysis',
+        [globalConstants.conceptSetSources.cohortDefinition]: 'Cohort Definition',
+        [globalConstants.conceptSetSources.characterization]: 'Characterization',
+        [globalConstants.conceptSetSources.incidenceRates]: 'Incidence Rates',
+      };
+      this.buttonText = ko.pureComputed(() => {
+        if (this.activeConceptSet() && this.activeConceptSet().current()) {
+          return `Add To Concept Set (${this.activeConceptSet().source})`;
+        }
+        return 'Add To New Concept Set';
+      })
       this.activeConceptSets = ko.pureComputed(() => {
 				const activeConceptSetSources = Object.keys(globalConstants.conceptSetSources).filter(key => !!sharedState[`${key}ConceptSet`].current());
 				return activeConceptSetSources.map(source => sharedState[`${source}ConceptSet`]);
@@ -35,7 +47,7 @@ define([
 			this.activeConceptSet = sharedState.activeConceptSet;
 			this.activeConceptSetName = ko.pureComputed(() => {
 				if (this.activeConceptSet() && this.activeConceptSet().current()) {
-					return this.activeConceptSet().current().name(); 
+					return `${this.activeConceptSet().current().name()} (${this.conceptSetType[this.activeConceptSet().source]})`; 
 				}
 				return 'Select Concept Set';
       });
@@ -49,7 +61,6 @@ define([
     
     handleSubmit() {
       const source = this.canSelectSource && this.activeConceptSet() ? this.activeConceptSet().source : undefined;
-      console.log('--handleSubmit')
       this.onSubmit(this.selectionOptions(), source);
       this.selectionOptions(this.defaultSelectionOptions);
     }

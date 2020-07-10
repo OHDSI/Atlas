@@ -19,7 +19,7 @@
           <!-- ko foreach: $component.activeConceptSets() -->
           <li>
             <a
-              data-bind="click: () => $component.setActiveConceptSet($data), text: $data.current().name()"
+              data-bind="click: () => $component.setActiveConceptSet($data), text: `${$data.current().name()} (${$component.conceptSetType[$data.source]})`"
             ></a>
           </li>
           <!-- /ko -->
@@ -53,6 +53,6 @@
   </div>
   <button
       class="btn btn-success"
-      data-bind="click: handleSubmit, css: { disabled: !canAddConcepts() }"
-    >Add to Concept Set</button>
+      data-bind="click: handleSubmit, css: { disabled: !canAddConcepts() }, text: buttonText"
+    ></button>
 </div>

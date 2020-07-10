@@ -347,6 +347,7 @@ define([
 			repository: 'repository',
 			cohortDefinition: 'cohortDefinition',
 			characterization: 'characterization',
+			incidenceRates: 'incidenceRates',
 		};
 
 		return {

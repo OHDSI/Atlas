@@ -77,11 +77,12 @@ define([
 
 		deleteConcepts() {
 			const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
+			const indexesForRemoval = conceptsForRemoval.map(concept => concept.idx);
       conceptSetService.removeConceptsFromConceptSet({
         concepts: conceptsForRemoval,
         source: this.currentConceptSetSource,
       });
-      const data = this.data().filter(({ concept}) => !idsForRemoval.includes(concept.CONCEPT_ID));
+      const data = this.data().filter(({ concept}) => !indexesForRemoval.includes(concept.idx));
       this.data(data);
 		}
 

@@ -4,12 +4,8 @@
 
 <!-- ko if: !isLoading() -->
 	<heading-title params="name: 'Vocabulary > Concept', icon: 'search', theme: 'dark'"></heading-title>
-	<div class="asset-heading concept-manager-heading-container" data-bind="with:currentConcept()">
+	<div class="asset-heading" data-bind="with:currentConcept()">
 		<span data-bind="css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}, text:CONCEPT_NAME"></span>
-		<concept-add-box params="{
-			canSelectSource: true,
-			onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
-		}"></concept-add-box>
 	</div>
 
 	<ul class="nav nav-tabs">
@@ -232,6 +228,12 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="concept-add-container">
+				<concept-add-box params="{
+					canSelectSource: true,
+					onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+				}"></concept-add-box>
+		</div>
 		<!-- /ko -->
 	</div>
 

@@ -37,6 +37,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.conceptSets = params.conceptSets;
+			this.exportCSV = typeof params.exportCSV !== 'undefined' ? params.exportCSV : true;
 			this.currentConceptSetSource = params.conceptSetSource;
 			this.conceptSetStoreKey = `${this.currentConceptSetSource}ConceptSet`;
 			this.canEdit = params.canEdit || (() => false);
@@ -67,7 +68,7 @@ define([
 					this.getDataboundColumn('name', 'Title', '100%')
 				],
 				language: {
-					search: 'Filter Cohort Concept Sets:'
+					search: 'Filter Concept Sets:'
 				},
 				select: {
 					style: 'single',
