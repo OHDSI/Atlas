@@ -214,11 +214,8 @@ define([
 			} else {
 				if (fData.includes(i.id)) {
 					i.selected(value);
-					console.log(i, i.selected());
 				}
 			}
-			console.log(data().filter(i => i.selected()));
-			// return fData.length === 0 ? i.selected(value) : (fData.includes(i.id) && i.selected(value));
 		});
 	}
 	const escapeTooltip = function(tooltipText) {

@@ -51,7 +51,7 @@ define([
                     },
                 ] : [];
 
-            this.tableDom = "Bfiprt<'page-size'l>ip";
+            this.tableDom = this.multiChoice ? "Bfiprt<'page-size'l>ip" : 'Blfiprt';
             this.rowClick = this.rowClick.bind(this);
             this.loadData();
         }

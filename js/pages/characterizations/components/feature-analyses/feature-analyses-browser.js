@@ -24,8 +24,6 @@ define([
 				Facets: feConst.FeatureAnalysisFacets,
 			};
 			
-			this.tableDom = "Bfiprt<'page-size'l>ip";
-
 			this.columns = [
 				...this.columns,
 				{
