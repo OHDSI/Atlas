@@ -81,7 +81,7 @@ define([
 			this.isSaving = ko.observable(false);
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
-			this.defaultName = globalConstants.newEntityNames.ple;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.ple);
 			this.executionTabTitle = config.useExecutionEngine ? ko.i18n('ple.tabs.executions', 'Executions') : "";
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
@@ -418,7 +418,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: ko.unwrap(this.defaultName)}, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: this.defaultName}, this.estimationType, this.defaultCovariateSettings()));
 			return new Promise(async (resolve, reject) => {
 				this.setCohortMethodAnalysisList();
 				this.resetDirtyFlag();

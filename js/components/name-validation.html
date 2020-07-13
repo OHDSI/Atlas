@@ -1,16 +1,16 @@
 <div data-bind="visible: hasEmptyName()" class="empty-name-error">
     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-    <label>The name is empty.</label>
+    <label data-bind="text: ko.i18n('components.nameValidation.empty', 'The name is empty.')"></label>
 </div>
 <div data-bind="visible: hasInvalidCharacters" class="empty-name-error">
     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-    <label>The name can't contain any of the following characters: \/:*?"<>|  Please choose a different name.</label>
+    <label data-bind="html: ko.i18n('components.nameValidation.invalidCharacters', 'The name cannot contain any of the following characters: \/:*?&quot;&lt;&gt;|  Please choose a different name.')"></label>
 </div>
 <div data-bind="visible: hasInvalidLength" class="empty-name-error">
     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-    <label>The name length exceeds 100 symbols. Please choose a different name.</label>
+    <label data-bind="text: ko.i18nformat('components.nameValidation.length', 'The name length exceeds <%=length%> symbols. Please choose a different name.', {length: maxEntityNameLength})"></label>
 </div>
 <div data-bind="visible: hasDefaultName" class="empty-name-error">
     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-    <label>The name of the analysis should differ from the default one.</label>
+    <label data-bind="text: ko.i18n('components.nameValidation.defaultName', 'The name should differ from the default one.')"></label>
 </div>

@@ -4,7 +4,7 @@
 	<div>
 		<div class="asset-heading">
 			<div class="input-group ir-header">
-				<input type="text" placeholder="New Incidence Rate Analysis" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !isNameFilled() }, enable: isEditable"/>
+				<input type="text" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !isNameFilled() }, enable: isEditable, placeholder: ko.i18n('const.newEntityNames.incidenceRate', 'New Incidence Rate Analysis')"/>
 				<div class="input-group-btn" role="group">
 					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>

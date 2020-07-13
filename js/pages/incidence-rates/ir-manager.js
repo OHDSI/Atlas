@@ -74,7 +74,7 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
 			this.constants = constants;
-			this.defaultName = globalConstants.newEntityNames.incidenceRate;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.incidenceRate);
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
