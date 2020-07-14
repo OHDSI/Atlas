@@ -38,6 +38,7 @@ define([
 			this.loading = params.loading;
 			this.managerMode = ko.observable('summary');
 			this.defaultCovariateSettings = params.defaultCovariateSettings;
+			this.isEditPermitted = params.isEditPermitted;
 		}
 
 		comparisonTableRowClickHandler(data, obj, tableRow, rowIndex) {
@@ -96,7 +97,7 @@ define([
 		copyAnalysisSettings(obj, index) {
 			const newAnalysis = ko.toJS(this.cohortMethodAnalysisList()[index]);
 			newAnalysis.analysisId = this.cohortMethodAnalysisList().length + 1;
-			newAnalysis.description = "COPY OF: " + newAnalysis.description;
+			newAnalysis.description = "COPY OF " + newAnalysis.description;
 			this.cohortMethodAnalysisList.push(new CohortMethodAnalysis(newAnalysis));
 		}
 
@@ -117,6 +118,7 @@ define([
 			this.editorComponentParams({ 
 				comparison: comparison,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor')
 		}

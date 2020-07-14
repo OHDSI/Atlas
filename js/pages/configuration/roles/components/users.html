@@ -1,0 +1,30 @@
+<div>
+    <table width="100%" class="roles-table stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: $component.userItems,
+            options: {
+                        dom: 'lfiprt',
+                        language: {
+                            search : 'Filter:'
+                        },
+                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                        orderClasses: false,
+                        deferRender: true,
+                        autoWidth: false,
+                        ordering: false,
+                        columns: [
+                                { class:'text-center', render: function() { return renderCheckbox('isRoleUser', $component.canEditRoleUsers); } },
+                                { data: 'login' }
+                        ]
+                }
+        }">
+        <thead>
+        <tr role="row">
+            <th class="roles-table__included-th text-center sorting_disabled" rowspan="1" colspan="1">
+                <span class="fa fa-check" data-bind="css: { selected: $component.areUsersSelected }, click: function(){$component.areUsersSelected()?$component.deselectAllUsers():$component.selectAllUsers();}"></span>
+                Included
+            </th>
+            <th tabindex="0" rowspan="1" colspan="1">Login</th>
+        </tr>
+        </thead>
+    </table>
+</div>

@@ -13,7 +13,8 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
-	'services/Poll',
+	'services/JobPollService',
+	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
 	'pages/Page',
@@ -29,7 +30,9 @@ define([
 	'components/heading',
 	'utilities/import',
 	'utilities/export',
+	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -45,7 +48,8 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
-	PollService,
+	JobPollService,
+	{ isPermittedExportSQL },
 	GlobalPermissionService,
 	{ entityType },
 	Page,
@@ -104,6 +108,7 @@ define([
 						&& !this.dirtyFlag().isDirty()
 					)
 			});
+			this.isPermittedExportSQL = isPermittedExportSQL;
 			this.selectedAnalysisId.subscribe((id) => {
 				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
 					authAPI.loadUserInfo();
@@ -150,14 +155,33 @@ define([
 
 			this.expressionMode = ko.observable('import');
 
-			this.isNameFilled = ko.computed(() => {
+			this.isNameFilled = ko.pureComputed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
-			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.selectedAnalysis().name());
 			});
-			this.canSave = ko.computed(() => {
-				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.selectedAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name() === this.defaultName;
+			});
+			
+			this.isNameCorrect = ko.pureComputed(() => {
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
+			});
+			
+			this.isTarValid = ko.pureComputed(() => {
+				const analysis = this.selectedAnalysis() && this.selectedAnalysis().expression();
+				if (analysis == null) return;
+				return !(analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField() && analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset());			});
+			
+			this.canSave = ko.pureComputed(() => {
+				return this.isEditable() 
+					&& this.isNameCorrect() 
+					&& this.dirtyFlag().isDirty() 
+					&& !this.isRunning();
 			});
 			this.error = ko.observable();
 			this.isSaving = ko.observable(false);
@@ -169,6 +193,7 @@ define([
 
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
+			this.exportSqlService = this.exportSql;
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
@@ -310,7 +335,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = JobPollService.add({
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -499,11 +524,19 @@ define([
 			!this.selectedAnalysis() && this.newAnalysis();
 		}
 
+		async exportSql({ analysisId = 0, expression = {} } = {}) {
+			const sql = await IRAnalysisService.exportSql({
+				analysisId,
+				expression,
+			});
+			return sql;
+		}
+
 		// cleanup
 		dispose() {
 			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
-			PollService.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 	}
 

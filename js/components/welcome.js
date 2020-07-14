@@ -4,6 +4,7 @@ define([
     'appConfig',
     'services/AuthAPI',
 	'utils/BemHelper',
+    'atlas-state',
     'less!welcome.less'
 ],
     function (
@@ -11,7 +12,8 @@ define([
     view,
     appConfig,
     authApi,
-	BemHelper
+    BemHelper,
+    sharedState,
     ) {
     const componentName = 'welcome';
 
@@ -68,6 +70,7 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
+            sharedState.resetCurrentDataSourceScope();
             self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
@@ -125,6 +128,12 @@ define([
 
         self.signout = function () {
             self.isInProgress(true);
+            if (authApi.authClient() === authApi.AUTH_CLIENTS.SAML) {
+                const id = 'saml-iframe';
+                const iframe = `<iframe id="${id}" src="${self.serviceUrl + 'saml/slo'}" style="position: absolute; width:0;height:0;border:0; border:none;"></iframe>`;
+                $('#' + id).remove();
+                $('body').append(iframe);
+            }
             $.ajax({
                 url: self.serviceUrl + "user/logout",
                 method: 'GET',

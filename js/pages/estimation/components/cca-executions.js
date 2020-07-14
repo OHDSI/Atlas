@@ -11,9 +11,11 @@ define([
 	'services/Source',
 	'services/Poll',
 	'services/file',
+	'services/MomentAPI',
 	'../const',
 	'utils/ExecutionUtils',
 	'lodash',
+	'services/JobDetailsService',
 	'less!./cca-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -27,11 +29,13 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
-	PollService,
+	{PollService},
 	FileService,
+	momentApi,
 	consts,
 	ExecutionUtils,
 	lodash,
+	jobDetailsService
 ) {
 
 	class EstimationGeneration extends AutoBind(Component) {
@@ -66,8 +70,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{
@@ -158,7 +162,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => EstimationService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 

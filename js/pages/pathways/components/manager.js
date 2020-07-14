@@ -23,6 +23,7 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -55,8 +56,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.design().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.design().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
 			this.canEdit = this.isEditPermittedResolver();
@@ -71,6 +81,7 @@ define([
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
+				isEditPermitted: this.canEdit
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
@@ -122,7 +133,7 @@ define([
 		}
 
 		isSavePermittedResolver() {
-				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect())
+				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect());
 		}
 
 		isDeletePermittedResolver() {

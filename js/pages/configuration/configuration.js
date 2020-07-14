@@ -10,7 +10,8 @@ define([
   'atlas-state',
   'const',
   'services/JobDetailsService',
-  'services/Poll',
+  'services/JobPollService',
+  'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -25,7 +26,8 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService
+  JobPollService,
+  cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -68,16 +70,19 @@ define([
         }
       });
 
-		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canClearServerCache = ko.pureComputed(() => {
+        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
+      });
 
-      this.intervalId = PollService.add({
+      this.intervalId = JobPollService.add({
         callback: () => this.checkJobs(),
-        interval: 5000,
+        interval: 5000
       });
     }
 
     dispose() {
-      PollService.stop(this.intervalId);
+      JobPollService.stop(this.intervalId);
     }
 
     getSource(job) {
@@ -129,6 +134,14 @@ define([
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
+
+		clearServerCache() {
+      if (confirm('Are you sure you want to clear the server cache?')) {
+        cacheApi.clearCache().then(() => {
+          alert("Server cache has been cleared.");
+        });
+      }
+    };
 
 		newSource() {
       commonUtils.routeTo('/source/0');

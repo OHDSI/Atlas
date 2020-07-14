@@ -110,7 +110,7 @@ define([
       });
 
       this.isDeletePermitted = ko.pureComputed(() => {
-        return authApi.isPermittedDeleteSource(this.selectedSource().key());
+        return authApi.isPermittedDeleteSource(this.selectedSource() && this.selectedSource().key());
       });
 
       this.canEdit = ko.pureComputed(() => {
@@ -152,6 +152,7 @@ define([
         { name: 'Impala', id: 'impala' },
         { name: 'Microsoft PDW', id: 'pdw' },
         { name: 'IBM Netezza', id: 'netezza' },
+        { name: 'Hive LLAP', id: 'hive'},
       ];
 
       this.sourceCaption = ko.computed(() => {

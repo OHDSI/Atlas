@@ -1,8 +1,5 @@
-define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
 	var state = {};
-	state.resultsUrl = ko.observable();
-	state.vocabularyUrl = ko.observable();
-	state.evidenceUrl = ko.observable();
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
@@ -10,6 +7,19 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	state.sources = ko.observableArray([]);
 	state.currentView = ko.observable('loading');
 	state.loading = ko.observable(false);
+
+	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
+	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
+	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
+	state.vocabularyUrl.subscribe(value => sessionStorage.vocabularyUrl = value);
+	state.evidenceUrl.subscribe(value => sessionStorage.evidenceUrl = value);
+	state.resultsUrl.subscribe(value => sessionStorage.resultsUrl = value);
+
+	state.resetCurrentDataSourceScope = function() {
+		state.resultsUrl(null);
+		state.vocabularyUrl(null);
+		state.evidenceUrl(null);
+	}
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
@@ -91,6 +101,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	state.includedConceptsMap = ko.observable({});
 	state.includedSourcecodes = ko.observableArray();
 	state.currentConceptSetMode = ko.observable('details');
+	state.includedHash = ko.observable();
 
 	state.ConceptSet = {
 		current: ko.observable(),
@@ -119,6 +130,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		info: ko.observable(),
 		mode: ko.observable('definition'),
 		sourceInfo: ko.observableArray(),
+		lastUpdatedId: ko.observable(),
 	};
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortDefinition.current()));
 	state.CohortDefinition.current.subscribe(newValue => {

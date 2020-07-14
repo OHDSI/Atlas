@@ -12,6 +12,23 @@ define([
             super(classes);
         }
 
+        convertAnalysisToTabularData(analysis, stratas = null) {
+
+            const result = super.convertAnalysisToTabularData(analysis, stratas);
+            stratas && stratas.filter(s => result.data.findIndex(row => row.strataId === s.strataId) < 0)
+              .forEach(s => result.data.push(this.getResultObject(
+                {
+                  analysisId: analysis.analysisId,
+                  analysisName: analysis.analysisName,
+                  domainId: analysis.domainId,
+                  cohorts: [],
+                  strataId: s.strataId,
+                  strataName: s.strataName,
+                }
+              )));
+            return result;
+        }
+
         getRowId(stat) {
             // Transform stratas into rows
             return stat.strataId;
@@ -31,6 +48,7 @@ define([
               title: 'Strata',
               data: 'strataName',
               className: this.classes('col-distr-title'),
+							xssSafe:false,
             }];
         }
 
@@ -59,12 +77,18 @@ define([
             return (mean2 - mean1) / sd;
         }
 
-        convertFields(result, strataId, cohortId, stat) {
+        convertFields(result, strataId, cohortId, stat, prefix) {
             result.strataName = stat.strataName;
             ['count', 'avg', 'pct', 'stdDev', 'median', 'max', 'min', 'p10', 'p25', 'p75', 'p90'].forEach(field => {
-			    this.setNestedValue(result, field, strataId, cohortId, stat[field]);
+                const statName = prefix ? prefix + field.charAt(0).toUpperCase() + field.slice(1) : field;
+			    this.setNestedValue(result, field, strataId, cohortId, stat[statName]);
             });
         }
+
+        convertCompareFields(result, strataId, stat) {
+            this.convertFields(result, strataId, stat.targetCohortId, stat, "target");
+            this.convertFields(result, strataId, stat.comparatorCohortId, stat, "comparator");
+		}
     }
 
     return BaseDistributionStatConverter;

@@ -25,6 +25,7 @@ define([
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
 	'components/security/access/configure-access-modal',
+    'components/name-validation',
 ], function (
     ko,
     CharacterizationService,
@@ -60,8 +61,17 @@ define([
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });
+            this.isNameCharactersValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+            });
+            this.isNameLengthValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+            });
+            this.isDefaultName = ko.computed(() => {
+                return this.isNameFilled() && this.design().name() === this.defaultName;
+            });
             this.isNameCorrect = ko.computed(() => {
-                return this.isNameFilled() && this.design().name() !== this.defaultName;
+                return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -84,6 +94,7 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                isEditPermitted: this.isEditPermitted,
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -92,6 +103,14 @@ define([
                     } else {
                         return 'Characterization #' + this.characterizationId();
                     }
+                }
+            });
+
+            const onCohortDefinitionChanged = sharedState.CohortCharacterization.onCohortDefinitionChanged;
+
+            sharedState.CohortCharacterization.onCohortDefinitionChanged = onCohortDefinitionChanged || sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
+                if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
+                    this.loadDesignData(this.characterizationId(), true);
                 }
             });
 
@@ -153,9 +172,9 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
-        async loadDesignData(id) {
+        async loadDesignData(id, force = false) {
 
-        if (this.design() && (this.design().id || 0) === id) return;
+        if (!force && this.design() && (this.design().id || 0) === id) return;
           if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
             return;
           }

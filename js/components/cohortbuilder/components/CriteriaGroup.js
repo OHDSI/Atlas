@@ -5,10 +5,11 @@ define([
 		'../InputTypes/Window',
 		'../AdditionalCriteria',
 		'../options',
-		'./utils',
-		'./const',
+		'../utils',
+		'../const',
 		'text!./CriteriaGroupTemplate.html',
-		'components/DropDownMenu'],
+		'components/DropDownMenu',
+		'less!./CriteriaGroup.less'],
 	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
 
 	function CriteriaGroupViewModel(params) {
@@ -19,6 +20,7 @@ define([
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
+		self.indexMessage = params.indexMessage;
 		self.groupCountOptions = ko.pureComputed(function () {
 			var optionsArray = ['0'];
 			for (var i = 0; i < (self.group().CriteriaList().length + self.group().Groups().length); i++) {
@@ -55,7 +57,7 @@ define([
 				}
 			}, unwrappedExpression.ConceptSets));
 		};
-
+		
 		self.addDrugExposureCriteria = function () {
 			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 			self.group().CriteriaList.push(new AdditionalCriteria({
@@ -194,6 +196,7 @@ define([
 		self.actions[consts.CriteriaTypes.CONDITION_OCCURRENCE] = self.addConditionCriteria;
 		self.actions[consts.CriteriaTypes.DEATH] = self.addDeathCriteria;
 		self.actions[consts.CriteriaTypes.DEVICE_EXPOSURE] = self.addDeviceCriteria;
+		self.actions[consts.CriteriaTypes.DOSE_ERA] = self.addDoseEraCriteria;
 		self.actions[consts.CriteriaTypes.DRUG_ERA] = self.addDrugEraCriteria;
 		self.actions[consts.CriteriaTypes.DRUG_EXPOSURE] = self.addDrugExposureCriteria;
 		self.actions[consts.CriteriaTypes.LOCATION_REGION] = self.addLocationRegionCriteria;

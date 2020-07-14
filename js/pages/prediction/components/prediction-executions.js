@@ -11,9 +11,11 @@ define([
 	'services/Source',
 	'services/Poll',
 	'services/file',
+	'services/MomentAPI',
 	'utils/ExecutionUtils',
 	'../const',
 	'lodash',
+	'services/JobDetailsService',
 	'less!./prediction-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -27,11 +29,13 @@ define([
 	PermissionService,
 	PredictionService,
 	SourceService,
-	PollService,
+	{PollService},
 	FileService,
+	momentApi,
 	ExecutionUtils,
 	consts,
 	lodash,
+	jobDetailsService
 ){
 
 	class PredictionGeneration extends AutoBind(Component) {
@@ -67,8 +71,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{
@@ -180,7 +184,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 

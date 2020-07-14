@@ -13,8 +13,9 @@ define([
 	'utils/DatatableUtils',
 	'services/Source',
 	'lodash',
-  'services/JobDetailsService',
-	'services/Poll',
+	'services/JobDetailsService',
+	'services/MomentAPI',
+	'services/JobPollService',
 	'less!./pathway-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -32,8 +33,9 @@ define([
 	datatableUtils,
 	SourceService,
 	lodash,
-  jobDetailsService,
-	PollService
+	jobDetailsService,
+	momentApi,
+	JobPollService
 ) {
 	class PathwayExecutions extends AutoBind(Component) {
 		constructor(params) {
@@ -42,7 +44,7 @@ define([
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
-			const currentHash = ko.pureComputed(() => params.design().hashCode);
+			const currentHash = ko.pureComputed(() => params.design() && params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
 
@@ -51,6 +53,7 @@ define([
 			this.isExecutionDesignShown = ko.observable(false);
 			this.stopping = ko.observable({});
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
+			this.isEditPermitted = params.isEditPermitted;
 
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
@@ -93,8 +96,8 @@ define([
 					title: 'Duration',
 					className: this.classes('col-exec-duration'),
 					render: (s, p, d) => {
-						const durationSec = ((d.endTime || (new Date()).getTime()) - d.startTime) / 1000;
-						return `${Math.floor(durationSec / 60)} min ${Math.round(durationSec % 60)} sec`;
+						const endTime = d.endTime || Date.now();
+						return d.startTime ? momentApi.formatDuration(endTime - d.startTime) : '';
 					}
 				},
 				{
@@ -113,15 +116,15 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = JobPollService.add( {
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
-				isSilentAfterFirstCall: true,
+				isSilentAfterFirstCall: true
 			});
 		}
 
 		dispose() {
-			PollService.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -139,7 +142,9 @@ define([
 		}
 
 		getExecutionGroupStatus(submissions) {
-			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED) ?
+			return submissions().find(s => s.status === this.pathwayGenerationStatusOptions.STARTED ||
+				s.status === this.pathwayGenerationStatusOptions.PENDING ||
+				s.status === this.pathwayGenerationStatusOptions.STARTING) ?
 				this.pathwayGenerationStatusOptions.STARTED :
 				this.pathwayGenerationStatusOptions.COMPLETED;
 		}

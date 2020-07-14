@@ -3,6 +3,7 @@ define((require, exports) => {
 
 	const pathwayGenerationStatus = {
 		STARTED: 'STARTED',
+		STARTING: 'STARTING',
 		COMPLETED: 'COMPLETED',
 	};
 
