@@ -1087,68 +1087,70 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			async loadRequiredData(conceptSetId, selectedSourceId, sourceKey) {
-				try {
-					if (this.currentCohortDefinition().expression().ConceptSets()) {
-						const identifiers = [];
-						this.currentCohortDefinition().expression().ConceptSets().forEach((identifier) => {
-							identifier.expression.items().forEach((item) => {
-								identifiers.push(item.concept.CONCEPT_ID);
+				if (this.currentCohortDefinition()) {
+					try {
+						if (this.currentCohortDefinition().expression().ConceptSets()) {
+							const identifiers = [];
+							this.currentCohortDefinition().expression().ConceptSets().forEach((identifier) => {
+								identifier.expression.items().forEach((item) => {
+									identifiers.push(item.concept.CONCEPT_ID);
+								});
 							});
-						});
-						const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
-						let conceptsNotFound = 0;
-						const identifiersByConceptId = new Map();
-						identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
+							const { data: identifiersResult } = await httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
+							let conceptsNotFound = 0;
+							const identifiersByConceptId = new Map();
+							identifiersResult.forEach(c => identifiersByConceptId.set(c.CONCEPT_ID, c));
 
-						this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
-						// Update each of the concept set items
-							currentConceptSet.expression.items().forEach((item) => {
-								const selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
-								if (selectedConcept) {
-									item.concept = selectedConcept;
-								} else {
-									conceptsNotFound++;
-								}
+							this.currentCohortDefinition().expression().ConceptSets().forEach((currentConceptSet) => {
+							// Update each of the concept set items
+								currentConceptSet.expression.items().forEach((item) => {
+									const selectedConcept = identifiersByConceptId.get(item.concept.CONCEPT_ID);
+									if (selectedConcept) {
+										item.concept = selectedConcept;
+									} else {
+										conceptsNotFound++;
+									}
+								});
+								currentConceptSet.expression.items.valueHasMutated();
 							});
-							currentConceptSet.expression.items.valueHasMutated();
-						});
-						if (conceptsNotFound > 0) {
-							console.error("Concepts not found: " + conceptsNotFound);
+							if (conceptsNotFound > 0) {
+								console.error("Concepts not found: " + conceptsNotFound);
+							}
+							this.dirtyFlag().reset();
 						}
-						this.dirtyFlag().reset();
-					}
-					// now that we have required information lets compile them into data objects for our view
-					const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
-					let results = [];
-					let selectedSourceInfo = null;
-					for (let s = 0; s < cdmSources.length; s++) {
-						const source = cdmSources[s];
-						this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
-							ready: false,
-							checking: false
-						});
-						const sourceInfo = this.getSourceInfo(source);
-						let cdsi = this.getCDSI(source, sourceInfo);
-						results.push(cdsi);
+						// now that we have required information lets compile them into data objects for our view
+						const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
+						let results = [];
+						let selectedSourceInfo = null;
+						for (let s = 0; s < cdmSources.length; s++) {
+							const source = cdmSources[s];
+							this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
+								ready: false,
+								checking: false
+							});
+							const sourceInfo = this.getSourceInfo(source);
+							let cdsi = this.getCDSI(source, sourceInfo);
+							results.push(cdsi);
 
-						if (selectedSourceId && source.sourceId === selectedSourceId) {
-							selectedSourceInfo = cdsi;
+							if (selectedSourceId && source.sourceId === selectedSourceId) {
+								selectedSourceInfo = cdsi;
+							}
 						}
-					}
-					this.cohortDefinitionSourceInfo(results);
+						this.cohortDefinitionSourceInfo(results);
 
-					if (selectedSourceInfo) {
-						this.toggleCohortReport(selectedSourceInfo);
-					}
+						if (selectedSourceInfo) {
+							this.toggleCohortReport(selectedSourceInfo);
+						}
 
-					if (conceptSetId != null) {
-						await this.loadConceptSet(conceptSetId);
-						return;
-					} else {
-						this.reportSourceKey(sourceKey);
+						if (conceptSetId != null) {
+							await this.loadConceptSet(conceptSetId);
+							return;
+						} else {
+							this.reportSourceKey(sourceKey);
+						}
+					} catch(er) {
+						console.error(er);
 					}
-				} catch(er) {
-					console.error(er);
 				}
 			}
 
