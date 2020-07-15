@@ -12,7 +12,7 @@ define([
             this.onSelect = params.onSelect;
             this.multiChoice = params.multiChoice || false;
             this.showModal = params.showModal;
-            this.scrollY = params.scrollY || '50vh';
+            this.scrollY = this.multiChoice ? (params.scrollY !== undefined ? params.scrollY : '50vh') : params.scrollY;
             this.scrollCollapse = params.scrollCollapse || false;
             this.selectedDataIds =
                 this.multiChoice && params.selectedData
