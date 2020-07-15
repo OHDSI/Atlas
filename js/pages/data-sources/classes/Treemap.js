@@ -56,7 +56,7 @@ define([
 						const i = steps.length - 1;
 						return `<div class="pathleaf">${steps[i]}</div>
             <div class="pathleafstat">${ko.i18n('dataSources.prevalence', 'Prevalence')()}: ${ChartUtils.formatPercent(node.percent_persons)}</div>
-            <div class="pathleafstat">${ko.i18n('dataSources.numberOfPeople', 'Number of People')()}</span>: ${ChartUtils.formatComma(node.num_persons)}</div>
+            <div class="pathleafstat">${ko.i18n('dataSources.numberOfPeople', 'Number of People')()}: ${ChartUtils.formatComma(node.num_persons)}</div>
             <div class="pathleafstat">${ko.unwrap(this.aggProperty.description)}: ${ChartUtils.formatFixed(node.agg_value)}</div>
             `;
 					},
@@ -100,7 +100,7 @@ define([
 							orderSequence: ['desc', 'asc']
 						},
 						{
-							title: ko.unwrap(this.aggProperty.description),
+							title: this.aggProperty.description,
 							data: 'agg_value',
 							className: 'treemap__tbl-col--narrow numeric',
 							orderSequence: ['desc', 'asc']
