@@ -15,4 +15,4 @@ define(function (require, exports) {
 		self.createdBy = ko.observable(data.createdBy || null);
 	}
 	return IRAnalysisDefinition;
-});n
+});
