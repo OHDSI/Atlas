@@ -1,6 +1,6 @@
 <div data-bind="css: classes('linked-entities')">
 	<h2 data-bind="css: classes('title'), text: $component.title"></h2>
-	<!-- ko if: descr && descr.length > 0 -->
+	<!-- ko if: descr -->
 		<p data-bind="css: classes('descr'), text: $component.descr"></p>
 	<!-- /ko -->
 	<div data-bind="css: classes('actions')">
