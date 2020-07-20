@@ -89,6 +89,7 @@ define([
 			this.canSave = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 			});
+			this.selectedTabKeySubsection = ko.observable(router.routerParams().subSection);
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
 				defaultCovariateSettings: this.defaultCovariateSettings,
@@ -101,7 +102,8 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
-				isEditPermitted: this.canSave
+				isEditPermitted: this.canSave,
+				selectedTabKeySubsection: this.selectedTabKeySubsection,
 			});
 
 			this.isNameFilled = ko.computed(() => {
@@ -441,12 +443,15 @@ define([
 			});
 		}
 
-        onRouterParamsChanged({ id, section }) {
+        onRouterParamsChanged({ id, section, subSection }) {
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
 					this.selectedTabKey(section);
 				}
 				this.onPageCreated();
+			}
+			if (subSection !== undefined) {
+				this.selectedTabKeySubsection(subSection);
 			}
         }
 

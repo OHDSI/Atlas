@@ -3,12 +3,13 @@ define((require, factory) => {
   const atlasState = require('atlas-state');
     function routes(router) {
 
-      const ccaViewEdit = new AuthorizedRoute((estimationId, section) => {
+      const ccaViewEdit = new AuthorizedRoute((estimationId, section, subSection) => {
         require(['./cca-manager'], function () {
           atlasState.estimationAnalysis.selectedId(estimationId);
           router.setCurrentView('cca-manager', {
             id: estimationId,
             section: section || 'specification',
+            subSection: subSection,
           });
         });
       });
@@ -21,6 +22,7 @@ define((require, factory) => {
         }),
         '/estimation/cca/:estimationId:': ccaViewEdit,
         '/estimation/cca/:estimationId:/:section:': ccaViewEdit,
+        '/estimation/cca/:estimationId:/:section:/:subSection:': ccaViewEdit,
       };
     }
 

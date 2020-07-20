@@ -44,6 +44,8 @@ define([
 
 			this.loading = ko.observable();
 			this.expandedSection = ko.observable();
+			this.selectedSourceId = params.selectedTabKeySubsection;
+			this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 
 			this.analysisId = params.estimationId;
 			this.dirtyFlag = params.dirtyFlag;
@@ -134,6 +136,7 @@ define([
 					let group = this.executionGroups().find(g => g.sourceKey === s.sourceKey);
 					if (!group) {
 						group = {
+							sourceId: s.sourceId,
 							sourceKey: s.sourceKey,
 							sourceName: s.sourceName,
 							submissions: ko.observableArray(),
@@ -148,10 +151,23 @@ define([
 						this.estimationStatusGenerationOptions.STARTED :
 						this.estimationStatusGenerationOptions.COMPLETED);
 				});
+				this.expandSelectedSource();
 			} catch (e) {
 				console.error(e);
 			} finally {
 				this.loading(false);
+			}
+		}
+
+		expandSelectedSource() {
+			if (this.selectedSourceId()) {
+				const sourceId = parseInt(this.selectedSourceId());
+				const idx = this.executionGroups().findIndex(g => g.sourceId === sourceId);
+				if (idx >= 0 && this.expandedSection() === undefined) {
+					this.expandedSection(idx);
+				}
+			} else {
+				this.expandedSection(null);
 			}
 		}
 
@@ -170,7 +186,16 @@ define([
 		}
 
 		toggleSection(idx) {
-			this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
+			if (this.expandedSection() === idx) {
+				this.expandedSection(null);
+				this.selectedSourceId(undefined);
+				commonUtils.routeTo('/estimation/cca/' + this.analysisId() + '/executions');
+			} else {
+				this.expandedSection(idx);
+				const executionGroup = this.executionGroups()[idx];
+				this.selectedSourceId(executionGroup.sourceId);
+				commonUtils.routeTo('/estimation/cca/' + this.analysisId() + '/executions/' + executionGroup.sourceId);
+			}
 		}
 
 		async downloadResults(generationId) {

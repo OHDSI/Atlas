@@ -94,6 +94,7 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
+			this.selectedTabKeySubsection = ko.observable(router.routerParams().subSection);
 			this.componentParams = ko.observable({
 				analysisId: sharedState.predictionAnalysis.selectedId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -105,6 +106,7 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
+				selectedTabKeySubsection: this.selectedTabKeySubsection,
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -166,13 +168,14 @@ define([
 			}
 		}
 
-        onRouterParamsChanged({ id, section }) {
+        onRouterParamsChanged({ id, section, subSection }) {
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
 				if (section !== undefined) {
 					this.selectedTabKey(section);
 				}
 				this.onPageCreated();
 			}
+			this.selectedTabKeySubsection(subSection);
         }
 
         selectTab(index, { key }) {
