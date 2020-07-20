@@ -16,6 +16,7 @@ define([
 	'const',
 	'utils/ExecutionUtils',
 	'lodash',
+	'services/JobDetailsService',
 	'less!./cca-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -29,13 +30,14 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
-	PollService,
+	{PollService},
 	FileService,
 	momentApi,
 	consts,
 	globalConsts,
 	ExecutionUtils,
 	lodash,
+	jobDetailsService
 ) {
 
 	class EstimationGeneration extends AutoBind(Component) {
@@ -172,7 +174,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => EstimationService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 
