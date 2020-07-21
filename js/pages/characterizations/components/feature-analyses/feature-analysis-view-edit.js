@@ -30,8 +30,9 @@ define([
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
-    'components/security/access/configure-access-modal',
     'components/authorship',
+	'components/security/access/configure-access-modal',
+    'components/name-validation',
 ], function (
     ko,
     clipboard,
@@ -89,8 +90,17 @@ define([
             this.isNameFilled = ko.computed(() => {
                 return this.data() && this.data().name();
             });
+            this.isNameCharactersValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameCharactersValid(this.data().name());
+            });
+            this.isNameLengthValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameLengthValid(this.data().name());
+            });
+            this.isDefaultName = ko.computed(() => {
+                return this.isNameFilled() && this.data().name() === this.defaultName;
+            });
             this.isNameCorrect = ko.computed(() => {
-                return this.isNameFilled() && this.data().name() !== this.defaultName;
+                return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
             this.canSave = ko.computed(() => {
                 return this.dataDirtyFlag().isDirty() &&
