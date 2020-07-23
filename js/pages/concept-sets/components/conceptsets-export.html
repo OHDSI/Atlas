@@ -11,5 +11,5 @@
     repositoryConceptSetTableId: 'exportConceptSetTable'
   "></cohort-concept-set-browser>
   <hr/>
-  <b><span data-bind="text: exportRowCount()"></span></b> <span data-bind="text: ko.i18n('cs.browser.exportConceptSetsNumber', 'concept sets selected for export.')"></span>
+  <span data-bind="html: ko.i18nformat('cs.browser.exportConceptSetsNumber', '<b><%=num%></b> concept sets selected for export.', {num: exportRowCount()})"></span>
 </div>
