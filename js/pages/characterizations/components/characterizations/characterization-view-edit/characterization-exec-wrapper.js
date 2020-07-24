@@ -25,6 +25,7 @@ define([
 
             this.executionId = params.executionId;
             const extraExecutionPermissions = ko.computed(() => !params.designDirtyFlag().isDirty() && params.design().cohorts().length && params.isEditPermitted());
+            
             this.componentParams = {
                 tableColumns: ['Date', 'Design', 'Status', 'Duration', 'Results'],
                 runExecutionInParallel: false,
