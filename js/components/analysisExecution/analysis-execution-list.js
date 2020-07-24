@@ -43,7 +43,6 @@ define([
       PollService,
     }) {
       super();
-      console.log(analysisId);
       this.analysisId = analysisId;
       this.resultsPathPrefix = resultsPathPrefix;
       this.downloadApiPaths = downloadApiPaths;
