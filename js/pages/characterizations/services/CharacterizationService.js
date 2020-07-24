@@ -73,7 +73,7 @@ define([
             .then(res => res.data);
     }
 
-    function runGeneration(ccId, sourcekey) {
+    function generate(ccId, sourcekey) {
         return httpService
             .doPost(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourcekey)
             .then(res => res.data);
@@ -117,7 +117,7 @@ define([
         loadCharacterizationResults,
         loadCharacterizationResultsCount,
         loadExportDesignByGeneration,
-        runGeneration,
+        generate,
         getPrevalenceStatsByGeneration,
         cancelGeneration,
         exists,

@@ -20,6 +20,7 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
+	'services/Poll',
 	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
@@ -32,6 +33,7 @@ define([
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -54,6 +56,7 @@ define([
 	ConceptSet,
 	ConceptSetCrossReference,
 	authAPI,
+	{PollService},
 	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
@@ -92,9 +95,9 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
-			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable());
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canSave());
 			this.componentParams = ko.observable({
-				analysisId: sharedState.predictionAnalysis.selectedId,
+				analysisId: this.selectedAnalysisId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
 				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
 				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
@@ -104,7 +107,6 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
-				analysisId: sharedState.estimationAnalysis.selectedId,
 				PermissionService,
 				ExecutionService: PredictionService,
 				extraExecutionPermissions,
@@ -113,8 +115,8 @@ define([
 				downloadFileName: 'prediction-analysis-results',
 				downloadApiPaths: constants.apiPaths,
 				runExecutionInParallel: true,
+				PollService: PollService,
 			});
-
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
 			});
@@ -138,8 +140,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.patientLevelPredictionAnalysis().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.patientLevelPredictionAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
 			this.canSave = ko.computed(() => {

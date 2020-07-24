@@ -3,6 +3,7 @@ define([
     'text!./pathway-exec-wrapper.html',
     'components/Component',
     'utils/CommonUtils',
+    'services/JobPollService',
     'const',
     '../../PathwayService',
     '../../PermissionService',
@@ -13,6 +14,7 @@ define([
     view,
     Component,
     commonUtils,
+    JobPollService,
     consts,
     PathwayService,
     PermissionService,
@@ -28,6 +30,7 @@ define([
                 resultsPathPrefix: '/pathways/',
                 ExecutionService: PathwayService,
                 PermissionService,
+                PollService: JobPollService,
                 executionResultMode: consts.executionResultModes.VIEW,
                 ...params,
             };

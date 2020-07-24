@@ -5,7 +5,6 @@ define([
   'utils/CommonUtils',
   'utils/DatatableUtils',
   'utils/ExecutionUtils',
-  'services/Poll',
   'services/Source',
   'services/JobDetailsService',
   'services/file',
@@ -21,7 +20,6 @@ define([
   CommonUtils,
   DatatableUtils,
   ExecutionUtils,
-  PollService,
   SourceService,
   JobDetailsService,
   FileService,
@@ -42,8 +40,10 @@ define([
       tableColumns = [],
       executionResultMode,
       runExecutionInParallel,
+      PollService,
     }) {
       super();
+      console.log(analysisId);
       this.analysisId = analysisId;
       this.resultsPathPrefix = resultsPathPrefix;
       this.downloadApiPaths = downloadApiPaths;
@@ -51,6 +51,7 @@ define([
       this.tableColumns = tableColumns;
       this.runExecutionInParallel = runExecutionInParallel;
       this.pollId = null;
+      this.PollService = PollService;
 
       this.loading = ko.observable(false);
       this.downloading = ko.observableArray();
@@ -117,7 +118,7 @@ define([
     }
 
     startPolling() {
-      this.pollId = PollService.add({
+      this.pollId = this.PollService.add({
         callback: silently => this.loadData({ silently }),
         interval: 10000,
         isSilentAfterFirstCall: true,
@@ -125,7 +126,7 @@ define([
     }
 
     dispose() {
-      PollService.stop(this.pollId);
+      this.PollService.stop(this.pollId);
     }
 
 

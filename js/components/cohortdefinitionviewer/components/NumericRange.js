@@ -28,7 +28,7 @@ define(['knockout', 'text!./NumericRangeTemplate.html'], function (ko, component
 		}];
 
 		self.rangeOpName = ko.pureComputed(function() {
-			return self.operationOptions.filter(function(item) {
+			return ko.utils.unwrapObservable(self.Range) && self.operationOptions.filter(function(item) {
 				return item.id == ko.utils.unwrapObservable(ko.utils.unwrapObservable(self.Range).Op);
 			})[0].name;
 		});

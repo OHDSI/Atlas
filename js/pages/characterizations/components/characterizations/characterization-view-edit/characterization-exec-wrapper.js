@@ -3,6 +3,7 @@ define([
     'text!./characterization-exec-wrapper.html',
     'components/Component',
     'utils/CommonUtils',
+    'services/JobPollService',
     'const',
     'pages/characterizations/services/CharacterizationService',
 	'pages/characterizations/services/PermissionService',
@@ -13,6 +14,7 @@ define([
     view,
     Component,
     commonUtils,
+    JobPollService,
     consts,
     CharacterizationService,
     PermissionService,
@@ -22,7 +24,7 @@ define([
             super();
 
             this.executionId = params.executionId;
-            const extraExecutionPermissions = ko.computed(() =>!params.designDirtyFlag().isDirty() && params.design().cohorts().length);
+            const extraExecutionPermissions = ko.computed(() => !params.designDirtyFlag().isDirty() && params.design().cohorts().length && params.isEditPermitted());
             this.componentParams = {
                 tableColumns: ['Date', 'Design', 'Status', 'Duration', 'Results'],
                 runExecutionInParallel: false,
@@ -30,6 +32,7 @@ define([
                 analysisId: params.characterizationId,
                 ExecutionService: CharacterizationService,
                 PermissionService,
+                PollService: JobPollService,
                 extraExecutionPermissions,
                 executionResultMode: consts.executionResultModes.VIEW,
                 ...params,
