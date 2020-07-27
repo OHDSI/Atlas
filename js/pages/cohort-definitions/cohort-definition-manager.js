@@ -1033,7 +1033,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					let source = this.sharedState.sources().find(s => s.sourceId === selectedSourceId)
 					if (source) {
 						let selectedSourceInfo = this.cohortDefinitionSourceInfo().find(s => s.sourceKey === source.sourceKey)
-						this.toggleCohortReport(selectedSourceInfo);
+						this.expandSelectedSection(selectedSourceInfo);
 					}
 				}
 			}
@@ -1139,7 +1139,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						this.cohortDefinitionSourceInfo(results);
 
 						if (selectedSourceInfo) {
-							this.toggleCohortReport(selectedSourceInfo);
+							this.expandSelectedSection(selectedSourceInfo);
 						}
 
 						if (conceptSetId != null) {
@@ -1153,6 +1153,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				}
 			}
+			
 
 			async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey) {
 				this.isLoading(true);
@@ -1260,11 +1261,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
+			expandSelectedSection(item) {
+				this.selectedReportSource(item);
+			}
+
 			toggleCohortReport(item) {
 				if (this.selectedReportSource() && this.selectedReportSource().sourceKey === item.sourceKey) {
 					this.selectedReportSource(null);
+					commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/generation');
 				} else {
 					this.selectedReportSource(item);
+					commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/generation/' + item.sourceId);
 				}
 			}
 
@@ -1522,6 +1529,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					modifiedBy: this.currentCohortDefinition().modifiedBy(),
 					modifiedDate: this.currentCohortDefinition().modifiedDate()
 				}
+			}
+
+			selectTab(key) {
+				this.tabMode(key);
+				return commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/' + key);
 			}
 	}
 

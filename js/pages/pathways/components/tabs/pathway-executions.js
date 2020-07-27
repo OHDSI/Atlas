@@ -44,6 +44,8 @@ define([
 			this.pathwayGenerationStatusOptions = consts.pathwayGenerationStatus;
 
 			this.analysisId = params.analysisId;
+			this.selectedSourceId = params.selectedSourceId;
+			this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 			const currentHash = ko.pureComputed(() => params.design() && params.design().hashCode);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
@@ -168,6 +170,7 @@ define([
 					let group = this.executionGroups().find(g => g.sourceKey == s.sourceKey);
 					if (!group) {
 						group = {
+							sourceId: s.sourceId,
 							sourceKey: s.sourceKey,
 							sourceName: s.sourceName,
 							submissions: ko.observableArray(),
@@ -179,11 +182,25 @@ define([
 
 					group.submissions(executionList.filter(e => e.sourceKey === s.sourceKey));
 					group.status(this.getExecutionGroupStatus(group.submissions));
+
+					this.expandSelectedSource();
 				});
 			} catch (e) {
 				console.error(e);
 			} finally {
 				this.loading(false);
+			}
+		}
+
+		expandSelectedSource() {
+			if (this.selectedSourceId()) {
+				const sourceId = parseInt(this.selectedSourceId());
+				const idx = this.executionGroups().findIndex(g => g.sourceId === sourceId);
+				if (idx >= 0 && this.expandedSection() !== idx) {
+					this.expandedSection(idx);
+				}
+			} else {
+				this.expandedSection(null);
 			}
 		}
 
@@ -233,7 +250,16 @@ define([
 		}
 
 		toggleSection(idx) {
-			this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
+			if (this.expandedSection() === idx) {
+				this.expandedSection(null);
+				this.selectedSourceId(undefined);
+				commonUtils.routeTo('/pathways/' + this.analysisId() + '/executions');
+			} else {
+				this.expandedSection(idx);
+				const executionGroup = this.executionGroups()[idx];
+				this.selectedSourceId(executionGroup.sourceId);
+				commonUtils.routeTo('/pathways/' + this.analysisId() + '/executions/' + executionGroup.sourceId);
+			}
 		}
 
 		goToResults(executionId) {

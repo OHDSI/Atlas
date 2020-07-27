@@ -444,14 +444,14 @@ define([
 		}
 
         onRouterParamsChanged({ id, section, subSection }) {
-			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
-				if (section !== undefined) {
-					this.selectedTabKey(section);
-				}
-				this.onPageCreated();
+			if (section !== undefined) {
+				this.selectedTabKey(section);
 			}
 			if (subSection !== undefined) {
 				this.selectedTabKeySubsection(subSection);
+			}
+			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
+				this.onPageCreated();
 			}
         }
 

@@ -12,7 +12,8 @@ define((require, factory) => {
 				router.setCurrentView('pathways-manager', {
 					analysisId: id,
 					section: section,
-					subId: subId
+					executionId: section === 'results' ? subId : undefined,
+					sourceId:  section === 'executions' ? subId : undefined,
 				});
 			});
 		});
@@ -27,7 +28,7 @@ define((require, factory) => {
 			'pathways': pathwaysBrowser,
 			'pathways/:id:': pathwaysManager,
 			'pathways/:id:/:section:': pathwaysManager,
-			'pathways/:id:/:section:/:subId:': pathwaysManager // for executions
+			'pathways/:id:/:section:/:subId:': pathwaysManager
 		};
 	}
 

@@ -32,6 +32,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.sources = params.sources;
+			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.hasSourceAccess = authApi.hasSourceAccess;
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
@@ -75,6 +76,7 @@ define([
 			});
 
 			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
+			this.selectedSourceId.subscribe(() => this.selectSource());
 
 			// observable subscriptions
 
@@ -171,25 +173,30 @@ define([
 				this.selectedReport(null);
 				return;
 			}
-
+			// stop subscribing for source loading
+			if (this.sourceInfoSubscribeId) {
+				this.sourceInfoSubscribeId.dispose();
+			}
 			if (!source) {
-                // stop subscribing for source loading
-			    if (this.sourceInfoSubscribeId) {
-                    this.sourceInfoSubscribeId.dispose();
-                }
-
                 source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
                 if (!source) {
-                    // no source was selected
+					// no source was selected
+					this.selectedSource(null);
+					this.selectedReport(null);
                     return;
                 }
-                if (!source.info()) {
-                    // if sources were not loaded yet - wait for their loading
-                    this.sourceInfoSubscribeId = source.info.subscribe(() => this.selectSource(null));
-                    // prevent further processing
-                    return;
-                }
-            }
+			}
+			if (!source.info()) {
+				// if sources were not loaded yet - wait for their loading
+				this.sourceInfoSubscribeId = source.info.subscribe(() => this.selectSource(null));
+				// prevent further processing
+				return;
+			}
+			if (source.source.sourceId !== this.selectedSourceId()) {				
+				commonUtils.routeTo('/iranalysis/' + this.selectedAnalysisId() + '/generation/' + source.source.sourceId);
+				// prevent further processing
+				return;
+			}
 			this.selectedSource(source);
 			this.isLoading(true);
 

@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'text!./manager.html',
+	'pages/Router',
 	'../PathwayService',
 	'../PermissionService',
 	'services/Permission',
@@ -27,6 +28,7 @@ define([
 ], function (
 	ko,
 	view,
+	router,
 	PathwayService,
 	PermissionService,
 	GlobalPermissionService,
@@ -49,7 +51,7 @@ define([
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
 			this.analysisId = ko.observable();
-			this.executionId = ko.observable();
+			this.executionId = ko.observable(router.routerParams().executionId);
 			this.loading = ko.observable(false);
 			this.defaultName = constants.newEntityNames.pathway;
 
@@ -76,10 +78,12 @@ define([
 			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
+			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
 			this.componentParams = {
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
+				selectedSourceId: this.selectedSourceId,
 				dirtyFlag: this.dirtyFlag,
 				isEditPermitted: this.canEdit
 			};
@@ -103,13 +107,16 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({analysisId, section, subId}) {
+		onRouterParamsChanged({analysisId, section, executionId, sourceId}) {
 			if (analysisId !== undefined) {
 				this.analysisId(parseInt(analysisId));
 				this.load(this.analysisId() || 0);
 			}
-			this.setupSection(section);
-			this.executionId(subId);
+			if (section !== undefined) {
+				this.setupSection(section);
+			}
+			this.executionId(executionId);
+			this.selectedSourceId(sourceId);
 		}
 
 		selectTab(index, { key }) {

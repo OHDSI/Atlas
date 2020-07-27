@@ -54,7 +54,7 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 				if (n.status == 'COMPLETED') {
 				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/results/' + n.executionId;
 				} else {
-				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/executions';
+				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/executions/' + n.jobParameters.source_id;
 				}
 			case "cohortAnalysisJob":
 				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/reporting?sourceKey=' + n.jobParameters.sourceKey;

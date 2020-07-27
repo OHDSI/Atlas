@@ -163,7 +163,7 @@ define([
 			if (this.selectedSourceId()) {
 				const sourceId = parseInt(this.selectedSourceId());
 				const idx = this.executionGroups().findIndex(g => g.sourceId === sourceId);
-				if (idx >= 0 && this.expandedSection() === undefined) {
+				if (idx >= 0 && this.expandedSection() !== idx) {
 					this.expandedSection(idx);
 				}
 			} else {
