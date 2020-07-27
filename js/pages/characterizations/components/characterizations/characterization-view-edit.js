@@ -102,7 +102,7 @@ define([
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
                     } else {
-                        return `Cohort #${this.characterizationId()} ${this.isEditPermitted() ? '' : '(Read only)'}`;
+                        return `Characterization #${this.characterizationId()}`;
                     }
                 }
             });

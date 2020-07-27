@@ -116,7 +116,7 @@ define([
 					if (this.currentConceptSet().id === 0) {
 						return this.defaultName;
 					} else {
-						return `Concept Set #${this.currentConceptSet().id} ${this.canEdit() ? '' : '(Read only)'}`;
+						return `Concept Set #${this.currentConceptSet().id}`;
 					}
 				}
 			});
@@ -143,7 +143,6 @@ define([
 			this.optimizerRemovedConceptSet = ko.observable(null);
 			this.optimizerSavingNew = ko.observable(false);
 			this.optimizerSavingNewName = ko.observable();
-			console.log(this);
 			this.optimizerFoundSomething = ko.pureComputed(() => {
 				var returnVal = false;
 				if (this.optimalConceptSet() &&

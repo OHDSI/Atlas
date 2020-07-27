@@ -4,7 +4,7 @@
 
 <!-- ko if:data -->
 <div data-bind="css: classes()">
-    <heading-title params="name: featureCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <heading-title params="name: featureCaption(), description: canEdit() ? '' : '(Read only)', icon: 'shopping-cart', theme: 'dark'"></heading-title>
     <!-- ko if: !!data().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->

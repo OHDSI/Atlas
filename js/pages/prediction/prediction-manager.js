@@ -124,7 +124,7 @@ define([
 					if (this.selectedAnalysisId() === '0') {
 						return 'New Patient Level Prediction';
 					} else {
-						return `Patient Level Prediction #${this.selectedAnalysisId()} ${this.canEdit() ? '' : '(Read only)'}`;
+						return `Patient Level Prediction #${this.selectedAnalysisId()}`;
 					}
 				}
 			});

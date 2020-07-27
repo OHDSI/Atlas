@@ -86,7 +86,7 @@ define([
 			};
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return `Cohort Pathway #${this.design().id} ${this.canEdit() ? '' : '(Read only)'}`;
+					return `Cohort Pathway #${this.design().id}`;
 				}
 				return this.defaultName;
 			});

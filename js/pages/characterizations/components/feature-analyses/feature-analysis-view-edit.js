@@ -126,7 +126,7 @@ define([
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
                     if (this.featureId() !== 0) {
-                        return `Feature Analysis #${this.featureId()} ${this.canEdit() ? '' : '(Read only)'}`;
+                        return `Feature Analysis #${this.featureId()}`;
                     } else {
                         return this.defaultName;
                     }
