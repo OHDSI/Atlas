@@ -14,7 +14,7 @@ define([
     'atlas-state',
     'services/AuthAPI',
     'services/Vocabulary',
-	'services/Permission',
+    'services/Permission',
 	'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'pages/Page',
@@ -30,6 +30,7 @@ define([
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
+    'components/authorship',
 	'components/security/access/configure-access-modal',
     'components/name-validation',
 ], function (
@@ -48,7 +49,7 @@ define([
     sharedState,
     authApi,
     VocabularyAPI,
-	GlobalPermissionService,
+    GlobalPermissionService,
 	{ entityType },
     ConceptSet,
     Page,
@@ -229,7 +230,7 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
+        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy, createdDate, modifiedBy, modifiedDate }) {
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
             const anaylysisDomain = domain || defaultDomain;
@@ -245,6 +246,9 @@ define([
               statType: ko.observable(),
               conceptSets: ko.observableArray(),
               createdBy: ko.observable(),
+              createdDate: ko.observable(),
+              modifiedBy: ko.observable(),
+              modifiedDate: ko.observable(),
             };
             data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
@@ -284,6 +288,9 @@ define([
             data.statType(statType);
             data.statType.subscribe(() => this.data().design([]));
             data.createdBy(createdBy);
+            data.createdDate(createdDate);
+            data.modifiedBy(modifiedBy);
+            data.modifiedDate(modifiedDate);
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
             this.previousDesign = { [type]: parsedDesign };
@@ -410,6 +417,17 @@ define([
 
         copyAnalysisSQLTemplateToClipboard() {
             this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
+        }
+
+        getAuthorship() {
+            const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
+            const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
+            return {
+                createdBy: this.data().createdBy(),
+                createdDate,
+                modifiedBy: this.data().modifiedBy(),
+                modifiedDate,
+            }
         }
     }
 

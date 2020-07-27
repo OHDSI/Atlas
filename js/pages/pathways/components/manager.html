@@ -2,8 +2,11 @@
 
 <!-- ko if: design -->
 <div data-bind="css: classes(), visible: !$component.loading()">
-	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
-	<div class="asset-heading"">
+	<heading-title params="name: pathwayCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'sitemap', theme: 'dark'"></heading-title>
+	<!-- ko if: !!design().id -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+	<!-- /ko -->
+	<div class="asset-heading">
 		<div class="input-group">
 			<input type="text" class="form-control"
 			data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />

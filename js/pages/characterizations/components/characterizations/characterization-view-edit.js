@@ -24,6 +24,7 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
+    'components/authorship',
 	'components/security/access/configure-access-modal',
     'components/name-validation',
 ], function (
@@ -101,7 +102,7 @@ define([
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
                     } else {
-                        return ko.i18n('cc.viewEdit.caption', 'Characterization #')() + this.characterizationId();
+                        return ko.i18nformat('cc.viewEdit.caption', 'Characterization #<%=id%>', {id: this.characterizationId()})();
                     }
                 }
             });
@@ -251,6 +252,15 @@ define([
             this.design(null);
             this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');
+        }
+
+        getAuthorship() {
+            return {
+                createdBy: lodash.get(this.design(), 'createdBy.name'),
+                createdDate: this.design().createdAt,
+                modifiedBy: lodash.get(this.design(), 'updatedBy.name'),
+                modifiedDate: this.design().updatedAt,
+            }
         }
     }
 

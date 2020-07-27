@@ -33,6 +33,7 @@ define([
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
+	'components/authorship',
 	'components/name-validation',
 ], function (
 	ko,
@@ -484,6 +485,17 @@ define([
 		cancelSaveNewOptimizedConceptSet() {
 			this.optimizerSavingNew(false);
 		}
+
+	 getAuthorship() {
+		const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
+			 return {
+					 createdBy: this.currentConceptSet().createdBy,
+					 createdDate,
+					 modifiedBy: this.currentConceptSet().modifiedBy,
+					 modifiedDate,
+			 }
+	 }
 
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);

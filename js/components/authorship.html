@@ -1,6 +1,7 @@
+<!-- ko if: createdBy && createdDate -->
 <div data-bind="css: classes('container')">
 	<span data-bind="text: ko.i18n('components.authorship.created', 'created')"></span>
-	<span data-bind="visible: createdBy, text: ko.i18nformat('components.authorship.byCreated', 'by <%=createdBy%>', {createdBy: createdBy})"></span>  
+	<span data-bind="visible: createdBy, text: ko.i18nformat('components.authorship.byCreated', 'by <%=createdBy%>', {createdBy: createdBy})"></span>
 	<span data-bind="text: ko.i18n('components.authorship.on', 'on')"></span>
 	<span data-bind="text: createdDate"></span><span data-bind="visible: modifiedDate">,</span>
 	<span data-bind="visible: modifiedDate">
@@ -10,3 +11,4 @@
 		<span data-bind="text: modifiedDate"></span>
 	</span>
 </div>
+<!-- /ko -->

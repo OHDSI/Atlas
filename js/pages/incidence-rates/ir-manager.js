@@ -33,6 +33,7 @@ define([
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
 	'components/name-validation',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -148,7 +149,7 @@ define([
 			};
 			this.incidenceRateCaption = ko.computed(() => {
 				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
-					return ko.i18n('ir.caption', 'Incidence Rate Analysis #')() + this.selectedAnalysisId();
+					return ko.i18nformat('ir.caption', 'Incidence Rate Analysis #<%=id%>', {id: this.selectedAnalysisId()})();
 				}
 				return this.defaultName;
 			});
@@ -529,6 +530,17 @@ define([
 				expression,
 			});
 			return sql;
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
+			return {
+					createdBy: this.selectedAnalysis().createdBy(),
+					createdDate,
+					modifiedBy: this.selectedAnalysis().modifiedBy(),
+					modifiedDate,
+			};
 		}
 
 		// cleanup

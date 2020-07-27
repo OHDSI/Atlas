@@ -1,6 +1,9 @@
 <loading data-bind="visible: loading"></loading>
 <div data-bind="if:!loading()">
-  <heading-title params="name: predictionCaption(), icon: 'heartbeat', theme: 'dark'"></heading-title>
+  <heading-title params="name: predictionCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'heartbeat', theme: 'dark'"></heading-title>
+  <!-- ko if: !!patientLevelPredictionAnalysis().id -->
+    <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+  <!-- /ko -->
   <div class="asset-heading">
       <div class="input-group">
           <input type="text" class="form-control" data-bind="

@@ -29,6 +29,7 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
+	'components/authorship',
 	'components/name-validation',
 ], function (
 	ko,
@@ -86,8 +87,9 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
+			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
@@ -137,7 +139,7 @@ define([
 							ko.i18n('ple.caption', 'Comparative Cohort Analysis')();
 					} else {
 						return ko.i18n('ple.title', 'Population Level Effect Estimation')() + ' - ' +
-							ko.i18n('ple.captionNumber', 'Comparative Cohort Analysis #')() + this.selectedAnalysisId();
+							ko.i18nformat('ple.captionNumber', 'Comparative Cohort Analysis #<%=id%>', {id: this.selectedAnalysisId()})();
 					}
 				}
 			});
@@ -471,6 +473,17 @@ define([
 					propertyName: propertyName
 				})
 			);
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().modifiedDate);
+			return {
+					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy.name'),
+					createdDate,
+					modifiedBy: lodash.get(this.estimationAnalysis(), 'modifiedBy.name'),
+					modifiedDate,
+			}
 		}
 	}
 

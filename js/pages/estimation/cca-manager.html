@@ -1,6 +1,9 @@
 <loading data-bind="visible: loading"></loading>
  <div data-bind="if:!loading()">
-    <heading-title params="name: populationCaption(), icon: 'balance-scale', theme: 'dark'"></heading-title>
+    <heading-title params="name: populationCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'balance-scale', theme: 'dark'"></heading-title>
+    <!-- ko if: !!estimationAnalysis().id -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
     <div class="asset-heading">
         <div class="input-group">
           <input type="text" class="form-control" data-bind="textInput: $component.estimationAnalysis() && $component.estimationAnalysis().name, css: { emptyInput: !isNameFilled() }, placeholder: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis')" />
