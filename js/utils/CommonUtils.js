@@ -2,12 +2,14 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
+		'services/MomentAPI',
 		'urijs',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
+		momentApi,
 		URI,
 	) => {
 
@@ -224,6 +226,11 @@ define([
 		return !forbiddenSymbols.some(symbol => name.includes(symbol));
 	}
 
+	const formatDateForAuthorship = (date, format = momentApi.DESIGN_DATE_TIME_FORMAT) => {
+		const d = ko.unwrap(date);
+		return d ? momentApi.formatDateTimeWithFormat(d, format) : '';
+	}
+
 	return {
 		build,
 		confirmAndDelete,
@@ -246,6 +253,7 @@ define([
 		toggleConceptSetCheckbox,
 		escapeTooltip,
 		getUniqueIdentifier,
+		formatDateForAuthorship,
 		isNameCharactersValid,
 		isNameLengthValid,
 	};

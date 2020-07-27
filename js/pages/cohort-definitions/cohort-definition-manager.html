@@ -1,6 +1,6 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
-	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
+	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko if: currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->

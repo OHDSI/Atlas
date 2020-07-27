@@ -1,4 +1,7 @@
-<heading-title params="name: incidenceRateCaption(), icon: 'bolt', theme: 'dark'"></heading-title>
+<heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : '(Read only)', icon: 'bolt', theme: 'dark'"></heading-title>
+<!-- ko if: !!selectedAnalysisId() -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
 <div data-bind="visible:!loading()">
 	<!-- ko if: selectedAnalysis() -->
 	<div>
