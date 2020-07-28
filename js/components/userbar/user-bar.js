@@ -41,17 +41,19 @@ define([
 			this.loading = state.loading;
 			this.signInOpened = authApi.signInOpened;
 			this.jobListing = state.jobListing;
+			this.selectTab = this.selectTab.bind(this);
 			this.userJobParams = {
 				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
 					.filter( j => j.ownerType === constants.jobTypes.USER_JOB.ownerType)),
-				jobNameClick: this.jobNameClick,
+				jobNameClick: this.jobNameClick.bind(this),
 			};
 			this.systemJobParams = {
 				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
 					.filter( j => j.ownerType === constants.jobTypes.SYSTEM_JOB.ownerType)),
-				jobNameClick: this.jobNameClick,
+				jobNameClick: this.jobNameClick.bind(this),
 			};
 			this.tabs = [];
+			this.selectedTabKey = ko.observable();
 			if (this.appConfig.userAuthenticationEnabled) {
 				this.tabs.push({
 					title: 'User jobs',
@@ -59,10 +61,10 @@ define([
 					componentName: 'user-bar-jobs',
 					componentParams: this.userJobParams,
 				});
-				this.selectedTabKey = ko.observable(constants.jobTypes.USER_JOB.title);
+				this.selectedTabKey(constants.jobTypes.USER_JOB.title);
 				this.jobNotificationsPending = ko.computed(() => this.userJobParams.jobListing().filter(j => !j.viewed()).length);
 			} else {
-				this.selectedTabKey = ko.observable(constants.jobTypes.SYSTEM_JOB.title);
+				this.selectedTabKey(constants.jobTypes.SYSTEM_JOB.title);
 				this.jobNotificationsPending = ko.computed(() => this.systemJobParams.jobListing().filter(j => !j.viewed()).length);
 			}
 			this.tabs.push({
@@ -216,12 +218,12 @@ define([
 			}
 		}
 
-		jobNameClick = (j) => {
+		jobNameClick(j) {
 			this.jobModalOpened(false);
 			window.location = '#/' + j.url;
 		}
 
-		selectTab = (tab) => {
+		selectTab(tab) {
 			switch (tab) {
 				default:
 				case 0:
