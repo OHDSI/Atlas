@@ -208,6 +208,18 @@ define([
 		}
 	}
 
+	const selectAllFilteredItems = (data, filteredData, value) => {
+		const fData = (ko.utils.unwrapObservable(filteredData) || []).map(i => i.id);
+		data().forEach(i => {
+			if (fData.length === 0) {
+				i.selected(value);
+			} else {
+				if (fData.includes(i.id)) {
+					i.selected(value);
+				}
+			}
+		});
+	}
 	const escapeTooltip = function(tooltipText) {
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
@@ -251,6 +263,7 @@ define([
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
+		selectAllFilteredItems,
 		escapeTooltip,
 		getUniqueIdentifier,
 		formatDateForAuthorship,
