@@ -12,7 +12,7 @@
 				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_2', 'Choose Cohort Definition')"></span>
 			</div>
 			<div class="modal-body">
-				<cohort-definition-browser params="{onSelected: data => $component.reportCohortDefinitionId(data.id)}"></cohort-definition-browser>
+				<cohort-definition-browser params="{onSelect: data => $component.reportCohortDefinitionId(data.id)}"></cohort-definition-browser>
 			</div>
 		</div>
 	</div>
