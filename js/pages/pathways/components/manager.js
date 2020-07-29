@@ -93,9 +93,7 @@ define([
 				warningCount: ko.observable(0),
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
-				changeFlag: ko.pureComputed(()=> {
-					return this.dirtyFlag().isChanged();
-				}),
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 			this.pathwayCaption = ko.computed(() => {

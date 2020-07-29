@@ -101,14 +101,12 @@ define([
                 isEditPermitted: this.isEditPermitted,
             });
             this.warningParams = ko.observable({
-				current: sharedState.CohortCharacterization.current,
+                current: sharedState.CohortCharacterization.current,
                 warningsTotal: ko.observable(0),
                 warningCount: ko.observable(0),
                 infoCount: ko.observable(0),
                 criticalCount: this.criticalCount,
-                changeFlag: ko.pureComputed(()=> {
-					return this.designDirtyFlag().isChanged();
-				}),
+                changeFlag: ko.pureComputed(() => this.designDirtyFlag().isChanged()),
                 onDiagnoseCallback: this.diagnose.bind(this),
             });
             this.characterizationCaption = ko.computed(() => {

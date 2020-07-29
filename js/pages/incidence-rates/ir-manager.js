@@ -34,7 +34,7 @@ define([
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
 	'components/name-validation',
-	'css!./ir-manager.css',
+	'less!./ir-manager.less',
 	'components/authorship',
 ], function (
 	ko,
@@ -205,9 +205,7 @@ define([
 				warningCount: ko.observable(0),
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
-				changeFlag: ko.pureComputed(()=> {
-					return this.dirtyFlag().isChanged();
-				}),
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 

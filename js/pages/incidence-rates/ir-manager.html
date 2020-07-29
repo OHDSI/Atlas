@@ -26,7 +26,7 @@
                                  hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 		</div>
 
-		<ul class="nav nav-tabs">
+		<ul data-bind="css: classes({extra: 'nav nav-tabs'})">
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.selectTab(tabs.DEFINITION) };">
 				<a>Definition</a>
 			</li>

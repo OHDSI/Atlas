@@ -8,7 +8,7 @@ define([
 	'./warnings-badge',
 	'databindings',
 	'faceted-datatable',
-	'css!./style.css',
+	'less!./warnings.less',
 ],
 function (
 	ko, 
