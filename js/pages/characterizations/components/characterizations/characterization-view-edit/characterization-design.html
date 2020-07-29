@@ -5,7 +5,7 @@
     <p data-bind="css: classes('descr'), html: ko.i18n('cc.viewEdit.design.description', '<b>Cohort characterization</b> is defined as the process of generating cohort level descriptive summary statistics from person level covariate data. Summary statistics of these person level covariates may be count, mean, sd, var, min, max, median, range, and quantiles. In addition, covariates during a period may be stratified into temporal units of time for time-series analysis such as fixed intervals of time relative to cohort_start_date (e.g. every 7 days, every 30 days etc.), or in absolute calendar intervals such as calendar-week, calendar-month, calendar-quarter, calendar-year.')">
     </p>
     <div data-bind="css: classes('linked-entities')">
-        <linked-cohort-list params="data: $component.cohorts, isEditPermitted: $component.isEditPermitted"></linked-cohort-list>
+        <linked-cohort-list params="data: $component.cohorts, multiChoice: true, isEditPermitted: $component.isEditPermitted"></linked-cohort-list>
     </div>
     <div data-bind="css: classes('linked-entities')">
         <linked-entity-list params="
@@ -72,21 +72,14 @@
         title: ko.i18n('cc.modals.chooseAFeatureAnalyses', 'Choose a Feature analyses...'),
         dialogExtraClasses: [ $component.classes('feature-analyses-modal') ],
         data: {
-            selectedAnalyses: $component.featureAnalysesSelected,
+            onSelect: $component.onSelect,
             classes: $component.classes,
-            closeFeatureBrowser: $component.closeFeatureBrowser,
-            importFeatures: $component.importFeatures,
-            importEnabled: $component.featureAnalysesAvailable
+            selectedData: $component.design().featureAnalyses,
+            showModal: showFeatureAnalysesBrowser,
         }
     "
     >
-        <div data-bind="css: classes('feature-analyses-list')">
-            <feature-analyses-browser params="selectedAnalyses: selectedAnalyses, scrollY: '50vh'"></feature-analyses-browser>
-        </div>
-        <div data-bind="css: classes('button-panel')">
-            <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-primary'}), click: importFeatures, enable: importEnabled, text: ko.i18n('common.import', 'Import')"></button>
-            <button type="button" data-bind="css: classes({extra:'btn btn-sm btn-danger'}), click: closeFeatureBrowser, text: ko.i18n('common.cancel', 'Cancel')"></button>
-        </div>
+        <feature-analyses-browser params="onSelect: data => onSelect(data), selectedData: selectedData, scrollY: '50vh', multiChoice: true, showModal: showModal"></feature-analyses-browser>
     </atlas-modal>
 
     <atlas-modal params="{

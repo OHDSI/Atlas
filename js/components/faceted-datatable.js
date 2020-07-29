@@ -6,19 +6,18 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
+		self.dtApi = params.dtApi || ko.observable();
 		self.data = params.xfObservable || ko.observable();
 		self.tableData = ko.pureComputed(function () {
 			if (self.data() && self.data().size() && self.data().size() > 0) {
-				const data = self.data().allFiltered();
-				self.selectedData && self.selectedData(data);
-				return data;
+				return self.data().allFiltered();
 			} else {
 				return [];
 			}
 		});
 		self.componentLoading = ko.observable(true);
 		self.facets = ko.observableArray();
-
+		
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
 		self.options = params.options;
 		self.oOptions = ko.unwrap(params.options);

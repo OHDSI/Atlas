@@ -8,7 +8,7 @@
 					`		 data-bind="text: ko.i18n('cohortDefinitions.newDefinition', 'New Cohort'), click:$component.newDefinition, css: {disabled: currentCohortDefinition() != undefined || !$component.canCreateCohort()}"></div>
 				</div>
 			</div>
-			<cohort-definition-browser params="{cohortDefinitionSelected: data => cohortDefinitionId(data.id)}"></cohort-definition-browser>
+			<cohort-definition-browser params="{onSelect: data => cohortDefinitionId(data.id)}"></cohort-definition-browser>
 		</div>
 	</div>
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canReadCohorts"></access-denied>

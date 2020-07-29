@@ -23,9 +23,10 @@ define([
 		return '<span class="fa fa-check-circle"></span>';
 	}
 
-	function _getSelectedData(element)
+	function _getTableData(element, type = 'selected')
 	{
-		var selectedRows = $(element).DataTable().rows('tr:has(td.select:has(span.selected))', {
+		const selector = type === 'selected' ? 'tr:has(td.select:has(span.selected))' : '';
+		const selectedRows = $(element).DataTable().rows(selector, {
 			'search': 'applied'
 		}).data();
 
@@ -160,7 +161,8 @@ define([
 				{
 					// expose datatable API to context's api binding.
 					binding.api({
-						getSelectedData: function() { return _getSelectedData(element);}
+						getSelectedData: function() { return _getTableData(element, 'selected');},
+						getFilteredData: function() { return _getTableData(element, 'filtered');},
 					});
 				}
 				// Workaround for bug when datatable header column width is not adjusted to column values when using scrollY datatable option

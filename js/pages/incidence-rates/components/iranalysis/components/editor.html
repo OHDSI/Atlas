@@ -144,7 +144,7 @@
 					<div class="modal-title" data-bind="text: ko.i18n('ir.editor.chooseACohort', 'Choose a Cohort')"></div>
 				</div>
 				<div class="modal-body">
-					<cohort-definition-browser params="cohortDefinitionSelected: data => cohortSelected(data.id)"></cohort-definition-browser>
+					<cohort-definition-browser params="onSelect: data => cohortSelected(data.id)"></cohort-definition-browser>
 				</div>
 			</div>
 		</div>

@@ -65,7 +65,7 @@
                                         </button>
                                     </div>
                                     <div class="panel-body">
-                                        <faceted-datatable params="{ 
+                                        <faceted-datatable params="{
                                 columns: options.cohortTableColumns, 
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
@@ -91,7 +91,7 @@
                                         </button>
                                     </div>
                                     <div class="panel-body">
-                                        <faceted-datatable params="{ 
+                                        <faceted-datatable params="{
                                 columns: options.cohortTableColumns, 
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
@@ -140,7 +140,7 @@
                                         </div>
                                     </div>
                                     <div class="panel-body">
-                                        <faceted-datatable params="{ 
+                                        <faceted-datatable params="{
                                 columns: options.modelSettingsTableColumns, 
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
@@ -167,7 +167,7 @@
                                         </div>
                                     </div>
                                     <div class="panel-body">
-                                        <faceted-datatable params="{ 
+                                        <faceted-datatable params="{
                                 columns: options.covariateSettingsTableColumns, 
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
@@ -191,7 +191,7 @@
                                         </button>
                                     </div>
                                     <div class="panel-body">
-                                        <faceted-datatable params="{ 
+                                        <faceted-datatable params="{
                                 columns: options.populationSettingsTableColumns, 
                                 options: options.specificationSummaryTableOptions, 
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
@@ -214,9 +214,9 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-cog"></i> 
+                            <i class="fa fa-cog"></i>
                             <span data-bind="text: ko.i18n('predictions.item.executionSettings', 'Execution Settings')"></span>
-                            
+
                         </div>
                         <div class="panel-body">
                             <execution-settings-editor
@@ -232,8 +232,8 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-cog"></i> 
-                            
+                            <i class="fa fa-cog"></i>
+
                             <span data-bind="text: ko.i18n('predictions.item.trainingSettings', 'Training Settings')"></span>
                         </div>
                         <div class="panel-body">
@@ -281,6 +281,5 @@
         showCohortSelector: $component.showCohortSelector,
     }
 }">
-    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}">
-    </cohort-definition-browser>
+    <cohort-definition-browser params="{onSelect: data => cohortSelected(data), selectedData: currentCohortList(), multiChoice: true, showModal: showCohortSelector}"></cohort-definition-browser>
 </atlas-modal>
