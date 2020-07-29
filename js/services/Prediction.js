@@ -79,9 +79,15 @@ define(function (require, exports) {
 			.then(res => res.data)
 			.catch(error => authApi.handleAccessDenied(error));
 	}
+ 
+	function runDiagnostics(design) {
+		return httpService
+			.doPost(`${config.webAPIRoot}${predictionEndpoint}check`, design)
+			.then(res => res.data);
+	}
 
 
-    var api = {
+	return {
 		getPredictionList: getPredictionList,
 		savePrediction: savePrediction,
 		copyPrediction: copyPrediction,
@@ -92,8 +98,7 @@ define(function (require, exports) {
 		generate,
 		listGenerations,
 		exists,
+		runDiagnostics,
 	};
-
-	return api;
 });
 

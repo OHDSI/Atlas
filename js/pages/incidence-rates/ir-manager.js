@@ -23,6 +23,7 @@ define([
 	'utils/ExceptionUtils',
 	'./const',
 	'const',
+	'components/checks/warnings',
 	'./components/iranalysis/main',
 	'databindings',
 	'conceptsetbuilder/components',
@@ -33,6 +34,7 @@ define([
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
 	'components/name-validation',
+	'less!./ir-manager.less',
 	'components/authorship',
 ], function (
 	ko,
@@ -168,7 +170,7 @@ define([
 			this.isDefaultName = ko.computed(() => {
 				return this.isNameFilled() && this.selectedAnalysis().name() === this.defaultName;
 			});
-			
+
 			this.isNameCorrect = ko.pureComputed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
@@ -195,6 +197,30 @@ define([
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
 			this.exportSqlService = this.exportSql;
+			this.criticalCount = ko.observable(0);
+
+			this.warningParams = ko.observable({
+				current: this.selectedAnalysis,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
+			});
+
+			this.warningClass = ko.computed(() => {
+				if (this.warningParams().warningsTotal() > 0){
+					if (this.warningParams().criticalCount() > 0) {
+						return 'badge warning-alarm';
+					} else if (this.warningParams().warningCount() > 0) {
+						return 'badge warning-warn';
+					} else {
+						return 'badge warning-info';
+					}
+				}
+				return 'badge';
+			});
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
@@ -214,6 +240,11 @@ define([
 			return authAPI.isPermitted(`ir:${id}:design:get`);
 		}
 
+		diagnose() {
+			if (this.selectedAnalysis()) {
+				return IRAnalysisService.runDiagnostics(this.selectedAnalysis());
+			}
+		}
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {

@@ -29,6 +29,7 @@ define([
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
+	'components/checks/warnings',
 	'components/authorship',
 	'components/name-validation',
 ], function (
@@ -140,6 +141,33 @@ define([
 						return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()}`;
 					}
 				}
+			});
+
+			this.criticalCount = ko.observable(0);
+
+			this.componentParams = ko.observable({
+				comparisons: sharedState.estimationAnalysis.comparisons,
+				defaultCovariateSettings: this.defaultCovariateSettings,
+				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
+				estimationAnalysis: sharedState.estimationAnalysis.current,
+				estimationId: sharedState.estimationAnalysis.selectedId,
+				fullAnalysisList: this.fullAnalysisList,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				loadingMessage: this.loadingMessage,
+				packageName: this.packageName,
+				subscriptions: this.subscriptions,
+				criticalCount: this.criticalCount,
+			});
+
+			this.warningParams = ko.observable({
+				current: sharedState.estimationAnalysis.current,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -308,6 +336,13 @@ define([
 			});
 		}
 
+		diagnose() {
+			if (this.estimationAnalysis()) {
+				const payload = this.prepForSave();
+				return EstimationService.runDiagnostics(payload);
+			}
+		}
+
 		loadAnalysisFromServer() {
 			this.loading(true);
 			EstimationService.getEstimation(this.selectedAnalysisId()).then((analysis) => {
@@ -319,7 +354,9 @@ define([
 		setAnalysis(analysis) {
 			const header = analysis.json;
 			const specification = JSON.parse(analysis.data.specification);
-			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...analysis.data }, this.estimationType, this.defaultCovariateSettings()));
+			// ignore createdBy and modifiedBy
+			const { createdBy, modifiedBy, ...props } = header;
+			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...props }, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);
