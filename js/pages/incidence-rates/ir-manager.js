@@ -35,6 +35,7 @@ define([
 	'components/security/access/configure-access-modal',
 	'components/name-validation',
 	'css!./ir-manager.css',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -563,6 +564,17 @@ define([
 				expression,
 			});
 			return sql;
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
+			return {
+					createdBy: this.selectedAnalysis().createdBy(),
+					createdDate,
+					modifiedBy: this.selectedAnalysis().modifiedBy(),
+					modifiedDate,
+			};
 		}
 
 		// cleanup

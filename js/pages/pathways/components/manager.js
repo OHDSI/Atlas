@@ -24,6 +24,7 @@ define([
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',
+	'components/authorship',
 	'components/name-validation',
 ], function (
 	ko,
@@ -99,7 +100,7 @@ define([
 			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return 'Cohort Pathway #' + this.design().id;
+					return `Cohort Pathway #${this.design().id}`;
 				}
 				return this.defaultName;
 			});
@@ -239,6 +240,17 @@ define([
 			this.dirtyFlag().reset();
 
 			commonUtils.routeTo('/pathways');
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
+			return {
+					createdBy: lodash.get(this.design(), 'createdBy.name'),
+					createdDate,
+					modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
+					modifiedDate,
+			}
 		}
 
 	}
