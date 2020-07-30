@@ -26,6 +26,7 @@ define([
     'components/ac-access-denied',
     'components/authorship',
 	'components/security/access/configure-access-modal',
+	'components/checks/warnings',
     'components/name-validation',
 ], function (
     ko,
@@ -87,6 +88,7 @@ define([
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
+            this.criticalCount = ko.observable(0);
             this.componentParams = ko.observable({
                 ...params,
                 characterizationId: this.characterizationId,
@@ -95,7 +97,17 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
+            });
+            this.warningParams = ko.observable({
+                current: sharedState.CohortCharacterization.current,
+                warningsTotal: ko.observable(0),
+                warningCount: ko.observable(0),
+                infoCount: ko.observable(0),
+                criticalCount: this.criticalCount,
+                changeFlag: ko.pureComputed(() => this.designDirtyFlag().isChanged()),
+                onDiagnoseCallback: this.diagnose.bind(this),
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
@@ -172,6 +184,12 @@ define([
             this.design(design);
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
+
+		diagnose() {
+            if (this.design()) {
+                return CharacterizationService.runDiagnostics(this.design());
+            }
+		}
 
         async loadDesignData(id, force = false) {
 

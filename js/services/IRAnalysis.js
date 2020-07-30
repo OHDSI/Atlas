@@ -19,7 +19,7 @@ define(function (require, exports) {
 			expression: JSON.parse(data.expression),
 		});
 	}
-
+	
 	function getAnalysisList() {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir`);
 		promise.catch(response => {
@@ -30,7 +30,7 @@ define(function (require, exports) {
 
 		return promise;
 	}
-
+	
 	function getAnalysis(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id}`)
 			.then(parse)
@@ -41,13 +41,13 @@ define(function (require, exports) {
 
 		return promise;
 	}
-
+		
 	function saveAnalysis(definition) {
 		var definitionCopy = JSON.parse(ko.toJSON(definition));
-
+		
 		if (typeof definitionCopy.expression != 'string')
 			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
-
+		
 		const url = `${config.webAPIRoot}ir/${definitionCopy.id || ""}`;
 		let promise = new Promise(r => r());
 		if (definitionCopy.id) {
@@ -63,31 +63,31 @@ define(function (require, exports) {
 				return response;
 			});
 	}
-
+	
 	function copyAnalysis(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/copy`);
-
+		
 		return promise
 			.then(parse)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}
-
+	}	
+	
 	function deleteAnalysis(id) {
 		const promise = httpService.doDelete(`${config.webAPIRoot}ir/${id || ""}`);
-
+		
 		return promise
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}
-
+	}		
+	
 	function execute(id, sourceKey) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/execute/${sourceKey}`);
-
+		
 		return promise
 			.catch(response => {
 				authApi.handleAccessDenied(response);
@@ -112,10 +112,10 @@ define(function (require, exports) {
 		authApi.handleAccessDenied(response);
 		return response;
 	};
-
+	
 	function getInfo(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/info`);
-
+		
 		return promise
 			.then(({ data }) => data)
 			.catch(errorHandler);
@@ -128,20 +128,20 @@ define(function (require, exports) {
 			.then(({data}) => data)
 			.catch(errorHandler);
 	}
-
+	
 	function deleteInfo(id, sourceKey) {
 		const promise = httpService.doDelete(`${config.webAPIRoot}ir/${id || ""}/info/${sourceKey}`);
-
+		
 		return promise
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
 			});
-	}
-
+	}		
+	
 	function getReport(id, sourceKey, targetId, outcomeId) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/report/${sourceKey}?targetId=${targetId}&outcomeId=${outcomeId}`);
-
+		
 		return promise
 			.then(({ data }) => data)
 			.catch(response => {
@@ -190,6 +190,19 @@ define(function (require, exports) {
 				});
 	 }
 
+	function runDiagnostics(design) {
+		var designCopy = JSON.parse(ko.toJSON(design));
+
+		if (typeof designCopy.expression != 'string') {
+			designCopy.expression = JSON.stringify(designCopy.expression);
+		}
+
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/check`, designCopy)
+			.then(res => res.data);
+	}
+
+
 	var api = {
 		getAnalysisList: getAnalysisList,
 		getAnalysis: getAnalysis,
@@ -206,6 +219,7 @@ define(function (require, exports) {
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
 		exportSql,
+        runDiagnostics,
 	};
 
 	return api;

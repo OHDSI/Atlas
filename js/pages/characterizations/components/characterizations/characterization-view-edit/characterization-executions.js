@@ -3,6 +3,7 @@ define([
 	'pages/characterizations/services/CharacterizationService',
 	'pages/characterizations/services/PermissionService',
 	'pages/characterizations/const',
+	'const',
 	'text!./characterization-executions.html',
 	'appConfig',
 	'services/AuthAPI',
@@ -26,6 +27,7 @@ define([
 	CharacterizationService,
 	PermissionService,
 	consts,
+	globalConsts,
 	view,
 	config,
 	authApi,
@@ -48,7 +50,8 @@ define([
 			this.ccGenerationStatusOptions = consts.ccGenerationStatus;
 
 			this.characterizationId = params.characterizationId;
-			this.designDirtyFlag = params.designDirtyFlag;
+			this.designDirtyFlag = params.designDirtyFlag;			
+			this.criticalCount = params.criticalCount;
 			this.currentHash = ko.computed(() => params.design() ? params.design().hashCode : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
@@ -135,7 +138,15 @@ define([
 
 		isExecutionPermitted(sourceKey) {
 			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty() &&
-				this.design().cohorts().length;
+				this.design().cohorts().length && this.criticalCount() <= 0;
+		}
+
+		generateDisabledReason(sourceKey) {
+			if (this.isExecutionPermitted(sourceKey)) return null;
+			if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+			if (!this.design().cohorts().length) return globalConsts.disabledReasons.EMPTY_COHORTS;
+			if (this.designDirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+			return globalConsts.disabledReasons.ACCESS_DENIED;
 		}
 
 		isResultsViewPermitted(sourceKey) {

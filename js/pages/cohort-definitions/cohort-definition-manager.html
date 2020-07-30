@@ -75,11 +75,9 @@
 				data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
-			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
-				<a
-					data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages'), attr: { class: warningClass }"><span
-						class="badge" data-bind="text: warningsTotals, visible: warningsTotals() > 0"></span></a>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
+				<a>Messages <span
+					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
 			</li>
 		</ul>
 		<div class="tab-content">
@@ -493,13 +491,10 @@
 						<tr
 							data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
 							<td>
-								<span
-									data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null"
-									data-placement="right">
-									<span
-										data-bind="tooltip: !$component.canGenerate() ? 'Initial event is not set or changes not saved' : null"
-										data-placement="right">
-										<button class="btn btn-sm btn-primary" data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
+								<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
+									<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="right">
+										<button class="btn btn-sm btn-primary"
+												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																		visible: !$component.isSourceRunning($data),
 																		click: (data, event) => $component.generateCohort(data, false)">
 											<i class="fa fa-play"></i>&nbsp;
@@ -721,9 +716,7 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">
 				<div class="paddedWrapper">
-					<conceptset-warnings params="{count: warningsTotals, infoCount: infoCount,
-						warningCount: warningCount, crititcalCount: criticalCount,
-						canDiagnose: canSave, onFixCallback: fixConceptSet}"></conceptset-warnings>
+					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
 				</div>
 			</div>
 		</div>

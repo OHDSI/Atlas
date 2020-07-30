@@ -7,9 +7,9 @@ define(
     };
 
     const status = {
-      PENDING: 'PENDING',
-      RUNNING: 'RUNNING',
-      COMPLETE: 'COMPLETE',
+        PENDING: 'PENDING',
+        RUNNING: 'RUNNING',
+        COMPLETE: 'COMPLETE',
     };
 
     const tabs = {
@@ -17,23 +17,17 @@ define(
       CONCEPT_SETS: 'conceptsets',
       GENERATION: 'generation',
       UTILITIES: 'utilities',
-    };
-
-    const disabledReasons = {
-      DIRTY: 'Save changes to generate',
-      ACCESS_DENIED: 'Access denied',
-      INVALID_TAR: 'Invalid TAR'
+      WARNINGS: 'warnings',
     };
 
     function isInProgress(currentStatus) {
-      return [status.PENDING, status.RUNNING].includes(currentStatus);
+        return [status.PENDING, status.RUNNING].includes(currentStatus);
     }
 
     return {
       apiPaths,
       status,
       isInProgress,
-      disabledReasons,
       tabs,
     };
   }

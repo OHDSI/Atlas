@@ -51,15 +51,6 @@ define([
 				console.log("New analysis set.");
 				this.selectedStrataRule(params.analysis().strata()[this.selectedStrataRuleIndex]);
 			}));
-			
-			this.tarMessage = ko.pureComputed( () => {
-				const analysis = this.analysis();
-				if (analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField()) {
-					if (analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset()) {
-						return ko.i18n('ir.editor.timeAtRiskWarningMessage', 'Error: Time at risk starts on or after time at risk end, resulting in zero time at risk.  Please ensure the start offset is greater than the end offset.')();
-					}
-				}
-			})
 		}
 			
 		addStudyWindow() {

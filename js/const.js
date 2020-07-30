@@ -302,6 +302,16 @@ define([
 			},
 		};
 
+		const disabledReasons = {
+			DIRTY: 'Save changes to generate',
+			ACCESS_DENIED: 'Access denied',
+			INVALID_TAR: 'Invalid TAR',
+			INVALID_DESIGN: 'Design is not valid',
+			ENGINE_NOT_AVAILABLE: 'Execution engine is not available',
+			EMPTY_COHORTS: 'No cohorts found',
+			EMPTY_INITIAL_EVENT: 'Initial event is not set',
+		  };
+
 		return {
 			maxEntityNameLength,
 			minChartHeight,
@@ -319,7 +329,8 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
-			sqlDialects
+			sqlDialects,
+			disabledReasons,
     };
   }
 );

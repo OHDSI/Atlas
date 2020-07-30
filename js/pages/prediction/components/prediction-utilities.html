@@ -14,16 +14,7 @@
         <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'download'" class="tab-pane">
             <div class="paddedWrapper">
                 <div data-bind="if: !($component.specificationValid())">
-                    <b
-                        data-bind="text: ko.i18n('predictions.utilitiesText_1', 'Your study has the following issues that prevent you from reviewing the full specification details and downloading the study package:')"></b>
-                    <ul>
-                        <li
-                            data-bind="text: ko.i18n('predictions.utilitiesText_2', 'You must specify at least 1 of each: Target Cohort, Outcome Cohort, Model Settings, Covariate Settings and Population Settings.'), visible: !($component.specificationMeetsMinimumRequirements())">
-                        </li>
-                        <li
-                            data-bind="text: ko.i18n('predictions.utilitiesText_3', 'Your study contains duplicate values in one of the following areas: Model Settings, Covariate Settings and Population Settings. Please review and fix these errors in order to proceed.'), visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasUniqueSettings())">
-                        </li>
-                    </ul>
+                    <b>Your study has invalid design that prevent you from reviewing the full specification details and downloading the study package. Please check "Messages" tab</b>
                 </div>
                 <div
                     data-bind="if: $component.dirtyFlag().isDirty()">

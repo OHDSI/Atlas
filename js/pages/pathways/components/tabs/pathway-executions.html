@@ -45,7 +45,7 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: (!$component.isGenerationPermitted(sourceKey) || !$component.isEditPermitted()) ? ko.i18n('pathways.manager.executions.tooltips.generatePermissions', 'Not enough permissions to generate')() : null,
+                    tooltip: (!$component.isGenerationPermitted(sourceKey) || !$component.isEditPermitted()) ? $component.generateDisabledReason(sourceKey) : null,
                 ">
                     <!-- ko if: $component.pathwayGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="
