@@ -1,5 +1,4 @@
-define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
-
+define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (ko, appConfig, jobDetail, sharedState, httpService) {
 	function list(hideStatuses) {
 		return httpService.doGet(appConfig.api.url + 'notifications?hide_statuses=' + hideStatuses.join());
 	}
@@ -10,9 +9,9 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 		job.status(updated.status);
 		job.name = updated.jobParameters.jobName;
 		job.executionId = updated.executionId;
-		job.url = getJobURL(updated)
-		job.duration = '';
-		job.endDate = '';
+		job.url(getJobURL(updated));
+		job.duration = ko.observable('');
+		job.endDate = ko.observable('');
 		queue(job);
 	}
 
@@ -84,10 +83,10 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 	}
 
 	return {
-		createJob: createJob,
-		list: list,
-		getJobURL: getJobURL,
-		setLastViewedTime: setLastViewedTime,
-		getLastViewedTime: getLastViewedTime
-	}
+		createJob,
+		list,
+		getJobURL,
+		setLastViewedTime,
+		getLastViewedTime,
+	};
 });

@@ -41,7 +41,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Period',
 			{
 				text: "Add Period Length Criteria",
 				selected: false,
-				description: "Filter Payer Plan Periods by duration",
+				description: "Filter Payer Plan Periods by duration.",
 				action: function () {
 					if (self.Criteria.PeriodLength() == null)
 						self.Criteria.PeriodLength(new Range());

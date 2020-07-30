@@ -4,19 +4,23 @@
 	</p>
 	<div data-bind="css: classes('linked-entities')">
 		<linked-cohort-list params="title: 'Target Cohorts',
-																descr: 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.',
-																canEditName: canEditName,
-																data: design().targetCohorts,
-																isEditPermitted: isEditPermitted">
+			descr: 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.',
+			canEditName: true,
+			data: design().targetCohorts,
+			multiChoice: true,
+			isEditPermitted: isEditPermitted"
+		>
 
 		</linked-cohort-list>
 	</div>
 	<div data-bind="css: classes('linked-entities')">
 		<linked-cohort-list params="title: 'Event Cohorts',
-																descr: 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.',
-																canEditName: canEditName,
-																data: design().eventCohorts,
-																isEditPermitted: isEditPermitted">
+			descr: 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.',
+			canEditName: true,
+			data: design().eventCohorts,
+			multiChoice: true,
+			isEditPermitted: isEditPermitted"
+		>
 		</linked-cohort-list>
 	</div>
 
