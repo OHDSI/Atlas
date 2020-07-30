@@ -115,7 +115,7 @@ define(function (require, exports) {
 		else
 			repositoryUrl = config.webAPIRoot + 'conceptset/';
 
-		repositoryUrl += id + '/expression';
+		repositoryUrl += id + '/expression/' + sharedState.sourceKeyOfVocabUrl();
 
 		return httpService.doGet(repositoryUrl).then(({ data }) => data);
 	}
