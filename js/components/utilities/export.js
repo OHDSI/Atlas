@@ -4,6 +4,7 @@ define([
     'appConfig',
     'services/AuthAPI',
     'components/Component',
+    'utils/Clipboard',
     'utils/AutoBind',
     'utils/CommonUtils',
     './const',
@@ -14,14 +15,17 @@ define([
     config,
     authApi,
     Component,
+    Clipboard,
     AutoBind,
     commonUtils,
     constants,
 ) {
-    class ExportUtil extends AutoBind(Component) {
+    class ExportUtil extends AutoBind(Clipboard(Component)) {
         constructor(params) {
             super();
             const { entityId, message = {}, isPermittedExport = () => false, exportService, dirtyFlag } = params;
+            // unique identifier is need to avoid conflicts with other export buttons on the page
+            this.uniqueId = commonUtils.getUniqueIdentifier();
             this.loading = ko.observable(false);
             this.entityId = entityId;
             this.isPermittedExport = isPermittedExport;
@@ -74,6 +78,10 @@ define([
                 this.exportEntity(res);
                 this.loading(false);
             }
+        }
+
+        copyExpressionToClipboard() {
+            this.copyToClipboard('#btnCopyToClipboard' + this.uniqueId, '#copyExpressionToClipboardMessage' + this.uniqueId);
         }
     }
 

@@ -8,18 +8,7 @@
         <div role="tabpanel" data-bind="visible: $component.utilityPillMode() == 'download'" class="tab-pane">
             <div class="paddedWrapper">
                 <div data-bind="if: !($component.specificationValid())">
-                    <b>Your study has the following issues that prevent you from reviewing the full specification details and downloading the study package:</b>
-                    <ul>
-                    <li data-bind="visible: !($component.specificationMeetsMinimumRequirements())">
-                    You must specify at least 1 valid comparison and analysis setting.
-                    </li>
-                    <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasFullComparisons())">
-                    You must specify at least 1 target, comparator and outcome in your comparison settings.
-                    </li>
-                    <li data-bind="visible: $component.specificationMeetsMinimumRequirements() && !($component.specificationHasUniqueSettings())">
-                    Your study contains duplicate values in one of the following areas: Comparisons or Analysis Settings.
-                    </li>
-                </ul>
+                    <b>Your study has invalid design that prevent you from reviewing the full specification details and downloading the study package. Please check "Messages" tab</b>
                 </div>
                 <div data-bind="if: $component.dirtyFlag().isDirty()">
                     You must save your analysis before you can review & download.

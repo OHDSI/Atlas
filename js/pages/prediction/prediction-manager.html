@@ -1,6 +1,9 @@
 <loading data-bind="visible: loading"></loading>
 <div data-bind="if:!loading()">
-  <heading-title params="name: predictionCaption(), icon: 'heartbeat', theme: 'dark'"></heading-title>
+  <heading-title params="name: predictionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'heartbeat', theme: 'dark'"></heading-title>
+  <!-- ko if: !!patientLevelPredictionAnalysis().id -->
+    <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+  <!-- /ko -->
   <div class="asset-heading">
       <div class="input-group">
         <input type="text" placeholder="New Patient Level Prediction Analysis" class="form-control" data-bind="textInput: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !isNameFilled() }" />
@@ -16,10 +19,8 @@
           <!-- /ko -->
         </div>
       </div>
-      <div data-bind="visible: !isNameFilled()" class="empty-name-error">
-          <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-          <label>Patient Level Prediction name is empty.</label>
-      </div>
+      <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
   </div>
 
   <tabs data-bind="visible: !$component.loading()" params="
@@ -43,7 +44,15 @@
             key: 'utilities',
             componentName: 'prediction-utilities',
             componentParams: $component.componentParams,
-        }
+        },
+        {
+            title: 'Messages', 
+            key: 'messages',
+            componentName: 'warnings',
+            componentParams: $component.warningParams,
+            hasBadge: true,
+            preload: true,
+        },
     ]">
   </tabs>
 </div>

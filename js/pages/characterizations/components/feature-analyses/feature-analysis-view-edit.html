@@ -4,7 +4,10 @@
 
 <!-- ko if:data -->
 <div data-bind="css: classes()">
-    <heading-title params="name: featureCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <heading-title params="name: featureCaption(), description: canEdit() ? '' : '(Read only)', icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <!-- ko if: !!data().id -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
     <div class="asset-heading">
         <div class="input-group">
             <input type="text" placeholder="New Feature Analysis" class="form-control" data-bind="attr: { disabled: canEdit() ? null : true }, textInput: $component.data().name, css: { emptyInput: !isNameFilled() }" />
@@ -21,13 +24,11 @@
                 <!-- /ko -->
             </div>
         </div>
-        <div data-bind="visible: !isNameFilled()" class="empty-name-error">
-            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-            <label>Feature Analysis name is empty.</label>
-        </div>
+        <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
     </div>
 
-    <div data-bind="css: classes('content'), visible: !$component.loading()">
+    <div data-bind="css: editorClasses(), visible: !$component.loading()">
 
         <div data-bind="css: classes({ element: 'descr-panel', extra: 'panel panel-primary' })">
             <div class="panel-heading">
