@@ -76,7 +76,7 @@
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
-				<a>Messages <span
+				<a><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages')"></span> <span
 					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
 			</li>
 		</ul>

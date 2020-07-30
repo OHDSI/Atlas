@@ -35,12 +35,12 @@ function (
 			this.loading = ko.observable(false);
 			this.isFixCalled = false;
 			this.warningsColumns = [
-				{ data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
-				{ data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
+				{ data: 'severity', title: ko.i18n('columns.severity', 'Severity'), width: '100px', render: utils.renderSeverity, },
+				{ data: 'message', title: ko.i18n('columns.message', 'Message'), width: '100%', render: utils.renderMessage, }
 			];
 			this.warningsOptions = {
 				Facets: [{
-					'caption': 'Severity',
+					'caption': ko.i18n('facets.caption.severity', 'Severity'),
 					'binding': o => o.severity,
 					defaultFacets: [
 						'WARNING', 'CRITICAL'
