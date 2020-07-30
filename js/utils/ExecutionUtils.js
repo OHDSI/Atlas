@@ -32,8 +32,20 @@ define([
 		return generations;
 	}
 
+	function getExecutionGroupStatus(submissions = []) {
+		const { executionStatuses } = consts;
+		const submissionStatuses = submissions().map(s => s.status);
+		if (submissionStatuses.includes(executionStatuses.PENDING)) {
+			return executionStatuses.PENDING;
+		} else if (submissionStatuses.includes(executionStatuses.STARTED)) {
+			return executionStatuses.STARTED;
+		}
+		return executionStatuses.COMPLETED;
+	}
+
 	return {
 		StartExecution,
 		generateVersionTags,
+		getExecutionGroupStatus,
 	};
 });

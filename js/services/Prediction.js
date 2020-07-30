@@ -61,7 +61,7 @@ define(function (require, exports) {
 				.catch(error => authApi.handleAccessDenied(error));
 	}
 
-	function listGenerations(id) {
+	function listExecutions(id) {
     	return httpService.doGet(config.webAPIRoot + predictionEndpoint + id + '/generation')
 				.then(res => res.data)
 				.catch(error => authApi.handleAccessDenied(error));
@@ -96,7 +96,7 @@ define(function (require, exports) {
 		exportPrediction: exportPrediction,
 		importPrediction: importPrediction,
 		generate,
-		listGenerations,
+		listExecutions,
 		exists,
 		runDiagnostics,
 	};

@@ -20,12 +20,12 @@ define([
 	'services/analysis/ConceptSetCrossReference',
 	'featureextraction/InputTypes/CovariateSettings',
 	'services/FeatureExtraction',
+	'services/Poll',
 	'lodash',
 	'faceted-datatable',
     'components/tabs',
 	'./components/cca-specification-view-edit',
 	'./components/cca-utilities',
-	'./components/cca-executions',
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
@@ -54,6 +54,7 @@ define([
 	ConceptSetCrossReference,
 	CovariateSettings,
 	FeatureExtractionService,
+	{PollService},
 	lodash
 ) {
 	class ComparativeCohortAnalysisManager extends Page {
@@ -88,7 +89,8 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canSave());
 			this.canSave = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
@@ -104,7 +106,17 @@ define([
 				loadingMessage: this.loadingMessage,
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
-				isEditPermitted: this.canSave
+				analysisId: sharedState.estimationAnalysis.selectedId,
+				PermissionService,
+				ExecutionService: EstimationService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'estimation-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
+				isEditPermitted: this.canSave,
+				PollService: PollService,
 			});
 
 			this.isNameFilled = ko.computed(() => {
