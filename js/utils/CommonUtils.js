@@ -2,12 +2,14 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
+		'services/MomentAPI',
 		'urijs',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
+		momentApi,
 		URI,
 	) => {
 
@@ -206,6 +208,18 @@ define([
 		}
 	}
 
+	const selectAllFilteredItems = (data, filteredData, value) => {
+		const fData = (ko.utils.unwrapObservable(filteredData) || []).map(i => i.id);
+		data().forEach(i => {
+			if (fData.length === 0) {
+				i.selected(value);
+			} else {
+				if (fData.includes(i.id)) {
+					i.selected(value);
+				}
+			}
+		});
+	}
 	const escapeTooltip = function(tooltipText) {
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
@@ -222,6 +236,11 @@ define([
 	const isNameCharactersValid = function(name) {
 		const forbiddenSymbols = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
 		return !forbiddenSymbols.some(symbol => name.includes(symbol));
+	}
+
+	const formatDateForAuthorship = (date, format = momentApi.DESIGN_DATE_TIME_FORMAT) => {
+		const d = ko.unwrap(date);
+		return d ? momentApi.formatDateTimeWithFormat(d, format) : '';
 	}
 
 	return {
@@ -244,8 +263,10 @@ define([
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
+		selectAllFilteredItems,
 		escapeTooltip,
 		getUniqueIdentifier,
+		formatDateForAuthorship,
 		isNameCharactersValid,
 		isNameLengthValid,
 	};

@@ -80,6 +80,12 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
+	function runDiagnostics(design) {
+		return httpService
+			.doPost(`${config.webAPIRoot}${estimationEndpoint}check`, design)
+			.then(res => res.data);
+	}
+
     var api = {
 		getEstimationList: getEstimationList,
 		saveEstimation: saveEstimation,
@@ -91,6 +97,7 @@ define(function (require, exports) {
 		generate,
 		listExecutions,
 		exists,
+		runDiagnostics,
 	};
 
 	return api;

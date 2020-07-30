@@ -189,6 +189,19 @@ define(function (require, exports) {
 					return response;
 				});
 	 }
+ 
+	function runDiagnostics(design) {
+		var designCopy = JSON.parse(ko.toJSON(design));
+		
+		if (typeof designCopy.expression != 'string') {
+			designCopy.expression = JSON.stringify(designCopy.expression);
+		}
+
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/check`, designCopy)
+			.then(res => res.data);
+	}
+	 
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -206,6 +219,7 @@ define(function (require, exports) {
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
 		exportSql,
+        runDiagnostics,
 	};
 
 	return api;

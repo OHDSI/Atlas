@@ -33,6 +33,8 @@ define([
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
+	'components/checks/warnings',
+	'components/authorship',
 	'components/name-validation',
 ], function (
 	ko,
@@ -117,6 +119,8 @@ define([
 				runExecutionInParallel: true,
 				PollService: PollService,
 			});
+			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
 			});
@@ -126,13 +130,12 @@ define([
 			});
 
 			this.isNewEntity = this.isNewEntityResolver();
-
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
 						return 'New Patient Level Prediction';
 					} else {
-						return 'Patient Level Prediction #' + this.selectedAnalysisId();
+						return `Patient Level Prediction #${this.selectedAnalysisId()}`;
 					}
 				}
 			});
@@ -154,7 +157,33 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
+			});
+
+			this.criticalCount = ko.observable(0);
+
+			this.componentParams = ko.observable({
+				analysisId: sharedState.predictionAnalysis.selectedId,
+				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
+				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
+				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
+				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
+				fullAnalysisList: this.fullAnalysisList,
+				packageName: this.packageName,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				subscriptions: this.subscriptions,
+				criticalCount: this.criticalCount,
+			});
+
+			this.warningParams = ko.observable({
+				current: sharedState.predictionAnalysis.current,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -211,6 +240,13 @@ define([
 
 		isNewEntityResolver() {
 			return ko.computed(() => this.patientLevelPredictionAnalysis() && this.selectedAnalysisId() === '0');
+		}
+
+		diagnose() {
+			if (this.patientLevelPredictionAnalysis()) {
+				const payload = this.prepForSave();
+				return PredictionService.runDiagnostics(payload);
+			}
 		}
 
 		async delete() {
@@ -348,7 +384,9 @@ define([
 		loadAnalysisFromServer(analysis) {
 			var header = analysis.json;
 			var specification = JSON.parse(analysis.data.specification);
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...header }));
+			// ignore createdBy and modifiedBy
+			const { createdBy, modifiedBy, ...props } = header;
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...props }));
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
 			this.setAnalysisSettingsLists();
@@ -398,6 +436,17 @@ define([
 			this.covariateSettings = this.patientLevelPredictionAnalysis().covariateSettings;
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().modifiedDate);
+			return {
+					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.name'),
+					createdDate,
+					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'modifiedBy.name'),
+					modifiedDate,
+			}
 		}
 	}
 

@@ -103,6 +103,12 @@ define([
             .then(res => res.data);
     }
 
+	function runDiagnostics(design) {
+        return httpService
+            .doPost(`${config.webAPIRoot}cohort-characterization/check`, design)
+            .then(res => res.data);
+	}
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -121,5 +127,6 @@ define([
         getPrevalenceStatsByGeneration,
         cancelGeneration,
         exists,
+        runDiagnostics,
     };
 });

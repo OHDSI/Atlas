@@ -1,4 +1,7 @@
-<heading-title params="name: incidenceRateCaption(), icon: 'bolt', theme: 'dark'"></heading-title>
+<heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : '(Read only)', icon: 'bolt', theme: 'dark'"></heading-title>
+<!-- ko if: !!selectedAnalysisId() -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
 <div data-bind="visible:!loading()">
 	<!-- ko if: selectedAnalysis() -->
 	<div>
@@ -23,7 +26,7 @@
                                  hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 		</div>
 
-		<ul class="nav nav-tabs">
+		<ul data-bind="css: classes({extra: 'nav nav-tabs'})">
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.selectTab(tabs.DEFINITION) };">
 				<a>Definition</a>
 			</li>
@@ -39,7 +42,10 @@
             <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
 				<a>Utilities</a>
             </li>
-
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
+				<a>Messages <span
+					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
@@ -70,7 +76,8 @@
 																			 cancelExecution, 
 																			 stoppingSources: stoppingSources, 
 																			 loadingSummary: loadingSummary,
-																			 isTarValid: isTarValid"></ir-analysis-results>
+																			 isTarValid: isTarValid,
+																			 criticalCount: criticalCount"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
@@ -107,7 +114,12 @@
 						 	exportSqlService: $component.exportSql"></export-sql>
 					</div>
                 </div>
-            </div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }" class="tab-pane">
+				<div class="paddedWrapper">
+					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
+				</div>
+			</div>
         </div>
 	</div>
 
