@@ -20,6 +20,7 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
+	'services/Poll',
 	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
@@ -29,7 +30,6 @@ define([
     'components/tabs',
 	'./components/prediction-specification-view-edit',
 	'./components/prediction-utilities',
-	'./components/prediction-executions',
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
@@ -58,6 +58,7 @@ define([
 	ConceptSet,
 	ConceptSetCrossReference,
 	authAPI,
+	{PollService},
 	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
@@ -96,7 +97,28 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
-
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canSave());
+			this.componentParams = ko.observable({
+				analysisId: this.selectedAnalysisId,
+				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
+				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
+				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
+				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
+				fullAnalysisList: this.fullAnalysisList,
+				packageName: this.packageName,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				subscriptions: this.subscriptions,
+				PermissionService,
+				ExecutionService: PredictionService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'prediction-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
+				PollService: PollService,
+			});
 			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
 
 			this.canDelete = ko.pureComputed(() => {
