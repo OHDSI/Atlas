@@ -1,7 +1,7 @@
 <loading data-bind="visible: loading"></loading>
 <div data-bind="if:!loading()">
   <heading-title params="name: predictionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'heartbeat', theme: 'dark'"></heading-title>
-  <!-- ko if: !!patientLevelPredictionAnalysis().id -->
+  <!-- ko if: !!patientLevelPredictionAnalysis() && !!patientLevelPredictionAnalysis().id -->
     <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
   <!-- /ko -->
   <div class="asset-heading">
