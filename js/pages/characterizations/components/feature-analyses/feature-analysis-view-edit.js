@@ -30,6 +30,7 @@ define([
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
+    'components/heading',
     'components/authorship',
 	'components/security/access/configure-access-modal',
     'components/name-validation',

@@ -34,6 +34,7 @@ define([
 	'components/security/access/configure-access-modal',
 	'databindings',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (

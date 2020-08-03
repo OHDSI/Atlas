@@ -24,6 +24,7 @@ define([
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (
