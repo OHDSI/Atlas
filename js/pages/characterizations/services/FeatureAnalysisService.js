@@ -40,6 +40,10 @@ define([
     function exportConceptSets(id) {
         return fileService.loadZip(`${config.webAPIRoot}feature-analysis/${id}/export/conceptset`);
     }
+    
+    function copyFeatureAnalysis(id) {
+        return httpService.doGet(`${config.webAPIRoot}feature-analysis/${id}/copy`);
+    }
 
     return {
         loadFeatureAnalysisList,
@@ -50,5 +54,6 @@ define([
         deleteFeatureAnalysis,
         exists,
         exportConceptSets,
+        copyFeatureAnalysis,
     };
 });

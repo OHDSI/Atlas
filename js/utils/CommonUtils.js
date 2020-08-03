@@ -2,12 +2,14 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
+		'services/MomentAPI',
 		'urijs',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
+		momentApi,
 		URI,
 	) => {
 
@@ -210,6 +212,18 @@ define([
 		}
 	}
 
+	const selectAllFilteredItems = (data, filteredData, value) => {
+		const fData = (ko.utils.unwrapObservable(filteredData) || []).map(i => i.id);
+		data().forEach(i => {
+			if (fData.length === 0) {
+				i.selected(value);
+			} else {
+				if (fData.includes(i.id)) {
+					i.selected(value);
+				}
+			}
+		});
+	}
 	const escapeTooltip = function(tooltipText) {
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
@@ -228,6 +242,21 @@ define([
 		
 	const getUniqueIdentifier = () => {
 		return ([1e7]+1e3+4e3+8e3+1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15 >> c/4).toString(16));
+	}
+		
+	const isNameLengthValid = function(name) {
+		const maxFileNameLength = 100;
+		return name.length <= maxFileNameLength;
+	}
+
+	const isNameCharactersValid = function(name) {
+		const forbiddenSymbols = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
+		return !forbiddenSymbols.some(symbol => name.includes(symbol));
+	}
+
+	const formatDateForAuthorship = (date, format = momentApi.DESIGN_DATE_TIME_FORMAT) => {
+		const d = ko.unwrap(date);
+		return d ? momentApi.formatDateTimeWithFormat(d, format) : '';
 	}
 
 	const clearConceptSetBySource = ({ source }) => {
@@ -269,11 +298,15 @@ define([
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
+		selectAllFilteredItems,
 		escapeTooltip,
 		highlightRow,
 		getSelectedConcepts,
 		getUniqueIdentifier,
 		clearConceptSetBySource,
 		clearConceptsSelectionState,
+		formatDateForAuthorship,
+		isNameCharactersValid,
+		isNameLengthValid,
 	};
 });

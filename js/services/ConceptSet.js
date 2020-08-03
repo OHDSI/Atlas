@@ -254,6 +254,9 @@ define(function (require, exports) {
 			name: ko.observable(conceptset.name),
 			id: conceptset.id,
 			createdBy: conceptset.createdBy,
+			createdDate: conceptset.createdDate,
+			modifiedBy: conceptset.modifiedBy,
+			modifiedDate: conceptset.modifiedDate,
 		});
 	}
 

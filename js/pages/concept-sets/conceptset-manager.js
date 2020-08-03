@@ -32,7 +32,9 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	'components/authorship',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -84,8 +86,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.currentConceptSet().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.currentConceptSet().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.currentConceptSet().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.currentConceptSet().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 			this.canSave = ko.computed(() => {
 				return (
@@ -105,7 +116,7 @@ define([
 					if (this.currentConceptSet().id === 0) {
 						return this.defaultName;
 					} else {
-						return 'Concept Set #' + this.currentConceptSet().id;
+						return `Concept Set #${this.currentConceptSet().id}`;
 					}
 				}
 			});
@@ -472,6 +483,17 @@ define([
 		cancelSaveNewOptimizedConceptSet() {
 			this.optimizerSavingNew(false);
 		}
+
+	 getAuthorship() {
+		const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
+			 return {
+					 createdBy: this.currentConceptSet().createdBy,
+					 createdDate,
+					 modifiedBy: this.currentConceptSet().modifiedBy,
+					 modifiedDate,
+			 }
+	 }
 
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);

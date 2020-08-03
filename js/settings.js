@@ -167,7 +167,7 @@ const settingsObject = {
 		"conceptset-editor": "components/conceptset/conceptset-editor",
 		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
 		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-		"user-bar": "components/user-bar",
+		"user-bar": "components/userbar/user-bar",
 		"faceted-datatable": "components/faceted-datatable",
 		"explore-cohort": "components/explore-cohort",
 		"r-manager": "components/r-manager",

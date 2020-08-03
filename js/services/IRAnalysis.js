@@ -193,7 +193,20 @@ define(function (require, exports) {
 
 	 function exportConceptSets(id) {
 		return fileService.loadZip(`${config.webAPIRoot}ir/${id}/export/conceptset`);
-}
+	}
+ 
+	function runDiagnostics(design) {
+		var designCopy = JSON.parse(ko.toJSON(design));
+		
+		if (typeof designCopy.expression != 'string') {
+			designCopy.expression = JSON.stringify(designCopy.expression);
+		}
+
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/check`, designCopy)
+			.then(res => res.data);
+	}
+	 
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -212,6 +225,7 @@ define(function (require, exports) {
 		exportAnalysis: exportAnalysis,
 		exportSql,
 		exportConceptSets,
+		runDiagnostics,
 	};
 
 	return api;

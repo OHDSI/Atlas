@@ -49,7 +49,7 @@
             <ul data-bind="css: classes({ element: 'action-list' })">
                 <li data-bind="
                     css: classes({ element: 'action' }),
-                    tooltip: !$component.isExecutionPermitted(sourceKey) ? 'Not enough permissions to generate, changes not saved or no cohorts found' : null,
+                    tooltip: !$component.isExecutionPermitted(sourceKey) ? $component.generateDisabledReason(sourceKey) : null,
                 ">
                     <!-- ko if: $component.ccGenerationStatusOptions.COMPLETED === status() -->
                     <button data-bind="

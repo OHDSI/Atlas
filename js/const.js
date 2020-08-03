@@ -283,6 +283,21 @@ define([
 			PENDING: 'PENDING',
 		};
 
+		const executionStatuses = {
+			STARTED: 'STARTED',
+			COMPLETED: 'COMPLETED',
+			PENDING: 'STARTING',
+			FAILED: 'FAILED',
+			CANCELED: 'STOPPED',
+			STOPPING: 'STOPPING',
+			RUNNING: 'RUNNING',
+		};
+
+		const executionResultModes = {
+			DOWNLOAD: 'DOWNLOAD',
+			VIEW: 'VIEW',
+		}
+
 		const newEntityNames = {
 			characterization: 'New Characterization',
 			featureAnalysis: 'New Feature Analysis',
@@ -349,6 +364,27 @@ define([
 			characterization: 'characterization',
 			incidenceRates: 'incidenceRates',
 		};
+		
+		const jobTypes = {
+			USER_JOB: {
+				title: 'userJob',
+				ownerType: 'USER_JOB',
+			},
+			ALL_JOB: {
+				title: 'allJob',
+				ownerType: 'ALL_JOB',
+			},
+		};
+
+		const disabledReasons = {
+			DIRTY: 'Save changes to generate',
+			ACCESS_DENIED: 'Access denied',
+			INVALID_TAR: 'Invalid TAR',
+			INVALID_DESIGN: 'Design is not valid',
+			ENGINE_NOT_AVAILABLE: 'Execution engine is not available',
+			EMPTY_COHORTS: 'No cohorts found',
+			EMPTY_INITIAL_EVENT: 'Initial event is not set',
+		};
 
 		return {
 			minChartHeight,
@@ -367,9 +403,13 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
+			executionStatuses,
+			executionResultModes,
 			sqlDialects,
 			eventTypes,
 			conceptSetSources,
+			disabledReasons,
+			jobTypes,
     };
   }
 );
