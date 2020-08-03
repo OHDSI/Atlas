@@ -3,6 +3,7 @@ define([
     'text!./welcome.html',
     'appConfig',
     'services/AuthAPI',
+	  'services/SourceAPI',
 	'utils/BemHelper',
     'atlas-state',
     'less!welcome.less'
@@ -12,6 +13,7 @@ define([
     view,
     appConfig,
     authApi,
+    sourceApi,
     BemHelper,
     sharedState,
     ) {
@@ -71,6 +73,9 @@ define([
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
             sharedState.resetCurrentDataSourceScope();
+            // if (!sharedState.vocabularyUrl()) {
+            //     await sourceApi.initSourcesConfig();
+            // }
             self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
