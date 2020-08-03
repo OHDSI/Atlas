@@ -21,9 +21,9 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.defaultResultsUrl.subscribe((value) => state.resultsUrl(value));
 
 	state.resetCurrentDataSourceScope = function() {
-		state.resultsUrl(state.defaultResultsUrl());
 		state.vocabularyUrl(state.defaultVocabularyUrl());
 		state.evidenceUrl(state.defaultEvidenceUrl());
+		state.resultsUrl(state.defaultResultsUrl());
 	}
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
