@@ -307,9 +307,9 @@ define([
 				title: 'userJob',
 				ownerType: 'USER_JOB',
 			},
-			SYSTEM_JOB: {
-				title: 'systemJob',
-				ownerType: 'SYSTEM_JOB',
+			ALL_JOB: {
+				title: 'allJob',
+				ownerType: 'ALL_JOB',
 			},
 		};
 

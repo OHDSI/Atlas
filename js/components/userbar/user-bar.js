@@ -47,9 +47,9 @@ define([
 					.filter( j => j.ownerType === constants.jobTypes.USER_JOB.ownerType)),
 				jobNameClick: this.jobNameClick.bind(this),
 			};
-			this.systemJobParams = {
+			this.allJobParams = {
 				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
-					.filter( j => j.ownerType === constants.jobTypes.SYSTEM_JOB.ownerType)),
+					.filter( j => j.ownerType === constants.jobTypes.ALL_JOB.ownerType)),
 				jobNameClick: this.jobNameClick.bind(this),
 			};
 			this.tabs = [];
@@ -64,21 +64,21 @@ define([
 				this.selectedTabKey(constants.jobTypes.USER_JOB.title);
 				this.jobNotificationsPending = ko.computed(() => this.userJobParams.jobListing().filter(j => !j.viewed()).length);
 			} else {
-				this.selectedTabKey(constants.jobTypes.SYSTEM_JOB.title);
-				this.jobNotificationsPending = ko.computed(() => this.systemJobParams.jobListing().filter(j => !j.viewed()).length);
+				this.selectedTabKey(constants.jobTypes.ALL_JOB.title);
+				this.jobNotificationsPending = ko.computed(() => this.allJobParams.jobListing().filter(j => !j.viewed()).length);
 			}
 			this.tabs.push({
-				title: 'System jobs',
-				key: constants.jobTypes.SYSTEM_JOB.title,
+				title: 'All jobs',
+				key: constants.jobTypes.ALL_JOB.title,
 				componentName: 'user-bar-jobs',
-				componentParams: this.systemJobParams,
+				componentParams: this.allJobParams,
 			});
 			this.jobsCount = ko.computed(() => {
 				if (this.selectedTabKey() === constants.jobTypes.USER_JOB.title) {
 					return this.userJobParams.jobListing().length;
 				}
-				if (this.selectedTabKey() === constants.jobTypes.SYSTEM_JOB.title) {
-					return this.systemJobParams.jobListing().length;
+				if (this.selectedTabKey() === constants.jobTypes.ALL_JOB.title) {
+					return this.allJobParams.jobListing().length;
 				}
 				return 0;
 			})
@@ -230,7 +230,7 @@ define([
 					this.selectedTabKey(constants.jobTypes.USER_JOB.title);
 					break;
 				case 1:
-					this.selectedTabKey(constants.jobTypes.SYSTEM_JOB.title);
+					this.selectedTabKey(constants.jobTypes.ALL_JOB.title);
 					break;
 			}
 		}
