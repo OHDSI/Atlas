@@ -84,8 +84,18 @@ define([
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
+				criticalCount: this.criticalCount,
 				isEditPermitted: this.canEdit,
 				extraExecutionPermissions: this.canEdit,
+			});
+			this.warningParams = ko.observable({
+				current: sharedState.CohortPathways.current,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {

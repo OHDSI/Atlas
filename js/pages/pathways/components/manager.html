@@ -3,7 +3,7 @@
 <!-- ko if: design -->
 <div data-bind="css: classes(), visible: !$component.loading()">
 	<heading-title params="name: pathwayCaption(), description: canEdit() ? '' : '(Read only)', icon: 'sitemap', theme: 'dark'"></heading-title>
-	<!-- ko if: !!design().id -->
+	<!-- ko if: !!design() && !!design().id -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 <!-- /ko -->
 	<div class="asset-heading">

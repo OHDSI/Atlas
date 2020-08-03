@@ -346,7 +346,8 @@ define([
 			sqlDialects,
 			executionStatuses,
 			executionResultModes,
-			sqlDialects
+			sqlDialects,
+			disabledReasons,
     };
   }
 );
