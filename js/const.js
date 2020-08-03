@@ -317,6 +317,17 @@ define([
 			},
 		};
 
+		const jobTypes = {
+			USER_JOB: {
+				title: 'userJob',
+				ownerType: 'USER_JOB',
+			},
+			ALL_JOB: {
+				title: 'allJob',
+				ownerType: 'ALL_JOB',
+			},
+		};
+
 		const disabledReasons = {
 			DIRTY: 'Save changes to generate',
 			ACCESS_DENIED: 'Access denied',
@@ -343,11 +354,11 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
-			sqlDialects,
 			executionStatuses,
 			executionResultModes,
 			sqlDialects,
 			disabledReasons,
+			jobTypes,
     };
   }
 );
