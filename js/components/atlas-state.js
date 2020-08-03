@@ -145,11 +145,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	};
 	
 
-	state.cohortDefinitionConceptSet = {
-		current: ko.observable(),
-		selectedConcepts: ko.observableArray([]),
-	};
-
 	// Define ConceptSetStore for each module with conceptSet tab
 	Object.keys(constants.conceptSetSources).forEach(k => {
 		const conceptSetStoreKey = `${k}ConceptSet`
@@ -190,6 +185,5 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 
 	state.activeConceptSetSource = ko.observable();
 	state.activeConceptSet = ko.observable();
-
 	return state;
 });

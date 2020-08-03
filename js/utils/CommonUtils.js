@@ -200,7 +200,7 @@ define([
 
 	const toggleConceptSetCheckbox = function(hasPermissions, selectedConcepts, d, field, successFunction) {
 		if (hasPermissions()) {
-			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
+			const concept = selectedConcepts()[d.idx];
 			if (!!concept) {
 				concept[field](!concept[field]());
 				if (successFunction && typeof successFunction === 'function') {

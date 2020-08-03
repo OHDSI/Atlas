@@ -9,6 +9,7 @@ define([
 	'services/AuthAPI',
 	'services/ConceptSet',
 	'atlas-state',
+	'conceptsetbuilder/InputTypes/ConceptSetItem',
 	'conceptset-editor',
 	'conceptset-modal',
 	'less!./expression.less',
@@ -23,6 +24,7 @@ define([
 	authApi,
 	conceptSetService,
 	sharedState,
+	ConceptSetItem,
 ) {
 
 	class ConceptSetExpression extends AutoBind(Component) {
@@ -44,7 +46,7 @@ define([
 			this.saveConceptSetShow = ko.observable();
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
 			this.data = ko.observable(this.normalizeData());
-			this.data.subscribe(this.addItemsToConceptSet);
+			this.data.subscribe(this.updateExpressionItems);
 			this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
 		}
 
@@ -52,11 +54,22 @@ define([
       return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!ko.unwrap(concept.isSelected)) }));
 		}
 		
-		addItemsToConceptSet(items) {
+		updateExpressionItems(items) {
 			if (this.currentConceptSet()) {
 				const conceptSet = this.conceptSets().find(cs => cs.id === this.currentConceptSet().id);
-				const concepts = items.map(({ isSelected, idx, ...item }) => item);
-				conceptSet && conceptSet.expression.items(concepts);
+				if (conceptSet) {
+					const expressionItems = conceptSet.expression.items;
+					const conceptsIdx = items.map(i => i.idx);
+					const expressionItemsIndexes = expressionItems().map(i => i.idx);
+						items.forEach(item => {
+							if (!expressionItemsIndexes.includes(item.idx)) {
+								const { idx, ...concept } = ko.toJS(item);
+								expressionItems.push(new ConceptSetItem(concept, idx));
+							} 
+						});
+						expressionItems.remove(item => !conceptsIdx.includes(item.idx));
+				}
+				
 			}
 		}
 
@@ -94,7 +107,7 @@ define([
       conceptSetService.removeConceptsFromConceptSet({
         concepts: conceptsForRemoval,
         source: this.currentConceptSetSource,
-      });
+			});
       const data = this.data().filter(({ concept}) => !indexesForRemoval.includes(concept.idx));
       this.data(data);
 		}

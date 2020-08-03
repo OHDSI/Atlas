@@ -10,8 +10,8 @@ define(['knockout', './ConceptSetItem'], function (ko, ConceptSetItem) {
 			items: ko.observableArray(data.expression && data.expression.items && 
 																data.expression.items.filter(function (item) { 
 																	return item.concept != null; 
-																}).map(function (item) { 
-																	return new ConceptSetItem(item); 
+																}).map(function (item, idx) { 
+																	return new ConceptSetItem(item, idx); 
 																}))
 		}
 	}

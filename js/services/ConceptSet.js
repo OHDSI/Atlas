@@ -261,7 +261,8 @@ define(function (require, exports) {
 		source,
 	}) {
 		const currentConceptSet = sharedState[`${source}ConceptSet`];
-		const conceptSetExpression = { items: currentConceptSet.selectedConcepts() };
+		const selectedConcepts = currentConceptSet.selectedConcepts().map(({ idx, ...item }) => item);
+		const conceptSetExpression = { items: selectedConcepts };
 		const highlightedJson = commonUtils.syntaxHighlight(conceptSetExpression);
 		currentConceptSet.currentConceptSetExpressionJson(highlightedJson);
 		let conceptIdentifierList = [];
