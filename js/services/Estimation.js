@@ -61,7 +61,7 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
-	function listGenerations(id) {
+	function listExecutions(id) {
 		return httpService.doGet(config.webAPIRoot + estimationEndpoint + id + '/generation')
 			.then(res => res.data)
 			.catch(error => authApi.handleAccessDenied(error));
@@ -80,6 +80,12 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
+	function runDiagnostics(design) {
+		return httpService
+			.doPost(`${config.webAPIRoot}${estimationEndpoint}check`, design)
+			.then(res => res.data);
+	}
+
     var api = {
 		getEstimationList: getEstimationList,
 		saveEstimation: saveEstimation,
@@ -89,8 +95,9 @@ define(function (require, exports) {
 		exportEstimation: exportEstimation,
 		importEstimation: importEstimation,
 		generate,
-		listGenerations,
+		listExecutions,
 		exists,
+		runDiagnostics,
 	};
 
 	return api;

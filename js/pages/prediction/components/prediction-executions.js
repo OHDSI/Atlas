@@ -14,7 +14,9 @@ define([
 	'services/MomentAPI',
 	'utils/ExecutionUtils',
 	'../const',
+	'const',
 	'lodash',
+	'services/JobDetailsService',
 	'less!./prediction-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -33,7 +35,9 @@ define([
 	momentApi,
 	ExecutionUtils,
 	consts,
+	globalConsts,
 	lodash,
+	jobDetailsService
 ){
 
 	class PredictionGeneration extends AutoBind(Component) {
@@ -47,6 +51,7 @@ define([
 			this.analysisId = params.analysisId;
 			this.dirtyFlag = params.dirtyFlag;
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
+			this.criticalCount = params.criticalCount;
 
 			this.predictionStatusGenerationOptions = consts.predictionGenerationStatus;
 			this.isExitMessageShown = ko.observable();
@@ -106,7 +111,16 @@ define([
 		}
 
 		isGeneratePermitted(sourceKey) {
-			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) && config.api.isExecutionEngineAvailable();
+			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) 
+				&& config.api.isExecutionEngineAvailable() && this.criticalCount() <= 0;
+		}
+
+		generateDisabledReason(sourceKey) {
+			if (this.isGeneratePermitted(sourceKey)) return null;
+			if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+			if (!config.api.isExecutionEngineAvailable()) return globalConsts.disabledReasons.ENGINE_NOT_AVAILABLE;
+			if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+			return globalConsts.disabledReasons.ACCESS_DENIED;
 		}
 
 		isResultsViewPermitted(id) {
@@ -182,7 +196,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => PredictionService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 
