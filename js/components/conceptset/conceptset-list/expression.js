@@ -46,8 +46,10 @@ define([
 			this.saveConceptSetShow = ko.observable();
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
 			this.data = ko.observable(this.normalizeData());
-			this.data.subscribe(this.updateExpressionItems);
-			this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
+			this.subscriptions.push(
+				this.data.subscribe(this.updateExpressionItems),
+				this.selectedConcepts.subscribe(val => this.data(this.normalizeData())),
+			);
 		}
 
 		normalizeData() {

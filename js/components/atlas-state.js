@@ -134,15 +134,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
-
-	ko.subscribable.fn.subscribeChanged = function (callback, context) {
-		var savedValue = this.peek();
-		return this.subscribe(function (latestValue) {
-			var oldValue = savedValue;
-			savedValue = latestValue;
-			callback.call(context, latestValue, oldValue);
-		});
-	};
 	
 
 	// Define ConceptSetStore for each module with conceptSet tab
