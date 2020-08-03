@@ -56,7 +56,7 @@ define([
 			this.selectedTabKey = ko.observable();
 			if (this.appConfig.userAuthenticationEnabled) {
 				this.tabs.push({
-					title: 'User jobs',
+					title: 'My jobs',
 					key: constants.jobTypes.USER_JOB.title,
 					componentName: 'user-bar-jobs',
 					componentParams: this.userJobParams,
