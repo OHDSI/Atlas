@@ -17,12 +17,28 @@ define(
 			name: 'Has ancestor of',
 			range: [1, 1]
 		}]
-	};
+  };
+  
+    const importModes = {
+      IDENTIFIERS: {
+        key: 'identifiers',
+        title: 'Concept Identifiers',
+      },
+			SOURCE_CODES: {
+        key: 'source_codes',
+        title: 'Source Codes'
+      },
+      CONCEPT_SET: {
+        key: 'concept_set',
+        title: 'Concept Set',
+      },
+    };
 
     return {
 	    defaultConceptHierarchyRelationships,
       pageTitle,
       paths,
+      importModes,
     };
   }
 );

@@ -53,7 +53,7 @@ define(function (require, exports) {
 		};
 	}
 
-	function enhanceConceptSet(conceptSetItem) {
+	function enhanceConceptSetItem(conceptSetItem) {
 		return {
 			...conceptSetItem,
 			isExcluded: ko.observable(conceptSetItem.isExcluded),
@@ -240,8 +240,8 @@ define(function (require, exports) {
 	function setConceptSet(conceptset, expressionItems, source) {
 		let conceptSetItemsToAdd = [];
 		const currentConceptSet = sharedState[`${source}ConceptSet`];
-		expressionItems.forEach(conceptSet => {
-			const conceptSetItem = enhanceConceptSet(conceptSet);
+		expressionItems.forEach(item => {
+			const conceptSetItem = enhanceConceptSetItem(item);
 			currentConceptSet.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID] = {
 				isExcluded: conceptSetItem.isExcluded,
 				includeDescendants: conceptSetItem.includeDescendants,
@@ -408,7 +408,7 @@ define(function (require, exports) {
 		getIncludedConceptSetDrawCallback: getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler: getAncestorsModalHandler,
 		getAncestorsRenderFunction: getAncestorsRenderFunction,
-		enhanceConceptSet,
+		enhanceConceptSetItem,
 		loadConceptSet,
 		loadConceptSetExpression,
 		lookupIdentifiers,

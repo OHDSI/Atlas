@@ -32,6 +32,7 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
+	'./components/tabs/conceptset-import',
 	'components/security/access/configure-access-modal',
 	'components/authorship',
 	'components/name-validation',
@@ -194,6 +195,15 @@ define([
 						componentParams: params,
 				},
 				{
+					title: 'Import',
+					componentName: 'conceptset-import',
+					componentParams: { 
+						...params,
+						canEditCurrentConceptSet: this.canEdit,
+						currentConceptSetStore: sharedState.repositoryConceptSet,
+					},
+				},
+				{
 						title: 'Compare',
 						componentName: 'conceptset-compare',
 						componentParams: {
@@ -201,7 +211,7 @@ define([
 							saveConceptSetFn: this.saveConceptSet,
 							saveConceptSetShow: this.saveConceptSetShow,
 						},
-				}
+				},
 			];
 			this.selectedTab = ko.observable(this.routerParams.mode);
 
@@ -390,7 +400,7 @@ define([
 				.then((optimizationResults) => {
 					var optimizedConcepts = [];
 					optimizationResults.optimizedConceptSet.items.forEach((item) => {
-						optimizedConcepts.push(conceptSetService.enhanceConceptSet(item));
+						optimizedConcepts.push(conceptSetService.enhanceConceptSetItem(item));
 					});
 					var removedConcepts = [];
 					optimizationResults.removedConceptSet.items.forEach((item) => {

@@ -1,0 +1,40 @@
+<div class="conceptset-import-tab">
+  <ul class="nav nav-pills" data-bind="foreach: Object.keys(importModes)">
+    <li
+      role="presentation"
+      data-bind="
+        click: () => $component.currentImportMode($component.importModes[$data].key),
+        attr: {
+          class: $component.currentImportMode() == $component.importModes[$data].key ? 'active' : '',
+        },
+      "
+    >
+      <a data-bind="text: $component.importModes[$data].title"></a>
+    </li>
+  </ul>
+
+  <!-- ko foreach: pills -->
+    <div data-bind="if: $component.currentImportMode() === $data.key">
+      <access-denied params=" isAuthenticated: $data.isAuthenticated, isPermitted: $data.isPermitted"></access-denied>
+      <!-- ko if: $data.isAuthenticated() && $data.isPermitted() -->
+        <div class="heading">
+          <span data-bind="text: $data.titleText"></span>&nbsp;
+          (<a class="linkish" data-bind="click: () => $data.onClear($data.textareaId)">click to clear</a>)
+        </div>
+        <textarea class="form-control" rows="5" data-bind="attr: { id: $data.textareaId }"></textarea>
+        <a data-bind="click: () => $data.onImport($data.textareaId)" class="btn btn-sm btn-primary pull-right">
+          <span class="fa fa-upload"></span>&nbsp;
+          <span data-bind="text: $data.importText"></span>
+        </a>
+      <!-- /ko -->
+    </div>
+  <!-- /ko -->
+
+  <!-- ko if: loading -->
+  <loading></loading>
+  <!-- /ko -->
+
+  <!-- ko if: error -->
+    <empty-state params="message: error"></empty-state>
+  <!-- /ko -->
+</div>

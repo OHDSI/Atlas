@@ -23,7 +23,6 @@ define([
 			super(params);
 			this.importConceptSetExpressionItems = params.importConceptSetExpressionItems;
 			this.importConceptSetJson = ko.observable();
-			this.currentConceptSet = sharedState.ConceptSet.current;
 		}
 
 		async runImport() {
