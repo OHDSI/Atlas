@@ -5,14 +5,16 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.roles = ko.observableArray();
 	state.sources = ko.observableArray([]);
 
+	const updateKey = (key, value) => value ? sessionStorage.setItem(key, value) : sessionStorage.removeItem(key);
 	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
 	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
 	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
-	const updateKey = (key, value) => value ? sessionStorage.setItem(key, value) : sessionStorage.removeItem(key);
 	state.vocabularyUrl.subscribe(value => updateKey('vocabularyUrl', value));
 	state.evidenceUrl.subscribe(value => updateKey('evidenceUrl', value));
 	state.resultsUrl.subscribe(value => updateKey('resultsUrl', value));
 
+	// This default values are stored during initialization
+	// and used to reset after session finished
 	state.defaultVocabularyUrl = ko.observable();
 	state.defaultEvidenceUrl = ko.observable();
 	state.defaultResultsUrl = ko.observable();
