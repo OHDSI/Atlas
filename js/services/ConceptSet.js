@@ -62,7 +62,8 @@ define(function (require, exports) {
 	}
 
 	function loadConceptSetExpression(conceptSetId) {
-		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression/' + sharedState.sourceKeyOfVocabUrl()).then(({ data }) => data);
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression' + (sourceKey ? `/${sourceKey}`: '')).then(({ data }) => data);
 	}
 
 	function lookupIdentifiers(identifiers) {
