@@ -20,16 +20,17 @@ define([
 	'services/analysis/ConceptSetCrossReference',
 	'featureextraction/InputTypes/CovariateSettings',
 	'services/FeatureExtraction',
+	'services/Poll',
 	'lodash',
 	'faceted-datatable',
     'components/tabs',
 	'./components/cca-specification-view-edit',
 	'./components/cca-utilities',
-	'./components/cca-executions',
 	'less!./cca-manager.less',
 	'databindings',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (
@@ -54,6 +55,7 @@ define([
 	ConceptSetCrossReference,
 	CovariateSettings,
 	FeatureExtractionService,
+	{PollService},
 	lodash
 ) {
 	class ComparativeCohortAnalysisManager extends Page {
@@ -88,24 +90,6 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
-			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
-			});
-			this.componentParams = ko.observable({
-				comparisons: sharedState.estimationAnalysis.comparisons,
-				defaultCovariateSettings: this.defaultCovariateSettings,
-				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
-				estimationAnalysis: sharedState.estimationAnalysis.current,
-				estimationId: sharedState.estimationAnalysis.selectedId,
-				fullAnalysisList: this.fullAnalysisList,
-				fullSpecification: this.fullSpecification,
-				loading: this.loading,
-				loadingMessage: this.loadingMessage,
-				packageName: this.packageName,
-				subscriptions: this.subscriptions,
-				isEditPermitted: this.canSave
-			});
 
 			this.isNameFilled = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();
@@ -131,6 +115,39 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
+			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+
+			this.canSave = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
+			});
+
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canEdit());
+			this.componentParams = ko.observable({
+				comparisons: sharedState.estimationAnalysis.comparisons,
+				defaultCovariateSettings: this.defaultCovariateSettings,
+				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
+				estimationAnalysis: sharedState.estimationAnalysis.current,
+				estimationId: sharedState.estimationAnalysis.selectedId,
+				fullAnalysisList: this.fullAnalysisList,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				loadingMessage: this.loadingMessage,
+				packageName: this.packageName,
+				subscriptions: this.subscriptions,
+				criticalCount: this.criticalCount,
+				analysisId: sharedState.estimationAnalysis.selectedId,
+				PermissionService,
+				ExecutionService: EstimationService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'estimation-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
+				isEditPermitted: this.canEdit,
+				PollService: PollService,
+			});
+
 			this.isNewEntity = this.isNewEntityResolver();
 
 			this.populationCaption = ko.computed(() => {
@@ -147,21 +164,6 @@ define([
 
 			this.criticalCount = ko.observable(0);
 
-			this.componentParams = ko.observable({
-				comparisons: sharedState.estimationAnalysis.comparisons,
-				defaultCovariateSettings: this.defaultCovariateSettings,
-				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
-				estimationAnalysis: sharedState.estimationAnalysis.current,
-				estimationId: sharedState.estimationAnalysis.selectedId,
-				fullAnalysisList: this.fullAnalysisList,
-				fullSpecification: this.fullSpecification,
-				loading: this.loading,
-				loadingMessage: this.loadingMessage,
-				packageName: this.packageName,
-				subscriptions: this.subscriptions,
-				criticalCount: this.criticalCount,
-			});
-
 			this.warningParams = ko.observable({
 				current: sharedState.estimationAnalysis.current,
 				warningsTotal: ko.observable(0),
@@ -170,6 +172,7 @@ define([
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				onDiagnoseCallback: this.diagnose.bind(this),
+				checkOnInit: true,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -340,8 +343,16 @@ define([
 
 		diagnose() {
 			if (this.estimationAnalysis()) {
+				// do not pass modifiedBy and createdBy parameters to check
+				const modifiedBy = this.estimationAnalysis().modifiedBy;
+				this.estimationAnalysis().modifiedBy = null;
+				const createdBy = this.estimationAnalysis().createdBy;
+				this.estimationAnalysis().createdBy = null;
 				const payload = this.prepForSave();
+				this.estimationAnalysis().modifiedBy = modifiedBy;
+				this.estimationAnalysis().createdBy = createdBy;
 				return EstimationService.runDiagnostics(payload);
+
 			}
 		}
 
@@ -358,7 +369,7 @@ define([
 			const specification = JSON.parse(analysis.data.specification);
 			// ignore createdBy and modifiedBy
 			const { createdBy, modifiedBy, ...props } = header;
-			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...props }, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...header }, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);

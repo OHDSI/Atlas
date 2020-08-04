@@ -207,6 +207,7 @@ define([
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				onDiagnoseCallback: this.diagnose.bind(this),
+				checkOnInit: true,
 			});
 
 			this.warningClass = ko.computed(() => {

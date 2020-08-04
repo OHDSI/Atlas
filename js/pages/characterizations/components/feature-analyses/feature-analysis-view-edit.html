@@ -1,11 +1,9 @@
 <div data-bind="html: $component.template"></div>
 
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Feature Analysis...'"></loading>
-
 <!-- ko if:data -->
 <div data-bind="css: classes()">
     <heading-title params="name: featureCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark'"></heading-title>
-    <!-- ko if: !!data().id -->
+    <!-- ko if: !!data() && !!data().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
     <div class="asset-heading">
@@ -17,7 +15,8 @@
                 </div>
                 <button class="btn btn-primary" data-bind="click: closeAnalysis, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity -->
-                <button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
+                <button type="button" class="btn btn-primary" data-bind="click: copyFeatureAnalysis, css: {disabled: !canCopy() || isProcessing() }, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" data-bind="visible: isOwner, enable: !isProcessing(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
                 <button class="btn btn-danger" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
@@ -204,6 +203,8 @@
     </div>
 </div>
 <!-- /ko -->
+
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: isCopying() ? 'Copying Feature Analysis...' : 'Loading Feature Analysis...'"></loading>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,

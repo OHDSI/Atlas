@@ -247,6 +247,21 @@ define([
 			PENDING: 'PENDING',
 		};
 
+		const executionStatuses = {
+			STARTED: 'STARTED',
+			COMPLETED: 'COMPLETED',
+			PENDING: 'STARTING',
+			FAILED: 'FAILED',
+			CANCELED: 'STOPPED',
+			STOPPING: 'STOPPING',
+			RUNNING: 'RUNNING',
+		};
+
+		const executionResultModes = {
+			DOWNLOAD: 'DOWNLOAD',
+			VIEW: 'VIEW',
+		}
+
 		const newEntityNames = {
 			characterization: ko.i18n('const.newEntityNames.characterization', 'New Characterization'),
 			featureAnalysis: ko.i18n('const.newEntityNames.featureAnalysis', 'New Feature Analysis'),
@@ -302,6 +317,17 @@ define([
 			},
 		};
 
+		const jobTypes = {
+			USER_JOB: {
+				title: 'userJob',
+				ownerType: 'USER_JOB',
+			},
+			ALL_JOB: {
+				title: 'allJob',
+				ownerType: 'ALL_JOB',
+			},
+		};
+
 		const disabledReasons = {
 			DIRTY: 'Save changes to generate',
 			ACCESS_DENIED: 'Access denied',
@@ -329,8 +355,11 @@ define([
 			timeAtRiskCohortDate,
 			newEntityNames,
 			pluginTypes,
+			executionStatuses,
+			executionResultModes,
 			sqlDialects,
 			disabledReasons,
+			jobTypes,
     };
   }
 );

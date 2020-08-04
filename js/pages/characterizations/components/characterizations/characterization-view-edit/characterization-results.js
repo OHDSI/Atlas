@@ -168,7 +168,7 @@ define([
           this.executionDesign(null);
           this.isExecutionDesignShown(true);
           CharacterizationService
-            .loadCharacterizationExportDesignByGeneration(this.executionId())
+            .loadExportDesignByGeneration(this.executionId())
             .then(res => {
               this.executionDesign(res);
               this.loading(false);
@@ -235,7 +235,7 @@ define([
             Promise.all([
                 SourceService.loadSourceList(),
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
-                CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
+                CharacterizationService.loadExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId(), params),
                 CharacterizationService.loadCharacterizationResultsCount(this.executionId()),

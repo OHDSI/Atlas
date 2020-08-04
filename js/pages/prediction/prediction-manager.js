@@ -20,6 +20,7 @@ define([
 	'services/analysis/ConceptSet',
 	'services/analysis/ConceptSetCrossReference',
 	'services/AuthAPI',
+	'services/Poll',
 	'lodash',
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
@@ -29,11 +30,11 @@ define([
     'components/tabs',
 	'./components/prediction-specification-view-edit',
 	'./components/prediction-utilities',
-	'./components/prediction-executions',
 	'less!./prediction-manager.less',
 	'components/security/access/configure-access-modal',
 	'databindings',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (
@@ -58,6 +59,7 @@ define([
 	ConceptSet,
 	ConceptSetCrossReference,
 	authAPI,
+	{PollService},
 	lodash
 ) {
 	const NOT_FOUND = 'NOT FOUND';
@@ -96,7 +98,6 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.plp);
-
 			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
 
 			this.canDelete = ko.pureComputed(() => {
@@ -139,6 +140,29 @@ define([
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
 
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canEdit());
+			this.componentParams = ko.observable({
+				analysisId: this.selectedAnalysisId,
+				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
+				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
+				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
+				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
+				fullAnalysisList: this.fullAnalysisList,
+				packageName: this.packageName,
+				fullSpecification: this.fullSpecification,
+				loading: this.loading,
+				subscriptions: this.subscriptions,
+				PermissionService,
+				ExecutionService: PredictionService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'prediction-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
+				PollService: PollService,
+			});
+
 			this.criticalCount = ko.observable(0);
 
 			this.componentParams = ko.observable({
@@ -163,6 +187,7 @@ define([
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				onDiagnoseCallback: this.diagnose.bind(this),
+				checkOnInit: true,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -223,7 +248,14 @@ define([
 
 		diagnose() {
 			if (this.patientLevelPredictionAnalysis()) {
+				// do not pass modifiedBy and createdBy parameters to check
+				const modifiedBy = this.patientLevelPredictionAnalysis().modifiedBy;
+				this.patientLevelPredictionAnalysis().modifiedBy = null;
+				const createdBy = this.patientLevelPredictionAnalysis().createdBy;
+				this.patientLevelPredictionAnalysis().createdBy = null;
 				const payload = this.prepForSave();
+				this.patientLevelPredictionAnalysis().modifiedBy = modifiedBy;
+				this.patientLevelPredictionAnalysis().createdBy = createdBy;
 				return PredictionService.runDiagnostics(payload);
 			}
 		}
@@ -363,9 +395,7 @@ define([
 		loadAnalysisFromServer(analysis) {
 			var header = analysis.json;
 			var specification = JSON.parse(analysis.data.specification);
-			// ignore createdBy and modifiedBy
-			const { createdBy, modifiedBy, ...props } = header;
-			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...props }));
+			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({ ...specification, ...header }));
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
 			this.setAnalysisSettingsLists();

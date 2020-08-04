@@ -24,6 +24,7 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
+    'components/heading',
     'components/authorship',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',

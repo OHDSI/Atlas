@@ -9,7 +9,8 @@ define([
 	'pages/Page',
 	'utils/CommonUtils',
 	'utils/DatatableUtils',
-	'less!./browser.less'
+	'less!./browser.less',
+	'components/heading'
 ], function (
 	ko,
 	view,

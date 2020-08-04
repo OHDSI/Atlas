@@ -24,6 +24,7 @@ define([
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (
@@ -85,7 +86,8 @@ define([
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
 				criticalCount: this.criticalCount,
-                isEditPermitted: this.canEdit,
+				isEditPermitted: this.canEdit,
+				extraExecutionPermissions: this.canEdit,
 			});
 			this.warningParams = ko.observable({
 				current: sharedState.CohortPathways.current,

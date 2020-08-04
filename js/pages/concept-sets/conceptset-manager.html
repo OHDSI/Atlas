@@ -4,7 +4,7 @@
 
 <!-- ko if: currentConceptSet() != null && !loading() -->
 <heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'),  icon: 'shopping-cart', theme: 'dark'"></heading-title>
-<!-- ko if: !!currentConceptSet().id -->
+<!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 <!-- /ko -->
 <div data-bind="css: classes()">
