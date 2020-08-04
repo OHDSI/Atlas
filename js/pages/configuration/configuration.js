@@ -168,6 +168,7 @@ define([
     updateVocabPriority() {
       var newVocabUrl = sharedState.vocabularyUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultVocabularyUrl(newVocabUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
       return true;
     };
@@ -175,6 +176,7 @@ define([
     updateEvidencePriority() {
       var newEvidenceUrl = sharedState.evidenceUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultEvidenceUrl(newEvidenceUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'CEM');
       return true;
     };
@@ -182,6 +184,7 @@ define([
     updateResultsPriority() {
       var newResultsUrl = sharedState.resultsUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.resultsUrl === newResultsUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultResultsUrl(newResultsUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };
