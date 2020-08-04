@@ -1,14 +1,13 @@
 <div data-bind="if: $component.jobListing().length <= 0">
-    Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
-    have new notifications available.
+    <span data-bind="html: ko.i18n('notifications.explanation', 'Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class=\'fa fa-bell pending\'></i> if you have new notifications available.')"></span>
 </div>
 <div data-bind="if: $component.jobListing().length > 0">
     <table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
         <thead>
-        <th>Job Name</th>
-        <th>Duration</th>
-        <th>End time</th>
-        <th>Status</th>
+        <th data-bind="text: ko.i18n('notifications.jobName', 'Job Name')"></th>
+        <th data-bind="text: ko.i18n('notifications.duration', 'Duration')"></th>
+        <th data-bind="text: ko.i18n('notifications.endTime', 'End time')"></th>
+        <th data-bind="text: ko.i18n('notifications.status', 'Status')"></th>
         </thead>
         <tbody>
         <!-- ko foreach: jobListing -->
@@ -18,7 +17,7 @@
             </td>
             <td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
             <td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
-            <td data-bind="css: $parent.classes('job-status'), html: status"></td>
+            <td data-bind="css: $parent.classes('job-status'), text: ko.i18n('executionStatus.values.' + status, status)"></td>
         </tr>
         <!-- /ko -->
         </tbody>

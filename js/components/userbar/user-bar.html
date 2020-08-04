@@ -7,12 +7,19 @@
 	<!-- ko ifnot: loading -->
 	<!-- for notifications, job completion, etc. -->
 	<div class="user-bar-container">
+		<select data-bind="css: classes('locale'), foreach:availableLocales, value: locale">
+			<option data-bind="value: $data.code, text:$data.name"></option>
+		</select>
 		<!-- ko if: isLoggedIn -->
 		<a data-bind="click: function () { $component.jobModalOpened(true) }"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
 		<!-- /ko -->
 		<div data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
-			<div title="Sign In" data-bind="if: !isLoggedIn() || tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i>Sign In</a></div>
-			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: fullName"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
+			<div data-bind="title: ko.i18n('components.userBar.signin', 'Sign In'), if: !isLoggedIn() || tokenExpired()">
+				<span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i><span data-bind="text: ko.i18n('components.userBar.signin', 'Sign In')"></span></a>
+			</div>
+			<div data-bind="title: ko.i18n('components.userBar.signout', 'Sign Out'), if: isLoggedIn() && !tokenExpired()">
+				<span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: fullName"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a>
+			</div>
 		</div>
 	</div>
 	<!-- /ko -->
@@ -23,14 +30,14 @@
 		showModal: signInOpened,
 		modifiers: ['sm'],
 		iconClass: 'fa fa-sign-in',
-		title: 'Sign In',
+		title: ko.i18n('components.userBar.signin', 'Sign In'),
 }">
 	<welcome></welcome>
 </atlas-modal>
 
 <atlas-modal params="{
 		showModal: jobModalOpened,
-		title: 'Notifications (last ' + $component.jobsCount() + ')',
+		title: ko.i18nformat('notifications.title', 'Notifications (last <%=length%>)', {length: $component.jobsCount()}),
 		templateWrapperClass: {},
 		data: {
 			tabs: $component.tabs,
@@ -55,7 +62,12 @@
 
 		<div data-bind="css: classes({ element: 'filter-button', extra: ['btn-group', 'pull-right'] })">
 			<button type="button" class="btn btn-sm btn-primary" data-bind="click: toggleCompletedFilter">
-				<span data-bind="text: (hideCompleted ? 'Show' : 'Hide') + ' completed jobs'"></span>
+				<!-- ko if: hideCompleted -->
+				<span data-bind="text: ko.i18n('notifications.showCompletedJobsButton', 'Show completed jobs')"></span>
+				<!-- /ko -->
+				<!-- ko ifnot: hideCompleted -->
+				<span data-bind="text: ko.i18n('notifications.hideCompletedJobsButton', 'Hide completed jobs')"></span>
+				<!-- /ko -->
 				<i data-bind="visible: isRefreshing, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
 			</button>
 		</div>
