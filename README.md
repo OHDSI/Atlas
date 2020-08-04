@@ -14,18 +14,18 @@
 
 ATLAS is built using HTML, CSS and [Knockout JavaScript](http://knockoutjs.com/ "Knockout JavaScript"). For more information on using Atlas, please refer to the [setup guide](https://github.com/OHDSI/Atlas/wiki/Atlas-Setup-Guide "setup guide").
 
-## Geospacial support
+## Geo spatial support
 
-Geospacial is an optional component that provides to build analyses utilizing locations and areas.
+Geo spatial is an optional component that provides to build analyses utilizing locations and areas.
 To enable this component do the following:
-* first build [WebAPI](https://github.com/OHDSI/WebAPI) with geospacial enabled, following instructions 
+* first build [WebAPI](https://github.com/OHDSI/WebAPI) with geospatial enabled, following instructions 
 from the README
-* clone or download sources from the [Atlas Component Geospacial](https://github.com/OHDSI/atlas-component-geospacial)
+* clone or download sources from the [Atlas Component Geospatial](https://github.com/OHDSI/atlas-component-geospatial)
 * and place them to the directory served by any HTTP server
 
   For example if you're using Apache and the /var/www/atlas is a Atlas root directory
 accessible by the http://yourserver.com/atlas, 
-then place geospacial component into the /var/www/atlas/js/gis directory.
+then place geospatial component into the /var/www/atlas/js/gis directory.
 Following configuration component would rely on these deployment environment.
  
 * Add the following to the `config-local.js` file:
@@ -38,7 +38,7 @@ Following configuration component would rely on these deployment environment.
   ];
 
 ```
-* Now Geospacial features should be available on the Cohort's Report page and the Person Profile page
+* Now Geo spatial features should be available on the Cohort's Report page and the Person Profile page
 
 
 ## Dependencies
