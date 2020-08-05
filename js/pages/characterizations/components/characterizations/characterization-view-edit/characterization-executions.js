@@ -3,6 +3,7 @@ define([
 	'pages/characterizations/services/CharacterizationService',
 	'pages/characterizations/services/PermissionService',
 	'pages/characterizations/const',
+	'const',
 	'text!./characterization-executions.html',
 	'appConfig',
 	'services/AuthAPI',
@@ -15,7 +16,7 @@ define([
 	'services/Source',
 	'lodash',
 	'services/JobDetailsService',
-	'services/Poll',
+	'services/JobPollService',
 	'services/MomentAPI',
 	'less!./characterization-executions.less',
 	'./characterization-results',
@@ -26,6 +27,7 @@ define([
 	CharacterizationService,
 	PermissionService,
 	consts,
+	globalConsts,
 	view,
 	config,
 	authApi,
@@ -38,7 +40,7 @@ define([
 	SourceService,
 	lodash,
 	jobDetailsService,
-	PollService,
+	JobPollService,
 	momentApi,
 ) {
 	class CharacterizationViewEditExecutions extends AutoBind(Component) {
@@ -48,7 +50,8 @@ define([
 			this.ccGenerationStatusOptions = consts.ccGenerationStatus;
 
 			this.characterizationId = params.characterizationId;
-			this.designDirtyFlag = params.designDirtyFlag;
+			this.designDirtyFlag = params.designDirtyFlag;			
+			this.criticalCount = params.criticalCount;
 			this.currentHash = ko.computed(() => params.design() ? params.design().hashCode : 0);
 
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
@@ -122,15 +125,15 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = JobPollService.add({
 				callback: silently => this.loadData({ silently }),
 				interval: 10000,
-				isSilentAfterFirstCall: true,
+				isSilentAfterFirstCall: true
 			});
 		}
 
 		dispose() {
-			PollService.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 
 		isViewGenerationsPermittedResolver() {
@@ -141,7 +144,15 @@ define([
 
 		isExecutionPermitted(sourceKey) {
 			return PermissionService.isPermittedGenerateCC(this.characterizationId(), sourceKey) && !this.designDirtyFlag().isDirty() &&
-				this.design().cohorts().length;
+				this.design().cohorts().length && this.criticalCount() <= 0;
+		}
+
+		generateDisabledReason(sourceKey) {
+			if (this.isExecutionPermitted(sourceKey)) return null;
+			if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+			if (!this.design().cohorts().length) return globalConsts.disabledReasons.EMPTY_COHORTS;
+			if (this.designDirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+			return globalConsts.disabledReasons.ACCESS_DENIED;
 		}
 
 		isResultsViewPermitted(sourceKey) {
