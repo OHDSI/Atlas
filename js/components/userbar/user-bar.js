@@ -46,11 +46,13 @@ define([
 				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
 					.filter( j => j.ownerType === constants.jobTypes.USER_JOB.ownerType)),
 				jobNameClick: this.jobNameClick.bind(this),
+				showAsHyperlinks: true,
 			};
 			this.allJobParams = {
 				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
 					.filter( j => j.ownerType === constants.jobTypes.ALL_JOB.ownerType)),
 				jobNameClick: this.jobNameClick.bind(this),
+				showAsHyperlinks: false,
 			};
 			this.tabs = [];
 			this.selectedTabKey = ko.observable();
