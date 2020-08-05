@@ -243,13 +243,8 @@ define([
 		}
 
 		getAuthorship() {
-			const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
-			const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
 			return {
-					createdBy: lodash.get(this.design(), 'createdBy.name'),
-					createdDate,
-					modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
-					modifiedDate,
+				entity: this.design(),
 			}
 		}
 

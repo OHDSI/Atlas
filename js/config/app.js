@@ -9,7 +9,7 @@ define(function () {
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
 	appConfig.cohortComparisonResultsEnabled = false;
-	appConfig.userAuthenticationEnabled = false;
+	appConfig.userAuthenticationEnabled = true;
 	appConfig.plpResultsEnabled = false;
 	appConfig.useExecutionEngine = false;
 	appConfig.viewProfileDates = false;
