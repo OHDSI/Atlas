@@ -37,7 +37,7 @@ define([
 			return AuthAPI.isPermitted(`prediction:${id}:export:get`);
 		}
 
-		static isPermittedGenerate(sourceKey, id) {
+		static isPermittedGenerate(id, sourceKey) {
 			return AuthAPI.isPermitted(`prediction:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
 		}
 
@@ -45,7 +45,7 @@ define([
 			return AuthAPI.isPermitted(`prediction:${id}:generation:get`);
 		}
 
-		static isPermittedViewResults(id) {
+		static isPermittedResults(id) {
 			return AuthAPI.isPermitted(`prediction:generation:${id}:result:get`);
 		}
 

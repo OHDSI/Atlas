@@ -43,6 +43,7 @@ define([
 			this.packageName = params.packageName;
 			this.targetCohorts = params.targetCohorts;
 			this.outcomeCohorts = params.outcomeCohorts;
+			this.criticalCount = params.criticalCount;
 			this.covariateSettings = this.patientLevelPredictionAnalysis().covariateSettings;
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
@@ -57,38 +58,7 @@ define([
 			this.isPermittedExport = PermissionService.isPermittedExport;
 			this.isPermittedImport = PermissionService.isPermittedImport;
 
-			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
-				return (
-					this.targetCohorts().length > 0 &&
-					this.outcomeCohorts().length > 0 &&
-					(this.modelSettings != null && this.modelSettings().length > 0) &&
-					(this.covariateSettings != null && this.covariateSettings().length > 0) &&
-					(this.populationSettings != null && this.populationSettings().length > 0)
-				);
-			});
-
-			this.specificationHasUniqueSettings = ko.pureComputed(() => {
-				let result = this.specificationMeetsMinimumRequirements();
-				if (result) {
-					// Check to make sure the other settings are unique
-					const uniqueModelSettings = new Set(this.modelSettings().map((ms) => { return ko.toJSON(ms)}));
-					const uniqueCovariateSettings = new Set(this.covariateSettings().map((cs) => { return ko.toJSON(cs)}));
-					const uniquePopulationSettings = new Set(this.populationSettings().map((ps) => { return ko.toJSON(ps)}));
-					result = (
-							this.modelSettings().length === uniqueModelSettings.size &&
-							this.covariateSettings().length === uniqueCovariateSettings.size &&
-							this.populationSettings().length === uniquePopulationSettings.size
-					)
-				}
-				return result;
-			});
-
-			this.specificationValid = ko.pureComputed(() => {
-				return (
-					this.specificationMeetsMinimumRequirements() && 
-					this.specificationHasUniqueSettings()
-				)
-			});
+			this.specificationValid = ko.pureComputed(() => this.criticalCount() <= 0);
 
 			this.validPackageName = ko.pureComputed(() => {
 				return (this.packageName() && this.packageName().length > 0)

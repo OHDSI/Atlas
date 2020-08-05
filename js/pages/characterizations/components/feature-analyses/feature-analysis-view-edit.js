@@ -14,7 +14,7 @@ define([
     'atlas-state',
     'services/AuthAPI',
     'services/Vocabulary',
-	'services/Permission',
+    'services/Permission',
 	'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
     'pages/Page',
@@ -30,6 +30,8 @@ define([
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
+    'components/heading',
+    'components/authorship',
 	'components/security/access/configure-access-modal',
     'components/name-validation',
 ], function (
@@ -48,7 +50,7 @@ define([
     sharedState,
     authApi,
     VocabularyAPI,
-	GlobalPermissionService,
+    GlobalPermissionService,
 	{ entityType },
     ConceptSet,
     Page,
@@ -84,6 +86,7 @@ define([
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
+            this.isCopying = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
             this.isNameFilled = ko.computed(() => {
@@ -109,6 +112,7 @@ define([
             });
             this.canDelete = this.isDeletePermittedResolver();
             this.isNewEntity = this.isNewEntityResolver();
+            this.canCopy = ko.pureComputed(() => PermissionService.isPermittedCopyFa(this.featureId()));
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
@@ -125,7 +129,7 @@ define([
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
                     if (this.featureId() !== 0) {
-                        return 'Feature Analysis #' + this.featureId();
+                        return `Feature Analysis #${this.featureId()}`;
                     } else {
                         return this.defaultName;
                     }
@@ -134,7 +138,7 @@ define([
             this.isSaving = ko.observable(false);
             this.isDeleting = ko.observable(false);
             this.isProcessing = ko.computed(() => {
-                return this.isSaving() || this.isDeleting();
+                return this.isSaving() || this.isDeleting() || this.isCopying();
             });
             this.initialFeatureType = ko.observable();
             this.isPresetFeatureTypeAvailable = ko.pureComputed(() => {
@@ -227,7 +231,7 @@ define([
             this.loading(false);
         }
 
-        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy }) {
+        setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy, createdDate, modifiedBy, modifiedDate }) {
             const isDomainAvailable = !!this.domains() && !!this.domains()[0];
             const defaultDomain = isDomainAvailable ? this.domains()[0].value : '';
             const anaylysisDomain = domain || defaultDomain;
@@ -243,6 +247,9 @@ define([
               statType: ko.observable(),
               conceptSets: ko.observableArray(),
               createdBy: ko.observable(),
+              createdDate: ko.observable(),
+              modifiedBy: ko.observable(),
+              modifiedDate: ko.observable(),
             };
             data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
 
@@ -282,6 +289,9 @@ define([
             data.statType(statType);
             data.statType.subscribe(() => this.data().design([]));
             data.createdBy(createdBy);
+            data.createdDate(createdDate);
+            data.modifiedBy(modifiedBy);
+            data.modifiedDate(modifiedDate);
             this.data(data);
             this.dataDirtyFlag(new ohdsiUtil.dirtyFlag(this.data()));
             this.previousDesign = { [type]: parsedDesign };
@@ -408,6 +418,33 @@ define([
 
         copyAnalysisSQLTemplateToClipboard() {
             this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');
+        }
+
+        async copyFeatureAnalysis() {
+            this.isCopying(true);
+            this.loading(true);
+            try {
+                const { data } = await FeatureAnalysisService.copyFeatureAnalysis(this.featureId());
+                this.setupAnalysisData(data);
+                commonUtils.routeTo(`cc/feature-analyses/${data.id}`);
+            } catch(err) {
+                console.error(err);
+                alert('Failed to copy feature analysis.');
+            } finally {
+                this.isCopying(false);
+                this.loading(false);
+            }
+        }
+        
+        getAuthorship() {
+            const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
+            const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
+            return {
+                createdBy: this.data().createdBy(),
+                createdDate,
+                modifiedBy: this.data().modifiedBy(),
+                modifiedDate,
+            }
         }
     }
 

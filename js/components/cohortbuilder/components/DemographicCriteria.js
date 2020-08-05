@@ -39,7 +39,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./Dem
 			{
 				text: "Add Event End Date Criteria",
 				selected: false,
-				description: "Filter Events by End Date",
+				description: "Filter Events by End Date.",
 				action: function () {
 					if (self.Criteria.OccurrenceEndDate() == null)
 						self.Criteria.OccurrenceEndDate(new Range({

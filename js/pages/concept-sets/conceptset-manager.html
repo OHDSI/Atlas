@@ -3,8 +3,10 @@
 <!-- /ko -->
 
 <!-- ko if: currentConceptSet() != null && !loading() -->
-<heading-title params="name: conceptSetCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
-
+<heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : '(Read only)',  icon: 'shopping-cart', theme: 'dark'"></heading-title>
+<!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+<!-- /ko -->
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
     <div class="input-group">

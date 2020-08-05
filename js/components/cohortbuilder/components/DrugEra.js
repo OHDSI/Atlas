@@ -60,7 +60,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 			{
 				text: "Add Era End Date Criteria",
 				selected: false,
-				description: "Filter Drug Eras  by the Era End Date",
+				description: "Filter Drug Eras by the Era End Date.",
 				action: function () {
 					if (self.Criteria.EraEndDate() == null)
 						self.Criteria.EraEndDate(new Range({
@@ -89,7 +89,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the drug era as the index event",
+				description: "Apply criteria using the drug era as the index event.",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));

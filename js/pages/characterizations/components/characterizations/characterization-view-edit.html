@@ -2,7 +2,10 @@
 
 <!-- ko if:design -->
 <div data-bind="css: classes()">
-    <heading-title params="name: characterizationCaption(), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : '(Read only)', icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <!-- ko if: !!design() && !!design().id -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
     <div class="asset-heading">
         <div class="input-group">
             <input type="text" placeholder="New Characterization" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
@@ -43,6 +46,14 @@
                 key: 'utilities',
                 componentName: 'characterization-view-edit-utils',
                 componentParams: $component.componentParams,
+            },
+            {
+                title: 'Messages', 
+                key: 'messages',
+                componentName: 'warnings',
+                componentParams: $component.warningParams,
+                hasBadge: true,
+                preload: true,
             },
         ]">
     </tabs>

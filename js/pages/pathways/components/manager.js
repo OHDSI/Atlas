@@ -1,7 +1,6 @@
 define([
 	'knockout',
 	'text!./manager.html',
-	'pages/Router',
 	'../PathwayService',
 	'../PermissionService',
 	'services/Permission',
@@ -24,11 +23,13 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'components/checks/warnings',
+	'components/heading',
+	'components/authorship',
 	'components/name-validation',
 ], function (
 	ko,
 	view,
-	router,
 	PathwayService,
 	PermissionService,
 	GlobalPermissionService,
@@ -51,7 +52,7 @@ define([
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
 			this.analysisId = ko.observable();
-			this.executionId = ko.observable(router.routerParams().executionId);
+			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
 			this.defaultName = constants.newEntityNames.pathway;
 
@@ -78,18 +79,28 @@ define([
 			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
-			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
-			this.componentParams = {
+			this.criticalCount = ko.observable(0);
+			this.componentParams = ko.observable({
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
-				selectedSourceId: this.selectedSourceId,
 				dirtyFlag: this.dirtyFlag,
-				isEditPermitted: this.canEdit
-			};
+				criticalCount: this.criticalCount,
+				isEditPermitted: this.canEdit,
+				extraExecutionPermissions: this.canEdit,
+			});
+			this.warningParams = ko.observable({
+				current: sharedState.CohortPathways.current,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
+			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return 'Cohort Pathway #' + this.design().id;
+					return `Cohort Pathway #${this.design().id}`;
 				}
 				return this.defaultName;
 			});
@@ -107,20 +118,23 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({analysisId, section, executionId, sourceId}) {
+		onRouterParamsChanged({analysisId, section, subId}) {
 			if (analysisId !== undefined) {
 				this.analysisId(parseInt(analysisId));
 				this.load(this.analysisId() || 0);
 			}
-			if (section !== undefined) {
-				this.setupSection(section);
-			}
-			this.executionId(executionId);
-			this.selectedSourceId(sourceId);
+			this.setupSection(section);
+			this.executionId(subId);
 		}
 
 		selectTab(index, { key }) {
-			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams.analysisId(), key));
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams().analysisId(), key));
+		}
+
+		diagnose() {
+			if (this.design()) {
+				return PathwayService.runDiagnostics(this.design());
+			}
 		}
 
 		setupDesign(design) {
@@ -226,6 +240,17 @@ define([
 			this.dirtyFlag().reset();
 
 			commonUtils.routeTo('/pathways');
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
+			return {
+					createdBy: lodash.get(this.design(), 'createdBy.name'),
+					createdDate,
+					modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
+					modifiedDate,
+			}
 		}
 
 	}
