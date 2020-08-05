@@ -14,11 +14,11 @@
         <!-- ko foreach: jobListing -->
         <tr data-bind="css: { warning: !viewed() }">
             <td data-bind="css: $parent.classes('job-name')">
-                <div data-bind="if: $parent.showAsHyperlinks">
+                <div data-bind="if: $parent.jobNameClick">
                     <i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> 
                     <a data-bind="click: () => { $parent.jobNameClick($data); }, text: $data.name" class="linkish"></a>
                 </div>
-                <div data-bind="if: !$parent.showAsHyperlinks">
+                <div data-bind="if: !$parent.jobNameClick">
                     <i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> 
                     <span data-bind="text: $data.name"></span>
                 </div>

@@ -16,7 +16,6 @@ define([
 
 			this.jobNameClick = params.jobNameClick;
 			this.jobListing = params.jobListing;
-			this.showAsHyperlinks = params.showAsHyperlinks;
 		}
 	}
 
