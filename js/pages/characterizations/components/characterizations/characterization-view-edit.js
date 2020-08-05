@@ -53,7 +53,8 @@ define([
         constructor(params) {
             super(params);
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
-            this.executionId = ko.observable();
+            this.executionId = ko.observable(params.router.routerParams().executionId);
+            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
             this.design = sharedState.CohortCharacterization.current;
@@ -100,6 +101,7 @@ define([
                 duplicatedStrataNames: this.duplicatedStrataNames,
                 criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
+                selectedSourceId: this.selectedSourceId,
             });
             this.warningParams = ko.observable({
                 current: sharedState.CohortCharacterization.current,
@@ -135,7 +137,7 @@ define([
 			});
         }
 
-        onRouterParamsChanged({ characterizationId, section, subId }) {
+        onRouterParamsChanged({ characterizationId, section, executionId, sourceId }) {
             if (characterizationId !== undefined) {
                 this.characterizationId(parseInt(characterizationId));
                 this.loadDesignData(this.characterizationId() || 0);
@@ -145,9 +147,12 @@ define([
                 this.setupSection(section);
             }
 
-            if (subId !== undefined) {
-                this.executionId(subId);
-            }
+			if (executionId !== undefined) {
+				this.executionId(executionId);
+			}
+			if (sourceId !== undefined) {
+				this.selectedSourceId(sourceId);
+			}
         }
 
         isEditPermittedResolver() {

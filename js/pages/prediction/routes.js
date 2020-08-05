@@ -4,7 +4,7 @@ define(
     const atlasState = require('atlas-state');
     function routes(router) {
 
-      const predictionViewEdit = new AuthorizedRoute((analysisId, section, subSection) => {
+      const predictionViewEdit = new AuthorizedRoute((analysisId, section, sourceId) => {
         require([
           './prediction-manager',
           './components/editors/evaluation-settings-editor',
@@ -17,7 +17,7 @@ define(
           router.setCurrentView('prediction-manager', {
             id: analysisId,
             section: section || 'specification',
-            subSection: subSection,
+            sourceId: section === 'executions' ? sourceId : null,
           });
         });
       });
@@ -30,7 +30,7 @@ define(
         }),
         '/prediction/:analysisId:': predictionViewEdit,
         '/prediction/:analysisId:/:section:': predictionViewEdit,
-        '/prediction/:analysisId:/:section:/:subSection:': predictionViewEdit,
+        '/prediction/:analysisId:/:section:/:sourceId:': predictionViewEdit,
       };
     }
 

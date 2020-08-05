@@ -32,28 +32,28 @@
 		</div>
 
 		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.selectTab('definition'); }">
 				<a>Definition <i data-bind="click: function () { $component.cohortDefinitionOpened(true) }" class="fa fa-question-circle-o"></i></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.selectTab('conceptsets'); }">
 				<a>Concept Sets</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
 				<a>Generation</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
 				<a>Reporting</a>
 			</li>
 			<!--
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }"><a>Explore</a></li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }"><a>Explore</a></li>
 			-->
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.selectTab('export')">
 				<a>Export</a>
 			</li>
-			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
 				<a>Messages <span 
 					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
 			</li>

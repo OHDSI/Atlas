@@ -1060,7 +1060,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						let selectedSourceInfo = this.cohortDefinitionSourceInfo().find(s => s.sourceKey === source.sourceKey)
 						this.expandSelectedSection(selectedSourceInfo);
 					}
+				} else {
+					this.selectedReportSource(null);
 				}
+			}
+
+			expandSelectedSection(item) {
+				this.selectedReportSource(item);
 			}
 
 			getSourceInfo(source) {
@@ -1178,7 +1184,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				}
 			}
-			
+
 
 			async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey) {
 				this.isLoading(true);
@@ -1286,10 +1292,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			expandSelectedSection(item) {
-				this.selectedReportSource(item);
-			}
-
 			toggleCohortReport(item) {
 				if (this.selectedReportSource() && this.selectedReportSource().sourceKey === item.sourceKey) {
 					this.selectedReportSource(null);
@@ -1298,6 +1300,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					this.selectedReportSource(item);
 					commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/generation/' + item.sourceId);
 				}
+			}
+
+			selectTab(key) {
+				this.tabMode(key);
+				return commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/' + key);
 			}
 
 			getStatusMessage (info) {
@@ -1545,7 +1552,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				}
 			}
-
+			
 			getAuthorship() {
 				const cohortDef = this.currentCohortDefinition();
 				return {
@@ -1554,11 +1561,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					modifiedBy: this.currentCohortDefinition().modifiedBy(),
 					modifiedDate: this.currentCohortDefinition().modifiedDate()
 				}
-			}
-
-			selectTab(key) {
-				this.tabMode(key);
-				return commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/' + key);
 			}
 	}
 

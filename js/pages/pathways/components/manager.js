@@ -51,6 +51,8 @@ define([
 
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
+            this.executionId = ko.observable(params.router.routerParams().executionId);
+            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
@@ -87,7 +89,7 @@ define([
 				dirtyFlag: this.dirtyFlag,
 				criticalCount: this.criticalCount,
 				isEditPermitted: this.canEdit,
-				extraExecutionPermissions: this.canEdit,
+                selectedSourceId: this.selectedSourceId,
 			});
 			this.warningParams = ko.observable({
 				current: sharedState.CohortPathways.current,
@@ -118,13 +120,22 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({analysisId, section, subId}) {
+		onRouterParamsChanged({analysisId, section,  executionId, sourceId}) {
 			if (analysisId !== undefined) {
 				this.analysisId(parseInt(analysisId));
 				this.load(this.analysisId() || 0);
 			}
-			this.setupSection(section);
-			this.executionId(subId);
+
+            if (section !== undefined) {
+                this.setupSection(section);
+            }
+
+			if (executionId !== undefined) {
+				this.executionId(executionId);
+			}
+			if (sourceId !== undefined) {
+				this.selectedSourceId(sourceId);
+			}
 		}
 
 		selectTab(index, { key }) {

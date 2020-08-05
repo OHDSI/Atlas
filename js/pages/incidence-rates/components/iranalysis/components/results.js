@@ -35,6 +35,8 @@ define([
 			super(params);
 			this.sources = params.sources;
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
+			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
+			this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 			this.hasSourceAccess = authApi.hasSourceAccess;
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
@@ -78,17 +80,16 @@ define([
 				return "per " + multiplier  + " persons";
 			});
 
-			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
-			this.selectedSourceId.subscribe(() => this.selectSource());
-
 			// observable subscriptions
 
 			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
-				this.selectSource(this.selectedSource());
+				if (this.selectedSourceId()) // this will cause a report refresh
+					this.expandSelectedSource();
 			}));
 			
 			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
-				this.selectSource(this.selectedSource());
+				if (this.selectedSourceId()) // this will cause a report refresh
+					this.expandSelectedSource();
 			}));
 
 			this.executionDisabled = ko.pureComputed(() => {
@@ -106,6 +107,8 @@ define([
 			this.disableExportAnalysis = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
 			});
+
+			this.expandSelectedSource();
 		}
 
 		reportDisabledReason(source) {
@@ -124,6 +127,15 @@ define([
 
 		isSummaryLoading(sourceItem) {
 			return sourceItem.source && this.loadingSummary && this.loadingSummary().find(sourceKey => sourceKey === sourceItem.source.sourceKey);
+		}
+
+		getSourceName() {
+			if (this.selectedSourceId()) {
+				const source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
+				if (source) {
+					return source.source.sourceName;
+				}
+			}
 		}
 
 		showExitMessage(sourceKey) {
@@ -170,10 +182,20 @@ define([
 		}
 
 		selectSource(source) {
+			if (source) {
+				this.selectedSourceId(source);
+			}
+		}
 
-			// fail-fast if source/targets are not set,
+		expandSelectedSource() {			
 			if (!(this.selectedTarget() && this.selectedOutcome())) {
-				this.selectedSource(null);
+				this.selectedReport(null);
+				return;
+			}
+
+			const source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
+			if (!source) {
+				// no source was selected
 				this.selectedReport(null);
 				return;
 			}
@@ -181,18 +203,9 @@ define([
 			if (this.sourceInfoSubscribeId) {
 				this.sourceInfoSubscribeId.dispose();
 			}
-			if (!source) {
-                source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
-                if (!source) {
-					// no source was selected
-					this.selectedSource(null);
-					this.selectedReport(null);
-                    return;
-                }
-			}
 			if (!source.info()) {
 				// if sources were not loaded yet - wait for their loading
-				this.sourceInfoSubscribeId = source.info.subscribe(() => this.selectSource(null));
+				this.sourceInfoSubscribeId = source.info.subscribe(() => this.expandSelectedSource());
 				// prevent further processing
 				return;
 			}
@@ -201,7 +214,7 @@ define([
 				// prevent further processing
 				return;
 			}
-			this.selectedSource(source);
+
 			this.isLoading(true);
 
 			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome())
@@ -233,7 +246,6 @@ define([
 		}
 
 		closeReport() {
-			this.selectedSource(null);
 			this.selectedReport(null);
 		}
 

@@ -49,7 +49,7 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/results/' +
 				        n.executionId;
 				} else {
-				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/executions';
+				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/executions/' + n.jobParameters.source_id;
 				}
 			case 'generatePathwayAnalysis':
 				if (n.status == 'COMPLETED') {

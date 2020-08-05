@@ -113,7 +113,7 @@
 <!-- ko if: selectedReport -->
 	<div data-bind="css: classes('report-block'), visible: !isLoading()">
 		<div data-bind="css: classes('report-header')">
-			<h3 data-bind="css: classes('report-title'), text: selectedSource() ? selectedSource().source.sourceName : ''"></h3>
+			<h3 data-bind="css: classes('report-title'), text: getSourceName()"></h3>
 			<a data-bind="css: classes('report-close'), click: closeReport">Close</a>
 		</div>
 		<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, calculateProportion: calculateProportion, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption, ipCaption: ipCaption"></ir-analysis-report>
