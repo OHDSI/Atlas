@@ -61,7 +61,7 @@ define(function (require, exports) {
 				.catch(error => authApi.handleAccessDenied(error));
 	}
 
-	function listGenerations(id) {
+	function listExecutions(id) {
     	return httpService.doGet(config.webAPIRoot + predictionEndpoint + id + '/generation')
 				.then(res => res.data)
 				.catch(error => authApi.handleAccessDenied(error));
@@ -79,9 +79,15 @@ define(function (require, exports) {
 			.then(res => res.data)
 			.catch(error => authApi.handleAccessDenied(error));
 	}
+ 
+	function runDiagnostics(design) {
+		return httpService
+			.doPost(`${config.webAPIRoot}${predictionEndpoint}check`, design)
+			.then(res => res.data);
+	}
 
 
-    var api = {
+	return {
 		getPredictionList: getPredictionList,
 		savePrediction: savePrediction,
 		copyPrediction: copyPrediction,
@@ -90,10 +96,9 @@ define(function (require, exports) {
 		exportPrediction: exportPrediction,
 		importPrediction: importPrediction,
 		generate,
-		listGenerations,
+		listExecutions,
 		exists,
+		runDiagnostics,
 	};
-
-	return api;
 });
 

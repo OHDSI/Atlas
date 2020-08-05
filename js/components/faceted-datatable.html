@@ -23,7 +23,8 @@
 							data: $component.tableData,
 							options: $component.options,
 							scrollOptions: $component.scrollOptions,
-							onRowClick: $component.rowClick
+							onRowClick: $component.rowClick,
+							api: dtApi
 					} "><!-- ko if: $component.headersTemplateId -->
 					<thead data-bind="template: { name: $component.headersTemplateId }"></thead><!-- /ko -->
 				</table>

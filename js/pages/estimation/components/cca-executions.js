@@ -13,8 +13,10 @@ define([
 	'services/file',
 	'services/MomentAPI',
 	'../const',
+	'const',
 	'utils/ExecutionUtils',
 	'lodash',
+	'services/JobDetailsService',
 	'less!./cca-executions.less',
 	'components/modal-exit-message',
 ], function(
@@ -28,12 +30,14 @@ define([
 	PermissionService,
 	EstimationService,
 	SourceService,
-	PollService,
+	{PollService},
 	FileService,
 	momentApi,
 	consts,
+	globalConsts,
 	ExecutionUtils,
 	lodash,
+	jobDetailsService
 ) {
 
 	class EstimationGeneration extends AutoBind(Component) {
@@ -46,6 +50,7 @@ define([
 			this.analysisId = params.estimationId;
 			this.dirtyFlag = params.dirtyFlag;
 			this.isViewGenerationsPermitted = this.isViewGenerationsPermittedResolver();
+			this.criticalCount = params.criticalCount;
 
 			this.estimationStatusGenerationOptions = consts.estimationGenerationStatus;
 			this.isExitMessageShown = ko.observable();
@@ -105,7 +110,16 @@ define([
 		}
 
 		isGeneratePermitted(sourceKey) {
-			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) && config.api.isExecutionEngineAvailable();
+			return !this.dirtyFlag().isDirty() && PermissionService.isPermittedGenerate(sourceKey, this.analysisId()) 
+				&& config.api.isExecutionEngineAvailable() && this.criticalCount() <= 0;
+		}
+
+		generateDisabledReason(sourceKey) {
+			if (this.isGeneratePermitted(sourceKey)) return null;
+			if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+			if (!config.api.isExecutionEngineAvailable()) return globalConsts.disabledReasons.ENGINE_NOT_AVAILABLE;
+			if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+			return globalConsts.disabledReasons.ACCESS_DENIED;
 		}
 
 		isResultsViewPermitted(id) {
@@ -160,7 +174,10 @@ define([
 			this.loading(true);
 			ExecutionUtils.StartExecution(executionGroup)
 				.then(() => EstimationService.generate(this.analysisId(), sourceKey))
-				.then(() => this.loadData())
+				.then((data) => {
+					jobDetailsService.createJob(data);
+					this.loadData()
+				})
 				.catch(() => {});
 		}
 
