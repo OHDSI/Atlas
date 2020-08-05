@@ -65,6 +65,7 @@ define([
 			} else {
 				this.selectedTabKey(constants.jobTypes.ALL_JOB.title);
 				this.jobNotificationsPending = ko.computed(() => this.allJobParams.jobListing().filter(j => !j.viewed()).length);
+				this.allJobParams.jobNameClick = this.jobNameClick.bind(this);
 			}
 			this.tabs.push({
 				title: 'All jobs',
