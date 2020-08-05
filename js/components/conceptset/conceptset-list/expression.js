@@ -45,15 +45,10 @@ define([
 			this.newConceptSetName = ko.observable();
 			this.saveConceptSetShow = ko.observable();
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
-			this.data = ko.observable(this.normalizeData());
+			this.data = ko.pureComputed(() => this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!ko.unwrap(concept.isSelected)) })));
 			this.subscriptions.push(
 				this.data.subscribe(this.updateExpressionItems),
-				this.selectedConcepts.subscribe(val => this.data(this.normalizeData())),
 			);
-		}
-
-		normalizeData() {
-      return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!ko.unwrap(concept.isSelected)) }));
 		}
 		
 		updateExpressionItems(items) {
@@ -100,18 +95,15 @@ define([
 
 		addConcepts() {
 			sharedState.activeConceptSet(sharedState[this.currentConceptSetStoreKey]);
-			commonUtils.routeTo('#/search');
+			commonUtils.routeTo('/search');
 		}
 
 		deleteConcepts() {
 			const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
-			const indexesForRemoval = conceptsForRemoval.map(concept => concept.idx);
       conceptSetService.removeConceptsFromConceptSet({
         concepts: conceptsForRemoval,
         source: this.currentConceptSetSource,
 			});
-      const data = this.data().filter(({ concept}) => !indexesForRemoval.includes(concept.idx));
-      this.data(data);
 		}
 
 		async saveConceptSet() {

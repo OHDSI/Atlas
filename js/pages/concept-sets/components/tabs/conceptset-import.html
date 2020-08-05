@@ -3,7 +3,7 @@
     <li
       role="presentation"
       data-bind="
-        click: () => $component.currentImportMode($component.importModes[$data].key),
+        click: () => $component.changeImportMode($component.importModes[$data].key),
         attr: {
           class: $component.currentImportMode() == $component.importModes[$data].key ? 'active' : '',
         },
@@ -22,16 +22,23 @@
           (<a class="linkish" data-bind="click: () => $data.onClear($data.textareaId)">click to clear</a>)
         </div>
         <textarea class="form-control" rows="5" data-bind="attr: { id: $data.textareaId }"></textarea>
-        <a data-bind="click: () => $data.onImport($data.textareaId)" class="btn btn-sm btn-primary pull-right">
-          <span class="fa fa-upload"></span>&nbsp;
-          <span data-bind="text: $data.importText"></span>
-        </a>
+        <div class="btn-group pull-right">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="fa fa-upload"></span>&nbsp;
+            <span data-bind="text: $data.importText"></span>
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a href="#" data-bind="text: $data.appendText, click: () => $data.onImport($data.textareaId, $component.importTypes.APPEND)"></a></li>
+            <li><a href="#" data-bind="text: $data.overwriteText, click: () => $data.onImport($data.textareaId, $component.importTypes.OVERWRITE)"></a></li>
+          </ul>
+        </div>
       <!-- /ko -->
     </div>
   <!-- /ko -->
 
   <!-- ko if: loading -->
-  <loading></loading>
+    <loading></loading>
   <!-- /ko -->
 
   <!-- ko if: error -->

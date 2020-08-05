@@ -34,11 +34,17 @@ define(
       },
     };
 
+    const importTypes = {
+      OVERWRITE: 'overwrite',
+      APPEND: 'append',
+    };
+
     return {
 	    defaultConceptHierarchyRelationships,
       pageTitle,
       paths,
       importModes,
+      importTypes,
     };
   }
 );

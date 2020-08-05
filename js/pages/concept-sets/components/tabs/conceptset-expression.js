@@ -37,9 +37,8 @@ define([
       });
 
       this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
-      this.data = ko.observable(this.normalizeData());
       this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
-      this.selectedConcepts.subscribe(val => this.data(this.normalizeData()));
+      this.data = ko.pureComputed(() => this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) })));
 
       this.columns = [
         {
@@ -121,13 +120,10 @@ define([
 
     removeConceptsFromConceptSet() {
       const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
-      const indexesForRemoval = conceptsForRemoval.map(concept => concept.idx);
       conceptSetService.removeConceptsFromConceptSet({
         concepts: conceptsForRemoval,
         source: globalConstants.conceptSetSources.repository
       });
-      const data = this.data().filter((concept) => !indexesForRemoval.includes(concept.idx));
-      this.data(data);
     }
 
 		selectAllConceptSetItems(key, areAllSelected) {
@@ -142,7 +138,7 @@ define([
 
     navigateToSearchPage() {
       sharedState.activeConceptSet(sharedState.repositoryConceptSet);
-      commonUtils.routeTo('#/search');
+      commonUtils.routeTo('/search');
     }
 
 	}

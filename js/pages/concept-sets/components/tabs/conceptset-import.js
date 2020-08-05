@@ -30,14 +30,12 @@ define([
       this.currentConceptSetStore = params.currentConceptSetStore;
       this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
       this.importModes = constants.importModes;
-
+      this.importTypes = constants.importTypes;
       this.currentConceptSet = this.currentConceptSetStore.current;
 
       this.error = ko.observable('');
       this.loading = ko.observable(false);
       this.currentImportMode = ko.observable(this.importModes.IDENTIFIERS.key);
-
-
 
       this.isAuthenticated = ko.pureComputed(() => AuthAPI.isAuthenticated);
       this.isPermittedLookupIds = ko.pureComputed(() => PermissionService.isPermittedLookupIds());
@@ -46,6 +44,8 @@ define([
       this.commonParams = {
         onClear: id => this.clearTextarea(id),
         isAuthenticated: this.isAuthenticated,
+        appendText: 'Append to Concept Set Expression',
+        overwriteText: 'Overwrite Concept Set Expression',
       }
       
       this.pills = [
@@ -63,7 +63,7 @@ define([
           key: this.importModes.SOURCE_CODES.key,
           titleText: 'Enter Source Codes',
           importText: 'Import Source Codes',
-          onImport: this.importConceptIdentifiers,
+          onImport: this.importSourceCodes,
           textareaId: 'textImportSourcecodes',
           isPermitted: this.isPermittedLookupCodes,
         },
@@ -79,7 +79,7 @@ define([
       ];
     }
 
-    async importConcepts(textareaId, method) {
+    async importConcepts(textareaId, method, type) {
       try {
         this.error('');
         this.loading(true);
@@ -89,8 +89,12 @@ define([
           this.loading(false);
         } else {
           const { data } = await VocabularyService[method](identifiers);
-          const concepts = items.map(conceptSetItem => commonUtils.createConceptSetItem(conceptSetItem));
-          this.appendConceptsToConceptSet(concepts);
+          if (!data.length) {
+            this.error('No concepts found');
+            return;
+          }
+          const concepts = data.map(conceptSetItem => commonUtils.createConceptSetItem(conceptSetItem));
+          this.addConceptsToConceptSetExpression(concepts, type);
           this.clearAndNavigate(textareaId);
         }
       } catch (err) {
@@ -100,24 +104,46 @@ define([
       }
     }
 
-    importConceptIdentifiers(textareaId) {
-      return this.importConcepts(textareaId, 'getConceptsById');
+    importConceptIdentifiers(textareaId, type) {
+      if (this.confirmAction(type)) {
+        return this.importConcepts(textareaId, 'getConceptsById', type);
+      }
     }
 
-    importSourceCodes(textareaId) {
-      return this.importConcepts(textareaId, 'getConceptsByCode');
+    importSourceCodes(textareaId, type) {
+      if (this.confirmAction(type)) {
+        return this.importConcepts(textareaId, 'getConceptsByCode', type);
+      }
     }
 
-    importConceptSet(textareaId) {
-      const id = `#${textareaId}`;
+    confirmAction(type) {
+      let isConfirmed = true;
+      if(type === this.importTypes.OVERWRITE) {
+        isConfirmed = confirm('Are you sure you want to overwrite current Concept Set Expression?');
+      }
+      return isConfirmed;
+    }
+
+    changeImportMode(mode) {
+      this.error('');
+      this.currentImportMode(mode);
+    }
+
+    importConceptSet(textareaId, type) {
       try {
         this.error('');
         this.loading(true);
         const expression = $(`#${textareaId}`).val();
         const items = JSON.parse(expression).items;
-        const concepts = items.map(conceptSetItem => ConceptSetService.enhanceConceptSetItem(conceptSetItem));
-        this.appendConceptsToConceptSet(concepts);
-        this.clearAndNavigate(id);
+        if (!Array.isArray(items) || !items.length) {
+          this.error('No concepts found');
+          return;
+        }
+        if (this.confirmAction(type)) {
+          const concepts = items.map(conceptSetItem => ConceptSetService.enhanceConceptSetItem(conceptSetItem));
+          this.addConceptsToConceptSetExpression(concepts, type);
+          this.clearAndNavigate(textareaId);
+        }
       } catch (err) {
         console.log(err);
         this.error('Unable to parse JSON');
@@ -126,10 +152,15 @@ define([
       }
     }
 
-    appendConceptsToConceptSet(concepts = []) {
-      concepts.forEach(concept => {
-        this.currentConceptSetStore.selectedConcepts.push(concept);
-      });
+    addConceptsToConceptSetExpression(concepts = [], type) {
+      if (type === this.importTypes.APPEND) {
+        concepts.forEach(concept => {
+          this.currentConceptSetStore.selectedConcepts.push(concept);
+        });
+      } else {
+        this.currentConceptSetStore.selectedConcepts(concepts);
+      }
+
       ConceptSetService.resolveConceptSetExpression({
         source: this.currentConceptSetStore.source,
       });
@@ -141,7 +172,7 @@ define([
 
     clearAndNavigate(textareaId) {
       this.clearTextarea(textareaId);
-      return commonUtils.routeTo(`#/conceptset/${this.currentConceptSet().id}/conceptset-expression`);
+      return commonUtils.routeTo(`/conceptset/${this.currentConceptSet().id}/conceptset-expression`);
     }
   }
 
