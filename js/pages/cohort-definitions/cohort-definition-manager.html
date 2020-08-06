@@ -45,36 +45,36 @@
 
 		<ul class="nav nav-tabs">
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition'); }">
+				data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.selectTab('definition'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.definition', 'Definition')"><i
 						data-bind="click: function () { $component.cohortDefinitionOpened(true) }"
 						class="fa fa-question-circle-o"></i></a>
 			</li>
 
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets'); }">
+				data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.selectTab('conceptsets'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.conceptSets', 'Concept Sets')"></a>
 			</li>
 
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation'); }">
+				data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.generation', 'Generation')"></a>
 			</li>
 
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting'); }">
+				data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.reporting', 'Reporting')"></a>
 			</li>
 			<!--
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.explore', 'Explore')"></a>
 			</li>
 			-->
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
+				data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.selectTab('export')">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
-			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
 				<a><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages')"></span> <span
 					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
 			</li>

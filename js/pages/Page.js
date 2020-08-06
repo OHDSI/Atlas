@@ -8,15 +8,21 @@ define([
   _,
 ) {
   function detectChanges(newVal, oldVal) {
-    let nv = newVal[1], ov = oldVal[1];
+    let nn = newVal[0], nv = newVal[1], on = oldVal[0], ov = oldVal[1];
+    if (nn instanceof Function) {
+      nn = nn();
+    }
     if (nv instanceof Function) {
       nv = nv();
+    }
+    if (on instanceof Function) {
+      on = on();
     }
     if (ov instanceof Function) {
       ov = ov();
     }
 
-    return nv === ov;
+    return nn === on && nv === ov;
   }
 
   class Page extends Component {

@@ -329,7 +329,7 @@ define([
 		};
 
 		const disabledReasons = {
-			DIRTY: 'Save changes to generate',
+			DIRTY: 'Save changes before generate',
 			ACCESS_DENIED: 'Access denied',
 			INVALID_TAR: 'Invalid TAR',
 			INVALID_DESIGN: 'Design is not valid',

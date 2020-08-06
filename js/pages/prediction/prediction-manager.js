@@ -140,7 +140,21 @@ define([
 				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
 
-			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canEdit());
+			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
+
+			this.criticalCount = ko.observable(0);
+
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() 
+				&& config.api.isExecutionEngineAvailable() 
+				&& this.canEdit()
+				&& this.criticalCount() <= 0);
+				
+			const generationDisableReason = ko.computed(() => {
+				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
+				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
+				if (config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
+				return globalConstants.disabledReasons.ACCESS_DENIED;
+			});
 			this.componentParams = ko.observable({
 				analysisId: this.selectedAnalysisId,
 				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
@@ -161,21 +175,9 @@ define([
 				downloadApiPaths: constants.apiPaths,
 				runExecutionInParallel: true,
 				PollService: PollService,
-			});
-
-			this.criticalCount = ko.observable(0);
-
-			this.componentParams = ko.observable({
-				analysisId: sharedState.predictionAnalysis.selectedId,
-				patientLevelPredictionAnalysis: sharedState.predictionAnalysis.current,
-				targetCohorts: sharedState.predictionAnalysis.targetCohorts,
-				outcomeCohorts: sharedState.predictionAnalysis.outcomeCohorts,
-				dirtyFlag: sharedState.predictionAnalysis.dirtyFlag,
-				fullAnalysisList: this.fullAnalysisList,
-				packageName: this.packageName,
-				fullSpecification: this.fullSpecification,
-				loading: this.loading,
-				subscriptions: this.subscriptions,
+				selectedSourceId: this.selectedSourceId,
+				generationDisableReason,
+				resultsPathPrefix: '/prediction/',
 				criticalCount: this.criticalCount,
 			});
 
@@ -209,14 +211,17 @@ define([
 			}
 		}
 
-        onRouterParamsChanged({ id, section }) {
+		onRouterParamsChanged({ id, section, sourceId }) {
+			if (section !== undefined) {
+				this.selectedTabKey(section);
+			}
+			if (sourceId !== undefined) {
+				this.selectedSourceId(sourceId);
+			}
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
-				if (section !== undefined) {
-					this.selectedTabKey(section);
-				}
 				this.onPageCreated();
 			}
-        }
+		}
 
         selectTab(index, { key }) {
 			this.selectedTabKey(key);
