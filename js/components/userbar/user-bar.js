@@ -125,7 +125,7 @@ define([
 			this.hideCompleted = ko.computed({
 				owner: ko.observable(localStorage.getItem("jobs-hide-statuses")),
 				read: function() { 
-					return this(); 
+					return this() === 'true'; 
 				},
 				write: function( newValue ) {
 					localStorage.setItem("jobs-hide-statuses", newValue);
