@@ -61,16 +61,13 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', '../const'],
 
         const renderExecutionStatus = () => (s, p, d) => {
             const { executionStatuses } = consts;
+            const status = ko.i18n(`executionStatus.values.${s}`, s)();
             switch (s) {
                 case executionStatuses.FAILED:
-                    return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${s}</a>`;
-                case executionStatuses.CANCELED:
-                    return 'CANCELED';
-                case executionStatuses.PENDING:
-                    return 'PENDING';
+                    return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
                 default:
-                    return s;
-            };
+                    return `${status}`;
+            }
         };
 
         const renderExecutionDuration = () => (s, p, d) => {
@@ -83,7 +80,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', '../const'],
             const { executionStatuses } = consts;
             const { status } = d;
             return status === executionStatuses.COMPLETED
-            ? `<a data-bind="css: $component.classes('reports-link'), click: () => $component.goToResults(id)">View reports</a>`
+            ? `<a data-bind="css: $component.classes('reports-link'), click: () => $component.goToResults(id), text: ko.i18n('components.analysisExecution.datatable.viewReports', 'View reports')"></a>`
             : '-';
         };
 
@@ -91,7 +88,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', '../const'],
             const { executionStatuses } = consts;
             const { status } = d;
             return (status === executionStatuses.COMPLETED || status === executionStatuses.FAILED) && isPermittedFn(d.id) && d.numResultFiles > 0
-                ? `<a href='#' data-bind="ifnot: $component.isDownloadInProgress(id), css: $component.classes('reports-link'), click: () => $component.downloadResults(id)"><i class="comparative-cohort-analysis-executions__action-ico fa fa-download"></i> Download ${d.numResultFiles} files</a><span data-bind="if: $component.isDownloadInProgress(id)"><i class="prediction-generation__action-ico fa fa-spinner fa-spin"></i> Downloading ${d.numResultFiles} files...</span>`
+                ? `<a href='#' data-bind="ifnot: $component.isDownloadInProgress(id), css: $component.classes('reports-link'), click: () => $component.downloadResults(id)"><i class="comparative-cohort-analysis-executions__action-ico fa fa-download"></i> ${ko.i18nformat('components.analysisExecution.datatable.download', 'Download <%=num%> files', {num: d.numResultFiles})()}</a><span data-bind="if: $component.isDownloadInProgress(id)"><i class="prediction-generation__action-ico fa fa-spinner fa-spin"></i> ${ko.i18nformat('components.analysisExecution.datatable.downloading', 'Downloading <%=num%> files...', {num: d.numResultFiles})()}</span>`
                 : '-';
         }
 
@@ -103,7 +100,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', '../const'],
             } else {
               html = tag;
             }
-            html += currentHash() === hashCode ? ' (same as now)' : '';
+            html += currentHash() === hashCode ? ' ' + ko.i18n('components.analysisExecution.datatable.sameAsNow', '(same as now)')() : '';
             return html;
         };
 

@@ -131,10 +131,10 @@ define([
 				&& this.criticalCount() <= 0);
 				
 			const generationDisableReason = ko.computed(() => {
-				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
-				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
-				if (config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
-				return globalConstants.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConstants.disabledReasons.DIRTY);
+				if (this.criticalCount() > 0) return ko.unwrap(globalConstants.disabledReasons.INVALID_DESIGN);
+				if (!config.api.isExecutionEngineAvailable()) return ko.unwrap(globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE);
+				return ko.unwrap(globalConstants.disabledReasons.ACCESS_DENIED);
 			});
 
 			this.componentParams = ko.observable({

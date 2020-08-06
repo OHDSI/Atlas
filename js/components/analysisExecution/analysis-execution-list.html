@@ -1,9 +1,7 @@
 <div data-bind="css: classes()">
-  <loading data-bind="css: classes('loading-panel'), visible: loading" params="status: 'Loading ...'"></loading>
+  <loading data-bind="css: classes('loading-panel'), visible: loading" params="status: ko.i18n('common.loadingWithDots', 'Loading...')"></loading>
   <div data-bind="visible: !loading()">
-    <h2 data-bind="css: classes('title')">
-      Executions
-    </h2>
+    <h2 data-bind="css: classes('title'), text: ko.i18n('components.analysisExecution.title', 'Executions')"></h2>
     <div data-bind="css: classes('content')">
       <!-- ko foreach: executionGroups -->
         <div data-bind="template: {
@@ -22,13 +20,13 @@
 
 <atlas-modal params="
   showModal: $component.isExecutionDesignShown,
-  title: 'Design',
+  title: ko.i18n('components.analysisExecution.designModal.title', 'Design'),
   data: {
     executionDesign: $component.executionDesign,
     classes: $component.classes
   }
 ">
-  <loading data-bind="css: classes('loading-panel'), visible: executionDesign() == null" params="status: 'Loading ...'"></loading>
+  <loading data-bind="css: classes('loading-panel'), visible: executionDesign() == null" params="status: ko.i18n('common.loadingWithDots', 'Loading...')"></loading>
   <div data-bind="if: executionDesign() != null">
     <textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
   </div>
@@ -36,7 +34,7 @@
 
 <modal-exit-message params="{
     showModal: $component.isExitMessageShown,
-    title: 'Execution Exit Message',
+    title: ko.i18n('components.analysisExecution.exitModal.title', 'Execution Exit Message'),
     exitMessage: $component.exitMessage,
   }
 ">
@@ -48,75 +46,56 @@
     <div data-bind="css: classes('heading')">
       <label data-bind="css: classes('ds-title'), text: sourceName"></label>
       <ul data-bind="css: classes({ element: 'action-list' })">
-        <li data-bind="
-          css: classes({ element: 'action' }),
-          tooltip: !$component.isGenerationPermitted(sourceKey) ? $component.getDisableReason(sourceKey) : null,
-        ">
-          <button data-bind="
-            css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+        <li data-bind="css: classes({ element: 'action' }),
+          tooltip: !$component.isGenerationPermitted(sourceKey) ? $component.getDisableReason(sourceKey) : null">
+          <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
             attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) },
             click: () => $component.generate(sourceKey),
-            visible: $component.executionStatuses.COMPLETED === status()
-          ">
+            visible: $component.executionStatuses.COMPLETED === status()">
             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
-            <span data-bind="css: classes('action-text')">Generate</span>
+            <span data-bind="css: classes('action-text'), text: ko.i18n('components.analysisExecution.buttons.generate', 'Generate')"></span>
           </button>
-          <a role="button" class="btn btn-sm btn-danger" data-bind="
-            click: () => $component.cancelGenerate(sourceKey),
+          <a role="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.cancelGenerate(sourceKey),
             attr: { disabled: $component.isSourceStopping($data) },
-            visible: $component.executionStatuses.STARTED === status() && !$component.runExecutionInParallel
-          ">
-            <i class="fa fa-spinner fa-spin"></i> Cancel
+            visible: $component.executionStatuses.STARTED === status() && !$component.runExecutionInParallel">
+            <i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
           </a>
-          <a role="button" class="btn btn-sm btn-primary" data-bind="
-            click: () => $component.generate(sourceKey),
-            visible: $component.executionStatuses.STARTED === status() && $component.runExecutionInParallel
-          ">
-            <i class="fa fa-spinner fa-spin"></i> Generating
+          <a role="button" class="btn btn-sm btn-primary" data-bind="click: () => $component.generate(sourceKey),
+            visible: $component.executionStatuses.STARTED === status() && $component.runExecutionInParallel">
+            <i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('components.analysisExecution.buttons.generating', 'Generating')"></span>
           </a>
-          <a role="button" class="btn btn-sm btn-warning" data-bind="
-            attr: { disabled: true },
-            visible: $component.executionStatuses.PENDING === status()
-          ">
-            <i class="fa fa-spinner fa-spin"></i> Pending
+          <a role="button" class="btn btn-sm btn-warning" data-bind="attr: { disabled: true },
+            visible: $component.executionStatuses.PENDING === status()">
+            <i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('components.analysisExecution.buttons.pending', 'Pending')"></span>
           </a>
         </li>
-        <li data-bind="
-          css: classes({ element: 'action' }),
-          tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null",
-        ">
+        <li data-bind="css: classes({ element: 'action' }),
+          tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('components.analysisExecution.messages.permissions', 'Not enough permissions to view results') : null">
           <!-- ko if: $component.executionResultMode === $component.executionResultModes.VIEW -->
             <button data-bind="
               css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
               attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
-              click: () => $component.goToLatestResults(sourceKey)"
-            ">
+              click: () => $component.goToLatestResults(sourceKey)">
               <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
-              View latest result
+              <span data-bind="text: ko.i18n('components.analysisExecution.buttons.latestResult', 'View latest result')"></span>
             </button>
           <!-- /ko -->
           <!-- ko if: $component.executionResultMode === $component.executionResultModes.DOWNLOAD -->
-            <button data-bind="
-              css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+            <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
               attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
-              click: () => $component.downloadLatestResults(sourceKey)"
-            ">
+              click: () => $component.downloadLatestResults(sourceKey)">
               <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-download']})"></i>
-              Download latest result
+              <span data-bind="text: ko.i18n('components.analysisExecution.buttons.downloadLatestResult', 'Download latest result')"></span>
             </button>
           <!-- /ko -->
         </li>
-        <li data-bind="
-          css: classes({ element: 'action' }),
-          tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null"
-        ">
-          <button data-bind="
-            css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+        <li data-bind="css: classes({ element: 'action' }),
+          tooltip: !$component.isResultsViewPermitted(sourceKey) ? ko.i18n('components.analysisExecution.messages.permissions', 'Not enough permissions to view results') : null">
+          <button data-bind="css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
             attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
-            click: toggleSection,
-          ">
+            click: toggleSection">
             <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
-            <span data-bind="text: `All executions (${submissions().length})`"></span>
+            <span data-bind="text: ko.i18nformat('components.analysisExecution.buttons.allExecutions', 'All executions (<%=submissions%>)', {submissions: submissions().length})"></span>
           </button>
         </li>
       </ul>
@@ -130,6 +109,7 @@
             options: {
               columns: execColumns,
               order: [[ 0, 'desc' ]],
+              language: ko.i18n('datatable.language')
             }
           }
         "></table>

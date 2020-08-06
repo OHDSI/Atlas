@@ -329,14 +329,14 @@ define([
 		};
 
 		const disabledReasons = {
-			DIRTY: 'Save changes before generate',
-			ACCESS_DENIED: 'Access denied',
-			INVALID_TAR: 'Invalid TAR',
-			INVALID_DESIGN: 'Design is not valid',
-			ENGINE_NOT_AVAILABLE: 'Execution engine is not available',
-			EMPTY_COHORTS: 'No cohorts found',
-			EMPTY_INITIAL_EVENT: 'Initial event is not set',
-		  };
+			DIRTY: ko.i18n('const.disabledReason.dirty', 'Save changes before generate'),
+			ACCESS_DENIED: ko.i18n('const.disabledReason.accessDenied', 'Access denied'),
+			INVALID_TAR: ko.i18n('const.disabledReason.invalidTar', 'Invalid TAR'),
+			INVALID_DESIGN: ko.i18n('const.disabledReason.invalidDesign', 'Design is not valid'),
+			ENGINE_NOT_AVAILABLE: ko.i18n('const.disabledReason.engineNotAvalable', 'Execution engine is not available'),
+			EMPTY_COHORTS: ko.i18n('const.disabledReason.emptyCohorts', 'No cohorts found'),
+			EMPTY_INITIAL_EVENT: ko.i18n('const.disabledReason.emptyInitionEvent', 'Initial event is not set')
+		};
 
 		return {
 			maxEntityNameLength,

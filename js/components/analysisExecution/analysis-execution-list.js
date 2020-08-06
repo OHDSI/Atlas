@@ -84,28 +84,28 @@ define([
       const currentHash = ko.pureComputed(() => design() && design().hashCode);
       const execColumnsMap = {
         Date: {
-          title: 'Date',
+          title: ko.i18n('columns.date', 'Date'),
           className: this.classes('col-exec-date'),
           render: DatatableUtils.getDateFieldFormatter('startTime'),
         },
         Design: {
-          title: 'Design',
+          title: ko.i18n('columns.design', 'Design'),
           className: this.classes('col-exec-checksum'),
           render: DatatableUtils.renderExecutionDesign(this.PermissionService.isPermittedExportGenerationDesign, currentHash),
         },
         Status: {
-          title: 'Status',
+          title: ko.i18n('columns.status', 'Status'),
           data: 'status',
           className: this.classes('col-exec-status'),
           render: DatatableUtils.renderExecutionStatus(),
         },
         Duration: {
-          title: 'Duration',
+          title: ko.i18n('columns.duration', 'Duration'),
           className: this.classes('col-exec-duration'),
           render: DatatableUtils.renderExecutionDuration(),
         },
         Results: {
-          title: 'Results',
+          title: ko.i18n('columns.results', 'Results'),
           data: 'results',
           className: this.classes('col-exec-results'),
           render: this.executionResultMode === this.executionResultModes.VIEW
@@ -261,7 +261,7 @@ define([
 
     cancelGenerate(sourceKey) {
       this.stopping({...this.stopping(), [sourceKey]: true});
-      if (confirm('Do you want to stop generation?')) {
+      if (confirm(ko.i18n('components.analysisExecution.stopGenerationConfirmation', 'Do you want to stop generation?')())) {
         this.ExecutionService.cancelGeneration(this.analysisId(), sourceKey);
       } else {
         this.stopping({...this.stopping(), [sourceKey]: false});
@@ -313,7 +313,7 @@ define([
         this.goToResults(latestExecutedSubmission.id);
         return;
       }
-      alert('There is no completed executions for the data source yet');
+      alert(ko.i18n('components.analysisExecution.noCompletedExecutionsForDataSource', 'There is no completed executions for the data source yet')());
     }
 
   }

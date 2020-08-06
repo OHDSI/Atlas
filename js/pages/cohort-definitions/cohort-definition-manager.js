@@ -295,11 +295,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.generateDisabledReason = ko.pureComputed(() => {
-				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
+				if (this.criticalCount() > 0) return ko.unwrap(globalConstants.disabledReasons.INVALID_DESIGN);
 				const hasInitialEvent = this.currentCohortDefinition() && this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
-				if (!hasInitialEvent) return globalConstants.disabledReasons.EMPTY_INITIAL_EVENT;
-				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
-
+				if (!hasInitialEvent) return ko.unwrap(globalConstants.disabledReasons.EMPTY_INITIAL_EVENT);
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConstants.disabledReasons.DIRTY);
 				return null;
 			});
 

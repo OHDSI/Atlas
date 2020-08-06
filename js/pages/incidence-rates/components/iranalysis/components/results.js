@@ -100,10 +100,10 @@ define([
 
 			this.executionDisabledReason = ko.pureComputed(() => {
 				if (!this.executionDisabled()) return null;
-				if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
-				if (!this.isTarValid()) return globalConsts.disabledReasons.INVALID_TAR;
-				if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
-				return globalConsts.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConsts.disabledReasons.DIRTY);
+				if (!this.isTarValid()) return ko.unwrap(globalConsts.disabledReasons.INVALID_TAR);
+				if (this.criticalCount() > 0) return ko.unwrap(globalConsts.disabledReasons.INVALID_DESIGN);
+				return ko.unwrap(globalConsts.disabledReasons.ACCESS_DENIED);
 			});
 
 			this.disableExportAnalysis = ko.pureComputed(() => {
@@ -114,7 +114,7 @@ define([
 		}
 
 		reportDisabledReason(source) {
-			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? ko.unwrap(constants.disabledReasons.ACCESS_DENIED) : null);
 		}
 
 		isExecutionDisabled(source) {
