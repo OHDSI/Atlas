@@ -133,7 +133,7 @@ define([
 			const generationDisableReason = ko.computed(() => {
 				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
 				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
-				if (config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
+				if (!config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
 				return globalConstants.disabledReasons.ACCESS_DENIED;
 			});
 
