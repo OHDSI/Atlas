@@ -2,8 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
-	'services/Permission',
-	'components/security/access/const',
+    'services/Permission',
+    'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
@@ -24,13 +24,17 @@ define([
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
     'components/ac-access-denied',
-	'components/security/access/configure-access-modal',
+    'components/heading',
+    'components/authorship',
+    'components/security/access/configure-access-modal',
+    'components/checks/warnings',
+    'components/name-validation',
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
-	GlobalPermissionService,
-	{ entityType },
+    GlobalPermissionService,
+    { entityType },
     CriteriaGroup,
     ConceptSet,
     CharacterizationAnalysis,
@@ -49,7 +53,8 @@ define([
         constructor(params) {
             super(params);
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
-            this.executionId = ko.observable();
+            this.executionId = ko.observable(params.router.routerParams().executionId);
+            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
             this.design = sharedState.CohortCharacterization.current;
@@ -60,8 +65,17 @@ define([
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name();
             });
+            this.isNameCharactersValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+            });
+            this.isNameLengthValid = ko.computed(() => {
+                return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+            });
+            this.isDefaultName = ko.computed(() => {
+                return this.isNameFilled() && this.design().name() === this.defaultName;
+            });
             this.isNameCorrect = ko.computed(() => {
-                return this.isNameFilled() && this.design().name() !== this.defaultName;
+                return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
@@ -76,6 +90,7 @@ define([
             this.isNewEntity = this.isNewEntityResolver();
 
             this.selectedTabKey = ko.observable();
+            this.criticalCount = ko.observable(0);
             this.componentParams = ko.observable({
                 ...params,
                 characterizationId: this.characterizationId,
@@ -84,14 +99,25 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
+                selectedSourceId: this.selectedSourceId,
+            });
+            this.warningParams = ko.observable({
+                current: sharedState.CohortCharacterization.current,
+                warningsTotal: ko.observable(0),
+                warningCount: ko.observable(0),
+                infoCount: ko.observable(0),
+                criticalCount: this.criticalCount,
+                changeFlag: ko.pureComputed(() => this.designDirtyFlag().isChanged()),
+                onDiagnoseCallback: this.diagnose.bind(this),
             });
             this.characterizationCaption = ko.computed(() => {
                 if (this.design()) {
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
                     } else {
-                        return 'Characterization #' + this.characterizationId();
+                        return `Characterization #${this.characterizationId()}`;
                     }
                 }
             });
@@ -104,14 +130,14 @@ define([
                 }
             });
 
-			GlobalPermissionService.decorateComponent(this, {
-				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
-				entityIdGetter: () => this.characterizationId(),
-				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
-			});
+            GlobalPermissionService.decorateComponent(this, {
+                entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
+                entityIdGetter: () => this.characterizationId(),
+                createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+            });
         }
 
-        onRouterParamsChanged({ characterizationId, section, subId }) {
+        onRouterParamsChanged({ characterizationId, section, executionId, sourceId }) {
             if (characterizationId !== undefined) {
                 this.characterizationId(parseInt(characterizationId));
                 this.loadDesignData(this.characterizationId() || 0);
@@ -121,8 +147,11 @@ define([
                 this.setupSection(section);
             }
 
-            if (subId !== undefined) {
-                this.executionId(subId);
+            if (executionId !== undefined) {
+                this.executionId(executionId);
+            }
+            if (sourceId !== undefined) {
+                this.selectedSourceId(sourceId);
             }
         }
 
@@ -162,20 +191,27 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
-        async loadDesignData(id, force = false) {
+        diagnose() {
+            if (this.design()) {
+                return CharacterizationService.runDiagnostics(this.design());
+            }
+        }
 
-        if (!force && this.design() && (this.design().id || 0) === id) return;
-          if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
-            return;
-          }
+        async loadDesignData(id, force = false) {
+            if (!force && this.design() && (this.design().id || 0) === id) {
+                return;
+            }
+            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+                return;
+            }
             if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
-          } else {
-            this.loading(true);
-            const res = await CharacterizationService.loadCharacterizationDesign(id);
-            this.setupDesign(new CharacterizationAnalysis(res));
-            this.loading(false);
-          }
+            } else {
+                this.loading(true);
+                const res = await CharacterizationService.loadCharacterizationDesign(id);
+                this.setupDesign(new CharacterizationAnalysis(res));
+                this.loading(false);
+            }
         }
 
         selectTab(index, { key }) {
@@ -241,6 +277,15 @@ define([
             this.design(null);
             this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');
+        }
+
+        getAuthorship() {
+            return {
+                createdBy: lodash.get(this.design(), 'createdBy.name'),
+                createdDate: this.design().createdAt,
+                modifiedBy: lodash.get(this.design(), 'updatedBy.name'),
+                modifiedDate: this.design().updatedAt,
+            }
         }
     }
 

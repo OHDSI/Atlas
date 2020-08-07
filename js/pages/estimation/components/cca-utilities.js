@@ -50,6 +50,7 @@ define([
 			this.loadingMessage = params.loadingMessage;
 			this.packageName = params.packageName;
 			this.selectedAnalysisId = params.estimationId;
+			this.criticalCount = params.criticalCount;
 			this.exportService = EstimationService.exportEstimation;
 			this.importService = EstimationService.importEstimation;
 			this.isPermittedExport = PermissionService.isPermittedExport;
@@ -57,48 +58,7 @@ define([
 			this.isEditPermitted = params.isEditPermitted;
 			this.cca = constants.getCca(this.isEditPermitted())[0];
 
-			this.specificationMeetsMinimumRequirements = ko.pureComputed(() => {
-				return (
-					this.comparisons().length > 0 &&
-					(this.cohortMethodAnalysisList != null && this.cohortMethodAnalysisList().length > 0)
-				);
-			});
-
-			this.specificationHasFullComparisons = ko.pureComputed(() => {
-				var result = this.specificationMeetsMinimumRequirements(); 
-				if (result) {
-					for(var i = 0; i < this.comparisons().length; i++) {
-						var currentComparison = this.comparisons()[i];
-						if (currentComparison.target().id == 0 || currentComparison.comparator().id == 0 || currentComparison.outcomes().length == 0) {
-							result = false;
-							break;
-						}
-					}
-				}
-				return result;
-			});
-
-			this.specificationHasUniqueSettings = ko.pureComputed(() => {
-				var result = this.specificationMeetsMinimumRequirements() && this.specificationHasFullComparisons();
-				if (result) {
-					// Check to make sure the other settings are unique
-					var uniqueComparisons = new Set(this.comparisons().map((c) => { return (c.target().id + ',' + c.comparator().id) }));
-					var uniqueAnalysisList = new Set(this.cohortMethodAnalysisList().map((a) => { return ko.toJSON(a)}));
-					result = (
-							this.comparisons().length == uniqueComparisons.size &&
-							this.cohortMethodAnalysisList().length == uniqueAnalysisList.size
-					)
-				}
-				return result;
-			});
-
-			this.specificationValid = ko.pureComputed(() => {
-				return (
-					this.specificationMeetsMinimumRequirements() && 
-					this.specificationHasFullComparisons() &&
-					this.specificationHasUniqueSettings()
-				)
-			});
+			this.specificationValid = ko.pureComputed(() => this.criticalCount() <= 0);
 
 			this.validPackageName = ko.pureComputed(() => {
 				return (this.packageName() && this.packageName().length > 0)

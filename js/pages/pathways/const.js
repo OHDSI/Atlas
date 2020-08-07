@@ -13,7 +13,6 @@ define((require, exports) => {
 
 	return {
 		pageTitle,
-		pathwayGenerationStatus,
 		combinationWindowOptions,
 		minCellCountOptions,
 		maxDepthOptions

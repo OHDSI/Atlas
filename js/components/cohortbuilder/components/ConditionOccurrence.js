@@ -54,7 +54,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 			{
 				text: "Add Condition End Date",
 				selected: false,
-				description: "Filter Condition Occurrences  by the Condition End Date",
+				description: "Filter Condition Occurrences by the Condition End Date.",
 				action: function () {
 					if (self.Criteria.OccurrenceEndDate() == null)
 						self.Criteria.OccurrenceEndDate(new Range({
@@ -65,7 +65,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 			{
 				text: "Add Condition Type",
 				selected: false,
-				description: "Filter Condition Occurrences  by the Condition Type.",
+				description: "Filter Condition Occurrences by the Condition Type.",
 				action: function () {
 					if (self.Criteria.ConditionType() == null)
 						self.Criteria.ConditionType(ko.observableArray());
@@ -112,7 +112,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index event",
+				description: "Apply criteria using the condition occurrence as the index event.",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));

@@ -12,7 +12,8 @@ define((require, factory) => {
 				router.setCurrentView('pathways-manager', {
 					analysisId: id,
 					section: section,
-					subId: subId
+					executionId: section === 'results' ? subId : null,
+					sourceId:  section === 'executions' ? subId : null,
 				});
 			});
 		});

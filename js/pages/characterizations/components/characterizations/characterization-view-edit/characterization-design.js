@@ -81,8 +81,6 @@ define([
             };
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
-            this.featureAnalysesSelected = ko.observableArray();
-            this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
             this.showConceptSetBrowser = ko.observable(false);
@@ -118,22 +116,11 @@ define([
             this.showFeatureAnalysesBrowser(false);
         }
 
-        importFeatures() {
+        onSelect(data = []) {
             this.closeFeatureBrowser();
-            this.featureAnalysesSelected().forEach(fe => this.attachFeature(fe));
-        }
-
-        attachFeature({ id, name, description }) {
             const ccDesign = this.design();
-            this.showFeatureAnalysesBrowser(false);
-            ccDesign.featureAnalyses(lodash.uniqBy(
-                    [
-                        ...(ccDesign.featureAnalyses() || []),
-                        { id, name, description }
-                    ],
-                    'id'
-                )
-            );
+            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description']));
+            ccDesign.featureAnalyses(featureAnalyses);
         }
 
         removeFeature(id) {

@@ -1,7 +1,7 @@
 define([
-	'knockout', 
+	'knockout',
 	'text!./prediction-specification-view-edit.html',
-	'utils/AutoBind',	
+	'utils/AutoBind',
 	'components/Component',
 	'utils/CommonUtils',
 	'../const',
@@ -15,8 +15,8 @@ define([
 	'faceted-datatable',
 	'less!./prediction-specification-view-edit.less',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	AutoBind,
 	Component,
 	commonUtils,
@@ -71,7 +71,7 @@ define([
 				this.deleteFromTable(this.modelSettings, obj, rowIndex);
 			} else {
 				this.editModelSettings(data);
-			}		
+			}
 		}
 
 		covariateSettingRowClickHandler(data, obj, tableRow, rowIndex) {
@@ -94,7 +94,7 @@ define([
 			} else {
 				this.editPopulationSettings(data);
 			}
-		}			
+		}
 
 		addTarget() {
 			this.currentCohortList(this.targetCohorts);
@@ -106,10 +106,9 @@ define([
 			this.showCohortSelector(true);
 		}
 
-		cohortSelected(id, name) {
-			if (this.currentCohortList()().filter(a => a.id === parseInt(id)).length == 0) {
-				this.currentCohortList().push(new Cohort({id: id, name: name}));
-			}
+		cohortSelected(items) {
+			const cohortList = items.map(({ id, name }) => new Cohort({ id, name }));
+			this.currentCohortList()(cohortList);
 			this.showCohortSelector(false);
 		}
 
@@ -136,8 +135,8 @@ define([
 			this.editorHeading(headingPrefix + 'Covariate Settings');
 			this.editorDescription('Add or update the covariate settings');
 			this.editorComponentName(editorNamePrefix + 'prediction-covar-settings-editor');
-			this.editorComponentParams({ 
-				covariateSettings: this.patientLevelPredictionAnalysis().covariateSettings()[index], 
+			this.editorComponentParams({
+				covariateSettings: this.patientLevelPredictionAnalysis().covariateSettings()[index],
 			});
 			this.managerMode('editor');
 		}
@@ -158,9 +157,9 @@ define([
 			this.editorDescription('Add or update the covariate settings');
 			this.editorComponentName('prediction-covar-settings-editor');
 			this.editorComponentParams({
-				covariateSettings: settings, 
+				covariateSettings: settings,
 				subscriptions: this.subscriptions,
-				isEditPermitted: this.isEditPermitted,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor');
 		}
@@ -180,7 +179,7 @@ define([
 			this.editorHeading(option.name + ' Model Settings');
 			this.editorDescription('Use the options below to edit the model settings');
 			this.editorComponentName('model-settings-editor');
-			this.editorComponentParams({ 
+			this.editorComponentParams({
 				subscriptions: this.subscriptions,
 				modelSettings: modelSettings,
 				editor: editor,
@@ -201,12 +200,12 @@ define([
 			this.editorHeading('Population Settings');
 			this.editorDescription('Add or update the population settings');
 			this.editorComponentName('population-settings-editor');
-			this.editorComponentParams({ 
+			this.editorComponentParams({
 				populationSettings: settings,
 				subscriptions: this.subscriptions,
 			});
 			this.managerMode('editor');
-		}		
+		}
 
 		closeEditor() {
 			this.editorArray.valueHasMutated();
