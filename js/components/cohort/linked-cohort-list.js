@@ -6,6 +6,7 @@ define([
 	'xss',
 	'appConfig',
 	'text!./linked-cohort-list.html',
+	'const',
 	'components/cohort-definition-browser',
 	'less!./linked-cohort-list.less',
 	'components/linked-entity-list',
@@ -18,12 +19,13 @@ define([
 	lodash,
 	filterXSS,
 	appConfig,
-	view
+	view,
+	globalConstants
 ) {
 	class LinkedCohortList extends Component {
 		constructor(params) {
 			super();
-
+			this.multiChoice = params.multiChoice || false;
 			this.showCohortModal = this.showCohortModal.bind(this);
 			this.removeCohort = this.removeCohort.bind(this);
 
@@ -52,32 +54,15 @@ define([
 			this.newItemLabel = params.newItemLabel || 'Import';
 			this.newItemAction = params.newItemAction || this.showCohortModal;
 			this.data = params.data || ko.observable([]);
-			this.columns = params.columns || [
-				{
-					title: 'ID',
-					data: 'id',
-					className: this.classes('col-cohort-id'),
-				},
-				nameCol,
-				{
-					title: '',
-					render: this.getEditCell('editCohort'),
-					className: this.classes('col-cohort-edit'),
-				},
-				{
-					title: '',
-					render: this.getRemoveCell('removeCohort'),
-					className: this.classes('col-cohort-remove'),
-				},
-
-			];
+			this.isEditPermitted = params.isEditPermitted;
+			this.columns = params.columns || globalConstants.getLinkedCohortColumns(this, nameCol);
 
 			// Modal props
 			this.showModal = ko.observable(false);
 			this.cohortSelected = ko.observable();
 
 			// subscriptions
-			this.subscriptions.push(this.cohortSelected.subscribe(cohort => this.attachCohort(cohort)));
+			this.subscriptions.push(this.cohortSelected.subscribe(cohorts => this.attachCohorts(cohorts)));
 		}
 
 		getRemoveCell(action, identifierField = 'id') {
@@ -92,14 +77,17 @@ define([
 			}
 		}
 
-
 		showCohortModal() {
 			this.showModal(true);
 		}
 
+		attachCohorts(data) {
+			this.showModal(false);
+			this.multiChoice ? this.data(data) : this.attachCohort(data);
+		}
+
 		attachCohort({ id, name }) {
 			const data = this.data();
-			this.showModal(false);
 			this.data(
 				lodash.uniqBy(
 					[

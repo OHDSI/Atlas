@@ -35,13 +35,13 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add End Date Criteria",
 				value: 1,
 				selected: false,
-				description: "Filter Drug Exposures  by the Drug Exposure End Date"
+				description: "Filter Drug Exposures by the Drug Exposure End Date."
 			},
 			{
 				text: "Add Drug Type Criteria",
 				value: 2,
 				selected: false,
-				description: "Filter Drug Exposures  by the Drug Type."
+				description: "Filter Drug Exposures by the Drug Type."
 			},
 			{
 				text: "Add Visit Criteria",
@@ -127,7 +127,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
-				description: "Apply criteria using the drug exposure as the index event",
+				description: "Apply criteria using the drug exposure as the index event.",
 			}
 		];
 

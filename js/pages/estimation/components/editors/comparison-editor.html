@@ -23,7 +23,7 @@
         <label>Choose your outcome cohorts:</label>
     </div>
     <div>
-        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes}"></linked-cohort-list>
+        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes, multiChoice: true, isEditPermitted: $component.isEditPermitted}"></linked-cohort-list>
     </div>
     <div>
         <label>Negative control concept set:</label>
@@ -34,7 +34,7 @@
                 <button class="btn btn-danger" data-bind="disable:comparison.negativeControlOutcomesConceptSet().id == 0,click:clearNegativeControlOutcomesConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
             </span>
         </div>
-    </div>    
+    </div>
     <div class="panel panel-default" data-bind="css: classes('panel-buffer')">
         <div class="panel-heading panel-subheading">
           <i class="fa fa-cog"></i> Covariate selection
@@ -77,7 +77,7 @@
         showCohortSelector: $component.showCohortSelector,
     }
 }">
-    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+    <cohort-definition-browser params="{onSelect: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
 </atlas-modal>
 <atlas-modal params="{
     showModal: showConceptSetSelector,

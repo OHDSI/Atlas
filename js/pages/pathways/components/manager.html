@@ -2,7 +2,10 @@
 
 <!-- ko if: design -->
 <div data-bind="css: classes(), visible: !$component.loading()">
-	<heading-title params="name: pathwayCaption(), icon: 'sitemap', theme: 'dark'"></heading-title>
+	<heading-title params="name: pathwayCaption(), description: canEdit() ? '' : '(Read only)', icon: 'sitemap', theme: 'dark'"></heading-title>
+	<!-- ko if: !!design() && !!design().id -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+<!-- /ko -->
 	<div class="asset-heading">
 		<div class="input-group">
 			<input type="text" placeholder="New Cohort Pathway" class="form-control" data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
@@ -18,10 +21,8 @@
 				<!-- /ko -->
 			</div>
 		</div>
-		<div data-bind="visible: !isNameFilled()" class="empty-name-error">
-			<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-			<label>Cohort Pathway name is empty.</label>
-		</div>
+		<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 	</div>
 
 	<tabs data-bind="visible: !$component.loading()" params="
@@ -45,7 +46,15 @@
 				key: 'utilities',
 				componentName: 'pathway-utils',
 				componentParams: $component.componentParams,
-			}
+			},
+            {
+                title: 'Messages', 
+                key: 'messages',
+                componentName: 'warnings',
+                componentParams: $component.warningParams,
+				hasBadge: true,
+				preload: true,
+            },
 		]">
 	</tabs>
 </div>

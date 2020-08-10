@@ -8,7 +8,8 @@ define([
 		'../utils',
 		'../const',
 		'text!./CriteriaGroupTemplate.html',
-		'components/DropDownMenu'],
+		'components/DropDownMenu',
+		'less!./CriteriaGroup.less'],
 	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, consts, template) {
 
 	function CriteriaGroupViewModel(params) {
@@ -53,15 +54,6 @@ define([
 			self.group().CriteriaList.push(new AdditionalCriteria({
 				Criteria: {
 					ConditionEra: {}
-				}
-			}, unwrappedExpression.ConceptSets));
-		};
-
-		self.addDoseEraCriteria = function () {
-			var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
-			self.group().CriteriaList.push(new AdditionalCriteria({
-				Criteria: {
-					DoseEra: {}
 				}
 			}, unwrappedExpression.ConceptSets));
 		};

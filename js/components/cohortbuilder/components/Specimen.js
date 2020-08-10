@@ -59,7 +59,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 			{
 				text: "Add Quantity Criteria",
 				selected: false,
-				description: "Filter Observations  by the Quantity.",
+				description: "Filter Observations by the Quantity.",
 				action: function () {
 					if (self.Criteria.Quantity() == null)
 						self.Criteria.Quantity(new Range({
@@ -108,7 +108,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the specimen as the index event",
+				description: "Apply criteria using the specimen as the index event.",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));

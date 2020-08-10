@@ -67,35 +67,40 @@ define(function (require, exports) {
   };
 
   async function initSourcesConfig() {
-    try {
-		const [{data: sources}, {data: priorityDaimons}] = await Promise.all([
-			httpService.doGet(config.api.url + 'source/sources'),
-			httpService.doGet(config.api.url + 'source/daimon/priority'),
-		]);
-		config.api.available = true;
-        if (sources.length === 0) {
-            return constants.applicationStatuses.noSourcesAvailable;
-        }
-        setSharedStateSources(sources, priorityDaimons);
-        return constants.applicationStatuses.running;
-	} catch (e) {
-        if (e.status !== 403) {
-          config.api.available = false;
-          document.location = '#/configure';
-        }
-        return constants.applicationStatuses.failed;
-	}
+    if (authApi.isPermittedGetSourceDaimonPriority()) {
+      try {
+        const [{data: sources}, {data: priorityDaimons}] = await Promise.all([
+          httpService.doGet(config.api.url + 'source/sources'),
+          httpService.doGet(config.api.url + 'source/daimon/priority'),
+        ]);
+        config.api.available = true;
+            if (sources.length === 0) {
+                return constants.applicationStatuses.noSourcesAvailable;
+            }
+            setSharedStateSources(sources, priorityDaimons);
+            return constants.applicationStatuses.running;
+      } catch (e) {
+            if (e.status !== 403) {
+              config.api.available = false;
+              document.location = '#/configure';
+            }
+            return constants.applicationStatuses.failed;
+      }
+    } else {
+      console.warn('There isn\'t permission to get source daimons priorities');
+      return constants.applicationStatuses.running;
+    }
   }
 
   function setSharedStateSources(sources, priorityDaimons) {
-    sharedState.sources([]);
-    const serviceCacheKey = getCacheKey();
+      sharedState.sources([]);
+      const serviceCacheKey = getCacheKey();
 
-		sharedState.vocabularyUrl() || (priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.vocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey)));
-		sharedState.evidenceUrl() || priorityDaimons[DAIMON_TYPE.CEM] && sharedState.evidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
-		sharedState.resultsUrl() || priorityDaimons[DAIMON_TYPE.Results] && sharedState.resultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
+      sharedState.vocabularyUrl() || (priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.vocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey)));
+      sharedState.evidenceUrl() || priorityDaimons[DAIMON_TYPE.CEM] && sharedState.evidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
+      sharedState.resultsUrl() || priorityDaimons[DAIMON_TYPE.Results] && sharedState.resultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
 
-		const sourceList = lodash.sortBy(sources.map(function (source, sourceIndex) {
+      const sourceList = lodash.sortBy(sources.map(function (source, sourceIndex) {
       source.hasVocabulary = false;
       source.hasEvidence = false;
       source.hasResults = false;

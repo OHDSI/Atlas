@@ -101,6 +101,7 @@ define([
             this.prevalenceStatData = ko.observableArray();
             this.thresholdValuePct = ko.observable();
             this.newThresholdValuePct = ko.observable().extend({ regexp: { pattern: '^(0*100{1,1}\\.?((?<=\\.)0*)?%?$)|(^0*\\d{0,2}\\.?((?<=\\.)\\d*)?%?)$', allowEmpty: false } });
+            this.showEmptyResults = ko.observable();
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
             this.downloading = ko.observableArray();
@@ -165,7 +166,7 @@ define([
           this.executionDesign(null);
           this.isExecutionDesignShown(true);
           CharacterizationService
-            .loadCharacterizationExportDesignByGeneration(this.executionId())
+            .loadExportDesignByGeneration(this.executionId())
             .then(res => {
               this.executionDesign(res);
               this.loading(false);
@@ -225,13 +226,14 @@ define([
                 cohortIds: cohorts,
                 analysisIds: analyses,
                 domainIds: domains,
-                thresholdValuePct: this.thresholdValuePct() / 100
+                thresholdValuePct: this.thresholdValuePct() / 100,
+                showEmptyResults: !!this.showEmptyResults(),
             };
 
             Promise.all([
                 SourceService.loadSourceList(),
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
-                CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
+                CharacterizationService.loadExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId(), params),
                 CharacterizationService.loadCharacterizationResultsCount(this.executionId()),
@@ -248,6 +250,7 @@ define([
                 this.totalResultsCount(totalCount);
                 this.thresholdValuePct(generationResults.prevalenceThreshold * 100);
                 this.newThresholdValuePct(this.thresholdValuePct());
+                this.showEmptyResults(generationResults.showEmptyResults);
                 this.resultsCountFiltered(generationResults.count);
 
                 const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
@@ -258,16 +261,21 @@ define([
                     sourceName: source.sourceName,
                     date: execution.endTime,
                     designHash: execution.hashCode,
-                }
+                };
                 
                 this.data(result);
 
                 this.getData(generationResults.reports);
                 this.loading(false);
-                
+
                 this.filterList(this.getFilterList(this.data().analyses));
                 this.selectedItems.subscribe(this.updateData);
             });
+        }
+
+        toggleEmptyResults() {
+            this.showEmptyResults(!this.showEmptyResults());
+            this.updateData();
         }
 
         updateData() {
@@ -278,7 +286,8 @@ define([
                 cohortIds: cohorts,
                 analysisIds: analyses,
                 domainIds: domains,
-                thresholdValuePct: this.thresholdValuePct() / 100
+                thresholdValuePct: this.thresholdValuePct() / 100,
+                showEmptyResults: !!this.showEmptyResults(),
             };
 
             Promise.all([
@@ -303,7 +312,7 @@ define([
 															(this.design().featureAnalyses.find(fa => fa.id === r.id) || { })[ 'domain' ] : null,
                             analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             cohorts: r.cohorts,
-                            domainIds: r.domainIds,   
+                            domainIds: r.domainIds,
                             type: r.resultType.toLowerCase(),
                             isSummary: r.isSummary,
                             isComparative: r.isComparative,
@@ -332,7 +341,8 @@ define([
                     cohortIds: cohorts,
                     analysisIds: analyses,
                     domainIds: domains,
-                    thresholdValuePct: this.thresholdValuePct() / 100
+                    thresholdValuePct: this.thresholdValuePct() / 100,
+                    showEmptyResults: !!this.showEmptyResults(),
                 };
                 await FileService.loadZip(`${config.api.url}cohort-characterization/generation/${this.executionId()}/result/export`,
                     `characterization_${this.characterizationId()}_execution_${this.executionId()}_reports.zip`, 'POST', params);
@@ -354,7 +364,8 @@ define([
                     domainIds: analysis.domainIds,
                     isSummary: analysis.isSummary,
                     isComparative: isComparative,
-                    thresholdValuePct: this.thresholdValuePct() / 100
+                    thresholdValuePct: this.thresholdValuePct() / 100,
+                    showEmptyResults: !!this.showEmptyResults(),
                 };
                 await FileService.loadZip(`${config.api.url}cohort-characterization/generation/${this.executionId()}/result/export`,
                     `characterization_${this.characterizationId()}_execution_${this.executionId()}_report.zip`, 'POST', params);
@@ -428,18 +439,21 @@ define([
                 return;
             }
 
+
+            const designStratas = this.showEmptyResults() ? this.design().stratas.map(s => ({ strataId: s.id, strataName: s.name })) : null;
+
             const convertedData = this.data().analyses.map(analysis => {
-                let convertedAnalysis;
+                let converter;
                 if (analysis.type === TYPE_PREVALENCE) {
-                    convertedAnalysis = this.prevalenceStatConverter.convertAnalysisToTabularData(analysis);
+                    converter = this.prevalenceStatConverter;
                 } else {
                     if (analysis.isComparative) {
-                        convertedAnalysis = this.comparativeDistributionStatConverter.convertAnalysisToTabularData(analysis);
+                        converter = this.comparativeDistributionStatConverter;
                     } else {
-                        convertedAnalysis = this.distributionStatConverter.convertAnalysisToTabularData(analysis);
+                        converter = this.distributionStatConverter;
                     }
                 }
-                return convertedAnalysis;
+                return converter.convertAnalysisToTabularData(analysis, designStratas);
             });
 
             this.analysisList(convertedData);

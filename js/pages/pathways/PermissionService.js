@@ -40,7 +40,7 @@ define([
 		return AuthAPI.isPermitted(`pathway-analysis:generation:*:result:get`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
 	}
 
-	function isPermittedExportByGeneration(id) {
+	function isPermittedExportGenerationDesign(id) {
 		return AuthAPI.isPermitted(`pathway-analysis:generation:${id}:design:get`);
 	}
 
@@ -64,7 +64,7 @@ define([
 		isPermittedListGenerations,
 		isPermittedGenerate,
 		isPermittedResults,
-		isPermittedExportByGeneration,
+		isPermittedExportGenerationDesign,
 		isPermittedExport
 	};
 });

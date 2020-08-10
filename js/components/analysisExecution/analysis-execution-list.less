@@ -1,5 +1,4 @@
-.comparative-cohort-analysis-executions {
-
+.analysis-execution-list {
   &__title {
     margin: 0;
     margin-top: 1rem;
@@ -14,7 +13,7 @@
     margin-top: 1rem;
 
     &--expanded {
-      .comparative-cohort-analysis-executions {
+      .analysis-execution-list {
         &__heading {
           border-bottom-right-radius: 0;
           border-bottom-left-radius: 0;
@@ -41,10 +40,8 @@
 
   &__ds-title {
     align-self: center;
-    //font-size: 1.2rem;
     font-weight: 500;
     font-size: 1.3rem;
-
     margin: 0;
   }
 
@@ -65,8 +62,8 @@
     }
   }
 
-  &__action-ico {
-    margin-right: 0.5rem;
+  &__action-text {
+    padding-left: .5rem;
   }
 
   &__result-list {
@@ -90,7 +87,7 @@
     .dataTables_length, .dataTables_filter {
       display: none;
     }
-    // , .dataTables_info, .dataTables_paginate
+
     .dataTables_info, .dataTables_paginate {
       padding-bottom: 0.75rem;
     }
@@ -126,11 +123,11 @@
     }
   }
 
-  &__action-text {
-    padding-left: .5rem;
+  &__col-exec-date {
+    width: 20%;
   }
 
-  &__col-exec-date {
+  &__col-exec-checksum {
     width: 20%;
   }
 
@@ -146,4 +143,12 @@
     width: 20%;
   }
 
+  &__design-link, &__reports-link {
+    cursor: pointer;
+  }
+
+  &__execution-design {
+    width: 100%;
+    height: 600px;
+  }
 }

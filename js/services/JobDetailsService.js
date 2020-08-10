@@ -1,5 +1,4 @@
-define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (appConfig, jobDetail, sharedState, httpService) {
-
+define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], function (ko, appConfig, jobDetail, sharedState, httpService) {
 	function list(hideStatuses) {
 		return httpService.doGet(appConfig.api.url + 'notifications?hide_statuses=' + hideStatuses.join());
 	}
@@ -10,9 +9,10 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 		job.status(updated.status);
 		job.name = updated.jobParameters.jobName;
 		job.executionId = updated.executionId;
-		job.url = getJobURL(updated)
-		job.duration = '';
-		job.endDate = '';
+		job.url(getJobURL(updated));
+		job.duration = ko.observable('');
+		job.endDate = ko.observable('');
+		job.ownerType = 'USER_JOB'
 		queue(job);
 	}
 
@@ -31,9 +31,17 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 	function getJobURL(n) {
 		switch (n.jobInstance.name) {
 			case "generateCohort":
-				return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
+				if (n.status == 'COMPLETED') {
+					return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation/' + n.jobParameters.source_id;
+				} else {
+					return 'cohortdefinition/' + n.jobParameters.cohort_definition_id + '/generation';
+				}
 			case 'irAnalysis':
-				return 'iranalysis/' + n.jobParameters.analysis_id + '/generation';
+				if (n.status == 'COMPLETED') {
+					return 'iranalysis/' + n.jobParameters.analysis_id + '/generation/' + n.jobParameters.source_id;
+				} else {
+					return 'iranalysis/' + n.jobParameters.analysis_id + '/generation';
+				}
 			case 'negativeControlsAnalysisJob':
 				return 'conceptset/' + n.jobParameters.concept_set_id + '/evidence';
 			case 'generateCohortCharacterization':
@@ -41,13 +49,13 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/results/' +
 				        n.executionId;
 				} else {
-				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/executions';
+				    return 'cc/characterizations/' + n.jobParameters.cohort_characterization_id + '/executions/' + n.jobParameters.source_id;
 				}
 			case 'generatePathwayAnalysis':
 				if (n.status == 'COMPLETED') {
 				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/results/' + n.executionId;
 				} else {
-				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/executions';
+				    return 'pathways/' + n.jobParameters.pathway_analysis_id + '/executions/' + n.jobParameters.source_id;
 				}
 			case "cohortAnalysisJob":
 				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/reporting?sourceKey=' + n.jobParameters.sourceKey;
@@ -57,10 +65,14 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 						return 'estimation/' + n.jobParameters.cohortId;
 					case 'PLP':
 						return 'plp/' + n.jobParameters.cohortId;
-				}
-      case 'warmCacheByUser':
-        return 'configure';
-		}
+				}				
+			case "generateEstimationAnalysis":
+				return 'estimation/cca/' + n.jobParameters.estimation_analysis_id + '/executions/' + n.jobParameters.source_id;
+			case "generatePredictionAnalysis":
+				return 'prediction/' + n.jobParameters.prediction_analysis_id + '/executions/' + n.jobParameters.source_id;
+			case 'warmCacheByUser':
+				return 'configure';
+			}
 		return null;
 	}
 
@@ -84,10 +96,10 @@ define(['appConfig', 'services/job/jobDetail', 'atlas-state', 'services/http'], 
 	}
 
 	return {
-		createJob: createJob,
-		list: list,
-		getJobURL: getJobURL,
-		setLastViewedTime: setLastViewedTime,
-		getLastViewedTime: getLastViewedTime
-	}
+		createJob,
+		list,
+		getJobURL,
+		setLastViewedTime,
+		getLastViewedTime,
+	};
 });

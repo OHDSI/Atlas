@@ -5,18 +5,26 @@
 	newItemAction: $component.newItemAction,
 	data: $component.data,
 	columns: $component.columns,
-	removeCohort: removeCohort
+	removeCohort: removeCohort,
+	isEditPermitted: $component.isEditPermitted
 "></linked-entity-list>
 
 <atlas-modal params="
 	showModal: $component.showModal,
+	dialogExtraClasses: [ $component.classes('cohort-definitions-modal') ],
 	title: 'Choose a Cohort definition',
 	data: {
 		cohortSelected: $component.cohortSelected,
 		classes: $component.classes,
+		data: $component.data,
+		showModal: $component.showModal,
+		multiChoice: $component.multiChoice,
 	}
 ">
-	<cohort-definition-browser data-bind="css: classes('modal-cohort-list')" 
-														 params="cohortDefinitionSelected: data => cohortSelected(data)">
+<div class="import-modal_list-container">
+	<cohort-definition-browser
+		data-bind="css: classes('modal-cohort-list')"
+		params="onSelect: data => cohortSelected(data), selectedData: data, showModal: showModal, multiChoice: multiChoice">
 	</cohort-definition-browser>
+	</div>
 </atlas-modal>

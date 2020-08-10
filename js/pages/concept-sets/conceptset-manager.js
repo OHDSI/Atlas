@@ -32,7 +32,9 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	'components/authorship',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -67,6 +69,7 @@ define([
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(true);
+
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
 					return false;
@@ -83,8 +86,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.currentConceptSet().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.currentConceptSet().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.currentConceptSet().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.currentConceptSet().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 			this.canSave = ko.computed(() => {
 				return (
@@ -104,7 +116,7 @@ define([
 					if (this.currentConceptSet().id === 0) {
 						return this.defaultName;
 					} else {
-						return 'Concept Set #' + this.currentConceptSet().id;
+						return `Concept Set #${this.currentConceptSet().id}`;
 					}
 				}
 			});
@@ -160,7 +172,7 @@ define([
 				{
 						title: 'Included Concepts',
 						componentName: 'included-conceptsets',
-						componentParams: params,
+						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
 						hasBadge: true,
 				},
 				{
@@ -219,13 +231,20 @@ define([
 			this.currentConceptSetMode(mode);
 		}
 
-		renderCheckbox(field) {
-			if (this.canEdit()) {
-				return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
-			} else {
-				return '<span data-bind="css: { selected: ' + field + '} " class="fa fa-check readonly"></span>';
-			}
+		renderCheckbox(field, readonly = false) {
+			return this.canEdit() && !readonly
+				? `<span data-bind="click: d => $parent.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
+				: `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
 		}
+
+		toggleCheckbox(d, field) {
+			commonUtils.toggleConceptSetCheckbox(
+				this.canEdit,
+				this.optimalConceptSet,
+				d,
+				field,
+			);
+    }
 
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
@@ -370,7 +389,7 @@ define([
 				.then((optimizationResults) => {
 					var optimizedConcepts = [];
 					optimizationResults.optimizedConceptSet.items.forEach((item) => {
-						optimizedConcepts.push(item);
+						optimizedConcepts.push(conceptSetService.enhanceConceptSet(item));
 					});
 					var removedConcepts = [];
 					optimizationResults.removedConceptSet.items.forEach((item) => {
@@ -420,14 +439,18 @@ define([
 			!!mode && commonUtils.routeTo(constants.paths.mode(id, mode));
 		}
 
-		overwriteConceptSet() {
+		async overwriteConceptSet() {
 			sharedState.clearSelectedConcepts();
 			const newConceptSet = this.optimalConceptSet().map((item) => {
 				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
-				return conceptSetService.enhanceConceptSet(item);
+				return item;
 			});
 			sharedState.selectedConcepts(newConceptSet);
 			this.isOptimizeModalShown(false);
+			sharedState.includedConcepts.valueHasMutated();
+			sharedState.includedSourcecodes.valueHasMutated();
+			await conceptSetService.resolveConceptSetExpression();
+			await conceptSetService.onCurrentConceptSetModeChanged(sharedState.currentConceptSetMode());
 		}
 
 		copyOptimizedConceptSet () {
@@ -444,15 +467,7 @@ define([
 				id: 0,
 				name: this.optimizerSavingNewName,
 			};
-			const selectedConcepts = this.optimalConceptSet().map((item) => (
-				{
-					concept: item.concept,
-					isExcluded: ko.observable(item.isExcluded),
-					includeDescendants: ko.observable(item.includeDescendants),
-					includeMapped: ko.observable(item.includeMapped),
-				}
-			));
-			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, selectedConcepts);
+			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, this.optimalConceptSet());
 			this.optimizerSavingNew(false);
 			this.isOptimizeModalShown(false);
 		}
@@ -460,6 +475,17 @@ define([
 		cancelSaveNewOptimizedConceptSet() {
 			this.optimizerSavingNew(false);
 		}
+
+	 getAuthorship() {
+		const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
+			 return {
+					 createdBy: this.currentConceptSet().createdBy,
+					 createdDate,
+					 modifiedBy: this.currentConceptSet().modifiedBy,
+					 modifiedDate,
+			 }
+	 }
 
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);

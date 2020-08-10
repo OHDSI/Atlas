@@ -4,7 +4,6 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 		var self = this;
 
 		self.expression = params.expression;
-    //if (!params.parentGroup) debugger;
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
@@ -49,9 +48,9 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 		};
 		
 		self.groupType = ko.pureComputed(function() {
-			return { name } = (self.options.groupTypeOptions.find((item) =>
+			return self.options.groupTypeOptions.find((item) =>
 				self.group() && item.id == self.group().Type()
-			) || {});
+			).name;
 		});
 		
 		self.getOccurrenceType = function(occurenceType) {

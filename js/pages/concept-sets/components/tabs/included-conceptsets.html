@@ -1,18 +1,3 @@
-<script type="text/html" id="included-conceptsets-headers">
-  <tr>
-    <th><i class="fa fa-shopping-cart"></i></th>
-    <th>Id</th>
-    <th>Code</th>
-    <th>Name</th>
-    <th>Class</th>
-    <th>Standard Concept Caption</th>
-    <th>RC</th>
-    <th>DRC</th>
-    <th>Domain</th>
-    <th>Vocabulary</th>
-    <th>Ancestors</th>
-  </tr>
-</script>
 <!-- ko if: loading -->
   <loading></loading>
 <!-- /ko -->
@@ -22,7 +7,7 @@
   options: $component.searchConceptsOptions,
   reference: $component.includedConcepts,
   rowCallback: $component.commonUtils.contextSensitiveLinkColor,
-  headersTemplateId: 'included-conceptsets-headers',
+  deferRender: false,
 }">
 </faceted-datatable>
 <div class="linkLegend">

@@ -19,7 +19,6 @@ define(
         browser: () => '#/estimation',
     };
 
-    const estimationGenerationStatus = consts.generationStatuses;
 
     const conceptSetCrossReference = {
       targetComparatorOutcome: {
@@ -435,7 +434,6 @@ define(
     return {
       pageTitle,
       apiPaths,
-      estimationGenerationStatus,
       paths: paths,
       conceptSetCrossReference,
       isUsingRegularization,

@@ -2,12 +2,14 @@ define([
 		'knockout',
 		'atlas-state',
 		'pages/Page',
+		'services/MomentAPI',
 		'urijs',
 	],
 	(
 		ko,
 		sharedState,
 		Page,
+		momentApi,
 		URI,
 	) => {
 
@@ -128,8 +130,8 @@ define([
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
 
-    const renderConceptSetCheckbox = function(hasPermissions, field) {
-		return hasPermissions()
+    const renderConceptSetCheckbox = function(hasPermissions, field, readonly = false) {
+		return hasPermissions() && !readonly
 		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
 		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
 	}
@@ -199,13 +201,46 @@ define([
 			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
 			if (!!concept) {
 				concept[field](!concept[field]());
-				successFunction();
-			  }
+				if (successFunction && typeof successFunction === 'function') {
+					successFunction();
+				}
+			}
 		}
 	}
-	
+
+	const selectAllFilteredItems = (data, filteredData, value) => {
+		const fData = (ko.utils.unwrapObservable(filteredData) || []).map(i => i.id);
+		data().forEach(i => {
+			if (fData.length === 0) {
+				i.selected(value);
+			} else {
+				if (fData.includes(i.id)) {
+					i.selected(value);
+				}
+			}
+		});
+	}
 	const escapeTooltip = function(tooltipText) {
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+	}
+
+	const getUniqueIdentifier = () => {
+		return ([1e7]+1e3+4e3+8e3+1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15 >> c/4).toString(16));
+	}
+		
+	const isNameLengthValid = function(name) {
+		const maxFileNameLength = 100;
+		return name.length <= maxFileNameLength;
+	}
+
+	const isNameCharactersValid = function(name) {
+		const forbiddenSymbols = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
+		return !forbiddenSymbols.some(symbol => name.includes(symbol));
+	}
+
+	const formatDateForAuthorship = (date, format = momentApi.DESIGN_DATE_TIME_FORMAT) => {
+		const d = ko.unwrap(date);
+		return d ? momentApi.formatDateTimeWithFormat(d, format) : '';
 	}
 
 	return {
@@ -228,6 +263,11 @@ define([
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
+		selectAllFilteredItems,
 		escapeTooltip,
+		getUniqueIdentifier,
+		formatDateForAuthorship,
+		isNameCharactersValid,
+		isNameLengthValid,
 	};
 });
