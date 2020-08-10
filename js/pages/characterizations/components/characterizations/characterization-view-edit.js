@@ -2,8 +2,8 @@ define([
     'knockout',
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
-	'services/Permission',
-	'components/security/access/const',
+    'services/Permission',
+    'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
     './CharacterizationAnalysis',
@@ -27,15 +27,15 @@ define([
     'components/ac-access-denied',
     'components/heading',
     'components/authorship',
-	'components/security/access/configure-access-modal',
-	'components/checks/warnings',
+    'components/security/access/configure-access-modal',
+    'components/checks/warnings',
     'components/name-validation',
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
-	GlobalPermissionService,
-	{ entityType },
+    GlobalPermissionService,
+    { entityType },
     CriteriaGroup,
     ConceptSet,
     CharacterizationAnalysis,
@@ -54,7 +54,8 @@ define([
         constructor(params) {
             super(params);
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
-            this.executionId = ko.observable();
+            this.executionId = ko.observable(params.router.routerParams().executionId);
+            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
             this.design = sharedState.CohortCharacterization.current;
@@ -103,6 +104,7 @@ define([
                 conceptSets: ko.computed(() => this.design() && this.design().strataConceptSets),
                 criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
+                selectedSourceId: this.selectedSourceId,
             });
             this.warningParams = ko.observable({
                 current: sharedState.CohortCharacterization.current,
@@ -131,14 +133,14 @@ define([
                 }
             });
 
-			GlobalPermissionService.decorateComponent(this, {
-				entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
-				entityIdGetter: () => this.characterizationId(),
-				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
-			});
+            GlobalPermissionService.decorateComponent(this, {
+                entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
+                entityIdGetter: () => this.characterizationId(),
+                createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+            });
         }
 
-        onRouterParamsChanged({ characterizationId, section, subId }) {
+        onRouterParamsChanged({ characterizationId, section, executionId, sourceId }) {
             if (characterizationId !== undefined) {
                 this.characterizationId(parseInt(characterizationId));
                 this.loadDesignData(this.characterizationId() || 0);
@@ -148,8 +150,11 @@ define([
                 this.setupSection(section);
             }
 
-            if (subId !== undefined) {
-                this.executionId(subId);
+            if (executionId !== undefined) {
+                this.executionId(executionId);
+            }
+            if (sourceId !== undefined) {
+                this.selectedSourceId(sourceId);
             }
         }
 
@@ -189,26 +194,27 @@ define([
             this.designDirtyFlag(new ohdsiUtil.dirtyFlag(this.design()));
         }
 
-		diagnose() {
+        diagnose() {
             if (this.design()) {
                 return CharacterizationService.runDiagnostics(this.design());
             }
-		}
+        }
 
         async loadDesignData(id, force = false) {
-
-        if (!force && this.design() && (this.design().id || 0) === id) return;
-          if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
-            return;
-          }
+            if (!force && this.design() && (this.design().id || 0) === id) {
+                return;
+            }
+            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+                return;
+            }
             if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
-          } else {
-            this.loading(true);
-            const res = await CharacterizationService.loadCharacterizationDesign(id);
-            this.setupDesign(new CharacterizationAnalysis(res));
-            this.loading(false);
-          }
+            } else {
+                this.loading(true);
+                const res = await CharacterizationService.loadCharacterizationDesign(id);
+                this.setupDesign(new CharacterizationAnalysis(res));
+                this.loading(false);
+            }
         }
 
         selectTab(index, { key }) {

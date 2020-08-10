@@ -25,7 +25,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/CommonUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
-    'services/Poll',
+	'services/Poll',
     'services/JobPollService',
 	'services/file',
 	'services/http',
@@ -890,11 +890,28 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			onRouterParamsChanged(params) {
-				const { cohortDefinitionId, conceptSetId, mode = 'definition', sourceKey } = params;
+				let { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey } = params;
+				// cohortDefinitionId can be undefined in case of following links fron notifications
+				// when another tab of the same cohort definition is selected
+				if (!cohortDefinitionId && this.currentCohortDefinition()) {
+					cohortDefinitionId = this.currentCohortDefinition().id();
+				}
 				this.tabMode(mode);
 				if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
-					this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, sourceKey);
+					this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
+				} else if (selectedSourceId) {
+					let source = this.sharedState.sources().find(s => s.sourceId === selectedSourceId)
+					if (source) {
+						let selectedSourceInfo = this.cohortDefinitionSourceInfo().find(s => s.sourceKey === source.sourceKey)
+						this.expandSelectedSection(selectedSourceInfo);
+					}
+				} else {
+					this.selectedReportSource(null);
 				}
+			}
+
+			expandSelectedSection(item) {
+				this.selectedReportSource(item);
 			}
 
 			getSourceInfo(source) {
@@ -945,7 +962,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return cdsi;
 			}
 
-			async loadRequiredData(conceptSetId, sourceKey) {
+			async loadRequiredData(conceptSetId, selectedSourceId, sourceKey) {
 				if (this.currentCohortDefinition()) {
 					try {
 						if (this.currentCohortDefinition().expression().ConceptSets()) {
@@ -980,6 +997,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						// now that we have required information lets compile them into data objects for our view
 						const cdmSources = sharedState.sources().filter(commonUtils.hasCDM);
 						let results = [];
+						let selectedSourceInfo = null;
 						for (let s = 0; s < cdmSources.length; s++) {
 							const source = cdmSources[s];
 							this.sourceAnalysesStatus[source.sourceKey] = ko.observable({
@@ -989,8 +1007,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							const sourceInfo = this.getSourceInfo(source);
 							let cdsi = this.getCDSI(source, sourceInfo);
 							results.push(cdsi);
+
+							if (selectedSourceId && source.sourceId === selectedSourceId) {
+								selectedSourceInfo = cdsi;
+							}
 						}
 						this.cohortDefinitionSourceInfo(results);
+
+						if (selectedSourceInfo) {
+							this.expandSelectedSection(selectedSourceInfo);
+						}
 
 						if (conceptSetId != null) {
 							await this.loadConceptSet(conceptSetId);
@@ -1004,14 +1030,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}
 
-			async prepareCohortDefinition(cohortDefinitionId, conceptSetId, sourceKey) {
+
+			async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey) {
 				this.isLoading(true);
 				if(parseInt(cohortDefinitionId) === 0) {
 					this.setNewCohortDefinition();
 				} else {
 					await this.loadExistingCohortDefinition(cohortDefinitionId);
 				}
-				await this.loadRequiredData(conceptSetId, sourceKey);
+				await this.loadRequiredData(conceptSetId, selectedSourceId, sourceKey);
 				this.isLoading(false);
 			}
 
@@ -1111,9 +1138,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			toggleCohortReport(item) {
 				if (this.selectedReportSource() && this.selectedReportSource().sourceKey === item.sourceKey) {
 					this.selectedReportSource(null);
+					commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/generation');
 				} else {
 					this.selectedReportSource(item);
+					commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/generation/' + item.sourceId);
 				}
+			}
+
+			selectTab(key) {
+				this.tabMode(key);
+				return commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/' + key);
 			}
 
 			getStatusMessage (info) {
