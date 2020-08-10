@@ -106,6 +106,12 @@ define([
 			});
 		}
 
+		dispose() {
+			if (!this.currentConceptSet()) {
+				super.dispose();
+			}
+		}
+
 		async saveConceptSet() {
 			this.saveConceptSetShow(false);
 			const conceptSet = {
