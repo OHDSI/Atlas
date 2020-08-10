@@ -18,7 +18,7 @@ define([
 
 			this.prior = ko.isObservable(params.prior) ? params.prior() : params.prior;
 			this.options = options;
-			this.isEditPermitted = params.isEditPermitted();
+			this.isEditPermitted = params.isEditPermitted;
 		}
 	}
 

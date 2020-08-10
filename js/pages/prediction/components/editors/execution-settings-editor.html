@@ -6,7 +6,7 @@
     <div data-bind="visible: $component.maxSampleSizeToggle()">
         <div class="input-group">
             <label>How many patients to use for a subset? &nbsp;&nbsp;</label>
-            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.getPlpDataArgs.maxSampleSize, eventType:'blur', ko_autocomplete: { value: $component.getPlpDataArgs.maxSampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.getPlpDataArgs.maxSampleSize, eventType:'blur', ko_autocomplete: { value: $component.getPlpDataArgs.maxSampleSize, source: $component.options.sampleSizeOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> patients
         </div>
     </div>
 </div>

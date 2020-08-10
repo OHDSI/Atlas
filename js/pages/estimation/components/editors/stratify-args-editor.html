@@ -1,7 +1,7 @@
 <div>
     <label>Into how many strata should the propensity score be divided? The boundaries of the strata are automatically defined to contain equal numbers of target persons:</label>
     <div class="input-group">
-        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.stratifyArgs.numberOfStrata, eventType:'blur', ko_autocomplete: { value: $component.stratifyArgs.numberOfStrata, source: $component.options.numberOfStrataOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.stratifyArgs.numberOfStrata, eventType:'blur', ko_autocomplete: { value: $component.stratifyArgs.numberOfStrata, source: $component.options.numberOfStrataOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
