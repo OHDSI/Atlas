@@ -142,7 +142,7 @@
                         <i class="fa fa-cog"></i> Execution Settings
                     </div>
                     <div class="panel-body" data-bind="css:{'settings-disabled': !$component.isEditPermitted()}">
-                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></execution-settings-editor>
+                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></execution-settings-editor>
                     </div>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                     <i class="fa fa-cog"></i> Training Settings
                     </div>
                     <div class="panel-body" data-bind="css:{'settings-disabled': !$component.isEditPermitted()}">
-                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></evaluation-settings-editor>
+                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></evaluation-settings-editor>
                     </div>
                 </div>
                 </div>

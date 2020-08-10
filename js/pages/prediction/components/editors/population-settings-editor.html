@@ -2,19 +2,19 @@
     <div>
         <label>Define the time-at-risk window start, relative to target cohort entry:</label>
         <div class="input-group form-inline">
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.populationSettings.riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToStart"></select>
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.populationSettings.riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.timeAtRiskStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToStart"></select>
         </div>
     </div>
     <div>
         <label>Define the time-at-risk window end:</label>
         <div class="input-group form-inline">
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.populationSettings.riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToEnd"></select>
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.populationSettings.riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.populationSettings.addExposureDaysToEnd"></select>
         </div>
     </div>
     <div>
         <label>Minimum lookback period applied to target cohort:</label>
         <div class="input-group">
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.populationSettings.washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.washoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.populationSettings.washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.washoutPeriod, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
         </div>
     </div>
     <div>
@@ -27,7 +27,7 @@
                 <div class="form-group" data-bind="css: classes('form-sub-option'), visible: $component.populationSettings.requireTimeAtRisk()">
                     <label>Minimum time at risk:</label>
                     <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.populationSettings.minTimeAtRisk, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.minTimeAtRisk, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days
+                        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.populationSettings.minTimeAtRisk, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.minTimeAtRisk, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@
         <div data-bind="visible: $component.populationSettings.removeSubjectsWithPriorOutcome()">
             <div class="input-group">
                 <label>How many days to look back from cohort entry for the outcome?&nbsp;&nbsp;</label>
-                <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.populationSettings.priorOutcomeLookback, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.priorOutcomeLookback, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days prior to cohort start
+                <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted, htmlValue: $component.populationSettings.priorOutcomeLookback, eventType:'blur', ko_autocomplete: { value: $component.populationSettings.priorOutcomeLookback, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />&nbsp;days prior to cohort start
             </div>
         </div>
     </div>

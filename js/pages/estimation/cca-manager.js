@@ -115,10 +115,10 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
-			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+			this.canEdit = ko.pureComputed(() => parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && this.canEdit();
 			});
 
 			this.selectedSourceId = ko.observable(router.routerParams().sourceId);

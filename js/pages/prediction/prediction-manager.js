@@ -98,7 +98,7 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
-			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+			this.canEdit = ko.pureComputed(() => parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
@@ -136,7 +136,7 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && this.canEdit();
 			});
 
 			this.selectedSourceId = ko.observable(router.routerParams().sourceId);

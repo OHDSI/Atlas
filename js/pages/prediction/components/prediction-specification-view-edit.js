@@ -41,7 +41,7 @@ define([
 			this.specificationPillMode = ko.observable('all');
 			this.targetCohorts = params.targetCohorts;
 			this.outcomeCohorts = params.outcomeCohorts;
-			this.currentCohortList = ko.observable(null);;
+			this.currentCohortList = ko.observable(null);
 			this.showCohortSelector = ko.observable(false);
 			this.covariateSettings = this.patientLevelPredictionAnalysis().covariateSettings;
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
@@ -203,6 +203,7 @@ define([
 			this.editorComponentParams({
 				populationSettings: settings,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor');
 		}

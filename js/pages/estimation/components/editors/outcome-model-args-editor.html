@@ -38,7 +38,7 @@
                 <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Control Settings</span>
             </div>
             <div class="panel-body collapse" data-bind="css:{'div-disabled': !$component.isEditPermitted()}">
-                <cyclops-control-editor params="control: $component.outcomeModelArgs.control"></cyclops-control-editor>
+                <cyclops-control-editor params="control: $component.outcomeModelArgs.control, isEditPermitted: $component.isEditPermitted"></cyclops-control-editor>
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
                 <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Prior</span>
             </div>
             <div class="panel-body collapse" data-bind="css:{'div-disabled': !$component.isEditPermitted()}">
-                <cyclops-prior-editor params="prior: $component.outcomeModelArgs.prior"></cyclops-prior-editor>
+                <cyclops-prior-editor params="prior: $component.outcomeModelArgs.prior, isEditPermitted: $component.isEditPermitted"></cyclops-prior-editor>
             </div>
         </div>
     </div>
