@@ -9,9 +9,9 @@ define(function () {
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
 	appConfig.cohortComparisonResultsEnabled = false;
-	appConfig.userAuthenticationEnabled = false;
+	appConfig.userAuthenticationEnabled = true;
 	appConfig.plpResultsEnabled = false;
-	appConfig.useExecutionEngine = false;
+	appConfig.useExecutionEngine = true;
 	appConfig.viewProfileDates = false;
   appConfig.enableCosts = false;
 	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
@@ -35,12 +35,6 @@ define(function () {
       "ajax": false,
       "icon": "fa fa-openid"
     },
-        {
-            "name": "SAML",
-            "url": "user/login/saml",
-            "ajax": false,
-            "icon": "fa fa-openid"
-        },
     {
       "name": "Google",
       "url": "user/oauth/google",
@@ -72,6 +66,12 @@ define(function () {
       "ajax": true,
       "icon": "fa fa-cubes",
       "isUseCredentialsForm": true
+    },
+    {
+      "name": "SAML",
+      "url": "user/login/saml",
+      "ajax": false,
+      "icon": "fa fa-openid"
     },
     {
       "name": "Active Directory LDAP",
