@@ -68,12 +68,6 @@ define(function () {
       "isUseCredentialsForm": true
     },
     {
-      "name": "SAML",
-      "url": "user/login/saml",
-      "ajax": false,
-      "icon": "fa fa-openid"
-    },
-    {
       "name": "Active Directory LDAP",
       "url": "user/login/ad",
       "ajax": true,
