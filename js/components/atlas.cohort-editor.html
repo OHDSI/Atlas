@@ -1,5 +1,6 @@
 <div class="paddedWrapper">
-	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable: $component.currentCohortDefinition().description"></div>
+	<!-- contenteditableSwitch must be placed AFTER contentEditable to override 'contenteditable' attribute -->
+	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable: $component.currentCohortDefinition().description, contenteditableSwitch: canEdit()"></div>
 	<div data-bind="eventListener: [
 									{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport},
 									{ event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}
