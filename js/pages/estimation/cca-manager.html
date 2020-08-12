@@ -1,7 +1,7 @@
 <loading data-bind="visible: loading"></loading>
  <div data-bind="if:!loading()">
     <heading-title params="name: populationCaption(), description: canEdit() ? '' : '(Read only)', icon: 'balance-scale', theme: 'dark'"></heading-title>
-    <!-- ko if: !!estimationAnalysis().id -->
+    <!-- ko if: !!estimationAnalysis() && !!estimationAnalysis().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
     <div class="asset-heading">

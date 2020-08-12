@@ -1,11 +1,9 @@
 <div data-bind="html: $component.template"></div>
 
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Feature Analysis...'"></loading>
-
 <!-- ko if:data -->
 <div data-bind="css: classes()">
     <heading-title params="name: featureCaption(), description: canEdit() ? '' : '(Read only)', icon: 'shopping-cart', theme: 'dark'"></heading-title>
-    <!-- ko if: !!data().id -->
+    <!-- ko if: !!data() && !!data().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
     <div class="asset-heading">
@@ -17,7 +15,8 @@
                 </div>
                 <button class="btn btn-primary" title="Close" data-bind="click: closeAnalysis, enable: !isProcessing()"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity -->
-                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                <button type="button" class="btn btn-primary" data-bind="click: copyFeatureAnalysis, css: {disabled: !canCopy() || isProcessing() }" title="Create a copy of this feature analysis"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, enable: !isProcessing(), click: () => isAccessModalShown(!isAccessModalShown())">
                     <i class="fa fa-lock"></i>
                 </button>
                 <button class="btn btn-danger" title="Delete" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
@@ -199,6 +198,8 @@
     </div>
 </div>
 <!-- /ko -->
+
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: isCopying() ? 'Copying Feature Analysis...' : 'Loading Feature Analysis...'"></loading>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,

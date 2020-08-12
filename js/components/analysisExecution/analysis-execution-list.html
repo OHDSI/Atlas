@@ -50,7 +50,7 @@
       <ul data-bind="css: classes({ element: 'action-list' })">
         <li data-bind="
           css: classes({ element: 'action' }),
-          tooltip: !$component.isGenerationPermitted(sourceKey) ? 'Not enough permissions to generate' : null,
+          tooltip: !$component.isGenerationPermitted(sourceKey) ? $component.getDisableReason(sourceKey) : null,
         ">
           <button data-bind="
             css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),

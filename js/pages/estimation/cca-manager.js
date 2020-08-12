@@ -30,6 +30,7 @@ define([
 	'databindings',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (
@@ -90,35 +91,6 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 
-			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() && config.api.isExecutionEngineAvailable() && this.canSave());
-			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
-			});
-			this.componentParams = ko.observable({
-				comparisons: sharedState.estimationAnalysis.comparisons,
-				defaultCovariateSettings: this.defaultCovariateSettings,
-				dirtyFlag: sharedState.estimationAnalysis.dirtyFlag,
-				estimationAnalysis: sharedState.estimationAnalysis.current,
-				estimationId: sharedState.estimationAnalysis.selectedId,
-				fullAnalysisList: this.fullAnalysisList,
-				fullSpecification: this.fullSpecification,
-				loading: this.loading,
-				loadingMessage: this.loadingMessage,
-				packageName: this.packageName,
-				subscriptions: this.subscriptions,
-				analysisId: sharedState.estimationAnalysis.selectedId,
-				PermissionService,
-				ExecutionService: EstimationService,
-				extraExecutionPermissions,
-				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
-				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
-				downloadFileName: 'estimation-analysis-results',
-				downloadApiPaths: constants.apiPaths,
-				runExecutionInParallel: true,
-				isEditPermitted: this.canSave,
-				PollService: PollService,
-			});
-
 			this.isNameFilled = ko.computed(() => {
 				return this.estimationAnalysis() && this.estimationAnalysis().name();
 			});
@@ -143,19 +115,27 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
-			this.isNewEntity = this.isNewEntityResolver();
+			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
 
-			this.populationCaption = ko.computed(() => {
-				if (this.estimationAnalysis()) {
-					if (this.selectedAnalysisId() === '0') {
-						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
-					} else {
-						return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()}`;
-					}
-				}
+			this.canSave = ko.pureComputed(() => {
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
 			});
 
+			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
+
 			this.criticalCount = ko.observable(0);
+
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() 
+				&& config.api.isExecutionEngineAvailable() 
+				&& this.canEdit()
+				&& this.criticalCount() <= 0);
+				
+			const generationDisableReason = ko.computed(() => {
+				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
+				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
+				if (!config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
+				return globalConstants.disabledReasons.ACCESS_DENIED;
+			});
 
 			this.componentParams = ko.observable({
 				comparisons: sharedState.estimationAnalysis.comparisons,
@@ -170,6 +150,32 @@ define([
 				packageName: this.packageName,
 				subscriptions: this.subscriptions,
 				criticalCount: this.criticalCount,
+				analysisId: sharedState.estimationAnalysis.selectedId,
+				PermissionService,
+				ExecutionService: EstimationService,
+				extraExecutionPermissions,
+				tableColumns: ['Date', 'Status', 'Duration', 'Results'],
+				executionResultMode: globalConstants.executionResultModes.DOWNLOAD,
+				downloadFileName: 'estimation-analysis-results',
+				downloadApiPaths: constants.apiPaths,
+				runExecutionInParallel: true,
+				isEditPermitted: this.canEdit,
+				PollService: PollService,
+				selectedSourceId: this.selectedSourceId,
+				generationDisableReason,
+				resultsPathPrefix: '/estimation/cca/',
+			});
+
+			this.isNewEntity = this.isNewEntityResolver();
+
+			this.populationCaption = ko.computed(() => {
+				if (this.estimationAnalysis()) {
+					if (this.selectedAnalysisId() === '0') {
+						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
+					} else {
+						return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()}`;
+					}
+				}
 			});
 
 			this.warningParams = ko.observable({
@@ -180,6 +186,7 @@ define([
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				onDiagnoseCallback: this.diagnose.bind(this),
+				checkOnInit: true,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -350,8 +357,16 @@ define([
 
 		diagnose() {
 			if (this.estimationAnalysis()) {
+				// do not pass modifiedBy and createdBy parameters to check
+				const modifiedBy = this.estimationAnalysis().modifiedBy;
+				this.estimationAnalysis().modifiedBy = null;
+				const createdBy = this.estimationAnalysis().createdBy;
+				this.estimationAnalysis().createdBy = null;
 				const payload = this.prepForSave();
+				this.estimationAnalysis().modifiedBy = modifiedBy;
+				this.estimationAnalysis().createdBy = createdBy;
 				return EstimationService.runDiagnostics(payload);
+
 			}
 		}
 
@@ -368,7 +383,7 @@ define([
 			const specification = JSON.parse(analysis.data.specification);
 			// ignore createdBy and modifiedBy
 			const { createdBy, modifiedBy, ...props } = header;
-			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...props }, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...header }, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);
@@ -492,14 +507,17 @@ define([
 			});
 		}
 
-        onRouterParamsChanged({ id, section }) {
+		onRouterParamsChanged({ id, section, sourceId }) {
+			if (section !== undefined) {
+				this.selectedTabKey(section);
+			}
+			if (sourceId !== undefined) {
+				this.selectedSourceId(sourceId);
+			}
 			if (id !== undefined && id !== parseInt(this.selectedAnalysisId())) {
-				if (section !== undefined) {
-					this.selectedTabKey(section);
-				}
 				this.onPageCreated();
 			}
-        }
+		}
 
 		addCohortToEstimation(specification, cohort) {
 			cohort = ko.isObservable(cohort) ? ko.utils.unwrapObservable(cohort) : cohort;

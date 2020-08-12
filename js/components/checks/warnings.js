@@ -49,8 +49,12 @@ function (
 			};
 			// Entities use different methods of initialization
 			this.changeSubscription = this.changeFlag.subscribe(() => this.runDiagnostics());
-			this.initSubscription = this.current.subscribe(() => this.runDiagnostics());
-			this.runDiagnostics();
+			// Entities use different methods of initialization
+			if (params.checkOnInit) {
+				this.initSubscription = this.current.subscribe(() => this.runDiagnostics());
+			} else {
+				this.runDiagnostics();
+			}
 		}
 
 		drawCallback(settings) {
@@ -115,7 +119,9 @@ function (
 
 		dispose() {
 			this.changeSubscription.dispose();
-			this.initSubscription.dispose();
+			if (this.initSubscription) {
+				this.initSubscription.dispose();
+			}
 		}
 	}
 		

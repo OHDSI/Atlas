@@ -51,6 +51,7 @@
 		</thead>
 		<tbody data-bind="foreach: sources().filter(function(source) { return source.info() != null; })">
 			<tr>
+				<!-- ko if: info() -->
 				<td data-bind="css: $component.classes('tbl-col')" nowrap>
 					<!-- ko ifnot: $component.isInProgress($data) -->
 						<select-sources-btn params="selectedSources: [source], callback: $component.runGenerations, wasGenerated: true, label: 'Rerun', disabled: $component.isExecutionDisabled(source), disabledReason: $component.executionDisabledReason"></select-sources-btn>
@@ -97,6 +98,7 @@
 						</span>
 					</td>
 				<!-- /ko -->
+				<!-- /ko -->
 				<!-- ko if: $component.isInProgress($data) -->
 					<td colspan="8" data-bind="css: $component.classes('tbl-col', 'progress')"><i class="fa fa-spinner fa-spin fa-lg"></i> Running</td>
 				<!-- /ko -->
@@ -111,7 +113,7 @@
 <!-- ko if: selectedReport -->
 	<div data-bind="css: classes('report-block'), visible: !isLoading()">
 		<div data-bind="css: classes('report-header')">
-			<h3 data-bind="css: classes('report-title'), text: selectedSource() ? selectedSource().source.sourceName : ''"></h3>
+			<h3 data-bind="css: classes('report-title'), text: getSourceName()"></h3>
 			<a data-bind="css: classes('report-close'), click: closeReport">Close</a>
 		</div>
 		<ir-analysis-report params="report: selectedReport, calculateRate: calculateRate, calculateProportion: calculateProportion, rateModifiers: {up: stepUp, down: stepDown}, rateCaption: irCaption, ipCaption: ipCaption"></ir-analysis-report>

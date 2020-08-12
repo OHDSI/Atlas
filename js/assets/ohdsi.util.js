@@ -124,6 +124,11 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 
 		result.isChanged = ko.pureComputed(function () {
 			return changedCount();
+		}).extend({
+			rateLimit: {
+				timeout: 200,
+				method: "notifyWhenChangesStop"
+			}
 		});
 
 		result.reset = function () {

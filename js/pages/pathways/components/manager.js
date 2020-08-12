@@ -24,6 +24,7 @@ define([
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
 	'components/checks/warnings',
+	'components/heading',
 	'components/authorship',
 	'components/name-validation',
 ], function (
@@ -50,6 +51,8 @@ define([
 
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
+            this.executionId = ko.observable(params.router.routerParams().executionId);
+            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
@@ -84,8 +87,18 @@ define([
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
+				criticalCount: this.criticalCount,
 				isEditPermitted: this.canEdit,
-				extraExecutionPermissions: this.canEdit,
+                selectedSourceId: this.selectedSourceId,
+			});
+			this.warningParams = ko.observable({
+				current: sharedState.CohortPathways.current,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
@@ -107,13 +120,22 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({analysisId, section, subId}) {
+		onRouterParamsChanged({analysisId, section,  executionId, sourceId}) {
 			if (analysisId !== undefined) {
 				this.analysisId(parseInt(analysisId));
 				this.load(this.analysisId() || 0);
 			}
-			this.setupSection(section);
-			this.executionId(subId);
+
+            if (section !== undefined) {
+                this.setupSection(section);
+            }
+
+			if (executionId !== undefined) {
+				this.executionId(executionId);
+			}
+			if (sourceId !== undefined) {
+				this.selectedSourceId(sourceId);
+			}
 		}
 
 		selectTab(index, { key }) {

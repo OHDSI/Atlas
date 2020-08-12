@@ -34,6 +34,7 @@ define([
       ExecutionService,
       PermissionService,
       extraExecutionPermissions,
+      generationDisableReason,
       resultsPathPrefix,
       downloadApiPaths,
       downloadFileName,
@@ -41,9 +42,11 @@ define([
       executionResultMode,
       runExecutionInParallel,
       PollService,
+      selectedSourceId,
     }) {
       super();
       this.analysisId = analysisId;
+      this.analysisId.subscribe(() => this.loadData());
       this.resultsPathPrefix = resultsPathPrefix;
       this.downloadApiPaths = downloadApiPaths;
       this.downloadFileName = downloadFileName;
@@ -51,6 +54,8 @@ define([
       this.runExecutionInParallel = runExecutionInParallel;
       this.pollId = null;
       this.PollService = PollService;
+      this.selectedSourceId = selectedSourceId;
+      this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 
       this.loading = ko.observable(false);
       this.downloading = ko.observableArray();
@@ -58,6 +63,7 @@ define([
       this.ExecutionService = ExecutionService;
       this.PermissionService = PermissionService;
       this.extraExecutionPermissions = extraExecutionPermissions;
+      this.generationDisableReason = generationDisableReason;
 
       this.executionStatuses = consts.executionStatuses;
 
@@ -143,10 +149,11 @@ define([
         });
         sourceList = lodash.sortBy(sourceList, ['sourceName']);
         sourceList.forEach(source => {
-          const { sourceKey, sourceName } = source;
+          const { sourceKey, sourceName, sourceId } = source;
           let group = this.getExecutionGroup(sourceKey);
           if (!group) {
             group = {
+              sourceId,
               sourceKey,
               sourceName,
               submissions: ko.observableArray(),
@@ -158,11 +165,21 @@ define([
           group.submissions(executionList.filter(({ sourceKey: exSourceKey }) => exSourceKey === sourceKey));
           this.setExecutionGroupStatus(group);
         })
+        this.expandSelectedSource();
       } catch (err) {
         console.error(err);
       } finally {
         this.loading(false);
       }
+    }
+
+    expandSelectedSource() {
+      let idx = null;
+      if (this.selectedSourceId()) {
+        const sourceId = parseInt(this.selectedSourceId());
+        idx = this.executionGroups().findIndex(g => g.sourceId === sourceId);
+      }
+      this.expandedSection(idx);
     }
 
     async showExecutionDesign(executionId) {
@@ -193,7 +210,16 @@ define([
     }
 
     toggleSection(idx) {
-      this.expandedSection() === idx ? this.expandedSection(null) : this.expandedSection(idx);
+      if (this.expandedSection() === idx) {
+        this.expandedSection(null);
+        this.selectedSourceId(null);
+        CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions`);        
+      } else {
+        this.expandedSection(idx);
+        const executionGroup = this.executionGroups()[idx];
+        this.selectedSourceId(executionGroup.sourceId);
+        CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions/${executionGroup.sourceId}`);
+      }
     }
 
     isGenerationPermitted(sourceKey) {
@@ -206,6 +232,13 @@ define([
 
     isResultsViewPermitted(sourceKey) {
       return this.PermissionService.isPermittedResults(sourceKey);
+    }
+
+    getDisableReason(sourceKey) {
+      if (this.isGenerationPermitted(sourceKey)) return null;
+      if (this.generationDisableReason) {
+        return this.generationDisableReason();
+      }
     }
 
     async generate(sourceKey) {

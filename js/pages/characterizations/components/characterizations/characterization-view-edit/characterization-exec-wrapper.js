@@ -24,8 +24,21 @@ define([
             super();
 
             this.executionId = params.executionId;
-            const extraExecutionPermissions = ko.computed(() => !params.designDirtyFlag().isDirty() && params.design().cohorts().length && params.isEditPermitted());
-            
+            this.criticalCount = params.criticalCount;
+            this.design = params.design;
+            this.designDirtyFlag = params.designDirtyFlag;
+
+            const extraExecutionPermissions = ko.computed(() => !this.designDirtyFlag().isDirty() 
+                && this.design() && this.design().cohorts().length 
+                && params.isEditPermitted()
+                && this.criticalCount() <= 0);       
+                
+            const generationDisableReason = ko.computed(() => {
+                if (this.designDirtyFlag().isDirty()) return consts.disabledReasons.DIRTY;
+                if (this.criticalCount() > 0) return consts.disabledReasons.INVALID_DESIGN;
+                if (this.design() && !this.design().cohorts().length) return consts.disabledReasons.EMPTY_COHORTS;
+                return consts.disabledReasons.ACCESS_DENIED;
+            });            
             this.componentParams = {
                 tableColumns: ['Date', 'Design', 'Status', 'Duration', 'Results'],
                 runExecutionInParallel: false,
@@ -35,7 +48,9 @@ define([
                 PermissionService,
                 PollService: JobPollService,
                 extraExecutionPermissions,
+                generationDisableReason,
                 executionResultMode: consts.executionResultModes.VIEW,
+                selectedSourceId: params.selectedSourceId,
                 ...params,
             };
         }

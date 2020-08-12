@@ -3,7 +3,7 @@
 <!-- ko if:design -->
 <div data-bind="css: classes()">
     <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : '(Read only)', icon: 'shopping-cart', theme: 'dark'"></heading-title>
-    <!-- ko if: !!design().id -->
+    <!-- ko if: !!design() && !!design().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
     <div class="asset-heading">
