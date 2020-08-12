@@ -1,4 +1,4 @@
-<div>
+<div data-bind="css: {'div-disabled': !$component.isEditPermitted()}">
     <div>
         <label>Model Type:</label>
         <div class="input-group">
@@ -6,24 +6,24 @@
         </div>
     </div>
     <div>
-        <label>Using OHDSI covariates for model. (<span class="linkish" data-bind="click: () => { showCovariateSelector(true) }">Click to view details</span>)</label>
+        <label>Using OHDSI covariates for model. (<span class="linkish div-enabled" data-bind="click: () => { showCovariateSelector(true) }">Click to view details</span>)</label>
     </div>
     <div>
         <label>Define the time-at-risk window start, relative to target/comparator cohort entry:</label>
         <div class="input-group">
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.settings().riskWindowStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> &nbsp;days from cohort start date
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.settings().riskWindowStart, eventType:'blur', ko_autocomplete: { value: $component.settings().riskWindowStart, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> &nbsp;days from cohort start date
         </div>
     </div>
    <div>
         <label>Define the time-at-risk window end:</label>
         <div class="input-group">
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.settings().riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />  &nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.settings().addExposureDaysToEnd"></select>
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.settings().riskWindowEnd, eventType:'blur', ko_autocomplete: { value: $component.settings().riskWindowEnd, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />  &nbsp;days from <select data-bind="options: $component.constants.timeAtRiskCohortDate, optionsText:'name', optionsValue:'id', value: $component.settings().addExposureDaysToEnd"></select>
         </div>
     </div>
     <div>
         <label>The minimum required continuous observation time (in days) prior to exposure:</label>
         <div class="input-group">
-            <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.settings().washoutPeriod, source: $component.options.washoutPeriodOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+            <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.settings().washoutPeriod, eventType:'blur', ko_autocomplete: { value: $component.settings().washoutPeriod, source: $component.options.washoutPeriodOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
         </div>
     </div>
     <div>
@@ -47,14 +47,14 @@
     <label>Advanced Settings start here</label>
     <div class="row" data-bind="css: classes('subsection')">
         <div class="panel panel-default" data-bind="collapsable: showAdditionalSettings, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
-            <div class="panel-heading panel-subheading panel-heading-collapsible" data-bind="click: toggleAdditionalSettings">
+            <div class="panel-heading panel-subheading panel-heading-collapsible div-enabled" data-bind="click: toggleAdditionalSettings">
                 <span class="glyphicon-chevron-up"><i class="fa fa-cogs"></i> Additional Settings</span>
             </div>
             <div class="panel-body collapse">
                 <div>
                     <label>Maximum number of people used to fit an outcome model:</label>
                     <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().maxSubjectsForModel, eventType:'blur', ko_autocomplete: { value: $component.settings().maxSubjectsForModel, source: $component.options.maxSubjectsForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+                        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.settings().maxSubjectsForModel, eventType:'blur', ko_autocomplete: { value: $component.settings().maxSubjectsForModel, source: $component.options.maxSubjectsForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
                     </div>
                 </div>
                 <div>
@@ -78,13 +78,13 @@
                  <div>
                     <label>Minimum number of outcome events required to build a model</label>
                     <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().minOutcomeCountForModel, eventType:'blur', ko_autocomplete: { value: $component.settings().minOutcomeCountForModel, source: $component.options.minOutcomeCountForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+                        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.settings().minOutcomeCountForModel, eventType:'blur', ko_autocomplete: { value: $component.settings().minOutcomeCountForModel, source: $component.options.minOutcomeCountForModelOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
                     </div>
                 </div>
                 <div>
                     <label>Minimum number of outcome events required to inject a signal.</label>
                     <div class="input-group">
-                        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.settings().minOutcomeCountForInjection, eventType:'blur', ko_autocomplete: { value: $component.settings().minOutcomeCountForInjection, source: $component.options.minOutcomeCountForInjectionOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+                        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.settings().minOutcomeCountForInjection, eventType:'blur', ko_autocomplete: { value: $component.settings().minOutcomeCountForInjection, source: $component.options.minOutcomeCountForInjectionOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
                     </div>
                 </div>
             </div>
@@ -99,7 +99,8 @@
     data: {
         covariateSettings: $component.settings().covariateSettings,
         showCovariateSelector: $component.showCovariateSelector,
+        isEditPermitted: $component.isEditPermitted
     }
 }">
-    <covar-settings-editor params="covariateSettings: covariateSettings, isEditPermitted: $component.isEditPermitted"></covar-settings-editor>
+    <covar-settings-editor params="covariateSettings: covariateSettings, isEditPermitted: isEditPermitted"></covar-settings-editor>
 </atlas-modal>
