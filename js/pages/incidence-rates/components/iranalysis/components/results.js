@@ -113,7 +113,7 @@ define([
 		}
 
 		reportDisabledReason(source) {
-			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? globalConsts.disabledReasons.ACCESS_DENIED : null);
 		}
 
 		isExecutionDisabled(source) {
