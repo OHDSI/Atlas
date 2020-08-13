@@ -6,7 +6,7 @@
   <!-- /ko -->
   <div class="asset-heading">
       <div class="input-group">
-        <input type="text" placeholder="New Patient Level Prediction Analysis" class="form-control" data-bind="textInput: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !isNameFilled() }" />
+        <input type="text" placeholder="New Patient Level Prediction Analysis" class="form-control" data-bind="textInput: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().name, css: { emptyInput: !isNameFilled() }, attr: { disabled: !canEdit() }" />
         <div class="input-group-btn" role="group">
           <button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
           <button class="btn btn-primary" title="Close" data-bind="click: close, enable: !isProcessing()"><i class="fa fa-times"></i></button>

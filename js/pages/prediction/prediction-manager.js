@@ -98,7 +98,7 @@ define([
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.defaultName = globalConstants.newEntityNames.plp;
-			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+			this.canEdit = ko.pureComputed(() => parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
@@ -136,18 +136,18 @@ define([
 			});
 
 			this.canSave = ko.computed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && this.canEdit();
 			});
 
 			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
 
 			this.criticalCount = ko.observable(0);
 
-			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() 
-				&& config.api.isExecutionEngineAvailable() 
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty()
+				&& config.api.isExecutionEngineAvailable()
 				&& this.canEdit()
 				&& this.criticalCount() <= 0);
-				
+
 			const generationDisableReason = ko.computed(() => {
 				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
 				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
@@ -165,6 +165,7 @@ define([
 				fullSpecification: this.fullSpecification,
 				loading: this.loading,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.canEdit,
 				PermissionService,
 				ExecutionService: PredictionService,
 				extraExecutionPermissions,
@@ -222,10 +223,10 @@ define([
 			}
 		}
 
-        selectTab(index, { key }) {
+    selectTab(index, { key }) {
 			this.selectedTabKey(key);
-            return commonUtils.routeTo('/prediction/' + this.componentParams().analysisId() + '/' + key);
-        }
+      return commonUtils.routeTo('/prediction/' + this.componentParams().analysisId() + '/' + key);
+    }
 
 		patientLevelPredictionAnalysisForWebAPI() {
 			let definition = ko.toJS(this.patientLevelPredictionAnalysis);
