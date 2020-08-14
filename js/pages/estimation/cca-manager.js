@@ -105,7 +105,7 @@ define([
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
-			});			
+			});
 
 			this.canDelete = ko.pureComputed(() => {
 				return PermissionService.isPermittedDelete(this.selectedAnalysisId());
@@ -115,21 +115,21 @@ define([
 				return PermissionService.isPermittedCopy(this.selectedAnalysisId());
 			});
 
-			this.canEdit = ko.pureComputed(() => PermissionService.isPermittedUpdate(this.selectedAnalysisId()));
+			this.canEdit = ko.pureComputed(() => parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 
 			this.canSave = ko.pureComputed(() => {
-				return this.dirtyFlag().isDirty() && this.isNameCorrect() && (parseInt(this.selectedAnalysisId()) ? this.canEdit() : PermissionService.isPermittedCreate());
+				return this.dirtyFlag().isDirty() && this.isNameCorrect() && this.canEdit();
 			});
 
 			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
 
 			this.criticalCount = ko.observable(0);
 
-			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() 
-				&& config.api.isExecutionEngineAvailable() 
+			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty()
+				&& config.api.isExecutionEngineAvailable()
 				&& this.canEdit()
 				&& this.criticalCount() <= 0);
-				
+
 			const generationDisableReason = ko.computed(() => {
 				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConstants.disabledReasons.DIRTY);
 				if (this.criticalCount() > 0) return ko.unwrap(globalConstants.disabledReasons.INVALID_DESIGN);

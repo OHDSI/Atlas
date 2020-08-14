@@ -89,7 +89,7 @@ define([
 				dirtyFlag: this.dirtyFlag,
 				criticalCount: this.criticalCount,
 				isEditPermitted: this.canEdit,
-                selectedSourceId: this.selectedSourceId,
+        selectedSourceId: this.selectedSourceId,
 			});
 			this.warningParams = ko.observable({
 				current: sharedState.CohortPathways.current,

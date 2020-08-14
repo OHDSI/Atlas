@@ -68,26 +68,6 @@ define(
 
     const options = {
       removeButton: `<button type="button" class="btn btn-danger btn-xs btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>`,
-      cohortTableColumns: [
-        {
-            title: ko.i18n('columns.remove', 'Remove'),
-            render: function (s, p, d) {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: ko.i18n('columns.id', 'Id'),
-            data: d => d.id,
-            visible: false,
-        },
-        {
-            title: ko.i18n('columns.name', 'Name'),
-            data: d => d.name,
-        },
-      ],
       targetOutcomeTableColumns: [
         {
             title: ko.i18n('columns.targetId', 'Target Id'),
@@ -198,150 +178,6 @@ define(
         },
         ]
       },
-      populationSettingsTableColumns: [
-        {
-            title: ko.i18n('columns.remove', 'Remove'),
-            render: (s, p, d) => {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: ko.i18n('columns.binary', 'Binary'),
-            data: d => d.binary().toString(),
-            visible: false,
-        },
-        {
-            title: ko.i18n('columns.firstExposureOnly', 'First Exposure Only'),
-            data: d => d.firstExposureOnly().toString(),
-            visible: false,
-        },
-        {
-            title: ko.i18n('columns.riskWindowStart', 'Risk Window Start'),
-            render: (s, p, d) => {
-                return d.riskWindowStart().toString() +
-                  "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
-                  "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
-                  ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name);
-            },
-        },
-        {
-            title: ko.i18n('columns.riskWindowEnd', 'Risk Window End'),
-            render: (s, p, d) => {
-                return d.riskWindowEnd().toString() +
-                  "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
-                  "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
-                  ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name);
-            },
-        },
-        {
-            title: ko.i18n('columns.washoutPeriod', 'Washout Period'),
-            data: d => d.washoutPeriod().toString() + 'd',
-        },
-        {
-            title: ko.i18n('columns.includeAllOutcomes', 'Include All Outcomes'),
-            data: d => d.includeAllOutcomes().toString(),
-        },
-        {
-            title: ko.i18n('columns.removeSubjectsWithPriorOutcome', 'Remove Subjects With Prior Outcome'),
-            data: d => d.removeSubjectsWithPriorOutcome().toString(),
-        },
-        {
-            title: ko.i18n('columns.priorOutcomeLookback', 'Prior Outcome Lookback'),
-            data: d => d.priorOutcomeLookback().toString() + 'd',
-            visible: false,
-        },
-        {
-            title: ko.i18n('columns.requireTimeAtRisk', 'Require Time At Risk'),
-            data: d => d.requireTimeAtRisk().toString(),
-            visible: false,
-        },
-        {
-            title: ko.i18n('columns.minimumTimeAtRisk', 'Minimum Time At Risk'),
-            data: d => d.minTimeAtRisk().toString() + 'd',
-        },
-      ],
-      modelSettingsTableColumns: [
-        {
-            title: ko.i18n('columns.remove', 'Remove'),
-            render: (s, p, d) => {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: ko.i18n('columns.model', 'Model'),
-            data: d => Object.keys(d)[0],
-        },
-        {
-            title: ko.i18n('columns.options', 'Options'),
-            data: d => {
-                const key = Object.keys(d)[0];
-                return ko.toJSON(d[key]);
-            },
-        },
-    ],
-    covariateSettingsTableColumns: [
-        {
-            title: ko.i18n('columns.remove', 'Remove'),
-            render: (s, p, d) => {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: ko.i18n('columns.temporal', 'Temporal'),
-            render: (s, p, d) => {
-              return Object.keys(d)[0] === 'temporal' ? 'Yes': 'No'
-            },
-            visible: false,
-        },
-        {
-            title: ko.i18n('columns.options', 'Options'),
-            render: (s, p, d, a, b, c) => {
-                const keys = Object.keys(d);
-                const vals = Object.values(d);
-                var settings = [];
-                const defaultDisplayLength = 5;
-                for (let i = 0; i < keys.length; i++) {
-                    const currentVal = ko.isObservable(vals[i]) ? vals[i]() : vals[i];
-                    if (currentVal === true) {
-                        settings.push(keys[i]);
-                    }
-                }
-                if (settings.length > 1) {
-                    let displayVal = "";
-                    settings.forEach((element, index) => {
-                        if (index < defaultDisplayLength) {
-                            if (index < settings.length - 1) {
-                                displayVal += (element + ", ");
-                            } else {
-                                displayVal += element;
-                            }
-                        } else if (index === defaultDisplayLength) {
-                            displayVal = displayVal + element + "&nbsp;&nbsp;<div class=\"tool-tip\">(+" + (settings.length - defaultDisplayLength - 1) + " more covariate settings<span class=\"tooltiptext\">";
-                        } else if (index > defaultDisplayLength) {
-                            displayVal += ("<span class=\"tooltipitem\">" + element + "</span>");
-                        }
-                    });
-                    if (settings.length > defaultDisplayLength) {
-                        displayVal += "</span>)</div>";
-                    }
-                    return displayVal;
-                } else if (settings.length === 1) {
-                    return settings[0];
-                } else {
-                    return 'No covariate settings selected';
-                }
-            }
-        },
-      ],
       specificationSummaryTableOptions: {
         pageLength: 10,
         lengthMenu: [
@@ -373,12 +209,12 @@ define(
         id: false
       }],
       yesNoIntOptions: [{
-            name: ko.i18n('options.yes', 'Yes'),
-            id: "1"
-        }, {
-            name: ko.i18n('options.no', 'No'),
-            id: "0"
-		}],
+        name: ko.i18n('options.yes', 'Yes'),
+        id: "1"
+      }, {
+        name: ko.i18n('options.no', 'No'),
+        id: "0"
+      }],
       testSplit: [{
         name: 'time',
         desc: ko.i18n('options.time', 'Time'),
@@ -390,6 +226,178 @@ define(
       classWeightOptions: [{label: ko.i18n('options.none', 'None'), value: 'None'},{label: ko.i18n('options.balanced', 'Balanced'), value: 'Balanced'}],
     };
 
+    const getCohortTableColumns = (canEdit) => [
+        {
+          title: 'Remove',
+          render: function (s, p, d) {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: 'Id',
+          data: d => d.id,
+          visible: false,
+        },
+        {
+          title: 'Name',
+          data: d => d.name,
+        },
+      ];
+
+    const getPopulationSettingsTableColumns = (canEdit) => [
+        {
+          title: ko.i18n('columns.remove', 'Remove'),
+          render: (s, p, d) => {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: ko.i18n('columns.binary', 'Binary'),
+          data: d => d.binary().toString(),
+          visible: false,
+        },
+        {
+          title: ko.i18n('columns.firstExposureOnly', 'First Exposure Only'),
+          data: d => d.firstExposureOnly().toString(),
+          visible: false,
+        },
+        {
+          title: ko.i18n('columns.riskWindowStart', 'Risk Window Start'),
+          render: (s, p, d) => {
+            return d.riskWindowStart().toString() +
+              "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
+              "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
+              ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name);
+          },
+        },
+        {
+          title: ko.i18n('columns.riskWindowEnd', 'Risk Window End'),
+          render: (s, p, d) => {
+            return d.riskWindowEnd().toString() +
+              "<span data-bind=\"text: ko.i18n('common.daysAbbr', 'd')\"></span> " +
+              "<span data-bind=\"text: ko.i18n('ple.spec.from', 'from')\"></span><br/>" +
+              ko.unwrap(consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name);
+          },
+        },
+        {
+          title: ko.i18n('columns.washoutPeriod', 'Washout Period'),
+          data: d => d.washoutPeriod().toString() + 'd',
+        },
+        {
+          title: ko.i18n('columns.includeAllOutcomes', 'Include All Outcomes'),
+          data: d => d.includeAllOutcomes().toString(),
+        },
+        {
+          title: ko.i18n('columns.removeSubjectsWithPriorOutcome', 'Remove Subjects With Prior Outcome'),
+          data: d => d.removeSubjectsWithPriorOutcome().toString(),
+        },
+        {
+          title: ko.i18n('columns.priorOutcomeLookback', 'Prior Outcome Lookback'),
+          data: d => d.priorOutcomeLookback().toString() + 'd',
+          visible: false,
+        },
+        {
+          title: ko.i18n('columns.requireTimeAtRisk', 'Require Time At Risk'),
+          data: d => d.requireTimeAtRisk().toString(),
+          visible: false,
+        },
+        {
+          title: ko.i18n('columns.minimumTimeAtRisk', 'Minimum Time At Risk'),
+          data: d => d.minTimeAtRisk().toString() + 'd',
+        },
+      ];
+
+    const getModelSettingsTableColumns = (canEdit) => [
+        {
+          title: ko.i18n('columns.remove', 'Remove'),
+          render: (s, p, d) => {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: ko.i18n('columns.model', 'Model'),
+          data: d => Object.keys(d)[0],
+        },
+        {
+          title: ko.i18n('columns.options', 'Options'),
+          data: d => {
+            const key = Object.keys(d)[0];
+            return ko.toJSON(d[key]);
+          },
+        },
+      ];
+
+    const getCovariateSettingsTableColumns = (canEdit) => [
+        {
+          title: ko.i18n('columns.remove', 'Remove'),
+          render: (s, p, d) => {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: ko.i18n('columns.temporal', 'Temporal'),
+          render: (s, p, d) => {
+            return Object.keys(d)[0] === 'temporal' ? 'Yes': 'No'
+          },
+          visible: false,
+        },
+        {
+          title: ko.i18n('columns.options', 'Options'),
+          render: (s, p, d, a, b, c) => {
+            const keys = Object.keys(d);
+            const vals = Object.values(d);
+            var settings = [];
+            const defaultDisplayLength = 5;
+            for (let i = 0; i < keys.length; i++) {
+              const currentVal = ko.isObservable(vals[i]) ? vals[i]() : vals[i];
+              if (currentVal === true) {
+                settings.push(keys[i]);
+              }
+            }
+            if (settings.length > 1) {
+              let displayVal = "";
+              settings.forEach((element, index) => {
+                if (index < defaultDisplayLength) {
+                  if (index < settings.length - 1) {
+                    displayVal += (element + ", ");
+                  } else {
+                    displayVal += element;
+                  }
+                } else if (index === defaultDisplayLength) {
+                  displayVal = displayVal + element + "&nbsp;&nbsp;<div class=\"tool-tip\">(+" + (settings.length - defaultDisplayLength - 1) + " more covariate settings<span class=\"tooltiptext\">";
+                } else if (index > defaultDisplayLength) {
+                  displayVal += ("<span class=\"tooltipitem\">" + element + "</span>");
+                }
+              });
+              if (settings.length > defaultDisplayLength) {
+                displayVal += "</span>)</div>";
+              }
+              return displayVal;
+            } else if (settings.length === 1) {
+              return settings[0];
+            } else {
+              return 'No covariate settings selected';
+            }
+          }
+        },
+      ];
+
     return {
       apiPaths,
       pageTitle,
@@ -398,6 +406,10 @@ define(
       defaultNontemporalCovariates,
       options,
       predictionGenerationStatus,
+      getCohortTableColumns,
+      getPopulationSettingsTableColumns,
+      getModelSettingsTableColumns,
+      getCovariateSettingsTableColumns,
     };
   }
 );

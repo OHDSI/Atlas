@@ -1,7 +1,6 @@
 <div class="paddedWrapper">
-	<div  
-	class="divtext cohort-description" 
-	data-bind="attr:{placeholder:ko.i18n('components.atlasCohortEditor.enterCohortPlaceholder', 'Enter a cohort definition description here')}, contentEditable: $component.currentCohortDefinition().description"></div>
+	<!-- contenteditableSwitch must be placed AFTER contentEditable to override 'contenteditable' attribute -->
+	<div class="divtext cohort-description" data-bind="contentEditable: $component.currentCohortDefinition().description, contenteditableSwitch: canEdit(), placeholder: ko.i18n('components.atlasCohortEditor.enterCohortPlaceholder', 'Enter a cohort definition description here')"></div>
 	<div data-bind="eventListener: [
 									{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport},
 									{ event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}

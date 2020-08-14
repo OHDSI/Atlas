@@ -55,6 +55,8 @@ define([
 			this.importService = EstimationService.importEstimation;
 			this.isPermittedExport = PermissionService.isPermittedExport;
 			this.isPermittedImport = PermissionService.isPermittedImport;
+			this.isEditPermitted = params.isEditPermitted;
+			this.cca = constants.getCca(this.isEditPermitted())[0];
 
 			this.specificationValid = ko.pureComputed(() => this.criticalCount() <= 0);
 

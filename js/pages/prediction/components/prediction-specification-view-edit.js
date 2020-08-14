@@ -13,6 +13,7 @@ define([
 	'featureextraction/components/temporal-covariate-settings-editor',
 	'components/cohort-definition-browser',
 	'faceted-datatable',
+	'less!./prediction-specification-view-edit.less',
 ], function (
 	ko,
 	view,
@@ -40,14 +41,19 @@ define([
 			this.specificationPillMode = ko.observable('all');
 			this.targetCohorts = params.targetCohorts;
 			this.outcomeCohorts = params.outcomeCohorts;
-			this.currentCohortList = ko.observable(null);;
+			this.currentCohortList = ko.observable(null);
 			this.showCohortSelector = ko.observable(false);
 			this.covariateSettings = this.patientLevelPredictionAnalysis().covariateSettings;
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 			this.modelSettingsOptions = ModelSettings.options;
 			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
-			this.language = ko.i18n('datatable.language')
+			this.isEditPermitted = params.isEditPermitted;
+			this.cohortTableColumns = constants.getCohortTableColumns(this.isEditPermitted());
+			this.populationSettingsTableColumns = constants.getPopulationSettingsTableColumns(this.isEditPermitted());
+			this.modelSettingsTableColumns = constants.getModelSettingsTableColumns(this.isEditPermitted());
+			this.covariateSettingsTableColumns = constants.getCovariateSettingsTableColumns(this.isEditPermitted());
+			this.language = ko.i18n('datatable.language');
 		}
 
 		removeTargetCohort(data, obj, tableRow, rowIndex) {
@@ -154,6 +160,7 @@ define([
 			this.editorComponentParams({
 				covariateSettings: settings,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor');
 		}
@@ -197,6 +204,7 @@ define([
 			this.editorComponentParams({
 				populationSettings: settings,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor');
 		}

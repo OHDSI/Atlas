@@ -9,7 +9,8 @@
           <input type="text" class="form-control" data-bind="
             placeholder: ko.i18n('predictions.newItemPlaceholder', 'New Patient Level Prediction Analysis'),
             textInput: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().name,
-            css: { emptyInput: !isNameFilled() }" />
+            css: { emptyInput: !isNameFilled() },
+            attr: { disabled: !canEdit() }" />
           <div class="input-group-btn" role="group">
               <button class="btn btn-success"
                       data-bind="title: ko.i18n('common.save', 'Save'), click: save, enable: canSave() && !isProcessing()"><i

@@ -1,7 +1,7 @@
 <div>
     <label data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_1', 'Specify how to split the test/train set:')"></label>
     <div class="input-group">
-        <select class="form-control" 
+        <select class="form-control"
         data-bind="options: $component.options.testSplit, optionsText:'desc', optionsValue:'name', value: $component.runPlpArgs.testSplit"></select>
     </div>
 </div>
@@ -14,7 +14,7 @@
 <div class="input-group">
     <label data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_3', 'The number of folds used in the cross validation:')"></label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> 
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
         <span data-bind="text: ko.i18n('predictions.editors.evaluationEditorText_4', 'folds')"></span>
     </div>
 </div>

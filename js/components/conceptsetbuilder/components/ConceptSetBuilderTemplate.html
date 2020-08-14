@@ -3,11 +3,11 @@
 	optionsCaption: ko.i18n('components.conceptSetBuilder.pleaseSelectCodesetToModify', 'Please select codeset to modify...'),
 	value: selectedConceptSet" class="mediumInputField">
 </select>
-<button class="btn btn-primary btn-sm" data-bind="click: function () { $component.createConceptSet() }, text: ko.i18n('components.conceptSetBuilder.newConceptSet', 'New Concept Set')"></button>
-<button class="btn btn-primary btn-sm" data-bind="visible: !(selectedConceptSet()), click: function () { $component.isModalOpened(true) }, text: ko.i18n('components.conceptSetBuilder.load', 'Load')"></button>
-<button class="btn btn-primary btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.isImportEnabled(true) }, text: ko.i18n('components.conceptSetBuilder.import', 'Import')"></button>
-<button class="btn btn-primary btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.isExportEnabled(true) }, text: ko.i18n('components.conceptSetBuilder.export', 'Export')"></button>
-<button class="btn btn-danger btn-sm" data-bind="visible: selectedConceptSet, click: function () { $component.deleteConceptSet() }, text: ko.i18n('components.conceptSetBuilder.delete', 'Delete')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: isEditable(), click: function () { $component.createConceptSet() }, text: ko.i18n('components.conceptSetBuilder.newConceptSet', 'New Concept Set')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: isEditable() && !(selectedConceptSet()), click: function () { $component.isModalOpened(true) }, text: ko.i18n('components.conceptSetBuilder.load', 'Load')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: isEditable() && selectedConceptSet, click: function () { $component.isImportEnabled(true) }, text: ko.i18n('components.conceptSetBuilder.import', 'Import')"></button>
+<button class="btn btn-primary btn-sm" data-bind="visible: isEditable() && selectedConceptSet, click: function () { $component.isExportEnabled(true) }, text: ko.i18n('components.conceptSetBuilder.export', 'Export')"></button>
+<button class="btn btn-danger btn-sm" data-bind="visible: isEditable() && selectedConceptSet, click: function () { $component.deleteConceptSet() }, text: ko.i18n('components.conceptSetBuilder.delete', 'Delete')"></button>
 <div data-bind="if: selectedConceptSet">
 		<div class="tabs" data-bind="tabs: { widget: $component.tabWidget }">
 		<ul>
@@ -40,7 +40,7 @@
 		<div data-bind="attr: { id: 'csExpression' }">
 			<div data-bind="with: selectedConceptSet" style="padding: 5px;">
 				<input style="width: 100%" data-bind="value:name"></input>
-				<table class="stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable: {
+				<table cellspacing="0" width="100%" data-bind="dataTable: {
 						data: expression.items,
 						api: $component.dtApi,
 						options: {
@@ -60,21 +60,23 @@
 							],
 							language: ko.i18n('datatable.language')
 					 }
-				}">
+				}, css: {stripe: true, compact:true, hover:true, 'tab-disabled': !$component.isEditable()}">
 				</table>
 			</div>
-			<concept-picker params="onAdd: $component.addConcepts"></concept-picker><button class="btn btn-danger btn-sm" data-bind="click: function () { $component.removeSelected() }, text: ko.i18n('components.conceptSetBuilder.removeSelected', 'Remove Selected')"></button>
+			<div data-bind="visible: $component.isEditable()">
+				<concept-picker params="onAdd: $component.addConcepts"></concept-picker><button class="btn btn-danger btn-sm" data-bind="click: function () { $component.removeSelected() }, text: ko.i18n('components.conceptSetBuilder.removeSelected', 'Remove Selected')"></button>
+			</div>
 		</div>
 		<div data-bind="attr: { id: 'csIncluded' }">
 			<div style="padding: 5px;">
 				<input style="width: 100%" data-bind="value:name"></input>
-				<concept-set-included-concepts params="conceptSet: selectedConceptSet, widget:includedConceptsComponent"></concept-set-included-concepts>
+				<concept-set-included-concepts params="conceptSet: selectedConceptSet, widget:includedConceptsComponent, canEdit: $component.isEditable"></concept-set-included-concepts>
 			</div>
 		</div>
 		<div data-bind="attr: { id: 'csMapped' }">
 			<div style="padding: 5px;">
 				<input style="width: 100%" data-bind="value:name"></input>
-				<concept-set-mapped-concepts params="conceptSet: selectedConceptSet, widget:mappedConceptsComponent"></concept-set-mapped-concepts>
+				<concept-set-mapped-concepts params="conceptSet: selectedConceptSet, widget:mappedConceptsComponent, canEdit: $component.isEditable"></concept-set-mapped-concepts>
 			</div>
 
 		</div>

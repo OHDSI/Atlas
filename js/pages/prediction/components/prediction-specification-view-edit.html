@@ -2,7 +2,7 @@
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
             <textarea class="descriptionEntry"
-                data-bind="placeholder: ko.i18n('predictions.descriptionPlaceholder', 'enter a description here (1000 characters max)'), value: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().description"
+                data-bind="placeholder: ko.i18n('predictions.descriptionPlaceholder', 'enter a description here (1000 characters max)'), value: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().description, disable: !$component.isEditPermitted()"
                 maxlength="1000"></textarea>
             <hr />
             <div id="filters">
@@ -17,23 +17,19 @@
                                 <a data-bind="text: ko.i18n('predictions.item.all', 'All')"></a></li>
                             <li role="presentation"
                                 data-bind="css: {active: $component.specificationPillMode() == 'predictions' }, click: function() {$component.specificationPillMode('predictions') };">
-                                <a
-                                    data-bind="text: ko.i18n('predictions.item.predictionProblemSettings', 'Prediction Problem Settings')"></a>
+                                <a data-bind="text: ko.i18n('predictions.item.predictionProblemSettings', 'Prediction Problem Settings')"></a>
                             </li>
                             <li role="presentation"
                                 data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };">
-                                <a
-                                    data-bind="text: ko.i18n('predictions.item.analysisSettings', 'Analysis Settings')"></a>
+                                <a data-bind="text: ko.i18n('predictions.item.analysisSettings', 'Analysis Settings')"></a>
                             </li>
                             <li role="presentation"
                                 data-bind="css: {active: $component.specificationPillMode() == 'executionSettings' }, click: function() {$component.specificationPillMode('executionSettings') };">
-                                <a
-                                    data-bind="text: ko.i18n('predictions.item.executionSettings', 'Execution Settings')"></a>
+                                <a data-bind="text: ko.i18n('predictions.item.executionSettings', 'Execution Settings')"></a>
                             </li>
                             <li role="presentation"
                                 data-bind="css: {active: $component.specificationPillMode() == 'trainingSettings' }, click: function() {$component.specificationPillMode('trainingSettings') };">
-                                <a
-                                    data-bind="text: ko.i18n('predictions.item.trainingSettings', 'Training Settings')"></a>
+                                <a data-bind="text: ko.i18n('predictions.item.trainingSettings', 'Training Settings')"></a>
                             </li>
                         </ul>
                     </div>
@@ -45,62 +41,52 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-heartbeat"></i>
-                            <span
-                                data-bind="text: ko.i18n('predictions.item.predictionProblemSettings', 'Prediction Problem Settings')"></span>
+                            <i class="fa fa-heartbeat"></i> <span data-bind="text: ko.i18n('predictions.item.predictionProblemSettings', 'Prediction Problem Settings')"></span>
                         </div>
                         <div class="panel-body">
                             <div class="paddedWrapper">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <i class="fa fa-users"></i>
-                                        <span
-                                            data-bind="text: ko.i18n('predictions.item.targetCohort', 'Target Cohorts')"></span>
-                                        <button type="button" class="btn btn-primary btn-sm pull-right"
-                                            data-bind="click: addTarget">
-                                            <i class="fa fa-plus"></i>
-                                            <span
-                                                data-bind="text: ko.i18n('predictions.item.addTargetCohort', 'Add Target Cohort')"></span>
+                                        <i class="fa fa-users"></i> <span data-bind="text: ko.i18n('predictions.item.targetCohort', 'Target Cohorts')"></span>
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget, disable: !$component.isEditPermitted()">
+                                            <i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('predictions.item.addTargetCohort', 'Add Target Cohort')"></span>
                                             <span class="caret"></span>
                                         </button>
                                     </div>
                                     <div class="panel-body">
                                         <faceted-datatable params="{
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.domNoButtons,
-                                reference: $component.targetCohorts,
-                                language: language,
-                                rowClick: $component.removeTargetCohort
-                                }"></faceted-datatable>
+                                            columns: $component.cohortTableColumns,
+                                            options: options.specificationSummaryTableOptions,
+                                            pageLength: options.specificationSummaryTableOptions.pageLength,
+                                            lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
+                                            dom: options.specificationSummaryTableOptions.domNoButtons,
+                                            reference: $component.targetCohorts,
+                                            language: language,
+                                            rowClick: $component.removeTargetCohort
+                                        }"></faceted-datatable>
                                     </div>
                                 </div>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <i class="fa fa-users"></i>
-                                        <span
-                                            data-bind="text: ko.i18n('predictions.item.outcomeCohort', 'Outcome Cohorts')"></span>
-                                        <button type="button" class="btn btn-primary btn-sm pull-right"
-                                            data-bind="click: addOutcome">
+                                        <span data-bind="text: ko.i18n('predictions.item.outcomeCohort', 'Outcome Cohorts')"></span>
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome, disable: !$component.isEditPermitted()">
                                             <i class="fa fa-plus"></i>
-                                            <span
-                                                data-bind="text: ko.i18n('predictions.item.addOutcomeCohort', 'Add Outcome Cohort')"></span>
+                                            <span data-bind="text: ko.i18n('predictions.item.addOutcomeCohort', 'Add Outcome Cohort')"></span>
                                             <span class="caret"></span>
                                         </button>
                                     </div>
                                     <div class="panel-body">
                                         <faceted-datatable params="{
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.domNoButtons,
-                                reference: $component.outcomeCohorts,
-                                language: language,
-                                rowClick: $component.removeOutcomeCohort
-                                }"></faceted-datatable>
+                                            columns: $component.cohortTableColumns,
+                                            options: options.specificationSummaryTableOptions,
+                                            pageLength: options.specificationSummaryTableOptions.pageLength,
+                                            lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
+                                            dom: options.specificationSummaryTableOptions.domNoButtons,
+                                            reference: $component.outcomeCohorts,
+                                            language: language,
+                                            rowClick: $component.removeOutcomeCohort
+                                        }"></faceted-datatable>
                                     </div>
                                 </div>
                             </div>
@@ -115,92 +101,80 @@
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <i class="fa fa-cogs"></i>
-                            <span
-                                data-bind="text: ko.i18n('predictions.item.analysisSettings', 'Analysis Settings')"></span>
+                            <span data-bind="text: ko.i18n('predictions.item.analysisSettings', 'Analysis Settings')"></span>
                         </div>
                         <div class="panel-body">
                             <div class="paddedWrapper">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <span
-                                            data-bind="text: ko.i18n('predictions.item.modelSettings', 'Model Settings')"></span>
+                                        <span data-bind="text: ko.i18n('predictions.item.modelSettings', 'Model Settings')"></span>
                                         <div class="btn-group pull-right">
-                                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                                data-toggle="dropdown" aria-expanded="true">
+                                            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true" data-bind="disable: !$component.isEditPermitted()">
                                                 <i class="fa fa-plus"></i>
-                                                <span
-                                                    data-bind="text: ko.i18n('predictions.item.addModelSettings', 'Add Model Settings')"></span>
+                                                <span data-bind="text: ko.i18n('predictions.item.addModelSettings', 'Add Model Settings')"></span>
                                                 <span class="caret"></span>
                                             </button>
-                                            <ul class="dropdown-menu"
-                                                data-bind="foreach:$component.modelSettingsOptions">
-                                                <li><a data-bind="text:ko.i18n($data.name, $data.defaultName), click:function() {$component.addModelSettings($data)}"
-                                                        href="#"></a></li>
+                                            <ul class="dropdown-menu" data-bind="foreach:$component.modelSettingsOptions">
+                                                <li><a data-bind="text:ko.i18n($data.name, $data.defaultName), click:function() {$component.addModelSettings($data)}" href="#"></a></li>
                                             </ul>
                                         </div>
                                     </div>
                                     <div class="panel-body">
                                         <faceted-datatable params="{
-                                columns: options.modelSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.domNoButtons,
-                                reference: $component.modelSettings,
-                                language: language,
-                                rowClick: $component.modelSettingRowClickHandler,
-                            }"></faceted-datatable>
+                                            columns: $component.modelSettingsTableColumns,
+                                            options: options.specificationSummaryTableOptions,
+                                            pageLength: options.specificationSummaryTableOptions.pageLength,
+                                            lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
+                                            dom: options.specificationSummaryTableOptions.domNoButtons,
+                                            reference: $component.modelSettings,
+                                            language: language,
+                                            rowClick: $component.modelSettingRowClickHandler,
+                                        }"></faceted-datatable>
                                     </div>
                                 </div>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <span
-                                            data-bind="text: ko.i18n('predictions.item.covariateSettings', 'Covariate Settings')"></span>
+                                        <span data-bind="text: ko.i18n('predictions.item.covariateSettings', 'Covariate Settings')"></span>
                                         <div class="btn-group pull-right">
-                                            <button type="button" class="btn btn-primary btn-sm pull-right"
-                                                data-bind="click: addCovariateSettings">
+                                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addCovariateSettings, disable: !$component.isEditPermitted()">
                                                 <i class="fa fa-plus"></i>
-                                                <span
-                                                    data-bind="text: ko.i18n('predictions.item.addCovariateSettings', 'Add Covariate Settings')"></span>
+                                                <span data-bind="text: ko.i18n('predictions.item.addCovariateSettings', 'Add Covariate Settings')"></span>
                                                 <span class="caret"></span>
                                             </button>
                                         </div>
                                     </div>
                                     <div class="panel-body">
                                         <faceted-datatable params="{
-                                columns: options.covariateSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.dom,
-                                reference: $component.covariateSettings,
-                                language: language,
-                                rowClick: $component.covariateSettingRowClickHandler,
-                                }"></faceted-datatable>
+                                            columns: $component.covariateSettingsTableColumns,
+                                            options: options.specificationSummaryTableOptions,
+                                            pageLength: options.specificationSummaryTableOptions.pageLength,
+                                            lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
+                                            dom: options.specificationSummaryTableOptions.dom,
+                                            reference: $component.covariateSettings,
+                                            language: language,
+                                            rowClick: $component.covariateSettingRowClickHandler,
+                                        }"></faceted-datatable>
                                     </div>
                                 </div>
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
-                                        <span
-                                            data-bind="text: ko.i18n('predictions.item.populationSettings', 'Population Settings')"></span>
-                                        <button type="button" class="btn btn-primary btn-sm pull-right"
-                                            data-bind="click: addPopulationSettings">
+                                        <span data-bind="text: ko.i18n('predictions.item.populationSettings', 'Population Settings')"></span>
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addPopulationSettings, disable: !$component.isEditPermitted()">
                                             <i class="fa fa-plus"></i>
-                                            <span
-                                                data-bind="text: ko.i18n('predictions.item.addPopulationSettings', 'Add Population Settings')"></span>
+                                            <span data-bind="text: ko.i18n('predictions.item.addPopulationSettings', 'Add Population Settings')"></span>
                                         </button>
                                     </div>
                                     <div class="panel-body">
                                         <faceted-datatable params="{
-                                columns: options.populationSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
-                                pageLength: options.specificationSummaryTableOptions.pageLength,
-                                lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
-                                dom: options.specificationSummaryTableOptions.dom,
-                                reference: $component.populationSettings,
-                                language: language,
-                                rowClick: $component.populationSettingRowClickHandler,
-                            }"></faceted-datatable>
+                                            columns: $component.populationSettingsTableColumns,
+                                            options: options.specificationSummaryTableOptions,
+                                            pageLength: options.specificationSummaryTableOptions.pageLength,
+                                            lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
+                                            dom: options.specificationSummaryTableOptions.dom,
+                                            reference: $component.populationSettings,
+                                            language: language,
+                                            rowClick: $component.populationSettingRowClickHandler,
+                                        }"></faceted-datatable>
                                     </div>
                                 </div>
                             </div>
@@ -214,14 +188,10 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-cog"></i>
-                            <span data-bind="text: ko.i18n('predictions.item.executionSettings', 'Execution Settings')"></span>
-
+                            <i class="fa fa-cog"></i> <span data-bind="text: ko.i18n('predictions.item.executionSettings', 'Execution Settings')"></span>
                         </div>
-                        <div class="panel-body">
-                            <execution-settings-editor
-                                params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions">
-                            </execution-settings-editor>
+                        <div class="panel-body" data-bind="css:{'settings-disabled': !$component.isEditPermitted()}">
+                            <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></execution-settings-editor>
                         </div>
                     </div>
                 </div>
@@ -232,14 +202,10 @@
                 <div class="paddedWrapper">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <i class="fa fa-cog"></i>
-
-                            <span data-bind="text: ko.i18n('predictions.item.trainingSettings', 'Training Settings')"></span>
+                            <i class="fa fa-cog"></i> <span data-bind="text: ko.i18n('predictions.item.trainingSettings', 'Training Settings')"></span>
                         </div>
-                        <div class="panel-body">
-                            <evaluation-settings-editor
-                                params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions">
-                            </evaluation-settings-editor>
+                        <div class="panel-body" data-bind="css:{'settings-disabled': !$component.isEditPermitted()}">
+                            <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></evaluation-settings-editor>
                         </div>
                     </div>
                 </div>
@@ -252,18 +218,15 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div class="row">
-                            <div data-bind="click: closeEditor" class="editor-back-icon"><i
-                                    class="fa fa-chevron-left fa-lg"></i></div>
+                            <div data-bind="click: closeEditor" class="editor-back-icon"><i class="fa fa-chevron-left fa-lg"></i></div>
                             <div>
                                 <div class="editor-heading" data-bind="text: ko.unwrap($component.editorHeading)"></div>
                                 <div data-bind="text: ko.unwrap($component.editorDescription)"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-body" data-bind="if: $component.editorComponentName() != null">
-                        <div id="editorComponent"
-                            data-bind='component: {name: $component.editorComponentName(), params: $component.editorComponentParams()}'>
-                        </div>
+                    <div class="panel-body" data-bind="if: $component.editorComponentName() != null, css:{'settings-disabled': !$component.isEditPermitted()}">
+                        <div id="editorComponent" data-bind='component: {name: $component.editorComponentName(), params: $component.editorComponentParams()}'></div>
                     </div>
                 </div>
             </div>

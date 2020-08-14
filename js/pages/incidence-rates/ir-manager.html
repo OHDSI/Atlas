@@ -59,7 +59,7 @@
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
 				<!-- ko with: selectedAnalysis().expression -->
-					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
+					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor, isEditable: $parent.isEditable"></concept-set-builder>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },
@@ -77,7 +77,8 @@
 																			 stoppingSources: stoppingSources,
 																			 loadingSummary: loadingSummary,
 																			 isTarValid: isTarValid,
-																			 criticalCount: criticalCount"></ir-analysis-results>
+																			 criticalCount: criticalCount,
+																			 isEditable: isEditable"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">

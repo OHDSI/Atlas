@@ -4,6 +4,8 @@ define([
 	'text!./MappedConcepts.html',
 	'services/VocabularyProvider',
 	'utils/CommonUtils',
+	'const',
+	'atlas-state',
 	'faceted-datatable'
 ], function (
 		$,
@@ -11,6 +13,8 @@ define([
 		template,
 		VocabularyAPI,
 		commonUtils,
+		globalConstants,
+		sharedState
 		) {
 	
 	function MappedConcepts(params) {
@@ -19,7 +23,7 @@ define([
 		self.conceptSet = ko.pureComputed(function () {
 			return ko.toJS(params.conceptSet().expression);	
 		});
-
+		self.canEdit = params.canEdit;
 		self.isLoading = ko.observable(true);
 		
 		self.selectedConcepts = ko.observableArray();
@@ -83,52 +87,7 @@ define([
 			]
 		};
 
-		self.tableColumns = [
-			{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-
-					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			},
-			{
-				title: ko.i18n('columns.id', 'Id'),
-				data: 'CONCEPT_ID'
-			},
-			{
-				title: ko.i18n('columns.code', 'Code'),
-				data: 'CONCEPT_CODE'
-			},
-			{
-				title: ko.i18n('columns.name', 'Name'),
-				data: 'CONCEPT_NAME',
-				render: commonUtils.renderLink,
-			},
-			{
-				title: ko.i18n('columns.class', 'Class'),
-				data: 'CONCEPT_CLASS_ID'
-			},
-			{
-				title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
-				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: ko.i18n('columns.domain', 'Domain'),
-				data: 'DOMAIN_ID'
-			},
-			{
-				title: ko.i18n('columns.vocabulary', 'Vocabulary'),
-				data: 'VOCABULARY_ID'
-			}
-		];
+		self.tableColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
 	
 		self.contextSensitiveLinkColor = function (row, data) {
 			var switchContext;

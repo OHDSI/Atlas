@@ -1,7 +1,7 @@
 <div>
     <label data-bind="text: ko.i18n('ple.spec.propensityScoreAdjustmentPanel.maximumNumberOfPersons', 'What is the maximum number of persons in the comparator arm to be matched to each person in the target arm within the defined caliper? (0 = means no maximum - all comparators will be assigned to a target person):')"></label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.matchArgs.maxRatio, eventType:'blur', ko_autocomplete: { value: $component.matchArgs.maxRatio, source: $component.options.maxRatioOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.matchArgs.maxRatio, eventType:'blur', ko_autocomplete: { value: $component.matchArgs.maxRatio, source: $component.options.maxRatioOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>

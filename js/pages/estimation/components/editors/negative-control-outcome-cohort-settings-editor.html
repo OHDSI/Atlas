@@ -1,4 +1,4 @@
-<div>
+<div data-bind="css:{'div-disabled': !$component.isEditPermitted()}">
     <div>
         <label data-bind="text: ko.i18n('ple.spec.evaluationSettingsPanel.typeOfOccurence', 'The type of occurrence of the event when selecting from the domain.')"></label>
         <div class="input-group">

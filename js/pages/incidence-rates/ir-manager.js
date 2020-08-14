@@ -94,7 +94,7 @@ define([
 					)
 			});
 			this.isEditable = ko.pureComputed(() => {
-				return this.selectedAnalysisId() === null
+				return this.selectedAnalysisId() === null || this.selectedAnalysisId() === 0
 					|| !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled

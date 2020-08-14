@@ -61,6 +61,7 @@ define([
 			this.selectedTarget = ko.observable();
 			this.selectedOutcome = ko.observable();
 			this.isLoading = ko.observable();
+			this.isEditable = params.isEditable;
 			this.formatDateTime = function(date){
 				return momentApi.formatDateTime(new Date(date));
 			};
@@ -114,7 +115,7 @@ define([
 		}
 
 		reportDisabledReason(source) {
-			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? ko.unwrap(constants.disabledReasons.ACCESS_DENIED) : null);
+			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? ko.unwrap(globalConsts.disabledReasons.ACCESS_DENIED) : null);
 		}
 
 		isExecutionDisabled(source) {

@@ -48,6 +48,7 @@ define([
 				this.importValues = ko.observable();
 				this.dtApi = ko.observable(); // store reference to datatable
 				this.includedConceptsComponent = ko.observable();
+				this.isEditable = params.isEditable;
 				this.mappedConceptsComponent = ko.observable();			
 			}		
 		

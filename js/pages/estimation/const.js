@@ -192,8 +192,9 @@ define(
               name: ko.i18n('options.no', 'No'),
               id: false
           }],
-      },
-      cca: {
+      }
+    };
+      const getCca = (canEdit) => [{
         comparisonTableColumns: [
             {
                 title: ko.i18n('columns.remove', 'Remove'),
@@ -203,6 +204,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-remove',
+                visible: canEdit,
             },
                 {
                 title: ko.i18n('columns.targetId', 'Target Id'),
@@ -264,6 +266,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-copy',
+                visible: canEdit,
             },
         ],
         comparisonTableOptions: {
@@ -283,6 +286,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-remove',
+                visible: canEdit
             },
             {
                 title: ko.i18n('columns.description', 'Description'),
@@ -354,6 +358,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-copy',
+                visible: canEdit
             },
         ],
         analysisSettingsTableOptions: {
@@ -436,8 +441,7 @@ define(
             },
             ]
         }
-      }
-    };
+      }];
 
     return {
       pageTitle,
@@ -447,6 +451,7 @@ define(
       isUsingRegularization,
       setRegularization,
       options,
+      getCca,
     };
   }
 );
