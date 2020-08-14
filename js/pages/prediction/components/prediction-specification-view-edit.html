@@ -50,7 +50,6 @@
                                         <i class="fa fa-users"></i> <span data-bind="text: ko.i18n('predictions.item.targetCohort', 'Target Cohorts')"></span>
                                         <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget, disable: !$component.isEditPermitted()">
                                             <i class="fa fa-plus"></i> <span data-bind="text: ko.i18n('predictions.item.addTargetCohort', 'Add Target Cohort')"></span>
-                                            <span class="caret"></span>
                                         </button>
                                     </div>
                                     <div class="panel-body">
@@ -73,7 +72,6 @@
                                         <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome, disable: !$component.isEditPermitted()">
                                             <i class="fa fa-plus"></i>
                                             <span data-bind="text: ko.i18n('predictions.item.addOutcomeCohort', 'Add Outcome Cohort')"></span>
-                                            <span class="caret"></span>
                                         </button>
                                     </div>
                                     <div class="panel-body">
@@ -112,7 +110,6 @@
                                             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true" data-bind="disable: !$component.isEditPermitted()">
                                                 <i class="fa fa-plus"></i>
                                                 <span data-bind="text: ko.i18n('predictions.item.addModelSettings', 'Add Model Settings')"></span>
-                                                <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu" data-bind="foreach:$component.modelSettingsOptions">
                                                 <li><a data-bind="text:ko.i18n($data.name, $data.defaultName), click:function() {$component.addModelSettings($data)}" href="#"></a></li>
@@ -139,7 +136,6 @@
                                             <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addCovariateSettings, disable: !$component.isEditPermitted()">
                                                 <i class="fa fa-plus"></i>
                                                 <span data-bind="text: ko.i18n('predictions.item.addCovariateSettings', 'Add Covariate Settings')"></span>
-                                                <span class="caret"></span>
                                             </button>
                                         </div>
                                     </div>

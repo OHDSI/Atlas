@@ -228,7 +228,7 @@ define(
 
     const getCohortTableColumns = (canEdit) => [
         {
-          title: 'Remove',
+          title: ko.i18n('columns.remove', 'Remove'),
           render: function (s, p, d) {
             return options.removeButton;
           },
@@ -238,12 +238,12 @@ define(
           visible: canEdit,
         },
         {
-          title: 'Id',
+          title: ko.i18n('columns.id', 'Id'),
           data: d => d.id,
           visible: false,
         },
         {
-          title: 'Name',
+          title: ko.i18n('columns.name', 'Name'),
           data: d => d.name,
         },
       ];
