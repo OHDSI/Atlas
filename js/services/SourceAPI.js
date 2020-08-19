@@ -172,7 +172,7 @@ define(function (require, exports) {
     sharedState.sources(sourceList);
     if (config.cacheSources) {
       config.api.sources = sourceList;
-      lscache.set(serviceCacheKey, config.api, 720);
+      lscache.set(serviceCacheKey, config.api.sources, 720);
     }
   }
 
