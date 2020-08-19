@@ -277,7 +277,7 @@ define(
 
 					if (cachedService && cachedService.sources) {
 						console.info('cached service');
-						config.api = cachedService;
+						config.api.sources = cachedService;
 						sourceApi.setSharedStateSources(cachedService.sources);
 						resolve();
 					} else {

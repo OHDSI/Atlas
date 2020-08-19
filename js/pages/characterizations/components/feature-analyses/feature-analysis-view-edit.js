@@ -400,11 +400,16 @@ define([
         }
 
         deleteFeature() {
-            this.isDeleting(true);
             commonUtils.confirmAndDelete({
                 loading: this.loading,
-                remove: () => FeatureAnalysisService.deleteFeatureAnalysis(this.featureId()),
-                redirect: this.closeAnalysis
+                remove: () => {
+                    this.isDeleting(true);
+                    FeatureAnalysisService.deleteFeatureAnalysis(this.featureId())
+                },
+                redirect: () => {
+                    this.isDeleting(false);
+                    this.closeAnalysis();
+                },
             });
         }
 
