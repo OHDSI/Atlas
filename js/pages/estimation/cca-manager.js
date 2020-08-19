@@ -194,7 +194,7 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.ESTIMATION,
 				entityIdGetter: () => this.selectedAnalysisId(),
-				createdByUsernameGetter: () => this.estimationAnalysis() && lodash.get(this.estimationAnalysis(), 'createdBy.login')
+				createdByUsernameGetter: () => this.estimationAnalysis() && lodash.get(this.estimationAnalysis(), 'createdBy')
 			});
 		}
 
@@ -385,7 +385,12 @@ define([
 			const specification = JSON.parse(analysis.data.specification);
 			// ignore createdBy and modifiedBy
 			const { createdBy, modifiedBy, ...props } = header;
-			this.estimationAnalysis(new EstimationAnalysis({ ...specification, ...header }, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({
+				...specification,
+				...props,
+				createdBy: createdBy ? createdBy.name : null,
+				modifiedBy: modifiedBy ? modifiedBy.name : null
+			}, this.estimationType, this.defaultCovariateSettings()));
 			this.estimationAnalysis().id(header.id);
 			this.estimationAnalysis().name(header.name);
 			this.estimationAnalysis().description(header.description);
@@ -546,13 +551,13 @@ define([
 			const createdDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().createdDate);
 			const modifiedDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().modifiedDate);
 			return {
-					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy.name'),
+					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy'),
 					createdDate,
-					modifiedBy: lodash.get(this.estimationAnalysis(), 'modifiedBy.name'),
+					modifiedBy: lodash.get(this.estimationAnalysis(), 'modifiedBy'),
 					modifiedDate,
 			}
 		}
 	}
 
-	return commonUtils.build('cca-manager', ComparativeCohortAnalysisManager, view);;
+	return commonUtils.build('cca-manager', ComparativeCohortAnalysisManager, view);
 });
