@@ -21,6 +21,7 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
+	'components/conceptset/ConceptSetStore',
 	'./const',
 	'const',
 	'components/checks/warnings',
@@ -59,6 +60,7 @@ define([
 	AutoBind,
 	commonUtils,
 	exceptionUtils,
+	ConceptSetStore,
 	constants,
 	globalConstants,
 ) {
@@ -77,6 +79,7 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -377,13 +380,25 @@ define([
 			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
+		
+		handleEditConceptSet(item, context) {
+			if (item.conceptSetId() == null) {
+				return;
+			}
+			this.loadConceptSet(item.conceptSetId());
+		}
+			
+		loadConceptSet(conceptSetId) {
+				this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
+				commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
+		}
 
 		onConceptSetSelectAction(result, valueAccessor) {
 			this.showConceptSetBrowser(false);
 
 			if (result.action === 'add') {
 				var newConceptSet = this.conceptSetEditor().createConceptSet();
-				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
+				valueAccessor.conceptSetId(newConceptSet.id);
 				this.activeTab(this.tabs.CONCEPT_SETS);
 			}
 			this.criteriaContext(null);
@@ -406,7 +421,7 @@ define([
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-			commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.incidenceRates });
+			this.conceptSetStore.clear();
 
 			this.sources().forEach(function (source) {
 				source.info(null);

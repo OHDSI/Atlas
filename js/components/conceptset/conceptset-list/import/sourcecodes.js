@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./sourcecodes.html',
 	'components/Component',
-	'../ImportComponent',
+	'./ImportComponent',
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
@@ -23,13 +23,15 @@ define([
 	class SourceCodesImport extends AutoBind(ImportComponent(Component)) {
 		constructor(params) {
 			super(params);
-			this.sourcecodes = ko.observable();
+			this.sourcecodes = ko.observable("");
 			this.appendConcepts = params.appendConcepts;
+			this.canAddConcepts = ko.pureComputed(() => this.sourcecodes().length > 0);
+			this.doImport = this.doImport.bind(this);
 		}
 
-		async runImport() {
+		async runImport(options) {
 			const {data} = await vocabularyApi.getConceptsByCode(this.sourcecodes().match(/[0-9a-zA-Z\.-]+/g));
-			this.appendConcepts(data);
+			this.appendConcepts(data, options);
 			this.sourcecodes('');
 		}
 	}

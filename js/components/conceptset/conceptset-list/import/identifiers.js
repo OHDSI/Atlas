@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./identifiers.html',
 	'components/Component',
-	'../ImportComponent',
+	'./ImportComponent',
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
@@ -25,12 +25,14 @@ define([
 			super(params);
 			this.appendConcepts = params.appendConcepts;
 			this.importing = params.importing;
-			this.identifiers = ko.observable();
+			this.identifiers = ko.observable("");
+			this.canAddConcepts = ko.pureComputed(() => this.identifiers().length > 0);
+			this.doImport = this.doImport.bind(this);
 		}
 
-		async runImport() {
+		async runImport(options) {
 			const {data} = await vocabularyApi.getConceptsById(this.identifiers().match(/[0-9]+/g));
-			this.appendConcepts(data);
+			this.appendConcepts(data, options);
 			this.identifiers('');
 		}
 	}

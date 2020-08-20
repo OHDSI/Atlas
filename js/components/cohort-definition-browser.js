@@ -24,8 +24,6 @@ define([
 			super(params);
 			this.showModal = params.showModal;
 			this.data = ko.observableArray();
-			this.currentConceptSet = sharedState.ConceptSet.current;
-			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
 			this.options = {
 				Facets: [
 					{
@@ -79,17 +77,6 @@ define([
 					render: datatableUtils.getCreatedByFormatter(),
 				},
 			];
-		}
-
-		action(callback) {
-			const isConceptSetDirty = this.currentConceptSet() && this.currentConceptSetDirtyFlag().isDirty();
-			if (isConceptSetDirty) {
-				if (confirm('Concept set changes are not saved. Would you like to continue?')) {
-					callback();
-				}
-			} else {
-				callback();
-			}
 		}
 
 		async loadData() {

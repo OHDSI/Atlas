@@ -1,4 +1,5 @@
 define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+
 	var state = {};
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
@@ -32,12 +33,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		return { "items": state.selectedConcepts() };
 	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
-
-	state.clearSelectedConcepts = function ({ source } = {}) {
-		conceptSetKey = `${source}ConceptSet`;
-		this[conceptSetKey].selectedConceptsIndex = {};
-		this[conceptSetKey].selectedConcepts([]);
-	}
 
 	state.IRAnalysis = {
 		current: ko.observable(null),
@@ -109,24 +104,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.currentConceptSetMode = ko.observable('details');
 	state.includedHash = ko.observable();
 
-	state.ConceptSet = {
-		current: ko.observable(),
-		source: ko.observable(),
-		negativeControls: ko.observable(),
-	};
-	state.ConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
-		header: state.ConceptSet.current,
-		details: state.selectedConcepts,
-	}));
-	state.ConceptSet.current.subscribe((newValue) => {
-		if (newValue != null) {
-			state.ConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag({
-				header: state.ConceptSet.current,
-				details: state.selectedConcepts,
-			}));
-		}
-	});
-
 	state.currentConceptIdentifierList = ko.observable();
 	state.resolvingConceptSetExpression = ko.observable(false);
 	state.currentConceptSetExpressionJson = ko.observable();
@@ -141,51 +118,27 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortDefinition.current()));
 	state.CohortDefinition.current.subscribe(newValue => {
 		if (newValue != null) {
-			state.CohortDefinition.dirtyFlag(new ohdsiUtil.dirtyFlag(state.CohortDefinition.current()));
+			state.CohortDefinition.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
 	
 
-	// Define ConceptSetStore for each module with conceptSet tab
-	Object.keys(constants.conceptSetSources).forEach(k => {
-		const conceptSetStoreKey = `${k}ConceptSet`
-		state[conceptSetStoreKey] = {
-			current: ko.observable(),
-			negativeControls: ko.observable(),
-			selectedConcepts: ko.observableArray([]),
-			selectedConceptsIndex: {},
-			includedConcepts: ko.observableArray([]),
-			includedConceptsMap: ko.observable({}),
-			includedSourcecodes: ko.observableArray([]),
-			conceptSetInclusionIdentifiers: ko.observableArray([]),
-			currentConceptIdentifierList: ko.observable(),
-			currentIncludedConceptIdentifierList: ko.observable(),
-			currentConceptSetExpressionJson: ko.observable(),
-			includedHash: ko.observable(),
-			resolvingConceptSetExpression: ko.observable(false),
-			loadingSourcecodes: ko.observable(false),
-			loadingIncluded: ko.observable(false),
-			source: k,
-		};
-
-		state[conceptSetStoreKey].dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
-			header: state[conceptSetStoreKey].current,
-			details: state[conceptSetStoreKey].selectedConcepts,
-		}));
-
-		state[conceptSetStoreKey].current.subscribe((newValue) => {
-			if (newValue != null) {
-				state[conceptSetStoreKey].dirtyFlag(new ohdsiUtil.dirtyFlag({
-					header: state[conceptSetStoreKey].current,
-					details: state[conceptSetStoreKey].selectedConcepts,
-				}));
-			}
-		});
+	// repository concept state
+	state.RepositoryConceptSet = {
+		current: ko.observable()
+	}
+	
+	state.RepositoryConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.RepositoryConceptSet.current()));
+	state.RepositoryConceptSet.current.subscribe(newValue => {
+		if (newValue != null) {
+			state.RepositoryConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
+		}
 	});
-
-
+	
 	state.activeConceptSetSource = ko.observable();
 	state.activeConceptSet = ko.observable();
+	
+	
 	return state;
 });

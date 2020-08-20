@@ -25,6 +25,7 @@ define([
 			this.canEdit = params.canEdit || (() => false);
 			this.irAnalysisId = params.irAnalysisId;
 			this.conceptSets = ko.computed(() => this.data() && this.data().conceptSets);
+			this.conceptSetStore = params.conceptSetStore;
 		}
 
 		exportConceptSets() {

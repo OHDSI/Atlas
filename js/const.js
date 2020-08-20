@@ -1,13 +1,12 @@
 define([
 	'knockout',
 	'appConfig',
-	'utils/Renderers',
+	'utils/Renderers'
 	],
 	(
 		ko,
 		config,
-		renderers,
-	) => {
+		renderers) => {
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
@@ -158,7 +157,7 @@ define([
 			];
 		};
 				
-		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
+		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService, conceptSetUtils) => [
 			{
 				title: '',
 				orderable: false,
@@ -209,7 +208,7 @@ define([
 			{
 				title: 'Ancestors',
 				data: 'ANCESTORS',
-				render: conceptSetService.getAncestorsRenderFunction()
+				render: conceptSetUtils.getAncestorsRenderFunction()
 			},
 		];
 
@@ -357,14 +356,7 @@ define([
 			conceptSetChanged: 'conceptSetChanged',
 		};
 
-		const conceptSetSources = {
-			featureAnalysis: 'featureAnalysis',
-			repository: 'repository',
-			cohortDefinition: 'cohortDefinition',
-			characterization: 'characterization',
-			incidenceRates: 'incidenceRates',
-		};
-		
+	
 		const jobTypes = {
 			USER_JOB: {
 				title: 'userJob',
@@ -407,7 +399,6 @@ define([
 			executionResultModes,
 			sqlDialects,
 			eventTypes,
-			conceptSetSources,
 			disabledReasons,
 			jobTypes,
     };

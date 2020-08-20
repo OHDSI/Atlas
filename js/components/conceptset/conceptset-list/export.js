@@ -21,13 +21,11 @@ define([
 		constructor(params) {
 			super(params);
 			this.loading = params.loading;
-			this.currentConceptSet = params.currentConceptSet;
-			this.currentConceptSetSource = params.currentConceptSetSource;
-			this.currentConceptSetKeyStore = [`${this.currentConceptSetSource}ConceptSet`];
-			this.resolvingConceptSetExpression = sharedState[this.currentConceptSetKeyStore].resolvingConceptSetExpression;
-			this.currentConceptSetExpressionJson = sharedState[this.currentConceptSetKeyStore].currentConceptSetExpressionJson;
-			this.currentConceptIdentifierList = sharedState[this.currentConceptSetKeyStore].currentConceptIdentifierList;
-			this.currentIncludedConceptIdentifierList = sharedState[this.currentConceptSetKeyStore].currentIncludedConceptIdentifierList;
+			this.conceptSetStore = params.conceptSetStore;
+			this.resolvingConceptSetExpression = this.conceptSetStore.resolvingConceptSetExpression;
+			this.currentConceptSetExpressionJson = this.conceptSetStore.currentConceptSetExpressionJson;
+			this.currentConceptIdentifierList = this.conceptSetStore.currentConceptIdentifierList;
+			this.currentIncludedConceptIdentifierList = this.conceptSetStore.currentIncludedConceptIdentifierList;
 		}
 
 		copyExpressionToClipboard () {

@@ -2,10 +2,11 @@
 <loading></loading>
 <!-- /ko -->
 
-<!-- ko if: currentConceptSet() != null && !loading() -->
+<!-- ko if: (currentConceptSet() != null && !loading()) -->
 <heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : '(Read only)',  icon: 'shopping-cart', theme: 'dark'"></heading-title>
 <!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
-	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> 
+	<!-- /ko -->
 <!-- /ko -->
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
@@ -43,8 +44,7 @@
     title: 'Concept Set Optimization',
     data: $component,
     fade: $component.fade,
-  }"
->
+  }">
   <div data-bind="css: classes('optimize-modal-content')">
     <div data-bind="if: optimizeLoading()">
       <i class="fa fa-circle-o-notch fa-spin fa-lg">
@@ -158,9 +158,11 @@
         </div>
       </div>
     </div>
-  </div>
+	</div>
 </atlas-modal>
+
 <!-- /ko -->
+
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 <configure-access-modal params="

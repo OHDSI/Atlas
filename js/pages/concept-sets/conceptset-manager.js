@@ -14,6 +14,7 @@ define([
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'atlas-state',
 	'services/ConceptSet',
+	'components/conceptset/ConceptSetStore',
 	'services/AuthAPI',
 	'databindings',
 	'bootstrap',
@@ -49,22 +50,21 @@ define([
 	vocabularyAPI,
 	GlobalPermissionService,
 	{ entityType },
-	conceptSet,
+	ConceptSet,
 	sharedState,
 	conceptSetService,
+	ConceptSetStore,
 	authApi,
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-			this.componentParams = params;
 			this.commonUtils = commonUtils;
-			this.currentConceptSet = sharedState.repositoryConceptSet.current;
-			this.currentConceptSetSource = sharedState.ConceptSet.source;
-			this.currentConceptSetDirtyFlag = sharedState.repositoryConceptSet.dirtyFlag;
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().repository);			
+			this.currentConceptSet = sharedState.RepositoryConceptSet.current;
+			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
-			this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
 			this.defaultName = globalConstants.newEntityNames.conceptSet;
 			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
@@ -135,7 +135,7 @@ define([
 				return (
 					this.currentConceptSet()
 					&& this.currentConceptSet().id != 0
-					&& sharedState.repositoryConceptSet.selectedConcepts().length > 1
+					&& this.currentConceptSet().expression.items().length > 1
 					&& this.canCreate()
 					&& this.canEdit()
 				);
@@ -173,7 +173,7 @@ define([
 				{
 						title: 'Included Concepts',
 						componentName: 'included-conceptsets',
-						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
+						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit, currentConceptSet: this.currentConceptSet },
 						hasBadge: true,
 				},
 				{
@@ -261,25 +261,24 @@ define([
 			this.loading(true);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				// Create a new concept set
-				this.currentConceptSet({
-					name: ko.observable('New Concept Set'),
+				this.currentConceptSet(new ConceptSet({
+					name: 'New Concept Set',
 					id: 0
-				});
+				}));
 				this.loading(false);
 			}
 			if (
 				this.currentConceptSet()
 				&& this.currentConceptSet().id === conceptSetId
 			) {
-				this.currentConceptSetSource('repository');
 				this.loading(false);
 				return;
 			}
 			try {
-				const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
-				const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
-				const expression = _.isEmpty(data) ? { items: [] } : data;
-				conceptSetService.setConceptSet(conceptset, expression.items, globalConstants.conceptSetSources.repository);
+				const conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
+				const expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+				conceptSet.expression = _.isEmpty(expression) ? { items: [] } : expression;
+				this.currentConceptSet({...conceptSet, ...(new ConceptSet(conceptSet))});
 				await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
 				// this.currentConceptSetSource('repository');
 			} catch(err) {
@@ -326,7 +325,7 @@ define([
 				if (results > 0) {
 					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
 				} else {
-					const conceptSetItems = utils.toConceptSetItems(selectedConcepts);
+					const conceptSetItems = utils.toRepositoryConceptSetItems(selectedConcepts);
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
@@ -451,7 +450,6 @@ define([
 		}
 
 		async overwriteConceptSet() {
-			sharedState.clearSelectedConcepts({ source: globalConstants.conceptSetSources.repository });
 			const newConceptSet = this.optimalConceptSet().map((item) => {
 				sharedState.repositoryConceptSet.selectedConceptsIndex[item.concept.CONCEPT_ID] = {
 					isExcluded: ko.observable(!!item.isExcluded),

@@ -15,7 +15,7 @@ define([
 
 		constructor(params){
 			super(params);
-			this.selectedConcepts = params.selectedConcepts;
+			this.expression = ko.pureComputed(() => params.currentConceptSet() && params.currentConceptSet().expression);
 		}
 	}
 

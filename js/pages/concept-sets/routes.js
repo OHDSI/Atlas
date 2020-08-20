@@ -3,10 +3,12 @@ define(
     const { AuthorizedRoute } = require('pages/Route');
     const globalConstants = require('const');
     const sharedState = require('atlas-state');
+		const ConceptSetStore = require('components/conceptset/ConceptSetStore');
+		
     function routes(router) {
       const detailsRoute = new AuthorizedRoute((conceptSetId, mode = 'conceptset-expression') => {
-        require(['./conceptset-manager', 'components/cohort-definition-browser', 'conceptset-list-modal'], function () {
-          sharedState.activeConceptSetSource(globalConstants.conceptSetSources.repository);
+        require(['./conceptset-manager', 'components/cohort-definition-browser', 'components/conceptset/conceptset-list-modal'], function () {
+					sharedState.activeConceptSet(ConceptSetStore.getStore(ConceptSetStore.sourceKeys().repository));					
           router.setCurrentView('conceptset-manager', {
             conceptSetId: conceptSetId && parseInt(conceptSetId),
             mode,

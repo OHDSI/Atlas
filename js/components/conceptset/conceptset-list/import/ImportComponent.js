@@ -1,5 +1,5 @@
 define([
-	'../consts',
+	'../../const',
 ], function(
 	consts,
 ){
@@ -11,10 +11,10 @@ define([
 			this.selectedTabKey = params.selectedTabKey;
 		}
 
-		async importConceptSet() {
+		async doImport(options) {
 			this.importing(true);
 			try {
-				await this.runImport();
+				await this.runImport(options);
 			} finally {
 				this.importing(false);
 				this.selectedTabKey(consts.ConceptSetTabKeys.EXPRESSION);

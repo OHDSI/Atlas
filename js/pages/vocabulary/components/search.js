@@ -4,7 +4,7 @@ define([
 	'text!./search.html',
 	'appConfig',
 	'services/AuthAPI',
-	'services/ConceptSet',
+	'components/conceptset/utils',
 	'../PermissionService',
 	'components/Component',
 	'utils/AutoBind',
@@ -26,7 +26,7 @@ define([
 	view,
 	config,
 	authApi,
-	ConceptSetService,
+	conceptSetUtils,
 	PermissionService,
 	Component,
 	AutoBind,
@@ -344,8 +344,10 @@ define([
 
 			addConcepts = (options, source = globalConstants.conceptSetSources.repository) => {
 				sharedState.activeConceptSetSource(globalConstants.conceptSetSources[source]);
-				const conceptsToAdd = commonUtils.getSelectedConcepts(this.data, options);
-				ConceptSetService.addConceptsToConceptSet({ concepts: conceptsToAdd, source });
+				const conceptSetStore = sharedState.getConceptSetStore(source);
+				const concepts = commonUtils.getSelectedConcepts(this.data);
+				const items = commonUtils.buildConceptSetItems(concepts, options);				
+				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
 				commonUtils.clearConceptsSelectionState(this.data);
 			}
 

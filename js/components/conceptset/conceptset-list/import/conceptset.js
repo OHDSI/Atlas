@@ -2,7 +2,7 @@ define([
 	'knockout',
 	'text!./conceptset.html',
 	'components/Component',
-	'../ImportComponent',
+	'./ImportComponent',
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
@@ -21,13 +21,14 @@ define([
 	class ConceptSetImport extends AutoBind(ImportComponent(Component)) {
 		constructor(params) {
 			super(params);
-			this.importConceptSetExpressionItems = params.importConceptSetExpressionItems;
+			this.importConceptSetExpression = params.importConceptSetExpression;
 			this.importConceptSetJson = ko.observable();
+			this.doImport = this.doImport.bind(this);			
 		}
 
 		async runImport() {
-			const items = JSON.parse(this.importConceptSetJson()).items;
-			this.importConceptSetExpressionItems(items);
+			const expression = JSON.parse(this.importConceptSetJson());
+			this.importConceptSetExpression(expression);
 			this.importConceptSetJson('');
 		}
 	}

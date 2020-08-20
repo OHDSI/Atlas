@@ -19,6 +19,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.conceptSets = params.conceptSets;
+			this.conceptSetStore = params.conceptSetStore;
 			this.canEdit = params.canEdit || (() => false);
 			this.characterizationId = params.characterizationId;
 		}

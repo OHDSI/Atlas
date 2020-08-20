@@ -10,8 +10,23 @@
 		showModal: $component.showImportConceptSetModal,
 		title: 'Import Concept Set From Repository...',
 		data: {
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport
+		}
+	"
+>
+    <cohort-concept-set-browser params="
+			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+			buttonActionEnabled: false
+		"></cohort-concept-set-browser>
+</atlas-modal>
+
+<!-- This is the origional
+<atlas-modal params="
+		showModal: $component.showImportConceptSetModal,
+		title: 'Import Concept Set From Repository...',
+		data: {
 			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
-			criteriaContext: criteriaContext,
+		 	criteriaContext: criteriaContext,
 			cohortConceptSets: conceptSets,
 		}
 	"
@@ -23,3 +38,4 @@
 			buttonActionEnabled: false
 		"></cohort-concept-set-browser>
 </atlas-modal>
+-->

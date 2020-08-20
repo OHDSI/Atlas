@@ -49,7 +49,7 @@
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
-				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
+				<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
 					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
 				</div>
 			</div>
@@ -61,7 +61,7 @@
 				<incidence-rates-conceptset params="{
 					data: $component.selectedAnalysis().expression().ConceptSets,
 					canEdit: $component.isEditable,
-					irAnalysisId: $component.selectedAnalysis().id
+					conceptSetStore: $component.conceptSetStore
 				}"></incidence-rates-conceptset>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },

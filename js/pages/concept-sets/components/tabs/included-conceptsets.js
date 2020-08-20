@@ -46,10 +46,6 @@ define([
 
       this.searchConceptsOptions = globalConstants.includedConceptsOptions;
 
-      // Triggers parallel load of subset of Ancestors only for current page - to display data ASAP
-      // while the query for full ancestors list is being executed in background
-      // Per: https://github.com/OHDSI/Atlas/pull/614#issuecomment-383050990
-      this.includedDrawCallback = conceptSetService.getIncludedConceptSetDrawCallback({ searchConceptsColumns: this.searchConceptsColumns });
     }
 
     addConcepts = (options) => {

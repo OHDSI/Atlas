@@ -17,7 +17,7 @@ define([
 	class IncludedConceptsetsBadge extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
+			this.expression = ko.pureComputed(() => params.currentConceptSet() && params.currentConceptSet().expression);
 		}
 
 	}

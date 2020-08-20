@@ -15,8 +15,9 @@ define([
     'services/AuthAPI',
     'services/Vocabulary',
     'services/Permission',
-	'components/security/access/const',
+    'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/ConceptSetStore',    
     'pages/Page',
     'pages/characterizations/const',
     'utils/AutoBind',
@@ -34,8 +35,8 @@ define([
     'components/DropDownMenu',
     'components/heading',
     'components/authorship',
-	'components/security/access/configure-access-modal',
-	'components/tabs',
+    'components/security/access/configure-access-modal',
+    'components/tabs',
     'components/name-validation',
 ], function (
     ko,
@@ -56,6 +57,7 @@ define([
     GlobalPermissionService,
 	{ entityType },
     ConceptSet,
+    ConceptSetStore,
     Page,
     constants,
     AutoBind,
@@ -82,12 +84,14 @@ define([
             super(params);
             this.featureId = sharedState.FeatureAnalysis.selectedId;
             this.data = sharedState.FeatureAnalysis.current;
+            this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().featureAnalysis);
+            this.conceptSets = ko.pureComputed(() => this.data() && this.data().conceptSets)
             this.domains = ko.observable([]);
             this.previousDesign = {};
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
-            sharedState.activeConceptSetSource(globalConstants.conceptSetSources.featureAnalysis);
+           
             this.isCopying = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
@@ -156,6 +160,8 @@ define([
               setType: this.setType,
               getEmptyCriteriaFeatureDesign: this.getEmptyCriteriaFeatureDesign,
               getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
+              conceptSetStore: this.conceptSetStore,
+              loadConceptSet: this.loadConceptSet,
             });
             this.tabs = ko.computed(() => {
                 const tabs = [
@@ -375,10 +381,6 @@ define([
             };
         }
 
-        handleEditConceptSet() {
-
-        }
-
         async save() {
             this.isSaving(true);
             console.log('Saving: ', JSON.parse(ko.toJSON(this.data())));
@@ -423,7 +425,7 @@ define([
             this.data(null);
             this.featureId(null);
             this.dataDirtyFlag().reset();
-            commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.featureAnalysis });
+            this.conceptSetStore.clear();
             commonUtils.routeTo('/cc/feature-analyses');
         }
 
@@ -457,6 +459,11 @@ define([
                 modifiedDate,
             }
         }
+
+				loadConceptSet(conceptSetId) {
+				    this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+				    commonUtils.routeTo(`/cc/feature-analyses/${this.data().id}/conceptset`);
+				}		
     }
 
     return commonUtils.build('feature-analysis-view-edit', FeatureAnalysisViewEdit, view);

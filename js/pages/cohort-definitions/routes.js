@@ -26,7 +26,7 @@ define(
             'explore-cohort',
           ], function () {
             sharedState.CohortDefinition.mode('conceptsets');
-            sharedState.ConceptSet.source(globalConstants.conceptSetSources.cohortDefinition);
+            ///sharedState.ConceptSet.source(globalConstants.conceptSetSources.cohortDefinition);
             sharedState.activeConceptSetSource(globalConstants.conceptSetSources.cohortDefinition);
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
@@ -45,7 +45,7 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-            'conceptset-list-modal',
+            'components/conceptset/conceptset-list-modal',
           ], function () {
             // Determine the view to show on the cohort manager screen based on the path
             path = path.split("/");
@@ -66,9 +66,7 @@ define(
               mode: view,
               sourceKey,
             });
-            sharedState.ConceptSet.source(globalConstants.conceptSetSources.cohortDefinition);
-            sharedState.activeConceptSetSource(globalConstants.conceptSetSources.cohortDefinition);
-            sharedState.CohortDefinition.mode(view);
+          	sharedState.CohortDefinition.mode(view);
           });
         }),
 

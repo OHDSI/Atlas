@@ -2,11 +2,10 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
-		function defaultRepositoryConceptSetSelected(conceptSet) {
+		function defaultRepositoryConceptSetSelected(conceptSet, source) {
 			// Default functionality
 			self.isProcessing(true);
-			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
-					.url)
+			VocabularyProvider.getConceptSetExpression(conceptSet.id, source.url)
 				.then((result) => {
 					var isCancelled = false;
 					while (self.cohortConceptSets().find(cs => cs.name() == conceptSet.name) != null && !isCancelled)

@@ -24,11 +24,11 @@ define([
 	class ConceptSetEditor extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.conceptSetName = ko.observable();
-			this.conceptSets = params.$raw.conceptSets();
-			this.conceptSetId = params.$raw.conceptSetId;
-			this.currentConceptSetSource = params.currentConceptSetSource;
-			this.selectedConcepts = sharedState[`${this.currentConceptSetSource}ConceptSet`].selectedConcepts;
+			//this.conceptSetName = ko.observable();
+			this.conceptSetItems = params.conceptSetItems;
+			//this.conceptSetId = params.$raw.conceptSetId;
+			//this.currentConceptSetSource = params.currentConceptSetSource;
+			//this.selectedConcepts = sharedState[`${this.currentConceptSetSource}ConceptSet`].selectedConcepts;
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.commonUtils = commonUtils;
 			this.columns = [
@@ -45,22 +45,8 @@ define([
 ]
 		}
 
-		renderLink(s, p, d) {
-			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
-		}
-
-		toggleCheckbox(d, field) {
-			commonUtils.toggleConceptSetCheckbox(
-				this.canEditCurrentConceptSet,
-				this.selectedConcepts,
-				d,
-				field,
-				() => conceptSetService.resolveConceptSetExpression({ source: this.currentConceptSetSource }),
-			);
-		  }
-
-		  renderCheckbox(field) {
-			return commonUtils.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
+		renderCheckbox(field) {
+			return renderers.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
 		}
 	}
 

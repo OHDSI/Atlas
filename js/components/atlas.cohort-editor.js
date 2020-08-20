@@ -36,7 +36,6 @@ define([
 		// model behaviors
 
 		self.handleConceptSetImport = function (item, context, event) {
-			event.stopPropagation();
 			self.criteriaContext(item);
 			self.showModal(true);
 			return false;
@@ -52,7 +51,7 @@ define([
 		}
 
 
-		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
+		self.onAtlasConceptSetSelectAction = function(result) {
 				self.showModal(false);
 				if (result.action === 'add') {
 						var newConceptSet = new ConceptSet();

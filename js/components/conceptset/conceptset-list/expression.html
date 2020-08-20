@@ -4,7 +4,7 @@
         Name:
     </div>
     <div class="divtext" placeholder="Concept Set Name" data-bind="attr: { contenteditable:canEdit() }, htmlValue:currentConceptSet().name"></div>
-    <conceptset-editor params="conceptSets:data, canEditCurrentConceptSet: canEdit, currentConceptSetSource: currentConceptSetSource"></conceptset-editor>
+    <conceptset-editor params="conceptSetItems:data, canEditCurrentConceptSet: canEdit"></conceptset-editor>
 
     <div class="clear"></div>
     <div data-bind="css: classes({element: 'button-pane', extra: 'pull-right'})">
@@ -17,9 +17,9 @@
                 css: { disabled: conceptsForRemovalLength() === 0 },
                 text: conceptsForRemovalLength() === 1 ? 'Remove Selected Concept' : 'Remove Selected Concepts'"
         ></button>
-        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.deleteConceptSet(); }">Delete Concept Set</button>
+        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.onDelete(); }">Delete Concept Set</button>
         <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet">Copy To Concept Set Repository</button>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.closeConceptSet(); }">Close Concept Set</button>
+        <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.onClose(); }">Close Concept Set</button>
     </div>
 </div>
 <conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>

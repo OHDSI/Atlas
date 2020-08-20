@@ -116,9 +116,10 @@ define(
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
+					
 					resolve();
 				});
-
+				
 				return promise;
 			}
 

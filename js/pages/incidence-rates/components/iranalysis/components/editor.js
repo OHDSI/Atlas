@@ -87,7 +87,7 @@ define([
 	
 		selectStrataRule(rule) {
 			this.selectedStrataRule(rule);	
-			this.selectedStrataRuleIndex = params.analysis().strata().indexOf(rule);
+			this.selectedStrataRuleIndex = this.analysis().strata().indexOf(rule);
 			console.log("Selected Index: " + this.selectedStrataRuleIndex);
 		};
 				

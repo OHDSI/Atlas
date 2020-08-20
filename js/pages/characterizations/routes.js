@@ -20,7 +20,7 @@ define(
             });
 
             const featureAnalysisViewEdit = new AuthorizedRoute((id, section) => {
-				sharedState.activeConceptSetSource(globalConstants.conceptSetSources.featureAnalysis);
+				//sharedState.activeConceptSetSource(globalConstants.conceptSetSources.featureAnalysis);
 							require(['./components/feature-analyses/feature-analysis-view-edit'], function () {
 								router.setCurrentView('feature-analysis-view-edit', {
 									id,
@@ -40,7 +40,7 @@ define(
 				'cc/characterizations/:id:/:section:/:subId:': characterizationViewEdit, // for executions
 				'cc/feature-analyses': new AuthorizedRoute(() => {
 					require(['./components/feature-analyses/feature-analyses-list'], function () {
-						sharedState.activeConceptSetSource(globalConstants.conceptSetSources.characterization);
+						//sharedState.activeConceptSetSource(globalConstants.conceptSetSources.characterization);
 						router.setCurrentView('feature-analyses-list');
 					});
 				}),
