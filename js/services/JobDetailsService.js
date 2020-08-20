@@ -3,6 +3,10 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 		return httpService.doGet(appConfig.api.url + 'notifications?hide_statuses=' + hideStatuses.join());
 	}
 
+	function listAll() {
+		return httpService.doGet(appConfig.api.url + 'notifications?includeAll=TRUE');
+	}
+
 	function createJob(updated) {
 		let job = new jobDetail();
 		job.type = updated.jobInstance.name;
@@ -98,6 +102,7 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 	return {
 		createJob,
 		list,
+		listAll,
 		getJobURL,
 		setLastViewedTime,
 		getLastViewedTime,

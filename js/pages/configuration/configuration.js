@@ -92,7 +92,7 @@ define([
     }
 
     async checkJobs() {
-      const notifications = await jobDetailsService.list([]);
+      const notifications = await jobDetailsService.listAll();
       const jobs = notifications.data.map(n => {
           const job = new jobDetail();
           job.status(n.status);
