@@ -24,6 +24,7 @@ define([
 			this.subscriptions = params.subscriptions;
 			this.splitSeed = ko.observable(this.runPlpArgs.splitSeed() !== null && this.runPlpArgs.splitSeed() !== 0 ? this.runPlpArgs.splitSeed() : '');
 			this.testFraction = ko.observable(dataTypeConverterUtils.convertFromPercent(this.runPlpArgs.testFraction()));
+			this.isEditPermitted = params.isEditPermitted;
 
 			this.subscriptions.push(this.splitSeed.subscribe(newValue => {
 				if (newValue === '' || !this.isInteger.test(newValue)) {

@@ -190,8 +190,9 @@ define(
               name: "No",
               id: false
           }],
-      },
-      cca: {
+      }
+    };
+      const getCca = (canEdit) => [{
         comparisonTableColumns: [
             {
                 title: 'Remove',
@@ -201,6 +202,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-remove',
+                visible: canEdit,
             },
                 {
                 title: 'Target Id',
@@ -262,6 +264,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-copy',
+                visible: canEdit,
             },
         ],
         comparisonTableOptions: {
@@ -281,6 +284,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-remove',
+                visible: canEdit
             },
             {
                 title: 'Description',
@@ -346,6 +350,7 @@ define(
                 orderable: false,
                 searchable: false,
                 className: 'col-copy',
+                visible: canEdit
             },
         ],
         analysisSettingsTableOptions: {
@@ -428,8 +433,7 @@ define(
             },
             ]
         }
-      }
-    };
+      }];
 
     return {
       pageTitle,
@@ -439,6 +443,7 @@ define(
       isUsingRegularization,
       setRegularization,
       options,
+      getCca,
     };
   }
 );

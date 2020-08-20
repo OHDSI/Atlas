@@ -50,7 +50,6 @@ define([
 			this.allJobParams = {
 				jobListing: ko.computed(() => lodash.sortBy(this.jobListing(), el => -1 * el.executionId)
 					.filter( j => j.ownerType === constants.jobTypes.ALL_JOB.ownerType)),
-				jobNameClick: this.jobNameClick.bind(this),
 			};
 			this.tabs = [];
 			this.selectedTabKey = ko.observable();
@@ -66,6 +65,7 @@ define([
 			} else {
 				this.selectedTabKey(constants.jobTypes.ALL_JOB.title);
 				this.jobNotificationsPending = ko.computed(() => this.allJobParams.jobListing().filter(j => !j.viewed()).length);
+				this.allJobParams.jobNameClick = this.jobNameClick.bind(this);
 			}
 			this.tabs.push({
 				title: 'All jobs',
@@ -125,7 +125,7 @@ define([
 			this.hideCompleted = ko.computed({
 				owner: ko.observable(localStorage.getItem("jobs-hide-statuses")),
 				read: function() { 
-					return this(); 
+					return this() === 'true'; 
 				},
 				write: function( newValue ) {
 					localStorage.setItem("jobs-hide-statuses", newValue);

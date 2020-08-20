@@ -24,6 +24,18 @@ define([
             super();
 
             this.executionId = params.executionId;
+            this.criticalCount = params.criticalCount;
+            this.dirtyFlag = params.dirtyFlag;
+
+            const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() 
+                && params.isEditPermitted()
+                && this.criticalCount() <= 0);       
+                
+            const generationDisableReason = ko.computed(() => {
+                if (this.dirtyFlag().isDirty()) return consts.disabledReasons.DIRTY;
+                if (this.criticalCount() > 0) return consts.disabledReasons.INVALID_DESIGN;
+                return consts.disabledReasons.ACCESS_DENIED;
+            });
             this.componentParams = {
                 tableColumns: ['Date', 'Design', 'Status', 'Duration', 'Results'],
                 runExecutionInParallel: false,
@@ -31,7 +43,10 @@ define([
                 ExecutionService: PathwayService,
                 PermissionService,
                 PollService: JobPollService,
+                extraExecutionPermissions,
+                generationDisableReason,
                 executionResultMode: consts.executionResultModes.VIEW,
+                selectedSourceId: params.selectedSourceId,
                 ...params,
             };
         }

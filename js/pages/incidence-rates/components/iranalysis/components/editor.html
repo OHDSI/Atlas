@@ -1,4 +1,4 @@
-<div class="tabcontent">
+<div data-bind="css: {tabcontent: true, 'tab-disabled':!isEditable()}">
 
 	<div class="criteriaGroup">
 		<div class="criteriaHeading">
@@ -37,12 +37,10 @@
 					</table>
 				</td>
 			</tr>
-			<!-- ko if: isEditable -->
 				<tr>
 					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button class="btn btn-sm btn-success" data-bind="click: addTargetCohort">Add Target Cohort</button></div></td>
 					<td><div style="padding-top: 5px; display: flex;justify-content: center;"><button style="margin:auto" class="btn btn-sm btn-danger" data-bind="click: addOutcomeCohort">Add Outcome Cohort</button></div></td>
 				</tr>
-			<!-- /ko -->
 		</table>
 	</div>
 
@@ -54,10 +52,10 @@
 		<div style="padding: 5px 0px">
 			<ul>
 				<li>
-					Time at risk starts with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.start.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
+					Time at risk starts with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.start.DateField" /> plus  <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditable(), htmlValue: analysis().timeAtRisk.start.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.start.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
 				</li>
 				<li>
-					Time at risk ends with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" /> plus  <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: analysis().timeAtRisk.end.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
+					Time at risk ends with <select data-bind="options: $component.fieldOptions, optionsText: 'name', optionsValue: 'id', value: analysis().timeAtRisk.end.DateField" /> plus  <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditable(), htmlValue: analysis().timeAtRisk.end.Offset.numeric(), eventType:'blur', ko_autocomplete: { value: analysis().timeAtRisk.end.Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> days.
 				</li>
 			</ul>
 		</div>
@@ -94,11 +92,9 @@
 			<tbody>
 				<tr>
 					<td style="vertical-align: top; padding-right: 20px;">
-						<!-- ko if: isEditable -->
 							<div>
 								<button class="btn btn-sm btn-success" data-bind="click: addStrataRule">New stratify criteria</button>
 							</div>
-						<!-- /ko -->
 						<div>
 							<table style="width: 100%" class="inclusionRules">
 								<tbody data-bind="sortable: {data: analysis().strata, connectClass: 'inclusionRuleItem'}">
@@ -112,14 +108,12 @@
 						</div>
 					</td>
 					<td style="vertical-align: top; padding-left: 25px; border-left: 1px #eee solid;">
-						<!-- ko if: isEditable -->
 							<!-- ko if: $component.selectedStrataRule() -->
 							<inclusion-rule-editor params="{IndexRule: analysis, InclusionRule: selectedStrataRule}"></inclusion-rule-editor>
 							<!-- /ko -->
 							<!-- ko ifnot: $component.selectedStrataRule() -->
 							<div>Please select a qualifying inclusion criteria to edit.</div>
 							<!-- /ko -->
-						<!-- /ko -->
 						</td>
 				</tr>
 			</tbody>
