@@ -186,7 +186,7 @@ define([
 
 		selectSource(source) {
 			if (source) {
-				this.selectedSourceId(source);
+				this.selectedSourceId(source.source.sourceId);
 			}
 		}
 
