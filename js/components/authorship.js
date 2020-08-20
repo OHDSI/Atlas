@@ -16,9 +16,9 @@ define([
 		constructor(params) {
 			super(params);
 			const entity = params.entity;
-			this.createdBy = entity.createdBy ? entity.createdBy.name : '';
+			this.createdBy = entity.createdBy ? (entity.createdBy.name ? entity.createdBy.name : entity.createdBy) : '';
 			this.createdDate = entity.createdDate;
-			this.modifiedBy = entity.modifiedBy ? entity.modifiedBy.name : '';
+			this.modifiedBy = entity.modifiedBy ? (entity.modifiedBy.name ? entity.modifiedBy.name : entity.modifiedBy) : '';
 			this.modifiedDate = entity.modifiedDate;
 		}
 	}
