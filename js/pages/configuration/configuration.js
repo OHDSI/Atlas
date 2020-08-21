@@ -10,7 +10,7 @@ define([
   'atlas-state',
   'const',
   'services/JobDetailsService',
-  'services/JobPollService',
+  'services/Poll',
   'services/job/jobDetail',
   'services/CacheAPI',
   'less!./configuration.less',
@@ -27,7 +27,7 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  JobPollService,
+  {PollService},
   jobDetail,
   cacheApi,
 ) {
@@ -77,14 +77,14 @@ define([
         return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
       });
 
-      this.intervalId = JobPollService.add({
+      this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
         interval: 5000
       });
     }
 
     dispose() {
-      JobPollService.stop(this.intervalId);
+      PollService.stop(this.intervalId);
     }
 
     getSource(job) {
@@ -92,7 +92,7 @@ define([
     }
 
     async checkJobs() {
-      const notifications = await jobDetailsService.listAll();
+      const notifications = await jobDetailsService.listRefreshCacheJobs();
       const jobs = notifications.data.map(n => {
           const job = new jobDetail();
           job.status(n.status);
