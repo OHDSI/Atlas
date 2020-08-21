@@ -36,6 +36,7 @@ define([
 			this.byValueAsConcept = false;
 			this.byOperator = false;
 			this.byQualifier = false;
+			this.byLengthOfEra = false;
 			this.handleConceptClick = node => {
 				if (authApi.isPermittedViewDataSourceReportDetails(this.context.currentSource().sourceKey)) {
 					this.currentConcept(node);
