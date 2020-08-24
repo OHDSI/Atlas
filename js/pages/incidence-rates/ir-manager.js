@@ -566,9 +566,14 @@ define([
 		}
 
 		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
 			return {
-				entity: this.selectedAnalysis(),
-			}
+                createdBy: this.selectedAnalysis().createdBy() ? this.selectedAnalysis().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.selectedAnalysis().modifiedBy() ? this.selectedAnalysis().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
+			};
 		}
 
 		// cleanup

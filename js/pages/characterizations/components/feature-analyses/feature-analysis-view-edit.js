@@ -442,8 +442,13 @@ define([
         }
         
         getAuthorship() {
+            const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
+            const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
             return {
-                entity: this.data(),
+                createdBy: this.data().createdBy() ? this.data().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.data().modifiedBy() ? this.data().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
             }
         }
     }
