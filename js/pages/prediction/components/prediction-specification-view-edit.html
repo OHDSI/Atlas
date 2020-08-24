@@ -1,7 +1,7 @@
 <div data-bind="css: classes()">
     <div id="summary" data-bind="visible: $component.managerMode() == 'summary'">
         <div class="paddedWrapper">
-            <textarea placeholder="enter a description here (1000 characters max)" class="descriptionEntry" data-bind="value: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().description" maxlength="1000"></textarea>
+            <textarea placeholder="enter a description here (1000 characters max)" class="descriptionEntry" data-bind="value: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().description, disable: !$component.isEditPermitted()" maxlength="1000"></textarea>
             <hr/>
             <div id="filters">
                 <div class="row">
@@ -13,7 +13,7 @@
                             <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'analysisSettings' }, click: function() {$component.specificationPillMode('analysisSettings') };"><a>Analysis Settings</a></li>
                             <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'executionSettings' }, click: function() {$component.specificationPillMode('executionSettings') };"><a>Execution Settings</a></li>
                             <li role="presentation" data-bind="css: {active: $component.specificationPillMode() == 'trainingSettings' }, click: function() {$component.specificationPillMode('trainingSettings') };"><a>Training Settings</a></li>
-                        </ul>        
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -28,12 +28,12 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                             <i class="fa fa-users"></i> Target Cohorts
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget"><i class="fa fa-plus"></i> Add Target Cohort</button>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addTarget, disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Target Cohort</button>
                             </div>
                             <div class="panel-body">
-                                <faceted-datatable params="{ 
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                                <faceted-datatable params="{
+                                columns: $component.cohortTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.domNoButtons,
@@ -45,12 +45,12 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                             <i class="fa fa-users"></i> Outcome Cohorts
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome"><i class="fa fa-plus"></i> Add Outcome Cohort</button>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addOutcome, disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Outcome Cohort</button>
                             </div>
                             <div class="panel-body">
-                                <faceted-datatable params="{ 
-                                columns: options.cohortTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                                <faceted-datatable params="{
+                                columns: $component.cohortTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.domNoButtons,
@@ -76,16 +76,16 @@
                             <div class="panel-heading">
                             Model Settings
                             <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-plus"></i> Add Model Settings <span class="caret"></span></button>
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="true" data-bind="disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Model Settings <span class="caret"></span></button>
                                 <ul class="dropdown-menu" data-bind="foreach:$component.modelSettingsOptions">
                                 <li><a data-bind="text:$data.name, click:function() {$component.addModelSettings($data)}" href="#"></a></li>
                                 </ul>
                             </div>
                             </div>
                             <div class="panel-body">
-                            <faceted-datatable params="{ 
-                                columns: options.modelSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                            <faceted-datatable params="{
+                                columns: $component.modelSettingsTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.domNoButtons,
@@ -98,13 +98,13 @@
                             <div class="panel-heading">
                             Covariate Settings
                             <div class="btn-group pull-right">
-                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addCovariateSettings"><i class="fa fa-plus"></i> Add Covariate Settings</button>
+                                <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addCovariateSettings, disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Covariate Settings</button>
                             </div>
                             </div>
                             <div class="panel-body">
-                                <faceted-datatable params="{ 
-                                columns: options.covariateSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                                <faceted-datatable params="{
+                                columns: $component.covariateSettingsTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.dom,
@@ -116,12 +116,12 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                             Population Settings
-                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addPopulationSettings"><i class="fa fa-plus"></i> Add Population Settings</button>
+                            <button type="button" class="btn btn-primary btn-sm pull-right" data-bind="click: addPopulationSettings, disable: !$component.isEditPermitted()"><i class="fa fa-plus"></i> Add Population Settings</button>
                             </div>
                             <div class="panel-body">
-                            <faceted-datatable params="{ 
-                                columns: options.populationSettingsTableColumns, 
-                                options: options.specificationSummaryTableOptions, 
+                            <faceted-datatable params="{
+                                columns: $component.populationSettingsTableColumns,
+                                options: options.specificationSummaryTableOptions,
                                 pageLength: options.specificationSummaryTableOptions.pageLength,
                                 lengthMenu: options.specificationSummaryTableOptions.lengthMenu,
                                 dom: options.specificationSummaryTableOptions.dom,
@@ -141,8 +141,8 @@
                     <div class="panel-heading">
                         <i class="fa fa-cog"></i> Execution Settings
                     </div>
-                    <div class="panel-body">
-                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></execution-settings-editor>
+                    <div class="panel-body" data-bind="css:{'settings-disabled': !$component.isEditPermitted()}">
+                        <execution-settings-editor params="getPlpDataArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().getPlpDataArgs, runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></execution-settings-editor>
                     </div>
                     </div>
                 </div>
@@ -153,14 +153,14 @@
                     <div class="panel-heading">
                     <i class="fa fa-cog"></i> Training Settings
                     </div>
-                    <div class="panel-body">
-                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions"></evaluation-settings-editor>
+                    <div class="panel-body" data-bind="css:{'settings-disabled': !$component.isEditPermitted()}">
+                        <evaluation-settings-editor params="runPlpArgs: $component.patientLevelPredictionAnalysis() && $component.patientLevelPredictionAnalysis().runPlpArgs, subscriptions: $component.subscriptions, isEditPermitted: $component.isEditPermitted"></evaluation-settings-editor>
                     </div>
                 </div>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
     <div id="editors" data-bind="visible: $component.managerMode() == 'editor'">
         <div id="editor-heading" class="editor-container">
         <div class="paddedWrapper">
@@ -174,7 +174,7 @@
                     </div>
                 </div>
                 </div>
-                <div class="panel-body" data-bind="if: $component.editorComponentName() != null">
+                <div class="panel-body" data-bind="if: $component.editorComponentName() != null, css:{'settings-disabled': !$component.isEditPermitted()}">
                 <div id="editorComponent" data-bind='component: {name: $component.editorComponentName(), params: $component.editorComponentParams()}'></div>
                 </div>
             </div>
@@ -193,5 +193,5 @@
         showCohortSelector: $component.showCohortSelector,
     }
 }">
-    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+    <cohort-definition-browser params="{onSelect: data => cohortSelected(data), selectedData: currentCohortList(), multiChoice: true, showModal: showCohortSelector}"></cohort-definition-browser>
 </atlas-modal>

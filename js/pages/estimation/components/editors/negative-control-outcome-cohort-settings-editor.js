@@ -14,7 +14,8 @@ define([
 ) {
 	class NegativeControlOutcomeCohortSettingsEditor extends Component {
 		constructor(params) {
-            super(params);
+      super(params);
+			this.isEditPermitted = params.isEditPermitted;
 
 			this.negativeControlCohortSettings = params.negativeControlCohortSettings;
             this.options = constants.options;

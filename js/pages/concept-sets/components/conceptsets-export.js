@@ -32,16 +32,18 @@ define([
 
 		onExportAction (result) {
 			if (result.action == 'add') {
-				this.isInProgress(true);
 				// Get the items we'd like to export from the table
 				var itemsForExport = $('#exportConceptSetTable').DataTable().rows('.selected').data();
 				var conceptSetIds = $.map(itemsForExport, function (obj) {
 					return obj.id
 				}).join('%2B'); // + encoded
 				if (conceptSetIds.length > 0) {
+					this.isInProgress(true);
 					fileService
 						.loadZip(config.api.url + 'conceptset/exportlist?conceptsets=' + conceptSetIds, 'exportedConceptSets.zip')
 						.finally(() => this.isInProgress(false));
+				} else {
+					alert('No concept set is selected.');
 				}
 			}
 		}

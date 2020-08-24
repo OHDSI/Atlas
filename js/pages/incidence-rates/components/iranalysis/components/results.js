@@ -5,6 +5,7 @@ define([
 	'utils/AutoBind',
 	'services/IRAnalysis',
 	'pages/incidence-rates/const',
+	'const',
 	'services/MomentAPI',
 	'services/AuthAPI',
 	'components/Component',
@@ -21,6 +22,7 @@ define([
 	AutoBind,
 	IRAnalysisService,
 	constants,
+	globalConsts,
 	momentApi,
 	authApi,
 	Component,
@@ -32,6 +34,9 @@ define([
 		constructor(params) {
 			super(params);
 			this.sources = params.sources;
+			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
+			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
+			this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 			this.hasSourceAccess = authApi.hasSourceAccess;
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
@@ -41,6 +46,7 @@ define([
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
 			this.stoppingSources = params.stoppingSources;
+			this.criticalCount = params.criticalCount;
 
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
@@ -53,6 +59,7 @@ define([
 			this.selectedTarget = ko.observable();
 			this.selectedOutcome = ko.observable();
 			this.isLoading = ko.observable();
+			this.isEditable = params.isEditable;
 			this.formatDateTime = function(date){
 				return momentApi.formatDateTime(new Date(date));
 			};
@@ -77,33 +84,36 @@ define([
 			// observable subscriptions
 
 			this.subscriptions.push(this.selectedTarget.subscribe((newVal) => {
-				if (this.selectedSource()) // this will cause a report refresh
-					this.selectSource(this.selectedSource());
+				if (this.selectedSourceId()) // this will cause a report refresh
+					this.expandSelectedSource();
 			}));
 			
 			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
-				if (this.selectedSource()) // this will cause a report refresh
-					this.selectSource(this.selectedSource());
+				if (this.selectedSourceId()) // this will cause a report refresh
+					this.expandSelectedSource();
 			}));
 
 			this.executionDisabled = ko.pureComputed(() => {
-				return (this.dirtyFlag().isDirty() || !this.isTarValid());
+				return (this.dirtyFlag().isDirty() || !this.isTarValid() || this.criticalCount() > 0);
 			});
 			
 			this.executionDisabledReason = ko.pureComputed(() => { 
 				if (!this.executionDisabled()) return null;
-				if (this.dirtyFlag().isDirty()) return constants.disabledReasons.DIRTY;
-				if (!this.isTarValid()) return constants.disabledReasons.INVALID_TAR;
-				return constants.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
+				if (!this.isTarValid()) return globalConsts.disabledReasons.INVALID_TAR;
+				if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
+				return globalConsts.disabledReasons.ACCESS_DENIED;
 			});
 
 			this.disableExportAnalysis = ko.pureComputed(() => {
 				return this.dirtyFlag().isDirty() || !this.sources().some(si => si.info() && si.info().executionInfo.status === constants.status.COMPLETE);
 			});
+
+			this.expandSelectedSource();
 		}
 
 		reportDisabledReason(source) {
-			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? constants.disabledReasons.ACCESS_DENIED : null);
+			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? globalConsts.disabledReasons.ACCESS_DENIED : null);
 		}
 
 		isExecutionDisabled(source) {
@@ -118,6 +128,15 @@ define([
 
 		isSummaryLoading(sourceItem) {
 			return sourceItem.source && this.loadingSummary && this.loadingSummary().find(sourceKey => sourceKey === sourceItem.source.sourceKey);
+		}
+
+		getSourceName() {
+			if (this.selectedSourceId()) {
+				const source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
+				if (source) {
+					return source.source.sourceName;
+				}
+			}
 		}
 
 		showExitMessage(sourceKey) {
@@ -164,15 +183,39 @@ define([
 		}
 
 		selectSource(source) {
+			if (source) {
+				this.selectedSourceId(source.source.sourceId);
+			}
+		}
 
-			// fail-fast if source/targets are not set,
+		expandSelectedSource() {			
 			if (!(this.selectedTarget() && this.selectedOutcome())) {
-				this.selectedSource(null);
 				this.selectedReport(null);
 				return;
 			}
 
-			this.selectedSource(source);
+			const source = this.sources().find(s => s.source.sourceId === this.selectedSourceId());
+			if (!source) {
+				// no source was selected
+				this.selectedReport(null);
+				return;
+			}
+			// stop subscribing for source loading
+			if (this.sourceInfoSubscribeId) {
+				this.sourceInfoSubscribeId.dispose();
+			}
+			if (!source.info()) {
+				// if sources were not loaded yet - wait for their loading
+				this.sourceInfoSubscribeId = source.info.subscribe(() => this.expandSelectedSource());
+				// prevent further processing
+				return;
+			}
+			if (source.source.sourceId !== this.selectedSourceId()) {				
+				commonUtils.routeTo('/iranalysis/' + this.selectedAnalysisId() + '/generation/' + source.source.sourceId);
+				// prevent further processing
+				return;
+			}
+
 			this.isLoading(true);
 
 			IRAnalysisService.getReport(source.info().executionInfo.id.analysisId, source.source.sourceKey, this.selectedTarget(), this.selectedOutcome())
@@ -204,7 +247,6 @@ define([
 		}
 
 		closeReport() {
-			this.selectedSource(null);
 			this.selectedReport(null);
 		}
 

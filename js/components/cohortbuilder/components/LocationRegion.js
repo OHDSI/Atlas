@@ -16,7 +16,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 			{
 				text: "Add Start Date Criteria",
 				selected: false,
-				description: "Filter Locations by date when Person started living there",
+				description: "Filter Locations by date when Person started living there.",
 				action: function () {
 					if (self.Criteria.StartDate() == null)
 						self.Criteria.StartDate(new Range({
@@ -27,7 +27,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 			{
 				text: "Add End Date Criteria",
 				selected: false,
-				description: "Filter Locations by date when Person finished living there",
+				description: "Filter Locations by date when Person finished living there.",
 				action: function () {
 					if (self.Criteria.EndDate() == null)
 						self.Criteria.EndDate(new Range({
@@ -38,7 +38,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../Criteri
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the location region as the index event",
+				description: "Apply criteria using the location region as the index event.",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));

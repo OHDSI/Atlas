@@ -11,6 +11,7 @@ define([
   'const',
   'services/JobDetailsService',
   'services/Poll',
+  'services/job/jobDetail',
   'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
@@ -26,7 +27,8 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService,
+  {PollService},
+  jobDetail,
   cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
@@ -77,7 +79,7 @@ define([
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
-        interval: 5000,
+        interval: 5000
       });
     }
 
@@ -89,8 +91,16 @@ define([
       return this.sourceJobs.get(job.executionId);
     }
 
-    checkJobs() {
-      this.jobListing().forEach(job => {
+    async checkJobs() {
+      const notifications = await jobDetailsService.listRefreshCacheJobs();
+      const jobs = notifications.data.map(n => {
+          const job = new jobDetail();
+          job.status(n.status);
+          job.executionId = n.executionId;
+          return job;
+      });
+
+      jobs.forEach(job => {
         let source = this.getSource(job);
         if (source && (job.isComplete() || job.isFailed())) {
           this.sourceJobs.delete(job.executionId);

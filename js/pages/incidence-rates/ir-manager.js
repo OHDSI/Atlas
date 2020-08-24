@@ -13,7 +13,7 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
-	'services/Poll',
+	'services/JobPollService',
 	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
@@ -23,6 +23,7 @@ define([
 	'utils/ExceptionUtils',
 	'./const',
 	'const',
+	'components/checks/warnings',
 	'./components/iranalysis/main',
 	'databindings',
 	'conceptsetbuilder/components',
@@ -32,6 +33,9 @@ define([
 	'utilities/export',
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
+	'less!./ir-manager.less',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -47,7 +51,7 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
-	PollService,
+	JobPollService,
 	{ isPermittedExportSQL },
 	GlobalPermissionService,
 	{ entityType },
@@ -90,7 +94,7 @@ define([
 					)
 			});
 			this.isEditable = ko.pureComputed(() => {
-				return this.selectedAnalysisId() === null
+				return this.selectedAnalysisId() === null || this.selectedAnalysisId() === 0
 					|| !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
@@ -157,9 +161,18 @@ define([
 			this.isNameFilled = ko.pureComputed(() => {
 				return this.selectedAnalysis() && this.selectedAnalysis().name();
 			});
-			
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.selectedAnalysis().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.selectedAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name() === this.defaultName;
+			});
+
 			this.isNameCorrect = ko.pureComputed(() => {
-				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 			
 			this.isTarValid = ko.pureComputed(() => {
@@ -184,6 +197,31 @@ define([
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
 			this.exportSqlService = this.exportSql;
+			this.criticalCount = ko.observable(0);
+
+			this.warningParams = ko.observable({
+				current: this.selectedAnalysis,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				onDiagnoseCallback: this.diagnose.bind(this),
+				checkOnInit: true,
+			});
+
+			this.warningClass = ko.computed(() => {
+				if (this.warningParams().warningsTotal() > 0){
+					if (this.warningParams().criticalCount() > 0) {
+						return 'badge warning-alarm';
+					} else if (this.warningParams().warningCount() > 0) {
+						return 'badge warning-warn';
+					} else {
+						return 'badge warning-info';
+					}
+				}
+				return 'badge';
+			});
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
@@ -203,6 +241,11 @@ define([
 			return authAPI.isPermitted(`ir:${id}:design:get`);
 		}
 
+		diagnose() {
+			if (this.selectedAnalysis()) {
+				return IRAnalysisService.runDiagnostics(this.selectedAnalysis());
+			}
+		}
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {
@@ -325,7 +368,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = JobPollService.add({
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -522,11 +565,22 @@ define([
 			return sql;
 		}
 
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
+			return {
+					createdBy: this.selectedAnalysis().createdBy(),
+					createdDate,
+					modifiedBy: this.selectedAnalysis().modifiedBy(),
+					modifiedDate,
+			};
+		}
+
 		// cleanup
 		dispose() {
 			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
-			PollService.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 	}
 

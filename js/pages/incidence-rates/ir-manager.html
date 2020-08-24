@@ -1,4 +1,7 @@
-<heading-title params="name: incidenceRateCaption(), icon: 'bolt', theme: 'dark'"></heading-title>
+<heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : '(Read only)', icon: 'bolt', theme: 'dark'"></heading-title>
+<!-- ko if: !!selectedAnalysis() && !!selectedAnalysis().id -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
 <div data-bind="visible:!loading()">
 	<!-- ko if: selectedAnalysis() -->
 	<div>
@@ -19,17 +22,11 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<div data-bind="visible: !isNameFilled()" class="empty-name-error">
-				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-				<label>Incidence Rate Analysis name is empty.</label>
-			</div>
-			<div data-bind="visible: !isNameCorrect()" class="empty-name-error">
-				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-				<label>The name of the analysis should differ from the default one.</label>
-			</div>
+			<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 		</div>
 
-		<ul class="nav nav-tabs">
+		<ul data-bind="css: classes({extra: 'nav nav-tabs'})">
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.selectTab(tabs.DEFINITION) };">
 				<a>Definition</a>
 			</li>
@@ -45,7 +42,10 @@
             <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
 				<a>Utilities</a>
             </li>
-
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
+				<a>Messages <span
+					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
@@ -59,7 +59,7 @@
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
 				<!-- ko with: selectedAnalysis().expression -->
-					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
+					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor, isEditable: $parent.isEditable"></concept-set-builder>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },
@@ -76,7 +76,9 @@
 																			 cancelExecution, 
 																			 stoppingSources: stoppingSources, 
 																			 loadingSummary: loadingSummary,
-																			 isTarValid: isTarValid"></ir-analysis-results>
+																			 isTarValid: isTarValid,
+																			 criticalCount: criticalCount,
+																			 isEditable: isEditable"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
@@ -113,7 +115,12 @@
 						 	exportSqlService: $component.exportSql"></export-sql>
 					</div>
                 </div>
-            </div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }" class="tab-pane">
+				<div class="paddedWrapper">
+					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
+				</div>
+			</div>
         </div>
 	</div>
 

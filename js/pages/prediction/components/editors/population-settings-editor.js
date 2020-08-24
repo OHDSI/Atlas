@@ -22,6 +22,7 @@ define([
 			this.populationSettings = params.populationSettings;
 			this.options = predictionConstants.options;
 			this.constants = constants;
+			this.isEditPermitted = params.isEditPermitted;
 		}
 	}
 

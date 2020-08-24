@@ -65,7 +65,7 @@ define(function (require, exports) {
 	}
 
 	function loadConceptSetExpression(conceptSetId) {
-		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression').then(({ data }) => data);
+		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression/' + sharedState.sourceKeyOfVocabUrl()).then(({ data }) => data);
 	}
 
 	function lookupIdentifiers(identifiers) {
@@ -231,6 +231,9 @@ define(function (require, exports) {
 			name: ko.observable(conceptset.name),
 			id: conceptset.id,
 			createdBy: conceptset.createdBy,
+			createdDate: conceptset.createdDate,
+			modifiedBy: conceptset.modifiedBy,
+			modifiedDate: conceptset.modifiedDate,
 		});
 	}
 
