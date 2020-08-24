@@ -546,8 +546,13 @@ define([
 		}
 
 		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().modifiedDate);
 			return {
-				entity: this.estimationAnalysis(),
+					createdBy: lodash.get(this.estimationAnalysis(), 'createdBy'),
+					createdDate,
+					modifiedBy: lodash.get(this.estimationAnalysis(), 'modifiedBy'),
+					modifiedDate,
 			}
 		}
 	}

@@ -477,9 +477,14 @@ define([
 		}
 
 		getAuthorship() {
-			return {
-				entity: this.currentConceptSet(),
-			}
+		   const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		   const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
+				return {
+						createdBy: this.currentConceptSet().createdBy,
+						createdDate,
+						modifiedBy: this.currentConceptSet().modifiedBy,
+						modifiedDate,
+				}
 		}
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);
