@@ -23,7 +23,6 @@ define([
 	class ConceptsetExport extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.exportTable = null;
 			this.exportRowCount = ko.observable(0);
 			this.exportConceptSets = [];
 			this.isInProgress = ko.observable(false);
@@ -49,11 +48,9 @@ define([
 		}
 
 		exportOnConceptSetSelected(conceptSet, valueAccessor, e) {
-			$(e.currentTarget).toggleClass('selected');
-			if (this.exportTable == null) {
-				this.exportTable = $(e.currentTarget.parentElement.parentElement).DataTable();
-			}
-			this.exportRowCount(this.exportTable.rows('.selected').data().length);
+			$(e).toggleClass('selected');
+			const exportTable = $('#exportConceptSetTable').DataTable();
+			this.exportRowCount(exportTable.rows('.selected').data().length);
 		}
 
 	}

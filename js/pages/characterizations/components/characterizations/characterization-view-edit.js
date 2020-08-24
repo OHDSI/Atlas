@@ -281,10 +281,7 @@ define([
 
         getAuthorship() {
             return {
-                createdBy: lodash.get(this.design(), 'createdBy.name'),
-                createdDate: this.design().createdAt,
-                modifiedBy: lodash.get(this.design(), 'updatedBy.name'),
-                modifiedDate: this.design().updatedAt,
+                entity: this.design(),
             }
         }
     }

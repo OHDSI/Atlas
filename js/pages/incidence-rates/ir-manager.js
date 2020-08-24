@@ -566,14 +566,9 @@ define([
 		}
 
 		getAuthorship() {
-			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
-			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
 			return {
-					createdBy: this.selectedAnalysis().createdBy(),
-					createdDate,
-					modifiedBy: this.selectedAnalysis().modifiedBy(),
-					modifiedDate,
-			};
+				entity: this.selectedAnalysis(),
+			}
 		}
 
 		// cleanup

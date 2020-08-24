@@ -1,5 +1,5 @@
-define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
-    (momentApi, filterXSS, appConfig, consts) => {
+define(['services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI', '../const'],
+    (momentApi, filterXSS, appConfig, authApi, consts) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
@@ -17,7 +17,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
             return label;
         };
 
-        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
+        const getDateFieldFormatter = (field = 'createdDate', defaultValue = false) => (s, type, d) => {
             if (type === "sort") {
               return (defaultValue && d[field]) || d[field] ? d[field] : defaultValue;
             } else {
@@ -52,6 +52,11 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
         const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
 
         const getFacetForCreatedBy = getCreatedByLogin;
+
+        const getFacetForDesign = d =>
+            d.hasWriteAccess || (d.createdBy && authApi.subject() === d.createdBy.login)
+                ? "My designs"
+                : "Other designs";
 
         const getFacetForDomain = (domain) => domain !== null ? domain : 'None';
 
@@ -113,6 +118,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
             getLinkFormatter,
             getCreatedByFormatter,
             getFacetForCreatedBy,
+            getFacetForDesign,
             renderCountColumn,
             getFacetForDomain,
             coalesceField,

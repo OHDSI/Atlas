@@ -459,13 +459,8 @@ define([
 		}
 
 		getAuthorship() {
-			const createdDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().createdDate);
-			const modifiedDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().modifiedDate);
 			return {
-					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy'),
-					createdDate,
-					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'modifiedBy'),
-					modifiedDate,
+				entity: this.patientLevelPredictionAnalysis(),
 			}
 		}
 	}
