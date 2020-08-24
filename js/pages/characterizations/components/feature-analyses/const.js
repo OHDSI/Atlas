@@ -66,7 +66,7 @@ define((require, exports) => {
 		{
 			title: 'Author',
 			className: classes('tbl-col', 'author'),
-			data: 'createdBy',
+			data: datatableUtils.getFacetForCreatedBy,
 		},
 
 	];

@@ -15,6 +15,7 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'services/AuthAPI',
+    'lodash',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -52,6 +53,7 @@ define([
 	sharedState,
 	conceptSetService,
 	authApi,
+    lodash,
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -480,9 +482,9 @@ define([
 		   const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
 		   const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
 				return {
-						createdBy: this.currentConceptSet().createdBy,
+						createdBy: lodash.get(this.currentConceptSet(), 'createdBy.name'),
 						createdDate,
-						modifiedBy: this.currentConceptSet().modifiedBy,
+						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
 						modifiedDate,
 				}
 		}

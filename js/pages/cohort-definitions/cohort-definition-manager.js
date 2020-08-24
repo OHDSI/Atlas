@@ -1556,12 +1556,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			
 			getAuthorship() {
 				const cohortDef = this.currentCohortDefinition();
+				const createdDate = commonUtils.formatDateForAuthorship(cohortDef.createdDate);
+				const modifiedDate = commonUtils.formatDateForAuthorship(cohortDef.modifiedDate);
 				return {
-					createdBy: this.currentCohortDefinition().createdBy(),
-					createdDate: this.currentCohortDefinition().createdDate(),
-					modifiedBy: this.currentCohortDefinition().modifiedBy(),
-					modifiedDate: this.currentCohortDefinition().modifiedDate()
-				}
+					createdBy: cohortDef.createdBy() ? cohortDef.createdBy().name : '',
+					createdDate: createdDate,
+					modifiedBy: cohortDef.modifiedBy() ? cohortDef.modifiedBy().name : '',
+					modifiedDate: modifiedDate,
+				}				
 			}
 	}
 

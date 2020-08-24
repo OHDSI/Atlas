@@ -445,10 +445,10 @@ define([
             const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
             const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
             return {
-                createdBy: this.data().createdBy(),
-                createdDate,
-                modifiedBy: this.data().modifiedBy(),
-                modifiedDate,
+                createdBy: this.data().createdBy() ? this.data().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.data().modifiedBy() ? this.data().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
             }
         }
     }
