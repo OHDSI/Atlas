@@ -23,7 +23,6 @@ define([
 	class ConceptsetExport extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.exportTable = null;
 			this.exportRowCount = ko.observable(0);
 			this.exportConceptSets = [];
 			this.isInProgress = ko.observable(false);
@@ -32,26 +31,26 @@ define([
 
 		onExportAction (result) {
 			if (result.action == 'add') {
-				this.isInProgress(true);
 				// Get the items we'd like to export from the table
 				var itemsForExport = $('#exportConceptSetTable').DataTable().rows('.selected').data();
 				var conceptSetIds = $.map(itemsForExport, function (obj) {
 					return obj.id
 				}).join('%2B'); // + encoded
 				if (conceptSetIds.length > 0) {
+					this.isInProgress(true);
 					fileService
 						.loadZip(config.api.url + 'conceptset/exportlist?conceptsets=' + conceptSetIds, 'exportedConceptSets.zip')
 						.finally(() => this.isInProgress(false));
+				} else {
+					alert('No concept set is selected.');
 				}
 			}
 		}
 
 		exportOnConceptSetSelected(conceptSet, valueAccessor, e) {
-			$(e.currentTarget).toggleClass('selected');
-			if (this.exportTable == null) {
-				this.exportTable = $(e.currentTarget.parentElement.parentElement).DataTable();
-			}
-			this.exportRowCount(this.exportTable.rows('.selected').data().length);
+			$(e).toggleClass('selected');
+			const exportTable = $('#exportConceptSetTable').DataTable();
+			this.exportRowCount(exportTable.rows('.selected').data().length);
 		}
 
 	}

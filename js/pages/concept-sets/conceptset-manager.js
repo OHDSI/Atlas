@@ -476,17 +476,11 @@ define([
 			this.optimizerSavingNew(false);
 		}
 
-	 getAuthorship() {
-		const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
-		const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
-			 return {
-					 createdBy: this.currentConceptSet().createdBy,
-					 createdDate,
-					 modifiedBy: this.currentConceptSet().modifiedBy,
-					 modifiedDate,
-			 }
-	 }
-
+		getAuthorship() {
+			return {
+				entity: this.currentConceptSet(),
+			}
+		}
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);
 });

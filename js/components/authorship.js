@@ -15,10 +15,11 @@ define([
 	class Authorship extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.createdBy = params.createdBy;
-			this.createdDate = params.createdDate;
-			this.modifiedBy = params.modifiedBy;
-			this.modifiedDate = params.modifiedDate;
+			const entity = params.entity;
+			this.createdBy = entity.createdBy ? (entity.createdBy.name ? entity.createdBy.name : entity.createdBy) : '';
+			this.createdDate = entity.createdDate;
+			this.modifiedBy = entity.modifiedBy ? (entity.modifiedBy.name ? entity.modifiedBy.name : entity.modifiedBy) : '';
+			this.modifiedDate = entity.modifiedDate;
 		}
 	}
 
