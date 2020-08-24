@@ -1555,8 +1555,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 			
 			getAuthorship() {
+				const cohortDef = this.currentCohortDefinition();
 				return {
-					entity: this.currentCohortDefinition(),
+					createdBy: this.currentCohortDefinition().createdBy(),
+					createdDate: this.currentCohortDefinition().createdDate(),
+					modifiedBy: this.currentCohortDefinition().modifiedBy(),
+					modifiedDate: this.currentCohortDefinition().modifiedDate()
 				}
 			}
 	}
