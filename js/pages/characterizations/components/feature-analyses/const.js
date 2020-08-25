@@ -22,7 +22,7 @@ define((require, exports) => {
 		},
 		{
 			'caption': 'Last Modified',
-			'binding': (o) => datatableUtils.getFacetForDate(o.modeifiedDate)
+			'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 		},
 		{
 			'caption': 'Author',
