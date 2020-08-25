@@ -84,7 +84,7 @@ define([
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
-					title: ko.i18n('columns.modified', 'Modified'),
+					title: ko.i18n('columns.updated', 'Updated'),
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{

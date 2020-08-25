@@ -55,8 +55,8 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
 
         const getFacetForDesign = d =>
             d.hasWriteAccess || (d.createdBy && authApi.subject() === d.createdBy.login)
-                ? "My designs"
-                : "Other designs";
+                ? ko.i18n('facets.designs.myDesigns', 'My designs')
+                : ko.i18n('facets.designs.otherDesigns', 'Other designs');
 
         const getFacetForDomain = (domain) => domain !== null ? domain : 'None';
 
