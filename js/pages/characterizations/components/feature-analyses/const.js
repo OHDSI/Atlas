@@ -21,7 +21,7 @@ define((require, exports) => {
 		},
 		{
 			'caption': ko.i18n('facets.caption.updated', 'Updated'),
-			'binding': (o) => datatableUtils.getFacetForDate(o.modeifiedDate)
+			'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 		},
 		{
 			'caption': ko.i18n('facets.caption.author', 'Author'),
