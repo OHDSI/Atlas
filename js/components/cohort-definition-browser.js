@@ -29,21 +29,22 @@ define([
 			this.options = {
 				Facets: [
 					{
-						'caption': ko.i18n('facets.caption.lastModified', 'Last Modified'),
-						'binding': function (o) {
-							const createDate = new Date(o.createdDate);
-							const modDate = new Date(o.modifiedDate);
-							const dateForCompare = (createDate > modDate) ? createDate : modDate;
-							return datatableUtils.getFacetForDate(dateForCompare);
-						}
+						'caption': ko.i18n('facets.caption.created', 'Created'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
+					{
+						'caption': ko.i18n('facets.caption.updated', 'Updated'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
 						'caption': ko.i18n('facets.caption.author', 'Author'),
-						'binding': function (o) {
-							return o.createdBy;
-						}
+						'binding': datatableUtils.getFacetForCreatedBy,
 					},
-				],
+					{
+						'caption': ko.i18n('facets.caption.designs', 'Designs'),
+						'binding': datatableUtils.getFacetForDesign,
+					},
+				]
 			};
 
 			this.columns = [

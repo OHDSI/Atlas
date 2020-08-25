@@ -1,180 +1,173 @@
-define([
-  "knockout",
-  "text!./CohortConceptSetBrowserTemplate.html",
-  "services/VocabularyProvider",
-  "appConfig",
-  "conceptsetbuilder/InputTypes/ConceptSet",
-  "services/AuthAPI",
-  "utils/DatatableUtils",
-  "components/ac-access-denied",
-  "databindings",
-  "css!./style.css",
-], function (
-  ko,
-  template,
-  VocabularyProvider,
-  appConfig,
-  ConceptSet,
-  authApi,
-  datatableUtils
-) {
-  function CohortConceptSetBrowser(params) {
-    var self = this;
+define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'utils/DatatableUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils) {
+	function CohortConceptSetBrowser(params) {
+		var self = this;
 
-    function defaultRepositoryConceptSetSelected(conceptSet) {
-      // Default functionality
-      self.isProcessing(true);
-      VocabularyProvider.getConceptSetExpression(
-        conceptSet.id,
-        self.selectedSource().url
-      )
-        .then((result) => {
-          var isCancelled = false;
-          while (
-            self
-              .cohortConceptSets()
-              .find((cs) => cs.name() == conceptSet.name) != null &&
-            !isCancelled
-          ) {
-            var newName = prompt(
-              "Duplicate Concept Name. Please enter a new name",
-              conceptSet.name
-            );
-            if (newName) {
-              conceptSet.name = newName;
-            } else {
-              isCancelled = true;
-            }
-          }
-          if (!isCancelled) {
-            var newId =
-              self.cohortConceptSets().length > 0
-                ? Math.max.apply(
-                    null,
-                    self.cohortConceptSets().map((d) => d.id)
-                  ) + 1
-                : 0;
-            var newConceptSet = new ConceptSet({
-              id: newId,
-              name: conceptSet.name,
-              expression: result,
-            });
-            params.$raw.cohortConceptSets().push(newConceptSet);
-            self.criteriaContext() &&
-              self.criteriaContext().conceptSetId(newConceptSet.id);
-            self.onActionComplete({
-              action: "load",
-              status: "Success",
-            });
-          } else {
-            self.onActionComplete({
-              action: "load",
-              status: "Cancelled",
-            });
-          }
-          // Waiting for modal's amination to end
-          setTimeout(() => {
-            self.isProcessing(false);
-          }, 1000);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+		function defaultRepositoryConceptSetSelected(conceptSet) {
+			// Default functionality
+			self.isProcessing(true);
+			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
+					.url)
+				.then((result) => {
+					var isCancelled = false;
+					while (self.cohortConceptSets().find(cs => cs.name() == conceptSet.name) != null && !isCancelled)
+					{
+						var newName = prompt('Duplicate Concept Name. Please enter a new name', conceptSet.name);
+						if (newName) {
+							conceptSet.name = newName;
+						} else {
+							isCancelled = true;
+						}
+					}
+					if (!isCancelled)
+					{
+						var newId = self.cohortConceptSets().length > 0 ? Math.max.apply(null, self.cohortConceptSets().map(d => d.id)) + 1 : 0;
+						var newConceptSet = new ConceptSet({
+							id: newId,
+							name: conceptSet.name,
+							expression: result
+						});
+						params.$raw.cohortConceptSets().push(newConceptSet);
+						self.criteriaContext() && self.criteriaContext().conceptSetId(newConceptSet.id);
+						self.onActionComplete({
+							action: 'load',
+							status: 'Success'
+						});					
+					} else {
+						self.onActionComplete({
+							action: 'load',
+							status: 'Cancelled'
+						});
+					}
+					// Waiting for modal's amination to end
+					setTimeout(() => {
+						self.isProcessing(false);
+					}, 1000);	
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
 
-    function setDisabledConceptSetButton(action) {
-      if (action && action()) {
-        return action();
-      } else {
-        return false;
-      }
-    }
 
-    self.datatableUtils = datatableUtils;
-    self.criteriaContext = params.criteriaContext;
-    self.cohortConceptSets = params.cohortConceptSets;
-    self.onActionComplete = params.onActionComplete;
-    self.onRespositoryConceptSetSelected =
-      params.onRespositoryConceptSetSelected ||
-      defaultRepositoryConceptSetSelected;
-    self.disableConceptSetButton = setDisabledConceptSetButton(
-      params.disableConceptSetButton
-    );
-    self.buttonActionEnabled = params.buttonActionEnabled !== false;
-    self.buttonActionText =
-      params.buttonActionText ||
-      ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set');
-    self.repositoryConceptSetTableId =
-      params.repositoryConceptSetTableId || "repositoryConceptSetTable";
+		function setDisabledConceptSetButton(action) {
+			if (action && action()) {
+				return action()
+			} else {
+				return false;
+			}
+		}
 
-    self.loading = ko.observable(false);
-    self.repositoryConceptSets = ko.observableArray();
-    self.isProcessing = ko.observable(false);
+		self.datatableUtils = datatableUtils;
+		self.criteriaContext = params.criteriaContext;
+		self.cohortConceptSets = params.cohortConceptSets;
+		self.onActionComplete = params.onActionComplete;
+		self.onRespositoryConceptSetSelected = params.onRespositoryConceptSetSelected || defaultRepositoryConceptSetSelected;
+		self.disableConceptSetButton = setDisabledConceptSetButton(params.disableConceptSetButton);
+		self.buttonActionEnabled = params.buttonActionEnabled !== false;
+		self.buttonActionText = params.buttonActionText || ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set');
+		self.repositoryConceptSetTableId = params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 
-    self.sources = [];
-    self.sources.push(appConfig.api);
-    self.selectedSource = ko.observable(self.sources[0]);
+		self.loading = ko.observable(false);
+		self.repositoryConceptSets = ko.observableArray();
+		self.isProcessing = ko.observable(false);
 
-    self.isAuthenticated = authApi.isAuthenticated;
-    self.canReadConceptsets = ko.pureComputed(function () {
-      return (
-        (appConfig.userAuthenticationEnabled &&
-          self.isAuthenticated() &&
-          authApi.isPermittedReadConceptsets()) ||
-        !appConfig.userAuthenticationEnabled
-      );
-    });
-    self.canReadCohorts = ko.pureComputed(function () {
-      return (
-        (config.userAuthenticationEnabled &&
-          self.isAuthenticated() &&
-          authApi.isPermittedReadCohorts()) ||
-        !config.userAuthenticationEnabled
-      );
-    });
+		self.sources = [];
+		self.sources.push(appConfig.api);
+		self.selectedSource = ko.observable(self.sources[0]);
 
-    self.loadConceptSetsFromRepository = function (url) {
-      self.loading(true);
+		self.isAuthenticated = authApi.isAuthenticated;
+		self.canReadConceptsets = ko.pureComputed(function () {
+		  return (appConfig.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !appConfig.userAuthenticationEnabled;
+		});
+		self.canReadCohorts = ko.pureComputed(function () {
+		  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
+		});
 
-      VocabularyProvider.getConceptSetList(url)
-        .done(function (results) {
-          datatableUtils.coalesceField(results, "modifiedDate", "createdDate");
-          self.repositoryConceptSets(results);
-          self.loading(false);
-        })
-        .fail(function (err) {
-          console.log(err);
-        });
-    };
+		self.loadConceptSetsFromRepository = function (url) {
+			self.loading(true);
 
-    // datatable callbacks:
+			VocabularyProvider.getConceptSetList(url)
+				.done(function (results) {
+					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
+					self.repositoryConceptSets(results);
+					self.loading(false);
+				})
+				.fail(function (err) {
+					console.log(err);
+				});
+		}
 
-    self.selectRepositoryConceptSet = function (data, context, event) {
-      !self.isProcessing() &&
-        self.onRespositoryConceptSetSelected(
-          data,
-          self.selectedSource(),
-          event
-        );
-    };
+		// datatable callbacks:
 
-    self.addConceptSet = function () {
-      self.onActionComplete({
-        action: "add",
-        status: "Success",
-      });
-    };
+		self.selectRepositoryConceptSet = function (data, context, event) {
+			!self.isProcessing() && self.onRespositoryConceptSetSelected(data, self.selectedSource(), event);
+		}
 
-    // dispose subscriptions
+		self.addConceptSet = function () {
+			self.onActionComplete({
+				action: 'add',
+				status: 'Success'
+			});
+		}
 
-    // startup actions
-    self.loadConceptSetsFromRepository(self.selectedSource().url);
-  }
+		// dispose subscriptions
 
-  var component = {
-    viewModel: CohortConceptSetBrowser,
-    template: template,
-  };
+		// startup actions
+		self.loadConceptSetsFromRepository(self.selectedSource()
+			.url);
 
-  return component;
+		this.options = {
+			Facets: [
+				{
+					'caption': ko.i18n('facets.caption.created', 'Created'),
+					'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+				},
+				{
+					'caption': ko.i18n('facets.caption.updated', 'Updated'),
+					'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+				},
+				{
+					'caption': ko.i18n('facets.caption.author', 'Author'),
+					'binding': datatableUtils.getFacetForCreatedBy,
+				},
+				{
+					'caption': ko.i18n('facets.caption.designs', 'Designs'),
+					'binding': datatableUtils.getFacetForDesign,
+				},
+			]
+		};
+
+		this.columns = [
+			{
+				title: ko.i18n('columns.id', 'Id'),
+				data: 'id'
+			},
+			{
+				title: ko.i18n('columns.name', 'Name'),
+				render: datatableUtils.getLinkFormatter(d => ({
+					label: d['name'],
+					linkish: true,
+				})),
+			},
+			{
+				title: ko.i18n('columns.created', 'Created'),
+				render: datatableUtils.getDateFieldFormatter('createdDate'),
+			},
+			{
+				title: ko.i18n('columns.updated', 'Updated'),
+				render: datatableUtils.getDateFieldFormatter('modifiedDate'),
+			},
+			{
+				title: ko.i18n('columns.author', 'Author'),
+				render: datatableUtils.getCreatedByFormatter(),
+			}
+		];
+	}
+
+	var component = {
+		viewModel: CohortConceptSetBrowser,
+		template: template
+	};
+
+	return component;
 });

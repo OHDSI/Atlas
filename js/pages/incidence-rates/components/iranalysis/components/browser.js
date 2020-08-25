@@ -23,24 +23,21 @@ define([
 			this.options = {
 				Facets: [
 					{
-						'caption': ko.i18n('facets.caption.lastModified', 'Last Modified'),
-						'binding': function (o) {
-							var daysSinceModification = (new Date().getTime() - new Date(o.modifiedDate || o.createdDate).getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < 7) {
-								return ko.i18n('facets.date.thisWeek', 'This Week');
-							} else if (daysSinceModification < 14) {
-								return ko.i18n('facets.date.lastWeek', 'Last Week');
-							} else {
-								return ko.i18n('facets.date.others', '2+ Weeks Ago');
-							}
-						}
+						'caption': ko.i18n('facets.caption.created', 'Created'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
+					{
+						'caption': ko.i18n('facets.caption.updated', 'Updated'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
 						'caption': ko.i18n('facets.caption.author', 'Author'),
-						'binding': function (o) {
-							return o.createdBy;
-						}
-					}
+						'binding': datatableUtils.getFacetForCreatedBy,
+					},
+					{
+						'caption': ko.i18n('facets.caption.designs', 'Designs'),
+						'binding': datatableUtils.getFacetForDesign,
+					},
 				]
 			};
 

@@ -653,7 +653,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),
-				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
+				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy() 
+					&& this.currentCohortDefinition().createdBy().login
 			});
 		}
 
@@ -1556,12 +1557,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			
 			getAuthorship() {
 				const cohortDef = this.currentCohortDefinition();
+				const createdDate = commonUtils.formatDateForAuthorship(cohortDef.createdDate);
+				const modifiedDate = commonUtils.formatDateForAuthorship(cohortDef.modifiedDate);
 				return {
-					createdBy: this.currentCohortDefinition().createdBy(),
-					createdDate: this.currentCohortDefinition().createdDate(),
-					modifiedBy: this.currentCohortDefinition().modifiedBy(),
-					modifiedDate: this.currentCohortDefinition().modifiedDate()
-				}
+					createdBy: cohortDef.createdBy() ? cohortDef.createdBy().name : '',
+					createdDate: createdDate,
+					modifiedBy: cohortDef.modifiedBy() ? cohortDef.modifiedBy().name : '',
+					modifiedDate: modifiedDate,
+				}				
 			}
 	}
 

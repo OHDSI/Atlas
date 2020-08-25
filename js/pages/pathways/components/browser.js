@@ -85,17 +85,22 @@ define([
 
 		get gridOptions() {
 			return ko.observable({
-				Facets: [{
-					'caption': ko.i18n('facets.caption.created', 'Created'),
-					'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
-				},
+				Facets: [
+					{
+						'caption': ko.i18n('facets.caption.created', 'Created'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
 					{
 						'caption': ko.i18n('facets.caption.updated', 'Updated'),
-						'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
 						'caption': ko.i18n('facets.caption.author', 'Author'),
-						'binding': (o) => (o.createdBy && o.createdBy.login) || "",
+						'binding': datatableUtils.getFacetForCreatedBy,
+					},
+					{
+						'caption': ko.i18n('facets.caption.designs', 'Designs'),
+						'binding': datatableUtils.getFacetForDesign,
 					},
 				]
 			});

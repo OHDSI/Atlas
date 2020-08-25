@@ -55,6 +55,10 @@ define([
                         'caption': ko.i18n('facets.caption.author', 'Author'),
                         'binding': datatableUtils.getFacetForCreatedBy,
                     },
+                    {
+                        'caption': 'Designs',
+                        'binding': datatableUtils.getFacetForDesign,
+                    },
 				]
 			};
 

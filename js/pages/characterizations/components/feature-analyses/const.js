@@ -17,15 +17,19 @@ define((require, exports) => {
 		},
 		{
 			'caption': ko.i18n('facets.caption.created', 'Created'),
-			'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
+			'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
 		},
 		{
 			'caption': ko.i18n('facets.caption.updated', 'Updated'),
-			'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
+			'binding': (o) => datatableUtils.getFacetForDate(o.modeifiedDate)
 		},
 		{
 			'caption': ko.i18n('facets.caption.author', 'Author'),
-			'binding': (o) => o.createdBy || 'anonymous',
+			'binding': datatableUtils.getFacetForCreatedBy,
+		},
+		{
+			'caption': ko.i18n('facets.caption.designs', 'Designs'),
+			'binding': datatableUtils.getFacetForDesign,
 		},
 	];
 
@@ -35,7 +39,6 @@ define((require, exports) => {
 			data: 'id'
 		},
 		{
-			// title: 'Name',
 			title: ko.i18n('columns.name', 'Name'),
 			data: 'name',
 			className: classes('tbl-col', 'name'),
@@ -62,7 +65,7 @@ define((require, exports) => {
 		{
 			title: ko.i18n('columns.author', 'Author'),
 			className: classes('tbl-col', 'author'),
-			data: 'createdBy',
+			data: datatableUtils.getFacetForCreatedBy,
 		},
 
 	];
