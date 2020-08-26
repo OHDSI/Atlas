@@ -15,7 +15,7 @@ COPY ./js /code/js
 RUN npm run build:docker
 
 # Production Nginx image
-FROM nginx:1.17-alpine
+FROM nginx:1.19-alpine
 
 # Directory where atlas files will be stored
 ENV ATLAS_HOME=/usr/share/nginx/html/atlas
