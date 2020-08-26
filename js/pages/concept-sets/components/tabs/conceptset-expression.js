@@ -6,6 +6,7 @@ define([
   'utils/CommonUtils',
   'utils/Renderers',
   'services/ConceptSet',
+  'components/conceptset/ConceptSetStore',
   'atlas-state',
   'const',
   'components/conceptLegend/concept-legend',
@@ -17,15 +18,15 @@ define([
   commonUtils,
   renderers,
   conceptSetService,
+  ConceptSetStore,
   sharedState,
   globalConstants,
 ) {
 	class ConceptsetExpression extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.currentConceptSet = sharedState.getConceptSetStore(globalConstants.conceptSetSources.repository).current;
-			this.conceptSetItems = ko.pureComputed(() => (this.currentConceptSet() && this.currentConceptSet().expression.items()) || []);
-			
+      this.conceptSetStore = params.conceptSetStore;
+      this.conceptSetItems = ko.pureComputed(() => (this.conceptSetStore.current() && this.conceptSetStore.current().expression.items()) || []);
       this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
       this.commonUtils = commonUtils;
       this.allExcludedChecked = ko.pureComputed(() => {
@@ -112,11 +113,8 @@ define([
     }
 
     removeConceptsFromConceptSet() {
-      const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
-      conceptSetService.removeConceptsFromConceptSet({
-        concepts: conceptsForRemoval,
-        source: globalConstants.conceptSetSources.repository
-      });
+			const idxForRemoval = this.data().filter(concept => concept.isSelected()).map(item => item.idx);
+			this.conceptSetStore.removeItemsByIndex(idxForRemoval);
     }
 
 		selectAllConceptSetItems(key, areAllSelected) {

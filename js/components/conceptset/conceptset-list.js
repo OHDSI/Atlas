@@ -36,7 +36,7 @@ define([
 	globalConstants
 ) {
 
-	const {ConceptSetTabKeys, RESOLVE_OUT_OF_ORER} = constants;
+	const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
 	
 	class ConceptSetList extends AutoBind(Component) {
 
@@ -80,45 +80,44 @@ define([
 					toggleable: false,
 				},
 			};
-			this.selectedTabKey = ko.observable(ConceptSetTabKeys.EXPRESSION);
+			this.selectedTabKey = ko.observable(ViewMode.EXPRESSION);
 			const tabParams = {
 				...params,
 				conceptSetStore: this.conceptSetStore,
 				currentConceptSet: this.conceptSetStore.current,
 				loadConceptSet: this.loadConceptSet,
-				loading: this.loading,
 				importing: this.importing,
 				selectedTabKey: this.selectedTabKey,
 			};
 			this.tabs = [
 				{
 					title: 'Concept Set Expression',
-					key: ConceptSetTabKeys.EXPRESSION,
+					key: ViewMode.EXPRESSION,
 					componentName: 'conceptset-list-expression',
-					componentParams: {...tabParams, onClose: this.closeConceptSet, onDelete: this.deleteConceptSet}
+					componentParams: {...tabParams, onClose: this.closeConceptSet, onDelete: this.deleteConceptSet, loading: this.loading}
 				},
 				{
 					title: 'Included Concepts',
-					key: ConceptSetTabKeys.INCLUDED,
+					key: ViewMode.INCLUDED,
 					componentName: 'conceptset-list-included',
-					componentParams: tabParams,
+					componentParams: {...tabParams, loading: this.conceptSetStore.loadingIncluded},
 					hasBadge: true,
 				},
 				{
 					title: 'Included Source Codes',
-					key: ConceptSetTabKeys.SOURCECODES,
+					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
-					componentParams: tabParams,
+					componentParams: {...tabParams, loading: this.conceptSetStore.loadingSourceCodes}
 				},
 				{
 					title: 'Export',
-					key: ConceptSetTabKeys.EXPORT,
+					key: ViewMode.EXPORT,
 					componentName: 'conceptset-list-export',
 					componentParams: tabParams,
 				},
 				{
 					title: 'Import',
-					key: ConceptSetTabKeys.IMPORT,
+					key: ViewMode.IMPORT,
 					componentName: 'conceptset-list-import',
 					componentParams: tabParams,
 				}
@@ -133,7 +132,7 @@ define([
 			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
 				try {
 					await this.conceptSetStore.resolveConceptSetExpression();
-					this.selectTab(this.tabs.map(t=>t.key).indexOf(this.selectedTabKey()));					
+					await this.conceptSetStore.refresh(this.selectedTabKey());
 				} catch (err) {
 					if (err != RESOLVE_OUT_OF_ORER)
 						console.info(err);
@@ -166,14 +165,14 @@ define([
 			this.showImportConceptSetModal(false);
 			if (conceptSet.id !== (this.currentConceptSet() && this.currentConceptSet().id)) {
 				this.includedHash(null);
-				this.selectedTabKey(ConceptSetTabKeys.EXPRESSION);
+				this.selectedTabKey(ViewMode.EXPRESSION);
 				await this.loadConceptSet(conceptSet.id);
 			}
 		}
 
 		async loadConceptSet(conceptSetId) {
 			this.conceptSetStore.current(null);
-			this.selectedTabKey(ConceptSetTabKeys.EXPRESSION);
+			this.selectedTabKey(ViewMode.EXPRESSION);
 			const conceptSet = this.conceptSets().find(item => item.id === conceptSetId);
 			if (!conceptSet) {
 				return;
@@ -214,7 +213,7 @@ define([
 		async importConceptSet () {
 			const conceptSet = this.createConceptSet();
 			await this.prepareConceptSet(conceptSet);
-			this.selectedTabKey(ConceptSetTabKeys.IMPORT);
+			this.selectedTabKey(ViewMode.IMPORT);
 			this.markConceptSetSelected(conceptSet);
 			
 		};
@@ -224,7 +223,7 @@ define([
 			this.selectedTabKey(key);
 			this.loading(true);
 			try {
-				await conceptSetUtils.onCurrentConceptSetModeChanged(key, this.conceptSetStore);
+				await this.conceptSetStore.refresh(key);
 			} finally {
 				this.loading(false);
 			}

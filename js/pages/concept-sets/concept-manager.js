@@ -8,7 +8,8 @@ define([
 	'services/Vocabulary',
 	'utils/CommonUtils',
 	'services/ConceptSet',
-	'components/conceptset/ConceptSetStore',	
+	'components/conceptset/ConceptSetStore',
+  'components/conceptset/utils',
 	'utils/Renderers',
 	'atlas-state',
 	'services/http',
@@ -30,6 +31,7 @@ define([
 	commonUtils,
 	conceptSetService,
 	ConceptSetStore,
+  conceptSetUtils,
 	renderers,
 	sharedState,
 	httpService,
@@ -43,6 +45,7 @@ define([
 			super(params);
 			this.currentConceptId = ko.observable();
 			this.currentConcept = ko.observable();
+/*      
 			this.activeConceptSets = ko.pureComputed(() => {
 				const activeConceptSetSources = Object.keys(globalConstants.conceptSetSources).filter(key => !!sharedState[`${key}ConceptSet`].current());
 				return activeConceptSetSources.map(source => sharedState[`${source}ConceptSet`]);
@@ -54,6 +57,7 @@ define([
 				}
 				return 'Select Conceptset';
 			});
+*/      
 			this.currentConceptMode = ko.observable('details');
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
@@ -259,18 +263,18 @@ define([
 			this.sourceCounts(sourceData);
 		}
 
-		addConcepts = (options, source = globalConstants.conceptSetSources.repository) => (conceptsArr = [], isCurrentConcept = false) => {
-			let concepts = [];
-			if (isCurrentConcept) {
-				concepts.push({
-					...conceptsArr[0],
-					...options,
-				});
-			} else {
-				const selectedConcepts = commonUtils.getSelectedConcepts(conceptsArr, options);
-				concepts = concepts.concat(selectedConcepts);
-			}
-			conceptSetService.addConceptsToConceptSet({ concepts, source });
+    addConcept(options, conceptSetStore = ConceptSetStore.repository()) {
+      // add the current concept
+      const items = commonUtils.buildConceptSetItems([this.currentConcept()], options);
+      conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+    }
+    
+    // produces a closure to wrap options and source around a function
+    // that accepts the source selected concepts list
+		addConcepts = (options, conceptSetStore = ConceptSetStore.repository()) => (conceptsArr, isCurrentConcept = false) => {
+      const concepts = commonUtils.getSelectedConcepts(conceptsArr);
+      const items = commonUtils.buildConceptSetItems(concepts, options);				
+      conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
 			commonUtils.clearConceptsSelectionState(conceptsArr);
 		}
 

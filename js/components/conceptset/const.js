@@ -2,7 +2,7 @@ define([
 	'knockout'
 ], function(ko) {
 
-	const ConceptSetTabKeys = {
+	const ViewMode = {
 		EXPRESSION: 'expression',
 		INCLUDED: 'included',
 		SOURCECODES: 'included-sourcecodes',
@@ -21,7 +21,7 @@ define([
 	const RESOLVE_OUT_OF_ORDER = 'resolveConceptSetExpression() resolved out of oder';
 
 	return {
-		ConceptSetTabKeys,
+		ViewMode,
 		ConceptSetSources,
 		RESOLVE_OUT_OF_ORDER,
 	};

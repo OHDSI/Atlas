@@ -57,7 +57,6 @@ define([
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
 			this.params = params;
-			// && (this.activeConceptSet() || !this.hasActiveConceptSets())
 			this.canAddConcepts = ko.pureComputed(() => this.data().some(item => item.isSelected()) );
 
 				this.isInProgress = ko.computed(() => {
@@ -342,9 +341,8 @@ define([
 				return promise;
 			}
 
-			addConcepts = (options, source = globalConstants.conceptSetSources.repository) => {
-				sharedState.activeConceptSetSource(globalConstants.conceptSetSources[source]);
-				const conceptSetStore = sharedState.getConceptSetStore(source);
+			addConcepts = (options, conceptSetStore = ConceptSetStore.repository()) => {
+				sharedState.activeConceptSet(conceptSetStore);
 				const concepts = commonUtils.getSelectedConcepts(this.data);
 				const items = commonUtils.buildConceptSetItems(concepts, options);				
 				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});

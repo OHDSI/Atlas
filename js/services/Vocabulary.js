@@ -184,10 +184,16 @@ define(function (require, exports) {
 			method: 'POST',
 			contentType: 'application/json',
 			error: authAPI.handleAccessDenied,
-	});
+		});
 
 		return getComparedConceptSetPromise;
 	}
+	
+	async function loadAncestors(ancestors, descendants, url, sourceKey) {
+		const vocabUrl = getVocabUrl(url, sourceKey);
+		const data = { ancestors, descendants };
+		return httpService.doPost(vocabUrl + 'lookup/identifiers/ancestors', data);
+	}	
 
 	var api = {
 		search: search,
@@ -202,7 +208,8 @@ define(function (require, exports) {
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,
-		loadDensity: loadDensity
+		loadDensity: loadDensity,
+		loadAncestors,
 	}
 
 	return api;

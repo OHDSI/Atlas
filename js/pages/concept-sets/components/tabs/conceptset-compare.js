@@ -8,6 +8,7 @@ define([
   'services/CDMResultsAPI',
   'jquery',
   'atlas-state',
+	'components/conceptset/ConceptSetStore',
   'components/modal',
 ], function (
 	ko,
@@ -19,6 +20,7 @@ define([
   cdmResultsAPI,
   $,
   sharedState,
+	ConceptSetStore,
 ) {
 	class ConceptsetCompare extends AutoBind(Component) {
 		constructor(params) {
@@ -26,10 +28,9 @@ define([
       this.isModalShown = ko.observable(false);
       this.saveConceptSetFn = params.saveConceptSetFn;
       this.saveConceptSetShow = params.saveConceptSetShow;
-      this.currentConceptSet = sharedState.repositoryConceptSet.current;
-      this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
-      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-      this.criteriaContext = sharedState.criteriaContext;
+      this.currentConceptSet = ConceptSetStore.repository().current;
+      this.selectedConcepts = ko.pureComputed(() => this.currentConceptSet() && this.currentConceptSet().expression.items());
+      this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
       this.compareCS1Id = ko.observable(this.currentConceptSet().id); // Init to the currently loaded cs
       this.compareCS1Caption = ko.observable(this.currentConceptSet().name());
       this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());

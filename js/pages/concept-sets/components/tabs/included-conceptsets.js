@@ -4,7 +4,8 @@ define([
 	'components/Component',
   'utils/CommonUtils',
   'atlas-state',
-  'services/ConceptSet',
+	'services/ConceptSet',
+  'components/conceptset/utils',
   'const',
   'lodash',
   './included-conceptsets-badge',
@@ -17,7 +18,8 @@ define([
 	Component,
   commonUtils,
   sharedState,
-  conceptSetService,
+	conceptSetService,
+  conceptSetUtils,
   globalConstants,
   lodash,
 ) {
@@ -27,32 +29,32 @@ define([
       this.commonUtils = commonUtils;
       this.ancestorsModalIsShown = ko.observable(false);
       this.ancestors = ko.observableArray([]);
-      this.currentConceptSet = sharedState.repositoryConceptSet;
-      this.includedConcepts = this.currentConceptSet.includedConcepts;
+			this.conceptSetStore = params.conceptSetStore;
+			this.includedConcepts = this.conceptSetStore.includedConcepts;
       this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
       this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.loading = ko.pureComputed(() => {
-				return this.currentConceptSet.loadingSourcecodes() || this.currentConceptSet.loadingIncluded() || this.currentConceptSet.resolvingConceptSetExpression();
+				return this.conceptSetStore.loadingSourcecodes() || this.conceptSetStore.loadingIncluded() || this.conceptSetStore.resolvingConceptSetExpression();
       });
-      this.showAncestorsModal = conceptSetService.getAncestorsModalHandler({
-        sharedState: sharedState,
-        ancestors: this.ancestors,
-        ancestorsModalIsShown: this.ancestorsModalIsShown,
-        source: globalConstants.conceptSetSources.repository,
-      });
+			this.showAncestorsModal = conceptSetUtils.getAncestorsModalHandler({
+				conceptSetStore: this.conceptSetStore,
+				ancestors: this.ancestors,
+				ancestorsModalIsShown: this.ancestorsModalIsShown
+			});
       this.canAddConcepts = ko.pureComputed(() => this.includedConcepts().some(item => item.isSelected()));
 
-      this.searchConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, this, commonUtils, conceptSetService);
+      this.searchConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEditCurrentConceptSet }, commonUtils, conceptSetService, conceptSetUtils);
 
       this.searchConceptsOptions = globalConstants.includedConceptsOptions;
 
     }
 
     addConcepts = (options) => {
-      const concepts = commonUtils.getSelectedConcepts(this.includedConcepts, options);
-      conceptSetService.addConceptsToConceptSet({
-        concepts,
-        source: globalConstants.conceptSetSources.repository,
+      const concepts = commonUtils.getSelectedConcepts(this.includedConcepts);
+      const items = commonUtils.buildConceptSetItems(concepts, options);
+      conceptSetUtils.addItemsToConceptSet({
+        items,
+        conceptSetStore: this.conceptSetStore,
       });
       commonUtils.clearConceptsSelectionState(this.includedConcepts);
     }

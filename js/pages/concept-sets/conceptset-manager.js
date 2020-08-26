@@ -15,6 +15,7 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'components/conceptset/ConceptSetStore',
+	'components/conceptset/utils',
 	'services/AuthAPI',
 	'databindings',
 	'bootstrap',
@@ -37,6 +38,7 @@ define([
 	'components/security/access/configure-access-modal',
 	'components/authorship',
 	'components/name-validation',
+  'components/conceptset/conceptset-list/included'
 ], function (
 	ko,
 	view,
@@ -54,14 +56,18 @@ define([
 	sharedState,
 	conceptSetService,
 	ConceptSetStore,
+	conceptSetUtils,
 	authApi,
 ) {
+  
+  const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+  
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.commonUtils = commonUtils;
-			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().repository);			
-			this.currentConceptSet = sharedState.RepositoryConceptSet.current;
+			this.conceptSetStore = ConceptSetStore.repository();
+			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
@@ -166,54 +172,71 @@ define([
 			});
 			this.tabs = [
 				{
-						title: 'Concept Set Expression',
-						componentName: 'conceptset-expression',
-						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
+          title: 'Concept Set Expression',
+          key: ViewMode.EXPRESSION,
+          componentName: 'conceptset-expression',
+          componentParams: { ...params, 
+                            canEditCurrentConceptSet: this.canEdit, 
+                            conceptSetStore: this.conceptSetStore},
 				},
 				{
-						title: 'Included Concepts',
-						componentName: 'included-conceptsets',
-						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit, currentConceptSet: this.currentConceptSet },
-						hasBadge: true,
+          title: 'Included Concepts',
+          key: ViewMode.INCLUDED,
+          //componentName: 'included-conceptsets',
+          componentName: 'conceptset-list-included',
+          componentParams: { ...params, canEdit: this.canEdit,
+														currentConceptSet: this.conceptSetStore.current,
+                            conceptSetStore: this.conceptSetStore,
+                            loading: this.conceptSetStore.loadingIncluded,
+                           },
+          hasBadge: true,
 				},
 				{
-						title: 'Included Source Codes',
-						componentName: 'included-sourcecodes',
-						componentParams:  { ...params, canEditCurrentConceptSet: this.canEdit },
+          title: 'Included Source Codes',
+          key: ViewMode.SOURCECODES,
+          componentName: 'conceptset-list-included-sourcecodes',
+          componentParams:  { ...params, canEdit: this.canEdit,
+														 conceptSetStore: this.conceptSetStore,
+														 loading: this.conceptSetStore.loadingSourceCodes},
 				},
 				{
-						title: 'Explore Evidence',
-						componentName: 'explore-evidence',
-						componentParams: {
-							...params,
-							saveConceptSet: this.saveConceptSet,
-						},
+          title: 'Explore Evidence',
+          key: ViewMode.EXPLORE,
+          componentName: 'explore-evidence',
+          componentParams: {
+            ...params,
+            saveConceptSet: this.saveConceptSet,
+          },
 				},
 				{
-						title: 'Export',
-						componentName: 'conceptset-export',
-						componentParams: params,
+          title: 'Export',
+          key: ViewMode.EXPORT,
+          componentName: 'conceptset-list-export',
+          componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
 				},
 				{
 					title: 'Import',
-					componentName: 'conceptset-import',
+          key: ViewMode.IMPORT,
+					componentName: 'conceptset-list-import',
 					componentParams: { 
 						...params,
-						canEditCurrentConceptSet: this.canEdit,
-						currentConceptSetStore: sharedState.repositoryConceptSet,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						loadConceptSet: this.loadConceptSet,
 					},
 				},
 				{
-						title: 'Compare',
-						componentName: 'conceptset-compare',
-						componentParams: {
-							...params,
-							saveConceptSetFn: this.saveConceptSet,
-							saveConceptSetShow: this.saveConceptSetShow,
-						},
+          title: 'Compare',
+          key: ViewMode.COMPARE,
+          componentName: 'conceptset-compare',
+          componentParams: {
+            ...params,
+            saveConceptSetFn: this.saveConceptSet,
+            saveConceptSetShow: this.saveConceptSetShow,
+          },
 				},
 			];
-			this.selectedTab = ko.observable(this.routerParams.mode);
+			this.selectedTab = ko.observable(0);
 
 			this.activeUtility = ko.observable("");
 
@@ -223,23 +246,35 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			this.onConceptSetModeChanged = sharedState.currentConceptSetMode
-				.subscribe(mode => conceptSetService.onCurrentConceptSetModeChanged({ mode, source: globalConstants.conceptSetSources.repository }));
+			// watch for any change to expression items (observer has a delay)
+      this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				try {
+					await this.conceptSetStore.resolveConceptSetExpression();
+					await this.conceptSetStore.refresh(this.tabs[this.selectedTab()||0].key);
+				} catch (err) {
+					if (err != RESOLVE_OUT_OF_ORER)
+						console.info(err);
+					else
+						throw(err);
+				} finally {
+				}
+			}));      
 		}
 
 		onRouterParamsChanged(params, newParams) {
 			const {conceptSetId, mode} = Object.assign({}, params, newParams);
 			this.changeMode(conceptSetId, mode);
 			if (mode !== undefined) {
-				this.selectedTab(this.getIndexByComponentName(mode));
+				this.selectedTab(this.getIndexByMode(mode));
 			}
 		}
 
 		async changeMode(conceptSetId, mode) {
 			if (conceptSetId !== undefined) {
-				await this.loadConceptSet(conceptSetId, mode);
+				await this.loadConceptSet(conceptSetId);
+				await this.conceptSetStore.refresh(mode);
 			}
-			this.currentConceptSetMode(mode);
+			//this.currentConceptSetMode(mode);
 		}
 
 		renderCheckbox(field, readonly = false) {
@@ -257,82 +292,60 @@ define([
 			);
     }
 
+		createConceptSet() {
+			conceptSetutils.createRepositoryConceptSet(this.conceptSetStore);
+			this.loading(false);
+		}
+		
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
-				// Create a new concept set
-				this.currentConceptSet(new ConceptSet({
-					name: 'New Concept Set',
-					id: 0
-				}));
+				this.createConceptSet();
 				this.loading(false);
 			}
-			if (
-				this.currentConceptSet()
-				&& this.currentConceptSet().id === conceptSetId
-			) {
+			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
 				this.loading(false);
 				return;
 			}
 			try {
 				const conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
 				const expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
-				conceptSet.expression = _.isEmpty(expression) ? { items: [] } : expression;
-				this.currentConceptSet({...conceptSet, ...(new ConceptSet(conceptSet))});
-				await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
-				// this.currentConceptSetSource('repository');
+				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
+				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
+				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
+				sharedState.activeConceptSet(this.conceptSetStore);
 			} catch(err) {
 				console.error(err);
-				sharedState.repositoryConceptSet.resolvingConceptSetExpression(false);
 			}
 			this.loading(false);
 		}
 
 		dispose() {
+      super.dispose();
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
-			this.onSelectedConceptsChanged && this.onSelectedConceptsChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
-			sharedState.includedHash(null);
 		}
 
-		saveClick() {
-			this.saveConceptSet("#txtConceptSetName");
-		}
-
-		async saveConceptSet(txtElem, conceptSet, selectedConcepts) {
+		async saveConceptSet() {
 			this.isSaving(true);
 			this.loading(true);
-			if (conceptSet === undefined) {
-				conceptSet = {};
-				if (this.currentConceptSet() == undefined) {
-					conceptSet.id = 0;
-					conceptSet.name = this.conceptSetName;
-				} else {
-					conceptSet = this.currentConceptSet();
-				}
-			}
-			if (selectedConcepts === undefined) {
-				selectedConcepts = this.selectedConcepts();
-			}
-
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
+			const conceptSet = this.currentConceptSet();
+			const conceptSetItems = utils.toRepositoryConceptSetItems(conceptSet.expression.items());
 			try{
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
-					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
+					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', "#txtConceptSetName");
 				} else {
-					const conceptSetItems = utils.toRepositoryConceptSetItems(selectedConcepts);
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-						await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
-						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
 						this.currentConceptSetDirtyFlag().reset();
-						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
+						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/expression');
 					} catch(e){
 						alert('Unable to save concept set');
 					}
@@ -346,29 +359,25 @@ define([
 		}
 
 		raiseConceptSetNameProblem(msg, elem) {
-			if (this.currentConceptSet()) {
-				this.currentConceptSet().name.valueHasMutated();
-			}
 			alert(msg);
-			$(elem)
-				.select()
-				.focus();
+			$(elem).select().focus();
 		}
 
 		closeConceptSet() {
 			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
+				this.conceptSetStore.clear();
+				sharedState.RepositoryConceptSet.current(null);
 				commonUtils.routeTo('/conceptsets');
-				commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.repository });
 			}
 		}
 
 		async copy() {
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
-			this.conceptSetName(responseWithName.copyName);
-			this.currentConceptSet(undefined);
-			this.saveConceptSet("#txtConceptSetName");
+			this.currentConceptSet.name(responseWithName.copyName);
+			this.currentConceptSet().id = 0;
+			this.saveConceptSet();
 		}
 
 		optimize() {
@@ -426,10 +435,10 @@ define([
 				});
 		}
 
-		getIndexByComponentName(name = 'conceptset-expression') {
+		getIndexByMode(mode = ViewMode.EXPRESSION) {
 			let index = this.tabs
-				.map(tab => tab.componentName)
-				.indexOf(name);
+				.map(tab => tab.key)
+				.indexOf(mode);
 			if (index === -1) {
 				index = 0;
 			}
@@ -437,15 +446,15 @@ define([
 			return index;
 		}
 
-		getComponentNameByTabIndex(idx) {
-			return this.tabs[idx] ? this.tabs[idx].componentName : this.tabs[0].componentName;
+		getModeByTabIndex(idx) {
+			return this.tabs[idx] ? this.tabs[idx].key : this.tabs[0].key;
 		}
 
 		selectTab(index) {
 			const id = this.currentConceptSet()
 				? this.currentConceptSet().id
 				: 0;
-			const mode = this.getComponentNameByTabIndex(index);
+			const mode = this.getModeByTabIndex(index);
 			!!mode && commonUtils.routeTo(constants.paths.mode(id, mode));
 		}
 

@@ -3,22 +3,25 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'./const',
+	'./utils',
   'services/Vocabulary',
 ], function (
 	ko,
 	AutoBind,
 	commonUtils,
 	constants,
-  VocabularyService,
+	utils,
+  vocabularyService,
 ) {
 
+	const {ViewMode} = constants;
+	
 	class ConceptSetStore extends AutoBind() {
 
 		constructor(props = {}) {
 			super(props);
 
 			this.current = ko.observable();
-			this.negativeControls = ko.observable();
 			this.selectedConceptsIndex = {};
 			this.includedConcepts = ko.observableArray([]);
 			this.includedConceptsMap = ko.observable({});
@@ -30,7 +33,7 @@ define([
 			this.currentConceptSetExpressionJson = ko.pureComputed(() => commonUtils.syntaxHighlight(this.current() && this.current().expression));
 	
 			this.resolvingConceptSetExpression = ko.observable(false);
-			this.loadingSourcecodes = ko.observable(false);
+			this.loadingSourceCodes = ko.observable(false);
 			this.loadingIncluded = ko.observable(false);
 			this.source = props.source || "unnamed";
 			this.title = props.title || "unnamed";
@@ -44,7 +47,6 @@ define([
 
 		clear() {
 			this.current(null);
-			this.negativeControls(null);
 			this.includedConcepts(null);
 			this.includedConceptsMap(null);
 			this.includedSourcecodes(null);
@@ -52,19 +54,19 @@ define([
 			this.conceptSetInclusionIdentifiers(null);
 		}
     
-    invalidate() {
+    clearIncluded() {
       ['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
         .forEach(key => this[key](null));	
     }
     
     async resolveConceptSetExpression() {
-      this.invalidate();
+      this.clearIncluded();
       if (this.current()) {
         this.resolvingConceptSetExpression(true);
         this.resolveCount++;
         const currentResolve = this.resolveCount;
         const conceptSetExpression = this.current().expression;
-        const identfiers = await VocabularyService.resolveConceptSetExpression(conceptSetExpression)
+        const identfiers = await vocabularyService.resolveConceptSetExpression(conceptSetExpression)
         if (currentResolve != this.resolveCount) {
           return Promise.reject(constants.RESOLVE_OUT_OF_ORDER);
         }
@@ -74,7 +76,75 @@ define([
       } else {
         return null;
       }
-    }    
+    }
+    
+    async refresh(mode) {
+      if (this.resolvingConceptSetExpression()) // do nothing
+        return false;
+      switch (mode) {
+        case ViewMode.INCLUDED:
+          this.includedConcepts() == null && await this.loadIncluded();
+          break;
+        case ViewMode.SOURCECODES:
+          this.includedSourcecodes() == null && await this.loadSourceCodes();
+          break;
+      }
+    }
+		
+		removeItemsByIndex(idxList) {
+			const newItems = this.current().expression.items().filter((i,idx) => !idxList.includes(idx)); 
+			this.current().expression.items(newItems);
+		}
+    
+    async loadIncluded() {
+      const conceptIds = this.conceptSetInclusionIdentifiers();
+      try {
+        this.loadingIncluded(true);
+        const response = await vocabularyService.getConceptsById(conceptIds);
+        await vocabularyService.loadDensity(response.data);
+        this.includedConcepts((response.data || []).map(item => ({
+          ...item,
+          ANCESTORS: [],
+          isSelected: ko.observable(false)
+        })));
+        const map = response.data.reduce((result, item) => {
+          result[item.CONCEPT_ID] = item;
+          return result;
+        }, {});
+        this.includedConceptsMap(map);
+        await utils.loadAndApplyAncestors(this.includedConcepts(),this);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.loadingIncluded(false);
+      }
+    }
+		
+		async loadSourceCodes(conceptSetStore) {
+			this.loadingSourceCodes(true);
+      this.includedConcepts() == null && await this.loadIncluded();
+			// load mapped
+			let concepts = this.includedConcepts();
+			const identifiers = concepts.map(c => c.CONCEPT_ID);
+			try {
+				const data = await vocabularyService.getMappedConceptsById(identifiers);
+				const normalizedData = data.map(item => ({
+					...item, 
+					isSelected: ko.observable(false),
+				}))
+				this.includedSourcecodes(normalizedData);
+				return data;
+			} catch (err) {
+				console.error(err);
+			} finally {
+				this.loadingSourceCodes(false);
+			}
+		}		
+		
+		static activeStores() {
+			const activeKeys = Object.keys(constants.ConceptSetSources).filter(key => !!this.getStore(key).current());
+			return activeKeys.map(k => ConceptSetStore.getStore(k));
+		}
 		
 		static getStore(source) {
 			return registry[source];
@@ -84,6 +154,26 @@ define([
 			return constants.ConceptSetSources;
 		}
 		
+		// convienience getters
+		static featureAnalysis() {
+			return ConceptSetStore.getStore(constants.ConceptSetSources.featureAnalysis);
+		}
+
+		static repository() {
+			return ConceptSetStore.getStore(constants.ConceptSetSources.repository);
+		}
+		
+		static cohortDefinition() {
+			return ConceptSetStore.getStore(constants.ConceptSetSources.cohortDefinition);
+		}
+
+		static characterization() {
+			return ConceptSetStore.getStore(constants.ConceptSetSources.characterization);
+		}
+		
+		static featureAnalysis() {
+			return ConceptSetStore.getStore(constants.ConceptSetSources.incidenceRates);
+		}	
 	}
 	
 	// define a registry to contain individual stores

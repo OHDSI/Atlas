@@ -168,7 +168,6 @@ define([
         }
 
         handleConceptSetImport(item, context, event) {
-            event.stopPropagation();            
             this.criteriaContext(item);
             this.showConceptSetBrowser(true);
         }

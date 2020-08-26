@@ -95,19 +95,6 @@ define([
 		return source.daimons.find(daimon => daimon.daimonType == 'Results') !== undefined;
 	}
 
-	function renderConceptSetItemSelector(s, p, d) {
-		let css = '';
-		let tag = 'i';
-		if (sharedState.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
-			css = ' selected';
-		}
-		if (!this.canEditCurrentConceptSet()) {
-			css += ' readonly';
-			tag = 'span'; // to avoid call to 'click' event handler which is bound to <i> tag
-		}
-		return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
-	}
-
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
@@ -133,28 +120,6 @@ define([
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
 	}
-
-	/*
-	const createConceptSetItem = function (concept) {
-		var conceptSetItem = {};
-		conceptSetItem.concept = {
-			"CONCEPT_ID": concept.CONCEPT_ID,
-			"CONCEPT_NAME": concept.CONCEPT_NAME,
-			"STANDARD_CONCEPT": concept.STANDARD_CONCEPT,
-			"STANDARD_CONCEPT_CAPTION": concept.STANDARD_CONCEPT_CAPTION,
-			"INVALID_REASON": concept.INVALID_REASON,
-			"INVALID_REASON_CAPTION": concept.INVALID_REASON_CAPTION,
-			"CONCEPT_CODE": concept.CONCEPT_CODE,
-			"DOMAIN_ID": concept.DOMAIN_ID,
-			"VOCABULARY_ID": concept.VOCABULARY_ID,
-			"CONCEPT_CLASS_ID": concept.CONCEPT_CLASS_ID
-		};
-		conceptSetItem.isExcluded = ko.observable(false);
-		conceptSetItem.includeDescendants = ko.observable(false);
-		conceptSetItem.includeMapped = ko.observable(false);
-		return conceptSetItem;
-	}
-*/	
 
 	const syntaxHighlight = function (json) {
 		if (typeof json != 'string') {
@@ -267,12 +232,9 @@ define([
 		contextSensitiveLinkColor,
 		hasCDM,
 		hasResults,
-		renderConceptSetItemSelector,
 		renderLink,
 		renderBoundLink,
-		renderConceptSelector,
 		renderHierarchyLink,
-//		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
 		normalizeUrl,

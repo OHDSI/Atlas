@@ -29,7 +29,7 @@ define([
 			this.loading = params.loading;
 			//this.conceptSets = params.conceptSets;
 			this.loadConceptSet = params.loadConceptSet;
-			this.importing = params.importing;
+			this.importing = params.importing || ko.observable(false);
 			//this.criteriaContext = sharedState.criteriaContext;
 			this.currentConceptSet = this.conceptSetStore.current;
 
@@ -74,10 +74,10 @@ define([
 			this.showImportConceptSetModal(false);
 			this.importing(true);
 			if (this.currentConceptSet().expression.items().length == 0 || confirm("Your concept set expression will be replaced with new one. Would you like to continue?")) {
-				const result = await vocabularyApi.getConceptSetExpression(newConceptSet.id)
+				const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id)
 				this.currentConceptSet().name(newConceptSet.name);
 				this.currentConceptSet().expression.items([]);
-				this.importConceptSetExpressionItems(result);	
+				this.importConceptSetExpression(expression);	
 			}
 			this.importing(false);
 		}

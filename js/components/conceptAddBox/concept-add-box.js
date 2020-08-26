@@ -22,6 +22,7 @@ define([
   class ConceptAddBox extends Component {
     constructor(params) {
       super(params);
+      this.activeConceptSet = sharedState.activeConceptSet;
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
       this.canSelectSource = params.canSelectSource || false;
@@ -45,16 +46,14 @@ define([
         return 'Add To New Concept Set';
       })
       this.activeConceptSets = ko.pureComputed(() => {
-				const activeSources = Object.keys(storeKeys).filter(key => !!ConceptSetStore.getStore(key).current());
-				return activeSources;
+				return ConceptSetStore.activeStores();
 			});
-			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
-			this.activeConceptSet = sharedState.activeConceptSet;
-			this.activeConceptSetName = ko.pureComputed(() => {
-				if (this.activeConceptSet() && this.activeConceptSet().current()) {
-					return `${this.activeConceptSet().current().name()} (${this.conceptSetType[this.activeConceptSet().source]})`; 
-				}
-				return 'Select Concept Set';
+      this.hasActiveConceptSets = ko.pureComputed(() => !!this.activeConceptSets().length);
+      this.activeConceptSetName = ko.pureComputed(() => {
+        if (this.activeConceptSet() && this.activeConceptSet().current()) {
+          return `${this.activeConceptSet().current().name()} (${this.conceptSetType[this.activeConceptSet().source]})`;
+        }
+        return 'Select Concept Set';
       });
       this.canAddConcepts = ko.pureComputed(() => {
         if (this.canSelectSource) {

@@ -196,11 +196,6 @@ define([
         }
 
         onRouterParamsChanged({ id, section }) {
-            if (this.data() && this.data().id !== undefined) {
-                this.setupAnalysisData(ko.toJS(this.data));
-                this.selectedTabKey(section || 'design');
-                return;
-            }
             if (id !== undefined) {
                 this.featureId(parseInt(id));
                 if (this.featureId() === 0) {

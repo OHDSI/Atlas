@@ -22,6 +22,7 @@ define([
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
 	'components/conceptset/ConceptSetStore',
+	'components/conceptset/utils',
 	'./const',
 	'const',
 	'components/checks/warnings',
@@ -61,6 +62,7 @@ define([
 	commonUtils,
 	exceptionUtils,
 	ConceptSetStore,
+	conceptSetUtils,
 	constants,
 	globalConstants,
 ) {
@@ -389,18 +391,18 @@ define([
 		}
 			
 		loadConceptSet(conceptSetId) {
-				this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
-				commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
+			this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
+			commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
 		}
 
-		onConceptSetSelectAction(result, valueAccessor) {
+		onConceptSetSelectAction(result) {
 			this.showConceptSetBrowser(false);
-
 			if (result.action === 'add') {
-				var newConceptSet = this.conceptSetEditor().createConceptSet();
-				valueAccessor.conceptSetId(newConceptSet.id);
-				this.activeTab(this.tabs.CONCEPT_SETS);
+				const conceptSets = this.selectedAnalysis().expression().ConceptSets;
+				const newId = conceptSetUtils.newConceptSetHandler(conceptSets, this.criteriaContext());
+				this.loadConceptSet(newId)
 			}
+
 			this.criteriaContext(null);
 		}
 

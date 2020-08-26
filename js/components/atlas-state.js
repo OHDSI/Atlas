@@ -126,7 +126,8 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 
 	// repository concept state
 	state.RepositoryConceptSet = {
-		current: ko.observable()
+		current: ko.observable(),
+		negativeControls : ko.observable(),
 	}
 	
 	state.RepositoryConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.RepositoryConceptSet.current()));

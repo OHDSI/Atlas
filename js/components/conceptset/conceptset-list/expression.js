@@ -58,13 +58,13 @@ define([
 		}
 
 		addConcepts() {
-			sharedState.activeConceptSet(sharedState[this.currentConceptSetStoreKey]);
+			sharedState.activeConceptSet(this.conceptSetStore);
 			commonUtils.routeTo('/search');
 		}
 
 		deleteConcepts() {
 			const idxForRemoval = this.data().filter(concept => concept.isSelected()).map(item => item.idx);
-			this.currentConceptSet().expression.items(this.currentConceptSet().expression.items().filter((i,idx) => !idxForRemoval.includes(idx)));
+			this.conceptSetStore.removeItemsByIndex(idxForRemoval);
 		}
 
 		async saveConceptSet() {

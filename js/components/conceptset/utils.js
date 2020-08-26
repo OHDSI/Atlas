@@ -56,7 +56,7 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 		};
 	}
 	
-	async function loadSourcecodes(conceptSetStore) {
+	async function loadSourceCodes(conceptSetStore) {
 		conceptSetStore.loadingSourcecodes(true);
 
 		// load mapped
@@ -96,7 +96,7 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 		});
 		return new Promise((resolve, reject) => {
 			if (!_.isEmpty(selectedConceptIds) && !_.isEmpty(ids)) {
-				loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
+				vocabularyService.loadAncestors(selectedConceptIds, ids).then(({ data: ancestors }) => {
 					const map = conceptSetStore.includedConceptsMap();
 					$.each(data, idx => {
 						const line = data[idx];
@@ -168,12 +168,13 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 		};
 	}
 
-	function createNewConceptSet(currentConceptSet) {
-		const conceptSet = {
-			id: 0,
-			name: ko.observable("New Concept Set"),
-		};
-		currentConceptSet.current(conceptSet);
+	function createRepositoryConceptSet(conceptSetStore) {
+		const newConceptSet = new ConceptSet({
+			name: 'New Concept Set',
+			id: 0
+		});
+		sharedState.RepositoryConceptSet.current(newConceptSet);
+		conceptSetStore.current(sharedState.RepositoryConceptSet.current());		
 	}
 
 	function removeConceptsFromConceptSet({
@@ -213,7 +214,7 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 
 	function addItemsToConceptSet({ items = [], conceptSetStore }) {
 		if (!conceptSetStore.current()) {
-			createNewConceptSet(conceptSetStore);
+			createRepositoryConceptSet(conceptSetStore);
 		}
 		const itemsToAdd = items.map(item => new ConceptSetItem(item));
 		conceptSetStore.current().expression.items.push(...itemsToAdd);
@@ -258,8 +259,9 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 		getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler,
 		getAncestorsRenderFunction,
-		loadSourcecodes,
+		loadSourceCodes,
 		loadIncluded,
+		loadAndApplyAncestors,
 		onCurrentConceptSetModeChanged,
     newConceptSetHandler,
     conceptSetSelectionHandler,

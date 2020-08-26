@@ -46,7 +46,8 @@ define(
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.hasUnsavedChanges = ko.pureComputed(() => {
-					return (sharedState.CohortDefinition.dirtyFlag().isDirty()
+					return (sharedState.RepositoryConceptSet.dirtyFlag().isDirty()
+						|| sharedState.CohortDefinition.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
