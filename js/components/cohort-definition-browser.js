@@ -27,27 +27,22 @@ define([
 			this.options = {
 				Facets: [
 					{
-						'caption': 'Last Modified',
-						'binding': function (o) {
-							const createDate = new Date(o.createdDate);
-							const modDate = new Date(o.modifiedDate);
-							const dateForCompare = (createDate > modDate) ? createDate : modDate;
-							const daysSinceModification = (new Date().getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							}
-							return '2+ Weeks Ago';
-						}
+						'caption': 'Created',
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
+					{
+						'caption': 'Updated',
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
 						'caption': 'Author',
-						'binding': function (o) {
-							return o.createdBy;
-						}
+						'binding': datatableUtils.getFacetForCreatedBy,
 					},
-				],
+					{
+						'caption': 'Designs',
+						'binding': datatableUtils.getFacetForDesign,
+					},
+				]
 			};
 
 			this.columns = [

@@ -99,7 +99,7 @@ define([
 					)
 			});
 			this.isEditable = ko.pureComputed(() => {
-				return this.selectedAnalysisId() === null
+				return this.selectedAnalysisId() === null || this.selectedAnalysisId() === 0
 					|| !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
@@ -586,10 +586,10 @@ define([
 			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
 			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
 			return {
-					createdBy: this.selectedAnalysis().createdBy(),
-					createdDate,
-					modifiedBy: this.selectedAnalysis().modifiedBy(),
-					modifiedDate,
+                createdBy: this.selectedAnalysis().createdBy() ? this.selectedAnalysis().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.selectedAnalysis().modifiedBy() ? this.selectedAnalysis().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
 			};
 		}
 

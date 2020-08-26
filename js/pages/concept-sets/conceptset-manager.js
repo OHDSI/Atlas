@@ -17,6 +17,7 @@ define([
 	'components/conceptset/ConceptSetStore',
 	'components/conceptset/utils',
 	'services/AuthAPI',
+    'lodash',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -58,6 +59,7 @@ define([
 	ConceptSetStore,
 	conceptSetUtils,
 	authApi,
+    lodash,
 ) {
   
   const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
@@ -501,17 +503,16 @@ define([
 			this.optimizerSavingNew(false);
 		}
 
-	 getAuthorship() {
-		const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
-		const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
-			 return {
-					 createdBy: this.currentConceptSet().createdBy,
-					 createdDate,
-					 modifiedBy: this.currentConceptSet().modifiedBy,
-					 modifiedDate,
-			 }
-	 }
-
+		getAuthorship() {
+		   const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		   const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
+				return {
+						createdBy: lodash.get(this.currentConceptSet(), 'createdBy.name'),
+						createdDate,
+						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
+						modifiedDate,
+				}
+		}
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);
 });

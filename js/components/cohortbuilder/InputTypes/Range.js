@@ -1,4 +1,4 @@
-define(['knockout'], function (ko) {
+define(['knockout', 'moment'], function (ko) {
 	var debug = false;
 
 	function Range(data) {
@@ -12,8 +12,8 @@ define(['knockout'], function (ko) {
 
 	Range.prototype.toJSON = function () {
 		return {
-			Value : this.Value instanceof Date ? (this.Value.toISOString().slice(0,10)) : this.Value,
-			Extent: this.Extent instanceof Date ? (this.Extent.toISOString().slice(0,10)) : this.Extent,
+			Value : this.Value instanceof Date ? (moment(this.Value).toISOString(true).slice(0,10)) : this.Value,
+			Extent: this.Extent instanceof Date ? (moment(this.Extent).toISOString(true).slice(0,10)) : this.Extent,
 			Op: this.Op
 		}
 	}

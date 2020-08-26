@@ -21,7 +21,7 @@ define([
 		self.conceptSet = ko.pureComputed(function () {
 			return ko.toJS(params.conceptSet().expression);	
 		});
-
+		self.canEdit = params.canEdit;
 		self.isLoading = ko.observable(true);
 		
 		self.selectedConcepts = ko.observableArray();

@@ -405,11 +405,16 @@ define([
         }
 
         deleteFeature() {
-            this.isDeleting(true);
             commonUtils.confirmAndDelete({
                 loading: this.loading,
-                remove: () => FeatureAnalysisService.deleteFeatureAnalysis(this.featureId()),
-                redirect: this.closeAnalysis
+                remove: () => {
+                    this.isDeleting(true);
+                    FeatureAnalysisService.deleteFeatureAnalysis(this.featureId())
+                },
+                redirect: () => {
+                    this.isDeleting(false);
+                    this.closeAnalysis();
+                },
             });
         }
 
@@ -448,10 +453,10 @@ define([
             const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
             const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
             return {
-                createdBy: this.data().createdBy(),
-                createdDate,
-                modifiedBy: this.data().modifiedBy(),
-                modifiedDate,
+                createdBy: this.data().createdBy() ? this.data().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.data().modifiedBy() ? this.data().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
             }
         }
 

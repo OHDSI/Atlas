@@ -114,6 +114,53 @@ define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/Voc
 		// startup actions
 		self.loadConceptSetsFromRepository(self.selectedSource()
 			.url);
+
+		this.options = {
+			Facets: [
+				{
+					'caption': 'Created',
+					'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+				},
+				{
+					'caption': 'Modified',
+					'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+				},
+				{
+					'caption': 'Author',
+					'binding': datatableUtils.getFacetForCreatedBy,
+				},
+				{
+					'caption': 'Designs',
+					'binding': datatableUtils.getFacetForDesign,
+				},
+			]
+		};
+
+		this.columns = [
+			{
+				title: 'Id',
+				data: 'id'
+			},
+			{
+				title: 'Name',
+				render: datatableUtils.getLinkFormatter(d => ({
+					label: d['name'],
+					linkish: true,
+				})),
+			},
+			{
+				title: 'Created',
+				render: datatableUtils.getDateFieldFormatter('createdDate'),
+			},
+			{
+				title: 'Modified',
+				render: datatableUtils.getDateFieldFormatter('modifiedDate'),
+			},
+			{
+				title: 'Author',
+				render: datatableUtils.getCreatedByFormatter(),
+			}
+		];
 	}
 
 	var component = {

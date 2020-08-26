@@ -68,26 +68,6 @@ define(
 
     const options = {
       removeButton: `<button type="button" class="btn btn-danger btn-xs btn-remove"><i class="fa fa-times" aria-hidden="true"></i></button>`,
-      cohortTableColumns: [
-        {
-            title: 'Remove',
-            render: function (s, p, d) {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: 'Id',
-            data: d => d.id,
-            visible: false,
-        },
-        {
-            title: 'Name',
-            data: d => d.name,
-        },
-      ],
       targetOutcomeTableColumns: [
         {
             title: 'Target Id',
@@ -198,144 +178,6 @@ define(
         },
         ]
       },
-      populationSettingsTableColumns: [
-        {
-            title: 'Remove',
-            render: (s, p, d) => {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: 'Binary',
-            data: d => d.binary().toString(),
-            visible: false,
-        },
-        {
-            title: 'First Exposure Only',
-            data: d => d.firstExposureOnly().toString(),
-            visible: false,
-        },
-        {
-            title: 'Risk Window Start',
-            render: (s, p, d) => {
-                return d.riskWindowStart().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
-            },
-        },
-        {
-            title: 'Risk Window End',
-            render: (s, p, d) => {
-                return d.riskWindowEnd().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
-            },
-        },
-        {
-            title: 'Washout Period',
-            data: d => d.washoutPeriod().toString() + 'd',
-        },
-        {
-            title: 'Include All Outcomes',
-            data: d => d.includeAllOutcomes().toString(),
-        },
-        {
-            title: 'Remove Subjects With Prior Outcome',
-            data: d => d.removeSubjectsWithPriorOutcome().toString(),
-        },
-        {
-            title: 'Prior Outcome Lookback',
-            data: d => d.priorOutcomeLookback().toString() + 'd',
-            visible: false,
-        },
-        {
-            title: 'Require Time At Risk',
-            data: d => d.requireTimeAtRisk().toString(),
-            visible: false,
-        },
-        {
-            title: 'Minimum Time At Risk',
-            data: d => d.minTimeAtRisk().toString() + 'd',
-        },
-      ],
-      modelSettingsTableColumns: [
-        {
-            title: 'Remove',
-            render: (s, p, d) => {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: 'Model',
-            data: d => Object.keys(d)[0],
-        },
-        {
-            title: 'Options',
-            data: d => {
-                const key = Object.keys(d)[0];
-                return ko.toJSON(d[key]);
-            },
-        },
-    ],
-    covariateSettingsTableColumns: [
-        {
-            title: 'Remove',
-            render: (s, p, d) => {
-                return options.removeButton;
-            },
-            orderable: false,
-            searchable: false,
-            className: 'col-remove',
-        },
-        {
-            title: 'Temporal',
-            render: (s, p, d) => {
-              return Object.keys(d)[0] === 'temporal' ? 'Yes': 'No'
-            },
-            visible: false,
-        },
-        {
-            title: 'Options',
-            render: (s, p, d, a, b, c) => {
-                const keys = Object.keys(d);
-                const vals = Object.values(d);
-                var settings = [];
-                const defaultDisplayLength = 5;
-                for (let i = 0; i < keys.length; i++) {
-                    const currentVal = ko.isObservable(vals[i]) ? vals[i]() : vals[i];
-                    if (currentVal === true) {
-                        settings.push(keys[i]);
-                    }
-                }
-                if (settings.length > 1) {
-                    let displayVal = "";
-                    settings.forEach((element, index) => {
-                        if (index < defaultDisplayLength) {
-                            if (index < settings.length - 1) {
-                                displayVal += (element + ", ");
-                            } else {
-                                displayVal += element;
-                            }
-                        } else if (index === defaultDisplayLength) {
-                            displayVal = displayVal + element + "&nbsp;&nbsp;<div class=\"tool-tip\">(+" + (settings.length - defaultDisplayLength - 1) + " more covariate settings<span class=\"tooltiptext\">";
-                        } else if (index > defaultDisplayLength) {
-                            displayVal += ("<span class=\"tooltipitem\">" + element + "</span>");
-                        }
-                    });
-                    if (settings.length > defaultDisplayLength) {
-                        displayVal += "</span>)</div>";
-                    }
-                    return displayVal;
-                } else if (settings.length === 1) {
-                    return settings[0];
-                } else {
-                    return 'No covariate settings selected';
-                }
-            }
-        },
-      ],
       specificationSummaryTableOptions: {
         pageLength: 10,
         lengthMenu: [
@@ -384,6 +226,172 @@ define(
       classWeightOptions: [{label: "None", value: 'None'},{label: "Balanced", value: 'Balanced'}],
     };
 
+    const getCohortTableColumns = (canEdit) => [
+        {
+          title: 'Remove',
+          render: function (s, p, d) {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: 'Id',
+          data: d => d.id,
+          visible: false,
+        },
+        {
+          title: 'Name',
+          data: d => d.name,
+        },
+      ];
+
+    const getPopulationSettingsTableColumns = (canEdit) => [
+        {
+          title: 'Remove',
+          render: (s, p, d) => {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: 'Binary',
+          data: d => d.binary().toString(),
+          visible: false,
+        },
+        {
+          title: 'First Exposure Only',
+          data: d => d.firstExposureOnly().toString(),
+          visible: false,
+        },
+        {
+          title: 'Risk Window Start',
+          render: (s, p, d) => {
+            return d.riskWindowStart().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToStart()).name;
+          },
+        },
+        {
+          title: 'Risk Window End',
+          render: (s, p, d) => {
+            return d.riskWindowEnd().toString() + 'd from<br/>' + consts.timeAtRiskCohortDate.find(f => f.id === d.addExposureDaysToEnd()).name;
+          },
+        },
+        {
+          title: 'Washout Period',
+          data: d => d.washoutPeriod().toString() + 'd',
+        },
+        {
+          title: 'Include All Outcomes',
+          data: d => d.includeAllOutcomes().toString(),
+        },
+        {
+          title: 'Remove Subjects With Prior Outcome',
+          data: d => d.removeSubjectsWithPriorOutcome().toString(),
+        },
+        {
+          title: 'Prior Outcome Lookback',
+          data: d => d.priorOutcomeLookback().toString() + 'd',
+          visible: false,
+        },
+        {
+          title: 'Require Time At Risk',
+          data: d => d.requireTimeAtRisk().toString(),
+          visible: false,
+        },
+        {
+          title: 'Minimum Time At Risk',
+          data: d => d.minTimeAtRisk().toString() + 'd',
+        },
+      ];
+
+    const getModelSettingsTableColumns = (canEdit) => [
+        {
+          title: 'Remove',
+          render: (s, p, d) => {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: 'Model',
+          data: d => Object.keys(d)[0],
+        },
+        {
+          title: 'Options',
+          data: d => {
+            const key = Object.keys(d)[0];
+            return ko.toJSON(d[key]);
+          },
+        },
+      ];
+
+    const getCovariateSettingsTableColumns = (canEdit) => [
+        {
+          title: 'Remove',
+          render: (s, p, d) => {
+            return options.removeButton;
+          },
+          orderable: false,
+          searchable: false,
+          className: 'col-remove',
+          visible: canEdit,
+        },
+        {
+          title: 'Temporal',
+          render: (s, p, d) => {
+            return Object.keys(d)[0] === 'temporal' ? 'Yes': 'No'
+          },
+          visible: false,
+        },
+        {
+          title: 'Options',
+          render: (s, p, d, a, b, c) => {
+            const keys = Object.keys(d);
+            const vals = Object.values(d);
+            var settings = [];
+            const defaultDisplayLength = 5;
+            for (let i = 0; i < keys.length; i++) {
+              const currentVal = ko.isObservable(vals[i]) ? vals[i]() : vals[i];
+              if (currentVal === true) {
+                settings.push(keys[i]);
+              }
+            }
+            if (settings.length > 1) {
+              let displayVal = "";
+              settings.forEach((element, index) => {
+                if (index < defaultDisplayLength) {
+                  if (index < settings.length - 1) {
+                    displayVal += (element + ", ");
+                  } else {
+                    displayVal += element;
+                  }
+                } else if (index === defaultDisplayLength) {
+                  displayVal = displayVal + element + "&nbsp;&nbsp;<div class=\"tool-tip\">(+" + (settings.length - defaultDisplayLength - 1) + " more covariate settings<span class=\"tooltiptext\">";
+                } else if (index > defaultDisplayLength) {
+                  displayVal += ("<span class=\"tooltipitem\">" + element + "</span>");
+                }
+              });
+              if (settings.length > defaultDisplayLength) {
+                displayVal += "</span>)</div>";
+              }
+              return displayVal;
+            } else if (settings.length === 1) {
+              return settings[0];
+            } else {
+              return 'No covariate settings selected';
+            }
+          }
+        },
+      ];
+
     return {
       apiPaths,
       pageTitle,
@@ -392,6 +400,10 @@ define(
       defaultNontemporalCovariates,
       options,
       predictionGenerationStatus,
+      getCohortTableColumns,
+      getPopulationSettingsTableColumns,
+      getModelSettingsTableColumns,
+      getCovariateSettingsTableColumns,
     };
   }
 );
