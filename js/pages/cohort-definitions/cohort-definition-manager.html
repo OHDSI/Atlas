@@ -503,8 +503,7 @@
 								</span>
 								<a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
-															attr: {disabled: $component.isSourceStopping($data)}"><i class="fa fa-spinner fa-spin"></i>
-									<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.cancel', 'Cancel')"></span>
+															attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.cancel', 'Cancel')"></span>
 								</a>
 							</td>
 							<td class="nowrap" data-bind="text:name"></td>
