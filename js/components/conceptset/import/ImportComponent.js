@@ -17,9 +17,9 @@ define([
 			this.importing(true);
 			try {
 				await this.runImport(options);
+				this.selectedTabKey(consts.ViewMode.EXPRESSION);
 			} finally {
 				this.importing(false);
-				this.selectedTabKey(consts.ViewMode.EXPRESSION);
 			}
 		}
 	};

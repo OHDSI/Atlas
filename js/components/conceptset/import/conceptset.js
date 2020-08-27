@@ -26,17 +26,31 @@ define([
 			this.importConceptSetJson = ko.observable();
 			this.doImport = this.doImport.bind(this);
 			this.errorMessage = ko.observable("");
+			this.setTimeoutId = null;
 		}
 
 		async runImport(options) {
 			try {
-				await this.importConceptSetExpression(this.importConceptSetJson(), options);
+				let expression = null;
+				try {				
+					expression = JSON.parse(this.importConceptSetJson());
+				}
+				catch (err) {
+					throw(new Error("Error parsing JSON.  Please ensure it is well-formed."));
+				}
+				await this.importConceptSetExpression(expression, options);
 				this.importConceptSetJson('');
 			}
 			catch (err) {
-				this.errorMessage(err);
-				setTimeout(() => this.errorMessage(""), 3000);
+				this.setError(err.message);
+				throw(err);
 			}
+		}
+
+		setError(errorMessage) {
+			clearTimeout(this.setTimeoutId)
+			this.errorMessage(errorMessage);
+			this.setTimeoutId = setTimeout(() => this.errorMessage(""), 3000);
 		}
 	}
 

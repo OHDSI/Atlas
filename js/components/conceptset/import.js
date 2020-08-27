@@ -79,7 +79,7 @@ define([
 				const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id)
 				this.currentConceptSet().name(newConceptSet.name);
 				this.currentConceptSet().expression.items([]);
-				this.importConceptSetExpression(expression);	
+				this.importConceptSetExpression(expression, {type: constants.importTypes.APPEND}); // indicating 'append' because we handled the overwrite already.	
 			}
 			this.importing(false);
 		}
@@ -89,20 +89,15 @@ define([
 					|| options.type == constants.importTypes.APPEND
 					|| this.confirmAction(options.type)) {
 				
-				try {
-					const items = JSON.parse(expression).items;
-					if (options.type == constants.importTypes.OVERWRITE) {
-						this.conceptSetStore.expression().items([]);
-					}
-					conceptSetUtils.addItemsToConceptSet({
-						items: items,
-						conceptSetStore: this.conceptSetStore,
-					});
-					await this.loadConceptSet(this.conceptSetStore.current().id);
+				if (options.type == constants.importTypes.OVERWRITE) {
+					this.conceptSetStore.expression().items([]);
 				}
-				catch (err) {
-					throw("Error importing JSON. Please check the content is well-formed.");
-				}
+				conceptSetUtils.addItemsToConceptSet({
+					items: expression.items,
+					conceptSetStore: this.conceptSetStore,
+				});
+				await this.loadConceptSet(this.conceptSetStore.current().id);
+
 			}
 		}
 

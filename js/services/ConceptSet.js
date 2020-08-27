@@ -71,11 +71,6 @@ define(function (require) {
 			.then(({ data }) => data);
 	}
 	
-	function resolveConceptSetExpression(expression) {
-		return vocabularyService.resolveConceptSetExpression();
-	}
-
-		
 	const api = {
 		loadConceptSet,
 		loadConceptSetExpression,
@@ -88,7 +83,6 @@ define(function (require) {
 		exists,
 		saveConceptSet,
 		saveConceptSetItems,
-		resolveConceptSetExpression,
 	};
 
 	return api;
