@@ -7,6 +7,7 @@ define([
 	'atlas-state',
 	'services/VocabularyProvider',
 	'./utils',
+	'./const',
 	'components/tabs',
 	'./import/identifiers',
 	'./import/sourcecodes',
@@ -20,6 +21,7 @@ define([
 	sharedState,
 	vocabularyApi,
 	conceptSetUtils,
+	constants,
 ){
 
 	class ConceptSetImport extends AutoBind(Component) {
@@ -73,7 +75,7 @@ define([
 		async onConceptSetRepositoryImport(newConceptSet) {
 			this.showImportConceptSetModal(false);
 			this.importing(true);
-			if (this.currentConceptSet().expression.items().length == 0 || confirm("Your concept set expression will be replaced with new one. Would you like to continue?")) {
+			if (this.currentConceptSet().expression.items().length == 0 || this.confirmAction(constants.importTypes.OVERWRITE)) {
 				const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id)
 				this.currentConceptSet().name(newConceptSet.name);
 				this.currentConceptSet().expression.items([]);
@@ -82,12 +84,26 @@ define([
 			this.importing(false);
 		}
 
-		async importConceptSetExpression (expression) {
-			conceptSetUtils.addItemsToConceptSet({
-				items: expression.items,
-				conceptSetStore: this.conceptSetStore,
-			});
-			await this.loadConceptSet(this.conceptSetStore.current().id);
+		async importConceptSetExpression (expression, options) {
+			if (this.currentConceptSet().expression.items().length == 0 
+					|| options.type == constants.importTypes.APPEND
+					|| this.confirmAction(options.type)) {
+				
+				try {
+					const items = JSON.parse(expression).items;
+					if (options.type == constants.importTypes.OVERWRITE) {
+						this.conceptSetStore.expression().items([]);
+					}
+					conceptSetUtils.addItemsToConceptSet({
+						items: items,
+						conceptSetStore: this.conceptSetStore,
+					});
+					await this.loadConceptSet(this.conceptSetStore.current().id);
+				}
+				catch (err) {
+					throw("Error importing JSON. Please check the content is well-formed.");
+				}
+			}
 		}
 
 		appendConcepts(concepts, options) {
@@ -97,6 +113,15 @@ define([
 				conceptSetStore: this.conceptSetStore,
 			});
 		}
+		
+    confirmAction(type) {
+      let isConfirmed = true;
+      if(type === constants.importTypes.OVERWRITE) {
+        isConfirmed = confirm('Are you sure you want to overwrite current Concept Set Expression?');
+      }
+      return isConfirmed;
+    }
+
 	}
 
 	return commonUtils.build('conceptset-list-import', ConceptSetImport, view);

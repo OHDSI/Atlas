@@ -6,7 +6,7 @@ define([
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
-	'atlas-state',
+	'../const',
 ], function(
 	ko,
 	view,
@@ -15,21 +15,28 @@ define([
 	AutoBind,
 	Clipboard,
 	commonUtils,
-	sharedState,
+	constants,
 ){
 
 	class ConceptSetImport extends AutoBind(ImportComponent(Component)) {
 		constructor(params) {
 			super(params);
+			this.importTypes = constants.importTypes;
 			this.importConceptSetExpression = params.importConceptSetExpression;
 			this.importConceptSetJson = ko.observable();
-			this.doImport = this.doImport.bind(this);			
+			this.doImport = this.doImport.bind(this);
+			this.errorMessage = ko.observable("");
 		}
 
-		async runImport() {
-			const expression = JSON.parse(this.importConceptSetJson());
-			this.importConceptSetExpression(expression);
-			this.importConceptSetJson('');
+		async runImport(options) {
+			try {
+				await this.importConceptSetExpression(this.importConceptSetJson(), options);
+				this.importConceptSetJson('');
+			}
+			catch (err) {
+				this.errorMessage(err);
+				setTimeout(() => this.errorMessage(""), 3000);
+			}
 		}
 	}
 

@@ -2,6 +2,11 @@ define([
 	'knockout'
 ], function(ko) {
 
+	const importTypes = {
+		OVERWRITE: 'overwrite',
+		APPEND: 'append',
+  };
+
 	const ViewMode = {
 		EXPRESSION: 'expression',
 		INCLUDED: 'included',
@@ -21,6 +26,7 @@ define([
 	const RESOLVE_OUT_OF_ORDER = 'resolveConceptSetExpression() resolved out of oder';
 
 	return {
+		importTypes,
 		ViewMode,
 		ConceptSetSources,
 		RESOLVE_OUT_OF_ORDER,
