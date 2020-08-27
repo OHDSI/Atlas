@@ -729,7 +729,7 @@ define([
             this.parseAgeByGender(data.ageByGender);
             this.parseObservationLength(data.observationLength, data.observationLengthStats);
             this.parseDurationByGender(data.durationByGender);
-            // this.cumulativeObservation(data.cumulativeObservation);
+            this.parseCumulativeObservation(data.cumulativeObservation);
             // this.durationByAgeDecile(data.durationByAgeDecile);
             // this.personsWithContinuousObservationByYear(data.personsWithContinuousObservationsByYear, data.personsWithContinuousObservationsByYearStats);
             // this.observationPeriodsPerPerson(data.observationPeriodsPerPerson);
@@ -752,23 +752,8 @@ define([
         }
 
         parseAgeByGender(data) {
-            const bpseries = [];
-            const bpdata = ChartUtils.normalizeArray(data);
-            if (!bpdata.empty) {
-                for (let i = 0; i < bpdata.category.length; i++) {
-                    bpseries.push({
-                        Category: bpdata.category[i],
-                        min: bpdata.minValue[i],
-                        LIF: bpdata.p10Value[i],
-                        q1: bpdata.p25Value[i],
-                        median: bpdata.medianValue[i],
-                        q3: bpdata.p75Value[i],
-                        UIF: bpdata.p90Value[i],
-                        max: bpdata.maxValue[i],
-                    });
-                }
-                this.ageByGenderData(bpseries);
-            }
+			const bpseries = this.parseBoxPlotData(data);
+			this.ageByGenderData(bpseries);
         }
 
         parseObservationLength(observationLength, [observationLengthStats]) {
@@ -802,24 +787,8 @@ define([
         }
 
         parseDurationByGender(data) {
-            const bpseries = [];
-			const bpdata = ChartUtils.normalizeArray(data);
-
-            if (!bpdata.empty) {
-                for (let i = 0; i < bpdata.category.length; i++) {
-                    bpseries.push({
-                        Category: bpdata.category[i],
-                        min: bpdata.minValue[i],
-                        LIF: bpdata.p10Value[i],
-                        q1: bpdata.p25Value[i],
-                        median: bpdata.medianValue[i],
-                        q3: bpdata.p75Value[i],
-                        UIF: bpdata.p90Value[i],
-                        max: bpdata.maxValue[i],
-                    });
-                }
-            }
-
+			const bpseries = this.parseBoxPlotData(data);
+			
             let dataMinY = d3.min(bpseries, (d) => d.min);
 			let dataMaxY = d3.max(bpseries, (d) => d.max);
             if (dataMaxY - dataMinY > 1000) {
@@ -835,7 +804,33 @@ define([
                 this.chartFormats.durationByGender.yLabel = "Years";
 			}
 			this.durationByGenderData(bpseries);
-        }
+		}
+		
+		parseCumulativeObservation(data) {
+
+		}
+
+		parseBoxPlotData(data) {
+			const bpseries = [];
+			const bpdata = ChartUtils.normalizeArray(data);
+
+            if (!bpdata.empty) {
+                for (let i = 0; i < bpdata.category.length; i++) {
+                    bpseries.push({
+                        Category: bpdata.category[i],
+                        min: bpdata.minValue[i],
+                        LIF: bpdata.p10Value[i],
+                        q1: bpdata.p25Value[i],
+                        median: bpdata.medianValue[i],
+                        q3: bpdata.p75Value[i],
+                        UIF: bpdata.p90Value[i],
+                        max: bpdata.maxValue[i],
+                    });
+                }
+			}
+			
+			return bpseries;
+		}
     }
 
     return commonUtils.build("report-observation-period", ObservationPeriodReport, view);
