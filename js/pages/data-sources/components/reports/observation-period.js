@@ -11,12 +11,8 @@ define([
     "components/charts/histogram",
     "components/charts/boxplot",
     "components/charts/line",
-    // 'components/charts/donut',
-    // 'components/charts/trellisline',
-    // 'components/charts/histogram',
-    // 'components/charts/frequencyHistogram',
-    // 'components/heading',
-    // 'components/empty-state',
+    'components/charts/donut',
+    'components/heading',
 ], function (ko, view, d3, atlascharts, commonUtils, ChartUtils, constants, Report, Component) {
     class ObservationPeriodReport extends Report {
         constructor(params) {
@@ -29,7 +25,7 @@ define([
             this.durationByGenderData = ko.observable();
             this.cumulativeObservationData = ko.observable();
             this.durationByAgeDecileData = ko.observable();
-            this.personsWithContinuousObservationByYearData = ko.observable();
+            this.personsWithContinuousObservationsByYearData = ko.observable();
             this.observationPeriodsPerPersonData = ko.observable();
             this.personsWithContinuousObservationByMonthData = ko.observable();
 
@@ -59,26 +55,49 @@ define([
                     xLabel: "Gender",
                     yFormat: d3.format(",.1s"),
                     valueFormatter: d3.format("d"),
-				},
-				cumulativeObservation: {
-					yFormat: d3.format('0.0%'),
-					xFormat: (d) => {
-						if (d < 10) {
-							return d3.format('.2n')(d)
-						} else {
-							return d3.format('d')(d)
-						}
-					},
-					interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
-					xLabel: 'Days',
-					yLabel: 'Percent of Population'
-				},
-				durationByAgeDecile: {
+                },
+                cumulativeObservation: {
+                    yFormat: d3.format("0.0%"),
+                    xFormat: (d) => {
+                        if (d < 10) {
+                            return d3.format(".2n")(d);
+                        } else {
+                            return d3.format("d")(d);
+                        }
+                    },
+                    interpolate: new atlascharts.line().interpolation.curveStepBefore,
+                    xLabel: "Days",
+                    yLabel: "Percent of Population",
+                },
+                durationByAgeDecile: {
                     yLabel: "Days",
                     xLabel: "Age Decile",
                     yFormat: d3.format(",.1s"),
-                    valueFormatter: d3.format("d")
+                    valueFormatter: d3.format("d"),
+                },
+                personsWithContinuousObservationsByYear: {
+                    xLabel: "Years",
+                    yLabel: "People",
+                    xFormat: d3.format("d"),
+                    yFormat: d3.format(",.1s"),
 				},
+				personsWithContinuousObservationByMonth: {
+                    xScale: null,
+					xFormat: d3.timeFormat("%m/%Y"),
+					tickFormat: d3.timeFormat("%Y"),
+					xLabel: "Date",
+					yLabel: "People",
+					yFormat: d3.format(",.1s"),
+					getTooltipBuilder: options => {
+						return d => {
+							const format = d3.format(",.4s");
+							return `
+								${options.xLabel}: ${options.xFormat(d.xValue)}<br/>
+								${options.yLabel}: ${format(d.yValue)}
+							`;
+						}
+					}
+                },
             };
 
             // this.loadData();
@@ -624,7 +643,16 @@ define([
                         conceptName: "1",
                         conceptId: 1,
                         countValue: 2015,
-                    },
+					},
+					{
+                        conditionConceptName: null,
+                        conditionConceptId: 0,
+                        observationConceptName: null,
+                        observationConceptId: 0,
+                        conceptName: "2",
+                        conceptId: 2,
+                        countValue: 1235,
+                    }
                 ],
                 observedByMonth: [
                     {
@@ -750,24 +778,17 @@ define([
             this.parseDurationByGender(data.durationByGender);
             this.parseCumulativeObservation(data.cumulativeObservation);
             this.parseDurationByAgeDecile(data.durationByAgeDecile);
-            // this.personsWithContinuousObservationByYear(data.personsWithContinuousObservationsByYear, data.personsWithContinuousObservationsByYearStats);
-            // this.observationPeriodsPerPerson(data.observationPeriodsPerPerson);
-            // this.personsWithContinuousObservationByMonth(data.observedByMonth);
+            this.parsePersonsWithContinuousObservationByYear(
+                data.personsWithContinuousObservationsByYear,
+                data.personsWithContinuousObservationsByYearStats
+            );
+            this.parseObservationPeriodsPerPerson(data.observationPeriodsPerPerson);
+            this.parsePersonsWithContinuousObservationByMonth(data.observedByMonth);
         }
 
         parseAgeAtFirstObservation(data) {
-            if (!data.empty) {
-                const histData = {};
-                let ageAtFirstDataMapped = data.map((value) => ({
-                    INTERVAL_INDEX: value.intervalIndex,
-                    COUNT_VALUE: value.countValue,
-                }));
-                histData.INTERVAL_SIZE = 1;
-                histData.OFFSET = 0;
-                histData.DATA = ChartUtils.normalizeArray(ageAtFirstDataMapped);
-                histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
-                this.ageAtFirstObservationData(atlascharts.histogram.mapHistogram(histData));
-            }
+            const histData = this.parseHistogramData(data);
+            this.ageAtFirstObservationData(atlascharts.histogram.mapHistogram(histData));
         }
 
         parseAgeByGender(data) {
@@ -776,39 +797,27 @@ define([
         }
 
         parseObservationLength(observationLength, [observationLengthStats]) {
-            if (observationLength && observationLength.length > 0 && observationLengthStats) {
-                const histData = {};
-                let observationDataMapped = observationLength.map((value) => ({
-                    INTERVAL_INDEX: value.intervalIndex,
-                    COUNT_VALUE: value.countValue,
-                }));
-                histData.DATA = ChartUtils.normalizeArray(observationDataMapped);
-                histData.INTERVAL_SIZE = observationLengthStats.intervalSize;
-                histData.OFFSET = 0;
-                histData.MAX = observationLengthStats.maxValue;
-                histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
-                if (!histData.DATA.empty) {
-                    let observationLengthData = atlascharts.histogram.mapHistogram(histData);
-                    if (
-                        observationLengthData.length > 0 &&
-                        observationLengthData[observationLengthData.length - 1].x - observationLengthData[0].x > 1000
-                    ) {
-                        observationLengthData.forEach((d) => {
-                            d.x = d.x / 365.25;
-                            d.dx = d.dx / 365.25;
-                        });
-                        this.chartFormats.observationLength.xLabel = "Years";
-                    }
-
-                    this.observationLengthData(observationLengthData);
+            const histData = this.parseHistogramData(observationLength, observationLengthStats);
+            if (!histData.DATA.empty) {
+                let observationLengthData = atlascharts.histogram.mapHistogram(histData);
+                if (
+                    observationLengthData.length > 0 &&
+                    observationLengthData[observationLengthData.length - 1].x - observationLengthData[0].x > 1000
+                ) {
+                    observationLengthData.forEach((d) => {
+                        d.x = d.x / 365.25;
+                        d.dx = d.dx / 365.25;
+                    });
+                    this.chartFormats.observationLength.xLabel = "Years";
                 }
+                this.observationLengthData(observationLengthData);
             }
         }
 
         parseDurationByGender(data) {
             const bpseries = this.parseBoxPlotData(data);
 
-			//TODO 1
+            //TODO 1
             let dataMinY = d3.min(bpseries, (d) => d.min);
             let dataMaxY = d3.max(bpseries, (d) => d.max);
             if (dataMaxY - dataMinY > 1000) {
@@ -827,37 +836,37 @@ define([
         }
 
         parseCumulativeObservation(data) {
-			const normalizedData = ChartUtils.normalizeArray(data);
+            const normalizedData = ChartUtils.normalizeArray(data);
             if (!normalizedData.empty) {
-				const coData = atlascharts.histogram.normalizeDataframe(normalizedData);
-				let cumulativeData = [];
-				for (let i = 0; i < coData.xLengthOfObservation.length; i++) {
-					cumulativeData.push({
+                const coData = atlascharts.histogram.normalizeDataframe(normalizedData);
+                let cumulativeData = [];
+                for (let i = 0; i < coData.xLengthOfObservation.length; i++) {
+                    cumulativeData.push({
                         xValue: coData.xLengthOfObservation[i],
                         yValue: coData.yPercentPersons[i],
-                    })
-				}
-            
+                    });
+                }
+
                 if (cumulativeData.length > 0) {
                     if (cumulativeData.slice(-1)[0].xValue - cumulativeData[0].xValue > 1000) {
                         // convert x data to years
                         cumulativeData.forEach(function (d) {
                             d.xValue = d.xValue / 365.25;
                         });
-                        this.chartFormats.cumulativeObservation.yLabel = 'Years';
+                        this.chartFormats.cumulativeObservation.yLabel = "Years";
                     }
                 }
 
-				this.cumulativeObservationData(cumulativeData);
+                this.cumulativeObservationData(cumulativeData);
             }
-		}
-		
-		parseDurationByAgeDecile(data) {
+        }
+
+        parseDurationByAgeDecile(data) {
             const bpseries = this.parseBoxPlotData(data);
 
-			//TODO 1
-			// add chartFormat
-			let dataMinY = d3.min(bpseries, (d) => d.min);
+            //TODO 1
+            // add chartFormat
+            let dataMinY = d3.min(bpseries, (d) => d.min);
             let dataMaxY = d3.max(bpseries, (d) => d.max);
             if (dataMaxY - dataMinY > 1000) {
                 bpseries.forEach((d) => {
@@ -870,9 +879,35 @@ define([
                     d.max = d.max / 365.25;
                 });
                 this.chartFormats.durationByAgeDecile.yLabel = "Years";
+            }
+
+            this.durationByAgeDecileData(bpseries);
+        }
+
+        parsePersonsWithContinuousObservationByYear(personsWithContinuousObservationsByYear, [personsWithContinuousObservationsByYearStats]) {
+			console.log(personsWithContinuousObservationsByYear)
+            const histData = this.parseHistogramData(personsWithContinuousObservationsByYear, personsWithContinuousObservationsByYearStats);
+            this.chartFormats.personsWithContinuousObservationsByYear.ticks = histData.DATA.INTERVAL_INDEX.length + 1;
+            this.personsWithContinuousObservationsByYearData(atlascharts.histogram.mapHistogram(histData));
+        }
+
+        parseObservationPeriodsPerPerson(data) {
+			this.observationPeriodsPerPersonData(ChartUtils.mapConceptData(data));
+		}
+		
+		parsePersonsWithContinuousObservationByMonth(data) {
+			console.log(data);
+			const obsByMonthData = ChartUtils.normalizeArray(data);
+			if (!obsByMonthData.empty) {
+				const byMonthSeries = ChartUtils.mapMonthYearDataToSeries(obsByMonthData, {
+					dateField: 'monthYear',
+					yValue: 'countValue',
+					yPercent: 'percentValue'
+				});
+				this.personsWithContinuousObservationByMonthData(byMonthSeries);
+				this.chartFormats.personsWithContinuousObservationByMonth.xScale = d3.scaleTime()
+					.domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
 			}
-			
-			this.durationByAgeDecileData(bpseries);
 		}
 
         parseBoxPlotData(data) {
@@ -895,6 +930,27 @@ define([
             }
 
             return bpseries;
+        }
+
+        parseHistogramData(data, stats) {
+            const histData = {};
+            if (data && data.length > 0) {
+                let observationDataMapped = data.map((value) => ({
+                    INTERVAL_INDEX: value.intervalIndex,
+                    COUNT_VALUE: value.countValue,
+                }));
+                histData.DATA = ChartUtils.normalizeArray(observationDataMapped);
+                histData.INTERVAL_SIZE = 1;
+                histData.OFFSET = 0;
+                histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+            }
+
+            if (stats) {
+                histData.INTERVAL_SIZE = stats.intervalSize;
+                histData.MAX = stats.maxValue;
+            }
+
+            return histData;
         }
     }
 
