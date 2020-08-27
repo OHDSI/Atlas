@@ -6,7 +6,7 @@ define([
 	'utils/CommonUtils',
 	'atlas-state',
 	'services/VocabularyProvider',
-	'../utils',
+	'./utils',
 	'components/tabs',
 	'./import/identifiers',
 	'./import/sourcecodes',

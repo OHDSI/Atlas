@@ -45,7 +45,7 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-            'components/conceptset/conceptset-list-modal',
+            'components/conceptset/concept-modal',
           ], function () {
             // Determine the view to show on the cohort manager screen based on the path
             path = path.split("/");

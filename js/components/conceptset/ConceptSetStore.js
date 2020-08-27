@@ -61,6 +61,8 @@ define([
 			this.resolvingConceptSetExpression = ko.observable(false);
 			this.loadingSourceCodes = ko.observable(false);
 			this.loadingIncluded = ko.observable(false);
+			
+			// metadata about this store
 			this.source = props.source || "unnamed";
 			this.title = props.title || "unnamed";
       
@@ -157,7 +159,7 @@ define([
 			} finally {
 				this.loadingSourceCodes(false);
 			}
-		}		
+		}
 		
 		static activeStores() {
 			const activeKeys = Object.keys(constants.ConceptSetSources).filter(key => !!this.getStore(key).current());

@@ -7,7 +7,7 @@ define([
 	'atlas-state',
 	'const',
 	'services/ConceptSet',
-	'../utils',	
+	'./utils',	
 	'components/conceptAddBox/concept-add-box',
 ], function(
 	ko,

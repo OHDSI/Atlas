@@ -6,10 +6,10 @@ define([
 	'utils/CommonUtils',
 	'atlas-state',
 	'services/ConceptSet',
-	'../utils',
+	'./utils',
 	'const',
 	'components/conceptAddBox/concept-add-box',
-	'../conceptset-list-modal'
+	'./concept-modal'
 ], function (
 	ko,
 	view,

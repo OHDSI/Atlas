@@ -1,4 +1,4 @@
-define(['knockout', 'utils/CommonUtils', 'text!./conceptset-list-modal.html'], function (ko, commonUtils, template) {
+define(['knockout', 'utils/CommonUtils', 'text!./concept-modal.html'], function (ko, commonUtils, template) {
 
 	function ConceptSetListModal(params) {
 		const self = this;
@@ -12,7 +12,7 @@ define(['knockout', 'utils/CommonUtils', 'text!./conceptset-list-modal.html'], f
 		template: template
 	};
 
-	ko.components.register('conceptset-list-modal', component);
+	ko.components.register('conceptset-concept-modal', component);
 
 	return component;
 });

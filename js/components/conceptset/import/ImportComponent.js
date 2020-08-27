@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'../../const',
+	'../const',
 ], function(
 	ko,
 	consts,
