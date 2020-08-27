@@ -10,7 +10,7 @@ define([
     "components/Component",
     "components/charts/histogram",
     "components/charts/boxplot",
-    // 'components/charts/line',
+    "components/charts/line",
     // 'components/charts/donut',
     // 'components/charts/trellisline',
     // 'components/charts/histogram',
@@ -20,7 +20,7 @@ define([
 ], function (ko, view, d3, atlascharts, commonUtils, ChartUtils, constants, Report, Component) {
     class ObservationPeriodReport extends Report {
         constructor(params) {
-			super(params);
+            super(params);
 
             // plots
             this.ageAtFirstObservationData = ko.observable();
@@ -59,13 +59,26 @@ define([
                     xLabel: "Gender",
                     yFormat: d3.format(",.1s"),
                     valueFormatter: d3.format("d"),
-                },
+				},
+				cumulativeObservation: {
+					yFormat: d3.format('0.0%'),
+					xFormat: (d) => {
+						if (d < 10) {
+							return d3.format('.2n')(d)
+						} else {
+							return d3.format('d')(d)
+						}
+					},
+					interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
+					xLabel: 'Days',
+					yLabel: 'Percent of Population'
+				}
             };
 
             // this.loadData();
 
-			// WIP
-			// MOCK DATA
+            // WIP
+            // MOCK DATA
             this.res = {
                 ageAtFirst: [
                     { intervalIndex: 26, percentValue: 0.00347, countValue: 7 },
@@ -719,8 +732,8 @@ define([
                         countValue: 2014,
                     },
                 ],
-			};
-			
+            };
+
             this.parseData({ data: this.res });
         }
 
@@ -752,8 +765,8 @@ define([
         }
 
         parseAgeByGender(data) {
-			const bpseries = this.parseBoxPlotData(data);
-			this.ageByGenderData(bpseries);
+            const bpseries = this.parseBoxPlotData(data);
+            this.ageByGenderData(bpseries);
         }
 
         parseObservationLength(observationLength, [observationLengthStats]) {
@@ -787,10 +800,10 @@ define([
         }
 
         parseDurationByGender(data) {
-			const bpseries = this.parseBoxPlotData(data);
-			
+            const bpseries = this.parseBoxPlotData(data);
+
             let dataMinY = d3.min(bpseries, (d) => d.min);
-			let dataMaxY = d3.max(bpseries, (d) => d.max);
+            let dataMaxY = d3.max(bpseries, (d) => d.max);
             if (dataMaxY - dataMinY > 1000) {
                 bpseries.forEach((d) => {
                     d.min = d.min / 365.25;
@@ -802,17 +815,39 @@ define([
                     d.max = d.max / 365.25;
                 });
                 this.chartFormats.durationByGender.yLabel = "Years";
-			}
-			this.durationByGenderData(bpseries);
-		}
-		
-		parseCumulativeObservation(data) {
+            }
+            this.durationByGenderData(bpseries);
+        }
 
-		}
+        parseCumulativeObservation(data) {
+			const normalizedData = ChartUtils.normalizeArray(data);
+            if (!normalizedData.empty) {
+				const coData = atlascharts.histogram.normalizeDataframe(normalizedData);
+				let cumulativeData = [];
+				for (let i = 0; i < coData.xLengthOfObservation.length; i++) {
+					cumulativeData.push({
+                        xValue: coData.xLengthOfObservation[i],
+                        yValue: coData.yPercentPersons[i],
+                    })
+				}
+            
+                if (cumulativeData.length > 0) {
+                    if (cumulativeData.slice(-1)[0].xValue - cumulativeData[0].xValue > 1000) {
+                        // convert x data to years
+                        cumulativeData.forEach(function (d) {
+                            d.xValue = d.xValue / 365.25;
+                        });
+                        this.chartFormats.cumulativeObservation.yLabel = 'Years';
+                    }
+                }
 
-		parseBoxPlotData(data) {
-			const bpseries = [];
-			const bpdata = ChartUtils.normalizeArray(data);
+				this.cumulativeObservationData(cumulativeData);
+            }
+        }
+
+        parseBoxPlotData(data) {
+            const bpseries = [];
+            const bpdata = ChartUtils.normalizeArray(data);
 
             if (!bpdata.empty) {
                 for (let i = 0; i < bpdata.category.length; i++) {
@@ -827,10 +862,10 @@ define([
                         max: bpdata.maxValue[i],
                     });
                 }
-			}
-			
-			return bpseries;
-		}
+            }
+
+            return bpseries;
+        }
     }
 
     return commonUtils.build("report-observation-period", ObservationPeriodReport, view);
