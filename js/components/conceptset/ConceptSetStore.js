@@ -21,17 +21,43 @@ define([
 		constructor(props = {}) {
 			super(props);
 
+			// the concept set
 			this.current = ko.observable();
-			this.selectedConceptsIndex = {};
-			this.includedConcepts = ko.observableArray([]);
-			this.includedConceptsMap = ko.observable({});
-			this.includedSourcecodes = ko.observableArray([]);
-			this.includedHash = ko.observable();
-			this.conceptSetInclusionIdentifiers = ko.observableArray([]);
-			this.currentConceptIdentifierList = ko.pureComputed(() => this.current() && this.current().expression.items().map(item => item.concept.CONCEPT_ID).join(','));
+			this.expression = ko.pureComputed(() => this.current() && this.current().expression);
+			this.currentConceptSetExpressionJson = ko.pureComputed(() => commonUtils.syntaxHighlight(this.expression()));
+			
+			// the concepts in the expression
+			// concepts can appear more than once, the index object will keep the list of different items for each concept.
+			this.selectedConceptsIndex = ko.pureComputed(() => {
+				const index = this.expression() && this.expression().items()
+					.reduce((result, item) => {
+						const itemArr = result[item.concept.CONCEPT_ID] || [];
+						itemArr.push(item);
+						result[item.concept.CONCEPT_ID] = itemArr;
+          	return result;
+        	}, {});
+				return index || {};
+			});
+			this.currentConceptIdentifierList = ko.pureComputed(() => Object.keys(this.selectedConceptsIndex()).join(','));
+			
+			// the included conceptIds (from resolveConceptSetExpression, these are guarteed to be unique)
+			this.conceptSetInclusionIdentifiers = ko.observableArray();
 			this.currentIncludedConceptIdentifierList = ko.pureComputed(() => (this.conceptSetInclusionIdentifiers() || []).join(','));
-			this.currentConceptSetExpressionJson = ko.pureComputed(() => commonUtils.syntaxHighlight(this.current() && this.current().expression));
+
+			// the included concetepts (from loadIncluded)
+			this.includedConcepts = ko.observableArray([]);
+			this.includedConceptsMap = ko.pureComputed(
+				() => this.includedConcepts()
+					.reduce((result, item) => {
+						result[item.CONCEPT_ID] = item;
+          	return result;
+        	}, {})
+			);
+			
+			// the included source codes (from loadSourceCodes)
+			this.includedSourcecodes = ko.observableArray([]);
 	
+			// loading state of individual aspects of the concept set store
 			this.resolvingConceptSetExpression = ko.observable(false);
 			this.loadingSourceCodes = ko.observable(false);
 			this.loadingIncluded = ko.observable(false);
@@ -42,15 +68,12 @@ define([
 
 			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
 				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
-			
 		}
 
 		clear() {
 			this.current(null);
 			this.includedConcepts(null);
-			this.includedConceptsMap(null);
 			this.includedSourcecodes(null);
-			this.includedHash(null);
 			this.conceptSetInclusionIdentifiers(null);
 		}
     
@@ -107,11 +130,6 @@ define([
           ANCESTORS: [],
           isSelected: ko.observable(false)
         })));
-        const map = response.data.reduce((result, item) => {
-          result[item.CONCEPT_ID] = item;
-          return result;
-        }, {});
-        this.includedConceptsMap(map);
         await utils.loadAndApplyAncestors(this.includedConcepts(),this);
       } catch (err) {
         console.error(err);
@@ -120,7 +138,7 @@ define([
       }
     }
 		
-		async loadSourceCodes(conceptSetStore) {
+		async loadSourceCodes() {
 			this.loadingSourceCodes(true);
       this.includedConcepts() == null && await this.loadIncluded();
 			// load mapped

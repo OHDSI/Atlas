@@ -668,8 +668,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					cohortDefinitionService.deleteCohortDefinition(this.currentCohortDefinition().id()).
                     then( (result) => {
 						this.currentCohortDefinition(null);
-						PollService.stop(this.pollTimeoutId);
-						document.location = "#/cohortdefinitions"
+						this.dirtyFlag().reset();
+						this.close();
 					}, (error) => {
 						console.log("Error: " + error);
 						if(error.status == 409) {

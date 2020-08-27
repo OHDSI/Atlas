@@ -7,6 +7,7 @@ define([
   'const',
   'text!./concept-add-box.html',
   'less!./concept-add-box.less',
+	'databindings/cohortbuilder/dropupBinding',
 ], (
 	ko,
 	ConceptSetStore,

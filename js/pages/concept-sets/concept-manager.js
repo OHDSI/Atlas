@@ -45,19 +45,7 @@ define([
 			super(params);
 			this.currentConceptId = ko.observable();
 			this.currentConcept = ko.observable();
-/*      
-			this.activeConceptSets = ko.pureComputed(() => {
-				const activeConceptSetSources = Object.keys(globalConstants.conceptSetSources).filter(key => !!sharedState[`${key}ConceptSet`].current());
-				return activeConceptSetSources.map(source => sharedState[`${source}ConceptSet`]);
-			});
-			this.hasActiveConceptSets = ko.computed(() => !!Object.keys(this.activeConceptSets()).length);
-			this.currentlyActiveConceptSetName = ko.computed(() => {
-				if (sharedState.activeConceptSet() && sharedState.activeConceptSet().current()) {
-					return sharedState.activeConceptSet().current().name();
-				}
-				return 'Select Conceptset';
-			});
-*/      
+
 			this.currentConceptMode = ko.observable('details');
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
@@ -66,7 +54,6 @@ define([
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
-			this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
 			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
@@ -215,10 +202,6 @@ define([
 			this.currentConceptId(this.routerParams.conceptId);
 			this.loadConcept(this.currentConceptId());
 			super.onPageCreated();
-		}
-
-		renderCurrentConceptSelector() {
-			return this.renderConceptSelector(null, null, this.currentConcept());
 		}
 
 		onRouterParamsChanged({ conceptId }) {

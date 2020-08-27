@@ -24,7 +24,6 @@ define([
 		constructor(params) {
 			super(params);
 			this.appendConcepts = params.appendConcepts;
-			this.importing = params.importing;
 			this.identifiers = ko.observable("");
 			this.canAddConcepts = ko.pureComputed(() => this.identifiers().length > 0);
 			this.doImport = this.doImport.bind(this);

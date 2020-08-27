@@ -49,7 +49,6 @@ define([
 			this.exportConceptSets = params.exportConceptSets || (() => false);
 			this.currentConceptSet = this.conceptSetStore.current;
 			this.showImportConceptSetModal = ko.observable();
-			this.includedHash = this.conceptSetStore.includedHash;
 			this.exporting = ko.observable();
 			this.importing = ko.observable();
 			this.disableConceptSetExport = ko.observable(); //TODO implement export
@@ -140,6 +139,10 @@ define([
 						throw(err);
 				}
 			}));
+
+			// initially resolve the concept set
+			this.conceptSetStore.resolveConceptSetExpression();
+
 			
 			
 			this.subscriptions.push(this.conceptSetStore.current.subscribe(() => {
@@ -164,7 +167,6 @@ define([
 			sharedState.activeConceptSet(this.conceptSetStore);
 			this.showImportConceptSetModal(false);
 			if (conceptSet.id !== (this.currentConceptSet() && this.currentConceptSet().id)) {
-				this.includedHash(null);
 				this.selectedTabKey(ViewMode.EXPRESSION);
 				await this.loadConceptSet(conceptSet.id);
 			}
@@ -177,8 +179,8 @@ define([
 			if (!conceptSet) {
 				return;
 			}
-			const items = ko.unwrap(conceptSet.expression.items);
-			conceptSetUtils.addToConceptSetIdsMap({items, conceptSetStore: this.conceptSetStore});
+//			const items = ko.unwrap(conceptSet.expression.items);
+//			conceptSetUtils.addToConceptSetIdsMap({items, conceptSetStore: this.conceptSetStore});
 			this.conceptSetStore.current(conceptSet);
 		}
 

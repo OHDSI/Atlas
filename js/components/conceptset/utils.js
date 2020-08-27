@@ -90,7 +90,7 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 		const ids = [];
 		$.each(data, idx => {
 			const element = data[idx];
-			if (_.isEmpty(element.ANCESTORS) && !conceptSetStore.selectedConceptsIndex[element.CONCEPT_ID]) {
+			if (_.isEmpty(element.ANCESTORS) && !conceptSetStore.selectedConceptsIndex()[element.CONCEPT_ID]) {
 				ids.push(element.CONCEPT_ID);
 			}
 		});
@@ -155,18 +155,6 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
 				break;
 		}
 	}		
-
-	function addToConceptSetIdsMap({ items = [], conceptSetStore }) {
-		const selectedConceptsIndex = items.reduce((p, c) => ({ ...p, [c.concept.CONCEPT_ID]: {
-			includeDescendants: c.includeDescendants,
-			includeMapped: c.includeMapped,
-			isExcluded: c.isExcluded,
-		} }), {});
-		conceptSetStore.selectedConceptsIndex = {
-			...conceptSetStore.selectedConceptsIndex,
-			...selectedConceptsIndex,
-		};
-	}
 
 	function createRepositoryConceptSet(conceptSetStore) {
 		const newConceptSet = new ConceptSet({
@@ -254,7 +242,7 @@ define(['knockout','utils/CommonUtils','services/http','atlas-state','services/V
   return {
     toRepositoryConceptSetItems,
 		addItemsToConceptSet,
-		addToConceptSetIdsMap,
+		createRepositoryConceptSet,
 		removeConceptsFromConceptSet,
 		getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler,

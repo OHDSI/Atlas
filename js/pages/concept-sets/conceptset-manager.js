@@ -260,7 +260,11 @@ define([
 						throw(err);
 				} finally {
 				}
-			}));      
+			}));  
+			
+			// initially resolve the concept set
+			this.conceptSetStore.resolveConceptSetExpression();
+
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -293,16 +297,13 @@ define([
 				field,
 			);
     }
-
-		createConceptSet() {
-			conceptSetutils.createRepositoryConceptSet(this.conceptSetStore);
-			this.loading(false);
-		}
 		
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
+			sharedState.activeConceptSet(this.conceptSetStore);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
-				this.createConceptSet();
+				conceptSetUtils.createRepositoryConceptSet(this.conceptSetStore);
+				await this.conceptSetStore.resolveConceptSetExpression();
 				this.loading(false);
 			}
 			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
@@ -315,7 +316,6 @@ define([
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
-				sharedState.activeConceptSet(this.conceptSetStore);
 			} catch(err) {
 				console.error(err);
 			}
@@ -370,6 +370,7 @@ define([
 				return;
 			} else {
 				this.conceptSetStore.clear();
+				this.currentConceptSetDirtyFlag().reset();
 				sharedState.RepositoryConceptSet.current(null);
 				commonUtils.routeTo('/conceptsets');
 			}
@@ -432,8 +433,8 @@ define([
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.currentConceptSet().id)
 				.then(() => {
-					conceptSetService.clearConceptSet({ source: globalConstants.conceptSetSources.repository });
-					document.location = "#/conceptsets"
+					this.currentConceptSetDirtyFlag().reset(); // so that we don't get a 'unsaved' warning when we close.
+					this.closeConceptSet();
 				});
 		}
 
