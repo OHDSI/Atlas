@@ -72,7 +72,13 @@ define([
 					interpolate: (new atlascharts.line()).interpolation.curveStepBefore,
 					xLabel: 'Days',
 					yLabel: 'Percent of Population'
-				}
+				},
+				durationByAgeDecile: {
+                    yLabel: "Days",
+                    xLabel: "Age Decile",
+                    yFormat: d3.format(",.1s"),
+                    valueFormatter: d3.format("d")
+				},
             };
 
             // this.loadData();
@@ -743,7 +749,7 @@ define([
             this.parseObservationLength(data.observationLength, data.observationLengthStats);
             this.parseDurationByGender(data.durationByGender);
             this.parseCumulativeObservation(data.cumulativeObservation);
-            // this.durationByAgeDecile(data.durationByAgeDecile);
+            this.parseDurationByAgeDecile(data.durationByAgeDecile);
             // this.personsWithContinuousObservationByYear(data.personsWithContinuousObservationsByYear, data.personsWithContinuousObservationsByYearStats);
             // this.observationPeriodsPerPerson(data.observationPeriodsPerPerson);
             // this.personsWithContinuousObservationByMonth(data.observedByMonth);
@@ -802,6 +808,7 @@ define([
         parseDurationByGender(data) {
             const bpseries = this.parseBoxPlotData(data);
 
+			//TODO 1
             let dataMinY = d3.min(bpseries, (d) => d.min);
             let dataMaxY = d3.max(bpseries, (d) => d.max);
             if (dataMaxY - dataMinY > 1000) {
@@ -843,7 +850,30 @@ define([
 
 				this.cumulativeObservationData(cumulativeData);
             }
-        }
+		}
+		
+		parseDurationByAgeDecile(data) {
+            const bpseries = this.parseBoxPlotData(data);
+
+			//TODO 1
+			// add chartFormat
+			let dataMinY = d3.min(bpseries, (d) => d.min);
+            let dataMaxY = d3.max(bpseries, (d) => d.max);
+            if (dataMaxY - dataMinY > 1000) {
+                bpseries.forEach((d) => {
+                    d.min = d.min / 365.25;
+                    d.LIF = d.LIF / 365.25;
+                    d.q1 = d.q1 / 365.25;
+                    d.median = d.median / 365.25;
+                    d.q3 = d.q3 / 365.25;
+                    d.UIF = d.UIF / 365.25;
+                    d.max = d.max / 365.25;
+                });
+                this.chartFormats.durationByAgeDecile.yLabel = "Years";
+			}
+			
+			this.durationByAgeDecileData(bpseries);
+		}
 
         parseBoxPlotData(data) {
             const bpseries = [];
