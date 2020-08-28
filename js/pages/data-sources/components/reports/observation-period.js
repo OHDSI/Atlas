@@ -119,7 +119,13 @@ define([
         }
 
         parseObservationLength(observationLength, [observationLengthStats]) {
-            const histData = this.parseHistogramData(observationLength, observationLengthStats);
+            const histData = this.parseHistogramData(observationLength);
+            if(observationLengthStats) {
+                histData.INTERVAL_SIZE = observationLengthStats.intervalSize;
+                histData.OFFSET = 0;
+                histData.MAX = observationLengthStats.maxValue;
+                histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
+            }
             // convert to years
             if (!histData.DATA.empty) {
                 let observationLengthData = atlascharts.histogram.mapHistogram(histData);
@@ -175,7 +181,14 @@ define([
         }
 
         parsePersonsWithContinuousObservationByYear(personsWithContinuousObservationsByYear, [personsWithContinuousObservationsByYearStats]) {
-            const histData = this.parseHistogramData(personsWithContinuousObservationsByYear, personsWithContinuousObservationsByYearStats);
+            const histData = this.parseHistogramData(personsWithContinuousObservationsByYear);
+            const stats = personsWithContinuousObservationsByYearStats;
+            if (stats) {
+                histData.INTERVAL_SIZE = stats.intervalSize;
+                histData.MAX = stats.maxValue;
+                histData.OFFSET = stats.minValue;
+                histData.MAX = stats.maxValue;
+            }
             const ticks = histData.DATA.INTERVAL_INDEX.length + 1;
             if (ticks < 10) {
                 this.chartFormats.personsWithContinuousObservationsByYear.ticks = ticks;
@@ -225,7 +238,7 @@ define([
             return bpseries;
         }
 
-        parseHistogramData(data, stats) {
+        parseHistogramData(data) {
             const histData = {};
             if (data && data.length > 0) {
                 let observationDataMapped = data.map((value) => ({
@@ -236,11 +249,6 @@ define([
                 histData.INTERVAL_SIZE = 1;
                 histData.DATA = ChartUtils.normalizeArray(observationDataMapped);
                 histData.INTERVALS = histData.DATA.INTERVAL_INDEX.length;
-            }
-
-            if (stats) {
-                histData.INTERVAL_SIZE = stats.intervalSize;
-                histData.MAX = stats.maxValue;
             }
 
             return histData;
