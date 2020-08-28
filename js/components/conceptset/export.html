@@ -1,5 +1,5 @@
-<loading data-bind="visible: resolvingConceptSetExpression()" params="status: 'Loading for export...'"></loading>
-<div data-bind="visible: !resolvingConceptSetExpression()">
+<loading data-bind="visible: resolvingConceptSetExpression() || loading()" params="status: 'Loading for export...'"></loading>
+<div data-bind="visible: !(resolvingConceptSetExpression() || loading())">
     <div class="heading">Concept Set Expression JSON&nbsp;&nbsp;<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionClipboard" data-bind="click: copyExpressionToClipboard" data-clipboard-target="#conceptSetExpression"><i class="fa fa-clipboard" aria-hidden="true"></i></button>&nbsp;&nbsp;
         <span id="copyExpressionToClipboardMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
     </div>
@@ -12,15 +12,8 @@
         <span id="copyIncludedConceptIdentifierListMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
     </div>
     <pre id="includedConceptIdentifierList" data-bind="html: $component.currentIncludedConceptIdentifierList, selectOnFocus: {events: ['click']}"></pre>
+    <br/>
+    <button type="button" class="btn btn-success" data-bind="click: exportCsv">
+      <i class="fa fa-download" aria-hidden="true"></i>Export To CSV
+    </button>
 </div>
-<br/>
-<!--
-    TODO: implement export CSV of a concept set including expression, included and source codes.
-<button type="button" class="btn btn-success" data-bind="
-  click: exportCSV,
-  css: {
-    disabled:! (currentConceptSet() != null && !currentConceptSetDirtyFlag().isDirty())
-  }">
-  <i class="fa fa-download" aria-hidden="true"></i>Export To CSV
-</button>
--->

@@ -1,5 +1,4 @@
-define(['knockout','utils/CommonUtils','services/http','atlas-state','services/Vocabulary', 'conceptsetbuilder/InputTypes/ConceptSet', 'conceptsetbuilder/InputTypes/ConceptSetItem'
-]
+define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/Vocabulary', 'conceptsetbuilder/InputTypes/ConceptSet', 'conceptsetbuilder/InputTypes/ConceptSetItem']
 , function(ko, commonUtils, httpService, sharedState, vocabularyService, ConceptSet, ConceptSetItem){
 	
   function toRepositoryConceptSetItems(conceptSetItems){

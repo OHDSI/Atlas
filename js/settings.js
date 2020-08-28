@@ -132,6 +132,7 @@ const settingsObject = {
 		"bootstrap-select": "../node_modules/bootstrap-select/dist/js/bootstrap-select",
 		"less-js": "../node_modules/less/dist/less",
 		"file-saver": "../node_modules/file-saver/FileSaver",
+		"jszip": "../node_modules/jszip/dist/jszip.min",
 		"numeral": "../node_modules/numeral/numeral",
 		"lz-string": "../node_modules/lz-string/libs/lz-string",
 		"colorbrewer": "../node_modules/colorbrewer/index",

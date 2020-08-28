@@ -2,16 +2,20 @@ define([
 	'knockout',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/CsvUtils',
 	'./const',
 	'./utils',
-  'services/Vocabulary',
+	'services/Vocabulary',
+	'jszip',
 ], function (
 	ko,
 	AutoBind,
 	commonUtils,
+	csvUtils,
 	constants,
 	utils,
-  vocabularyService,
+	vocabularyService,
+	JSZip,
 ) {
 
 	const {ViewMode} = constants;
@@ -160,6 +164,56 @@ define([
 				this.loadingSourceCodes(false);
 			}
 		}
+
+		async exportConceptSet(prefixFields = {}) {
+			console.log('todo: export');
+
+			function formatBoolean (b) { return b ? "TRUE" : "FALSE"}
+
+			function conceptCols(c) { 
+				return {
+					"Concept ID": c.CONCEPT_ID, 
+					"Cocnept Code": c.CONCEPT_CODE, 
+					"Concept Name": c.CONCEPT_NAME,
+					"Domain": c.DOMAIN_ID, 
+					"Vocabulary": c.VOCABULARY_ID, 
+					"Standard Concept": c.STANDARD_CONCEPT
+				};
+			}
+			
+			function itemSettings(i) { 
+				return {
+					"Exclude": formatBoolean(ko.unwrap(i.isExcluded)), 
+					"Descendants": formatBoolean(ko.unwrap(i.includeDescendants)),
+					"Mapped": formatBoolean(ko.unwrap(i.includeMapped))
+				};
+			}
+
+			// setup the left-most columns of result CSV
+			const firstColumns = {...prefixFields, "Concept Set ID": this.current().id, "Name": this.current().name()};
+
+			// fetch included and source codes
+			this.includedConcepts() == null && await this.loadIncluded();
+			this.includedSourcecodes() == null && await this.loadSourceCodes();
+
+			const expressionRows = this.expression().items().map((item) => ({...firstColumns,  ...conceptCols(item.concept), ...itemSettings(item)}));
+			const expressionCsv = csvUtils.toCsv(expressionRows);
+
+			const includedRows = this.includedConcepts().map((ic) => ({...firstColumns, ...conceptCols(ic)}));
+			const includedCsv = csvUtils.toCsv(includedRows);
+
+			const mappedRows = this.includedSourcecodes().map((ic) => ({...firstColumns, ...conceptCols(ic)}));
+			const mappedCsv = csvUtils.toCsv(mappedRows);
+
+			const zip = new JSZip();
+			zip.file("conceptSetExpression.csv", expressionCsv);
+			zip.file("includedConcepts.csv", includedCsv);
+			zip.file("mappedConcepts.csv", mappedCsv);
+
+			const zipFile = await zip.generateAsync({type:"blob", compression: "DEFLATE"});
+			saveAs(zipFile, `${this.current().name()}.zip`);
+			
+		}		
 		
 		static activeStores() {
 			const activeKeys = Object.keys(constants.ConceptSetSources).filter(key => !!this.getStore(key).current());

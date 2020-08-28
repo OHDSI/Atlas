@@ -5,6 +5,7 @@ define([
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
+	'./utils',
 	'atlas-state',
 ], function(
 	ko,
@@ -13,6 +14,7 @@ define([
 	AutoBind,
 	Clipboard,
 	commonUtils,
+	conceptSetUtils,
 	sharedState,
 ){
 
@@ -20,7 +22,7 @@ define([
 
 		constructor(params) {
 			super(params);
-			this.loading = params.loading;
+			this.loading = params.loading || ko.observable(false);
 			this.conceptSetStore = params.conceptSetStore;
 			this.resolvingConceptSetExpression = this.conceptSetStore.resolvingConceptSetExpression;
 			this.currentConceptSetExpressionJson = this.conceptSetStore.currentConceptSetExpressionJson;
@@ -38,6 +40,15 @@ define([
 
 		copyIncludedConceptIdentifierListToClipboard () {
 			this.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
+		}
+
+		async exportCsv() {
+			this.loading(true);
+			try {
+				await this.conceptSetStore.exportConceptSet();
+			} finally {
+				this.loading(false);
+			}
 		}
 	}
 
