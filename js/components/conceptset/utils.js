@@ -1,5 +1,5 @@
-define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/Vocabulary', 'conceptsetbuilder/InputTypes/ConceptSet', 'conceptsetbuilder/InputTypes/ConceptSetItem']
-, function(ko, commonUtils, httpService, sharedState, vocabularyService, ConceptSet, ConceptSetItem){
+define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atlas-state','services/Vocabulary', 'conceptsetbuilder/InputTypes/ConceptSet', 'conceptsetbuilder/InputTypes/ConceptSetItem']
+, function(ko, commonUtils, renderers, httpService, sharedState, vocabularyService, ConceptSet, ConceptSetItem){
 	
   function toRepositoryConceptSetItems(conceptSetItems){
     const convertedItems = conceptSetItems.map((item) => ({
@@ -11,7 +11,110 @@ define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/
     return convertedItems;
   }
 
-	function getIncludedConceptSetDrawCallback({columns, source}) {
+	const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService, conceptSetUtils) => [
+		{
+			title: '',
+			orderable: false,
+			searchable: false,
+			className: 'text-center',
+			render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+		},
+		{
+			title: 'Id',
+			data: 'CONCEPT_ID'
+		},
+		{
+			title: 'Code',
+			data: 'CONCEPT_CODE'
+		},
+		{
+			title: 'Name',
+			data: 'CONCEPT_NAME',
+			render: commonUtils.renderLink,
+		},
+		{
+			title: 'Class',
+			data: 'CONCEPT_CLASS_ID'
+		},
+		{
+			title: 'Standard Concept Caption',
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+		},
+		{
+			title: 'RC',
+			data: 'RECORD_COUNT',
+			className: 'numeric'
+		},
+		{
+			title: 'DRC',
+			data: 'DESCENDANT_RECORD_COUNT',
+			className: 'numeric'
+		},
+		{
+			title: 'Domain',
+			data: 'DOMAIN_ID'
+		},
+		{
+			title: 'Vocabulary',
+			data: 'VOCABULARY_ID'
+		},
+		{
+			title: 'Ancestors',
+			data: 'ANCESTORS',
+			render: getAncestorsRenderFunction()
+		},
+	];
+
+	const includedConceptsOptions = {
+		Facets: [
+			{
+				'caption': 'Vocabulary',
+				'binding': (o) => {
+					return o.VOCABULARY_ID;
+				}
+			},
+			{
+				'caption': 'Class',
+				'binding': (o) => {
+					return o.CONCEPT_CLASS_ID;
+				}
+			},
+			{
+				'caption': 'Domain',
+				'binding': (o) => {
+					return o.DOMAIN_ID;
+				}
+			},
+			{
+				'caption': 'Standard Concept',
+				'binding': (o) => {
+					return o.STANDARD_CONCEPT_CAPTION;
+				}
+			},
+			{
+				'caption': 'Invalid Reason',
+				'binding': (o) => {
+					return o.INVALID_REASON_CAPTION;
+				}
+			},
+			{
+				'caption': 'Has Records',
+				'binding': (o) => {
+					return parseInt(o.RECORD_COUNT) > 0;
+				}
+			},
+			{
+				'caption': 'Has Descendant Records',
+				'binding': (o) => {
+					return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
+				}
+			},
+		]
+	}
+
+
+	function getIncludedConceptSetDrawCallback(columns, conceptSetStore) {
 		return async function (settings) {
 			if (settings.aoData) {
 				const api = this.api();
@@ -21,8 +124,8 @@ define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/
 				// In such case we would call API with set of NULLs which both doesn't make sense and breaks some DBs.
 				// Therefore, we first check if there is real data to send to API.
 				if (data[0] && data[0].CONCEPT_ID) {
-					await loadAndApplyAncestors(data, source);
-					const columnIndex = searchConceptsColumns.findIndex(v => v.data === 'ANCESTORS');
+					await loadAndApplyAncestors(data, conceptSetStore);
+					const columnIndex = columns.findIndex(v => v.data === 'ANCESTORS');
 					api.cells(null, columnIndex).invalidate();
 					rows.nodes().each((element, index) => {
 						const rowData = data[index];
@@ -50,8 +153,12 @@ define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/
 
 	function getAncestorsRenderFunction() {
 		return (s,p,d) => {
-			const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('\n');
-			return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: '${tooltip}'">${d.ANCESTORS.length}</a>`
+			if (d.ANCESTORS != null) {
+				const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('\n');
+				return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: '${tooltip}'">${d.ANCESTORS.length}</a>`
+			} else {
+				return `<i class="fa fa-circle-o-notch fa-spin"></i>`;
+			}
 		};
 	}
 	
@@ -89,8 +196,12 @@ define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/
 		const ids = [];
 		$.each(data, idx => {
 			const element = data[idx];
-			if (_.isEmpty(element.ANCESTORS) && !conceptSetStore.selectedConceptsIndex()[element.CONCEPT_ID]) {
-				ids.push(element.CONCEPT_ID);
+			if (element.ANCESTORS==null) { // determine if we should lookukp ancetors, or default to []
+				if (!conceptSetStore.selectedConceptsIndex()[element.CONCEPT_ID]) { // if not in the expression, look look up ancestors
+					ids.push(element.CONCEPT_ID);
+				} else { // else mark it as [] since it was included in the main expression
+					element.ANCESTORS = []; // included concepts that came in from the expression are set to 0 ancestors
+				}
 			}
 		});
 		return new Promise((resolve, reject) => {
@@ -100,8 +211,12 @@ define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/
 					$.each(data, idx => {
 						const line = data[idx];
 						const ancArray = ancestors[line.CONCEPT_ID];
-						if (!_.isEmpty(ancArray) && _.isEmpty(line.ANCESTORS)) {
-							line.ANCESTORS = ancArray.map(conceptId => map[conceptId]).filter(Boolean);
+						if (line.ANCESTORS==null) {
+							if (!_.isEmpty(ancArray)) {
+								line.ANCESTORS = ancArray.map(conceptId => map[conceptId]).filter(Boolean);
+							} else {
+								line.ANCESTORS = [];
+							}
 						}
 					});
 					resolve();
@@ -243,6 +358,8 @@ define(['knockout','utils/CommonUtils', 'services/http','atlas-state','services/
 		addItemsToConceptSet,
 		createRepositoryConceptSet,
 		removeConceptsFromConceptSet,
+		includedConceptsOptions,		
+		getIncludedConceptsColumns,
 		getIncludedConceptSetDrawCallback,
 		getAncestorsModalHandler,
 		getAncestorsRenderFunction,

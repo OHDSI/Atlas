@@ -342,16 +342,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.loadConceptSet(conceptSet.id);
 			}
 
-			this.includedConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService, conceptSetUtils);
-			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
-			this.ancestors = ko.observableArray();
-			this.ancestorsModalIsShown = ko.observable(false);
-			this.showAncestorsModal = conceptSetUtils.getAncestorsModalHandler({
-				conceptSetStore: this.conceptSetStore,
-				ancestors: this.ancestors,
-				ancestorsModalIsShown: this.ancestorsModalIsShown
-			});
-
 			this.includedConceptsOptions = {
 				Facets: [
 					{
@@ -1192,8 +1182,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportingState.dispose();
 				this.showReportNameDropdown.dispose();
 				this.reportSourceKeySub.dispose();
-				sharedState.includedHash(null);
-				this.ancestorsModalIsShown(false);
 				PollService.stop(this.pollId);
 			}
 

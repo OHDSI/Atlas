@@ -2,7 +2,8 @@
 <div data-bind="hidden: loading">
     <faceted-datatable params="{columns: $component.includedConceptsColumns, 
 															 options: $component.includedConceptsOptions, 
-															 reference: $component.includedConcepts, 
+                               reference: $component.includedConcepts, 
+                               drawCallback: $component.includedDrawCallback,
 															 rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
     <concept-add-box params="{
         isActive: canAddConcepts,

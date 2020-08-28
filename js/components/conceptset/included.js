@@ -30,17 +30,19 @@ define([
 			this.includedConcepts = this.conceptSetStore.includedConcepts;
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;
-			this.includedConceptsColumns = globalConstants.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService, conceptSetUtils);
-			this.includedConceptsOptions = globalConstants.includedConceptsOptions;
+			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService, conceptSetUtils);
+			this.includedConceptsOptions = conceptSetUtils.includedConceptsOptions;
 			this.canAddConcepts = ko.pureComputed(() => this.includedConcepts() && this.includedConcepts().some(item => item.isSelected()));
 
 			this.ancestorsModalIsShown = ko.observable(false);
-      this.ancestors = ko.observableArray([]);
+			this.ancestors = ko.observableArray([]);
 			this.showAncestorsModal = conceptSetUtils.getAncestorsModalHandler({
 				conceptSetStore: this.conceptSetStore,
 				ancestors: this.ancestors,
 				ancestorsModalIsShown: this.ancestorsModalIsShown
 			});
+
+			this.includedDrawCallback = conceptSetUtils.getIncludedConceptSetDrawCallback(this.includedConceptsColumns, this.conceptSetStore);
 	
 		}
 

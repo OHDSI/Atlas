@@ -99,7 +99,7 @@ define([
 					title: 'Included Concepts',
 					key: ViewMode.INCLUDED,
 					componentName: 'conceptset-list-included',
-					componentParams: {...tabParams, loading: this.conceptSetStore.loadingIncluded},
+					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingIncluded() || this.loading()))},
 					hasBadge: true,
 				},
 				{

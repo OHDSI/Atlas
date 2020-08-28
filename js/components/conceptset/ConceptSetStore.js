@@ -143,10 +143,10 @@ define([
         await vocabularyService.loadDensity(response.data);
         this.includedConcepts((response.data || []).map(item => ({
           ...item,
-          ANCESTORS: [],
+          ANCESTORS: null,
           isSelected: ko.observable(false)
         })));
-        await utils.loadAndApplyAncestors(this.includedConcepts(),this);
+        //await utils.loadAndApplyAncestors(this.includedConcepts(),this);
       } catch (err) {
         console.error(err);
       } finally {
