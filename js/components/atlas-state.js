@@ -9,17 +9,27 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.currentView = ko.observable('loading');
 	state.loading = ko.observable(false);
 
+	const updateKey = (key, value) => value ? sessionStorage.setItem(key, value) : sessionStorage.removeItem(key);
 	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
 	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
 	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
-	state.vocabularyUrl.subscribe(value => sessionStorage.vocabularyUrl = value);
-	state.evidenceUrl.subscribe(value => sessionStorage.evidenceUrl = value);
-	state.resultsUrl.subscribe(value => sessionStorage.resultsUrl = value);
+	state.vocabularyUrl.subscribe(value => updateKey('vocabularyUrl', value));
+	state.evidenceUrl.subscribe(value => updateKey('evidenceUrl', value));
+	state.resultsUrl.subscribe(value => updateKey('resultsUrl', value));
+
+	// This default values are stored during initialization
+	// and used to reset after session finished
+	state.defaultVocabularyUrl = ko.observable();
+	state.defaultEvidenceUrl = ko.observable();
+	state.defaultResultsUrl = ko.observable();
+	state.defaultVocabularyUrl.subscribe((value) => state.vocabularyUrl(value));
+	state.defaultEvidenceUrl.subscribe((value) => state.evidenceUrl(value));
+	state.defaultResultsUrl.subscribe((value) => state.resultsUrl(value));
 
 	state.resetCurrentDataSourceScope = function() {
-		state.resultsUrl(null);
-		state.vocabularyUrl(null);
-		state.evidenceUrl(null);
+		state.vocabularyUrl(state.defaultVocabularyUrl());
+		state.evidenceUrl(state.defaultEvidenceUrl());
+		state.resultsUrl(state.defaultResultsUrl());
 	}
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
