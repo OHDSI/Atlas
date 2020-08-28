@@ -19,6 +19,16 @@ define([
 ) {
 
 	const {ViewMode} = constants;
+
+	// define a counter that can be 'frozen' from ConceptSetStore
+	const counter = () => {
+		var currentValue = 0;
+
+		const increment = () => currentValue++;
+		const value = () => currentValue;
+
+		return {increment, value};
+	}
 	
 	class ConceptSetStore extends AutoBind() {
 
@@ -70,7 +80,7 @@ define([
 			this.source = props.source || "unnamed";
 			this.title = props.title || "unnamed";
       
-      this.resolveCount = 0; // handle out of order resolves
+      this.resolveCount = counter(); // handle out of order resolves
 
 			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
 				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
@@ -92,11 +102,11 @@ define([
       this.clearIncluded();
       if (this.current()) {
         this.resolvingConceptSetExpression(true);
-        this.resolveCount++;
-        const currentResolve = this.resolveCount;
+        this.resolveCount.increment();
+        const currentResolve = this.resolveCount.value();
         const conceptSetExpression = this.current().expression;
         const identfiers = await vocabularyService.resolveConceptSetExpression(conceptSetExpression)
-        if (currentResolve != this.resolveCount) {
+        if (currentResolve != this.resolveCount.value()) {
           return Promise.reject(constants.RESOLVE_OUT_OF_ORDER);
         }
         this.conceptSetInclusionIdentifiers(identfiers);
@@ -166,7 +176,6 @@ define([
 		}
 
 		async exportConceptSet(prefixFields = {}) {
-			console.log('todo: export');
 
 			function formatBoolean (b) { return b ? "TRUE" : "FALSE"}
 
@@ -257,6 +266,8 @@ define([
 
 	Object.keys(constants.ConceptSetSources).forEach(k => {
 		registry[k] = new ConceptSetStore({source: k});
+		// freeze the object to prevent any changes to the observable references, which should not be changed.
+		Object.freeze(registry[k]);
 	});
 	
 	return ConceptSetStore;	
