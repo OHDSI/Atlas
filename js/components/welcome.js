@@ -44,10 +44,10 @@ define([
         self.isLoggedIn = authApi.isAuthenticated;
 			  self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
         self.runAsLogin = ko.observable();
-		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
+        self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
-                return ko.i18n('components.welcome.wait', 'Please wait...');
+                return ko.i18n('components.welcome.wait', 'Please wait...')();
             if (self.errorMsg())
                 return self.errorMsg();
             if (self.isLoggedIn()) {
