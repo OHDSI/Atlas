@@ -121,7 +121,9 @@ define([
                     error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
                 });
             } else {
-                document.location = loginUrl;
+                const parts = window.location.href.split('#');
+                const url = parts.length === 2 ? parts[1] : window.location.href;
+                document.location = loginUrl + '?redirectUrl=' + encodeURIComponent(url);
             }
          }
      };
