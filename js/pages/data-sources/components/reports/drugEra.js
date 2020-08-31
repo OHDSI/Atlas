@@ -21,6 +21,8 @@ define([
 			super(params);
 
 			this.name = 'Drug Era'; // header
+			
+			this.byLengthOfEra = true;
 		}
 
         get aggProperty() {
