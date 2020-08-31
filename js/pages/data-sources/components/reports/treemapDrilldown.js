@@ -44,6 +44,7 @@ define([
 			this.byValueAsConcept = false;
 			this.byOperator = false;
 			this.byQualifier = false;
+			this.byLengthOfEra = false;
 
 			// data
 			this.prevalenceByMonthData = ko.observable();
@@ -59,6 +60,7 @@ define([
 			this.upperLimitDistributionData = ko.observable();
 			this.recordsByUnitData = ko.observable();
 			this.valuesRelativeToNormData = ko.observable();
+			this.lengthOfEra = ko.observable();
 
 			this.commonBoxplotChartOptions = {
 				yMax: 0,
@@ -137,6 +139,10 @@ define([
 						bottom: 5
 					}
 				},
+				lengthOfEra: {
+					yLabel: 'Days',
+					yFormat: d3.format('d')
+				},
 			};
 
 			this.scrollTo = function (s) {
@@ -153,6 +159,7 @@ define([
 			this.byValueAsConcept = params.byValueAsConcept;
 			this.byOperator = params.byOperator;
 			this.byQualifier = params.byQualifier;
+			this.byLengthOfEra = params.byLengthOfEra;
 			this.context = params.context;
 			this.subscriptions.push(params.currentConcept.subscribe(this.loadData.bind(this)));
 			this.loadData(params.currentConcept());
@@ -160,6 +167,10 @@ define([
 
 		parseAgeData(rawAgeData) {
 			this.ageData(this.parseBoxplotData(rawAgeData).data);
+		}
+
+		parseLengthOfEra(rawLengthOfEra) {
+			this.lengthOfEra(this.parseBoxplotData(rawLengthOfEra).data);
 		}
 
 		parsePrevalenceByMonth(rawPrevalenceByMonth) {
@@ -285,6 +296,10 @@ define([
 
 			if (this.byOperator) {
 				this.prevalenceByOperatorData(this.parseDonutData(data.byOperator));
+			}
+
+			if (this.byLengthOfEra) {
+				this.parseLengthOfEra(data.lengthOfEra);
 			}
 
 			if (this.byUnit) {
