@@ -78,7 +78,7 @@ define([
 			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
-			this.fade = ko.observable(true);
+			this.fade = ko.observable(false);
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -342,18 +342,14 @@ define([
 				if (results > 0) {
 					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', nameElementId);
 				} else {
-					try{
-						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
-						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-						this.currentConceptSetDirtyFlag().reset();
-						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/expression');
-					} catch(e){
-						alert('Unable to save concept set');
-					}
+					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
+					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
+					this.loading(false);
+					this.isSaving(false);
+					commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/expression');
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to save a concept set.');
-			} finally {
 				this.loading(false);
 				this.isSaving(false);
 			}
@@ -375,10 +371,16 @@ define([
 			}
 		}
 
+		async save() {
+			await this.saveConceptSet(this.currentConceptSet(), '#txtConceptSetName');
+			this.currentConceptSetDirtyFlag().reset();
+		}
+
 		async copy() {
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
-			this.currentConceptSet.name(responseWithName.copyName);
+			this.currentConceptSet().name(responseWithName.copyName);
 			this.currentConceptSet().id = 0;
+			this.currentConceptSetDirtyFlag().reset();
 			this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
 		}
 
@@ -453,6 +455,8 @@ define([
 		}
 
 		async saveNewOptimizedConceptSet() {
+			this.optimizerSavingNew(false);
+			this.isOptimizeModalShown(false);
 			const conceptSet = {
 				id: 0,
 				name: this.optimizerSavingNewName(),
@@ -461,8 +465,6 @@ define([
 				}
 			};
 			await this.saveConceptSet(new ConceptSet(conceptSet), "#txtOptimizerSavingNewName");
-			this.optimizerSavingNew(false);
-			this.isOptimizeModalShown(false);
 		}
 
 		cancelSaveNewOptimizedConceptSet() {

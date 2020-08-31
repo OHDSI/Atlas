@@ -13,7 +13,7 @@
     <div class="input-group">
       <input class="form-control" id="txtConceptSetName" placeholder="New Concept Set" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }"/>
       <div class="input-group-btn">
-        <button type="button" class="btn btn-success" data-bind="click: () => saveConceptSet(currentConceptSet(), '#txtConceptSetName'), css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
+        <button type="button" class="btn btn-success" data-bind="click: save, css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() || isProcessing()}">
           <i class="fa fa-copy"></i>
