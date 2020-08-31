@@ -128,7 +128,7 @@ define([
     }
 
     navigateToSearchPage() {
-      sharedState.activeConceptSet(sharedState.repositoryConceptSet);
+      sharedState.activeConceptSet(this.conceptSetStore);
       commonUtils.routeTo('/search');
     }
 

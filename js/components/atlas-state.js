@@ -147,9 +147,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		}
 	});
 	
-	state.activeConceptSetSource = ko.observable();
 	state.activeConceptSet = ko.observable();
-	
-	
+
 	return state;
 });

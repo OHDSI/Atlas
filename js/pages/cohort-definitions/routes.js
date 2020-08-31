@@ -16,7 +16,8 @@ define(
         }),
         '/cohortdefinition/:cohortDefinitionId/conceptsets/:conceptSetId/:mode': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
           require([
-           'components/cohortbuilder/CohortDefinition',
+            'components/conceptset/ConceptSetStore',
+            'components/cohortbuilder/CohortDefinition',
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
@@ -24,10 +25,9 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-          ], function () {
+          ], function (ConceptSetStore) {
             sharedState.CohortDefinition.mode('conceptsets');
-            ///sharedState.ConceptSet.source(globalConstants.conceptSetSources.cohortDefinition);
-            sharedState.activeConceptSetSource(globalConstants.conceptSetSources.cohortDefinition);
+            sharedState.activeConceptSet(ConceptSetStore.cohortDefinition());
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
               mode: 'conceptsets',

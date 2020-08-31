@@ -12,6 +12,7 @@ define([
 	'services/Permission',
 	'components/security/access/const',
 	'conceptsetbuilder/InputTypes/ConceptSet',
+	'conceptsetbuilder/InputTypes/ConceptSetItem',
 	'atlas-state',
 	'services/ConceptSet',
 	'components/conceptset/ConceptSetStore',
@@ -53,6 +54,7 @@ define([
 	GlobalPermissionService,
 	{ entityType },
 	ConceptSet,
+	ConceptSetItem,
 	sharedState,
 	conceptSetService,
 	ConceptSetStore,
@@ -133,7 +135,7 @@ define([
 					return true;
 
 				if (this.currentConceptSetSource() == 'repository') {
-					return sharedState.repositoryConceptSet.current() && authApi.isPermittedDeleteConceptset(sharedState.repositoryConceptSet.current().id);
+					return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
 				} else {
 					return false;
 				}
@@ -155,9 +157,9 @@ define([
 				var returnVal = false;
 				if (this.optimalConceptSet() &&
 					this.optimalConceptSet().length > 0 &&
-					this.selectedConcepts() &&
-					this.selectedConcepts().length > 0) {
-					returnVal = this.optimalConceptSet().length != this.selectedConcepts().length;
+					this.currentConceptSet() && this.currentConceptSet().expression.items() &&
+					this.currentConceptSet().expression.items().length > 0) {
+					returnVal = this.optimalConceptSet().length != this.currentConceptSet().expression.items().length;
 				}
 				return returnVal;
 			});
@@ -183,7 +185,6 @@ define([
 				{
           title: 'Included Concepts',
           key: ViewMode.INCLUDED,
-          //componentName: 'included-conceptsets',
           componentName: 'conceptset-list-included',
           componentParams: { ...params, canEdit: this.canEdit,
 														currentConceptSet: this.conceptSetStore.current,
@@ -329,18 +330,17 @@ define([
 			this.conceptSetCaption.dispose();
 		}
 
-		async saveConceptSet() {
+		async saveConceptSet(conceptSet, nameElementId) {
 			this.isSaving(true);
 			this.loading(true);
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
-			const conceptSet = this.currentConceptSet();
 			const conceptSetItems = utils.toRepositoryConceptSetItems(conceptSet.expression.items());
 			try{
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
-					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', "#txtConceptSetName");
+					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', nameElementId);
 				} else {
 					try{
 						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
@@ -379,10 +379,10 @@ define([
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
 			this.currentConceptSet.name(responseWithName.copyName);
 			this.currentConceptSet().id = 0;
-			this.saveConceptSet();
+			this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
 		}
 
-		optimize() {
+		async optimize() {
 			this.isOptimizing(true);
 			this.activeUtility("optimize");
 			this.optimizeLoading(true);
@@ -390,38 +390,20 @@ define([
 			this.optimizerRemovedConceptSet(null);
 			this.isOptimizeModalShown(true);
 
-			let conceptSetItems = [];
+			let conceptSetItems = ko.toJS(this.conceptSetStore.current().expression);
 
-			for (var i = 0; i < this.selectedConcepts().length; i++) {
-				var item = this.selectedConcepts()[i];
-				conceptSetItems.push({
-					concept: item.concept,
-					isExcluded: +item.isExcluded(),
-					includeDescendants: +item.includeDescendants(),
-					includeMapped: +item.includeMapped(),
-				});
-			}
+			const optimizationResults = await vocabularyAPI.optimizeConceptSet(conceptSetItems)
 
-			conceptSetItems = {
-				items: conceptSetItems
-			}
+			var optimizedConcepts = (optimizationResults.optimizedConceptSet.items || []).map(item => new ConceptSetItem(item));
+			
+			var removedConcepts = optimizationResults.removedConceptSet.items || [];
 
-			vocabularyAPI.optimizeConceptSet(conceptSetItems)
-				.then((optimizationResults) => {
-					var optimizedConcepts = [];
-					optimizationResults.optimizedConceptSet.items.forEach((item) => {
-						optimizedConcepts.push(conceptSetService.enhanceConceptSetItem(item));
-					});
-					var removedConcepts = [];
-					optimizationResults.removedConceptSet.items.forEach((item) => {
-						removedConcepts.push(item);
-					});
-					this.optimalConceptSet(optimizedConcepts);
-					this.optimizerRemovedConceptSet(removedConcepts);
-					this.optimizeLoading(false);
-					this.activeUtility("");
-					this.isOptimizing(false);
-				});
+			this.optimalConceptSet(optimizedConcepts);
+			this.optimizerRemovedConceptSet(removedConcepts);
+			this.optimizeLoading(false);
+			this.activeUtility("");
+			this.isOptimizing(false);
+
 		}
 
 		delete() {
@@ -461,40 +443,24 @@ define([
 		}
 
 		async overwriteConceptSet() {
-			const newConceptSet = this.optimalConceptSet().map((item) => {
-				sharedState.repositoryConceptSet.selectedConceptsIndex[item.concept.CONCEPT_ID] = {
-					isExcluded: ko.observable(!!item.isExcluded),
-					includeDescendants: ko.observable(!!item.isExcluded),
-					includeMapped: ko.observable(!!item.includeMapped),
-				};
-				return item;
-			});
-			sharedState.repositoryConceptSet.selectedConcepts(newConceptSet);
+			this.currentConceptSet().expression.items(this.optimalConceptSet());
 			this.isOptimizeModalShown(false);
-			sharedState.repositoryConceptSet.includedConcepts.valueHasMutated();
-			sharedState.repositoryConceptSet.includedSourcecodes.valueHasMutated();
-			await conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
-			await conceptSetService.onCurrentConceptSetModeChanged({
-				mode: sharedState.currentConceptSetMode(),
-				source: globalConstants.conceptSetSources.repository,
-			});
 		}
 
 		copyOptimizedConceptSet () {
-			if (this.currentConceptSet() == undefined) {
-				this.optimizerSavingNewName(this.conceptSetName());
-			} else {
-				this.optimizerSavingNewName(this.currentConceptSet().name() + " - OPTIMIZED");
-			}
+			this.optimizerSavingNewName(this.currentConceptSet().name() + " - OPTIMIZED");
 			this.optimizerSavingNew(true);
 		}
 
-		saveNewOptimizedConceptSet() {
+		async saveNewOptimizedConceptSet() {
 			const conceptSet = {
 				id: 0,
-				name: this.optimizerSavingNewName,
+				name: this.optimizerSavingNewName(),
+				expression: {
+					items: ko.toJS(this.optimalConceptSet())
+				}
 			};
-			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, this.optimalConceptSet());
+			await this.saveConceptSet(new ConceptSet(conceptSet), "#txtOptimizerSavingNewName");
 			this.optimizerSavingNew(false);
 			this.isOptimizeModalShown(false);
 		}
