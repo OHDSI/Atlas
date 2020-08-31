@@ -52,9 +52,7 @@
 		<!-- ko if: byLengthOfEra -->
 		<div class="col-xs-6">
 			<div class="panel panel-primary">
-				<div class="panel-heading">
-					Length of Era Distribution
-				</div>
+				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.lengthOfEraDistribution', 'Length of Era Distribution')"></div>
 				<div class="panel-body">
 					<boxplot class="evidenceVisualization" params="data: lengthOfEra, format: chartFormats.lengthOfEra"></boxplot>
 				</div>

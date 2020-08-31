@@ -140,7 +140,7 @@ define([
 					}
 				},
 				lengthOfEra: {
-					yLabel: 'Days',
+					yLabel: ko.i18n('dataSources.dashboardReport.days', 'Days'),
 					yFormat: d3.format('d')
 				},
 			};
