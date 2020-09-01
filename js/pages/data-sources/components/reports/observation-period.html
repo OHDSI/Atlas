@@ -1,0 +1,101 @@
+<!-- ko if: !isLoading() -->
+<heading-title params="name: title"></heading-title>
+<div class="col-xs-12 col-md-8">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Age at First Observation
+		</div>
+		<div class="panel-body">
+			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-4">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Age by Gender
+		</div>
+		<div class="panel-body">
+			<boxplot class="evidenceVisualization" params="data: ageByGenderData, format: chartFormats.ageByGender"></boxplot>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-8">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Observation Length
+		</div>
+		<div class="panel-body">
+			<histogram class="evidenceVisualization" params="data: observationLengthData, format: chartFormats.observationLength"></histogram>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-4">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Duration By Gender
+		</div>
+		<div class="panel-body">
+			<boxplot class="evidenceVisualization" params="data: durationByGenderData, format: chartFormats.durationByGender"></boxplot>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-6">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Cumulative Observation
+		</div>
+		<div class="panel-body">
+			<atlasline class="evidenceVisualization" params="data: cumulativeObservationData, format: chartFormats.cumulativeObservation"></atlasline>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-6">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Duration By Age Decile
+		</div>
+		<div class="panel-body">
+			<boxplot class="evidenceVisualization" params="data: durationByAgeDecileData, format: chartFormats.durationByAgeDecile"></boxplot>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-8">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+            Persons With Continuous Observation By Year
+		</div>
+		<div class="panel-body">
+			<histogram class="evidenceVisualization" params="data: personsWithContinuousObservationsByYearData, format: chartFormats.personsWithContinuousObservationsByYear"></histogram>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-4">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Observation Periods per Person
+		</div>
+		<div class="panel-body">
+			<donut params="data: observationPeriodsPerPersonData"></donut>
+		</div>
+	</div>
+</div>
+
+<div class="col-xs-12 col-md-12">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			Persons With Continuous Observation By Month
+		</div>
+		<div class="panel-body">
+			<atlasline class="evidenceVisualization" params="data: personsWithContinuousObservationByMonthData, format: chartFormats.personsWithContinuousObservationByMonth"></atlasline>
+		</div>
+	</div>
+</div>
+<!--/ko-->
