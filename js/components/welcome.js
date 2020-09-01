@@ -122,8 +122,7 @@ define([
                 });
             } else {
                 const parts = window.location.href.split('#');
-                const url = parts.length === 2 ? parts[1] : window.location.href;
-                document.location = loginUrl + '?redirectUrl=' + encodeURIComponent(url);
+                document.location = parts.length === 2 ? loginUrl + '?redirectUrl=' + parts[1] : loginUrl;
             }
          }
      };
