@@ -54,7 +54,7 @@ function (
 			];
 			// Entities use different methods of initialization
 			if (params.checkOnInit) {
-				this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
+				this.subscriptions.push(this.current.subscribe((current) => !!current && this.runDiagnostics()));
 			} else {
 				this.runDiagnostics();
 			}
