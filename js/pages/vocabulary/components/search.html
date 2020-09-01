@@ -43,9 +43,12 @@
 					element: 'input',
 					extra: 'form-control'
 				}),
-				" />
+				disable: loading()" />
 			<div class="input-group-btn">
-				<button class="pull-right btn btn-primary" title="Search" type="submit"><i class="fa fa-search"></i></button>
+				<button class="pull-right btn btn-primary" title="Search" type="submit"
+					data-bind="disable: loading()">
+					<i class="fa fa-search"></i>
+				</button>
 			</div>
 		</div>
 	</form>
