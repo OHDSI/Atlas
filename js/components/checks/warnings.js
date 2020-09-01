@@ -54,7 +54,7 @@ function (
 			];
 			// Entities use different methods of initialization
 			if (params.checkOnInit) {
-				this.subscriptions.push(this.current.subscribe((current) => !!current && this.runDiagnostics()));
+				this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
 			} else {
 				this.runDiagnostics();
 			}
@@ -75,21 +75,19 @@ function (
 		}
 
 		async runDiagnostics() {
-			if (this.diagnoseCallback) {
-				try {
-					this.isDiagnosticsRunning(true);
-					const data = await this.diagnoseCallback();
-					this.showWarnings(data);
-				} catch (err) {
-					console.error(err);
-					this.removeWarnings();
-				} finally {
-					setTimeout(() => {
-						this.isDiagnosticsRunning(false);
-						this.isInitialLoading() && this.isInitialLoading(false);
-					}, 300); // To prevent badge loader blinking on fast requests
-					
-				}
+			try {
+				this.isDiagnosticsRunning(true);
+				const data = await this.diagnoseCallback();
+				data && this.showWarnings(data);
+			} catch (err) {
+				console.error(err);
+				this.removeWarnings();
+			} finally {
+				setTimeout(() => {
+					this.isDiagnosticsRunning(false);
+					this.isInitialLoading() && this.isInitialLoading(false);
+				}, 300); // To prevent badge loader blinking on fast requests
+				
 			}
 		}
 	}
