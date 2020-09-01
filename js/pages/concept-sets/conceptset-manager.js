@@ -71,6 +71,7 @@ define([
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(true);
+			this.hasEvidence = this.getCurrentSource().hasEvidence;
 
       // switches default name according to current locale
 			sharedState.localeSettings.subscribe((localeSettings) => {
@@ -214,6 +215,11 @@ define([
 						},
 				}
 			];
+
+			if (!this.hasEvidence) {
+				this.tabs = this.tabs.filter(tab => tab.componentName !== 'explore-evidence');
+			}
+
 			this.selectedTab = ko.observable(this.routerParams.mode);
 
 			this.activeUtility = ko.observable("");
@@ -255,7 +261,7 @@ define([
 				d,
 				field,
 			);
-    }
+    	}
 
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
@@ -498,6 +504,13 @@ define([
 						modifiedDate,
 				}
 		}
+
+		getCurrentSource() {
+			const currentSource = sharedState.sources()
+				.find(source => source.sourceKey === sharedState.sourceKeyOfVocabUrl());
+			return currentSource;
+		}
+
 	}
 	return commonUtils.build('conceptset-manager', ConceptsetManager, view);
 });
