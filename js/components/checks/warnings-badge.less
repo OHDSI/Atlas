@@ -1,16 +1,15 @@
 .warnings-badge {
-  span.warning-alarm {
-    background-color: #ff001a;
-    color: #e3e3e3;
-  }
-
-  span.warning-info {
-    background-color: #337ab7;
-    color: #e3e3e3;
-  }
-
-  span.warning-warn {
-    background-color: #d82;
-    color: #e3e3e3;
-  }
+	display: inline-block;
+	span {
+		color: #e3e3e3;
+		&.warning-alarm {
+			background-color: #ff001a;
+		}
+		&.warning-info {
+			background-color: #337ab7;
+		}
+		&.warning-warn {
+			background-color: #d82;
+		}
+	}
 }
