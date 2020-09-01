@@ -103,7 +103,7 @@ define([
 					component: "report-achilles-heel",
 				},
 				{
-					name: "Observation Period",
+					name: ko.i18n('dataSources.reports.observationPeriod', 'Observation Period'),
 					path: "observationPeriod",
 					component: "report-observation-period"
 				}

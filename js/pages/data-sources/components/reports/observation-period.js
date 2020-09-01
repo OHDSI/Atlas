@@ -31,26 +31,26 @@ define([
 
             this.chartFormats = {
                 ageAtFirstObservation: {
-                    xLabel: "Age",
-                    yLabel: "People",
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.age', 'Age'),
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.people', 'People'),
                     xFormat: d3.format("d"),
                     yFormat: d3.format(",.1s"),
                 },
                 ageByGender: {
-                    yLabel: "Age",
-                    xLabel: "Gender",
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.age', 'Age'),
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.gender', 'Gender'),
                     yFormat: d3.format(",.1s"),
                     valueFormatter: d3.format("d"),
                 },
                 observationLength: {
-                    xLabel: "Days",
-                    yLabel: "People",
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.days', 'Days'),
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.people', 'People'),
                     xFormat: (d) => this.formatToFixed(d),
                     yFormat: d3.format(",.1s"),
                 },
                 durationByGender: {
-                    yLabel: "Days",
-                    xLabel: "Gender",
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.days', 'Days'),
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.gender', 'Gender'),
                     yFormat: (d) => this.formatToFixed(d),
                     valueFormatter: d3.format("d"),
                 },
@@ -58,18 +58,18 @@ define([
                     yFormat: d3.format("0.0%"),
                     xFormat: (d) => this.formatToFixed(d),
                     interpolate: new atlascharts.line().interpolation.curveStepBefore,
-                    xLabel: "Days",
-                    yLabel: "Percent of Population",
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.days', 'Days'),
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.percentOfPopulation', 'Percent of Population'),
                 },
                 durationByAgeDecile: {
-                    yLabel: "Days",
-                    xLabel: "Age Decile",
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.days', 'Days'),
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.ageDecile', 'Age Decile'),
                     yFormat: (d) => this.formatToFixed(d),
                     valueFormatter: d3.format("d"),
                 },
                 personsWithContinuousObservationsByYear: {
-                    xLabel: "Years",
-                    yLabel: "People",
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.years', 'Years'),
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.people', 'People'),
                     xFormat: d3.format("d"),
                     yFormat: d3.format(",.1s"),
                 },
@@ -77,8 +77,8 @@ define([
                     xScale: null,
                     xFormat: d3.timeFormat("%m/%Y"),
                     tickFormat: d3.timeFormat("%Y"),
-                    xLabel: "Date",
-                    yLabel: "People",
+                    xLabel: ko.i18n('dataSources.observationPeriodReport.date', 'Date'),
+                    yLabel: ko.i18n('dataSources.observationPeriodReport.people', 'People'),
                     yFormat: d3.format(",.1s"),
                     getTooltipBuilder: (options) => (d) => {
                         const format = d3.format(",.4s");
@@ -137,7 +137,7 @@ define([
                         d.x = d.x / 365.25;
                         d.dx = d.dx / 365.25;
                     });
-                    this.chartFormats.observationLength.xLabel = "Years";
+                    this.chartFormats.observationLength.xLabel = ko.i18n('dataSources.observationPeriodReport.years', 'Years');
                 }
                 this.observationLengthData(observationLengthData);
             }
@@ -165,7 +165,7 @@ define([
                     cumulativeData.forEach((d) => {
                         d.xValue = d.xValue / 365.25;
                     });
-                    this.chartFormats.cumulativeObservation.xLabel = "Years";
+                    this.chartFormats.cumulativeObservation.xLabel = ko.i18n('dataSources.observationPeriodReport.years', 'Years');
                 }
 
                 this.cumulativeObservationData(cumulativeData);
@@ -267,7 +267,7 @@ define([
                     d.UIF = d.UIF / 365.25;
                     d.max = d.max / 365.25;
                 });
-                this.chartFormats[chartFormatKey].yLabel = "Years";
+                this.chartFormats[chartFormatKey].yLabel = ko.i18n('dataSources.observationPeriodReport.years', 'Years');
             }
         }
 
