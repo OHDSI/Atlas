@@ -123,7 +123,8 @@ define([
                     error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.loginFailed', 'Login failed')()),
                 });
             } else {
-                document.location = loginUrl;
+                const parts = window.location.href.split('#');
+                document.location = parts.length === 2 ? loginUrl + '?redirectUrl=' + parts[1] : loginUrl;
             }
          }
      };
