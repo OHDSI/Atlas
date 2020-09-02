@@ -180,7 +180,8 @@ define([
           componentName: 'conceptset-expression',
           componentParams: { ...params, 
                             canEditCurrentConceptSet: this.canEdit, 
-                            conceptSetStore: this.conceptSetStore},
+														conceptSetStore: this.conceptSetStore,
+													},
 				},
 				{
           title: 'Included Concepts',
@@ -190,6 +191,7 @@ define([
 														currentConceptSet: this.conceptSetStore.current,
                             conceptSetStore: this.conceptSetStore,
                             loading: this.conceptSetStore.loadingIncluded,
+														activeConceptSet: ko.observable(this.conceptSetStore),
                            },
           hasBadge: true,
 				},
@@ -200,7 +202,8 @@ define([
           componentParams:  { ...params, canEdit: this.canEdit,
 														 conceptSetStore: this.conceptSetStore,
 														 loading: this.conceptSetStore.loadingSourceCodes},
-				},
+														 activeConceptSet: ko.observable(this.conceptSetStore),
+														},
 				{
           title: 'Explore Evidence',
           key: ViewMode.EXPLORE,
@@ -225,6 +228,7 @@ define([
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
 						loadConceptSet: this.loadConceptSet,
+						activeConceptSet: ko.observable(this.conceptSetStore),
 					},
 				},
 				{

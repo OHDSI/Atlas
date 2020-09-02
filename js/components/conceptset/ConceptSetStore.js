@@ -61,7 +61,7 @@ define([
 			// the included concetepts (from loadIncluded)
 			this.includedConcepts = ko.observableArray([]);
 			this.includedConceptsMap = ko.pureComputed(
-				() => this.includedConcepts()
+				() => this.includedConcepts() && this.includedConcepts()
 					.reduce((result, item) => {
 						result[item.CONCEPT_ID] = item;
           	return result;
@@ -95,7 +95,9 @@ define([
     
     clearIncluded() {
       ['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
-        .forEach(key => this[key](null));	
+				.forEach(key => this[key](null));	
+			['loadingIncluded', 'loadingSourceCodes']
+				.forEach(key => this[key](true));
     }
     
     async resolveConceptSetExpression() {

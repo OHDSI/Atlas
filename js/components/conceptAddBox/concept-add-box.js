@@ -23,7 +23,7 @@ define([
   class ConceptAddBox extends Component {
     constructor(params) {
       super(params);
-      this.activeConceptSet = sharedState.activeConceptSet;
+      this.activeConceptSet = params.activeConceptSet || sharedState.activeConceptSet;
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
       this.canSelectSource = params.canSelectSource || false;
@@ -42,7 +42,7 @@ define([
       };
       this.buttonText = ko.pureComputed(() => {
         if (this.activeConceptSet() && this.activeConceptSet().current()) {
-          return `Add To Concept Set (${this.conceptSetType[this.activeConceptSet().source]})`;
+          return `Add To Concept Set`;
         }
         return 'Add To New Concept Set';
       })

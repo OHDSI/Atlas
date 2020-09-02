@@ -12,6 +12,7 @@ define([
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
 	'services/Vocabulary',
+	'components/conceptset/ConceptSetStore',
 	'const',
 	'components/tabs',
 	'components/panel',
@@ -34,6 +35,7 @@ define([
 	constants,
 	commonUtils,
 	vocabularyProvider,
+	ConceptSetStore,
 	globalConstants,
 ) {
 	class Search extends AutoBind(Component) {

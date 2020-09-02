@@ -35,7 +35,7 @@ define([
 		}
 
 		addConcepts = (options) => {
-			this.loading(true);
+			this.conceptSetStore.loadingSourceCodes(true);
 			const concepts = commonUtils.getSelectedConcepts(this.includedSourcecodes);
 			const items = commonUtils.buildConceptSetItems(concepts, options);			
 			conceptSetUtils.addItemsToConceptSet({

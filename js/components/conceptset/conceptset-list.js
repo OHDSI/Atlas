@@ -83,6 +83,7 @@ define([
 			const tabParams = {
 				...params,
 				conceptSetStore: this.conceptSetStore,
+				activeConceptSet: ko.observable(this.conceptSetStore), // addConceptBox expectes an observable for activeConceptSet
 				currentConceptSet: this.conceptSetStore.current,
 				loadConceptSet: this.loadConceptSet,
 				importing: this.importing,
@@ -106,7 +107,7 @@ define([
 					title: 'Included Source Codes',
 					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
-					componentParams: {...tabParams, loading: this.conceptSetStore.loadingSourceCodes}
+					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingSourceCodes() || this.loading()))}
 				},
 				{
 					title: 'Export',
