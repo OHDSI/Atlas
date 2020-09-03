@@ -424,7 +424,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
                                     JobPollService.isJobListMutated(true);
                                 }
 								source.status(info.status);
-								source.includeFeatures(info.includeFeatures);
 								source.isValid(info.isValid);
 								source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
 								source.createdBy(info.createdBy ? info.createdBy.login : null);
@@ -794,14 +793,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return sharedState.sources().find(source => source.sourceKey === sourceKey).sourceId;
 			}
 
-			generateCohort (source, includeFeatures) {
+			generateCohort (source) {
 				this.stopping()[source.sourceKey](false);
 				this.getSourceKeyInfo(source.sourceKey).status('PENDING');
 				this.getSourceKeyInfo(source.sourceKey).createdBy(authApi.subject());
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.toggleCohortReport(null);
 				}
-				cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey, includeFeatures)
+				cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey)
 					.catch(this.authApi.handleAccessDenied)
 					.then(({data}) => {
 						jobDetailsService.createJob(data);
@@ -1095,7 +1094,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					} else {
 						cdsi.recordCount = ko.observable('...');
 					}
-					cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 					cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 					cdsi.createdBy = ko.observable(sourceInfo.createdBy);
 				} else {
@@ -1106,7 +1104,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					cdsi.executionDuration = ko.observable('n/a');
 					cdsi.personCount = ko.observable('n/a');
 					cdsi.recordCount = ko.observable('n/a');
-					cdsi.includeFeatures = ko.observable(false);
 					cdsi.failMessage = ko.observable(null);
 					cdsi.createdBy = ko.observable(null);
 				}
