@@ -37,6 +37,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'faceted-datatable',
 	'databindings/expressionCartoonBinding',
 	'components/checks/warnings',
+	'components/checks/warnings-badge',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
@@ -303,6 +304,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
+
 			this.warningParams = ko.observable({
 				current: sharedState.CohortDefinition.current,
 				warningsTotal: ko.observable(0),
@@ -310,21 +313,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 				onFixCallback: this.fixConceptSet,
-			});
-
-			this.warningClass = ko.computed(() => {
-				if (this.warningParams().warningsTotal() > 0){
-					if (this.warningParams().criticalCount() > 0) {
-						return 'badge warning-alarm';
-					} else if (this.warningParams().warningCount() > 0) {
-						return 'badge warning-warn';
-					} else {
-						return 'badge warning-info';
-					}
-				}
-				return 'badge';
 			});
 
 			this.modifiedJSON = "";

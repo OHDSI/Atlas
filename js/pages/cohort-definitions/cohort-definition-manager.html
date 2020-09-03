@@ -54,8 +54,10 @@
 				<a>Export</a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
-				<a>Messages <span 
-					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+				<a>
+					Messages
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --> <!-- /ko -->
+				</a>
 			</li>
 		</ul>
 		<div class="tab-content">
