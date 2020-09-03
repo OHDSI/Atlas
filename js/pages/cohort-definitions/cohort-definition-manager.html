@@ -309,7 +309,7 @@
 										<button class="btn btn-sm btn-primary"
 												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																		visible: !$component.isSourceRunning($data),
-																		click: (data, event) => $component.generateCohort(data, false)">
+																		click: (data, event) => $component.generateCohort(data)">
 												<i class="fa fa-play"></i>&nbsp;Generate
 										</button>
 									</span>

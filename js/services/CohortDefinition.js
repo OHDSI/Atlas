@@ -102,12 +102,8 @@ define(function (require, exports) {
 	}
 
 
-	function generate(cohortDefinitionId, sourceKey, includeFeatures) {
-		var route = config.webAPIRoot + 'cohortdefinition/' + cohortDefinitionId + '/generate/' + sourceKey;
-		if (includeFeatures) {
-			route = `${route}?includeFeatures`;
-		}
-		return httpService.doGet(route);
+	function generate(cohortDefinitionId, sourceKey) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/generate/${sourceKey}`);
 	}
 
 
