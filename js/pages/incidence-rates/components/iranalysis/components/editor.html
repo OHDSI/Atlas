@@ -110,7 +110,7 @@
 									<tr data-bind="click: $component.selectStrataRule, css: { selectedInclusion: $data == $component.selectedStrataRule() }">
 										<td style="width:20px; text-align: right; vertical-align: top;" data-bind="text: ($index() + 1) + '.'">
 										</td>
-										<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : ko.i18n('components.inclusionRuleEditor.unnamedCriteria', 'Unnamed Criteria')"></td>
+										<td style="vertical-align: top;" class="inclusionRules" data-bind="text: ((name() || '').length > 0) ? name() : $component.defaultStratifyRuleName"></td>
 									</tr>
 								</tbody>
 							</table>
