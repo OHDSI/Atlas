@@ -453,9 +453,8 @@ define([
         ko.toJS(inclusionRule),
         self.expression().ConceptSets
       );
-      var copyOfTranslate = ko.unwrap(ko.i18n('components.cohortExpressionEditor.copyOf', 'Copy of: '));
       var name = copiedRule.name() || ko.unwrap(ko.i18n('components.cohortExpressionEditor.unnamedCriteria', 'Unnamed Criteria'))
-      copiedRule.name(copyOfTranslate + name);
+      copiedRule.name(ko.i18nformat('common.copyOf', 'Copy of <%=name%>', {name: name})());
       self.expression().InclusionRules.push(copiedRule);
       self.selectedInclusionRule(copiedRule);
     };

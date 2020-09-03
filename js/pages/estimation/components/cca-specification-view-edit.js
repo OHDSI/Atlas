@@ -67,7 +67,7 @@ define([
 				this.deleteFromTable(this.cohortMethodAnalysisList, obj, rowIndex);
 			} else if (
 				obj.target.className.indexOf("btn-copy") >= 0 ||
-				obj.target.className.indexOf("fa-clone") >= 0
+				obj.target.parentElement.className.indexOf("btn-copy") >= 0
 			) {
 				this.copyAnalysisSettings(obj, rowIndex);
 			} else {
@@ -100,7 +100,7 @@ define([
 		copyAnalysisSettings(obj, index) {
 			const newAnalysis = ko.toJS(this.cohortMethodAnalysisList()[index]);
 			newAnalysis.analysisId = this.cohortMethodAnalysisList().length + 1;
-			newAnalysis.description = "COPY OF " + newAnalysis.description;
+			newAnalysis.description = ko.i18nformat('common.copyOf', 'Copy of <%=name%>', {name: newAnalysis.description})();
 			this.cohortMethodAnalysisList.push(new CohortMethodAnalysis(newAnalysis));
 		}
 

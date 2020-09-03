@@ -35,7 +35,7 @@ define([
 			this.selectedStrataRule = ko.observable();
 			this.selectedStrataRuleIndex = null;
 			this.isEditable = params.isEditable;
-			this.defaultStratifyRuleName = 'Unnamed criteria';
+			this.defaultStratifyRuleName = ko.i18n('components.inclusionRuleEditor.unnamedCriteria', 'Unnamed Criteria');
 
 			this.fieldOptions = [
 				{
@@ -85,8 +85,8 @@ define([
 
 		copyStrataRule(rule) {
 				const copiedRule = new StratifyRule(ko.toJS(rule), this.analysis().ConceptSets);
-				const name = copiedRule.name() || this.defaultStratifyRuleName;
-				copiedRule.name(`Copy of: ${name}`);
+				const name = copiedRule.name() || this.defaultStratifyRuleName();
+				copiedRule.name(ko.i18nformat('common.copyOf', 'Copy of <%=name%>', {name: name})());
 				this.analysis().strata.push(copiedRule);
 				this.selectStrataRule(copiedRule);
 		};
