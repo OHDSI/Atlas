@@ -142,6 +142,7 @@ define([
 			this.selectedSourceId = ko.observable(router.routerParams().sourceId);
 
 			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
 
 			const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty()
 				&& config.api.isExecutionEngineAvailable()
@@ -188,6 +189,7 @@ define([
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 				checkOnInit: true,
 			});

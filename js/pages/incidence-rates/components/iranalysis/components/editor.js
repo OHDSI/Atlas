@@ -24,7 +24,7 @@ define([
 ) {
 	class IRAnalysisEditorModel extends AutoBind(Component) {
 		constructor(params) {
-			super(params);					
+			super(params);
 			this.options = options;
 			
 			this.analysis = params.analysis;
@@ -35,6 +35,7 @@ define([
 			this.selectedStrataRule = ko.observable();
 			this.selectedStrataRuleIndex = null;
 			this.isEditable = params.isEditable;
+			this.defaultStratifyRuleName = 'Unnamed criteria';
 
 			this.fieldOptions = [{id: 'StartDate', name: 'start date'}, {id: 'EndDate', name: 'end date'}];
 			// Subscriptions
@@ -74,27 +75,28 @@ define([
 		};
 
 		copyStrataRule(rule) {
-				var copiedRule = new StratifyRule(ko.toJS(rule), this.analysis().ConceptSets);
-				copiedRule.name("Copy of: " + copiedRule.name());
+				const copiedRule = new StratifyRule(ko.toJS(rule), this.analysis().ConceptSets);
+				const name = copiedRule.name() || this.defaultStratifyRuleName;
+				copiedRule.name(`Copy of: ${name}`);
 				this.analysis().strata.push(copiedRule);
-				this.selectedStrataRule(copiedRule);
+				this.selectStrataRule(copiedRule);
 		};
 		
 		deleteStrataRule(rule) {
 			this.selectedStrataRule(null);
+			this.selectedStrataRuleIndex = null;
 			this.analysis().strata.remove(rule);
 		};
 	
 		selectStrataRule(rule) {
 			this.selectedStrataRule(rule);	
 			this.selectedStrataRuleIndex = this.analysis().strata().indexOf(rule);
-			console.log("Selected Index: " + this.selectedStrataRuleIndex);
 		};
 				
 		addStrataRule() {
-			var newStratifyRule = new StratifyRule(null, this.analysis().ConceptSets);
+			const newStratifyRule = new StratifyRule(null, this.analysis().ConceptSets);
 			this.analysis().strata.push(newStratifyRule);
-			this.selectedStrataRule(newStratifyRule);			
+			this.selectStrataRule(newStratifyRule);
 		};
 		
 		dispose() {

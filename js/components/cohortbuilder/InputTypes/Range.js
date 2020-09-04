@@ -1,4 +1,4 @@
-define(['knockout', 'moment'], function (ko) {
+define(['knockout', 'moment'], function (ko, moment) {
 	var debug = false;
 
 	function Range(data) {
