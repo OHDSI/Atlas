@@ -82,6 +82,8 @@ define([
 
 			this.selectedTabKey = ko.observable("design");
 			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
+
 			this.componentParams = ko.observable({
 				design: this.design,
 				analysisId: this.analysisId,
@@ -98,6 +100,7 @@ define([
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 			this.pathwayCaption = ko.computed(() => {

@@ -43,8 +43,10 @@
 				<a data-bind="text: ko.i18n('ir.tabs.utilities', 'Utilities')"></a>
             </li>
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
-				<a><span data-bind="text: ko.i18n('ir.tabs.messages', 'Messages')"></span> <span
-					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+				<a>
+					<span data-bind="text: ko.i18n('ir.tabs.messages', 'Messages')"></span>
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --><!-- /ko -->
+				</a>
 			</li>
 		</ul>
 		<div class="tab-content">

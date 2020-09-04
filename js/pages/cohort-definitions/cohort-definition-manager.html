@@ -75,8 +75,10 @@
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
-				<a><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages')"></span> <span
-					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+				<a>
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages')"></span>
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --> <!-- /ko -->
+				</a>
 			</li>
 		</ul>
 		<div class="tab-content">
@@ -495,9 +497,8 @@
 										<button class="btn btn-sm btn-primary"
 												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																		visible: !$component.isSourceRunning($data),
-																		click: (data, event) => $component.generateCohort(data, false)">
-											<i class="fa fa-play"></i>&nbsp;
-											<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generate', 'Generate')"></span>
+																		click: (data, event) => $component.generateCohort(data)">
+												<i class="fa fa-play"></i>&nbsp;<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generate', 'Generate')"></span>
 										</button>
 									</span>
 								</span>

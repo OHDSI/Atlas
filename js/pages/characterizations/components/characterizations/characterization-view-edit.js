@@ -91,6 +91,8 @@ define([
 
             this.selectedTabKey = ko.observable();
             this.criticalCount = ko.observable(0);
+            this.isDiagnosticsRunning = ko.observable(false);
+            
             this.componentParams = ko.observable({
                 ...params,
                 characterizationId: this.characterizationId,
@@ -110,6 +112,7 @@ define([
                 infoCount: ko.observable(0),
                 criticalCount: this.criticalCount,
                 changeFlag: ko.pureComputed(() => this.designDirtyFlag().isChanged()),
+                isDiagnosticsRunning: this.isDiagnosticsRunning,
                 onDiagnoseCallback: this.diagnose.bind(this),
             });
             this.characterizationCaption = ko.computed(() => {

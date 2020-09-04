@@ -37,6 +37,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'faceted-datatable',
 	'databindings/expressionCartoonBinding',
 	'components/checks/warnings',
+	'components/checks/warnings-badge',
 	'conceptset-modal',
 	'css!./cohort-definition-manager.css',
 	'assets/ohdsi.util',
@@ -302,6 +303,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
+
 			this.warningParams = ko.observable({
 				current: sharedState.CohortDefinition.current,
 				warningsTotal: ko.observable(0),
@@ -309,21 +312,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 				onFixCallback: this.fixConceptSet,
-			});
-
-			this.warningClass = ko.computed(() => {
-				if (this.warningParams().warningsTotal() > 0){
-					if (this.warningParams().criticalCount() > 0) {
-						return 'badge warning-alarm';
-					} else if (this.warningParams().warningCount() > 0) {
-						return 'badge warning-warn';
-					} else {
-						return 'badge warning-info';
-					}
-				}
-				return 'badge';
 			});
 
 			this.modifiedJSON = "";
@@ -432,7 +423,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
                                     JobPollService.isJobListMutated(true);
                                 }
 								source.status(info.status);
-								source.includeFeatures(info.includeFeatures);
 								source.isValid(info.isValid);
 								source.startTime(momentApi.formatDateTime(new Date(info.startTime)));
 								source.createdBy(info.createdBy ? info.createdBy.login : null);
@@ -804,14 +794,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return sharedState.sources().find(source => source.sourceKey === sourceKey).sourceId;
 			}
 
-			generateCohort (source, includeFeatures) {
+			generateCohort (source) {
 				this.stopping()[source.sourceKey](false);
 				this.getSourceKeyInfo(source.sourceKey).status('PENDING');
 				this.getSourceKeyInfo(source.sourceKey).createdBy(authApi.subject());
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.toggleCohortReport(null);
 				}
-				cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey, includeFeatures)
+				cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey)
 					.catch(this.authApi.handleAccessDenied)
 					.then(({data}) => {
 						jobDetailsService.createJob(data);
@@ -1105,7 +1095,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					} else {
 						cdsi.recordCount = ko.observable('...');
 					}
-					cdsi.includeFeatures = ko.observable(sourceInfo.includeFeatures);
 					cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 					cdsi.createdBy = ko.observable(sourceInfo.createdBy);
 				} else {
@@ -1116,7 +1105,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					cdsi.executionDuration = ko.observable('n/a');
 					cdsi.personCount = ko.observable('n/a');
 					cdsi.recordCount = ko.observable('n/a');
-					cdsi.includeFeatures = ko.observable(false);
 					cdsi.failMessage = ko.observable(null);
 					cdsi.createdBy = ko.observable(null);
 				}
