@@ -7,16 +7,18 @@ define([
 	'utils/CommonUtils',
 	'atlas-state',
 	'services/ConceptSet',
+	'./utils',
 	'conceptsetbuilder/InputTypes/ConceptSet',
-	'./consts',
+	'./const',
 	'utils/ExceptionUtils',
+	'const',
 	'components/tabs',
-	'./conceptset-list/expression',
-	'./conceptset-list/included',
-	'./conceptset-list/included-badge',
-	'./conceptset-list/included-sourcecodes',
-	'./conceptset-list/export',
-	'./conceptset-list/import',
+	'./expression',
+	'./included',
+	'./included-badge',
+	'./included-sourcecodes',
+	'./export',
+	'./import',
 	'less!./conceptset-list.less',
 ], function(
 	ko,
@@ -27,25 +29,26 @@ define([
 	commonUtils,
 	sharedState,
 	conceptSetService,
+	conceptSetUtils,
 	ConceptSet,
-	{ ConceptSetTabKeys },
+	constants,
 	exceptionUtils,
+	globalConstants
 ) {
 
+	const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+	
 	class ConceptSetList extends AutoBind(Component) {
 
 		constructor(params) {
 			super(params);
 			this.conceptSets = params.conceptSets;
 			this.exportCSV = typeof params.exportCSV !== 'undefined' ? params.exportCSV : true;
-			this.currentConceptSetSource = params.conceptSetSource;
-			this.conceptSetStoreKey = `${this.currentConceptSetSource}ConceptSet`;
+			this.conceptSetStore = params.conceptSetStore;
 			this.canEdit = params.canEdit || (() => false);
 			this.exportConceptSets = params.exportConceptSets || (() => false);
-			this.currentConceptSet = sharedState[this.conceptSetStoreKey].current;
-			this.selectedConcepts = sharedState[this.conceptSetStoreKey].selectedConcepts;
+			this.currentConceptSet = this.conceptSetStore.current;
 			this.showImportConceptSetModal = ko.observable();
-			this.includedHash = sharedState[this.conceptSetStoreKey].includedHash;
 			this.exporting = ko.observable();
 			this.importing = ko.observable();
 			this.disableConceptSetExport = ko.observable(); //TODO implement export
@@ -76,54 +79,77 @@ define([
 					toggleable: false,
 				},
 			};
-			this.selectedTabKey = ko.observable(ConceptSetTabKeys.EXPRESSION);
+			this.selectedTabKey = ko.observable(ViewMode.EXPRESSION);
 			const tabParams = {
 				...params,
-				conceptSetListTableApi: this.tableApi,
-				currentConceptSet: this.currentConceptSet,
-				currentConceptSetSource: this.currentConceptSetSource,
-				selectedConcepts: this.selectedConcepts,
+				conceptSetStore: this.conceptSetStore,
+				activeConceptSet: ko.observable(this.conceptSetStore), // addConceptBox expectes an observable for activeConceptSet
+				currentConceptSet: this.conceptSetStore.current,
 				loadConceptSet: this.loadConceptSet,
-				loading: this.loading,
 				importing: this.importing,
 				selectedTabKey: this.selectedTabKey,
 			};
 			this.tabs = [
 				{
 					title: 'Concept Set Expression',
-					key: ConceptSetTabKeys.EXPRESSION,
+					key: ViewMode.EXPRESSION,
 					componentName: 'conceptset-list-expression',
-					componentParams: tabParams,
+					componentParams: {...tabParams, onClose: this.closeConceptSet, onDelete: this.deleteConceptSet, loading: this.loading}
 				},
 				{
 					title: 'Included Concepts',
-					key: ConceptSetTabKeys.INCLUDED,
+					key: ViewMode.INCLUDED,
 					componentName: 'conceptset-list-included',
-					componentParams: tabParams,
+					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingIncluded() || this.loading()))},
 					hasBadge: true,
 				},
 				{
 					title: 'Included Source Codes',
-					key: ConceptSetTabKeys.SOURCECODES,
+					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
-					componentParams: tabParams,
+					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingSourceCodes() || this.loading()))}
 				},
 				{
 					title: 'Export',
-					key: ConceptSetTabKeys.EXPORT,
+					key: ViewMode.EXPORT,
 					componentName: 'conceptset-list-export',
 					componentParams: tabParams,
 				},
 				{
 					title: 'Import',
-					key: ConceptSetTabKeys.IMPORT,
+					key: ViewMode.IMPORT,
 					componentName: 'conceptset-list-import',
 					componentParams: tabParams,
 				}
 			];
+			
+			// watch for the tableApi beign published back
 			this.subscriptions.push(this.tableApi.subscribe(() => {
-				this.currentConceptSet() && this.markConceptSetSelected(this.currentConceptSet());
+				this.currentConceptSet() && this.markConceptSetSelected(this.conceptSetStore.current());
 			}));
+			
+			// watch for any change to expression items (observer has a delay)
+			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				try {
+					await this.conceptSetStore.resolveConceptSetExpression();
+					await this.conceptSetStore.refresh(this.selectedTabKey());
+				} catch (err) {
+					if (err != RESOLVE_OUT_OF_ORER)
+						console.info(err);
+					else
+						throw(err);
+				}
+			}));
+
+			// initially resolve the concept set
+			this.conceptSetStore.resolveConceptSetExpression();
+
+			
+			
+			this.subscriptions.push(this.conceptSetStore.current.subscribe(() => {
+				this.currentConceptSet() && this.markConceptSetSelected(this.conceptSetStore.current());
+			}));
+			
 		}
 
 		getDataboundColumn(field, title, width) {
@@ -139,38 +165,24 @@ define([
 		}
 
 		async selectConceptSet(conceptSet) {
+			sharedState.activeConceptSet(this.conceptSetStore);
 			this.showImportConceptSetModal(false);
 			if (conceptSet.id !== (this.currentConceptSet() && this.currentConceptSet().id)) {
-				this.includedHash(null);
-				this.selectedTabKey(ConceptSetTabKeys.EXPRESSION);
+				this.selectedTabKey(ViewMode.EXPRESSION);
 				await this.loadConceptSet(conceptSet.id);
 			}
 		}
 
 		async loadConceptSet(conceptSetId) {
-			this.selectedTabKey(ConceptSetTabKeys.EXPRESSION);
+			this.conceptSetStore.current(null);
+			this.selectedTabKey(ViewMode.EXPRESSION);
 			const conceptSet = this.conceptSets().find(item => item.id === conceptSetId);
 			if (!conceptSet) {
 				return;
 			}
-			const items = ko.unwrap(conceptSet.expression.items);
-			if (items && items.length > 0 && items[0].concept && !items[0].concept.STANDARD_CONCEPT) {
-				const identifiers = Array.from(conceptSet.expression.items())
-					.map((item) => {
-						return item.concept.CONCEPT_ID;
-					});
-				const { data } = await conceptSetService.lookupIdentifiers(identifiers);
-				data.forEach((item, index) => conceptSet.expression.items()[index].concept = item);
-				conceptSet.expression.items.valueHasMutated();
-			}
-			conceptSetService.addToConceptSetIdsMap({ concepts: items, source: this.currentConceptSetSource });
-			this.selectedConcepts(items);
-			const c = {
-				name: conceptSet.name,
-				id: conceptSet.id,
-			}
-			this.currentConceptSet(c);
-			conceptSetService.resolveConceptSetExpression({ source: this.currentConceptSetSource });
+//			const items = ko.unwrap(conceptSet.expression.items);
+//			conceptSetUtils.addToConceptSetIdsMap({items, conceptSetStore: this.conceptSetStore});
+			this.conceptSetStore.current(conceptSet);
 		}
 
 		createConceptSet() {
@@ -204,7 +216,7 @@ define([
 		async importConceptSet () {
 			const conceptSet = this.createConceptSet();
 			await this.prepareConceptSet(conceptSet);
-			this.selectedTabKey(ConceptSetTabKeys.IMPORT);
+			this.selectedTabKey(ViewMode.IMPORT);
 			this.markConceptSetSelected(conceptSet);
 			
 		};
@@ -214,11 +226,25 @@ define([
 			this.selectedTabKey(key);
 			this.loading(true);
 			try {
-				await conceptSetService.onCurrentConceptSetModeChanged({ mode: key, source: this.currentConceptSetSource });
+				await this.conceptSetStore.refresh(key);
 			} finally {
 				this.loading(false);
 			}
 		}
+		
+		closeConceptSet() {
+			const currentId = this.currentConceptSet() && this.currentConceptSet().id;
+			this.tableApi() && this.tableApi()
+				.getRows((idx, data) => data.id === currentId).deselect();
+			this.conceptSetStore.current(null);
+		}
+
+		deleteConceptSet() {
+			if (this.currentConceptSet() && confirm(`Do you want to delete ${this.currentConceptSet().name()}?`)) {
+				this.conceptSets(this.conceptSets().filter(item => item.id !== this.currentConceptSet().id));
+				this.closeConceptSet();
+			}
+		}		
 
 		async exportConceptSetCSV() {
 			this.exporting(true);

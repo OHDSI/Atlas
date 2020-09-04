@@ -6,6 +6,7 @@ define([
   'utils/CommonUtils',
   'utils/Renderers',
   'services/ConceptSet',
+  'components/conceptset/ConceptSetStore',
   'atlas-state',
   'const',
   'components/conceptLegend/concept-legend',
@@ -17,28 +18,31 @@ define([
   commonUtils,
   renderers,
   conceptSetService,
+  ConceptSetStore,
   sharedState,
   globalConstants,
 ) {
 	class ConceptsetExpression extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
+      this.conceptSetStore = params.conceptSetStore;
+      this.conceptSetItems = ko.pureComputed(() => (this.conceptSetStore.current() && this.conceptSetStore.current().expression.items()) || []);
       this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
       this.commonUtils = commonUtils;
       this.allExcludedChecked = ko.pureComputed(() => {
-        return this.selectedConcepts().find(item => !item.isExcluded()) === undefined;
+        return this.conceptSetItems().find(item => !item.isExcluded()) === undefined;
       });
       this.allDescendantsChecked = ko.pureComputed(() => {
-        return this.selectedConcepts().find(item => !item.includeDescendants()) === undefined;
+        return this.conceptSetItems().find(item => !item.includeDescendants()) === undefined;
       });
       this.allMappedChecked = ko.pureComputed(() => {
-        return this.selectedConcepts().find(item => !item.includeMapped()) === undefined;
+        return this.conceptSetItems().find(item => !item.includeMapped()) === undefined;
       });
 
-      this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
+			this.data = ko.pureComputed(() => this.conceptSetItems().map((item, idx) => ({ ...item, idx, isSelected: ko.observable() })));
+
+      this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(row => row.isSelected()).length);
       this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
-      this.data = ko.pureComputed(() => this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) })));
 
       this.columns = [
         {
@@ -99,18 +103,8 @@ define([
       return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) }));
     }
 
-    toggleCheckbox(d, field) {
-			commonUtils.toggleConceptSetCheckbox(
-				this.canEditCurrentConceptSet,
-				this.selectedConcepts,
-				d,
-				field,
-				() => conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository })
-			);
-    }
-
     renderCheckbox(field) {
-      return commonUtils.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
+      return renderers.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
     }
 
     toggleSelectedConceptsForRemoval() {
@@ -119,11 +113,8 @@ define([
     }
 
     removeConceptsFromConceptSet() {
-      const conceptsForRemoval = this.data().filter(concept => concept.isSelected());
-      conceptSetService.removeConceptsFromConceptSet({
-        concepts: conceptsForRemoval,
-        source: globalConstants.conceptSetSources.repository
-      });
+			const idxForRemoval = this.data().filter(concept => concept.isSelected()).map(item => item.idx);
+			this.conceptSetStore.removeItemsByIndex(idxForRemoval);
     }
 
 		selectAllConceptSetItems(key, areAllSelected) {
@@ -137,7 +128,7 @@ define([
     }
 
     navigateToSearchPage() {
-      sharedState.activeConceptSet(sharedState.repositoryConceptSet);
+      sharedState.activeConceptSet(this.conceptSetStore);
       commonUtils.routeTo('/search');
     }
 

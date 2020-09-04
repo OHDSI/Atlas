@@ -231,7 +231,7 @@
 		<div class="concept-add-container">
 				<concept-add-box params="{
 					canSelectSource: true,
-					onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+					onSubmit: $component.addConcept,
 				}"></concept-add-box>
 		</div>
 		<!-- /ko -->

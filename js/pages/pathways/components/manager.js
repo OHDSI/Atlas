@@ -82,6 +82,8 @@ define([
 
 			this.selectedTabKey = ko.observable("design");
 			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
+
 			this.componentParams = ko.observable({
 				design: this.design,
 				analysisId: this.analysisId,
@@ -89,7 +91,7 @@ define([
 				dirtyFlag: this.dirtyFlag,
 				criticalCount: this.criticalCount,
 				isEditPermitted: this.canEdit,
-                selectedSourceId: this.selectedSourceId,
+        selectedSourceId: this.selectedSourceId,
 			});
 			this.warningParams = ko.observable({
 				current: sharedState.CohortPathways.current,
@@ -98,6 +100,7 @@ define([
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 			this.pathwayCaption = ko.computed(() => {

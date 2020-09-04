@@ -43,13 +43,15 @@
 				<a>Utilities</a>
             </li>
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
-				<a>Messages <span
-					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+				<a>
+					Messages
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --><!-- /ko -->
+				</a>
 			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
-				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
+				<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
 					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
 				</div>
 			</div>
@@ -61,7 +63,7 @@
 				<incidence-rates-conceptset params="{
 					data: $component.selectedAnalysis().expression().ConceptSets,
 					canEdit: $component.isEditable,
-					irAnalysisId: $component.selectedAnalysis().id
+					conceptSetStore: $component.conceptSetStore
 				}"></incidence-rates-conceptset>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },
@@ -79,7 +81,8 @@
 																			 stoppingSources: stoppingSources, 
 																			 loadingSummary: loadingSummary,
 																			 isTarValid: isTarValid,
-																			 criticalCount: criticalCount"></ir-analysis-results>
+																			 criticalCount: criticalCount,
+																			 isEditable: isEditable"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
@@ -130,7 +133,7 @@
 			<div class="modal-content">
 				<div class="modal-header">Select Concept Set...</div>
 				<div class="paddedWrapper">
-					<cohort-concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></cohort-concept-set-browser>
+					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
 				</div>
 			</div>
 		</div>

@@ -96,9 +96,9 @@ define(function (require, exports) {
       sharedState.sources([]);
       const serviceCacheKey = getCacheKey();
 
-      sharedState.vocabularyUrl() || (priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.vocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey)));
-      sharedState.evidenceUrl() || priorityDaimons[DAIMON_TYPE.CEM] && sharedState.evidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
-      sharedState.resultsUrl() || priorityDaimons[DAIMON_TYPE.Results] && sharedState.resultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
+      sharedState.vocabularyUrl() || (priorityDaimons[DAIMON_TYPE.Vocabulary] && sharedState.defaultVocabularyUrl(getVocabularyUrl(priorityDaimons[DAIMON_TYPE.Vocabulary].sourceKey)));
+      sharedState.evidenceUrl() || priorityDaimons[DAIMON_TYPE.CEM] && sharedState.defaultEvidenceUrl(getEvidenceUrl(priorityDaimons[DAIMON_TYPE.CEM].sourceKey));
+      sharedState.resultsUrl() || priorityDaimons[DAIMON_TYPE.Results] && sharedState.defaultResultsUrl(getResultsUrl(priorityDaimons[DAIMON_TYPE.Results].sourceKey));
 
       const sourceList = lodash.sortBy(sources.map(function (source, sourceIndex) {
       source.hasVocabulary = false;
@@ -172,7 +172,7 @@ define(function (require, exports) {
     sharedState.sources(sourceList);
     if (config.cacheSources) {
       config.api.sources = sourceList;
-      lscache.set(serviceCacheKey, config.api, 720);
+      lscache.set(serviceCacheKey, config.api.sources, 720);
     }
   }
 

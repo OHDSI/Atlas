@@ -1,6 +1,6 @@
 define(['knockout', 'conceptpicker/InputTypes/Concept'], function (ko, Concept) {
 
-	function ConceptSetItem(data, idx)
+	function ConceptSetItem(data)
 	{
 		var self = this;
 		
@@ -8,7 +8,6 @@ define(['knockout', 'conceptpicker/InputTypes/Concept'], function (ko, Concept) 
 		self.isExcluded = ko.observable(data.isExcluded || false);
 		self.includeDescendants = ko.observable(data.includeDescendants || false);
 		self.includeMapped = ko.observable(data.includeMapped || false);
-		self.idx = idx;
 	}
 	
 	return ConceptSetItem;

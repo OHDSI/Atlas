@@ -24,7 +24,8 @@ define([
 			this.data = params.data;
 			this.canEdit = params.canEdit || (() => false);
 			this.featureId = params.featureId;
-			this.conceptSets = ko.computed(() => this.data() && this.data().conceptSets);
+      this.conceptSetStore = params.conceptSetStore;
+			this.conceptSets = ko.pureComputed(() => this.data() && this.data().conceptSets);
 		}
 
 		exportConceptSets() {

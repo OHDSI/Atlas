@@ -11,7 +11,7 @@ define([
 	'components/cohortbuilder/CriteriaTypes/DemographicCriteria',
 	'components/cohortbuilder/const',
 	'components/cohortbuilder/utils',
-	'../../../utils',
+	'components/conceptset/utils',
 	'pages/characterizations/const',
 	'components/multi-select',
 	'less!./fa-design.less',
@@ -28,7 +28,7 @@ define([
 	DemographicGriteria,
 	cohortbuilderConsts,
 	cohortbuilderUtils,
-	utils,
+	conceptSetUtils,
 	constants,
 ) {
 
@@ -48,7 +48,13 @@ define([
 			this.getEmptyWindowedCriteria = params.getEmptyWindowedCriteria;
 			this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
 			this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
+			this.loadConceptSet = params.loadConceptSet;			
 
+			this.conceptSets = ko.pureComputed({
+					read: () => params.data() && params.data().conceptSets || [],
+					write: (value) => params.data().conceptSets(value),
+			});
+			
 			// Concept set import for criteria
 			this.criteriaContext = ko.observable();
 			this.showConceptSetBrowser = ko.observable();
@@ -77,15 +83,32 @@ define([
 			this.data().design(criteriaList);
 		}
 
-		handleConceptSetImport(criteriaIdx, item) {
-			this.criteriaContext({...item, criteriaIdx});
+		handleConceptSetImport(item, context, event) {
+			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
+		
+		handleEditConceptSet(item, context) {
+			if (item.conceptSetId() == null) {
+				return;
+			}
+			this.loadConceptSet(item.conceptSetId());
+		}		
 
 		onRespositoryConceptSetSelected(conceptSet, source) {
-			utils.conceptSetSelectionHandler(this.data().conceptSets, this.criteriaContext(), conceptSet, source)
+			conceptSetUtils.conceptSetSelectionHandler(this.coceptSets(), this.criteriaContext(), conceptSet, source)
 				.done(() => this.showConceptSetBrowser(false));
 		}
+		
+		onRespositoryActionComplete(result) {
+			this.showConceptSetBrowser(false);
+			if (result.action === 'add') {
+				const newId = conceptSetUtils.newConceptSetHandler(this.conceptSets(), this.criteriaContext());
+				this.loadConceptSet(newId)
+			}
+
+			this.criteriaContext(null);
+		}	
 
 		copyAnalysisSQLTemplateToClipboard() {
 			this.copyToClipboard('#btnCopyAnalysisSQLTemplateClipboard', '#copyAnalysisSQLTemplateMessage');

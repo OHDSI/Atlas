@@ -46,7 +46,8 @@ define(
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
 				this.hasUnsavedChanges = ko.pureComputed(() => {
-					return (sharedState.CohortDefinition.dirtyFlag().isDirty()
+					return (sharedState.RepositoryConceptSet.dirtyFlag().isDirty()
+						|| sharedState.CohortDefinition.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
@@ -116,9 +117,10 @@ define(
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
+					
 					resolve();
 				});
-
+				
 				return promise;
 			}
 
@@ -160,7 +162,7 @@ define(
 
 					if (cachedService && cachedService.sources) {
 						console.info('cached service');
-						config.api = cachedService;
+						config.api.sources = cachedService;
 						sourceApi.setSharedStateSources(cachedService.sources);
 						resolve();
 					} else {

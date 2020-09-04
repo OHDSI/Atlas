@@ -17,7 +17,8 @@ define([
             super(params);
 
 			this.matchArgs = params.matchArgs;
-            this.options = constants.options;
+			this.options = constants.options;
+			this.isEditPermitted = params.isEditPermitted;
 
 			// TODO: At the moment, we do not expose the ability
 			// to edit Match/Stratify by covariate arguments

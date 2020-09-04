@@ -54,8 +54,10 @@
 				<a>Export</a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
-				<a>Messages <span 
-					data-bind="attr: { class: warningClass }, text: $component.warningParams().warningsTotal, visible: $component.warningParams().warningsTotal() > 0"></span></a>
+				<a>
+					Messages
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --> <!-- /ko -->
+				</a>
 			</li>
 		</ul>
 		<div class="tab-content">
@@ -64,11 +66,11 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }" class="tab-pane">
 				<conceptset-list params="{
-					conceptSets: conceptSets(),
-					conceptSetSource: 'cohortDefinition',
-					canEdit: canEdit,
-					exportConceptSets: exportConceptSetsCSV,
-				}">
+																 conceptSets: conceptSets(),
+																 conceptSetStore: conceptSetStore,
+																 canEdit: canEdit,
+																 exportConceptSets: exportConceptSetsCSV
+																 }">
 				</conceptset-list>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
@@ -185,7 +187,7 @@
 										<button class="btn btn-sm btn-primary"
 												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																		visible: !$component.isSourceRunning($data),
-																		click: (data, event) => $component.generateCohort(data, false)">
+																		click: (data, event) => $component.generateCohort(data)">
 												<i class="fa fa-play"></i>&nbsp;Generate
 										</button>
 									</span>
@@ -193,7 +195,7 @@
 								<a role="button" class="btn btn-sm btn-danger"
 									 data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
-															attr: {disabled: $component.isSourceStopping($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
+															attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
 								</a>
 							</td>
 							<td class="nowrap" data-bind="text:name"></td>
@@ -414,8 +416,6 @@
 		exitMessage: $component.exitMessage,
 	}"></modal-exit-message>
 </div>
-
-<conceptset-list-modal params="{isShown: $component.ancestorsModalIsShown, conceptSetList: $component.ancestors, title: 'Common Ancestors'}"></conceptset-list-modal>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,

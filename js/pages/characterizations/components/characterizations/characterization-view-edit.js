@@ -6,6 +6,7 @@ define([
     'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/ConceptSetStore',
     './CharacterizationAnalysis',
     'text!./characterization-view-edit.html',
     'appConfig',
@@ -38,6 +39,7 @@ define([
     { entityType },
     CriteriaGroup,
     ConceptSet,
+    ConceptSetStore,
     CharacterizationAnalysis,
     view,
     config,
@@ -53,12 +55,14 @@ define([
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
             super(params);
+            this.design = sharedState.CohortCharacterization.current;
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
+            this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().characterization);
+            this.conceptSets = ko.computed(() => this.design() && this.design().strataConceptSets)            
             this.executionId = ko.observable(params.router.routerParams().executionId);
             this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
-            this.design = sharedState.CohortCharacterization.current;
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
@@ -92,6 +96,8 @@ define([
 
             this.selectedTabKey = ko.observable();
             this.criticalCount = ko.observable(0);
+            this.isDiagnosticsRunning = ko.observable(false);
+            
             this.componentParams = ko.observable({
                 ...params,
 								canEdit: this.isEditPermitted,
@@ -101,7 +107,9 @@ define([
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
-                conceptSets: ko.computed(() => this.design() && this.design().strataConceptSets),
+                conceptSets: this.conceptSets,
+                conceptSetStore: this.conceptSetStore,
+                loadConceptSet: this.loadConceptSet,
                 criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
                 selectedSourceId: this.selectedSourceId,
@@ -113,9 +121,10 @@ define([
                 infoCount: ko.observable(0),
                 criticalCount: this.criticalCount,
                 changeFlag: ko.pureComputed(() => this.designDirtyFlag().isChanged()),
+                isDiagnosticsRunning: this.isDiagnosticsRunning,
                 onDiagnoseCallback: this.diagnose.bind(this),
             });
-            this.characterizationCaption = ko.computed(() => {
+            this.characterizationCaption = ko.pureComputed(() => {
                 if (this.design()) {
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
@@ -159,7 +168,7 @@ define([
         }
 
         isEditPermittedResolver() {
-            return ko.computed(
+            return ko.pureComputed(
                 () => (this.characterizationId() ? PermissionService.isPermittedUpdateCC(this.characterizationId()) : PermissionService.isPermittedCreateCC())
             );
         }
@@ -279,18 +288,25 @@ define([
             }
             this.design(null);
             this.designDirtyFlag().reset();
-            commonUtils.clearConceptSetBySource({ source: constants.conceptSetSources.characterization });
+            this.conceptSetStore.clear();
             commonUtils.routeTo('/cc/characterizations');
         }
 
         getAuthorship() {
+            const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
+            const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
             return {
                 createdBy: lodash.get(this.design(), 'createdBy.name'),
-                createdDate: this.design().createdAt,
-                modifiedBy: lodash.get(this.design(), 'updatedBy.name'),
-                modifiedDate: this.design().updatedAt,
+                createdDate: createdDate,
+                modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
+                modifiedDate: modifiedDate,
             }
         }
+        
+        loadConceptSet(conceptSetId) {
+            this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+            commonUtils.routeTo(`/cc/characterizations/${this.design().id}/conceptsets`);
+        }   
     }
 
     return commonUtils.build('characterization-view-edit', CharacterizationViewEdit, view);

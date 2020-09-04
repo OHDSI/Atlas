@@ -1,0 +1,27 @@
+<div data-bind="if:$component.canReadConceptsets">
+
+    <div data-bind="visible:$component.selectedSource().url != null">
+        <!-- ko if:  loading() || isProcessing() -->
+			<loading></loading>
+        <!-- /ko -->
+
+        <div data-bind="visible: !loading() && !isProcessing()">
+            <div class="conceptset-browser-panel">
+                <div class="btn btn-sm btn-primary new-concept-set"
+                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText, visible: buttonActionEnabled"></div>
+            </div>
+            <faceted-datatable params="
+                dataTableId: repositoryConceptSetTableId,
+                orderColumn: 3, 
+                reference: repositoryConceptSets(), 
+                columns: columns, 
+                options: options,
+                language:'Filter Repository Concept Sets:',
+                autoWidth: false,
+                orderClasses: false,
+                deferRender: true,
+                rowClick: selectRepositoryConceptSet">
+            </faceted-datatable>
+        </div>
+    </div>
+</div>

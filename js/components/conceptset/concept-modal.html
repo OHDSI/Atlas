@@ -1,0 +1,44 @@
+<div class="modal" data-bind="modal: isShown" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<div class="modal-title" data-bind="text: $component.title"></div>
+			</div>
+      <div class="modal-body">
+        <div data-bind="eventListener: { event: 'click', selector: 'a', callback: onNavigate }">
+          <div class="paddedWrapper">
+            <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+                  data:conceptSetList,
+                  options: {
+                    dom: 'Clfiprt',
+                    colVis: {
+                      buttonText: 'Change Columns',
+                      align: 'right',
+                      overlayFade: 0,
+                      showAll: 'Show All Columns',
+                      restore: 'Reset Columns'
+                    },
+                    rowCallback: $component.commonUtils.contextSensitiveLinkColor,
+                    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100,'All']],
+                    orderClasses: false,
+                    deferRender: true,
+                    autoWidth: false,
+                    order: [[2, 'desc']],
+                    columns: [
+                      { title: 'Concept Id', data: 'concept.CONCEPT_ID'},
+                      { title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
+                      { title: 'Concept Name', render: $component.commonUtils.renderBoundLink},
+                      { title: 'Domain', data: 'concept.DOMAIN_ID' },
+                      { title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
+                      { title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' }
+                    ]
+                 }
+              }">
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

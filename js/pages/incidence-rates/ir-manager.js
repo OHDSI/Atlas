@@ -21,9 +21,12 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
+	'components/conceptset/ConceptSetStore',
+	'components/conceptset/utils',
 	'./const',
 	'const',
 	'components/checks/warnings',
+	'components/checks/warnings-badge',
 	'./components/iranalysis/main',
 	'./components/iranalysis/components/ir-conceptset',
 	'databindings',
@@ -59,6 +62,8 @@ define([
 	AutoBind,
 	commonUtils,
 	exceptionUtils,
+	ConceptSetStore,
+	conceptSetUtils,
 	constants,
 	globalConstants,
 ) {
@@ -77,6 +82,7 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -94,7 +100,7 @@ define([
 					)
 			});
 			this.isEditable = ko.pureComputed(() => {
-				return this.selectedAnalysisId() === null
+				return this.selectedAnalysisId() === null || this.selectedAnalysisId() === 0
 					|| !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
@@ -196,6 +202,7 @@ define([
 			this.importService = IRAnalysisService.importAnalysis;
 			this.exportSqlService = this.exportSql;
 			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
 
 			this.warningParams = ko.observable({
 				current: this.selectedAnalysis,
@@ -204,21 +211,9 @@ define([
 				infoCount: ko.observable(0),
 				criticalCount: this.criticalCount,
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 				checkOnInit: true,
-			});
-
-			this.warningClass = ko.computed(() => {
-				if (this.warningParams().warningsTotal() > 0){
-					if (this.warningParams().criticalCount() > 0) {
-						return 'badge warning-alarm';
-					} else if (this.warningParams().warningCount() > 0) {
-						return 'badge warning-warn';
-					} else {
-						return 'badge warning-info';
-					}
-				}
-				return 'badge';
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -377,15 +372,27 @@ define([
 			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
-
-		onConceptSetSelectAction(result, valueAccessor) {
-			this.showConceptSetBrowser(false);
-
-			if (result.action === 'add') {
-				var newConceptSet = this.conceptSetEditor().createConceptSet();
-				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab(this.tabs.CONCEPT_SETS);
+		
+		handleEditConceptSet(item, context) {
+			if (item.conceptSetId() == null) {
+				return;
 			}
+			this.loadConceptSet(item.conceptSetId());
+		}
+			
+		loadConceptSet(conceptSetId) {
+			this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
+			commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
+		}
+
+		onConceptSetSelectAction(result) {
+			this.showConceptSetBrowser(false);
+			if (result.action === 'add') {
+				const conceptSets = this.selectedAnalysis().expression().ConceptSets;
+				const newId = conceptSetUtils.newConceptSetHandler(conceptSets, this.criteriaContext());
+				this.loadConceptSet(newId)
+			}
+
 			this.criteriaContext(null);
 		}
 
@@ -406,7 +413,7 @@ define([
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
-			commonUtils.clearConceptSetBySource({ source: globalConstants.conceptSetSources.incidenceRates });
+			this.conceptSetStore.clear();
 
 			this.sources().forEach(function (source) {
 				source.info(null);
@@ -569,10 +576,10 @@ define([
 			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
 			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
 			return {
-					createdBy: this.selectedAnalysis().createdBy(),
-					createdDate,
-					modifiedBy: this.selectedAnalysis().modifiedBy(),
-					modifiedDate,
+                createdBy: this.selectedAnalysis().createdBy() ? this.selectedAnalysis().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.selectedAnalysis().modifiedBy() ? this.selectedAnalysis().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
 			};
 		}
 

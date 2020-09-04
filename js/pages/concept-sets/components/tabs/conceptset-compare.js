@@ -8,6 +8,8 @@ define([
   'services/CDMResultsAPI',
   'jquery',
   'atlas-state',
+  'components/conceptset/ConceptSetStore',
+  'conceptsetbuilder/InputTypes/ConceptSet',
   'components/modal',
 ], function (
 	ko,
@@ -19,6 +21,8 @@ define([
   cdmResultsAPI,
   $,
   sharedState,
+  ConceptSetStore,
+  ConceptSet
 ) {
 	class ConceptsetCompare extends AutoBind(Component) {
 		constructor(params) {
@@ -26,10 +30,9 @@ define([
       this.isModalShown = ko.observable(false);
       this.saveConceptSetFn = params.saveConceptSetFn;
       this.saveConceptSetShow = params.saveConceptSetShow;
-      this.currentConceptSet = sharedState.repositoryConceptSet.current;
-      this.selectedConcepts = sharedState.repositoryConceptSet.selectedConcepts;
-      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-      this.criteriaContext = sharedState.criteriaContext;
+      this.currentConceptSet = ConceptSetStore.repository().current;
+      this.selectedConcepts = ko.pureComputed(() => this.currentConceptSet() && this.currentConceptSet().expression.items());
+      this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
       this.compareCS1Id = ko.observable(this.currentConceptSet().id); // Init to the currently loaded cs
       this.compareCS1Caption = ko.observable(this.currentConceptSet().name());
       this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());
@@ -291,13 +294,10 @@ define([
     compareCreateNewConceptSet() {
 			const dtItems = $('#compareResults table')
 				.DataTable()
-				.data();
-			const conceptSet = {};
-			conceptSet.id = 0;
-			conceptSet.name = this.compareNewConceptSetName;
-			const selectedConcepts = [];
-			$.each(dtItems, (index, item) => {
-				const concept = {
+				.data()
+				.toArray();
+			const conceptSetItems = dtItems.map(item => ({
+				concept: {
 					CONCEPT_CLASS_ID: item.conceptClassId,
 					CONCEPT_CODE: item.conceptCode,
 					CONCEPT_ID: item.conceptId,
@@ -308,18 +308,19 @@ define([
 					STANDARD_CONCEPT: null,
 					STANDARD_CONCEPT_CAPTION: null,
 					VOCABULARY_ID: null,
-				};
-				const newItem = {
-					concept: concept,
-					isExcluded: ko.observable(false),
-					includeDescendants: ko.observable(false),
-          includeMapped: ko.observable(false),
-				};
-				selectedConcepts.push(newItem);
+				}
+			}));
+
+			const conceptSet = new ConceptSet({
+				id: 0,
+				name: this.compareNewConceptSetName(),
+				expression: {
+					items: conceptSetItems
+				}
 			});
-			this.saveConceptSetFn("#txtNewConceptSetName", conceptSet, selectedConcepts);
+			this.saveConceptSetFn(conceptSet, "#txtNewConceptSetName");
 			this.saveConceptSetShow(false);
-    }
+		}
 
     async conceptsetSelected(d) {
 			this.isModalShown(false);

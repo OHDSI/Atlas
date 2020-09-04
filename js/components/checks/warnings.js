@@ -5,6 +5,7 @@ define([
 	'./utils',
 	'components/Component',
 	'utils/CommonUtils',
+	'utils/AutoBind',
 	'./warnings-badge',
 	'databindings',
 	'faceted-datatable',
@@ -17,12 +18,11 @@ function (
 	utils,
 	Component,
 	commonUtils,
+	AutoBind,
 ) {
-	class WarningComponent extends Component{
+	class WarningComponent extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-
-			const self = this;
 			this.current = params.current;
 			this.changeFlag = params.changeFlag || ko.observable();
 			this.diagnoseCallback = params.onDiagnoseCallback || function() {};
@@ -32,62 +32,33 @@ function (
 			this.criticalCount = params.criticalCount || ko.observable();
 			this.onFixCallback = params.onFixCallback || function() {};
 			this.warnings = ko.observableArray();
-			this.loading = ko.observable(false);
-			this.isFixCalled = false;
+			this.isInitialLoading = ko.observable(true);
+			this.isDiagnosticsRunning = params.isDiagnosticsRunning || ko.observable(false);
 			this.warningsColumns = [
 				{ data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
 				{ data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
 			];
 			this.warningsOptions = {
 				Facets: [{
-					'caption': 'Severity',
-					'binding': o => o.severity,
+					caption: 'Severity',
+					binding: o => o.severity,
 					defaultFacets: [
-						'WARNING', 'CRITICAL'
+						consts.WARNING,
+						consts.CRITICAL,
 					],
 				}],
 			};
-			// Entities use different methods of initialization
-			this.changeSubscription = this.changeFlag.subscribe(() => this.runDiagnostics());
+			this.subscriptions = [
+				// Entities use different methods of initialization
+				this.changeFlag.subscribe(() => this.runDiagnostics()),
+			];
 			// Entities use different methods of initialization
 			if (params.checkOnInit) {
-				this.initSubscription = this.current.subscribe(() => this.runDiagnostics());
+				this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
 			} else {
 				this.runDiagnostics();
 			}
 		}
-
-		drawCallback(settings) {
-				if (settings.aoData) {
-					const api = this.api();
-					const rows = this.api().rows({page: 'current'});
-					const data = rows.data();
-					rows.nodes().each((element, index) => {
-						const rowData = data[index];
-						const context = ko.contextFor(element);
-						ko.cleanNode(element);
-						ko.applyBindings(context, element);
-					});
-				}
-			};
-	
-		stateSaveCallback(settings, data){
-			if (!this.isFixCalled){
-				this.state = data;
-			}
-		};
-
-		stateLoadCallback(settings, callback) {
-			return this.state;
-		};
-
-		fixWarning(value, parent, event){
-			this.isFixCalled = true;
-			event.preventDefault();
-			this.onFixCallback(value);
-			this.onDiagnose();
-			this.isFixCalled = false;
-		};
 
 		showWarnings(result) {
 			const count = (severity) => result.warnings.filter(w => w.severity === severity).length;
@@ -96,31 +67,27 @@ function (
 			this.warningCount(count(consts.WarningSeverity.WARNING));
 			this.criticalCount(count(consts.WarningSeverity.CRITICAL));
 			this.warningsTotal(result.warnings.length);
-			this.loading(false);
 		}
 
-		handleError(error) {
+		removeWarnings() {
 			this.warningsTotal(0);
 			this.warnings.removeAll();
-			this.loading(false);
 		}
 
-		runDiagnostics() {
-			this.loading(true);
-			const promise = this.diagnoseCallback();
-			if (promise) {
-				promise.then((data) => this.showWarnings(data), (error) => this.handleError(error));
-			}
-		}
-
-		onDiagnose() {
-			this.runDiagnostics();
-		}
-
-		dispose() {
-			this.changeSubscription.dispose();
-			if (this.initSubscription) {
-				this.initSubscription.dispose();
+		async runDiagnostics() {
+			try {
+				this.isDiagnosticsRunning(true);
+				const data = await this.diagnoseCallback();
+				data && this.showWarnings(data);
+			} catch (err) {
+				console.error(err);
+				this.removeWarnings();
+			} finally {
+				setTimeout(() => {
+					this.isDiagnosticsRunning(false);
+					this.isInitialLoading() && this.isInitialLoading(false);
+				}, 300); // To prevent badge loader blinking on fast requests
+				
 			}
 		}
 	}

@@ -4,7 +4,7 @@ define([
 	'text!./search.html',
 	'appConfig',
 	'services/AuthAPI',
-	'services/ConceptSet',
+	'components/conceptset/utils',
 	'../PermissionService',
 	'components/Component',
 	'utils/AutoBind',
@@ -12,6 +12,7 @@ define([
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
 	'services/Vocabulary',
+	'components/conceptset/ConceptSetStore',
 	'const',
 	'components/tabs',
 	'components/panel',
@@ -26,7 +27,7 @@ define([
 	view,
 	config,
 	authApi,
-	ConceptSetService,
+	conceptSetUtils,
 	PermissionService,
 	Component,
 	AutoBind,
@@ -34,6 +35,7 @@ define([
 	constants,
 	commonUtils,
 	vocabularyProvider,
+	ConceptSetStore,
 	globalConstants,
 ) {
 	class Search extends AutoBind(Component) {
@@ -57,7 +59,6 @@ define([
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
 			this.params = params;
-			// && (this.activeConceptSet() || !this.hasActiveConceptSets())
 			this.canAddConcepts = ko.pureComputed(() => this.data().some(item => item.isSelected()) );
 
 				this.isInProgress = ko.computed(() => {
@@ -342,10 +343,11 @@ define([
 				return promise;
 			}
 
-			addConcepts = (options, source = globalConstants.conceptSetSources.repository) => {
-				sharedState.activeConceptSetSource(globalConstants.conceptSetSources[source]);
-				const conceptsToAdd = commonUtils.getSelectedConcepts(this.data, options);
-				ConceptSetService.addConceptsToConceptSet({ concepts: conceptsToAdd, source });
+			addConcepts = (options, conceptSetStore = ConceptSetStore.repository()) => {
+				sharedState.activeConceptSet(conceptSetStore);
+				const concepts = commonUtils.getSelectedConcepts(this.data);
+				const items = commonUtils.buildConceptSetItems(concepts, options);				
+				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
 				commonUtils.clearConceptsSelectionState(this.data);
 			}
 

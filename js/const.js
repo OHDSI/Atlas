@@ -1,13 +1,12 @@
 define([
 	'knockout',
 	'appConfig',
-	'utils/Renderers',
+	'utils/Renderers'
 	],
 	(
 		ko,
 		config,
-		renderers,
-	) => {
+		renderers) => {
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
@@ -44,53 +43,6 @@ define([
 				}
 			}]
 		};
-
-		const includedConceptsOptions = {
-			Facets: [
-				{
-					'caption': 'Vocabulary',
-					'binding': (o) => {
-						return o.VOCABULARY_ID;
-					}
-				},
-				{
-					'caption': 'Class',
-					'binding': (o) => {
-						return o.CONCEPT_CLASS_ID;
-					}
-				},
-				{
-					'caption': 'Domain',
-					'binding': (o) => {
-						return o.DOMAIN_ID;
-					}
-				},
-				{
-					'caption': 'Standard Concept',
-					'binding': (o) => {
-						return o.STANDARD_CONCEPT_CAPTION;
-					}
-				},
-				{
-					'caption': 'Invalid Reason',
-					'binding': (o) => {
-						return o.INVALID_REASON_CAPTION;
-					}
-				},
-				{
-					'caption': 'Has Records',
-					'binding': (o) => {
-						return parseInt(o.RECORD_COUNT) > 0;
-					}
-				},
-				{
-					'caption': 'Has Descendant Records',
-					'binding': (o) => {
-						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
-					}
-				},
-			]
-		}
 
 		const getLinkedFeAParametersColumns = (context) => {
 			return [
@@ -158,61 +110,6 @@ define([
 			];
 		};
 				
-		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
-			{
-				title: '',
-				orderable: false,
-				searchable: false,
-				className: 'text-center',
-				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
-			},
-			{
-				title: 'Id',
-				data: 'CONCEPT_ID'
-			},
-			{
-				title: 'Code',
-				data: 'CONCEPT_CODE'
-			},
-			{
-				title: 'Name',
-				data: 'CONCEPT_NAME',
-				render: commonUtils.renderLink,
-			},
-			{
-				title: 'Class',
-				data: 'CONCEPT_CLASS_ID'
-			},
-			{
-				title: 'Standard Concept Caption',
-				data: 'STANDARD_CONCEPT_CAPTION',
-				visible: false
-			},
-			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'Domain',
-				data: 'DOMAIN_ID'
-			},
-			{
-				title: 'Vocabulary',
-				data: 'VOCABULARY_ID'
-			},
-			{
-				title: 'Ancestors',
-				data: 'ANCESTORS',
-				render: conceptSetService.getAncestorsRenderFunction()
-			},
-		];
-
 		const getRelatedSourcecodesColumns = (sharedState, context) => [
 			{
 				title: '',
@@ -357,14 +254,7 @@ define([
 			conceptSetChanged: 'conceptSetChanged',
 		};
 
-		const conceptSetSources = {
-			featureAnalysis: 'featureAnalysis',
-			repository: 'repository',
-			cohortDefinition: 'cohortDefinition',
-			characterization: 'characterization',
-			incidenceRates: 'incidenceRates',
-		};
-		
+	
 		const jobTypes = {
 			USER_JOB: {
 				title: 'userJob',
@@ -391,8 +281,6 @@ define([
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
-			includedConceptsOptions,
-			getIncludedConceptsColumns,
 			getLinkedFeAParametersColumns,
 			getLinkedFeatureAnalysisColumns,
 			getLinkedCohortColumns,
@@ -407,7 +295,6 @@ define([
 			executionResultModes,
 			sqlDialects,
 			eventTypes,
-			conceptSetSources,
 			disabledReasons,
 			jobTypes,
     };

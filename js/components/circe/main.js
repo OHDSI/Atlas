@@ -5,7 +5,7 @@ define(function (require, exports) {
 	var generateComponent = require('./components/GenerateComponent');
 	ko.components.register('generate-component', generateComponent);
 	
-	var cohortConceptSetBrowser = require('./components/CohortConceptSetBrowser');
-	ko.components.register('cohort-concept-set-browser', cohortConceptSetBrowser);
+	var conceptSetBrowser = require('./components/ConceptSetBrowser');
+	ko.components.register('concept-set-browser', conceptSetBrowser);
 	
 });

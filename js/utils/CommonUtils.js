@@ -95,19 +95,6 @@ define([
 		return source.daimons.find(daimon => daimon.daimonType == 'Results') !== undefined;
 	}
 
-	function renderConceptSetItemSelector(s, p, d) {
-		let css = '';
-		let tag = 'i';
-		if (sharedState.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
-			css = ' selected';
-		}
-		if (!this.canEditCurrentConceptSet()) {
-			css += ' readonly';
-			tag = 'span'; // to avoid call to 'click' event handler which is bound to <i> tag
-		}
-		return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
-	}
-
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
@@ -132,32 +119,6 @@ define([
 	const renderHierarchyLink = function (d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-	}
-
-    const renderConceptSetCheckbox = function(hasPermissions, field, readonly = false) {
-		return hasPermissions() && !readonly
-		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
-		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
-	}
-
-	const createConceptSetItem = function (concept) {
-		var conceptSetItem = {};
-		conceptSetItem.concept = {
-			"CONCEPT_ID": concept.CONCEPT_ID,
-			"CONCEPT_NAME": concept.CONCEPT_NAME,
-			"STANDARD_CONCEPT": concept.STANDARD_CONCEPT,
-			"STANDARD_CONCEPT_CAPTION": concept.STANDARD_CONCEPT_CAPTION,
-			"INVALID_REASON": concept.INVALID_REASON,
-			"INVALID_REASON_CAPTION": concept.INVALID_REASON_CAPTION,
-			"CONCEPT_CODE": concept.CONCEPT_CODE,
-			"DOMAIN_ID": concept.DOMAIN_ID,
-			"VOCABULARY_ID": concept.VOCABULARY_ID,
-			"CONCEPT_CLASS_ID": concept.CONCEPT_CLASS_ID
-		};
-		conceptSetItem.isExcluded = ko.observable(false);
-		conceptSetItem.includeDescendants = ko.observable(false);
-		conceptSetItem.includeMapped = ko.observable(false);
-		return conceptSetItem;
 	}
 
 	const syntaxHighlight = function (json) {
@@ -228,13 +189,16 @@ define([
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
 
-	const getSelectedConcepts = (concepts, options) => {
-		const { isExcluded, includeMapped, includeDescendants } = ko.toJS(options);
-		return ko.unwrap(concepts).filter(concept => concept.isSelected()).map(({ isSelected, ...concept }) => ({
-			...concept,
-			isExcluded: ko.observable(isExcluded),
-			includeMapped: ko.observable(includeMapped),
-			includeDescendants: ko.observable(includeDescendants),
+	const getSelectedConcepts = (conceptList) => {
+		return ko.unwrap(conceptList).filter(concept => concept.isSelected()).map(({ isSelected, ...concept }) => ({
+			...concept
+		}));
+	}
+	
+	const buildConceptSetItems = (concepts, options) => {
+		return concepts.map((concept) => ({
+			concept: concept,
+			...ko.toJS(options)
 		}));
 	}
 
@@ -259,25 +223,6 @@ define([
 		return d ? momentApi.formatDateTimeWithFormat(d, format) : '';
 	}
 
-	const clearConceptSetBySource = ({ source }) => {
-		const conceptSet = sharedState[`${source}ConceptSet`];
-		conceptSet.current(undefined);
-		conceptSet.negativeControls(undefined);
-		conceptSet.selectedConcepts([]);
-		conceptSet.selectedConceptsIndex = {};
-		conceptSet.includedConcepts([]);
-		conceptSet.includedConceptsMap({});
-		conceptSet.includedSourcecodes([]);
-		conceptSet.conceptSetInclusionIdentifiers([]);
-		conceptSet.currentConceptIdentifierList(undefined);
-		conceptSet.currentIncludedConceptIdentifierList(undefined);
-		conceptSet.currentConceptSetExpressionJson(undefined);
-		conceptSet.includedHash(undefined);
-		conceptSet.resolvingConceptSetExpression(false);
-		conceptSet.loadingSourcecodes(false);
-		conceptSet.loadingIncluded(false);
-	}
-
 	return {
 		build,
 		confirmAndDelete,
@@ -287,13 +232,9 @@ define([
 		contextSensitiveLinkColor,
 		hasCDM,
 		hasResults,
-		renderConceptSetItemSelector,
 		renderLink,
 		renderBoundLink,
-		renderConceptSelector,
 		renderHierarchyLink,
-		renderConceptSetCheckbox,
-		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
 		normalizeUrl,
@@ -301,9 +242,9 @@ define([
 		selectAllFilteredItems,
 		escapeTooltip,
 		highlightRow,
+		buildConceptSetItems,
 		getSelectedConcepts,
 		getUniqueIdentifier,
-		clearConceptSetBySource,
 		clearConceptsSelectionState,
 		formatDateForAuthorship,
 		isNameCharactersValid,

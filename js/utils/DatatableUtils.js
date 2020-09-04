@@ -1,5 +1,5 @@
-define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
-    (momentApi, filterXSS, appConfig, consts) => {
+define(['services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI', '../const'],
+    (momentApi, filterXSS, appConfig, authApi, consts) => {
 
         const getLinkFormatter = (builder) => (s, p, d) => {
             const {
@@ -17,7 +17,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
             return label;
         };
 
-        const getDateFieldFormatter = (field = 'createdAt', defaultValue = false) => (s, type, d) => {
+        const getDateFieldFormatter = (field = 'createdDate', defaultValue = false) => (s, type, d) => {
             if (type === "sort") {
               return (defaultValue && d[field]) || d[field] ? d[field] : defaultValue;
             } else {
@@ -52,6 +52,11 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
         const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
 
         const getFacetForCreatedBy = getCreatedByLogin;
+
+        const getFacetForDesign = d =>
+            d.hasWriteAccess || (d.createdBy && authApi.subject() === d.createdBy.login)
+                ? "My designs"
+                : "Other designs";
 
         const getFacetForDomain = (domain) => domain !== null ? domain : 'None';
 
@@ -91,7 +96,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
             const { executionStatuses } = consts;
             const { status } = d;
             return (status === executionStatuses.COMPLETED || status === executionStatuses.FAILED) && isPermittedFn(d.id) && d.numResultFiles > 0
-                ? `<a href='#' data-bind="ifnot: $component.isDownloadInProgress(id), css: $component.classes('reports-link'), click: () => $component.downloadResults(id)"><i class="comparative-cohort-analysis-executions__action-ico fa fa-download"></i> Download ${d.numResultFiles} files</a><span data-bind="if: $component.isDownloadInProgress(id)"><i class="prediction-generation__action-ico fa fa-spinner fa-spin"></i> Downloading ${d.numResultFiles} files...</span>`
+                ? `<a href='#' data-bind="ifnot: $component.isDownloadInProgress(id), css: $component.classes('reports-link'), click: () => $component.downloadResults(id)"><i class="comparative-cohort-analysis-executions__action-ico fa fa-download"></i> Download</a><span data-bind="if: $component.isDownloadInProgress(id)"><i class="prediction-generation__action-ico fa fa-spinner fa-spin"></i> Downloading...</span>`
                 : '-';
         }
 
@@ -113,6 +118,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', '../const'],
             getLinkFormatter,
             getCreatedByFormatter,
             getFacetForCreatedBy,
+            getFacetForDesign,
             renderCountColumn,
             getFacetForDomain,
             coalesceField,
