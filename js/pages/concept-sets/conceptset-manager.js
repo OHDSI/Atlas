@@ -80,6 +80,7 @@ define([
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
 			this.hasEvidence = this.getCurrentSource().hasEvidence;
+			this.hasEvidence = this.getCurrentSource().hasEvidence;
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -305,8 +306,8 @@ define([
 				d,
 				field,
 			);
-    	}
-		
+		}
+
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
 			sharedState.activeConceptSet(this.conceptSetStore);
