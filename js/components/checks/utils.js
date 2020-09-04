@@ -9,7 +9,7 @@ define(['knockout', './const'], function(ko, consts){
     if ((data.type === 'ConceptSetWarning' && Number.isInteger(data.conceptSetId)) ||
       (data.type === 'IncompleteRuleWarning' && data.ruleName)) {
       return '<span class="warning-message">' + value +
-        '</span><a class="btn-fix">Fix It</a>';
+        '</span><a class="btn-fix" data-bind="text: ko.i18n(\'components.checks.fixIt\', \'Fix It\')"></a>';
     } else {
       return value;
     }
