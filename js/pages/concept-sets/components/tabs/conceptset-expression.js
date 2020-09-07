@@ -36,16 +36,16 @@ define([
     toggleExcluded() {
       this.selectAllConceptSetItems(
         !this.allExcludedChecked(),
-        this.allDescendantsChecked(),
-        this.allMappedChecked()
+        null,
+        null
       );
     }
 
     toggleDescendants() {
       this.selectAllConceptSetItems(
-        this.allExcludedChecked(),
+        null,
         !this.allDescendantsChecked(),
-        this.allMappedChecked()
+        null
       );
     }
 
@@ -66,8 +66,8 @@ define([
 
     toggleMapped() {
       this.selectAllConceptSetItems(
-        this.allExcludedChecked(),
-        this.allDescendantsChecked(),
+        null,
+        null,
         !this.allMappedChecked()
       );
     }
