@@ -17,11 +17,14 @@
 		</div>
 		<div data-bind="css: {'faceted-data-table-wrapper': true, 'col-xs-10': $component.facets().length > 0, 'col-xs-12': $component.facets().length == 0}">
 			<div class="facetedDataTable">
-				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="dataTable:{
+				<table width="100%" class="conceptTable stripe compact hover" cellspacing="0" cellspacing="0" data-bind="
+					attr: { id: $component.dataTableId },
+					dataTable:{
 							data: $component.tableData,
 							options: $component.options,
 							scrollOptions: $component.scrollOptions,
-							onRowClick: $component.rowClick
+							onRowClick: $component.rowClick,
+							api: dtApi
 					} "><!-- ko if: $component.headersTemplateId -->
 					<thead data-bind="template: { name: $component.headersTemplateId }"></thead><!-- /ko -->
 				</table>

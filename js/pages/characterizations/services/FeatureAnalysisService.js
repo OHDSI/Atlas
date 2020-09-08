@@ -39,6 +39,10 @@ define([
         return httpService.doGet(`${config.webAPIRoot}feature-analysis/aggregates`).then(res => res.data);
     }
 
+    function copyFeatureAnalysis(id) {
+        return httpService.doGet(`${config.webAPIRoot}feature-analysis/${id}/copy`);
+    }
+
     return {
         loadFeatureAnalysisList,
         loadFeatureAnalysis,
@@ -47,6 +51,7 @@ define([
         updateFeatureAnalysis,
         deleteFeatureAnalysis,
         exists,
+        copyFeatureAnalysis,
         loadAggregates,
     };
 });

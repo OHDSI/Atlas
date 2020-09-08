@@ -3,11 +3,9 @@ define([
 	'text!./cohort-definition-browser.html',
 	'appConfig',
 	'atlas-state',
-	'services/AuthAPI',
-	'services/MomentAPI',
-	'components/Component',
+	'components/entity-browser',
 	'utils/CommonUtils',
-	'services/http',
+	'services/CohortDefinition',
 	'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
@@ -15,70 +13,50 @@ define([
 	view,
 	config,
 	sharedState,
-	authApi,
-	momentApi,
-	Component,
+	EntityBrowser,
 	commonUtils,
-	httpService,
+	CohortDefinitionService,
 	datatableUtils,
 ) {
-	class CohortDefinitionBrowser extends Component {
+
+	class CohortDefinitionBrowser extends EntityBrowser {
 		constructor(params) {
 			super(params);
-			this.reference = ko.observableArray();
-			this.selected = params.cohortDefinitionSelected;
-			this.loading = ko.observable(false);
-			this.config = config;
+			this.showModal = params.showModal;
+			this.data = ko.observableArray();
 			this.currentConceptSet = sharedState.ConceptSet.current;
 			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-
-			this.loading(true);
-
-			httpService.doGet(`${config.api.url}cohortdefinition`)
-				.then(({ data }) => {
-					datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
-					this.reference(data);
-				})
-				.finally(() => { this.loading(false) });
-
 			this.options = {
-				Facets: [{
-						'caption': 'Last Modified',
-						'binding': function (o) {
-							var createDate = new Date(o.createdDate);
-							var modDate = new Date(o.modifiedDate);
-							var dateForCompare = (createDate > modDate) ? createDate : modDate;
-							var daysSinceModification = (new Date()
-								.getTime() - dateForCompare.getTime()) / 1000 / 60 / 60 / 24;
-							if (daysSinceModification < 7) {
-								return 'This Week';
-							} else if (daysSinceModification < 14) {
-								return 'Last Week';
-							} else {
-								return '2+ Weeks Ago';
-							}
-						}
+				Facets: [
+					{
+						'caption': 'Created',
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
+					{
+						'caption': 'Updated',
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
 						'caption': 'Author',
-						'binding': function (o) {
-							return o.createdBy;
-						}
-					}
+						'binding': datatableUtils.getFacetForCreatedBy,
+					},
+					{
+						'caption': 'Designs',
+						'binding': datatableUtils.getFacetForDesign,
+					},
 				]
 			};
 
-			this.columns = [{
+			this.columns = [
+				...this.columns,
+				{
 					title: 'Id',
 					className: 'id-column',
 					data: 'id'
 				},
 				{
 					title: 'Name',
-					render: datatableUtils.getLinkFormatter(d => ({
-						label: d['name'],
-						linkish: true,
-					})),
+					render: datatableUtils.getLinkFormatter(d => ({ label: d['name'], linkish: !this.multiChoice })),
 				},
 				{
 					title: 'Created',
@@ -94,14 +72,8 @@ define([
 					title: 'Author',
 					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
-				}
+				},
 			];
-
-			this.rowClick = this.rowClick.bind(this);
-		}
-
-		rowClick(data) {
-			this.action(() => this.selected(data));
 		}
 
 		action(callback) {
@@ -114,6 +86,20 @@ define([
 				callback();
 			}
 		}
+
+		async loadData() {
+			try {
+				this.isLoading(true);
+				const data = await CohortDefinitionService.getCohortDefinitionList();
+				datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate')
+				this.data(data.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
+			} catch (err) {
+				console.error(err);
+			} finally {
+				this.isLoading(false);
+			}
+		}
+
 	}
 
 	return commonUtils.build('cohort-definition-browser', CohortDefinitionBrowser, view);

@@ -9,7 +9,6 @@ define([
     'text!./characterization-results.html',
     'appConfig',
     'services/AuthAPI',
-    'services/CohortFeatures',
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
@@ -44,7 +43,6 @@ define([
     view,
     config,
     authApi,
-    cohortFeaturesService,
     Component,
     AutoBind,
     commonUtils,
@@ -166,7 +164,7 @@ define([
           this.executionDesign(null);
           this.isExecutionDesignShown(true);
           CharacterizationService
-            .loadCharacterizationExportDesignByGeneration(this.executionId())
+            .loadExportDesignByGeneration(this.executionId())
             .then(res => {
               this.executionDesign(res);
               this.loading(false);
@@ -233,7 +231,7 @@ define([
             Promise.all([
                 SourceService.loadSourceList(),
                 FeatureAnalysisService.loadFeatureAnalysisDomains(),
-                CharacterizationService.loadCharacterizationExportDesignByGeneration(this.executionId()),
+                CharacterizationService.loadExportDesignByGeneration(this.executionId()),
                 CharacterizationService.loadCharacterizationExecution(this.executionId()),
                 CharacterizationService.loadCharacterizationResults(this.executionId(), params),
                 CharacterizationService.loadCharacterizationResultsCount(this.executionId()),
@@ -267,7 +265,7 @@ define([
 
                 this.getData(generationResults.reports);
                 this.loading(false);
-                
+
                 this.filterList(this.getFilterList(this.data().analyses));
                 this.selectedItems.subscribe(this.updateData);
             });
@@ -312,7 +310,7 @@ define([
 															(this.design().featureAnalyses.find(fa => fa.id === r.id) || { })[ 'domain' ] : null,
                             analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             cohorts: r.cohorts,
-                            domainIds: r.domainIds,   
+                            domainIds: r.domainIds,
                             type: r.resultType.toLowerCase(),
                             isSummary: r.isSummary,
                             isComparative: r.isComparative,

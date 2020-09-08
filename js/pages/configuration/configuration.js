@@ -11,6 +11,7 @@ define([
   'const',
   'services/JobDetailsService',
   'services/Poll',
+  'services/job/jobDetail',
   'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
@@ -26,7 +27,8 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService,
+  {PollService},
+  jobDetail,
   cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
@@ -77,7 +79,7 @@ define([
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
-        interval: 5000,
+        interval: 5000
       });
     }
 
@@ -89,8 +91,16 @@ define([
       return this.sourceJobs.get(job.executionId);
     }
 
-    checkJobs() {
-      this.jobListing().forEach(job => {
+    async checkJobs() {
+      const notifications = await jobDetailsService.listRefreshCacheJobs();
+      const jobs = notifications.data.map(n => {
+          const job = new jobDetail();
+          job.status(n.status);
+          job.executionId = n.executionId;
+          return job;
+      });
+
+      jobs.forEach(job => {
         let source = this.getSource(job);
         if (source && (job.isComplete() || job.isFailed())) {
           this.sourceJobs.delete(job.executionId);
@@ -168,6 +178,7 @@ define([
     updateVocabPriority() {
       var newVocabUrl = sharedState.vocabularyUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultVocabularyUrl(newVocabUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
       return true;
     };
@@ -175,6 +186,7 @@ define([
     updateEvidencePriority() {
       var newEvidenceUrl = sharedState.evidenceUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultEvidenceUrl(newEvidenceUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'CEM');
       return true;
     };
@@ -182,6 +194,7 @@ define([
     updateResultsPriority() {
       var newResultsUrl = sharedState.resultsUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.resultsUrl === newResultsUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultResultsUrl(newResultsUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };

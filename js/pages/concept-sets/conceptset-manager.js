@@ -15,6 +15,7 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'services/AuthAPI',
+    'lodash',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -32,7 +33,9 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
-	'components/security/access/configure-access-modal'
+	'components/security/access/configure-access-modal',
+	'components/authorship',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -50,6 +53,7 @@ define([
 	sharedState,
 	conceptSetService,
 	authApi,
+    lodash,
 ) {
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -67,6 +71,7 @@ define([
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(true);
+			this.hasEvidence = this.getCurrentSource().hasEvidence;
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -84,8 +89,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.currentConceptSet().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.currentConceptSet().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.currentConceptSet().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.currentConceptSet().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 			this.canSave = ko.computed(() => {
 				return (
@@ -105,7 +119,7 @@ define([
 					if (this.currentConceptSet().id === 0) {
 						return this.defaultName;
 					} else {
-						return 'Concept Set #' + this.currentConceptSet().id;
+						return `Concept Set #${this.currentConceptSet().id}`;
 					}
 				}
 			});
@@ -192,6 +206,11 @@ define([
 						},
 				}
 			];
+
+			if (!this.hasEvidence) {
+				this.tabs = this.tabs.filter(tab => tab.componentName !== 'explore-evidence');
+			}
+
 			this.selectedTab = ko.observable(this.routerParams.mode);
 
 			this.activeUtility = ko.observable("");
@@ -233,7 +252,7 @@ define([
 				d,
 				field,
 			);
-    }
+    	}
 
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
@@ -463,6 +482,23 @@ define([
 
 		cancelSaveNewOptimizedConceptSet() {
 			this.optimizerSavingNew(false);
+		}
+
+		getAuthorship() {
+		   const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
+		   const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
+				return {
+						createdBy: lodash.get(this.currentConceptSet(), 'createdBy.name'),
+						createdDate,
+						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
+						modifiedDate,
+				}
+		}
+
+		getCurrentSource() {
+			const currentSource = sharedState.sources()
+				.find(source => source.sourceKey === sharedState.sourceKeyOfVocabUrl());
+			return currentSource;
 		}
 
 	}

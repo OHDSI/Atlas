@@ -23,6 +23,10 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'components/checks/warnings',
+	'components/heading',
+	'components/authorship',
+	'components/name-validation',
 ], function (
 	ko,
 	view,
@@ -47,6 +51,8 @@ define([
 
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
+            this.executionId = ko.observable(params.router.routerParams().executionId);
+            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
@@ -55,8 +61,17 @@ define([
 			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name();
 			});
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
+			});
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.design().name() === this.defaultName;
+			});
 			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.design().name() !== this.defaultName;
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
 			this.canEdit = this.isEditPermittedResolver();
@@ -66,16 +81,31 @@ define([
 			this.canCopy = this.canCopyResolver();
 
 			this.selectedTabKey = ko.observable("design");
-			this.componentParams = {
+			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
+
+			this.componentParams = ko.observable({
 				design: this.design,
 				analysisId: this.analysisId,
 				executionId: this.executionId,
 				dirtyFlag: this.dirtyFlag,
-				isEditPermitted: this.canEdit
-			};
+				criticalCount: this.criticalCount,
+				isEditPermitted: this.canEdit,
+        selectedSourceId: this.selectedSourceId,
+			});
+			this.warningParams = ko.observable({
+				current: sharedState.CohortPathways.current,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
+				onDiagnoseCallback: this.diagnose.bind(this),
+			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return 'Cohort Pathway #' + this.design().id;
+					return `Cohort Pathway #${this.design().id}`;
 				}
 				return this.defaultName;
 			});
@@ -93,17 +123,32 @@ define([
 			});
 		}
 
-		onRouterParamsChanged({analysisId, section, subId}) {
+		onRouterParamsChanged({analysisId, section,  executionId, sourceId}) {
 			if (analysisId !== undefined) {
 				this.analysisId(parseInt(analysisId));
 				this.load(this.analysisId() || 0);
 			}
-			this.setupSection(section);
-			this.executionId(subId);
+
+            if (section !== undefined) {
+                this.setupSection(section);
+            }
+
+			if (executionId !== undefined) {
+				this.executionId(executionId);
+			}
+			if (sourceId !== undefined) {
+				this.selectedSourceId(sourceId);
+			}
 		}
 
 		selectTab(index, { key }) {
-			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams.analysisId(), key));
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(this.componentParams().analysisId(), key));
+		}
+
+		diagnose() {
+			if (this.design()) {
+				return PathwayService.runDiagnostics(this.design());
+			}
 		}
 
 		setupDesign(design) {
@@ -123,7 +168,7 @@ define([
 		}
 
 		isSavePermittedResolver() {
-				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect())
+				return ko.computed(() => this.canEdit() && this.dirtyFlag().isDirty() && this.isNameCorrect());
 		}
 
 		isDeletePermittedResolver() {
@@ -209,6 +254,17 @@ define([
 			this.dirtyFlag().reset();
 
 			commonUtils.routeTo('/pathways');
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
+			return {
+					createdBy: lodash.get(this.design(), 'createdBy.name'),
+					createdDate,
+					modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
+					modifiedDate,
+			}
 		}
 
 	}

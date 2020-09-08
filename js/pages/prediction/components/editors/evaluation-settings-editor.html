@@ -7,13 +7,13 @@
 <div class="input-group">
     <label>Percentage of the data to be used as the test set (0-100%):</label>
     <div class="input-group">
-        <input class="form-control" type="text" data-bind="value: $component.testFraction" />
+        <input class="form-control" type="number" min="0" max="100" data-bind="value: $component.testFraction" />
     </div>
 </div>
 <div class="input-group">
     <label>The number of folds used in the cross validation:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> folds
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.runPlpArgs.nfold, eventType:'blur', ko_autocomplete: { value: $component.runPlpArgs.nfold, source: $component.options.nfoldOptions, minLength: 0, maxShowItems: 10, scroll: true }" /> folds
     </div>
 </div>
 <div class="input-group">

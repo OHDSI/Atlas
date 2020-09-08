@@ -1,7 +1,7 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
-	<heading-title params="name: cohortDefinitionCaption(), icon: 'users', theme: 'dark'"></heading-title>
-	<!-- ko if: currentCohortDefinition().id() != 0 -->
+	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'users', theme: 'dark'"></heading-title>
+	<!-- ko if: currentCohortDefinition() && currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
@@ -26,37 +26,38 @@
 					<!-- /ko -->
 				</div>
 			</div>
-				<div data-bind="visible: !isNameFilled()" class="empty-name-error">
-					<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-					<label>Cohort Definition name is empty.</label>
-				</div>
+			<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 
 		</div>
 
 		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.tabMode('definition'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.selectTab('definition'); }">
 				<a>Definition <i data-bind="click: function () { $component.cohortDefinitionOpened(true) }" class="fa fa-question-circle-o"></i></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.tabMode('conceptsets'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.selectTab('conceptsets'); }">
 				<a>Concept Sets</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.tabMode('generation'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
 				<a>Generation</a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.tabMode('reporting'); }">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
 				<a>Reporting</a>
 			</li>
 			<!--
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.tabMode('explore'); }"><a>Explore</a></li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }"><a>Explore</a></li>
 			-->
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.tabMode('export')">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.selectTab('export')">
 				<a>Export</a>
 			</li>
-			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.tabMode('warnings'); } ">
-				<a data-bind="attr: { class: warningClass }">Messages <span class="badge" data-bind="text: warningsTotals, visible: warningsTotals() > 0"></span></a>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
+				<a>
+					Messages
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --> <!-- /ko -->
+				</a>
 			</li>
 		</ul>
 		<div class="tab-content">
@@ -306,11 +307,11 @@
 						<tr data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
 							<td>
 								<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
-									<span data-bind="tooltip: !$component.canGenerate() ? 'Initial event is not set or changes not saved' : null" data-placement="right">
+									<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="right">
 										<button class="btn btn-sm btn-primary"
 												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																		visible: !$component.isSourceRunning($data),
-																		click: (data, event) => $component.generateCohort(data, false)">
+																		click: (data, event) => $component.generateCohort(data)">
 												<i class="fa fa-play"></i>&nbsp;Generate
 										</button>
 									</span>
@@ -318,7 +319,7 @@
 								<a role="button" class="btn btn-sm btn-danger"
 									 data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
-															attr: {disabled: $component.isSourceStopping($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
+															attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
 								</a>
 							</td>
 							<td class="nowrap" data-bind="text:name"></td>
@@ -478,9 +479,7 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">
 				<div class="paddedWrapper">
-					<conceptset-warnings params="{count: warningsTotals, infoCount: infoCount,
-						warningCount: warningCount, crititcalCount: criticalCount,
-						canDiagnose: canSave, onFixCallback: fixConceptSet}"></conceptset-warnings>
+					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
 				</div>
 			</div>
 		</div>

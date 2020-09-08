@@ -1,0 +1,63 @@
+<div class="wrapperHeader">
+	<!-- ko if: loading -->
+		<div data-bind="css: classes('loading')">
+			<i class="fa fa-circle-o-notch fa-spin"></i>
+		</div>
+	<!-- /ko -->
+	<!-- ko ifnot: loading -->
+	<!-- for notifications, job completion, etc. -->
+	<div class="user-bar-container">
+		<!-- ko if: isLoggedIn -->
+		<a data-bind="click: function () { $component.jobModalOpened(true) }"><i data-bind="css: {pending: jobNotificationsPending}" class="fa fa-bell"></i></a>
+		<!-- /ko -->
+		<div data-bind="if:appConfig.userAuthenticationEnabled===true" style="display: inline-block;">
+			<div title="Sign In" data-bind="if: !isLoggedIn() || tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><i class="fa fa-sign-in"></i>Sign In</a></div>
+			<div title="Sign Out" data-bind="if: isLoggedIn() && !tokenExpired()"><span class="pipe">|</span><a data-bind="click: function () { $component.signInOpened(true) }"><strong data-bind="text: fullName"></strong><i class="fa fa-user-circle fa-lg" aria-hidden="true"></i></a></div>
+		</div>
+	</div>
+	<!-- /ko -->
+</div>
+
+<atlas-modal params="{
+		if:appConfig.userAuthenticationEnabled === true,
+		showModal: signInOpened,
+		modifiers: ['sm'],
+		iconClass: 'fa fa-sign-in',
+		title: 'Sign In',
+}">
+	<welcome></welcome>
+</atlas-modal>
+
+<atlas-modal params="{
+		showModal: jobModalOpened,
+		title: 'Notifications (last ' + $component.jobsCount() + ')',
+		templateWrapperClass: {},
+		data: {
+			tabs: $component.tabs,
+			userJobParams: $component.userJobParams,
+			allJobParams: $component.allJobParams,
+			selectedTabKey: $component.selectedTabKey,
+			selectTab: $component.selectTab,
+			jobModalOpened: $component.jobModalOpened,
+			toggleCompletedFilter: $component.toggleCompletedFilter,
+			hideCompleted: $component.hideCompleted(),
+			isRefreshing: $component.isRefreshing(),
+			classes: $component.classes
+		}
+}">
+	<div data-bind="css: classes('jobs-modal-content')">
+		<tabs params="
+			selectedTabKey: selectedTabKey,
+			selectTab: selectTab,
+			tabs: tabs,
+			">
+		</tabs>
+
+		<div data-bind="css: classes({ element: 'filter-button', extra: ['btn-group', 'pull-right'] })">
+			<button type="button" class="btn btn-sm btn-primary" data-bind="click: toggleCompletedFilter">
+				<span data-bind="text: (hideCompleted ? 'Show' : 'Hide') + ' completed jobs'"></span>
+				<i data-bind="visible: isRefreshing, css: classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+			</button>
+		</div>
+	</div>
+</atlas-modal>

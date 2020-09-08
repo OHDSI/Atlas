@@ -102,12 +102,8 @@ define(function (require, exports) {
 	}
 
 
-	function generate(cohortDefinitionId, sourceKey, includeFeatures) {
-		var route = config.webAPIRoot + 'cohortdefinition/' + cohortDefinitionId + '/generate/' + sourceKey;
-		if (includeFeatures) {
-			route = `${route}?includeFeatures`;
-		}
-		return httpService.doGet(route);
+	function generate(cohortDefinitionId, sourceKey) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/generate/${sourceKey}`);
 	}
 
 
@@ -140,12 +136,9 @@ define(function (require, exports) {
 		return reportPromise;
 	}
 
-	function getWarnings(cohortDefinitionId) {
-		return httpService.doGet(config.webAPIRoot + 'cohortdefinition/' + (cohortDefinitionId || '-1') + '/check');
-	}
-
-	function runDiagnostics(id, expression) {
-		return httpService.doPost(config.webAPIRoot + 'cohortdefinition/' + (id || '-1') + '/check', expression);
+	function runDiagnostics(expression) {
+		return httpService.doPost(config.webAPIRoot + 'cohortdefinition/check', expression)
+			.then(res => res.data);
 	}
 
 	function getCohortCount(sourceKey, cohortDefinitionId) {
@@ -168,7 +161,6 @@ define(function (require, exports) {
 		generate: generate,
 		getInfo: getInfo,
 		getReport: getReport,
-		getWarnings: getWarnings,
 		runDiagnostics: runDiagnostics,
 		cancelGenerate,
 		getCohortCount,

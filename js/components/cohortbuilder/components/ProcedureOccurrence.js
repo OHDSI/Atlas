@@ -33,7 +33,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add Procedure Type Criteria",
 				value: 2,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Type."
+				description: "Filter Procedure Occurrences by the Procedure Type."
 			},
 			{
 				text: "Add Visit Criteria",
@@ -45,19 +45,19 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add Modifier Criteria",
 				value: 1,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Modifier."
+				description: "Filter Procedure Occurrences by the Modifier."
 			},
 			{
 				text: "Add Quantity Criteria",
 				value: 3,
 				selected: false,
-				description: "Filter Procedure Occurrences  by Quantity."
+				description: "Filter Procedure Occurrences by Quantity."
 			},
 			{
 				text: "Add Procedure Source Concept Criteria",
 				value: 4,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Source Concept."
+				description: "Filter Procedure Occurrences by the Procedure Source Concept."
 			},
 			/*
 			 			{
@@ -83,7 +83,7 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
-				description: "Apply criteria using the procedure occurrence as the index event",
+				description: "Apply criteria using the procedure occurrence as the index event.",
 			}
 		];
 		self.actionHandler = function (data) {

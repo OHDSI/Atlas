@@ -4,8 +4,8 @@
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.target().name" />
             <span class="input-group-btn">
-                <button class="btn btn-primary" data-bind="click:chooseTarget"><i class="fa fa-folder-open"></i></button>
-                <button class="btn btn-danger" data-bind="disable:comparison.target().id == 0, click:clearTarget" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                <button class="btn btn-primary" data-bind="click:chooseTarget, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable: comparison.target().id == 0 || !$component.isEditPermitted(), click:clearTarget" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
             </span>
         </div>
     </div>
@@ -14,8 +14,8 @@
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.comparator().name" />
             <span class="input-group-btn">
-                <button class="btn btn-primary" data-bind="click:chooseComparator"><i class="fa fa-folder-open"></i></button>
-                <button class="btn btn-danger" data-bind="disable:comparison.comparator().id == 0,click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                <button class="btn btn-primary" data-bind="click:chooseComparator, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable: comparison.comparator().id == 0 || !$component.isEditPermitted(), click:clearComparator" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
             </span>
         </div>
     </div>
@@ -23,18 +23,18 @@
         <label>Choose your outcome cohorts:</label>
     </div>
     <div>
-        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes, isEditPermitted: $component.isEditPermitted}"></linked-cohort-list>
+        <linked-cohort-list params="{title: ' ', newItemLabel: 'Add Outcome', data: $component.comparison.outcomes, multiChoice: true, isEditPermitted: $component.isEditPermitted}"></linked-cohort-list>
     </div>
     <div>
         <label>Negative control concept set:</label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: comparison.negativeControlOutcomesConceptSet().name" />
             <span class="input-group-btn">
-                <button class="btn btn-primary" data-bind="click:chooseNegativeControlOutcomesConceptSet"><i class="fa fa-folder-open"></i></button>
-                <button class="btn btn-danger" data-bind="disable:comparison.negativeControlOutcomesConceptSet().id == 0,click:clearNegativeControlOutcomesConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                <button class="btn btn-primary" data-bind="click:chooseNegativeControlOutcomesConceptSet, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                <button class="btn btn-danger" data-bind="disable:(comparison.negativeControlOutcomesConceptSet().id == 0 || !$component.isEditPermitted()), click:clearNegativeControlOutcomesConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
             </span>
         </div>
-    </div>    
+    </div>
     <div class="panel panel-default" data-bind="css: classes('panel-buffer')">
         <div class="panel-heading panel-subheading">
           <i class="fa fa-cog"></i> Covariate selection
@@ -45,8 +45,8 @@
                 <div class="input-group">
                     <input class="form-control" type="text" disabled data-bind="value: comparison.includedCovariateConceptSet().name" />
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" data-bind="click:chooseIncludedCovariateConceptSet"><i class="fa fa-folder-open"></i></button>
-                        <button class="btn btn-danger" data-bind="disable: comparison.includedCovariateConceptSet().id == 0, click:clearIncludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                        <button class="btn btn-primary" data-bind="click:chooseIncludedCovariateConceptSet, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                        <button class="btn btn-danger" data-bind="disable: (comparison.includedCovariateConceptSet().id == 0 || !$component.isEditPermitted()), click:clearIncludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
                 <label><i>* Concepts defined here are combined with those defined in the Analysis settings section.</i></label>
@@ -57,8 +57,8 @@
                 <div class="input-group">
                     <input class="form-control" type="text" disabled data-bind="value: comparison.excludedCovariateConceptSet().name" />
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" data-bind="click:chooseExcludedCovariateConceptSet"><i class="fa fa-folder-open"></i></button>
-                        <button class="btn btn-danger" data-bind="disable: comparison.excludedCovariateConceptSet().id == 0, click:clearExcludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
+                        <button class="btn btn-primary" data-bind="click:chooseExcludedCovariateConceptSet, disable: !$component.isEditPermitted()"><i class="fa fa-folder-open"></i></button>
+                        <button class="btn btn-danger" data-bind="disable: (comparison.excludedCovariateConceptSet().id == 0 || !$component.isEditPermitted()), click:clearExcludedCovariateConceptSet" type="button"><i class="fa fa-times-circle" aria-hidden="true"></i></button>
                     </span>
                 </div>
                 <label><i>* Concepts defined here are combined with those defined in the Analysis settings section.</i></label>
@@ -77,7 +77,7 @@
         showCohortSelector: $component.showCohortSelector,
     }
 }">
-    <cohort-definition-browser params="{cohortDefinitionSelected: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
+    <cohort-definition-browser params="{onSelect: data => cohortSelected(data.id, data.name)}"></cohort-definition-browser>
 </atlas-modal>
 <atlas-modal params="{
     showModal: showConceptSetSelector,

@@ -31,11 +31,19 @@ define([
 			// User can go back and forwards between tabs - no need to re-initialize them each time
 			this.previouslyLoadedTabs = typeof this.selectedTab() !== 'undefined' ? ko.observable([this.selectedTab()]) : ko.observable([]);
 			this.selectedTab.subscribe(idx => {
-				const indexes = this.previouslyLoadedTabs();
-				if (indexes.indexOf(idx) === -1) {
-					this.previouslyLoadedTabs([ ...indexes, idx ]);
-				}
+				this.addIdxToLoadedTabs(idx);
 			});
+			this.tabs().filter(t => t.preload).forEach(f => {
+				const idx = this.tabs().indexOf(this.tabs().find(t => t.key === f.key));
+				this.addIdxToLoadedTabs(idx);
+			});
+		}
+
+		addIdxToLoadedTabs(idx) {
+			const indexes = this.previouslyLoadedTabs();
+			if (indexes.indexOf(idx) === -1) {
+				this.previouslyLoadedTabs([ ...indexes, idx ]);
+			}
 		}
 
 		onSelectedTabKeyUpdate(newVal) {

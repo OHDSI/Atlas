@@ -4,6 +4,7 @@ define([
     'appConfig',
     'services/AuthAPI',
 	'utils/BemHelper',
+    'atlas-state',
     'less!welcome.less'
 ],
     function (
@@ -11,7 +12,8 @@ define([
     view,
     appConfig,
     authApi,
-	BemHelper
+    BemHelper,
+    sharedState,
     ) {
     const componentName = 'welcome';
 
@@ -68,6 +70,7 @@ define([
         };
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
+            sharedState.resetCurrentDataSourceScope();
             self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
@@ -118,7 +121,8 @@ define([
                     error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
                 });
             } else {
-                document.location = loginUrl;
+                const parts = window.location.href.split('#');
+                document.location = parts.length === 2 ? loginUrl + '?redirectUrl=' + parts[1] : loginUrl;
             }
          }
      };

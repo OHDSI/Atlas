@@ -28,15 +28,15 @@ define([
         return AuthAPI.isPermitted(`cohort-characterization:${id}:delete`);
     }
 
-    function isPermittedGetCCGenerations(id) {
+    function isPermittedListGenerations(id) {
         return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:get`);
     }
 
-    function isPermittedGenerateCC(id, sourceKey) {
+    function isPermittedGenerate(id, sourceKey) {
         return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:${sourceKey}:post`);
     }
 
-    function isPermittedGetCCGenerationResults(sourceKey) {
+    function isPermittedResults(sourceKey) {
         return (AuthAPI.isPermitted(`cohort-characterization:generation:*:result:post`))
             && AuthAPI.isPermitted(`source:${sourceKey}:access`);
     }
@@ -75,6 +75,10 @@ define([
         return AuthAPI.isPermitted(`feature-analysis:${id}:delete`);
     }
 
+    function isPermittedCopyFa(id) {
+        return AuthAPI.isPermitted(`feature-analysis:${id}:copy:get`);
+    }
+
     return {
         isPermittedCreateCC,
         isPermittedImportCC,
@@ -82,9 +86,9 @@ define([
         isPermittedGetCC,
         isPermittedUpdateCC,
         isPermittedDeleteCC,
-        isPermittedGetCCGenerations,
-        isPermittedGenerateCC,
-        isPermittedGetCCGenerationResults,
+        isPermittedListGenerations,
+        isPermittedGenerate,
+        isPermittedResults,
         isPermittedExportGenerationDesign,
         isPermittedExportCC,
         isPermittedCopyCC,
@@ -93,6 +97,7 @@ define([
         isPermittedCreateFa,
         isPermittedGetFa,
         isPermittedUpdateFa,
-        isPermittedDeleteFa
+        isPermittedDeleteFa,
+        isPermittedCopyFa,
     };
 });
