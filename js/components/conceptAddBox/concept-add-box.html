@@ -11,6 +11,7 @@
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="true"
+          data-bind="css: { disabled: isDisabled()}"
         >
           <span data-bind="text: $component.activeConceptSetName()"></span>
           <span class="caret"></span>
@@ -29,21 +30,21 @@
     <!-- /ko -->
   <!-- /ko -->
   <div class="options-container">
-    <div class="option" data-bind="{ css: { 'disabled': !isActive() } }">
+    <div class="option" data-bind="{ css: { disabled: isDisabled() } }">
       <span
           data-bind="click: () =>  $component.toggleSelectionOption('isExcluded'), css: { selected: selectionOptions().isExcluded() }"
           class="fa fa-check"
         ></span>
         Exclude
     </div>
-    <div class="option" data-bind="{ css: { 'disabled': !isActive() } }">
+    <div class="option" data-bind="{ css: { disabled: isDisabled() } }">
       <span
           data-bind="click: () =>  $component.toggleSelectionOption('includeDescendants'), css: { selected: selectionOptions().includeDescendants() }"
           class="fa fa-check"
         ></span>
         Descendants
     </div>
-    <div class="option" data-bind="{ css: { 'disabled': !isActive() } }">
+    <div class="option" data-bind="{ css: { disabled: isDisabled() } }">
       <span
           data-bind="click: () =>  $component.toggleSelectionOption('includeMapped'), css: { selected: selectionOptions().includeMapped() }"
           class="fa fa-check"
@@ -53,6 +54,7 @@
   </div>
   <button
       class="btn btn-success"
-      data-bind="click: handleSubmit, css: { disabled: !canAddConcepts() }, text: buttonText"
+      data-bind="click: handleSubmit, css: { disabled: !canAddConcepts() || isDisabled() }, text: buttonText"
     ></button>
+    <span data-bind="css: { active: isSuccessMessageVisible(), inactive: !isSuccessMessageVisible() }" class="alert alert-success add-tooltip" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Added To Concept Set!</strong></span>
 </div>

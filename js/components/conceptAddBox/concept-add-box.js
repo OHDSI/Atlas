@@ -27,6 +27,7 @@ define([
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
       this.canSelectSource = params.canSelectSource || false;
+      this.isAdded = ko.observable(false);
       this.defaultSelectionOptions = {
         includeDescendants: ko.observable(false),
         includeMapped: ko.observable(false),
@@ -62,12 +63,18 @@ define([
         }
         return this.isActive();
       });
+      this.isSuccessMessageVisible = ko.observable(false);
+      this.isDisabled = ko.pureComputed(() => !this.isActive() || !!this.isSuccessMessageVisible());
     }
     
     handleSubmit() {
+      this.isSuccessMessageVisible(true);
       const conceptSet = this.canSelectSource && this.activeConceptSet() ? this.activeConceptSet() : undefined;
       this.onSubmit(this.selectionOptions(), conceptSet);
       this.selectionOptions(this.defaultSelectionOptions);
+      setTimeout(() => {
+        this.isSuccessMessageVisible(false);
+      }, 1000);
     }
     
     toggleSelectionOption(option) {

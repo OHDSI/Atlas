@@ -31,4 +31,22 @@
       }
     }
   }
+
+  .add-tooltip {
+    margin-bottom: 0;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    &.active {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.2s linear;
+    }
+    &.inactive {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s 0.2s, opacity 0.2s linear;
+    }
+  }
 }
