@@ -409,19 +409,15 @@
 								<table class="pad-5" style="width:100%;">
 									<thead>
 										<th>Job Name</th>
-										<th>Progress</th>
+										<th>Start Date</th>
+										<th>Duration</th>
 										<th>Status</th>
 									</thead>
 									<tbody>
 										<tr data-bind="with:$component.currentJob">
 											<td class="pad-5"><i class="fa fa-tasks"></i> <span data-bind="html: name"></span></td>
-											<td class="pad-5">
-												<div data-bind="if:$data.progress">
-													<div class="progress">
-														<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" role="progressbar" data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)"></div>
-													</div>
-												</div>
-											</td>
+											<td class="pad-5" data-bind="text: startDate"></td>
+											<td class="pad-5" data-bind="text: duration"></td>
 											<td class="pad-5" data-bind="html: status"></td>
 										</tr>
 									</tbody>

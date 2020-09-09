@@ -95,7 +95,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		if (value === 0 || value || includeKeys.includes(key) ) {
 			return value;
 		} else {
-			return
+
 		}
 	}
 
@@ -655,7 +655,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
 			try {
 				const { data } = await jobService.getByName(testName, "cohortAnalysisJob");
-				data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null)
+				data.jobParameters ? this.currentJob({
+					...data,
+					name: data.jobParameters.jobName,
+					startDate: data.startDate ? momentApi.formatDateTimeUTC(data.startDate) : '',
+					duration: data.startDate ? momentApi.formatDuration((data.endDate || Date.now()) - data.startDate): ''
+				}) : this.currentJob(null)
 			} catch (e) {
 				console.error(e)
 			}
@@ -724,7 +729,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			close () {
 				if (this.dirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {
-					return;
+
 				} else {
 					commonUtils.routeTo('/cohortdefinitions');
 					this.currentConceptSet(null);
@@ -1168,7 +1173,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 						if (conceptSetId != null) {
 							await this.loadConceptSet(conceptSetId);
-							return;
+
 						} else {
 							this.reportSourceKey(sourceKey);
 						}
@@ -1525,7 +1530,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					if (value === 0 || value || ['UseEventEnd'].indexOf(key) > -1) {
 						return value;
 					} else {
-						return;
+
 					}
 				}, 2);
 			}
