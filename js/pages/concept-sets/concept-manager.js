@@ -254,11 +254,13 @@ define([
     
     // produces a closure to wrap options and source around a function
     // that accepts the source selected concepts list
-		addConcepts = (options, conceptSetStore = ConceptSetStore.repository()) => (conceptsArr, isCurrentConcept = false) => {
-      const concepts = commonUtils.getSelectedConcepts(conceptsArr);
-      const items = commonUtils.buildConceptSetItems(concepts, options);				
-      conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
-			commonUtils.clearConceptsSelectionState(conceptsArr);
+		addConcepts(options, conceptSetStore = ConceptSetStore.repository()) {
+			return (conceptsArr, isCurrentConcept = false) => {
+				const concepts = commonUtils.getSelectedConcepts(conceptsArr);
+				const items = commonUtils.buildConceptSetItems(concepts, options);
+				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+				commonUtils.clearConceptsSelectionState(conceptsArr);
+			}
 		}
 
 		hasRelationship(concept, relationships) {

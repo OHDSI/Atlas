@@ -133,14 +133,10 @@ define([
 				}
 			});
 			this.canDelete = ko.pureComputed(() => {
-				if (!config.userAuthenticationEnabled)
+				if (!config.userAuthenticationEnabled) {
 					return true;
-
-				if (this.currentConceptSetSource() == 'repository') {
-					return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
-				} else {
-					return false;
 				}
+				return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
 			});
 			this.canOptimize = ko.computed(() => {
 				return (

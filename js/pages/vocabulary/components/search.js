@@ -343,10 +343,10 @@ define([
 				return promise;
 			}
 
-			addConcepts = (options, conceptSetStore = ConceptSetStore.repository()) => {
+			addConcepts(options, conceptSetStore = ConceptSetStore.repository()) {
 				sharedState.activeConceptSet(conceptSetStore);
 				const concepts = commonUtils.getSelectedConcepts(this.data);
-				const items = commonUtils.buildConceptSetItems(concepts, options);				
+				const items = commonUtils.buildConceptSetItems(concepts, options);
 				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
 				commonUtils.clearConceptsSelectionState(this.data);
 			}

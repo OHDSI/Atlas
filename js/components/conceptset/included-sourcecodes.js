@@ -34,16 +34,16 @@ define([
 			this.canAddConcepts = ko.pureComputed(() => this.includedSourcecodes() && this.includedSourcecodes().some(item => item.isSelected()));
 		}
 
-		addConcepts = (options) => {
+		addConcepts(options) {
 			this.conceptSetStore.loadingSourceCodes(true);
 			const concepts = commonUtils.getSelectedConcepts(this.includedSourcecodes);
-			const items = commonUtils.buildConceptSetItems(concepts, options);			
+			const items = commonUtils.buildConceptSetItems(concepts, options);
 			conceptSetUtils.addItemsToConceptSet({
 				items,
 				conceptSetStore: this.conceptSetStore,
 			});
 			commonUtils.clearConceptsSelectionState(this.includedSourcecodes);
-    }
+		}
 	}
 
 	return commonUtils.build('conceptset-list-included-sourcecodes', IncludedSourcecodes, view);
