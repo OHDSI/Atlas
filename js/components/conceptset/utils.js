@@ -352,6 +352,10 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			context.conceptSetId(newConceptSet.id);
 		});
 	}
+
+	function getPermissionsText(clause = false, action = 'edit') {
+		return ko.unwrap(clause) ? null : `Not enough permissions to ${action} Concept Set`;
+	}
 	
   return {
     toRepositoryConceptSetItems,
@@ -368,6 +372,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 		loadAndApplyAncestors,
 		onCurrentConceptSetModeChanged,
     newConceptSetHandler,
-    conceptSetSelectionHandler,
+		conceptSetSelectionHandler,
+		getPermissionsText,
   };
 });

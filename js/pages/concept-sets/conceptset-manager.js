@@ -116,6 +116,7 @@ define([
 					&& this.currentConceptSet() != null
 					&& this.currentConceptSetDirtyFlag().isDirty()
 					&& this.isNameCorrect()
+					&& this.canEdit()
 				);
 			});
 			this.canCreate = ko.computed(() => {
@@ -270,7 +271,7 @@ define([
 			
 			// initially resolve the concept set
 			this.conceptSetStore.resolveConceptSetExpression();
-
+			this.conceptSetStore.isEditable(this.canEdit());
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -322,6 +323,7 @@ define([
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
+				this.conceptSetStore.isEditable(this.canEdit());
 			} catch(err) {
 				console.error(err);
 			}

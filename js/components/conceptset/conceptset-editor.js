@@ -32,7 +32,7 @@ define([
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.commonUtils = commonUtils;
 			this.columns = [
-				{ title: '', orderable:false, render: () => renderers.renderCheckbox('isSelected')  },
+				{ title: '', orderable: false, render: () => renderers.renderCheckbox('isSelected', this.canEditCurrentConceptSet()) },
 				{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
 				{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
 				{ title: 'Concept Name', render: commonUtils.renderBoundLink},

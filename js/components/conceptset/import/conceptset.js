@@ -7,6 +7,7 @@ define([
 	'utils/Clipboard',
 	'utils/CommonUtils',
 	'../const',
+	'../utils',
 ], function(
 	ko,
 	view,
@@ -16,11 +17,14 @@ define([
 	Clipboard,
 	commonUtils,
 	constants,
+	conceptSetUtils,
 ){
 
 	class ConceptSetImport extends AutoBind(ImportComponent(Component)) {
 		constructor(params) {
 			super(params);
+			this.canEdit = params.canEdit;
+			this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.canEdit(), 'edit');
 			this.importTypes = constants.importTypes;
 			this.importConceptSetExpression = params.importConceptSetExpression;
 			this.importConceptSetJson = ko.observable();

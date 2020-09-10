@@ -1,19 +1,25 @@
 define([
   'knockout',
-	'components/conceptset/ConceptSetStore',
+  'components/conceptset/ConceptSetStore',
+  'components/conceptset/utils',
   'components/Component',
   'utils/CommonUtils',
+  'services/AuthAPI',
   'atlas-state',
+  'appConfig',
   'const',
   'text!./concept-add-box.html',
   'less!./concept-add-box.less',
 	'databindings/cohortbuilder/dropupBinding',
 ], (
 	ko,
-	ConceptSetStore,
+  ConceptSetStore,
+  conceptSetUtils,
 	Component,
-	CommonUtils,
-	sharedState,
+  CommonUtils,
+  AuthAPI,
+  sharedState,
+  config,
 	globalConstants,
 	view,
 ) => {
@@ -24,6 +30,9 @@ define([
     constructor(params) {
       super(params);
       this.activeConceptSet = params.activeConceptSet || sharedState.activeConceptSet;
+      this.canCreateConceptSet = ko.pureComputed(function () {
+				return ((AuthAPI.isAuthenticated() && AuthAPI.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+			});
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
       this.canSelectSource = params.canSelectSource || false;
@@ -41,16 +50,17 @@ define([
         [storeKeys.characterization]: 'Characterization',
         [storeKeys.incidenceRates]: 'Incidence Rates',
       };
-      this.buttonText = ko.pureComputed(() => {
-        if (this.activeConceptSet() && this.activeConceptSet().current()) {
-          return `Add To Concept Set`;
-        }
-        return 'Add To New Concept Set';
-      })
+  
       this.activeConceptSets = ko.pureComputed(() => {
 				return ConceptSetStore.activeStores();
 			});
       this.hasActiveConceptSets = ko.pureComputed(() => !!this.activeConceptSets().length);
+      this.buttonText = ko.pureComputed(() => {
+        if (this.hasActiveConceptSets() && this.activeConceptSet() && this.activeConceptSet().current()) {
+          return `Add To Concept Set`;
+        }
+        return 'Add To New Concept Set';
+      });
       this.activeConceptSetName = ko.pureComputed(() => {
         if (this.activeConceptSet() && this.activeConceptSet().current()) {
           return `${this.activeConceptSet().current().name()} (${this.conceptSetType[this.activeConceptSet().source]})`;
@@ -59,20 +69,25 @@ define([
       });
       this.canAddConcepts = ko.pureComputed(() => {
         if (this.canSelectSource) {
-          return this.hasActiveConceptSets() ? (this.activeConceptSet() && this.activeConceptSet().source && this.isActive()) : this.isActive();
+          return this.hasActiveConceptSets()
+            ? (this.activeConceptSet() && this.activeConceptSet().source && this.isActive() && this.activeConceptSet().isEditable())
+            : this.isActive() && this.canCreateConceptSet();
         }
         return this.isActive();
       });
       this.isSuccessMessageVisible = ko.observable(false);
+      this.messageTimeout = null;
       this.isDisabled = ko.pureComputed(() => !this.isActive() || !!this.isSuccessMessageVisible());
+      this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.hasActiveConceptSets() || this.canCreateConceptSet(), 'create');
     }
     
     handleSubmit() {
+      clearTimeout(this.messageTimeout);
       this.isSuccessMessageVisible(true);
       const conceptSet = this.canSelectSource && this.activeConceptSet() ? this.activeConceptSet() : undefined;
       this.onSubmit(this.selectionOptions(), conceptSet);
       this.selectionOptions(this.defaultSelectionOptions);
-      setTimeout(() => {
+      this.messageTimeout = setTimeout(() => {
         this.isSuccessMessageVisible(false);
       }, 1000);
     }

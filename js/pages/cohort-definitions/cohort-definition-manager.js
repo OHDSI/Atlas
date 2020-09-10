@@ -1021,6 +1021,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			loadConceptSet(conceptSetId) {
 				this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+				this.conceptSetStore.isEditable(this.canEdit());
 				commonUtils.routeTo(`/cohortdefinition/${this.currentCohortDefinition().id()}/conceptsets/`);
 			}
 		

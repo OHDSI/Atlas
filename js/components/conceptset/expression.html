@@ -8,17 +8,26 @@
 
     <div class="clear"></div>
     <div data-bind="css: classes({element: 'button-pane', extra: 'pull-right'})">
-        <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { $component.addConcepts(); } ">Add Concepts</button>
-        <button
-            type="button"
-            class="btn btn-sm btn-danger"
-            data-bind="
-                click:function() { $component.deleteConcepts(); }, 
-                css: { disabled: conceptsForRemovalLength() === 0 },
-                text: conceptsForRemovalLength() === 1 ? 'Remove Selected Concept' : 'Remove Selected Concepts'"
-        ></button>
-        <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.onDelete(); }">Delete Concept Set</button>
-        <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet">Copy To Concept Set Repository</button>
+        <span data-bind="tooltip: buttonTooltipText">
+            <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { $component.addConcepts(); }, enable: canEdit">Add Concepts</button>
+        </span>
+        <span data-bind="tooltip: buttonTooltipText">
+            <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                data-bind="
+                    click:function() { $component.deleteConcepts(); }, 
+                    css: { disabled: conceptsForRemovalLength() === 0 || !canEdit() },
+                    text: conceptsForRemovalLength() === 1 ? 'Remove Selected Concept' : 'Remove Selected Concepts'"
+            ></button>
+        </span>
+        
+        <span data-bind="tooltip: buttonTooltipText">
+            <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.onDelete(); }, enable: canEdit">Delete Concept Set</button>
+        </span>
+        <span data-bind="tooltip: copyButtonTooltipText">
+            <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet">Copy To Concept Set Repository</button>
+        </span>
         <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.onClose(); }">Close Concept Set</button>
     </div>
 </div>

@@ -461,7 +461,8 @@ define([
         }
 
 				loadConceptSet(conceptSetId) {
-				    this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+                    this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+                    this.conceptSetStore.isEditable(this.canEdit());
 				    commonUtils.routeTo(`/cc/feature-analyses/${this.data().id}/conceptset`);
 				}		
     }

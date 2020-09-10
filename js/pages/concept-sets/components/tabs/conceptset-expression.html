@@ -76,19 +76,24 @@
 
   <concept-legend></concept-legend>
   <div class="row">
-    <button 
-      class="btn btn-danger btn-sm" 
-      data-bind="
-        click: removeConceptsFromConceptSet, 
-        css: { disabled: conceptsForRemovalLength() === 0 },
-        text: conceptsForRemovalLength() === 1 ? 'Remove selected concept' : 'Remove selected concepts',
-      "
-    ></button>
-    <button 
+    <span data-bind="tooltip: buttonTooltip">
+      <button 
+        class="btn btn-danger btn-sm" 
+        data-bind="
+          click: removeConceptsFromConceptSet, 
+          css: { disabled: conceptsForRemovalLength() === 0 || !canEditCurrentConceptSet() },
+          text: conceptsForRemovalLength() === 1 ? 'Remove selected concept' : 'Remove selected concepts',
+        "
+      ></button>
+    </span>
+    <span data-bind="tooltip: buttonTooltip">
+      <button 
       class="btn btn-success btn-sm" 
       data-bind="
-        click: navigateToSearchPage, 
+        click: navigateToSearchPage,
+        css: { disabled: !canEditCurrentConceptSet() }
       "
     >Add concepts</button>
+    </span>
   </div>
 </div>

@@ -382,6 +382,7 @@ define([
 			
 		loadConceptSet(conceptSetId) {
 			this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
+			this.conceptSetStore.isEditable(this.isEditable());
 			commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
 		}
 

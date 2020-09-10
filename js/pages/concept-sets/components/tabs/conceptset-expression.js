@@ -7,6 +7,7 @@ define([
   'utils/Renderers',
   'services/ConceptSet',
   'components/conceptset/ConceptSetStore',
+  'components/conceptset/utils',
   'atlas-state',
   'const',
   'components/conceptLegend/concept-legend',
@@ -19,6 +20,7 @@ define([
   renderers,
   conceptSetService,
   ConceptSetStore,
+  conceptSetUtils,
   sharedState,
   globalConstants,
 ) {
@@ -43,12 +45,13 @@ define([
 
       this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(row => row.isSelected()).length);
       this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
+      this.buttonTooltip = conceptSetUtils.getPermissionsText(this.canEditCurrentConceptSet());
 
       this.columns = [
         {
           class: 'text-center',
           orderable: false,
-          render: () => renderers.renderCheckbox('isSelected'),
+          render: () => renderers.renderCheckbox('isSelected', this.canEditCurrentConceptSet()),
         },
         {
           data: 'concept.CONCEPT_ID',

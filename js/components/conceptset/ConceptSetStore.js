@@ -84,6 +84,8 @@ define([
 
 			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
 				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
+
+			this.isEditable = ko.observable(false);
 		}
 
 		clear() {
@@ -227,7 +229,7 @@ define([
 		}		
 		
 		static activeStores() {
-			const activeKeys = Object.keys(constants.ConceptSetSources).filter(key => !!this.getStore(key).current());
+			const activeKeys = Object.keys(constants.ConceptSetSources).filter(key => !!this.getStore(key).current() && this.getStore(key).isEditable());
 			return activeKeys.map(k => ConceptSetStore.getStore(k));
 		}
 		

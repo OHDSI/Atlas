@@ -52,9 +52,11 @@
         Mapped
     </div>
   </div>
-  <button
+  <span data-bind="tooltip: buttonTooltipText">
+    <button
       class="btn btn-success"
       data-bind="click: handleSubmit, css: { disabled: !canAddConcepts() || isDisabled() }, text: buttonText"
     ></button>
-    <span data-bind="css: { active: isSuccessMessageVisible(), inactive: !isSuccessMessageVisible() }" class="alert alert-success add-tooltip" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Added To Concept Set!</strong></span>
+  </span>
+  <span data-bind="css: { active: isSuccessMessageVisible(), inactive: !isSuccessMessageVisible() }" class="alert alert-success add-tooltip" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Added To Concept Set!</strong></span>
 </div>

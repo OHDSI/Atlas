@@ -49,7 +49,8 @@ define([
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
 			this.onClose = params.onClose;
 			this.onDelete = params.onDelete;
-		
+			this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.canEdit(), 'edit');
+			this.copyButtonTooltipText = conceptSetUtils.getPermissionsText(this.canCreateConceptSet(), 'create');
 		}
 
 		showSaveConceptSet() {

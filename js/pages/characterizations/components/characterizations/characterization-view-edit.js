@@ -305,6 +305,7 @@ define([
         
         loadConceptSet(conceptSetId) {
             this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+            this.conceptSetStore.isEditable(this.isEditPermitted());
             commonUtils.routeTo(`/cc/characterizations/${this.design().id}/conceptsets`);
         }   
     }

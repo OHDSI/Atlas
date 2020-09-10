@@ -34,7 +34,7 @@ define([
 			this.importing = params.importing || ko.observable(false);
 			//this.criteriaContext = sharedState.criteriaContext;
 			this.currentConceptSet = this.conceptSetStore.current;
-
+			this.canEdit = params.canEdit;
 			this.showImportConceptSetModal = ko.observable();
 			this.selectedTabKey = ko.observable('concept-identifiers');
 			this.tabs = [
@@ -66,7 +66,11 @@ define([
 		selectTab(index) {
 			const key = this.tabs[index].key;
 			if (key === 'repository') {
-				this.showImportConceptSetModal(true);
+				if(this.canEdit()) {
+					this.showImportConceptSetModal(true);
+				} else {
+					alert(conceptSetUtils.getPermissionsText(false, 'edit'));
+				}
 			} else {
 				this.selectedTabKey(this.tabs[index].key);
 			}

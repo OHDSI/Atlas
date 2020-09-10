@@ -25,7 +25,7 @@ define([
 			super(params);
 			this.appendConcepts = params.appendConcepts;
 			this.identifiers = ko.observable("");
-			this.canAddConcepts = ko.pureComputed(() => this.identifiers().length > 0);
+			this.canAddConcepts = ko.pureComputed(() => this.identifiers().length > 0 && params.canEdit());
 			this.doImport = this.doImport.bind(this);
 		}
 
