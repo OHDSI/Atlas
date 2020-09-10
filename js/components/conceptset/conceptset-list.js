@@ -183,6 +183,7 @@ define([
 //			const items = ko.unwrap(conceptSet.expression.items);
 //			conceptSetUtils.addToConceptSetIdsMap({items, conceptSetStore: this.conceptSetStore});
 			this.conceptSetStore.current(conceptSet);
+			this.conceptSetStore.isEditable(this.canEdit());
 		}
 
 		createConceptSet() {
