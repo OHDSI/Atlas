@@ -238,6 +238,7 @@ define([
 			this.tableApi() && this.tableApi()
 				.getRows((idx, data) => data.id === currentId).deselect();
 			this.conceptSetStore.current(null);
+			sharedState.activeConceptSet(null);
 		}
 
 		deleteConceptSet() {

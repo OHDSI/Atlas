@@ -276,7 +276,8 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			id: 0
 		});
 		sharedState.RepositoryConceptSet.current(newConceptSet);
-		conceptSetStore.current(sharedState.RepositoryConceptSet.current());		
+		conceptSetStore.current(sharedState.RepositoryConceptSet.current());
+		conceptSetStore.isEditable(true);
 	}
 
 	function removeConceptsFromConceptSet({
