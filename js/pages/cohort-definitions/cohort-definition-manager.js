@@ -407,7 +407,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			this.pollForInfo = () => {
-				if (this.currentCohortDefinition()) {
+				const { PENDING, RUNNING } = globalConstants.generationStatuses;
+				if (this.currentCohortDefinition() && !this.isNew() && this.cohortDefinitionSourceInfo().some(i => [PENDING, RUNNING].includes(i.status()))) {
 					var id = this.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
 						var hasPending = false;
@@ -795,7 +796,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			generateCohort (source) {
 				this.stopping()[source.sourceKey](false);
-				this.getSourceKeyInfo(source.sourceKey).status('PENDING');
+				this.getSourceKeyInfo(source.sourceKey).status(globalConstants.generationStatuses.PENDING);
 				this.getSourceKeyInfo(source.sourceKey).createdBy(authApi.subject());
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.toggleCohortReport(null);
@@ -1412,6 +1413,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 			dispose () {
+				super.dispose();
 				this.onConceptSetTabMode && this.onConceptSetTabMode.dispose();
 				this.cohortDefinitionLink.dispose();
 				this.cohortDefinitionCaption.dispose();
