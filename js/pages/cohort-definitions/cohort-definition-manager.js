@@ -1322,10 +1322,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.isExitMessageShown(true);
 			}
 
-			calculateProgress (j) {
-				return j.progress() + '%';
-			}
-
 			async generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
 				if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
 					return;
