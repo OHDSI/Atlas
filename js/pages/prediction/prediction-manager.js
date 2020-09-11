@@ -120,7 +120,7 @@ define([
 			});
 
 			this.isNameFilled = ko.computed(() => {
-				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name();
+				return this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().name() && this.patientLevelPredictionAnalysis().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.patientLevelPredictionAnalysis().name());
@@ -129,7 +129,7 @@ define([
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.patientLevelPredictionAnalysis().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name() === this.defaultName;
+				return this.isNameFilled() && this.patientLevelPredictionAnalysis().name().trim() === this.defaultName;
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
@@ -297,6 +297,9 @@ define([
 		async save() {
 			this.isSaving(true);
 			this.loading(true);
+
+			let predictionName = this.patientLevelPredictionAnalysis().name();
+			this.patientLevelPredictionAnalysis().name(predictionName.trim());
 
 			// Next check to see that a prediction analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current prediction analysis is excluded in this check.

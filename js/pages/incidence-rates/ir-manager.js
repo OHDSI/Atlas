@@ -160,7 +160,7 @@ define([
 			this.expressionMode = ko.observable('import');
 
 			this.isNameFilled = ko.pureComputed(() => {
-				return this.selectedAnalysis() && this.selectedAnalysis().name();
+				return this.selectedAnalysis() && this.selectedAnalysis().name() && this.selectedAnalysis().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.selectedAnalysis().name());
@@ -169,7 +169,7 @@ define([
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.selectedAnalysis().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.selectedAnalysis().name() === this.defaultName;
+				return this.isNameFilled() && this.selectedAnalysis().name().trim() === this.defaultName;
 			});
 
 			this.isNameCorrect = ko.pureComputed(() => {
@@ -415,6 +415,9 @@ define([
 		async save() {
 			this.isSaving(true);
 			this.loading(true);
+
+			let irName = this.selectedAnalysis().name();
+			this.selectedAnalysis().name(irName.trim());
 
 			// Next check to see that an incidence rate with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.

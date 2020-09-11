@@ -51,15 +51,15 @@ define([
 
 			this.design = sharedState.CohortPathways.current;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
-            this.executionId = ko.observable(params.router.routerParams().executionId);
-            this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
+			this.executionId = ko.observable(params.router.routerParams().executionId);
+			this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
 			this.defaultName = constants.newEntityNames.pathway;
 
 			this.isNameFilled = ko.computed(() => {
-				return this.design() && this.design().name();
+				return this.design() && this.design().name() && this.design().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
@@ -68,7 +68,7 @@ define([
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.design().name() === this.defaultName;
+				return this.isNameFilled() && this.design().name().trim() === this.defaultName;
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
@@ -202,6 +202,9 @@ define([
 
 		async save() {
 			this.isSaving(true);
+
+			let pathwayName = this.design().name();
+			this.design().name(pathwayName.trim());
 
 			// Next check to see that a cohort pathway with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current cohort pathway is excluded in this check.

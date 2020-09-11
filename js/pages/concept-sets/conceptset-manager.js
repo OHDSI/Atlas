@@ -87,7 +87,7 @@ define([
 				}
 			});
 			this.isNameFilled = ko.computed(() => {
-				return this.currentConceptSet() && this.currentConceptSet().name();
+				return this.currentConceptSet() && this.currentConceptSet().name() && this.currentConceptSet().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.currentConceptSet().name());
@@ -96,7 +96,7 @@ define([
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.currentConceptSet().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.currentConceptSet().name() === this.defaultName;
+				return this.isNameFilled() && this.currentConceptSet().name().trim() === this.defaultName;
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
@@ -314,6 +314,9 @@ define([
 			if (selectedConcepts === undefined) {
 				selectedConcepts = this.selectedConcepts();
 			}
+
+			let conceptSetName = conceptSet.name();
+			conceptSet.name(conceptSetName.trim());
 
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
