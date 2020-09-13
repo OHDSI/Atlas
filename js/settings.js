@@ -41,9 +41,8 @@ const settingsObject = {
 			location: "pages",
 		},
 		{
-			name: "lodash",
-			location: "../node_modules/lodash",
-			main: "lodash",
+			name: "lodash-amd",
+			location: "../node_modules/lodash-amd"
 		},
 		{
 			name: "urijs",
@@ -119,6 +118,7 @@ const settingsObject = {
 		"appConfig": "config",
 		"prism": "../node_modules/prismjs/prism",
 		"js-cookie": "../node_modules/js-cookie/src/js.cookie",
+		"lodash": "assets/lodash-slim",
 
 		"d3": "../node_modules/d3/build/d3",
 		"d3-tip": "../node_modules/d3-tip/dist/index",
