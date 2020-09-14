@@ -114,10 +114,6 @@ body {
   padding: 10px;
 }
 
-#textImportConceptSet {
-  font-size: 10px;
-}
-
 .paddedWrapper {
   margin: 5px;
 }
@@ -652,45 +648,6 @@ ul.ColVis_collection li {
 .conceptTable div.swatch {
   width: 12px;
   height: 12px;
-}
-
-.linkLegend {
-  padding: 10px 10px 15px 10px;
-  clear: both;
-}
-
-.linkLegend .swatch {
-  width: 15px;
-  height: 15px;
-  float: left;
-  clear: left;
-  border: solid 1px #ccc;
-  margin-left: 10px;
-}
-
-.linkLegend .swatch.classification {
-  background-color: #a335ee;
-}
-
-.linkLegend .swatch.standard {
-  background-color: #0070dd;
-}
-
-.linkLegend .swatch.nonStandard {
-  background-color: #a71a19;
-}
-
-.linkLegend .linkLegendTitle {
-  float: left;
-  padding-left: 3px;
-  line-height: 15px;
-  font-size: 11px;
-}
-
-.linkLegendItem {
-  margin: 0px;
-  height: 20px;
-  float: right;
 }
 
 .clear {

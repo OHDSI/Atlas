@@ -19,7 +19,10 @@ define([
 			this.controlsComponent = params.controlsComponent;
 
 			this.selectedTab = params.selectedTab ? params.selectedTab : ko.observable(0);
-			this.tabs = ko.observableArray(params.tabs || []);
+			this.tabs = ko.observableArray(ko.unwrap(params.tabs) || []);
+			if (ko.isObservable(params.tabs)) {
+				this.subscriptions.push(params.tabs.subscribe((newTabs) => this.tabs(newTabs)));
+			}
 
             if (params.selectedTabKey) {
                 const selectedTabKeySubscr = params.selectedTabKey.subscribe(newKey => this.onSelectedTabKeyUpdate(newKey));

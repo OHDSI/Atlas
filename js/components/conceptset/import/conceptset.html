@@ -1,0 +1,19 @@
+<div>
+	<div class="heading">Concept Set Expression JSON (<a class="linkish" data-bind="click: function() { importConceptSetJson(''); }">click to clear</a>)</div>
+	<textarea class="form-control" rows="5" data-bind="value: importConceptSetJson"></textarea>
+	<div style="position: absolute" data-bind="if: errorMessage().length > 0"><span data-bind="text: errorMessage"></span></div>
+	<div class="clear"></div>
+	<div class="pull-right">
+		<span data-bind="tooltip: buttonTooltipText">
+			<button type="button" data-bind="click:() => { $component.doImport({type: $component.importTypes.APPEND }); }, css: { disabled: !canEdit() }" class="btn btn-sm btn-primary">
+				<i class="fa fa-upload"></i> Append Concept Set Expression
+			</button>
+		</span>
+		<span data-bind="tooltip: buttonTooltipText">
+			<button type="button" data-bind="click:() => { $component.doImport({type: $component.importTypes.OVERWRITE }); }, css: { disabled: !canEdit() }" class="btn btn-sm btn-danger">
+				<i class="fa fa-upload"></i> Overwrite Concept Set Expression
+			</button>
+		</span>
+	</div>
+	<div class="clear"></div>
+</div>
