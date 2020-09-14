@@ -656,7 +656,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
 			try {
 				const { data } = await jobService.getByName(testName, "cohortAnalysisJob");
-				data.jobParameters ? this.currentJob({ ...data, name: data.jobParameters.jobName }) : this.currentJob(null)
+				data.jobParameters ? this.currentJob({
+					...data,
+					name: data.jobParameters.jobName,
+					startDate: data.startDate ? momentApi.formatDateTimeUTC(data.startDate) : '',
+					duration: data.startDate ? momentApi.formatDuration((data.endDate || Date.now()) - data.startDate): ''
+				}) : this.currentJob(null);
 			} catch (e) {
 				console.error(e)
 			}
@@ -1316,10 +1321,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				const info = this.cohortDefinitionSourceInfo().find(i => i.sourceKey === sourceKey) || { failMessage: ko.i18n('cohortDefinitions.cohortDefinitionManager.failedWithoutAnyMessage', 'Failed without any message')() };
 				this.exitMessage(info.failMessage);
 				this.isExitMessageShown(true);
-			}
-
-			calculateProgress (j) {
-				return j.progress() + '%';
 			}
 
 			async generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {

@@ -622,25 +622,16 @@
 							<div class="panel-body">
 								<table class="pad-5" style="width:100%;">
 									<thead>
-										<th>
-											<span data-bind="text: ko.i18n('columns.jobName', 'Job Name')"></span>
-										</th>
-										<th><span data-bind="text: ko.i18n('columns.progress', 'Progress')"></span></th>
-										<th><span data-bind="text: ko.i18n('columns.status', 'Status')"></span></th>
+										<th data-bind="text: ko.i18n('columns.jobName', 'Job Name')"></th>
+										<th data-bind="text: ko.i18n('columns.startDate', 'Start Date')"></th>
+										<th data-bind="text: ko.i18n('columns.duration', 'Start Date')"></th>
+										<th data-bind="text: ko.i18n('columns.status', 'Status')"></th>
 									</thead>
 									<tbody>
 										<tr data-bind="with:$component.currentJob">
 											<td class="pad-5"><i class="fa fa-tasks"></i> <span data-bind="html: name"></span></td>
-											<td class="pad-5">
-												<div data-bind="if:$data.progress">
-													<div class="progress">
-														<div class="progress-bar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"
-															role="progressbar"
-															data-bind="style:{ width: $component.calculateProgress($data)}, text: $component.calculateProgress($data)">
-														</div>
-													</div>
-												</div>
-											</td>
+											<td class="pad-5" data-bind="text: startDate"></td>
+											<td class="pad-5" data-bind="text: duration"></td>
 											<td class="pad-5" data-bind="html: status"></td>
 										</tr>
 									</tbody>
