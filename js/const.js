@@ -1,11 +1,12 @@
 define([
 	'knockout',
 	'appConfig',
+	'utils/Renderers'
 	],
 	(
 		ko,
 		config,
-	) => {
+		renderers) => {
 
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
@@ -42,7 +43,7 @@ define([
 				}
 			}]
 		};
-		
+
 		const getLinkedFeAParametersColumns = (context) => {
 			return [
 				{
@@ -108,25 +109,14 @@ define([
 					}] : []
 			];
 		};
-		
-		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
+				
+		const getRelatedSourcecodesColumns = (sharedState, context) => [
 			{
-				title: !context.canEditCurrentConceptSet() ? '<span class="fa fa-shopping-cart"></span>' : '<i class="fa fa-shopping-cart"></i>',
-				render: (s, p, d) => {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-					var tag = 'i';
-					if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					if (!context.canEditCurrentConceptSet()) {
-						css += ' readonly';
-						tag = 'span';
-					}
-					return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
-				},
+				title: '',
 				orderable: false,
-				searchable: false
+				searchable: false,
+				className: 'text-center',
+				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
 			},
 			{
 				title: 'Id',
@@ -139,7 +129,10 @@ define([
 			{
 				title: 'Name',
 				data: 'CONCEPT_NAME',
-				render: commonUtils.renderLink,
+				render: function (s, p, d) {
+					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+				}
 			},
 			{
 				title: 'Class',
@@ -151,74 +144,14 @@ define([
 				visible: false
 			},
 			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
 			},
 			{
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-			},
-			{
-				title: 'Ancestors',
-				data: 'ANCESTORS',
-				render: conceptSetService.getAncestorsRenderFunction()
-			}
+			}, 
 		];
-
-		const getRelatedSourcecodesColumns = (sharedState, context) => [{
-			title: '',
-			render: (s, p, d) => {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				var tag = 'i'
-				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				if (!context.canEditCurrentConceptSet()) {
-					css += ' readonly';
-					tag = 'span';
-				}
-				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
-			},
-			orderable: false,
-			searchable: false
-		}, {
-			title: 'Id',
-			data: 'CONCEPT_ID'
-		}, {
-			title: 'Code',
-			data: 'CONCEPT_CODE'
-		}, {
-			title: 'Name',
-			data: 'CONCEPT_NAME',
-			render: function (s, p, d) {
-				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-			}
-		}, {
-			title: 'Class',
-			data: 'CONCEPT_CLASS_ID'
-		}, {
-			title: 'Standard Concept Caption',
-			data: 'STANDARD_CONCEPT_CAPTION',
-			visible: false
-		}, {
-			title: 'Domain',
-			data: 'DOMAIN_ID'
-		}, {
-			title: 'Vocabulary',
-			data: 'VOCABULARY_ID'
-		}];
 
 		const apiPaths = {
 			role: (id = '') => `${config.api.url}role/${id}`,
@@ -317,6 +250,11 @@ define([
 			},
 		};
 
+		const eventTypes = {
+			conceptSetChanged: 'conceptSetChanged',
+		};
+
+	
 		const jobTypes = {
 			USER_JOB: {
 				title: 'userJob',
@@ -336,14 +274,13 @@ define([
 			ENGINE_NOT_AVAILABLE: 'Execution engine is not available',
 			EMPTY_COHORTS: 'No cohorts found',
 			EMPTY_INITIAL_EVENT: 'Initial event is not set',
-		  };
+		};
 
 		return {
 			minChartHeight,
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
-			getIncludedConceptsColumns,
 			getLinkedFeAParametersColumns,
 			getLinkedFeatureAnalysisColumns,
 			getLinkedCohortColumns,
@@ -357,6 +294,7 @@ define([
 			executionStatuses,
 			executionResultModes,
 			sqlDialects,
+			eventTypes,
 			disabledReasons,
 			jobTypes,
     };

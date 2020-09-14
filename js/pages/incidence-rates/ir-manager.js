@@ -21,13 +21,15 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
+	'components/conceptset/ConceptSetStore',
+	'components/conceptset/utils',
 	'./const',
 	'const',
 	'components/checks/warnings',
 	'components/checks/warnings-badge',
 	'./components/iranalysis/main',
+	'./components/iranalysis/components/ir-conceptset',
 	'databindings',
-	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
 	'utilities/import',
@@ -60,6 +62,8 @@ define([
 	AutoBind,
 	commonUtils,
 	exceptionUtils,
+	ConceptSetStore,
+	conceptSetUtils,
 	constants,
 	globalConstants,
 ) {
@@ -78,6 +82,7 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -121,7 +126,6 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
-			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
 
@@ -139,7 +143,6 @@ define([
 				}
 				return analysisCohorts;
 			});
-
 			this.showConceptSetBrowser = ko.observable(false);
 			this.criteriaContext = ko.observable();
 			this.generateActionsSettings = {
@@ -369,15 +372,28 @@ define([
 			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
-
-		onConceptSetSelectAction(result, valueAccessor) {
-			this.showConceptSetBrowser(false);
-
-			if (result.action === 'add') {
-				var newConceptSet = this.conceptSetEditor().createConceptSet();
-				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab(this.tabs.CONCEPT_SETS);
+		
+		handleEditConceptSet(item, context) {
+			if (item.conceptSetId() == null) {
+				return;
 			}
+			this.loadConceptSet(item.conceptSetId());
+		}
+			
+		loadConceptSet(conceptSetId) {
+			this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
+			this.conceptSetStore.isEditable(this.isEditable());
+			commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
+		}
+
+		onConceptSetSelectAction(result) {
+			this.showConceptSetBrowser(false);
+			if (result.action === 'add') {
+				const conceptSets = this.selectedAnalysis().expression().ConceptSets;
+				const newId = conceptSetUtils.newConceptSetHandler(conceptSets, this.criteriaContext());
+				this.loadConceptSet(newId)
+			}
+
 			this.criteriaContext(null);
 		}
 
@@ -398,6 +414,8 @@ define([
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.conceptSetStore.clear();
+
 			this.sources().forEach(function (source) {
 				source.info(null);
 			});

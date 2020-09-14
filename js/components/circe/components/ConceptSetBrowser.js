@@ -1,12 +1,11 @@
-define(['knockout', 'text!./CohortConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'utils/DatatableUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils) {
+define(['knockout', 'text!./ConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'utils/DatatableUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
-		function defaultRepositoryConceptSetSelected(conceptSet) {
+		function defaultRepositoryConceptSetSelected(conceptSet, source) {
 			// Default functionality
 			self.isProcessing(true);
-			VocabularyProvider.getConceptSetExpression(conceptSet.id, self.selectedSource()
-					.url)
+			VocabularyProvider.getConceptSetExpression(conceptSet.id, source.url)
 				.then((result) => {
 					var isCancelled = false;
 					while (self.cohortConceptSets().find(cs => cs.name() == conceptSet.name) != null && !isCancelled)

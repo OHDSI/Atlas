@@ -38,12 +38,12 @@
 	<div data-bind="css: classes('tab')">
 		<!-- ko foreach: $component.previouslyLoadedTabs -->
 			<div data-bind="visible: $component.selectedTab() == $data">
-				<!-- ko if: $component.tabs()[$data].html -->
+				<!-- ko if: $component.tabs()[$data] && $component.tabs()[$data].html -->
 					<div data-bind="with: Object.assign({}, $component.tabs()[$data].componentParams, { html: $component.tabs()[$data].html })">
 						<div data-bind="template: {nodes: ko.utils.parseHtmlFragment(html)}"></div>
 					</div>
 				<!-- /ko -->
-				<!-- ko if: $component.tabs()[$data].componentName -->
+				<!-- ko if: $component.tabs()[$data] && $component.tabs()[$data].componentName -->
 					<div data-bind='component: { name: $component.tabs()[$data].componentName, params: $component.tabs()[$data].componentParams }'></div>
 				<!-- /ko -->
 			</div>

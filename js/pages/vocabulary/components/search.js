@@ -4,6 +4,7 @@ define([
 	'text!./search.html',
 	'appConfig',
 	'services/AuthAPI',
+	'components/conceptset/utils',
 	'../PermissionService',
 	'components/Component',
 	'utils/AutoBind',
@@ -11,10 +12,14 @@ define([
 	'pages/vocabulary/const',
 	'utils/CommonUtils',
 	'services/Vocabulary',
+	'components/conceptset/ConceptSetStore',
+	'const',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
 	'components/empty-state',
+	'components/conceptLegend/concept-legend',
+	'components/conceptAddBox/concept-add-box',
 	'less!./search.less'
 ], function (
 	ko,
@@ -22,13 +27,16 @@ define([
 	view,
 	config,
 	authApi,
+	conceptSetUtils,
 	PermissionService,
 	Component,
 	AutoBind,
 	httpService,
 	constants,
 	commonUtils,
-	vocabularyProvider
+	vocabularyProvider,
+	ConceptSetStore,
+	globalConstants,
 ) {
 	class Search extends AutoBind(Component) {
 		constructor(params) {
@@ -51,6 +59,7 @@ define([
 			this.searchColumns = ko.observableArray([]);
 			this.searchOptions = ko.observable();
 			this.params = params;
+			this.canAddConcepts = ko.pureComputed(() => this.data().some(item => item.isSelected()) );
 
 				this.isInProgress = ko.computed(() => {
 					return this.domainsLoading() === true && this.vocabulariesLoading() === true;
@@ -83,17 +92,8 @@ define([
 					}
 					return `Loading ${entities.join(', ')}`;
 				});
-				// 'colvis',
 				this.buttons = [
-					{
-						extend: 'colvis',
-						columnText: (dt, idx, title) => {
-							if (idx === 0) {
-								return '<i class="fa fa-shopping-cart"></i>';
-							}
-							return title;
-						}
-					},
+					'colvis',
 					'copyHtml5',
 					'excelHtml5',
 					'csvHtml5',
@@ -101,18 +101,9 @@ define([
 				];
 
 				this.searchColumns = [{
-					title: '<i class="fa fa-shopping-cart"></i>',
-					render: function (s, p, d) {
-						var css = '';
-						var icon = 'fa-shopping-cart';
-						if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-							css = ' selected';
-						}
-						return '<i class="fa ' + icon + ' ' + css + '"></i>';
-					},
-					orderable: false,
-					searchable: false
-				}, {
+					title: '',
+					render: (s, p, d) => this.renderCheckbox('isSelected'),
+				},{
 					title: 'Id',
 					data: 'CONCEPT_ID'
 				}, {
@@ -193,6 +184,10 @@ define([
 				}
 			}
 
+			renderCheckbox(field) {
+				return '<span data-bind="click: function(d) { d.' + field + '(!d.' + field + '()) } ,css: { selected: ' + field + '} " class="fa fa-check"></span>';
+			}
+
 			encodeSpecialCharacters(str) {
 				str = encodeURIComponent(str);
 				str = str.replace(/\*/g, '%2A'); // handle asterisk for wildcard search
@@ -256,7 +251,6 @@ define([
 					return true;
 				}
 			}
-
 			executeSearch() {
 				if (!this.currentSearch() && !this.showAdvanced()) {
 					this.data([]);
@@ -316,6 +310,26 @@ define([
 					});
 			}
 
+			getCheckBoxState(conceptId, key) {
+				const { selectedConceptsIndex, selectedConcepts } = sharedState;
+				const isConceptSelected = selectedConceptsIndex[conceptId];
+				if (isConceptSelected) {
+					const selectedConcept = selectedConcepts().find(item => item.concept.CONCEPT_ID === conceptId);
+					return selectedConcept[key];
+				}
+				return ko.observable(false);
+			}
+
+			normalizeSearchResults(searchResults) {
+				return searchResults.map(item => ({
+					...item,
+					isSelected: ko.observable(false),
+					includeDescendants: this.getCheckBoxState(item.CONCEPT_ID, 'includeDescendants'),
+					includeMapped: this.getCheckBoxState(item.CONCEPT_ID, 'includeMapped'),
+					isExcluded: this.getCheckBoxState(item.CONCEPT_ID, 'isExcluded'),
+				}));
+			}
+
 			handleSearchResults(results) {
 				if (results.length === 0) {
 					throw { message: 'No results found', results };
@@ -323,10 +337,18 @@ define([
 
 				const promise = vocabularyProvider.loadDensity(results);
 				promise.then(() => {
-					this.data(results);
+					this.data(this.normalizeSearchResults(results));
 				});
 
 				return promise;
+			}
+
+			addConcepts(options, conceptSetStore = ConceptSetStore.repository()) {
+				sharedState.activeConceptSet(conceptSetStore);
+				const concepts = commonUtils.getSelectedConcepts(this.data);
+				const items = commonUtils.buildConceptSetItems(concepts, options);
+				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+				commonUtils.clearConceptsSelectionState(this.data);
 			}
 
 			getVocabularies() {

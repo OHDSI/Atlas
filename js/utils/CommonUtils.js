@@ -83,25 +83,16 @@ define([
 			.addClass(getConceptLinkClass(data));
 	}
 
+	function highlightRow(row, cssClass) {
+		$(row).addClass(cssClass);
+	}
+
 	function hasCDM(source) {
 		return source.daimons.find(daimon => daimon.daimonType == 'CDM') !== undefined;
 	}
 
 	function hasResults(source) {
 		return source.daimons.find(daimon => daimon.daimonType == 'Results') !== undefined;
-	}
-
-	function renderConceptSetItemSelector(s, p, d) {
-		let css = '';
-		let tag = 'i';
-		if (sharedState.selectedConceptsIndex[d.concept.CONCEPT_ID] == 1) {
-			css = ' selected';
-		}
-		if (!this.canEditCurrentConceptSet()) {
-			css += ' readonly';
-			tag = 'span'; // to avoid call to 'click' event handler which is bound to <i> tag
-		}
-		return '<' + tag + ' class="fa fa-shopping-cart' + css + '"></' + tag + '>';
 	}
 
 	function renderLink(s, p, d) {
@@ -128,32 +119,6 @@ define([
 	const renderHierarchyLink = function (d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' || d.STANDARD_CONCEPT != 'S' ? 'invalid' : '';
 		return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-	}
-
-    const renderConceptSetCheckbox = function(hasPermissions, field, readonly = false) {
-		return hasPermissions() && !readonly
-		  ? `<span data-bind="click: d => $component.toggleCheckbox(d, '${field}'), css: { selected: ${field} }" class="fa fa-check"></span>`
-		  : `<span data-bind="css: { selected: ${field}}" class="fa fa-check readonly"></span>`;
-	}
-
-	const createConceptSetItem = function (concept) {
-		var conceptSetItem = {};
-		conceptSetItem.concept = {
-			"CONCEPT_ID": concept.CONCEPT_ID,
-			"CONCEPT_NAME": concept.CONCEPT_NAME,
-			"STANDARD_CONCEPT": concept.STANDARD_CONCEPT,
-			"STANDARD_CONCEPT_CAPTION": concept.STANDARD_CONCEPT_CAPTION,
-			"INVALID_REASON": concept.INVALID_REASON,
-			"INVALID_REASON_CAPTION": concept.INVALID_REASON_CAPTION,
-			"CONCEPT_CODE": concept.CONCEPT_CODE,
-			"DOMAIN_ID": concept.DOMAIN_ID,
-			"VOCABULARY_ID": concept.VOCABULARY_ID,
-			"CONCEPT_CLASS_ID": concept.CONCEPT_CLASS_ID
-		};
-		conceptSetItem.isExcluded = ko.observable(false);
-		conceptSetItem.includeDescendants = ko.observable(false);
-		conceptSetItem.includeMapped = ko.observable(false);
-		return conceptSetItem;
 	}
 
 	const syntaxHighlight = function (json) {
@@ -198,7 +163,7 @@ define([
 
 	const toggleConceptSetCheckbox = function(hasPermissions, selectedConcepts, d, field, successFunction) {
 		if (hasPermissions()) {
-			const concept = selectedConcepts().find(i => !!i.concept && !!d.concept && i.concept.CONCEPT_ID === d.concept.CONCEPT_ID);
+			const concept = selectedConcepts()[d.idx];
 			if (!!concept) {
 				concept[field](!concept[field]());
 				if (successFunction && typeof successFunction === 'function') {
@@ -224,6 +189,21 @@ define([
 		return tooltipText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 	}
 
+	const getSelectedConcepts = (conceptList) => {
+		return ko.unwrap(conceptList).filter(concept => concept.isSelected()).map(({ isSelected, ...concept }) => ({
+			...concept
+		}));
+	}
+	
+	const buildConceptSetItems = (concepts, options) => {
+		return concepts.map((concept) => ({
+			concept: concept,
+			...ko.toJS(options)
+		}));
+	}
+
+	const clearConceptsSelectionState = concepts => ko.unwrap(concepts).forEach(concept => concept.isSelected && concept.isSelected(false));
+		
 	const getUniqueIdentifier = () => {
 		return ([1e7]+1e3+4e3+8e3+1e11).replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15 >> c/4).toString(16));
 	}
@@ -252,20 +232,20 @@ define([
 		contextSensitiveLinkColor,
 		hasCDM,
 		hasResults,
-		renderConceptSetItemSelector,
 		renderLink,
 		renderBoundLink,
-		renderConceptSelector,
 		renderHierarchyLink,
-		renderConceptSetCheckbox,
-		createConceptSetItem,
 		syntaxHighlight,
 		getPathwaysUrl,
 		normalizeUrl,
 		toggleConceptSetCheckbox,
 		selectAllFilteredItems,
 		escapeTooltip,
+		highlightRow,
+		buildConceptSetItems,
+		getSelectedConcepts,
 		getUniqueIdentifier,
+		clearConceptsSelectionState,
 		formatDateForAuthorship,
 		isNameCharactersValid,
 		isNameLengthValid,

@@ -12,8 +12,11 @@ define([
 	'services/Permission',
 	'components/security/access/const',
 	'conceptsetbuilder/InputTypes/ConceptSet',
+	'conceptsetbuilder/InputTypes/ConceptSetItem',
 	'atlas-state',
 	'services/ConceptSet',
+	'components/conceptset/ConceptSetStore',
+	'components/conceptset/utils',
 	'services/AuthAPI',
     'lodash',
 	'databindings',
@@ -28,10 +31,11 @@ define([
 	'components/tabs',
 	'components/modal',
 	'./components/tabs/conceptset-expression',
-	'./components/tabs/included-conceptsets',
-	'./components/tabs/included-sourcecodes',
+  'components/conceptset/included',
+	'components/conceptset/included-sourcecodes',
+  'components/conceptset/import',
+  'components/conceptset/export',	
 	'./components/tabs/explore-evidence',
-	'./components/tabs/conceptset-export',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
 	'components/authorship',
@@ -49,28 +53,33 @@ define([
 	vocabularyAPI,
 	GlobalPermissionService,
 	{ entityType },
-	conceptSet,
+	ConceptSet,
+	ConceptSetItem,
 	sharedState,
 	conceptSetService,
+	ConceptSetStore,
+	conceptSetUtils,
 	authApi,
     lodash,
 ) {
+  
+  const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+  
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
-			this.componentParams = params;
 			this.commonUtils = commonUtils;
-			this.currentConceptSet = sharedState.ConceptSet.current;
-			this.currentConceptSetSource = sharedState.ConceptSet.source;
-			this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
+			this.conceptSetStore = ConceptSetStore.repository();
+			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
+			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
-			this.selectedConcepts = sharedState.selectedConcepts;
 			this.defaultName = globalConstants.newEntityNames.conceptSet;
 			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
-			this.fade = ko.observable(true);
+			this.fade = ko.observable(false);
+			this.hasEvidence = this.getCurrentSource().hasEvidence;
 			this.hasEvidence = this.getCurrentSource().hasEvidence;
 
 			this.canEdit = ko.pureComputed(() => {
@@ -107,6 +116,7 @@ define([
 					&& this.currentConceptSet() != null
 					&& this.currentConceptSetDirtyFlag().isDirty()
 					&& this.isNameCorrect()
+					&& this.canEdit()
 				);
 			});
 			this.canCreate = ko.computed(() => {
@@ -124,20 +134,16 @@ define([
 				}
 			});
 			this.canDelete = ko.pureComputed(() => {
-				if (!config.userAuthenticationEnabled)
+				if (!config.userAuthenticationEnabled) {
 					return true;
-
-				if (this.currentConceptSetSource() == 'repository') {
-					return sharedState.ConceptSet.current() && authApi.isPermittedDeleteConceptset(sharedState.ConceptSet.current().id);
-				} else {
-					return false;
 				}
+				return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
 			});
 			this.canOptimize = ko.computed(() => {
 				return (
 					this.currentConceptSet()
 					&& this.currentConceptSet().id != 0
-					&& sharedState.selectedConcepts().length > 1
+					&& this.currentConceptSet().expression.items().length > 1
 					&& this.canCreate()
 					&& this.canEdit()
 				);
@@ -150,9 +156,9 @@ define([
 				var returnVal = false;
 				if (this.optimalConceptSet() &&
 					this.optimalConceptSet().length > 0 &&
-					this.selectedConcepts() &&
-					this.selectedConcepts().length > 0) {
-					returnVal = this.optimalConceptSet().length != this.selectedConcepts().length;
+					this.currentConceptSet() && this.currentConceptSet().expression.items() &&
+					this.currentConceptSet().expression.items().length > 0) {
+					returnVal = this.optimalConceptSet().length != this.currentConceptSet().expression.items().length;
 				}
 				return returnVal;
 			});
@@ -168,50 +174,78 @@ define([
 			});
 			this.tabs = [
 				{
-						title: 'Concept Set Expression',
-						componentName: 'conceptset-expression',
-						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
+          title: 'Concept Set Expression',
+          key: ViewMode.EXPRESSION,
+          componentName: 'conceptset-expression',
+          componentParams: { ...params, 
+                            canEditCurrentConceptSet: this.canEdit, 
+														conceptSetStore: this.conceptSetStore,
+													},
 				},
 				{
-						title: 'Included Concepts',
-						componentName: 'included-conceptsets',
-						componentParams: { ...params, canEditCurrentConceptSet: this.canEdit },
-						hasBadge: true,
+          title: 'Included Concepts',
+          key: ViewMode.INCLUDED,
+          componentName: 'conceptset-list-included',
+          componentParams: { ...params, canEdit: this.canEdit,
+														currentConceptSet: this.conceptSetStore.current,
+                            conceptSetStore: this.conceptSetStore,
+                            loading: this.conceptSetStore.loadingIncluded,
+														activeConceptSet: ko.observable(this.conceptSetStore),
+                           },
+          hasBadge: true,
 				},
 				{
-						title: 'Included Source Codes',
-						componentName: 'included-sourcecodes',
-						componentParams:  { ...params, canEditCurrentConceptSet: this.canEdit },
+          title: 'Included Source Codes',
+          key: ViewMode.SOURCECODES,
+          componentName: 'conceptset-list-included-sourcecodes',
+          componentParams:  { ...params, canEdit: this.canEdit,
+														 conceptSetStore: this.conceptSetStore,
+														 loading: this.conceptSetStore.loadingSourceCodes},
+														 activeConceptSet: ko.observable(this.conceptSetStore),
+														},
+				{
+          title: 'Explore Evidence',
+          key: ViewMode.EXPLORE,
+          componentName: 'explore-evidence',
+          componentParams: {
+            ...params,
+            saveConceptSet: this.saveConceptSet,
+          },
 				},
 				{
-						title: 'Explore Evidence',
-						componentName: 'explore-evidence',
-						componentParams: {
-							...params,
-							saveConceptSet: this.saveConceptSet,
-						},
+          title: 'Export',
+          key: ViewMode.EXPORT,
+          componentName: 'conceptset-list-export',
+          componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
 				},
 				{
-						title: 'Export',
-						componentName: 'conceptset-export',
-						componentParams: params,
+					title: 'Import',
+          key: ViewMode.IMPORT,
+					componentName: 'conceptset-list-import',
+					componentParams: { 
+						...params,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						loadConceptSet: this.loadConceptSet,
+						activeConceptSet: ko.observable(this.conceptSetStore),
+					},
 				},
 				{
-						title: 'Compare',
-						componentName: 'conceptset-compare',
-						componentParams: {
-							...params,
-							saveConceptSetFn: this.saveConceptSet,
-							saveConceptSetShow: this.saveConceptSetShow,
-						},
-				}
+          title: 'Compare',
+          key: ViewMode.COMPARE,
+          componentName: 'conceptset-compare',
+          componentParams: {
+            ...params,
+            saveConceptSetFn: this.saveConceptSet,
+            saveConceptSetShow: this.saveConceptSetShow,
+          },
+				},
 			];
+			this.selectedTab = ko.observable(0);
 
 			if (!this.hasEvidence) {
-				this.tabs = this.tabs.filter(tab => tab.componentName !== 'explore-evidence');
+				this.tabs = this.tabs.filter(tab => tab.key !== ViewMode.EXPLORE);
 			}
-
-			this.selectedTab = ko.observable(this.routerParams.mode);
 
 			this.activeUtility = ko.observable("");
 
@@ -221,22 +255,39 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			this.onConceptSetModeChanged = sharedState.currentConceptSetMode.subscribe(conceptSetService.onCurrentConceptSetModeChanged);
+			// watch for any change to expression items (observer has a delay)
+      this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				try {
+					await this.conceptSetStore.resolveConceptSetExpression();
+					await this.conceptSetStore.refresh(this.tabs[this.selectedTab()||0].key);
+				} catch (err) {
+					if (err != RESOLVE_OUT_OF_ORER)
+						console.info(err);
+					else
+						throw(err);
+				} finally {
+				}
+			}));  
+			
+			// initially resolve the concept set
+			this.conceptSetStore.resolveConceptSetExpression();
+			this.conceptSetStore.isEditable(this.canEdit());
 		}
 
 		onRouterParamsChanged(params, newParams) {
 			const {conceptSetId, mode} = Object.assign({}, params, newParams);
 			this.changeMode(conceptSetId, mode);
 			if (mode !== undefined) {
-				this.selectedTab(this.getIndexByComponentName(mode));
+				this.selectedTab(this.getIndexByMode(mode));
 			}
 		}
 
 		async changeMode(conceptSetId, mode) {
 			if (conceptSetId !== undefined) {
-				await this.loadConceptSet(conceptSetId, mode);
+				await this.loadConceptSet(conceptSetId);
+				await this.conceptSetStore.refresh(mode);
 			}
-			this.currentConceptSetMode(mode);
+			//this.currentConceptSetMode(mode);
 		}
 
 		renderCheckbox(field, readonly = false) {
@@ -252,124 +303,99 @@ define([
 				d,
 				field,
 			);
-    	}
+		}
 
 		async loadConceptSet(conceptSetId) {
 			this.loading(true);
+			sharedState.activeConceptSet(this.conceptSetStore);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
-				// Create a new concept set
-				this.currentConceptSet({
-					name: ko.observable('New Concept Set'),
-					id: 0
-				});
+				conceptSetUtils.createRepositoryConceptSet(this.conceptSetStore);
+				await this.conceptSetStore.resolveConceptSetExpression();
 				this.loading(false);
 			}
-			if (
-				this.currentConceptSet()
-				&& this.currentConceptSet().id === conceptSetId
-			) {
-				this.currentConceptSetSource('repository');
+			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
 				this.loading(false);
 				return;
 			}
 			try {
-				const conceptset = await conceptSetService.loadConceptSet(conceptSetId);
-				const data = await conceptSetService.loadConceptSetExpression(conceptSetId);
-				const expression = _.isEmpty(data) ? { items: [] } : data;
-				conceptSetService.setConceptSet(conceptset, expression.items);
-				await conceptSetService.resolveConceptSetExpression();
-				this.currentConceptSetSource('repository');
+				const conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
+				const expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
+				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
+				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
+				this.conceptSetStore.isEditable(this.canEdit());
 			} catch(err) {
 				console.error(err);
-				sharedState.resolvingConceptSetExpression(false);
 			}
 			this.loading(false);
 		}
 
 		dispose() {
+      super.dispose();
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
-			this.onSelectedConceptsChanged && this.onSelectedConceptsChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
 			this.conceptSetCaption.dispose();
-			sharedState.includedHash(null);
 		}
 
-		saveClick() {
-			this.saveConceptSet("#txtConceptSetName");
-		}
-
-		async saveConceptSet(txtElem, conceptSet, selectedConcepts) {
+		async saveConceptSet(conceptSet, nameElementId) {
 			this.isSaving(true);
 			this.loading(true);
-			if (conceptSet === undefined) {
-				conceptSet = {};
-				if (this.currentConceptSet() == undefined) {
-					conceptSet.id = 0;
-					conceptSet.name = this.conceptSetName;
-				} else {
-					conceptSet = this.currentConceptSet();
-				}
-			}
-			if (selectedConcepts === undefined) {
-				selectedConcepts = this.selectedConcepts();
-			}
-
 			// Next check to see that a concept set with this name does not already exist
 			// in the database. Also pass the conceptSetId so we can make sure that the
 			// current concept set is excluded in this check.
+			const conceptSetItems = utils.toRepositoryConceptSetItems(conceptSet.expression.items());
 			try{
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
-					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', txtElem);
+					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', nameElementId);
 				} else {
-					const conceptSetItems = utils.toConceptSetItems(selectedConcepts);
-					try{
-						const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
-						await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-						await conceptSetService.resolveConceptSetExpression();
-						//order of setting 'dirtyFlag' and 'loading' affects correct behaviour of 'canSave' (it prevents duplicates)
-						this.currentConceptSetDirtyFlag().reset();
-						commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/details');
-					} catch(e){
-						alert('Unable to save concept set');
-					}
+					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
+					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
+					this.loading(false);
+					this.isSaving(false);
+					commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/expression');
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to save a concept set.');
-			} finally {
 				this.loading(false);
 				this.isSaving(false);
 			}
 		}
 
 		raiseConceptSetNameProblem(msg, elem) {
-			if (this.currentConceptSet()) {
-				this.currentConceptSet().name.valueHasMutated();
-			}
 			alert(msg);
-			$(elem)
-				.select()
-				.focus();
+			$(elem).select().focus();
 		}
 
 		closeConceptSet() {
 			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
 				return;
 			} else {
-				conceptSetService.clearConceptSet();
-				document.location = "#/conceptsets";
+				this.conceptSetStore.clear();
+				if (this.conceptSetStore == sharedState.activeConceptSet()) {
+					sharedState.activeConceptSet(null);
+				}
+				this.currentConceptSetDirtyFlag().reset();
+				sharedState.RepositoryConceptSet.current(null);
+				commonUtils.routeTo('/conceptsets');
 			}
+		}
+
+		async save() {
+			await this.saveConceptSet(this.currentConceptSet(), '#txtConceptSetName');
+			this.currentConceptSetDirtyFlag().reset();
 		}
 
 		async copy() {
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
-			this.conceptSetName(responseWithName.copyName);
-			this.currentConceptSet(undefined);
-			this.saveConceptSet("#txtConceptSetName");
+			this.currentConceptSet().name(responseWithName.copyName);
+			this.currentConceptSet().id = 0;
+			this.currentConceptSetDirtyFlag().reset();
+			this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
 		}
 
-		optimize() {
+		async optimize() {
 			this.isOptimizing(true);
 			this.activeUtility("optimize");
 			this.optimizeLoading(true);
@@ -377,38 +403,20 @@ define([
 			this.optimizerRemovedConceptSet(null);
 			this.isOptimizeModalShown(true);
 
-			let conceptSetItems = [];
+			let conceptSetItems = ko.toJS(this.conceptSetStore.current().expression);
 
-			for (var i = 0; i < this.selectedConcepts().length; i++) {
-				var item = this.selectedConcepts()[i];
-				conceptSetItems.push({
-					concept: item.concept,
-					isExcluded: +item.isExcluded(),
-					includeDescendants: +item.includeDescendants(),
-					includeMapped: +item.includeMapped()
-				});
-			}
+			const optimizationResults = await vocabularyAPI.optimizeConceptSet(conceptSetItems)
 
-			conceptSetItems = {
-				items: conceptSetItems
-			}
+			var optimizedConcepts = (optimizationResults.optimizedConceptSet.items || []).map(item => new ConceptSetItem(item));
+			
+			var removedConcepts = optimizationResults.removedConceptSet.items || [];
 
-			vocabularyAPI.optimizeConceptSet(conceptSetItems)
-				.then((optimizationResults) => {
-					var optimizedConcepts = [];
-					optimizationResults.optimizedConceptSet.items.forEach((item) => {
-						optimizedConcepts.push(conceptSetService.enhanceConceptSet(item));
-					});
-					var removedConcepts = [];
-					optimizationResults.removedConceptSet.items.forEach((item) => {
-						removedConcepts.push(item);
-					});
-					this.optimalConceptSet(optimizedConcepts);
-					this.optimizerRemovedConceptSet(removedConcepts);
-					this.optimizeLoading(false);
-					this.activeUtility("");
-					this.isOptimizing(false);
-				});
+			this.optimalConceptSet(optimizedConcepts);
+			this.optimizerRemovedConceptSet(removedConcepts);
+			this.optimizeLoading(false);
+			this.activeUtility("");
+			this.isOptimizing(false);
+
 		}
 
 		delete() {
@@ -419,15 +427,15 @@ define([
 			// reset view after save
 			conceptSetService.deleteConceptSet(this.currentConceptSet().id)
 				.then(() => {
-					conceptSetService.clearConceptSet();
-					document.location = "#/conceptsets"
+					this.currentConceptSetDirtyFlag().reset(); // so that we don't get a 'unsaved' warning when we close.
+					this.closeConceptSet();
 				});
 		}
 
-		getIndexByComponentName(name = 'conceptset-expression') {
+		getIndexByMode(mode = ViewMode.EXPRESSION) {
 			let index = this.tabs
-				.map(tab => tab.componentName)
-				.indexOf(name);
+				.map(tab => tab.key)
+				.indexOf(mode);
 			if (index === -1) {
 				index = 0;
 			}
@@ -435,49 +443,39 @@ define([
 			return index;
 		}
 
-		getComponentNameByTabIndex(idx) {
-			return this.tabs[idx] ? this.tabs[idx].componentName : this.tabs[0].componentName;
+		getModeByTabIndex(idx) {
+			return this.tabs[idx] ? this.tabs[idx].key : this.tabs[0].key;
 		}
 
 		selectTab(index) {
 			const id = this.currentConceptSet()
 				? this.currentConceptSet().id
 				: 0;
-			const mode = this.getComponentNameByTabIndex(index);
+			const mode = this.getModeByTabIndex(index);
 			!!mode && commonUtils.routeTo(constants.paths.mode(id, mode));
 		}
 
 		async overwriteConceptSet() {
-			sharedState.clearSelectedConcepts();
-			const newConceptSet = this.optimalConceptSet().map((item) => {
-				sharedState.selectedConceptsIndex[item.concept.CONCEPT_ID] = 1;
-				return item;
-			});
-			sharedState.selectedConcepts(newConceptSet);
+			this.currentConceptSet().expression.items(this.optimalConceptSet());
 			this.isOptimizeModalShown(false);
-			sharedState.includedConcepts.valueHasMutated();
-			sharedState.includedSourcecodes.valueHasMutated();
-			await conceptSetService.resolveConceptSetExpression();
-			await conceptSetService.onCurrentConceptSetModeChanged(sharedState.currentConceptSetMode());
 		}
 
 		copyOptimizedConceptSet () {
-			if (this.currentConceptSet() == undefined) {
-				this.optimizerSavingNewName(this.conceptSetName());
-			} else {
-				this.optimizerSavingNewName(this.currentConceptSet().name() + " - OPTIMIZED");
-			}
+			this.optimizerSavingNewName(this.currentConceptSet().name() + " - OPTIMIZED");
 			this.optimizerSavingNew(true);
 		}
 
-		saveNewOptimizedConceptSet() {
-			const conceptSet = {
-				id: 0,
-				name: this.optimizerSavingNewName,
-			};
-			this.saveConceptSet("#txtOptimizerSavingNewName", conceptSet, this.optimalConceptSet());
+		async saveNewOptimizedConceptSet() {
 			this.optimizerSavingNew(false);
 			this.isOptimizeModalShown(false);
+			const conceptSet = {
+				id: 0,
+				name: this.optimizerSavingNewName(),
+				expression: {
+					items: ko.toJS(this.optimalConceptSet())
+				}
+			};
+			await this.saveConceptSet(new ConceptSet(conceptSet), "#txtOptimizerSavingNewName");
 		}
 
 		cancelSaveNewOptimizedConceptSet() {
