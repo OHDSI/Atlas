@@ -1,6 +1,8 @@
 define(
 	(require, factory) => {
 		const ko = require('knockout');
+		const globalConstants = require('const');
+		const sharedState = require('atlas-state');
 	   const {
 		   AuthorizedRoute
 	   } = require('pages/Route');
@@ -17,6 +19,15 @@ define(
                 });
             });
 
+            const featureAnalysisViewEdit = new AuthorizedRoute((id, section) => {
+							require(['./components/feature-analyses/feature-analysis-view-edit'], function () {
+								router.setCurrentView('feature-analysis-view-edit', {
+									id,
+									section: section || 'design',
+								});
+							});
+						});
+
 			return {
 				'cc/characterizations': new AuthorizedRoute(() => {
 					require(['./components/characterizations/characterizations-list'], function () {
@@ -31,11 +42,8 @@ define(
 						router.setCurrentView('feature-analyses-list');
 					});
 				}),
-				'cc/feature-analyses/:id:': new AuthorizedRoute((id) => {
-					require(['./components/feature-analyses/feature-analysis-view-edit'], function () {
-						router.setCurrentView('feature-analysis-view-edit', { id });
-					});
-				}),
+				'cc/feature-analyses/:id:': featureAnalysisViewEdit,
+				'cc/feature-analyses/:id:/:section:': featureAnalysisViewEdit,
 			};
 		}
 

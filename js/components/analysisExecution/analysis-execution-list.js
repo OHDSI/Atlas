@@ -301,7 +301,8 @@ define([
       if (executionGroup) {
         const submissions = [...executionGroup.submissions()];
         if (submissions.length > 0) {
-          return submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+          submissions.sort((a, b) => b.endTime - a.endTime); // sort descending
+          return submissions.find(s => s.status === this.executionStatuses.COMPLETED);
         }
       }
       return null;

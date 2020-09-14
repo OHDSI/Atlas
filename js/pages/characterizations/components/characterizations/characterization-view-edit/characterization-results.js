@@ -18,6 +18,7 @@ define([
     'lodash',
     'd3',
     'components/visualizations/filter-panel/utils',
+    'components/conceptset/ConceptSetStore',
     'services/MomentAPI',
     'services/Source',
     'utils/CsvUtils',
@@ -52,6 +53,7 @@ define([
     lodash,
     d3,
     filterUtils,
+    ConceptSetStore,
     momentAPI,
     SourceService,
     CsvUtils,
@@ -72,8 +74,8 @@ define([
             this.prevalenceStatConverter = new PrevalenceStatConverter(this.classes);
             this.distributionStatConverter = new DistributionStatConverter(this.classes);
             this.comparativeDistributionStatConverter = new ComparativeDistributionStatConverter(this.classes);
-            this.currentConceptSet = sharedState.ConceptSet.current;
-            this.currentConceptSetSource = sharedState.ConceptSet.source;
+            this.conceptSetStore = ConceptSetStore.characterization();
+			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
             this.loading = ko.observable(false);
             this.characterizationId = params.characterizationId;
 
@@ -200,7 +202,7 @@ define([
         }
 
         showConceptSet() {
-            commonUtils.routeTo('#/conceptset/0/details');
+            commonUtils.routeTo('/conceptset/0/details');
         }
 
         async initConceptSet(conceptSetItems) {
@@ -210,9 +212,13 @@ define([
             });
             this.currentConceptSetSource('repository');
             for (let i = 0; i < conceptSetItems.length; i++) {
-                if (sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] !== 1) {
-                    sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = 1;
+                if (!sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID]) {
                     let conceptSetItem = commonUtils.createConceptSetItem(conceptSetItems[i]);
+                    sharedState.selectedConceptsIndex[conceptSetItems[i].CONCEPT_ID] = {
+                        isExcluded: conceptSetItem.isExcluded,
+                        includeDescendants: conceptSetItem.includeDescendants,
+                        includeMapped: conceptSetItem.includeMapped,
+                    };
                     sharedState.selectedConcepts.push(conceptSetItem);
                 }
             }

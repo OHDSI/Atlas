@@ -2,17 +2,7 @@
 	<div data-bind="css: classes('header')">
 		<heading-title params="name: ko.i18n('search.headingTitle', 'Search'), icon: 'search', theme: 'dark'"></heading-title>
 	</div>
-	<tabs params="
-		componentParams: $component.routerParams,
-		tabs: [
-			{
-				title: ko.i18n('search.tabs.search', 'Search'),
-				componentName: 'vocabulary-search',
-				componentParams: searchParams,
-			},
-			{
-				title: ko.i18n('search.tabs.import', 'Import'),
-				componentName: 'vocabulary-import',
-			}
-	]"></tabs>
+	<div data-bind="css: classes('content')">
+		<vocabulary-search params="query: query"></vocabulary-search>
+	</div>
 </div>

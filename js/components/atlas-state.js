@@ -1,4 +1,5 @@
 define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const-state'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+
 	var state = {};
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
@@ -43,11 +44,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
-	state.clearSelectedConcepts = function () {
-		this.selectedConceptsIndex = {};
-		this.selectedConcepts([]);
-	}
-
 	state.IRAnalysis = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
@@ -66,6 +62,11 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
 	};
+	state.FeatureAnalysis.current.subscribe(newValue => {
+		if (newValue != null) {
+			state.FeatureAnalysis.dirtyFlag(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
+		}
+	});
 	state.FeatureAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
 
 	// Pathways State
@@ -116,24 +117,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.currentConceptSetMode = ko.observable('details');
 	state.includedHash = ko.observable();
 
-	state.ConceptSet = {
-		current: ko.observable(),
-		source: ko.observable(),
-		negativeControls: ko.observable(),
-	};
-	state.ConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
-		header: state.ConceptSet.current,
-		details: state.selectedConcepts,
-	}));
-	state.ConceptSet.current.subscribe((newValue) => {
-		if (newValue != null) {
-			state.ConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag({
-				header: state.ConceptSet.current,
-				details: state.selectedConcepts,
-			}));
-		}
-	});
-
 	state.currentConceptIdentifierList = ko.observable();
 	state.resolvingConceptSetExpression = ko.observable(false);
 	state.currentConceptSetExpressionJson = ko.observable();
@@ -148,11 +131,26 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({header: state.CohortDefinition.current}));
 	state.CohortDefinition.current.subscribe(newValue => {
 		if (newValue != null) {
-			state.CohortDefinition.dirtyFlag(new ohdsiUtil.dirtyFlag({header: state.CohortDefinition.current}));
+			state.CohortDefinition.dirtyFlag(new ohdsiUtil.dirtyFlag({header: newValue}));
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
 
+
+	// repository concept state
+	state.RepositoryConceptSet = {
+		current: ko.observable(),
+		negativeControls : ko.observable(),
+	}
+
+	state.RepositoryConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.RepositoryConceptSet.current()));
+	state.RepositoryConceptSet.current.subscribe(newValue => {
+		if (newValue != null) {
+			state.RepositoryConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
+		}
+	});
+
+	state.activeConceptSet = ko.observable();
 
 	return state;
 });

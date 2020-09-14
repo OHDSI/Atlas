@@ -9,6 +9,7 @@ define([
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
+	'datatables.net-select',
 ], function (
 	$,
 	ko,
@@ -36,6 +37,11 @@ define([
 		});
 
 		return selectedData;
+	}
+
+	function _getRows(element, predicate) {
+
+		return $(element).DataTable().rows(predicate);
 	}
 
   function isUrlAbsolute(url) {
@@ -161,6 +167,7 @@ define([
 				{
 					// expose datatable API to context's api binding.
 					binding.api({
+						getRows: function (predicate) { return _getRows(element, predicate); },
 						getSelectedData: function() { return _getTableData(element, 'selected');},
 						getFilteredData: function() { return _getTableData(element, 'filtered');},
 					});

@@ -2,51 +2,49 @@ define([
 	'knockout',
 	'text!./conceptset-editor.html',
 	'atlas-state',
+	'components/Component',
+	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/Renderers',
 	'services/ConceptSet',
 	'databindings',
 	'bootstrap',
-	'faceted-datatable'
+	'faceted-datatable',
+	'components/conceptLegend/concept-legend',
 ], function (
 	ko,
 	view,
 	sharedState,
+	Component,
+	AutoBind,
 	commonUtils,
+	renderers,
 	conceptSetService,
 ) {
-	function conceptsetEditor(params) {
-		var self = this;
-		self.conceptSetName = ko.observable();
-		self.conceptSets = params.$raw.conceptSets();
-		self.conceptSetId = params.$raw.conceptSetId;
-		self.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
-		self.commonUtils = commonUtils;
-		self.renderConceptSetItemSelector = commonUtils.renderConceptSetItemSelector.bind(this);
-
-		self.renderLink = function (s, p, d) {
-			return '<a href=\"#/conceptset/' + d.id + '/details\">' + d.name + '</a>';
+	class ConceptSetEditor extends AutoBind(Component) {
+		constructor(params) {
+			super(params);
+			this.conceptSetItems = params.conceptSetItems;
+			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
+			this.commonUtils = commonUtils;
+			this.columns = [
+				{ title: '', orderable: false, render: () => renderers.renderCheckbox('isSelected', this.canEditCurrentConceptSet()) },
+				{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
+				{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
+				{ title: 'Concept Name', render: commonUtils.renderBoundLink},
+				{ title: 'Domain', data: 'concept.DOMAIN_ID' },
+				{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
+				{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
+				{ title: 'Exclude', class:'text-center', orderable:false,render: () => this.renderCheckbox('isExcluded') },
+				{ title: 'Descendants', class:'text-center', orderable:false, searchable:false, render: () => this.renderCheckbox('includeDescendants') },
+				{ title: 'Mapped', class:'text-center', orderable:false, searchable:false, render: () => this.renderCheckbox('includeMapped') }
+]
 		}
 
-		self.toggleCheckbox = function(d, field) {
-			commonUtils.toggleConceptSetCheckbox(
-				self.canEditCurrentConceptSet,
-				sharedState.selectedConcepts,
-				d,
-				field,
-				conceptSetService.resolveConceptSetExpression
-			);
-		  }
-
-		self.renderCheckbox = function(field) {
-			return commonUtils.renderConceptSetCheckbox(self.canEditCurrentConceptSet, field);
+		renderCheckbox(field) {
+			return renderers.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
 		}
 	}
 
-	var component = {
-		viewModel: conceptsetEditor,
-		template: view
-	};
-
-	ko.components.register('conceptset-editor', component);
-	return component;
+	return commonUtils.build('conceptset-editor', ConceptSetEditor, view);
 });

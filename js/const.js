@@ -1,11 +1,12 @@
 define([
 	'knockout',
 	'appConfig',
+	'utils/Renderers'
 	],
 	(
 		ko,
 		config,
-	) => {
+		renderers) => {
 
 	  const maxEntityNameLength = 100;
 		const minChartHeight = 300;
@@ -42,7 +43,7 @@ define([
 				}
 			}]
 		};
-		
+
 		const getLinkedFeAParametersColumns = (context) => {
 			return [
 				{
@@ -108,25 +109,14 @@ define([
 					}] : []
 			];
 		};
-		
-		const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService) => [
+
+		const getRelatedSourcecodesColumns = (sharedState, context) => [
 			{
-				title: !context.canEditCurrentConceptSet() ? '<span class="fa fa-shopping-cart"></span>' : '<i class="fa fa-shopping-cart"></i>',
-				render: (s, p, d) => {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-					var tag = 'i';
-					if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					if (!context.canEditCurrentConceptSet()) {
-						css += ' readonly';
-						tag = 'span';
-					}
-					return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
-				},
+				title: '',
 				orderable: false,
-				searchable: false
+				searchable: false,
+				className: 'text-center',
+				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
 			},
 			{
 				title: ko.i18n('columns.id', 'Id'),
@@ -139,7 +129,10 @@ define([
 			{
 				title: ko.i18n('columns.name', 'Name'),
 				data: 'CONCEPT_NAME',
-				render: commonUtils.renderLink,
+				render: function (s, p, d) {
+					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+					return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+				}
 			},
 			{
 				title: ko.i18n('columns.class', 'Class'),
@@ -151,16 +144,6 @@ define([
 				visible: false
 			},
 			{
-				title: ko.i18n('columns.rc', 'RC'),
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: ko.i18n('columns.drc', 'DRC'),
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
 				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'DOMAIN_ID'
 			},
@@ -168,57 +151,7 @@ define([
 				title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 				data: 'VOCABULARY_ID'
 			},
-			{
-				title: ko.i18n('columns.ancestors', 'Ancestors'),
-				data: 'ANCESTORS',
-				render: conceptSetService.getAncestorsRenderFunction()
-			}
 		];
-
-		const getRelatedSourcecodesColumns = (sharedState, context) => [{
-			title: '',
-			render: (s, p, d) => {
-				var css = '';
-				var icon = 'fa-shopping-cart';
-				var tag = 'i'
-				if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-					css = ' selected';
-				}
-				if (!context.canEditCurrentConceptSet()) {
-					css += ' readonly';
-					tag = 'span';
-				}
-				return '<' + tag + ' class="fa ' + icon + ' ' + css + '"></' + tag + '>';
-			},
-			orderable: false,
-			searchable: false
-		}, {
-			title: ko.i18n('columns.id', 'Id'),
-			data: 'CONCEPT_ID'
-		}, {
-			title: ko.i18n('columns.code', 'Code'),
-			data: 'CONCEPT_CODE'
-		}, {
-			title: ko.i18n('columns.name', 'Name'),
-			data: 'CONCEPT_NAME',
-			render: function (s, p, d) {
-				var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
-				return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
-			}
-		}, {
-			title: ko.i18n('columns.class', 'Class'),
-			data: 'CONCEPT_CLASS_ID'
-		}, {
-			title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
-			data: 'STANDARD_CONCEPT_CAPTION',
-			visible: false
-		}, {
-			title: ko.i18n('columns.domain', 'Domain'),
-			data: 'DOMAIN_ID'
-		}, {
-			title: ko.i18n('columns.vocabulary', 'Vocabulary'),
-			data: 'VOCABULARY_ID'
-		}];
 
 		const apiPaths = {
 			role: (id = '') => `${config.api.url}role/${id}`,
@@ -317,6 +250,11 @@ define([
 			},
 		};
 
+		const eventTypes = {
+			conceptSetChanged: 'conceptSetChanged',
+		};
+
+
 		const jobTypes = {
 			USER_JOB: {
 				title: 'userJob',
@@ -344,7 +282,6 @@ define([
 			treemapGradient,
 			defaultDeciles,
 			relatedSourcecodesOptions,
-			getIncludedConceptsColumns,
 			getLinkedFeAParametersColumns,
 			getLinkedFeatureAnalysisColumns,
 			getLinkedCohortColumns,
@@ -358,6 +295,7 @@ define([
 			executionStatuses,
 			executionResultModes,
 			sqlDialects,
+			eventTypes,
 			disabledReasons,
 			jobTypes,
     };

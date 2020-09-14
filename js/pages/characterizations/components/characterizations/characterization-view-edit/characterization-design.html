@@ -18,7 +18,7 @@
         "></linked-entity-list>
     </div>
     <div data-bind="css: {'linked-entities':true, 'strata-disabled': !$component.isEditPermitted()}, eventListener: [
-                                { event: 'click', selector: '.conceptset_import', callback: (item) => $component.handleConceptSetImport($index(), item) },
+                                { event: 'click', selector: '.conceptset_import', callback:$component.handleConceptSetImport},
                                 { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
                             ]">
         <h2 data-bind="css: classes('strata-title'),text: ko.i18n('cc.viewEdit.design.subgroups.title', 'Subgroup analyses')"></h2>
@@ -87,12 +87,18 @@
     title: ko.i18n('cc.modals.selectConceptSet', 'Select Concept Set...'),
     modifiers: ['lg'],
     data: {
-        onRespositoryConceptSetSelected: $component.onRespositoryConceptSetSelected
+        criteriaContext: $component.criteriaContext,
+        strataConceptSets: $component.strataConceptSets(),
+        onActionComplete: $component.onRespositoryActionComplete
     }
 }">
-        <cohort-concept-set-browser params="
-                    onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
-                "></cohort-concept-set-browser>
+        <div class="paddedWrapper">
+            <concept-set-browser params="
+                        criteriaContext: criteriaContext,
+                        cohortConceptSets: strataConceptSets,
+                        onActionComplete: onActionComplete
+                    "></concept-set-browser>
+        </div>
     </atlas-modal>
 
 

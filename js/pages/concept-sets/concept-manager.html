@@ -5,7 +5,6 @@
 <!-- ko if: !isLoading() -->
 	<heading-title params="name: ko.i18n('cs.manager.concept.title', 'Vocabulary > Concept'), icon: 'search', theme: 'dark'"></heading-title>
 	<div class="asset-heading" data-bind="with:currentConcept()">
-		<span data-bind="html: $component.renderCurrentConceptSelector()"></span>
 		<span data-bind="css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}, text:CONCEPT_NAME"></span>
 	</div>
 
@@ -104,25 +103,23 @@
 								orderClasses: false,
 								ordering: true,
 								order: [[ 6, 'desc' ]],
-								columns: [
-										{ title: '', render: $component.renderConceptSelector, orderable:false, searchable:false},
-										{ title: ko.i18n('columns.id', 'Id'), data: 'CONCEPT_ID'},
-										{ title: ko.i18n('columns.code', 'Code'), data: 'CONCEPT_CODE'},
-										{ title: ko.i18n('columns.name', 'Name'), data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-										{ title: ko.i18n('columns.class', 'Class'), data: 'CONCEPT_CLASS_ID' },
-										{ title: ko.i18n('columns.rc', 'RC'), data: 'RECORD_COUNT'},
-										{ title: ko.i18n('columns.drc', 'DRC'), data: 'DESCENDANT_RECORD_COUNT'},
-										{ title: ko.i18n('columns.distance', 'Distance'), data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-										{ title: ko.i18n('columns.domain', 'Domain'), data: 'DOMAIN_ID' },
-										{ title: ko.i18n('columns.vocabulary', 'Vocabulary'), data: 'VOCABULARY_ID', width: '100px' }
-								],
+								columns: relatedConceptsColumns,
 								options: hierarchyConceptsOptions,
 								reference: $component.metarchy.parents,
 								rowCallback: commonUtils.contextSensitiveLinkColor,
+								deferRender: true,
 								language: ko.i18n('datatable.language')
 							}"></faceted-datatable>
 							<!-- /ko -->
 						</div>
+							<!-- ko if: $component.metarchy.parents().length > 0 -->
+							<div class="panel-footer">
+								<concept-add-box params="{
+									canSelectSource: true,
+									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.parents),
+								}"></concept-add-box>
+							</div>
+							<!-- /ko -->
 					</div>
                 </div>
                 <div id="wrapperHierarchyAnchor" data-bind="visible: ['all', 'current'].includes($component.hierarchyPillMode())">
@@ -138,20 +135,17 @@
 									buttons: [],
 									dom: 'i',
 									order: [[ 6, 'desc' ]],
-									columns: [
-											{ title: ko.i18n('columns.id', 'Id'), data: 'CONCEPT_ID'},
-											{ title: ko.i18n('columns.code', 'Code'), data: 'CONCEPT_CODE'},
-											{ title: ko.i18n('columns.name', 'Name'), data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-											{ title: ko.i18n('columns.class', 'Class'), data: 'CONCEPT_CLASS_ID' },
-											{ title: ko.i18n('columns.rc', 'RC'), data: 'RECORD_COUNT'},
-											{ title: ko.i18n('columns.drc', 'DRC'), data: 'DESCENDANT_RECORD_COUNT'},
-											{ title: ko.i18n('columns.distance', 'Distance'), data: function (d) { return String(Math.min.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-											{ title: ko.i18n('columns.domain', 'Domain'), data: 'DOMAIN_ID' },
-											{ title: ko.i18n('columns.vocabulary', 'Vocabulary'), data: 'VOCABULARY_ID', width: '100px' }
-									],
+									columns: relatedConceptsColumns,
 									reference: $component.currentConceptArray,
+									deferRender: true,
 									language: ko.i18n('datatable.language')
 								}"></faceted-datatable>
+						</div>
+						<div class="panel-footer">
+							<concept-add-box params="{
+								canSelectSource: true,
+								onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+							}"></concept-add-box>
 						</div>
 					</div>
                 </div>
@@ -169,24 +163,22 @@
 									orderClasses: false,
 									ordering: true,
 									order: [[ 6, 'desc' ]],
-									columns: [
-										{ title: '', render: $component.renderConceptSelector, orderable:false, searchable:false},
-										{ title: ko.i18n('columns.id', 'Id'), data: 'CONCEPT_ID'},
-										{ title: ko.i18n('columns.code', 'Code'), data: 'CONCEPT_CODE'},
-										{ title: ko.i18n('columns.name', 'Name'), data: 'CONCEPT_NAME', render: commonUtils.renderLink, width: '50%'},
-										{ title: ko.i18n('columns.class', 'Class'), data: 'CONCEPT_CLASS_ID' },
-										{ title: ko.i18n('columns.rc', 'RC'), data: 'RECORD_COUNT'},
-										{ title: ko.i18n('columns.drc', 'DRC'), data: 'DESCENDANT_RECORD_COUNT'},
-										{ title: ko.i18n('columns.distance', 'Distance'), data: function (d) { return String(Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {return o.RELATIONSHIP_DISTANCE;})))}},
-										{ title: ko.i18n('columns.domain', 'Domain'), data: 'DOMAIN_ID' },
-										{ title: ko.i18n('columns.vocabulary', 'Vocabulary'), data: 'VOCABULARY_ID', width: '100px' }
-									],
+									columns: relatedConceptsColumns,
 									reference: $component.metarchy.children,
 									options: hierarchyConceptsOptions,
+									deferRender: true,
 									language: ko.i18n('datatable.language')
 								}"></faceted-datatable>
 								<!-- /ko -->
 							</div>
+							<!-- ko if: $component.metarchy.children().length > 0 -->
+							<div class="panel-footer">
+								<concept-add-box params="{
+									canSelectSource: true,
+									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.children),
+								}"></concept-add-box>
+							</div>
+							<!-- /ko -->
 						</div>
                 </div>
             <!-- /ko -->
@@ -239,6 +231,12 @@
 				</tr>
 			</tbody>
 		</table>
+		<div class="concept-add-container">
+				<concept-add-box params="{
+					canSelectSource: true,
+					onSubmit: $component.addConcept,
+				}"></concept-add-box>
+		</div>
 		<!-- /ko -->
 	</div>
 
@@ -246,25 +244,18 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
 
 		<!-- ko if: hasInfoAccess() -->
-		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor, language: ko.i18n('datatable.language') }"></faceted-datatable>
-		<div class="linkLegend">
-			<div class="linkLegendItem">
-				<div class="swatch standard">
-				</div>
-				<div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.concept.standard', 'Standard')"></div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch nonStandard">
-				</div>
-				<div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.concept.nonStandard', 'Non-Standard')"></div>
-			</div>
-			<div class="linkLegendItem">
-				<div class="swatch classification">
-				</div>
-				<div class="linkLegendTitle" data-bind="text: ko.i18n('cs.manager.concept.classification', 'Classification')"></div>
+		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, deferRender: true, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor, language: ko.i18n('datatable.language') }"></faceted-datatable>
+		<concept-legend></concept-legend>
+		<div class="clear"></div>
+		<div class="row">
+			<div class="col-lg-12">
+				<concept-add-box params="{
+					canSelectSource: true,
+					onSubmit: (options, source) => $component.addConcepts(options, source)($component.relatedConcepts),
+				}"></concept-add-box>
 			</div>
 		</div>
-		<div class="clear"></div>
+
 		<!-- /ko -->
 	</div>
 <!-- /ko -->

@@ -5,6 +5,7 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var authApi = require('services/AuthAPI');
 	const httpService = require('services/http');
+	const fileService = require('services/file');
 
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
@@ -190,6 +191,10 @@ define(function (require, exports) {
 				});
 	 }
 
+	 function exportConceptSets(id) {
+		return fileService.loadZip(`${config.webAPIRoot}ir/${id}/export/conceptset`);
+	}
+
 	function runDiagnostics(design) {
 		var designCopy = JSON.parse(ko.toJSON(design));
 
@@ -219,7 +224,8 @@ define(function (require, exports) {
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
 		exportSql,
-        runDiagnostics,
+		exportConceptSets,
+		runDiagnostics,
 	};
 
 	return api;

@@ -3,13 +3,13 @@
   <b data-bind="text: ko.i18n('cs.browser.exportInstructions', 'Instructions:')"></b>
   <span data-bind="text: ko.i18n('cs.browser.exportInstructionsText', 'Select the concept sets for export by selecting each row in the grid. When done, use the \'Export Concept Sets\' button which will start the download in a new window.')"></span>
   <hr/>
-  <cohort-concept-set-browser params="
+  <concept-set-browser params="
     criteriaContext: criteriaContext,
     onRespositoryConceptSetSelected: exportOnConceptSetSelected,
     onActionComplete: onExportAction,
     buttonActionText: ko.i18n('cs.browser.exportConceptSetsButton', 'Export Concept Sets'),
     repositoryConceptSetTableId: 'exportConceptSetTable'
-  "></cohort-concept-set-browser>
+  "></concept-set-browser>
   <hr/>
   <span data-bind="html: ko.i18nformat('cs.browser.exportConceptSetsNumber', '<b><%=num%></b> concept sets selected for export.', {num: exportRowCount()})"></span>
 </div>

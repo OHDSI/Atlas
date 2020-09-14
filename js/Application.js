@@ -47,12 +47,9 @@ define(
 				this.EventBus = EventBus;
 				const bemHelper = new BemHelper('app');
 				this.classes = bemHelper.run.bind(bemHelper);
-				this.currentConceptSet = sharedState.ConceptSet.current;
-				this.currentConceptSetSource = sharedState.ConceptSet.source;
-				this.currentCohortDefinition = sharedState.CohortDefinition.current;
 				this.hasUnsavedChanges = ko.pureComputed(() => {
-					return (sharedState.CohortDefinition.dirtyFlag().isDirty()
-						|| sharedState.ConceptSet.dirtyFlag().isDirty()
+					return (sharedState.RepositoryConceptSet.dirtyFlag().isDirty()
+						|| sharedState.CohortDefinition.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
 						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
@@ -129,6 +126,7 @@ define(
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
+
 					resolve();
 				});
 
@@ -154,110 +152,6 @@ define(
 
 			attachGlobalEventListeners() {
 				const self = this;
-				// handle select all
-					$(document)
-					.on('click', 'th i.fa.fa-shopping-cart', function () {
-						if (self.currentConceptSet() == undefined) {
-							var newConceptSet = {
-								name: ko.observable(constants.newEntityNames.conceptSet()),
-								id: 0
-							}
-							self.currentConceptSet(newConceptSet);
-						}
-
-						var table = $(this)
-							.closest('.dataTable')
-							.DataTable();
-						var concepts = table.rows({
-								search: 'applied'
-							})
-							.data();
-						var selectedConcepts = sharedState.selectedConcepts();
-
-						for (var i = 0; i < concepts.length; i++) {
-							var concept = concepts[i];
-							if (sharedState.selectedConceptsIndex[concept.CONCEPT_ID]) {
-								// ignore if already selected
-							} else {
-								var conceptSetItem = commonUtils.createConceptSetItem(concept);
-								sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-								selectedConcepts.push(conceptSetItem)
-							}
-						}
-						sharedState.selectedConcepts(selectedConcepts);
-						for (var i = 0; i < table.rows()[0].length; i++) {
-							table.cell(i,0).data('<i class="fa fa-shopping-cart"></i>');
-						}
-					});
-
-				// handling concept set selections
-				$(document)
-					.on('click', 'td i.fa.fa-shopping-cart, .asset-heading i.fa.fa-shopping-cart', function () {
-						if (self.currentConceptSet() == undefined) {
-							var newConceptSet = {
-								name: ko.observable(constants.newEntityNames.conceptSet()),
-								id: 0
-							}
-							self.currentConceptSet({
-								name: ko.observable(constants.newEntityNames.conceptSet()),
-								id: 0
-							});
-							self.currentConceptSetSource('repository');
-						}
-
-						$(this)
-							.toggleClass('selected');
-						var concept = ko.contextFor(this)
-							.$data;
-
-						if ($(this)
-							.hasClass('selected')) {
-							var conceptSetItem = commonUtils.createConceptSetItem(concept);
-							sharedState.selectedConceptsIndex[concept.CONCEPT_ID] = 1;
-							sharedState.selectedConcepts.push(conceptSetItem);
-							conceptSetService.setConceptSetExpressionExportItems();
-						} else {
-							delete sharedState.selectedConceptsIndex[concept.CONCEPT_ID];
-							sharedState.selectedConcepts.remove(function (i) {
-								return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
-							});
-						}
-
-						// If we are updating a concept set that is part of a cohort definition
-						// then we need to notify any dependent observables about this change in the concept set
-						if (self.currentCohortDefinition() && self.currentConceptSetSource() === "cohort") {
-							var conceptSet = self.currentCohortDefinition()
-								.expression()
-								.ConceptSets()
-								.find(function (item) {
-									return item.id === self.currentConceptSet().id;
-								});
-							if (!$(this).hasClass("selected")) {
-								conceptSet.expression.items.remove(function (i) {
-									return i.concept.CONCEPT_ID === concept.CONCEPT_ID;
-								});
-							}
-							conceptSet.expression.items.valueHasMutated();
-							conceptSetService.resolveConceptSetExpressionSimple(conceptSet.expression);
-						}
-					});
-
-				// concept set selector handling
-				$(document)
-					.on('click', '.conceptSetTable i.fa.fa-shopping-cart', function () {
-						$(this)
-							.toggleClass('selected');
-						var conceptSetItem = ko.contextFor(this)
-							.$data;
-
-						delete sharedState.selectedConceptsIndex[conceptSetItem.concept.CONCEPT_ID];
-						sharedState.selectedConcepts.remove(function (i) {
-							return i.concept.CONCEPT_ID == conceptSetItem.concept.CONCEPT_ID;
-						});
-						self.currentCohortDefinition() && self.currentCohortDefinition().expression().ConceptSets.valueHasMutated();
-						conceptSetService.resolveConceptSetExpression();
-					});
-
 				$(window)
 					.bind('beforeunload', function () {
 						if (self.hasUnsavedChanges())

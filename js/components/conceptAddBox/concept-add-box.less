@@ -1,0 +1,52 @@
+.concept-add-box-container {
+	margin: 1rem 0;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+  padding: 1rem;
+  display: flex;
+  background-color: #fff;
+  color: #000;
+  .concept-set-dropdown-container {
+    .text {
+      margin-right: 1rem;
+    }
+    margin-right: 2rem;
+    li {
+      cursor: pointer;
+    }
+  }
+  .options-container {
+    padding-right: 2rem;
+    display: flex;
+    align-items: center;
+    .option {
+      margin-right: 1rem;
+      &:last-child {
+        margin-right: 0;
+      }
+      &.disabled {
+        pointer-events: none;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .add-tooltip {
+    margin-bottom: 0;
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    &.active {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.2s linear;
+    }
+    &.inactive {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s 0.2s, opacity 0.2s linear;
+    }
+  }
+}
