@@ -373,6 +373,9 @@ define([
 				return;
 			} else {
 				this.conceptSetStore.clear();
+				if (this.conceptSetStore == sharedState.activeConceptSet()) {
+					sharedState.activeConceptSet(null);
+				}
 				this.currentConceptSetDirtyFlag().reset();
 				sharedState.RepositoryConceptSet.current(null);
 				commonUtils.routeTo('/conceptsets');

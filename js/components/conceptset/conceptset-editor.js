@@ -24,11 +24,7 @@ define([
 	class ConceptSetEditor extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			//this.conceptSetName = ko.observable();
 			this.conceptSetItems = params.conceptSetItems;
-			//this.conceptSetId = params.$raw.conceptSetId;
-			//this.currentConceptSetSource = params.currentConceptSetSource;
-			//this.selectedConcepts = sharedState[`${this.currentConceptSetSource}ConceptSet`].selectedConcepts;
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.commonUtils = commonUtils;
 			this.columns = [

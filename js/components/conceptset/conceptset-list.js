@@ -180,8 +180,6 @@ define([
 			if (!conceptSet) {
 				return;
 			}
-//			const items = ko.unwrap(conceptSet.expression.items);
-//			conceptSetUtils.addToConceptSetIdsMap({items, conceptSetStore: this.conceptSetStore});
 			this.conceptSetStore.current(conceptSet);
 			this.conceptSetStore.isEditable(this.canEdit());
 		}
@@ -238,7 +236,9 @@ define([
 			this.tableApi() && this.tableApi()
 				.getRows((idx, data) => data.id === currentId).deselect();
 			this.conceptSetStore.current(null);
-			sharedState.activeConceptSet(null);
+			if (this.conceptSetStore == sharedState.activeConceptSet()) {
+				sharedState.activeConceptSet(null);
+			}
 		}
 
 		deleteConceptSet() {
