@@ -150,7 +150,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 			});
 			this.isNameFilled = ko.computed(() => {
-				return this.currentCohortDefinition() && this.currentCohortDefinition().name();
+				return this.currentCohortDefinition() && this.currentCohortDefinition().name() && this.currentCohortDefinition().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.currentCohortDefinition().name());
@@ -159,7 +159,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.currentCohortDefinition().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.currentCohortDefinition().name() === this.defaultName;
+				return this.isNameFilled() && this.currentCohortDefinition().name().trim() === this.defaultName;
 			});
 
 			this.isNameCorrect = ko.computed(() => {
@@ -668,6 +668,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			async save () {
 				this.isSaving(true);
+
+				let cohortDefinitionName = this.currentCohortDefinition().name();
+				this.currentCohortDefinition().name(cohortDefinitionName.trim());
 
 				// Next check to see that a cohort definition with this name does not already exist
 				// in the database. Also pass the id so we can make sure that the

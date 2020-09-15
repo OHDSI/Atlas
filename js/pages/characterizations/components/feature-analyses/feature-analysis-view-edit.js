@@ -96,7 +96,7 @@ define([
 
             this.canEdit = this.isUpdatePermittedResolver();
             this.isNameFilled = ko.computed(() => {
-                return this.data() && this.data().name();
+                return this.data() && this.data().name() && this.data().name().trim();
             });
             this.isNameCharactersValid = ko.computed(() => {
                 return this.isNameFilled() && commonUtils.isNameCharactersValid(this.data().name());
@@ -105,7 +105,7 @@ define([
                 return this.isNameFilled() && commonUtils.isNameLengthValid(this.data().name());
             });
             this.isDefaultName = ko.computed(() => {
-                return this.isNameFilled() && this.data().name() === this.defaultName;
+                return this.isNameFilled() && this.data().name().trim() === this.defaultName;
             });
             this.isNameCorrect = ko.computed(() => {
                 return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
@@ -378,7 +378,9 @@ define([
 
         async save() {
             this.isSaving(true);
-            console.log('Saving: ', JSON.parse(ko.toJSON(this.data())));
+
+            let faName = this.data().name();
+            this.data().name(faName.trim());
 
             // Next check to see that a feature analysis with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current feature analysis is excluded in this check.
