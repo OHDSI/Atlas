@@ -2,17 +2,18 @@
 <loading></loading>
 <!-- /ko -->
 
-<!-- ko if: currentConceptSet() != null && !loading() -->
+<!-- ko if: (currentConceptSet() != null && !loading()) -->
 <heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : '(Read only)',  icon: 'shopping-cart', theme: 'dark'"></heading-title>
 <!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
-	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> 
+	<!-- /ko -->
 <!-- /ko -->
 <div data-bind="css: classes()">
   <div class="asset-heading" data-bind="if: currentConceptSet">
     <div class="input-group">
       <input class="form-control" id="txtConceptSetName" placeholder="New Concept Set" type="text" data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }"/>
       <div class="input-group-btn">
-        <button type="button" class="btn btn-success" data-bind="click: saveClick, css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
+        <button type="button" class="btn btn-success" data-bind="click: save, css: { disabled: !canSave() || isProcessing() }"><i class="fa fa-save"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: closeConceptSet, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: copy, visible: canCopy(), css: { disabled: !canCreate() || isProcessing()}">
           <i class="fa fa-copy"></i>
@@ -43,8 +44,7 @@
     title: 'Concept Set Optimization',
     data: $component,
     fade: $component.fade,
-  }"
->
+  }">
   <div data-bind="css: classes('optimize-modal-content')">
     <div data-bind="if: optimizeLoading()">
       <i class="fa fa-circle-o-notch fa-spin fa-lg">
@@ -158,9 +158,11 @@
         </div>
       </div>
     </div>
-  </div>
+	</div>
 </atlas-modal>
+
 <!-- /ko -->
+
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 <configure-access-modal params="

@@ -18,18 +18,18 @@ define([
 			super(params);
 			this.countLoading = ko.observable();
 			this.inclusionCount = ko.observable(0);
+			this.expression = params.conceptSetExpression;
 
-			this.conceptSetExpression = params.conceptSetExpression || ko.observableArray();
 			this.conceptSetSubscriptionRateLimit = params.conceptSetSubscriptionRateLimit || 1000;
 
 			this.getInclusionCount = this.getInclusionCount.bind(this);
-			this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.conceptSetExpression)).extend({rateLimit: this.conceptSetSubscriptionRateLimit}).subscribe(this.getInclusionCount));
+			this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.expression())).extend({ rateLimit: { timeout: this.conceptSetSubscriptionRateLimit, method: "notifyWhenChangesStop" } }).subscribe(this.getInclusionCount));
 			this.getInclusionCount();
 		}
 
 		getInclusionCount() {
 			this.countLoading(true);
-			conceptSetApi.getInclusionCount(this.conceptSetExpression())
+			conceptSetApi.getInclusionCount(this.expression())
 				.then(({data}) => this.inclusionCount(Number.isInteger(data) ? data : 0))
 				.finally(() => this.countLoading(false));
 		}

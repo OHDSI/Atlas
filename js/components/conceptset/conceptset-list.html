@@ -1,0 +1,25 @@
+<div data-bind="eventListener: [{event: 'click', selector: '.repositoryConceptSetItem', callback: selectConceptSet}]">
+    <loading params="status: 'Exporting All Concept Sets To CSV'" data-bind="visible: exporting()"></loading>
+    <div data-bind="hidden: exporting()">
+        <div data-bind="css: classes({element: 'button-pane', extra: 'pull-right'})">
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click:function() { newConceptSet(); }, enable: canEdit">New Concept Set</button>
+            <button type="button" class="btn btn-sm btn-primary" data-bind="click:function(){ $component.importConceptSet() }, enable: canEdit"><i class="fa fa-upload" aria-hidden="true" /> Import</button>
+            <!-- ko if: exportCSV -->
+            <span data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null" data-placement="bottom"><button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetCSV(); }, css: {'disabled': disableConceptSetExport}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button></span>
+            <!-- /ko -->
+        </div>
+        <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{ data: conceptSets, options: options, api: tableApi }">
+        </table>
+        <!-- ko if: currentConceptSet() -->
+        <loading params="status: 'Importing Concept Set'" data-bind="visible: importing()"></loading>
+        <div data-bind="css: classes('conceptset-tabs'), hidden: importing()">
+            <tabs params="
+                selectedTabKey: $component.selectedTabKey,
+                selectTab: $component.selectTab,
+                tabs: $component.tabs,
+            ">
+            </tabs>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<div>
+    <div class="heading">Enter Concept Identifiers (<a class="linkish" data-bind="click: function() { identifiers(''); }">click to clear</a>)</div>
+    <textarea class="form-control" rows="5" data-bind="textInput: identifiers"></textarea>
+    <concept-add-box params="{
+        isActive: canAddConcepts,
+        onSubmit: doImport,
+      }"></concept-add-box>	
+    <div class="clear"></div>
+</div>

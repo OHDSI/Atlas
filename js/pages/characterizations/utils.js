@@ -1,29 +1,10 @@
 define([
 	'knockout',
-	'services/Vocabulary',
-	'conceptsetbuilder/InputTypes/ConceptSet',
 	'./const',
 ], function (
 	ko,
-	VocabularyAPI,
-	ConceptSet,
 	constants,
 ) {
-
-	function conceptSetSelectionHandler(conceptSets, context, selection, source) {
-
-		return VocabularyAPI.getConceptSetExpression(selection.id, source.url).then((result) => {
-			const newId = conceptSets().length > 0 ? Math.max(...conceptSets().map(c => c.id)) + 1 : 0;
-			const newConceptSet = new ConceptSet({
-				id: newId,
-				name: selection.name,
-				expression: result
-			});
-			conceptSets([...conceptSets(), newConceptSet]);
-			context.conceptSetId(newConceptSet.id);
-		});
-
-	}
 
 	function extractMeaningfulCovName(fullName, faType = constants.feAnalysisTypes.CRITERIA) {
 		if ([constants.feAnalysisTypes.CRITERIA_SET, constants.feAnalysisTypes.CUSTOM_FE].includes(faType)) {
@@ -45,7 +26,6 @@ define([
 	}
 
 	return {
-		conceptSetSelectionHandler,
 		extractMeaningfulCovName,
 		sortedStrataNames,
 	};

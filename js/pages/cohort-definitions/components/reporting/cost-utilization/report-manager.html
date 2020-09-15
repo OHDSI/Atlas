@@ -190,7 +190,7 @@
 	</div>
 </div>
 
-<div id="reportTornado" data-bind="if: $component.currentReport() == 'Tornado' && !$component.loadingReport()">
+<div id="reportTornado" data-bind="visible: $component.currentReport() == 'Tornado' && !$component.loadingReport()">
 	<div class="report">
 		<div class="panel panel-primary">
 			<div class="panel-heading">

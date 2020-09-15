@@ -92,7 +92,7 @@ define([
 			});
 
 			this.isNameFilled = ko.computed(() => {
-				return this.estimationAnalysis() && this.estimationAnalysis().name();
+				return this.estimationAnalysis() && this.estimationAnalysis().name() && this.estimationAnalysis().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.estimationAnalysis().name());
@@ -101,7 +101,7 @@ define([
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.estimationAnalysis().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.estimationAnalysis().name() === this.defaultName;
+				return this.isNameFilled() && this.estimationAnalysis().name().trim() === this.defaultName;
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
@@ -225,6 +225,9 @@ define([
 		async save() {
 			this.isSaving(true);
 			this.loading(true);
+
+			let estimationName = this.estimationAnalysis().name();
+			this.estimationAnalysis().name(estimationName.trim());
 
 			// Next check to see that an estimation analysis with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current estimation analysis is excluded in this check.

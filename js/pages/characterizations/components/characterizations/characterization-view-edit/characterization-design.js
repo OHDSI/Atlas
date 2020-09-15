@@ -12,7 +12,7 @@ define([
     'conceptsetbuilder/InputTypes/ConceptSet',
     'services/Vocabulary',
     'lodash',
-    '../../../utils',
+    'components/conceptset/utils',
     'const',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
@@ -36,7 +36,7 @@ define([
     ConceptSet,
     VocabularyAPI,
     lodash,
-    utils,
+    conceptSetUtils,
     globalConstants
 ) {
     class CharacterizationDesign extends AutoBind(Component) {
@@ -47,13 +47,14 @@ define([
             this.characterizationId = params.characterizationId;
             this.areStratasNamesEmpty = params.areStratasNamesEmpty;
             this.duplicatedStrataNames = params.duplicatedStrataNames;
+            this.loadConceptSet = params.loadConceptSet;
 
             this.loading = ko.observable(false);
 
             this.isViewPermitted = this.isPermittedViewResolver();
             this.isEditPermitted = params.isEditPermitted;
 
-            this.cohorts = ko.computed({
+            this.cohorts = ko.pureComputed({
                 read: () => params.design() && params.design().cohorts() || [],
                 write: (value) => params.design().cohorts(value),
             });
@@ -63,7 +64,7 @@ define([
                 write: (value) => params.design() && params.design().strataConceptSets(value)
             });
 
-            this.stratas = ko.computed({
+            this.stratas = ko.pureComputed({
                 read: () => params.design() && params.design().stratas() || [],
                 write: (value) => params.design().stratas(value),
             });
@@ -71,13 +72,13 @@ define([
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
                 columns: globalConstants.getLinkedFeatureAnalysisColumns(this),
-                data: ko.computed(() => params.design() && params.design().featureAnalyses() || [])
+                data: ko.pureComputed(() => params.design() && params.design().featureAnalyses() || [])
             };
 
             this.featureAnalysesParams = {
                 newItemAction: this.showParameterCreateModal,
                 columns: globalConstants.getLinkedFeAParametersColumns(this),
-                data: ko.computed(() => params.design() && params.design().parameters() || [])
+                data: ko.pureComputed(() => params.design() && params.design().parameters() || [])
             };
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
@@ -97,7 +98,7 @@ define([
         }
 
         isPermittedViewResolver() {
-            return ko.computed(
+            return ko.pureComputed(
                 () => (this.characterizationId() ? PermissionService.isPermittedGetCC(this.characterizationId()) : true)
             );
         }
@@ -166,16 +167,33 @@ define([
             this.isParameterCreateModalShown(true);
         }
 
-        handleConceptSetImport(criteriaIdx, item) {
-          console.log('import', item);
-          this.criteriaContext({...item, criteriaIdx});
-          this.showConceptSetBrowser(true);
+        handleConceptSetImport(item, context, event) {
+            this.criteriaContext(item);
+            this.showConceptSetBrowser(true);
         }
+			
+        handleEditConceptSet(item, context) {
+          if (item.conceptSetId() == null) {
+            return;
+          }
+          this.loadConceptSet(item.conceptSetId());
+        }	
 
         onRespositoryConceptSetSelected(conceptSet, source) {
-            utils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
+            conceptSetUtils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
                 .done(() => this.showConceptSetBrowser(false));
         }
+      
+        onRespositoryActionComplete(result) {
+            this.showConceptSetBrowser(false);
+            if (result.action === 'add') {
+                const newId = conceptSetUtils.newConceptSetHandler(this.strataConceptSets(), this.criteriaContext());
+                this.loadConceptSet(newId)
+            }
+
+            this.criteriaContext(null);
+        }
+
     }
 
     return commonUtils.build('characterization-design', CharacterizationDesign, view);
