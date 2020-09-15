@@ -107,6 +107,10 @@
                                 data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeCriteria($index())"
                         ><i class="fa fa-trash-o"></i></button>
                     </div>
+                    <!-- Aggregate -->
+                    <div>
+                        <aggregate-select params="aggregates: $component.aggregates, currentAggregate: $data.aggregate, domains: $component.domains, criteria: $data"></aggregate-select>
+                    </div>
                     <div data-bind="if: $data.criteriaType === 'CriteriaGroup'">
                         <criteria-group params="{ expression: { ConceptSets: $component.data().conceptSets }, group: $data.expression }"></criteria-group>
                     </div>

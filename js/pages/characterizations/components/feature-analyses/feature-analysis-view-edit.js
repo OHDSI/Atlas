@@ -171,6 +171,8 @@ define([
               getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
               conceptSetStore: this.conceptSetStore,
               loadConceptSet: this.loadConceptSet,
+              defaultAggregate: this.defaultAggregate,
+              aggregates: this.aggregates,
             });
             this.tabs = ko.computed(() => {
                 const tabs = [
