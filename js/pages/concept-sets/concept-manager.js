@@ -1,5 +1,3 @@
-const { select } = require('d3');
-
 define([
 	'knockout',
 	'text!./concept-manager.html',
