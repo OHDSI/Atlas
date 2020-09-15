@@ -6,8 +6,11 @@ define([
 	'utils/CommonUtils',
 	'services/AuthAPI',
 	'services/ConceptSet',
+	'components/conceptset/ConceptSetStore',
 	'atlas-state',
 	'../const',
+  'appConfig',
+  'const',
   'components/tabs',
   'circe'
 ], function (
@@ -18,56 +21,36 @@ define([
 	commonUtils,
 	authApi,
 	conceptSetService,
+	ConceptSetStore,
 	sharedState,
 	constants,
+	config,
+	globalConstants,
 ) {
 	class ConceptsetList extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.currentConceptSet = sharedState.ConceptSet.current;
-			this.currentConceptSetSource = sharedState.ConceptSet.source;
-			this.currentCohortDefinition = sharedState.CohortDefinition.current;
-			this.currentCohortDefinitionSourceInfo = sharedState.CohortDefinition.sourceInfo;
-			this.currentCohortDefinitionDirtyFlag = sharedState.CohortDefinition.dirtyFlag;
-			this.criteriaContext = sharedState.criteriaContext;
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().repository);
+			this.currentConceptSet = this.conceptSetStore.current;
 			this.canCreateConceptSet = ko.pureComputed(function () {
-				return authApi.isPermittedCreateConceptset();
+				return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
 		}
 
-		action(callback) {
-			const isCohortDefinitionDirty = this.currentCohortDefinition() && this.currentCohortDefinitionDirtyFlag().isDirty();
-			if (isCohortDefinitionDirty) {
-				if (confirm('Cohort changes are not saved. Would you like to continue?')) {
-					this.clearCohortDefinition();
-					callback();
-				}
-			} else {
-				callback();
-			}
-		}
-
-		clearCohortDefinition() {
-			conceptSetService.clearConceptSet();
-			this.currentCohortDefinitionSourceInfo(null);
-			this.currentCohortDefinition(null);
-		}
-
 		onRespositoryConceptSetSelected (conceptSet) {
-			this.action(() => commonUtils.routeTo(constants.paths.mode(conceptSet.id)));
+			commonUtils.routeTo(constants.paths.mode(conceptSet.id));
 		}
 
 		onConceptSetBrowserAction (result) {
 			// Inspect the result to see what type of action was taken. For now
 			// we're handling the 'add' action
 			if (result.action == 'add') {
-				this.action(this.newConceptSet);
+				this.newConceptSet();
 			}
 		}
 
 		newConceptSet() {
 			if (this.currentConceptSet() == undefined) {
-				this.currentConceptSetSource('repository');
 				commonUtils.routeTo(constants.paths.mode());
 			}
 		}

@@ -1,0 +1,21 @@
+<div data-bind="css: classes('conceptset-tabs')">
+    <tabs params="
+        selectedTabKey: $component.selectedTabKey,
+        selectTab: $component.selectTab,
+        tabs: $component.tabs,
+    "></tabs>
+</div>
+
+<atlas-modal params="
+		showModal: $component.showImportConceptSetModal,
+		title: 'Import Concept Set From Repository...',
+		data: {
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport
+		}
+	"
+>
+    <concept-set-browser params="
+			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
+			buttonActionEnabled: false
+		"></concept-set-browser>
+</atlas-modal>

@@ -15,8 +15,9 @@ define([
     'services/AuthAPI',
     'services/Vocabulary',
     'services/Permission',
-	'components/security/access/const',
+    'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/ConceptSetStore',    
     'pages/Page',
     'pages/characterizations/const',
     'utils/AutoBind',
@@ -26,13 +27,16 @@ define([
     '../../utils',
     'const',
     'less!./feature-analysis-view-edit.less',
+    './fa-view-edit/fa-design',
+    './fa-view-edit/fa-conceptset',
     'components/cohortbuilder/components',
     'circe',
     'components/multi-select',
     'components/DropDownMenu',
     'components/heading',
     'components/authorship',
-	'components/security/access/configure-access-modal',
+    'components/security/access/configure-access-modal',
+    'components/tabs',
     'components/name-validation',
 ], function (
     ko,
@@ -53,6 +57,7 @@ define([
     GlobalPermissionService,
 	{ entityType },
     ConceptSet,
+    ConceptSetStore,
     Page,
     constants,
     AutoBind,
@@ -77,15 +82,16 @@ define([
     class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
-
             this.featureId = sharedState.FeatureAnalysis.selectedId;
             this.data = sharedState.FeatureAnalysis.current;
+            this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().featureAnalysis);
+            this.conceptSets = ko.pureComputed(() => this.data() && this.data().conceptSets)
             this.domains = ko.observable([]);
             this.previousDesign = {};
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
-
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
+           
             this.isCopying = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
@@ -116,16 +122,11 @@ define([
 
             this.saveTooltipText = this.getSaveTooltipTextComputed();
 
-            // Concept set import for criteria
-            this.criteriaContext = ko.observable();
-            this.showConceptSetBrowser = ko.observable();
-
             this.featureTypes = featureTypes;
             this.statTypeOptions = ko.observableArray(statTypeOptions);
-            this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
 
             this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
-            this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
+
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
                     if (this.featureId() !== 0) {
@@ -146,6 +147,42 @@ define([
             });
             this.editorClasses = ko.computed(() => this.classes({ element: 'content', modifiers: this.canEdit() ? '' : 'disabled' }))
 
+            this.selectedTabKey = ko.observable();
+            this.componentParams = ko.observable({
+              ...params,
+              featureId: this.featureId,
+              data: this.data,
+              dataDirtyFlag: this.dataDirtyFlag,
+              canEdit: this.canEdit,
+              domains: this.domains,
+              featureTypes: this.featureTypes,
+              statTypeOptions: this.statTypeOptions,
+              setType: this.setType,
+              getEmptyCriteriaFeatureDesign: this.getEmptyCriteriaFeatureDesign,
+              getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
+              conceptSetStore: this.conceptSetStore,
+              loadConceptSet: this.loadConceptSet,
+            });
+            this.tabs = ko.computed(() => {
+                const tabs = [
+                    {
+                      title: 'Design',
+                      key: 'design',
+                      componentName: 'feature-analysis-design',
+                      componentParams: this.componentParams,
+                    },
+                ];
+                if (this.data() && this.data().type() === this.featureTypes.CRITERIA_SET) {
+                    tabs.push({
+                      title: 'Concept Sets',
+                      key: 'conceptset',
+                      componentName: 'feature-analysis-conceptset',
+                      componentParams: this.componentParams,
+                    });
+                }
+              return tabs;
+            });
+
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.FE_ANALYSIS,
 				entityIdGetter: () => this.featureId(),
@@ -158,7 +195,7 @@ define([
             super.onPageCreated();
         }
 
-        onRouterParamsChanged({ id }) {
+        onRouterParamsChanged({ id, section }) {
             if (id !== undefined) {
                 this.featureId(parseInt(id));
                 if (this.featureId() === 0) {
@@ -167,6 +204,9 @@ define([
                     this.loadDesign(this.featureId());
                 }
             }
+            if (section !== undefined) {
+							this.selectedTabKey(section);
+						}
         }
 
         buildAddCriteriaAction(type) {
@@ -187,6 +227,10 @@ define([
 
         isNewEntityResolver() {
             return ko.computed(() => this.featureId() === 0);
+        }
+
+        selectTab(index, { key }) {
+            commonUtils.routeTo('/cc/feature-analyses/' + this.componentParams().featureId() + '/' + key);
         }
 
         areRequiredFieldsFilled() {
@@ -251,7 +295,7 @@ define([
               modifiedBy: ko.observable(),
               modifiedDate: ko.observable(),
             };
-            data.conceptSets(conceptSets.map(set => ({ ...set, name: ko.observable(set.name), })));
+            data.conceptSets(conceptSets.map(s => new ConceptSet(s)));
 
             if (type === this.featureTypes.CRITERIA_SET) {
                 parsedDesign = design.map(c => {
@@ -332,43 +376,6 @@ define([
             };
         }
 
-        getEmptyDemographicCriteria() {
-            return {
-              name: ko.observable(''),
-              criteriaType: 'DemographicCriteria',
-              expression: ko.observable(new DemographicGriteria()),
-            };
-        }
-
-        addCriteria() {
-            this.data().design([...this.data().design(), this.getEmptyCriteriaFeatureDesign()]);
-        }
-
-        addWindowedCriteria(type) {
-            const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
-            this.data().design([...this.data().design(), criteria]);
-        }
-
-        removeCriteria(index) {
-            const criteriaList = this.data().design();
-            criteriaList.splice(index, 1);
-            this.data().design(criteriaList);
-        }
-
-        handleConceptSetImport(criteriaIdx, item) {
-            this.criteriaContext({...item, criteriaIdx});
-            this.showConceptSetBrowser(true);
-        }
-
-        onRespositoryConceptSetSelected(conceptSet, source) {
-            utils.conceptSetSelectionHandler(this.data().conceptSets, this.criteriaContext(), conceptSet, source)
-              .done(() => this.showConceptSetBrowser(false));
-        }
-
-        handleEditConceptSet() {
-
-        }
-
         async save() {
             this.isSaving(true);
 
@@ -420,6 +427,7 @@ define([
             this.data(null);
             this.featureId(null);
             this.dataDirtyFlag().reset();
+            this.conceptSetStore.clear();
             commonUtils.routeTo('/cc/feature-analyses');
         }
 
@@ -453,6 +461,12 @@ define([
                 modifiedDate: modifiedDate,
             }
         }
+
+				loadConceptSet(conceptSetId) {
+                    this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+                    this.conceptSetStore.isEditable(this.canEdit());
+				    commonUtils.routeTo(`/cc/feature-analyses/${this.data().id}/conceptset`);
+				}		
     }
 
     return commonUtils.build('feature-analysis-view-edit', FeatureAnalysisViewEdit, view);
