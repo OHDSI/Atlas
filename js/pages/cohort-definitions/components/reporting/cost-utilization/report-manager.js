@@ -50,11 +50,29 @@ define([
 			this.visualizationPacks = cohortReportingService.visualizationPacks;
 			this.costUtilConst = costUtilConst;
 			this.activeReportDrilldown = ko.observable(false);
-			this.loadingReportDrilldown = ko.observable(false);
+			this._loadingReportDrilldown = ko.observable(false);
 			this.reportSourceKey = params.reportSourceKey;
 			this.reportReportName = params.reportReportName;
 			this.currentReport = ko.observable();
-			this.loadingReport = params.loadingReport;
+
+			// Setting 'ko.options.deferUpdates = true' in PR #2084 breaks rendering of reports and charts
+			// we need explicitly call for 'ko.tasks.runEarly' method
+			// TODO: Needs to be refactored in 2.8.1
+			this.loadingReport = ko.pureComputed({
+				read: () => params.loadingReport(),
+				write: isLoading => {
+					params.loadingReport(isLoading);
+					ko.tasks.runEarly();
+				}
+			});
+			this.loadingReportDrilldown = ko.pureComputed({
+				read: () => this._loadingReportDrilldown(),
+				write: isLoading => {
+					this._loadingReportDrilldown(isLoading);
+					ko.tasks.runEarly();
+				}
+			});
+			
 			this.reportTriggerRun = params.reportTriggerRun;
 			this.reportCohortDefinitionId = params.reportCohortDefinitionId;
 			this.reportValid = ko.computed(() => {
@@ -217,12 +235,6 @@ define([
 			this.careSiteDatatable;
 
 			this.currentAgeGroup = ko.observable();
-
-			this.reportTriggerRunSuscription = this.reportTriggerRun.subscribe((newValue) => {
-				if (newValue) {
-					this.runReport();
-				}
-			});
 
 			this.reportCohortDefinitionId.subscribe((d) => {
 				if (this.showSelectionArea) {
@@ -2189,8 +2201,8 @@ define([
 					case this.visualizationPacks.healthcareUtilCareSiteDatesCohort.name:
 					case this.visualizationPacks.healthcareUtilDrugBaseline.name:
 					case this.visualizationPacks.healthcareUtilDrugCohort.name:
-						this.loadingReport(false);
 						this.currentReport(this.reportReportName());
+						this.loadingReport(false);
 						break;
 				}
 			}
@@ -2290,15 +2302,15 @@ define([
 
 			// drilldown functions
 			this.conditionDrilldown = (concept_id, concept_name) => {
-				this.loadingReportDrilldown(true);
 				this.activeReportDrilldown(false);
+				this.loadingReportDrilldown(true);
 
 				$.ajax({
 					type: "GET",
 					url: this.config.api.url + 'cohortresults/' + this.reportSourceKey() + '/' + this.reportCohortDefinitionId() + '/condition/' + concept_id + "?refresh=true",
 					success: (data) => {
-						this.loadingReportDrilldown(false);
 						this.activeReportDrilldown(true);
+						this.loadingReportDrilldown(false);
 						$('#conditionDrilldown')
 							.html(concept_name + ' Drilldown Report');
 
@@ -2464,8 +2476,9 @@ define([
 					success: (data) => {
 						$('#drugExposureDrilldown')
 							.text(concept_name);
-						this.loadingReportDrilldown(false);
 						this.activeReportDrilldown(true);
+						this.loadingReportDrilldown(false);
+
 
 						this.boxplotHelper(data.ageAtFirstExposure, '#ageAtFirstExposure', this.boxplotWidth, this.boxplotHeight, 'Gender', 'Age at First Exposure');
 						this.boxplotHelper(data.daysSupplyDistribution, '#daysSupplyDistribution', this.boxplotWidth, this.boxplotHeight, 'Days Supply', 'Days');
@@ -2594,8 +2607,8 @@ define([
 					type: "GET",
 					url: this.config.api.url + 'cohortresults/' + this.reportSourceKey() + '/' + this.reportCohortDefinitionId() + '/conditionera/' + concept_id + '?refresh=' + this.refresh(),
 					success: (data) => {
-						this.loadingReportDrilldown(false);
 						this.activeReportDrilldown(true);
+						this.loadingReportDrilldown(false);
 
 						$('#conditionEraDrilldown')
 							.html(concept_name + ' Drilldown Report');
@@ -2704,15 +2717,15 @@ define([
 			}
 
 			this.drugeraDrilldown = (concept_id, concept_name) => {
-				this.loadingReportDrilldown(true);
 				this.activeReportDrilldown(false);
+				this.loadingReportDrilldown(true);
 
 				$.ajax({
 					type: "GET",
 					url: this.config.api.url + 'cohortresults/' + this.reportSourceKey() + '/' + this.reportCohortDefinitionId() + '/drugera/' + concept_id + '?refresh=' + this.refresh(),
 					success: (data) => {
-						this.loadingReportDrilldown(false);
 						this.activeReportDrilldown(true);
+						this.loadingReportDrilldown(false);
 
 						$('#drugeraDrilldown')
 							.html(concept_name + ' Drilldown Report');
@@ -2823,15 +2836,15 @@ define([
 			}
 
 			this.procedureDrilldown = (concept_id, concept_name) => {
-				this.loadingReportDrilldown(true);
 				this.activeReportDrilldown(false);
+				this.loadingReportDrilldown(true);
 
 				$.ajax({
 					type: "GET",
 					url: this.config.api.url + 'cohortresults/' + this.reportSourceKey() + '/' + this.reportCohortDefinitionId() + '/procedure/' + concept_id + '?refresh=' + this.refresh(),
 					success: (data) => {
-						this.loadingReportDrilldown(false);
 						this.activeReportDrilldown(true);
+						this.loadingReportDrilldown(false);
 						$('#procedureDrilldown')
 							.text(concept_name + ' Drilldown Report');
 
@@ -2982,8 +2995,8 @@ define([
 			}
 
 			this.drilldown = (id, name, type) => {
-				this.loadingReportDrilldown(true);
 				this.activeReportDrilldown(false);
+				this.loadingReportDrilldown(true);
 
 				$.ajax({
 						type: "GET",
@@ -2991,6 +3004,7 @@ define([
 						contentType: "application/json; charset=utf-8"
 					})
 					.done((result) => {
+						this.activeReportDrilldown(true);
 						this.loadingReportDrilldown(false);
 						if (result && result.length > 0) {
 							$("#" + type + "DrilldownScatterplot")
@@ -3011,7 +3025,6 @@ define([
 								});
 
 							let scatter = new atlascharts.scatterplot();
-							this.activeReportDrilldown(true);
 							$('#' + type + 'DrilldownScatterplotHeading').html(name);
 
 							scatter.render(totalRecordsData, "#" + type + "DrilldownScatterplot", 460, 150, {
@@ -3393,10 +3406,6 @@ define([
 				}
 			}
 
-			this.dispose = function () {
-				this.reportTriggerRunSuscription.dispose();
-			}
-
 			this.handleDrugTableClick = (data, context, event) => {
 				let dataTable = $("#drug_table")
 					.DataTable();
@@ -3446,6 +3455,18 @@ define([
 
 				this.conditionEraDrilldown(rowData.concept_id, rowData.snomed);
 			}
+
+			this.subscriptions.push(
+				this.reportTriggerRun.subscribe((newValue) => {
+					if (newValue) {
+						this.runReport();
+					}
+				}),
+			);
+		}
+
+		dispose() {
+			super.dispose();
 		}
 	}
 

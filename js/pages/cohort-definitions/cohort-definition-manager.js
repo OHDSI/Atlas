@@ -150,7 +150,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 			});
 			this.isNameFilled = ko.computed(() => {
-				return this.currentCohortDefinition() && this.currentCohortDefinition().name();
+				return this.currentCohortDefinition() && this.currentCohortDefinition().name() && this.currentCohortDefinition().name().trim();
 			});
 			this.isNameCharactersValid = ko.computed(() => {
 				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.currentCohortDefinition().name());
@@ -159,7 +159,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.isNameFilled() && commonUtils.isNameLengthValid(this.currentCohortDefinition().name());
 			});
 			this.isDefaultName = ko.computed(() => {
-				return this.isNameFilled() && this.currentCohortDefinition().name() === this.defaultName;
+				return this.isNameFilled() && this.currentCohortDefinition().name().trim() === this.defaultName;
 			});
 
 			this.isNameCorrect = ko.computed(() => {
@@ -389,7 +389,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			this.pollForInfo = () => {
-				if (this.currentCohortDefinition()) {
+				const { PENDING, RUNNING } = globalConstants.generationStatuses;
+				if (this.currentCohortDefinition() && !this.isNew() && this.cohortDefinitionSourceInfo().some(i => [PENDING, RUNNING].includes(i.status()))) {
 					var id = this.currentCohortDefinition().id();
 					cohortDefinitionService.getInfo(id).then((infoList) => {
 						var hasPending = false;
@@ -670,6 +671,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			async save () {
 				this.isSaving(true);
 
+				let cohortDefinitionName = this.currentCohortDefinition().name();
+				this.currentCohortDefinition().name(cohortDefinitionName.trim());
+
 				// Next check to see that a cohort definition with this name does not already exist
 				// in the database. Also pass the id so we can make sure that the
 				// current Cohort Definition is excluded in this check.
@@ -776,7 +780,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			generateCohort (source) {
 				this.stopping()[source.sourceKey](false);
-				this.getSourceKeyInfo(source.sourceKey).status('PENDING');
+				this.getSourceKeyInfo(source.sourceKey).status(globalConstants.generationStatuses.PENDING);
 				this.getSourceKeyInfo(source.sourceKey).createdBy(authApi.subject());
 				if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 					this.toggleCohortReport(null);
@@ -1166,6 +1170,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 			dispose () {
+				super.dispose();
 				this.cohortDefinitionLink.dispose();
 				this.cohortDefinitionCaption.dispose();
 				this.tabPath.dispose();
