@@ -125,7 +125,9 @@ define([
             this.featureTypes = featureTypes;
             this.statTypeOptions = ko.observableArray(statTypeOptions);
 
-            this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
+            this.windowedActions = Object.keys(cohortbuilderConsts.windowedAttributes).map(a => {
+                return {...cohortbuilderConsts.windowedAttributes[a], action: this.buildAddCriteriaAction(cohortbuilderConsts.CriteriaTypes[a]) }
+            });
 
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
