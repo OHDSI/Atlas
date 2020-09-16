@@ -136,7 +136,8 @@ define([
       if (!config.userAuthenticationEnabled) {
         return false;
       } else {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey) && source.hasResults && source.hasVocabulary);
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey) && source.hasResults
+            && (source.hasVocabulary || source.hasCDM));
       }
     }
 
