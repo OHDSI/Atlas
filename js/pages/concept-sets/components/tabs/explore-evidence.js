@@ -5,6 +5,7 @@ define([
 	'utils/AutoBind',
   'utils/CommonUtils',
   'atlas-state',
+	'components/conceptset/ConceptSetStore',
 ], function (
 	ko,
 	view,
@@ -12,15 +13,16 @@ define([
   AutoBind,
   commonUtils,
   sharedState,
+	ConceptSetStore,
 ) {
 	class ExploreEvidence extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-      this.selectedConcepts = sharedState.selectedConcepts;
-      this.currentConceptSet = sharedState.ConceptSet.current;
-      this.currentConceptSetDirtyFlag = sharedState.ConceptSet.dirtyFlag;
-      this.currentConceptSetNegativeControls = sharedState.ConceptSet.negativeControls;
-      this.conceptSetInclusionIdentifiers = sharedState.conceptSetInclusionIdentifiers;
+      this.currentConceptSet = ConceptSetStore.repository().current;
+      this.selectedConcepts = ko.pureComputed(() => this.currentConceptSet() && this.currentConceptSet().expression.items());
+			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
+      this.currentConceptSetNegativeControls = sharedState.RepositoryConceptSet.negativeControls;
+      this.conceptSetInclusionIdentifiers = ConceptSetStore.repository().conceptSetInclusionIdentifiers;
       this.resultsUrl = sharedState.resultsUrl;
       this.saveConceptSetFn = params.saveConceptSet;
     }

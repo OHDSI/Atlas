@@ -51,7 +51,7 @@
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
-				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
+				<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
 					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
 				</div>
 			</div>
@@ -60,9 +60,11 @@
 					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
-				<!-- ko with: selectedAnalysis().expression -->
-					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor, isEditable: $parent.isEditable"></concept-set-builder>
-				<!-- /ko -->
+				<incidence-rates-conceptset params="{
+					data: $component.selectedAnalysis().expression().ConceptSets,
+					canEdit: $component.isEditable,
+					conceptSetStore: $component.conceptSetStore
+				}"></incidence-rates-conceptset>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },
 																			eventListener: [
@@ -131,7 +133,7 @@
 			<div class="modal-content">
 				<div class="modal-header">Select Concept Set...</div>
 				<div class="paddedWrapper">
-					<cohort-concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></cohort-concept-set-browser>
+					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
 				</div>
 			</div>
 		</div>

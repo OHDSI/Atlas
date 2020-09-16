@@ -108,26 +108,21 @@
 </div>
 </div>
 
-<script type='template' id='conceptset-compare-modal'>
-  <cohort-concept-set-browser params="
-    criteriaContext: $component.criteriaContext,
-    cohortConceptSets: null,
-    onRespositoryConceptSetSelected: conceptsetSelected,
-    repositoryConceptSetTableId: 'csCompareConceptSets',
-    buttonActionEnabled: false
-  "></cohort-concept-set-browser>
-</script>
-
 <atlas-modal
   params="{
     showModal: isModalShown,
     title: 'Choose a concept set',
-    template: 'conceptset-compare-modal',
     data: {
       conceptsetSelected: conceptsetSelected
     },
   }"
-></atlas-modal>
+>
+	<concept-set-browser params="
+		onRespositoryConceptSetSelected: conceptsetSelected,
+		repositoryConceptSetTableId: 'csCompareConceptSets',
+		buttonActionEnabled: false">
+	</concept-set-browser>
+</atlas-modal>
 
 <conceptset-save params="
   conceptSetName: compareNewConceptSetName,

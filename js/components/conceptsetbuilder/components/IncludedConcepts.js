@@ -4,8 +4,7 @@ define([
 	'text!./IncludedConcepts.html',
 	'services/VocabularyProvider',
 	'utils/CommonUtils',
-	'const',
-	'atlas-state',
+	'utils/Renderers',
 	'faceted-datatable'
 ], function (
 		$,
@@ -13,8 +12,8 @@ define([
 		template,
 		VocabularyAPI,
 		commonUtils,
-		globalConstants,
-		sharedState) {
+		renderers,
+	) {
 
 	function IncludedConcepts(params) {
 
@@ -29,13 +28,6 @@ define([
 
 		self.selectedConcepts = ko.observableArray();
 
-		self.selectedConceptsIndex = ko.pureComputed(function () {
-			var index = {};
-			self.selectedConcepts().forEach(function (item) {
-				index[item.CONCEPT_ID] = 1;
-			});
-			return index;
-		});
 
 		self.includedConcepts = ko.observableArray();
 		if (params.widget)
@@ -88,7 +80,59 @@ define([
 			]
 		};
 
-		self.tableColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
+		self.tableColumns = [
+			{
+				title: 'Id',
+				data: 'CONCEPT_ID'
+			},
+			{
+				title: 'Code',
+				data: 'CONCEPT_CODE'
+			},
+			{
+				title: 'Name',
+				data: 'CONCEPT_NAME',
+				render: commonUtils.renderLink,
+			},
+			{
+				title: 'Class',
+				data: 'CONCEPT_CLASS_ID'
+			},
+			{
+				title: 'Standard Concept Caption',
+				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: 'Domain',
+				data: 'DOMAIN_ID'
+			},
+			{
+				title: 'Vocabulary',
+				data: 'VOCABULARY_ID'
+			},
+			{
+				title: 'Excluded',
+				render: () => renderers.renderCheckbox('isExcluded', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Descendants',
+				render: () => renderers.renderCheckbox('includeDescendants', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Mapped',
+				render: () => renderers.renderCheckbox('includeMapped', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+		];
 
 		self.contextSensitiveLinkColor = function (row, data) {
 			var switchContext;

@@ -43,8 +43,6 @@ define(['jquery'], function ($) {
 						input.width(newWidth);
 					}
 					
-					console.log("newWidth: " + newWidth);
-
 				};
 
 			testSubject.insertAfter(input);

@@ -100,5 +100,11 @@
 		<div class="clear"></div>
 	</div>
 </div>
-
+<!-- ko if: searchExecuted() && data().length > 0 -->
+<concept-add-box params="{
+	isActive: $component.canAddConcepts,
+	onSubmit: addConcepts,
+	canSelectSource: true,
+}"></concept-add-box>
+<!-- /ko -->
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

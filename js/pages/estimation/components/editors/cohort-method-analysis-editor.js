@@ -119,6 +119,11 @@ define([
 				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() === "stratifyOnPsAndCovariates");
 				this.setCreatePs();
 			}));
+			
+			
+			this.subscriptions.push(this.analysis.fitOutcomeModelArgs.inversePtWeighting.subscribe(newValue => {
+				this.setCreatePs();
+			}));
 		}
 
 		toggleControlDisplay() {
@@ -157,6 +162,9 @@ define([
 				this.analysis.createPs(
 					!(this.matchStratifySelection() === "none" && this.trimSelection() === "none")
 				);
+			}
+			if (this.analysis.fitOutcomeModelArgs.inversePtWeighting()) {
+				this.analysis.createPs(true);
 			}
 		}
 

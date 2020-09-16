@@ -11,7 +11,7 @@ define([
 		'atlas-state',
 		'components/cohortbuilder/CohortDefinition',
 		'services/CohortDefinition',
-		'services/ConceptSet',
+		'services/Vocabulary',
 		'pages/Page',
 		'utils/AutoBind',
 		'utils/CommonUtils',
@@ -41,7 +41,7 @@ define([
 		sharedState,
 		CohortDefinition,
 		cohortDefinitionService,
-		conceptSetService,
+		vocabularyService,
 		Page,
 		AutoBind,
 		commonUtils,
@@ -121,12 +121,10 @@ define([
 				this.loadConceptSets = (o) => {
 					if (!o.cohortDef)
 						return;
-					var conceptSets = ko.toJS(o.cohortDef.expression()
-						.ConceptSets());
+					var conceptSets = ko.toJS(o.cohortDef.expression().ConceptSets());
 					conceptSets.forEach((conceptSet) => {
-						conceptSetService.resolveConceptSetExpressionSimple(
-							ko.toJS(conceptSet.expression),
-							_.bind(this.loadedConceptSet, this, conceptSet))
+						vocabularyService.resolveConceptSetExpression(conceptSet.expression)
+							.then(resolvedIds => this.loadedConceptSet(conceptSet, resolvedIds));
 					});
 				};
 				this.conceptSets = ko.observable({});

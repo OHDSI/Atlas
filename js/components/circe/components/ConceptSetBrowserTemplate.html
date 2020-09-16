@@ -1,8 +1,4 @@
 <div data-bind="if:$component.canReadConceptsets">
-    <div class="conceptset-browser-panel">
-        <div class="btn btn-sm btn-primary new-concept-set"
-             data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText, visible: buttonActionEnabled"></div>
-    </div>
 
     <div data-bind="visible:$component.selectedSource().url != null">
         <!-- ko if:  loading() || isProcessing() -->
@@ -10,6 +6,10 @@
         <!-- /ko -->
 
         <div data-bind="visible: !loading() && !isProcessing()">
+            <div class="conceptset-browser-panel">
+                <div class="btn btn-sm btn-primary new-concept-set"
+                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText, visible: buttonActionEnabled"></div>
+            </div>
             <faceted-datatable params="
                 dataTableId: repositoryConceptSetTableId,
                 orderColumn: 3, 

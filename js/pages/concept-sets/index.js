@@ -4,18 +4,20 @@ define(
     const appState = require('atlas-state');
     const buildRoutes = require('./routes');
     const constants = require('./const');
+		const globalConstants = require('const');
+		const conceptSetStore = require('components/conceptset/ConceptSetStore')
 
     const statusCss = ko.pureComputed(() => {
-      if (appState.ConceptSet.current() && appState.ConceptSet.source() === 'repository') {
-        return appState.ConceptSet.dirtyFlag().isDirty() ? 'unsaved' : 'open';
+      if (appState.RepositoryConceptSet.current()) {
+        return appState.RepositoryConceptSet.dirtyFlag().isDirty() ? 'unsaved' : 'open';
       }
       return '';
     });
 
     const navUrl = ko.pureComputed(function () {
       let url = "#/conceptsets";
-      if (appState.ConceptSet.current() && appState.ConceptSet.source() === 'repository') {
-        url = `#${constants.paths.mode(appState.ConceptSet.current().id || 0)}`;
+      if (appState.RepositoryConceptSet.current()) {
+        url = `#${constants.paths.mode(appState.RepositoryConceptSet.current().id || 0)}`;
       }
       return url;
     });

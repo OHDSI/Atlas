@@ -6,6 +6,7 @@ define([
     'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/ConceptSetStore',
     './CharacterizationAnalysis',
     'text!./characterization-view-edit.html',
     'appConfig',
@@ -23,6 +24,7 @@ define([
     './characterization-view-edit/characterization-design',
     './characterization-view-edit/characterization-exec-wrapper',
     './characterization-view-edit/characterization-utils',
+    './characterization-view-edit/characterization-conceptsets',
     'components/ac-access-denied',
     'components/heading',
     'components/authorship',
@@ -37,6 +39,7 @@ define([
     { entityType },
     CriteriaGroup,
     ConceptSet,
+    ConceptSetStore,
     CharacterizationAnalysis,
     view,
     config,
@@ -52,18 +55,20 @@ define([
     class CharacterizationViewEdit extends AutoBind(Page) {
         constructor(params) {
             super(params);
+            this.design = sharedState.CohortCharacterization.current;
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
+            this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().characterization);
+            this.conceptSets = ko.computed(() => this.design() && this.design().strataConceptSets)            
             this.executionId = ko.observable(params.router.routerParams().executionId);
             this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
-            this.design = sharedState.CohortCharacterization.current;
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
             this.defaultName = constants.newEntityNames.characterization;
             this.isNameFilled = ko.computed(() => {
-                return this.design() && this.design().name();
+                return this.design() && this.design().name() && this.design().name().trim();
             });
             this.isNameCharactersValid = ko.computed(() => {
                 return this.isNameFilled() && commonUtils.isNameCharactersValid(this.design().name());
@@ -72,7 +77,7 @@ define([
                 return this.isNameFilled() && commonUtils.isNameLengthValid(this.design().name());
             });
             this.isDefaultName = ko.computed(() => {
-                return this.isNameFilled() && this.design().name() === this.defaultName;
+                return this.isNameFilled() && this.design().name().trim() === this.defaultName;
             });
             this.isNameCorrect = ko.computed(() => {
                 return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
@@ -95,12 +100,16 @@ define([
             
             this.componentParams = ko.observable({
                 ...params,
+								canEdit: this.isEditPermitted,
                 characterizationId: this.characterizationId,
                 design: this.design,
                 executionId: this.executionId,
                 designDirtyFlag: this.designDirtyFlag,
                 areStratasNamesEmpty: this.areStratasNamesEmpty,
                 duplicatedStrataNames: this.duplicatedStrataNames,
+                conceptSets: this.conceptSets,
+                conceptSetStore: this.conceptSetStore,
+                loadConceptSet: this.loadConceptSet,
                 criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
                 selectedSourceId: this.selectedSourceId,
@@ -116,7 +125,7 @@ define([
                 isDiagnosticsRunning: this.isDiagnosticsRunning,
                 onDiagnoseCallback: this.diagnose.bind(this),
             });
-            this.characterizationCaption = ko.computed(() => {
+            this.characterizationCaption = ko.pureComputed(() => {
                 if (this.design()) {
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
@@ -160,7 +169,7 @@ define([
         }
 
         isEditPermittedResolver() {
-            return ko.computed(
+            return ko.pureComputed(
                 () => (this.characterizationId() ? PermissionService.isPermittedUpdateCC(this.characterizationId()) : PermissionService.isPermittedCreateCC())
             );
         }
@@ -226,6 +235,9 @@ define([
             this.isSaving(true);
             const ccId = this.componentParams().characterizationId();
 
+            let characterizationName = this.design().name();
+            this.design().name(characterizationName.trim());
+
             // Next check to see that a characterization with this name does not already exist
             // in the database. Also pass the id so we can make sure that the current characterization is excluded in this check.
             try {
@@ -280,6 +292,7 @@ define([
             }
             this.design(null);
             this.designDirtyFlag().reset();
+            this.conceptSetStore.clear();
             commonUtils.routeTo('/cc/characterizations');
         }
 
@@ -299,6 +312,12 @@ define([
                 modifiedDate: modifiedDate,
             }
         }
+        
+        loadConceptSet(conceptSetId) {
+            this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
+            this.conceptSetStore.isEditable(this.isEditPermitted());
+            commonUtils.routeTo(`/cc/characterizations/${this.design().id}/conceptsets`);
+        }   
     }
 
     return commonUtils.build('characterization-view-edit', CharacterizationViewEdit, view);

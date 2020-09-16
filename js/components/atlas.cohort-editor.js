@@ -5,7 +5,7 @@ define([
 	'atlas-state',
 	'components/cohortbuilder/CohortDefinition',
 	'conceptsetbuilder/InputTypes/ConceptSet',
-	'assets/ohdsi.util',
+	'components/conceptset/utils',
 	'components/cohortbuilder/components',
 	'conceptsetbuilder/components',
 	'assets/knockout-jqueryui/tabs',
@@ -18,12 +18,13 @@ define([
 	config,
 	sharedState,
 	CohortDefinition,
-	ConceptSet
+	ConceptSet,
+	conceptSetUtils,
 ) {
 
 	function cohortEditor(params) {
 		var self = this;
-		self.criteriaContext = sharedState.criteriaContext;
+		self.criteriaContext = ko.observable(null);
 		self.canEdit = params.canEditCurrentCohortDefinition;
 		self.loadConceptSet = params.loadConceptSet;
 		self.currentCohortDefinition = sharedState.CohortDefinition.current;
@@ -36,7 +37,6 @@ define([
 		// model behaviors
 
 		self.handleConceptSetImport = function (item, context, event) {
-			event.stopPropagation();
 			self.criteriaContext(item);
 			self.showModal(true);
 			return false;
@@ -52,22 +52,17 @@ define([
 		}
 
 
-		self.onAtlasConceptSetSelectAction = function(result, valueAccessor) {
-				self.showModal(false);
-				if (result.action === 'add') {
-						var newConceptSet = new ConceptSet();
-						var cohortConceptSets = self.currentCohortDefinition().expression().ConceptSets;
-						newConceptSet.id = cohortConceptSets().length > 0 ? Math.max.apply(null, cohortConceptSets().map(function (d) {
-						 return d.id;
-						})) + 1 : 0;
-						cohortConceptSets.push(newConceptSet);
-						self.loadConceptSet(newConceptSet.id);
-						self.currentCohortDefinitionMode("conceptsets");
-						self.criteriaContext().conceptSetId(newConceptSet.id);
-				}
+		self.onAtlasConceptSetSelectAction = function(result) {
+			self.showModal(false);
 
-				self.criteriaContext(null);
-		}
+			if (result.action === 'add') {
+				var cohortConceptSets = self.currentCohortDefinition().expression().ConceptSets;
+				const newId = conceptSetUtils.newConceptSetHandler(cohortConceptSets, self.criteriaContext());
+				self.loadConceptSet(newId)
+			}
+
+			self.criteriaContext(null);
+		}			
 
 		self.onGenerate = function (generateComponent) {
 			CohortDefinition.generate(self.currentCohortDefinition().id(), generateComponent.source.sourceKey, false)
