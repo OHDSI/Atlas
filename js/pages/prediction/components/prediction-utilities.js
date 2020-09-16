@@ -57,6 +57,7 @@ define([
 			this.importService = PredictionService.importPrediction;
 			this.isPermittedExport = PermissionService.isPermittedExport;
 			this.isPermittedImport = PermissionService.isPermittedImport;
+			this.afterImportSuccess = params.afterImportSuccess;
 
 			this.specificationValid = ko.pureComputed(() => this.criticalCount() <= 0);
 

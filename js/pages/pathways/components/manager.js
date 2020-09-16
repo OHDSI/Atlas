@@ -92,6 +92,7 @@ define([
 				criticalCount: this.criticalCount,
 				isEditPermitted: this.canEdit,
         selectedSourceId: this.selectedSourceId,
+				afterImportSuccess: this.afterImportSuccess.bind(this),
 			});
 			this.warningParams = ko.observable({
 				current: sharedState.CohortPathways.current,
@@ -255,6 +256,13 @@ define([
 
 			commonUtils.routeTo('/pathways');
 		}
+
+		async afterImportSuccess(res) {
+            this.warningParams().checkOnInit = false;
+            this.design(null);
+            this.dirtyFlag().reset();
+            commonUtils.routeTo('/pathways/' + res.id);
+		};
 
 		getAuthorship() {
 			const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);

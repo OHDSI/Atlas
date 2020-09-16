@@ -165,6 +165,7 @@ define([
 				selectedSourceId: this.selectedSourceId,
 				generationDisableReason,
 				resultsPathPrefix: '/estimation/cca/',
+				afterImportSuccess: this.afterImportSuccess.bind(this),
 			});
 
 			this.isNewEntity = this.isNewEntityResolver();
@@ -188,7 +189,7 @@ define([
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
-				checkOnInit: true,
+				checkChangesOnly: true,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -383,6 +384,10 @@ define([
 		setAnalysis(analysis) {
 			const header = analysis.json;
 			const specification = JSON.parse(analysis.data.specification);
+			this.setParsedAnalysis(header, specification);
+		}
+
+		setParsedAnalysis(header, specification) {
 			// ignore createdBy and modifiedBy
 			const { createdBy, modifiedBy, ...props } = header;
 			this.estimationAnalysis(new EstimationAnalysis({
@@ -546,6 +551,18 @@ define([
 				})
 			);
 		}
+
+		async afterImportSuccess(res) {
+			this.loading(true);
+
+			const header = res;
+			const specification = JSON.parse(res.specification);
+			this.setParsedAnalysis(header, specification);
+			
+			this.loading(false);
+
+			commonUtils.routeTo('/estimation/cca/' + res.id);
+		};
 
 		getAuthorship() {
 			const createdDate = commonUtils.formatDateForAuthorship(this.estimationAnalysis().createdDate);

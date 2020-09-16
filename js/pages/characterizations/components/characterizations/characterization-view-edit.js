@@ -104,6 +104,7 @@ define([
                 criticalCount: this.criticalCount,
                 isEditPermitted: this.isEditPermitted,
                 selectedSourceId: this.selectedSourceId,
+                afterImportSuccess: this.afterImportSuccess.bind(this),
             });
             this.warningParams = ko.observable({
                 current: sharedState.CohortCharacterization.current,
@@ -281,6 +282,12 @@ define([
             this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations');
         }
+
+        async afterImportSuccess(res) {
+            this.design(null);
+            this.designDirtyFlag().reset();
+            commonUtils.routeTo('/cc/characterizations/' + res.id);
+		};
 
         getAuthorship() {
             const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
