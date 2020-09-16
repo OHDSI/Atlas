@@ -147,6 +147,11 @@ define(function (require, exports) {
         }
       });
 
+      if (!source.hasVocabulary && source.hasCDM) {
+          source.hasVocabulary = true;
+          source.vocabularyUrl = getVocabularyUrl(source.sourceKey);
+      }
+
       if (source.hasVocabulary && authApi.hasSourceAccess(source.sourceKey)) {
         $.ajax({
           url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
