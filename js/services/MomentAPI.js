@@ -40,12 +40,17 @@ define(function (require, exports) {
     return td.diff(fd, 'days');
   }
 
+  function formatDateToString(value) {
+    return value instanceof Date ? moment(value).toISOString(true).slice(0,10) : value;
+  }
+
   var api = {
     formatDateTime: formatDateTime,
     formatDate: formatDate,
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
+    formatDateToString,
     diffInDays,
     PARSE_FORMAT,
     DATE_TIME_FORMAT,
