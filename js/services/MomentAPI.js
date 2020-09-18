@@ -58,6 +58,7 @@ define(function (require, exports) {
     DATE_FORMAT,
     DURATION_FORMAT,
     DESIGN_DATE_TIME_FORMAT,
+    ISO_DATE_FORMAT
   };
 
   return api;
