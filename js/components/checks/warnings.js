@@ -52,11 +52,13 @@ function (
 				// Entities use different methods of initialization
 				this.changeFlag.subscribe(() => this.runDiagnostics()),
 			];
-			// Entities use different methods of initialization
-			if (params.checkOnInit) {
-				this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
-			} else {
-				this.runDiagnostics();
+			if (!params.checkChangesOnly) {
+				// Entities use different methods of initialization
+				if (params.checkOnInit) {
+					this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
+				} else {
+					this.runDiagnostics();
+				}
 			}
 		}
 
