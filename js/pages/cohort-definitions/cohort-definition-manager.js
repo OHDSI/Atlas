@@ -142,12 +142,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.currentCohortDefinition()) {
-					if (this.currentCohortDefinition().id() === 0) {
-					return this.defaultName;
-				} else {
+					if (this.currentCohortDefinition().id() === 0 || this.currentCohortDefinition().id() === null) {
+						return this.defaultName;
+					} else {
 						return 'Cohort #' + this.currentCohortDefinition().id();
+					}
 				}
-			}
 			});
 			this.isNameFilled = ko.computed(() => {
 				return this.currentCohortDefinition() && this.currentCohortDefinition().name() && this.currentCohortDefinition().name().trim();
@@ -996,7 +996,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			setNewCohortDefinition() {
-				this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
+				this.currentCohortDefinition(new CohortDefinition({ id: 0, name: 'New Cohort Definition' }));
 				this.currentCohortDefinitionInfo([]);
 
 			}
