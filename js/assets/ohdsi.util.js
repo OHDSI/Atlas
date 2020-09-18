@@ -126,7 +126,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			return changedCount();
 		}).extend({
 			rateLimit: {
-				timeout: 200,
+				timeout: 1000,
 				method: "notifyWhenChangesStop"
 			}
 		});

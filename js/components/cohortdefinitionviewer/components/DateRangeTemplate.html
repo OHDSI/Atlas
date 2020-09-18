@@ -1,7 +1,7 @@
-<span class="readOnlyField" data-bind="text: ko.unwrap(rangeOpName)"></span> 
-<span class="readOnlyField" data-bind="text: ko.unwrap(ko.utils.unwrapObservable(Range).Value)"></span>
-<span data-bind="if: ko.utils.unwrapObservable(ko.utils.unwrapObservable(Range).Op).substr(-2) == 'bt'"> 
-  <span data-bind="text: ko.i18n('components.dateRange.and', 'and')"></span> 
-<span class="readOnlyField" data-bind="text: ko.unwrap(ko.utils.unwrapObservable(Range).Extent)"></span> 
-(<span data-bind="text: ko.i18n('components.dateRange.inclusive', 'inclusive')"></span>)
+<span class="readOnlyField" data-bind="text: ko.unwrap(rangeOpName)"></span>
+<span class="readOnlyField" data-bind="text: prettyValue"></span>
+<span data-bind="if: ko.utils.unwrapObservable(ko.utils.unwrapObservable(Range).Op).substr(-2) == 'bt'">
+    <span data-bind="text: ko.i18n('components.dateRange.and', 'and')"></span>
+    <span class="readOnlyField" data-bind="text: prettyExtent"></span>
+    (<span data-bind="text: ko.i18n('components.dateRange.inclusive', 'inclusive')"></span>)
 </span>

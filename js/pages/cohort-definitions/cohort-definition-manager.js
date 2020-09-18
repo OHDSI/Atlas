@@ -142,12 +142,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.cohortDefinitionCaption = ko.computed(() => {
 				if (this.currentCohortDefinition()) {
-					if (this.currentCohortDefinition().id() === 0) {
-					return this.defaultName;
-				} else {
+					if (this.currentCohortDefinition().id() === 0 || this.currentCohortDefinition().id() === null) {
+						return this.defaultName;
+					} else {
 						return ko.i18nformat('cohortDefinitions.cohortId', 'Cohort #<%=id%>', {id: this.currentCohortDefinition().id()})();
+					}
 				}
-			}
 			});
 			this.isNameFilled = ko.computed(() => {
 				return this.currentCohortDefinition() && this.currentCohortDefinition().name() && this.currentCohortDefinition().name().trim();
@@ -592,7 +592,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			};
 
-			this.selectedCriteria = ko.observable();
+			this._selectedCriteria = ko.observable();
+			this.selectedCriteria = ko.pureComputed({
+				write: criteria => {
+					this._selectedCriteria(criteria);
+					ko.tasks.runEarly();
+				},
+				read: () => this._selectedCriteria(),
+			})
 			this.cohortLinkModalOpened = ko.observable(false);
 			this.cohortDefinitionOpened = ko.observable(false);
 			this.analysisTypesOpened = ko.observable(false);
@@ -997,7 +1004,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			setNewCohortDefinition() {
-				this.currentCohortDefinition(new CohortDefinition({ id: '0', name: 'New Cohort Definition' }));
+				this.currentCohortDefinition(new CohortDefinition({ id: 0, name: 'New Cohort Definition' }));
 				this.currentCohortDefinitionInfo([]);
 
 			}

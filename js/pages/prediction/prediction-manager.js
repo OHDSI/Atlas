@@ -180,6 +180,7 @@ define([
 				generationDisableReason,
 				resultsPathPrefix: '/prediction/',
 				criticalCount: this.criticalCount,
+				afterImportSuccess: this.afterImportSuccess.bind(this),
 			});
 
 			this.warningParams = ko.observable({
@@ -191,7 +192,7 @@ define([
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
-				checkOnInit: true,
+				checkChangesOnly: true,
 			});
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -405,6 +406,10 @@ define([
 		loadAnalysisFromServer(analysis) {
 			var header = analysis.json;
 			var specification = JSON.parse(analysis.data.specification);
+			this.loadParsedAnalysisFromServer(header, specification);
+		}
+
+		loadParsedAnalysisFromServer(header, specification) {
 			const { createdBy, modifiedBy, ...props } = header;
 			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({
 				...specification,
@@ -462,6 +467,18 @@ define([
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 		}
+
+		async afterImportSuccess(res) {
+			this.loading(true);
+
+			const header = res;
+			const specification = JSON.parse(res.specification);
+			this.loadParsedAnalysisFromServer(header, specification);
+			
+			this.loading(false);
+
+			document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+		};
 
 		getAuthorship() {
 			const createdDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().createdDate);

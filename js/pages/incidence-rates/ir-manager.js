@@ -525,6 +525,7 @@ define([
 				this.refreshDefs();
 				this.activeTab(this.tabs.DEFINITION);
 				this.close();
+				this.warningParams().checkOnInit = false;
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
 				alert('An error occurred while attempting to import an incidence rate.');

@@ -38,6 +38,7 @@ define([
             this.isPermittedImport = PermissionService.isPermittedImportCC;
             this.exportService = CharacterizationService.loadCharacterizationExportDesign;
             this.importService = CharacterizationService.importCharacterization;
+            this.afterImportSuccess = params.afterImportSuccess;
 
             this.setMode = this.setMode.bind(this);
         }

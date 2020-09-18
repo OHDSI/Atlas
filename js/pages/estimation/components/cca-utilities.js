@@ -56,6 +56,7 @@ define([
 			this.isPermittedExport = PermissionService.isPermittedExport;
 			this.isPermittedImport = PermissionService.isPermittedImport;
 			this.isEditPermitted = params.isEditPermitted;
+			this.afterImportSuccess = params.afterImportSuccess;
 			this.cca = constants.getCca(this.isEditPermitted())[0];
 
 			this.specificationValid = ko.pureComputed(() => this.criticalCount() <= 0);

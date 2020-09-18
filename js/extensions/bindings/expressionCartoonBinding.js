@@ -1191,18 +1191,18 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 				return;
 			switch (feature) {
 				case "max":
-					return Math.max(range.Value, range.Extent);
+					return Math.max(range.prettyValue, range.prettyExtent);
 					// need this? if (range.Op === "!bt") return; // no upper limit
 				case "upper":
 					//console.log(range.Extent(), range.Op(), range.Value());
-					return typeof range.Extent === "undefined" ? range.Value : range.Extent;
+					return typeof range.Extent === "undefined" ? range.prettyValue : range.prettyExtent;
 					// Extent is high end for "bt"
 				case "min": // not used
 					if (range.Op === "!bt")
 						return; // no lower limit
 				case "lower":
 				case "val":
-					return range.Value;
+					return range.prettyValue;
 				case "single-double":
 					if (range.Op.match(/bt/))
 						return 'double';

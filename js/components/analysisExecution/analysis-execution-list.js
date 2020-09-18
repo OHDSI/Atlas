@@ -66,7 +66,10 @@ define([
       this.generationDisableReason = generationDisableReason;
 
       this.executionStatuses = consts.executionStatuses;
-
+      this.runningExecutionStatuses = [
+        this.executionStatuses.RUNNING,
+        this.executionStatuses.STARTED,
+      ];
       this.expandedSection = ko.observable();
 
       this.isExitMessageShown = ko.observable(false);
@@ -213,7 +216,7 @@ define([
       if (this.expandedSection() === idx) {
         this.expandedSection(null);
         this.selectedSourceId(null);
-        CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions`);        
+        CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions`);
       } else {
         this.expandedSection(idx);
         const executionGroup = this.executionGroups()[idx];
@@ -272,6 +275,15 @@ define([
       executionGroup.status(ExecutionUtils.getExecutionGroupStatus(executionGroup.submissions));
     }
 
+    checkResults({ sourceKey, callback }) {
+      const submission = this.findLatestSubmission(sourceKey);
+      if (submission) {
+        callback(submission.id);
+      } else {
+        alert(ko.i18n('components.analysisExecution.noCompletedExecutionsForDataSource', 'There is no completed executions for the data source yet')());
+      }
+    }
+
     async downloadResults(generationId) {
       this.downloading.push(generationId);
       try {
@@ -282,10 +294,10 @@ define([
     }
 
     downloadLatestResults(sourceKey) {
-      const submission = this.findLatestSubmission(sourceKey);
-      if (submission) {
-        this.downloadResults(submission.id);
-      }
+      this.checkResults({
+        sourceKey,
+        callback: id => this.downloadResults(id),
+      });
     }
 
     isDownloadInProgress(id) {
@@ -309,12 +321,10 @@ define([
     }
 
     goToLatestResults(sourceKey) {
-      const latestExecutedSubmission = this.findLatestSubmission(sourceKey);
-      if (latestExecutedSubmission) {
-        this.goToResults(latestExecutedSubmission.id);
-        return;
-      }
-      alert(ko.i18n('components.analysisExecution.noCompletedExecutionsForDataSource', 'There is no completed executions for the data source yet')());
+      this.checkResults({
+        sourceKey,
+        callback: id => this.goToResults(id),
+      });
     }
 
   }
