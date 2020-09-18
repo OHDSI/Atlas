@@ -591,7 +591,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			};
 
-			this.selectedCriteria = ko.observable();
+			this._selectedCriteria = ko.observable();
+			this.selectedCriteria = ko.pureComputed({
+				write: criteria => {
+					this._selectedCriteria(criteria);
+					ko.tasks.runEarly();
+				},
+				read: () => this._selectedCriteria(),
+			})
 			this.cohortLinkModalOpened = ko.observable(false);
 			this.cohortDefinitionOpened = ko.observable(false);
 			this.analysisTypesOpened = ko.observable(false);
