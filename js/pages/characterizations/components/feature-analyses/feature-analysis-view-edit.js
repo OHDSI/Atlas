@@ -7,8 +7,6 @@ define([
     'components/cohortbuilder/AdditionalCriteria',
     'components/cohortbuilder/WindowedCriteria',
     'components/cohortbuilder/CriteriaTypes/DemographicCriteria',
-    'components/cohortbuilder/const',
-    'components/cohortbuilder/utils',
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'atlas-state',
@@ -49,8 +47,6 @@ define([
     AdditionalCriteria,
     WindowedCriteria,
     DemographicGriteria,
-    cohortbuilderConsts,
-    cohortbuilderUtils,
     view,
     config,
     sharedState,
@@ -68,7 +64,7 @@ define([
     ohdsiUtil,
     utils,
     globalConstants,
-		componentConst,
+	componentConst,
     lodash,
 ) {
 
@@ -133,8 +129,6 @@ define([
 
             this.featureTypes = featureTypes;
             this.statTypeOptions = ko.observableArray(statTypeOptions);
-
-            this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
 
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
@@ -219,10 +213,6 @@ define([
             if (section !== undefined) {
 							this.selectedTabKey(section);
 						}
-        }
-
-        buildAddCriteriaAction(type) {
-            return () => this.addWindowedCriteria(type);
         }
 
         isCreatePermitted() {
