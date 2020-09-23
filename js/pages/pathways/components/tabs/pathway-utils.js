@@ -39,6 +39,7 @@ define([
 			this.exportEntity = ko.observable();
 			this.exportService = PathwayService.loadExportDesign;
 			this.importService = PathwayService.importPathwayDesign;
+			this.afterImportSuccess = params.afterImportSuccess;
 
 			this.subscriptions = [];
 			// subscriptions

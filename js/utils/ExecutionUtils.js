@@ -7,7 +7,7 @@ define([
 		if (!executionGroup) {
 			confirmPromise = new Promise((resolve, reject) => reject());
 		} else {
-			if (executionGroup.status() === consts.generationStatuses.STARTED) {
+			if ([consts.generationStatuses.STARTED, consts.generationStatuses.RUNNING].includes(executionGroup.status())) {
 				confirmPromise = new Promise((resolve, reject) => {
 					if (confirm('A generation for the source has already been started. Are you sure you want to start a new one in parallel?')) {
 						resolve();
@@ -39,6 +39,8 @@ define([
 			return executionStatuses.PENDING;
 		} else if (submissionStatuses.includes(executionStatuses.STARTED)) {
 			return executionStatuses.STARTED;
+		} else if (submissionStatuses.includes(executionStatuses.RUNNING)) {
+			return executionStatuses.RUNNING;
 		}
 		return executionStatuses.COMPLETED;
 	}
