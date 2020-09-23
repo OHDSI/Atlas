@@ -7,8 +7,6 @@ define([
     'components/cohortbuilder/AdditionalCriteria',
     'components/cohortbuilder/WindowedCriteria',
     'components/cohortbuilder/CriteriaTypes/DemographicCriteria',
-    'components/cohortbuilder/const',
-    'components/cohortbuilder/utils',
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'atlas-state',
@@ -17,7 +15,7 @@ define([
     'services/Permission',
     'components/security/access/const',
     'conceptsetbuilder/InputTypes/ConceptSet',
-    'components/conceptset/ConceptSetStore',    
+    'components/conceptset/ConceptSetStore',
     'pages/Page',
     'pages/characterizations/const',
     'utils/AutoBind',
@@ -47,8 +45,6 @@ define([
     AdditionalCriteria,
     WindowedCriteria,
     DemographicGriteria,
-    cohortbuilderConsts,
-    cohortbuilderUtils,
     view,
     config,
     sharedState,
@@ -66,6 +62,8 @@ define([
     ohdsiUtil,
     utils,
     globalConstants,
+	componentConst,
+    lodash,
 ) {
 
     const featureTypes = {
@@ -91,7 +89,7 @@ define([
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
-           
+
             this.isCopying = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
@@ -124,8 +122,6 @@ define([
 
             this.featureTypes = featureTypes;
             this.statTypeOptions = ko.observableArray(statTypeOptions);
-
-            this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
 
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
@@ -207,10 +203,6 @@ define([
             if (section !== undefined) {
 							this.selectedTabKey(section);
 						}
-        }
-
-        buildAddCriteriaAction(type) {
-            return () => this.addWindowedCriteria(type);
         }
 
         isCreatePermitted() {
@@ -450,7 +442,7 @@ define([
                 this.loading(false);
             }
         }
-        
+
         getAuthorship() {
             const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
             const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);
@@ -466,7 +458,7 @@ define([
                     this.conceptSetStore.current(this.conceptSets()().find(item => item.id == conceptSetId));
                     this.conceptSetStore.isEditable(this.canEdit());
 				    commonUtils.routeTo(`/cc/feature-analyses/${this.data().id}/conceptset`);
-				}		
+				}
     }
 
     return commonUtils.build('feature-analysis-view-edit', FeatureAnalysisViewEdit, view);
