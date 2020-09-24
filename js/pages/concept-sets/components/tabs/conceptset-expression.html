@@ -6,11 +6,11 @@
           language: datatableLanguage,
           dom: 'Clfiprt',
           colVis: {
-            buttonText: ko.i18n('cs.manager.expression.changeColumns', 'Change Columns'),
+            buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
             align: 'right',
             overlayFade: 0,
-            showAll: ko.i18n('cs.manager.expression.showAllColumns', 'Show All Columns'),
-            restore: ko.i18n('cs.manager.expression.resetColumns', 'Reset Columns')
+            showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+            restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
           },
           rowCallback: commonUtils.contextSensitiveLinkColor,
           lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
@@ -86,7 +86,7 @@
         data-bind="
           click: removeConceptsFromConceptSet,
           css: { disabled: conceptsForRemovalLength() === 0 || !canEditCurrentConceptSet() },
-          text: conceptsForRemovalLength() === 1 ? 'Remove selected concept' : 'Remove selected concepts',
+          text: ko.i18n('components.conceptSet.removeSelected', 'Remove Selected'),
         "
       ></button>
     </span>
@@ -95,9 +95,10 @@
       class="btn btn-success btn-sm"
       data-bind="
         click: navigateToSearchPage,
-        css: { disabled: !canEditCurrentConceptSet() }
+        css: { disabled: !canEditCurrentConceptSet() },
+        text: ko.i18n('components.conceptSet.addConcepts', 'Add concepts')
       "
-    >Add concepts</button>
+    ></button>
     </span>
   </div>
 </div>

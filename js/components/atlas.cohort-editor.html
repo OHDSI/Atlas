@@ -14,7 +14,7 @@
 		<div class="modal fade" data-bind="modal: showModal" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg">
 				<div class="modal-content">
-					<div class="modal-header" data-bind="text:ko.i18n('components.atlasCohortEditor.importConceptSet', 'Import Concept Set From Repository...')"></div>
+					<div class="modal-header" data-bind="text: ko.i18n('components.atlasCohortEditor.importConceptSet', 'Import Concept Set From Repository...')"></div>
 					<div class="paddedWrapper">
 						<concept-set-browser params="criteriaContext: $component.criteriaContext, cohortConceptSets: $component.currentCohortDefinition().expression().ConceptSets, onActionComplete: $component.onAtlasConceptSetSelectAction, buttonActionEnabled: true"></concept-set-browser>
 					</div>

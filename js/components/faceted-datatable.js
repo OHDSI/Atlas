@@ -35,11 +35,11 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 			'colvis',  'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'
 		];
 		self.colVis = params.colVis || {
-			buttonText: 'Change Columns',
+			buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
 			align: 'right',
 			overlayFade: 0,
-			showAll: 'Show All Columns',
-			restore: 'Reset Columns'
+			showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+			restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
 		};
 		self.deferRender = typeof params.deferRender != 'undefined' ? params.deferRender : true;
 		self.dom = params.dom || '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';

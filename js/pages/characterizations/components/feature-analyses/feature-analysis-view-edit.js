@@ -168,7 +168,7 @@ define([
             this.tabs = ko.computed(() => {
                 const tabs = [
                     {
-                      title: 'Design',
+                      title: ko.i18n('cc.fa.tabs.design', 'Design'),
                       key: 'design',
                       componentName: 'feature-analysis-design',
                       componentParams: this.componentParams,
@@ -176,7 +176,7 @@ define([
                 ];
                 if (this.data() && this.data().type() === this.featureTypes.CRITERIA_SET) {
                     tabs.push({
-                      title: 'Concept Sets',
+                      title: ko.i18n('cc.fa.tabs.conceptSets', 'Concept Sets'),
                       key: 'conceptset',
                       componentName: 'feature-analysis-conceptset',
                       componentParams: this.componentParams,

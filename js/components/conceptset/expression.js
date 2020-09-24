@@ -49,8 +49,8 @@ define([
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(concept => concept.isSelected()).length);
 			this.onClose = params.onClose;
 			this.onDelete = params.onDelete;
-			this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.canEdit(), 'edit');
-			this.copyButtonTooltipText = conceptSetUtils.getPermissionsText(this.canCreateConceptSet(), 'create');
+			this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.canEdit(), ko.i18n('components.conceptSet.actionEdit', 'edit')());
+			this.copyButtonTooltipText = conceptSetUtils.getPermissionsText(this.canCreateConceptSet(), ko.i18n('components.conceptSet.actionCreate', 'create')());
 		}
 
 		showSaveConceptSet() {

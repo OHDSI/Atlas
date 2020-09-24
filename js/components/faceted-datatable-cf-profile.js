@@ -22,11 +22,11 @@ define(['knockout', 'text!./faceted-datatable-cf-profile.html', 'databindings', 
 				'colvis', 'copyHtml5','excelHtml5','csvHtml5','pdfHtml5'
 		];
 		self.colVis = params.colVis || {
-						buttonText: 'Change Columns',
+						buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
 						align: 'right',
 						overlayFade: 0,
-						showAll: 'Show All Columns',
-						restore: 'Reset Columns'
+						showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+						restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
 					};
 		self.dom = params.dom || 'Blfiprt';
 		self.language = params.language || {

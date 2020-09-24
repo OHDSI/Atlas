@@ -39,25 +39,25 @@ define([
 			this.selectedTabKey = ko.observable('concept-identifiers');
 			this.tabs = [
 				{
-					title: 'Concept Identifiers',
+					title: ko.i18n('components.conceptSet.conceptIdentifiers', 'Concept Identifiers'),
 					key: 'concept-identifiers',
 					componentName: 'conceptset-list-import-identifiers',
 					componentParams: {...params, appendConcepts: this.appendConcepts}
 				},
 				{
-					title: 'Source Codes',
+					title: ko.i18n('components.conceptSet.sourceCodes', 'Source Codes'),
 					key: 'concept-sourcecodes',
 					componentName: 'conceptset-list-import-sourcecodes',
 					componentParams: {...params,appendConcepts: this.appendConcepts}
 				},
 				{
-					title: 'Concept Set',
+					title: ko.i18n('components.conceptSet.conceptSet', 'Concept Set'),
 					key: 'conceptset',
 					componentName: 'conceptset-list-import-conceptset',
 					componentParams: {...params,importConceptSetExpression: this.importConceptSetExpression}
 				},
 				{
-					title: 'Repository',
+					title: ko.i18n('components.conceptSet.repository', 'Repository'),
 					key: 'repository',
 				}
 			];
@@ -69,7 +69,7 @@ define([
 				if(this.canEdit()) {
 					this.showImportConceptSetModal(true);
 				} else {
-					alert(conceptSetUtils.getPermissionsText(false, 'edit'));
+					alert(conceptSetUtils.getPermissionsText(false, ko.i18n('components.conceptSet.actionEdit', 'edit')()));
 				}
 			} else {
 				this.selectedTabKey(this.tabs[index].key);
@@ -116,7 +116,7 @@ define([
     confirmAction(type) {
       let isConfirmed = true;
       if(type === constants.importTypes.OVERWRITE) {
-        isConfirmed = confirm('Are you sure you want to overwrite current Concept Set Expression?');
+        isConfirmed = confirm(ko.i18n('components.conceptSet.overwriteConfirm', 'Are you sure you want to overwrite current Concept Set Expression?')());
       }
       return isConfirmed;
     }

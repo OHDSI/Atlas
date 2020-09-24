@@ -55,17 +55,14 @@ define([
 				return ConceptSetStore.activeStores();
 			});
       this.hasActiveConceptSets = ko.pureComputed(() => !!this.activeConceptSets().length);
-      this.buttonText = ko.pureComputed(() => {
-        if (this.hasActiveConceptSets() && this.activeConceptSet() && this.activeConceptSet().current()) {
-          return `Add To Concept Set`;
-        }
-        return 'Add To New Concept Set';
-      });
+      this.buttonText = this.hasActiveConceptSets() && this.activeConceptSet() && this.activeConceptSet().current()
+        ? ko.i18n('components.conceptAddBox.addToConceptSet', 'Add To Concept Set')
+        : ko.i18n('components.conceptAddBox.addToNewConceptSet', 'Add To New Concept Set');
       this.activeConceptSetName = ko.pureComputed(() => {
         if (this.activeConceptSet() && this.activeConceptSet().current()) {
           return `${this.activeConceptSet().current().name()} (${this.conceptSetType[this.activeConceptSet().source]})`;
         }
-        return 'Select Concept Set';
+        return ko.i18n('components.conceptAddBox.selectConceptSet', 'Select Concept Set');
       });
       this.canAddConcepts = ko.pureComputed(() => {
         if (this.canSelectSource) {

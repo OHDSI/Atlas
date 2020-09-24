@@ -29,15 +29,15 @@ define([
 			this.commonUtils = commonUtils;
 			this.columns = [
 				{ title: '', orderable: false, render: () => renderers.renderCheckbox('isSelected', this.canEditCurrentConceptSet()) },
-				{ title: 'Concept Id', data: 'concept.CONCEPT_ID'},
-				{ title: 'Concept Code', data: 'concept.CONCEPT_CODE'},
-				{ title: 'Concept Name', render: commonUtils.renderBoundLink},
-				{ title: 'Domain', data: 'concept.DOMAIN_ID' },
-				{ title: 'Standard Concept Code', data: 'concept.STANDARD_CONCEPT', visible:false },
-				{ title: 'Standard Concept Caption', data: 'concept.STANDARD_CONCEPT_CAPTION' },
-				{ title: 'Exclude', class:'text-center', orderable:false,render: () => this.renderCheckbox('isExcluded') },
-				{ title: 'Descendants', class:'text-center', orderable:false, searchable:false, render: () => this.renderCheckbox('includeDescendants') },
-				{ title: 'Mapped', class:'text-center', orderable:false, searchable:false, render: () => this.renderCheckbox('includeMapped') }
+				{ title: ko.i18n('columns.conceptId', 'Concept Id'), data: 'concept.CONCEPT_ID'},
+				{ title: ko.i18n('columns.conceptCode', 'Concept Code'), data: 'concept.CONCEPT_CODE'},
+				{ title: ko.i18n('columns.conceptName', 'Concept Name'), render: commonUtils.renderBoundLink},
+				{ title: ko.i18n('columns.domain', 'Domain'), data: 'concept.DOMAIN_ID' },
+				{ title: ko.i18n('columns.standardConceptCode', 'Standard Concept Code'), data: 'concept.STANDARD_CONCEPT', visible:false },
+				{ title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'), data: 'concept.STANDARD_CONCEPT_CAPTION' },
+				{ title: ko.i18n('columns.exclude', 'Exclude'), class: 'text-center', orderable: false, render: () => this.renderCheckbox('isExcluded') },
+				{ title: ko.i18n('columns.descendants', 'Descendants'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeDescendants') },
+				{ title: ko.i18n('columns.mapped', 'Mapped'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeMapped') }
 ]
 		}
 

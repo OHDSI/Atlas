@@ -13,11 +13,11 @@
                   options: {
                     dom: 'Clfiprt',
                     colVis: {
-                      buttonText: 'Change Columns',
-                      align: 'right',
-                      overlayFade: 0,
-                      showAll: 'Show All Columns',
-                      restore: 'Reset Columns'
+                        buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
+                        align: 'right',
+                        overlayFade: 0,
+                        showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+                        restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
                     },
                     language: ko.i18n('datatable.language'),
                     rowCallback: $component.commonUtils.contextSensitiveLinkColor,
