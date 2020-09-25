@@ -108,7 +108,7 @@
                         ><i class="fa fa-trash-o"></i></button>
                     </div>
                     <!-- Aggregate -->
-                    <div>
+                    <div data-bind="if: $parent.data().statType() === 'DISTRIBUTION'">
                         <aggregate-select params="aggregates: $component.aggregates, currentAggregate: $data.aggregate, domains: $component.domains, criteria: $data"></aggregate-select>
                     </div>
                     <div data-bind="if: $data.criteriaType === 'CriteriaGroup'">
