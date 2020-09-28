@@ -54,10 +54,15 @@ define([
 					read: () => params.data() && params.data().conceptSets || [],
 					write: (value) => params.data().conceptSets(value),
 			});
-			
+
+			this.windowedActions = Object.keys(cohortbuilderConsts.windowedAttributes).map(a => {
+				return {...cohortbuilderConsts.windowedAttributes[a], action: this.buildAddCriteriaAction(cohortbuilderConsts.CriteriaTypes[a]) }
+			});
+
 			// Concept set import for criteria
 			this.criteriaContext = ko.observable();
 			this.showConceptSetBrowser = ko.observable();
+
 		}
 
 		getEmptyDemographicCriteria() {
@@ -72,8 +77,12 @@ define([
 			this.data().design([...this.data().design(), this.getEmptyCriteriaFeatureDesign()]);
 		}
 
+		buildAddCriteriaAction(type) {
+			return () => this.addWindowedCriteria(type);
+		}
+
 		addWindowedCriteria(type) {
-			const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
+			const criteria = type === cohortbuilderConsts.CriteriaTypes.addDemographic ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
 			this.data().design([...this.data().design(), criteria]);
 		}
 
