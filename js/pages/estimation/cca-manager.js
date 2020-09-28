@@ -393,6 +393,7 @@ define([
 		setParsedAnalysis(header, specification) {
 			// ignore createdBy and modifiedBy
 			const { createdBy, modifiedBy, ...props } = header;
+			this.selectedAnalysisId(header.id);
 			this.estimationAnalysis(new EstimationAnalysis({
 				...specification,
 				...props,
