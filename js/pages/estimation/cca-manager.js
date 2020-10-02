@@ -538,6 +538,13 @@ define([
 		addCohortToEstimation(specification, cohort) {
 			cohort = ko.isObservable(cohort) ? ko.utils.unwrapObservable(cohort) : cohort;
 			if (specification.cohortDefinitions.filter(element => element.id === cohort.id).length === 0) {
+				// Server expects createdBy and modifiedBy as string
+				if (cohort.createdBy && typeof cohort.createdBy === 'object') {
+					cohort.createdBy = cohort.createdBy.login;
+				}
+				if (cohort.modifiedBy && typeof cohort.modifiedBy === 'object') {
+					cohort.modifiedBy = cohort.modifiedBy.login;
+				}
 				specification.cohortDefinitions.push(cohort);
 			}
 		}
