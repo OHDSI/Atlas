@@ -99,8 +99,8 @@
 								<thead>
 								<tr>
 									<th>Name</th>
-									<th>% Remain</th>
-									<th>% Diff</th>
+									<th>Remain</th>
+									<th>Diff</th>
 								</tr>
 								</thead>
 								<tbody data-bind="foreach: pathDetails().tableData">
@@ -111,10 +111,10 @@
 										</div>
 									</td>
 									<td data-bind="css: $component.classes('detail-table-col-remain')">
-										<span data-bind="text: $component.formatPct(remainPct)"></span>
+										<span data-bind="text: $component.formatDetailValue(personCount, remainPct)"></span>
 									</td>
 									<td data-bind="css: $component.classes('detail-table-col-diff')">
-										<span data-bind="text: $component.formatPct(diffPct)"></span>
+										<span data-bind="text: $component.formatDetailValue(diff, diffPct)"></span>
 									</td>
 								</tr>
 								</tbody>

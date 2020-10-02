@@ -144,8 +144,10 @@ define([
 			rows.forEach((r, i) => {
 				if (i> 0) {
 					r.diffPct = rows[i-1].remainPct - r.remainPct;
+					r.diff = rows[i-1].personCount - r.personCount;
 				} else {
 					r.diffPct = 1.0-r.remainPct;
+					r.diff = pathwayData.summary.totalPathways - r.personCount;
 				}
 			});
 
@@ -177,6 +179,10 @@ define([
 
 		formatPct(value) {
 			return percentFormat(value);
+		}
+
+		formatDetailValue(value, percent) {
+			return this.formatNumber(value) + ' (' + this.formatPct(percent) + ')';
 		}
 
 		// used to 'capture' the data context in the knockout binding for use in the d3 callback
