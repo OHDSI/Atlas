@@ -155,9 +155,13 @@ define([
 			}, {
 				title: 'Distance',
 				data: function (d) {
-					return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {
-						return o.RELATIONSHIP_DISTANCE;
-					}))
+					if (d.RELATIONSHIPS) {
+						return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {
+							return o.RELATIONSHIP_DISTANCE;
+						}))
+					} else {
+						return 0;
+					}
 				}
 			}, {
 				title: 'Domain',
@@ -330,13 +334,8 @@ define([
 				this.metagorize(this.metarchy, relatedConcepts[i]);
 			}
 
-			await vocabularyProvider.loadDensity(relatedConcepts);
-			var currentConceptObject = _.find(relatedConcepts, c => c.CONCEPT_ID == this.currentConceptId());
-			if (currentConceptObject !== undefined){
-			    this.currentConceptArray([currentConceptObject]);
-			} else {
-				this.currentConceptArray([]);
-			}
+			await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
+			this.currentConceptArray([this.currentConcept()]);
 			this.relatedConcepts(relatedConcepts);
 
 			this.loadingRelated(false);
