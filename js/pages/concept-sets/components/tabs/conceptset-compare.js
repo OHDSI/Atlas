@@ -37,20 +37,20 @@ define([
       this.compareCS1Caption = ko.observable(this.currentConceptSet().name());
       this.compareCS1ConceptSet = ko.observable(sharedState.selectedConcepts());
       this.compareCS1ConceptSetExpression = ko.pureComputed(() => {
-        if (this.currentConceptSet() && this.compareCS1Id === this.currentConceptSet().id) {
+        if (this.currentConceptSet() && this.compareCS1Id() === this.currentConceptSet().id) {
           return ko.toJS(this.selectedConcepts());
         } else {
-          return ko.toJS(this.compareCS1ConceptSet);
+          return ko.toJS(this.compareCS1ConceptSet());
         }
       });
       this.compareCS2Id = ko.observable(0);
       this.compareCS2Caption = ko.observable();
       this.compareCS2ConceptSet = ko.observable(null);
       this.compareCS2ConceptSetExpression = ko.pureComputed(() => {
-        if (this.currentConceptSet() && this.compareCS2Id === this.currentConceptSet().id) {
+        if (this.currentConceptSet() && this.compareCS2Id() === this.currentConceptSet().id) {
           return ko.toJS(this.selectedConcepts());
         } else {
-          return ko.toJS(this.compareCS2ConceptSet);
+          return ko.toJS(this.compareCS2ConceptSet());
         }
       });
       this.compareResults = ko.observable();

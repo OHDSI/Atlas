@@ -95,8 +95,8 @@
 								<thead>
 								<tr>
 									<th data-bind="text: ko.i18n('columns.name', 'Name')"></th>
-									<th data-bind="text: ko.i18n('columns.percentRemain', '% Remain')"></th>
-									<th data-bind="text: ko.i18n('columns.percentDiff', '% Diff')"></th>
+									<th data-bind="text: ko.i18n('columns.remain', 'Remain')"></th>
+									<th data-bind="text: ko.i18n('columns.diff', 'Diff')"></th>
 								</tr>
 								</thead>
 								<tbody data-bind="foreach: pathDetails().tableData">
@@ -107,10 +107,10 @@
 										</div>
 									</td>
 									<td data-bind="css: $component.classes('detail-table-col-remain')">
-										<span data-bind="text: $component.formatPct(remainPct)"></span>
+										<span data-bind="text: $component.formatDetailValue(personCount, remainPct)"></span>
 									</td>
 									<td data-bind="css: $component.classes('detail-table-col-diff')">
-										<span data-bind="text: $component.formatPct(diffPct)"></span>
+										<span data-bind="text: $component.formatDetailValue(diff, diffPct)"></span>
 									</td>
 								</tr>
 								</tbody>
