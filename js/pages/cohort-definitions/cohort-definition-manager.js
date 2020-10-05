@@ -1072,7 +1072,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (info.status() === "COMPLETE" && !info.isValid())
 					return !info.isCanceled() ? "FAILED" : "CANCELED";
 				else
-					return info.status();
+					// replace 'COMPLETE' with 'COMPLETED' to match other complete statuses
+					return info.status() === 'COMPLETE' ? 'COMPLETED' : info.status();
 			}
 
 			getStatusTemplate(item) {
