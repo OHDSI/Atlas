@@ -8,12 +8,13 @@ WORKDIR /code
 COPY package*.json /code/
 RUN npm install
 
-# Load code to be built
+# Build code
 COPY ./build /code/build
 COPY ./js /code/js
-
 RUN npm run build:docker
 
+# Statically pre-compress all output files to be served
+COPY ./index.html /code/index.html
 RUN find . -type f \( -name "*.js" ! -name "config-local.js" -o -name "*.css" -o -name "*.xml" -o -name "*.html" -o -name "*.svg" -o -name "*.json" \) -print0 \
   | xargs -0 -n 1 gzip -k
 
@@ -33,7 +34,8 @@ COPY ./docker/30-atlas-env-subst.sh /docker-entrypoint.d/30-atlas-env-subst.sh
 
 # Load code
 COPY ./images $ATLAS_HOME/images
-COPY ./index.html ./README.md ./LICENSE $ATLAS_HOME/
+COPY ./README.md ./LICENSE $ATLAS_HOME/
+COPY --from=builder /code/index.html* $ATLAS_HOME/
 COPY --from=builder /code/node_modules $ATLAS_HOME/node_modules
 COPY --from=builder /code/js $ATLAS_HOME/js
 
