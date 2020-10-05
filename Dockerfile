@@ -14,8 +14,11 @@ COPY ./js /code/js
 
 RUN npm run build:docker
 
+RUN find . -type f \( -name "*.js" ! -name "config-local.js" -o -name "*.css" -o -name "*.xml" -o -name "*.html" -o -name "*.svg" -o -name "*.json" \) -print0 \
+  | xargs -0 -n 1 gzip -k
+
 # Production Nginx image
-FROM nginx:1.19-alpine
+FROM nginxinc/nginx-unprivileged:1.19-alpine
 
 # Directory where atlas files will be stored
 ENV ATLAS_HOME=/usr/share/nginx/html/atlas
@@ -25,9 +28,8 @@ ENV WEBAPI_URL=http://localhost:8080/WebAPI/
 ENV ATLAS_HOSTNAME=localhost
 
 # Configure webserver
-COPY ./docker/nginx.conf /etc/nginx/nginx.conf
-COPY ./docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY ./docker/optimization.conf /etc/nginx/conf.d/optimization.conf
+COPY ./docker/30-atlas-env-subst.sh /docker-entrypoint.d/30-atlas-env-subst.sh
 
 # Load code
 COPY ./images $ATLAS_HOME/images
@@ -35,11 +37,6 @@ COPY ./index.html ./README.md ./LICENSE $ATLAS_HOME/
 COPY --from=builder /code/node_modules $ATLAS_HOME/node_modules
 COPY --from=builder /code/js $ATLAS_HOME/js
 
-# Load Atlas configuration
-COPY ./docker/config-local.js $ATLAS_HOME/js/config-local.js
-
-ENTRYPOINT ["/entrypoint.sh"]
-
-CMD ["nginx", "-g", "daemon off;"]
-
-EXPOSE 80
+# Load Atlas local config with current user, so it can be modified
+# with env substitution
+COPY --chown=101 docker/config-local.js $ATLAS_HOME/js/config-local.js
