@@ -1070,11 +1070,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			getStatusMessage (info) {
+				let status;
 				if (info.status() === "COMPLETE" && !info.isValid())
-					return !info.isCanceled() ? "FAILED" : "CANCELED";
+					status = !info.isCanceled() ? "FAILED" : "CANCELED";
 				else
-					// replace 'COMPLETE' with 'COMPLETED' to match other complete statuses
-					return info.status() === 'COMPLETE' ? 'COMPLETED' : info.status();
+					status = info.status() === 'COMPLETE' ? 'COMPLETED' : info.status();
+				return datatableUtils.getExecutionStatus()(status);
 			}
 
 			getStatusTemplate(item) {
