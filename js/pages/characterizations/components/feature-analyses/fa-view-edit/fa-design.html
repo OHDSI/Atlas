@@ -38,7 +38,7 @@
                     </li>
                     <!-- /ko -->
                     <!-- ko if: !$component.isPresetFeatureTypeAvailable && !$component.featureId() -->
-                    <div data-bind="css: classes('message-pane')"><span data-bind="css: classes('note')"><i class="fa fa-exclamation-triangle"></i> Warning:</span> You wouldn't be able to change the type of analysis after save.</div>
+                    <div data-bind="css: classes('message-pane')"><span data-bind="css: classes('note')"><i class="fa fa-exclamation-triangle"></i> <span data-bind="text: ko.i18n('cc.fa.warning', 'Warning:')"></span></span> <span data-bind="text: ko.i18n('cc.fa.warningText', 'You wouldn\'t be able to change the type of analysis after save.')"></span></div>
                     <!-- /ko -->
                     <li role="presentation"
                         data-bind="
