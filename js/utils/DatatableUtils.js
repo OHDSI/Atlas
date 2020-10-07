@@ -111,7 +111,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
 
         const getExecutionStatus = () => (s, p, d) => {
 					const status = ko.i18n(`executionStatus.values.${s}`, s)();
-					if (s === 'FAILED') {
+					if (s === 'FAILED' && d) {
 						return `<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage('${d.sourceKey}', ${d.id})">${status}</a>`;
 					} else if (s === 'STOPPED') {
 						return ko.i18n('executionStatus.values.CANCELED', 'CANCELED')();

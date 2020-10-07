@@ -530,9 +530,9 @@
 "></configure-access-modal>
 
 <script type="text/html" id="success-status-tmpl">
-	<span data-bind="text: $data.status"></span>
+	<span data-bind="text: $component.getStatusMessageTranslated($data.status)"></span>
 </script>
 
 <script type="text/html" id="failed-status-tmpl">
-	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $data.status"></a>
+	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $component.getStatusMessageTranslated($data.status)"></a>
 </script>
