@@ -10,3 +10,27 @@ if (typeof Promise.prototype.done !== 'function') {
     })
   }
 }
+
+/* 
+ * Credit to https://medium.com/@95yashsharma/polyfill-for-promise-allsettled-965f9f2a003
+ */
+if (typeof Promise.allSettled !== 'function') {
+  Promise.allSettled = function (promises) {
+    let mappedPromises = promises.map((p) => {
+      return p
+        .then((value) => {
+          return {
+            status: 'fulfilled',
+            value,
+          };
+        })
+        .catch((reason) => {
+          return {
+            status: 'rejected',
+            reason,
+          };
+        });
+    });
+    return Promise.all(mappedPromises);
+  };
+}

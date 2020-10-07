@@ -312,9 +312,6 @@ define([
       if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('configuration.viewEdit.source.confirms.close', 'Source changes are not saved. Would you like to continue?')))) {
         return;
       }
-      this.selectedSource(null);
-      this.selectedSourceId(null);
-      this.dirtyFlag().reset();
       this.goToConfigure();
     }
 
@@ -356,6 +353,9 @@ define([
     }
 
     goToConfigure() {
+      this.selectedSource(null);
+      this.selectedSourceId(null);
+      this.dirtyFlag().reset();
       commonUtils.routeTo('/configure');
     }
 

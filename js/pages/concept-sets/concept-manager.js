@@ -220,23 +220,32 @@ define([
 			const promises = [];
 			const sourceData = [];
 			for (const source of sources) {
-				if (authApi.hasSourceAccess(source.sourceKey)) {
+				const { sourceName, sourceKey, resultsUrl } = source;
+				if (authApi.hasSourceAccess(sourceKey)) {
 					// await is harmless here since it will pull data sequentially while it can be done in parallel
-					let promise = httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId()]).then(({ data }) => {
+					let promise = httpService.doPost(`${resultsUrl}conceptRecordCount`, [this.currentConceptId()]).then(({ data }) => {
 						const recordCountObject = data.length > 0 ? Object.values(data[0])[0] : null;
 						if (recordCountObject) {
 							sourceData.push({
-								sourceName: source.sourceName,
+								sourceName,
 								recordCount: recordCountObject[0],
 								descendantRecordCount: recordCountObject[1]
 							});
 						}
+					}).catch(err => {
+						const failedMsg = 'Failed to load data';
+						sourceData.push({
+							sourceName,
+							recordCount: failedMsg,
+							descendantRecordCount: failedMsg,
+						});
 					});
 					promises.push(promise);
 				}
 			}
-
-			await Promise.all(promises);
+			
+			// Promise.allSettled works since Chrome v76 so we need polyfill for it
+			await Promise.allSettled(promises);
 			return sourceData;
 		}
 
