@@ -48,7 +48,9 @@ define([
 			this.getEmptyWindowedCriteria = params.getEmptyWindowedCriteria;
 			this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
 			this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
-			this.loadConceptSet = params.loadConceptSet;			
+			this.loadConceptSet = params.loadConceptSet;
+			this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
+
 
 			this.conceptSets = ko.pureComputed({
 					read: () => params.data() && params.data().conceptSets || [],
@@ -71,6 +73,10 @@ define([
 		addCriteria() {
 			this.data().design([...this.data().design(), this.getEmptyCriteriaFeatureDesign()]);
 		}
+
+		buildAddCriteriaAction(type) {
+			return () => this.addWindowedCriteria(type);
+	}
 
 		addWindowedCriteria(type) {
 			const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
