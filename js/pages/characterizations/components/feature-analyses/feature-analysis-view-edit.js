@@ -7,8 +7,6 @@ define([
     'components/cohortbuilder/AdditionalCriteria',
     'components/cohortbuilder/WindowedCriteria',
     'components/cohortbuilder/CriteriaTypes/DemographicCriteria',
-    'components/cohortbuilder/const',
-    'components/cohortbuilder/utils',
     'text!./feature-analysis-view-edit.html',
     'appConfig',
     'atlas-state',
@@ -47,8 +45,6 @@ define([
     AdditionalCriteria,
     WindowedCriteria,
     DemographicGriteria,
-    cohortbuilderConsts,
-    cohortbuilderUtils,
     view,
     config,
     sharedState,
@@ -66,6 +62,8 @@ define([
     ohdsiUtil,
     utils,
     globalConstants,
+	componentConst,
+    lodash,
 ) {
 
     const featureTypes = {
@@ -444,7 +442,7 @@ define([
                 this.loading(false);
             }
         }
-        
+
         getAuthorship() {
             const createdDate = commonUtils.formatDateForAuthorship(this.data().createdDate);
             const modifiedDate = commonUtils.formatDateForAuthorship(this.data().modifiedDate);

@@ -62,7 +62,6 @@ define([
 			// Concept set import for criteria
 			this.criteriaContext = ko.observable();
 			this.showConceptSetBrowser = ko.observable();
-
 		}
 
 		getEmptyDemographicCriteria() {
