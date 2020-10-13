@@ -241,7 +241,7 @@ define([
 			];
 			this.selectedTab = ko.observable(0);
 
-			if (!sharedState.evidenceUrl.hasEvidence) {
+			if (!sharedState.evidenceUrl()) {
 				this.tabs = this.tabs.filter(tab => tab.key !== ViewMode.EXPLORE);
 			}
 
