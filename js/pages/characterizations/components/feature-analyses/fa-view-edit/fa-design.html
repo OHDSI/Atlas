@@ -41,9 +41,12 @@
                         <a>Preset</a>
                     </li>
                     <!-- /ko -->
+                    <!-- ko if: !$component.isPresetFeatureTypeAvailable && !$component.featureId() -->
+                    <div data-bind="css: classes('message-pane')"><span data-bind="css: classes('note')"><i class="fa fa-exclamation-triangle"></i> Warning:</span> You wouldn't be able to change the type of analysis after save.</div>
+                    <!-- /ko -->
                     <li role="presentation"
                         data-bind="
-                            if: $component.canEdit() || $component.data().type() === $component.featureTypes.CRITERIA_SET,
+                            if: ($component.canEdit() && !$component.featureId()) || $component.data().type() === $component.featureTypes.CRITERIA_SET,
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CRITERIA_SET ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.CRITERIA_SET)
                         ">
@@ -51,7 +54,7 @@
                     </li>
                     <li role="presentation"
                         data-bind="
-                            if: $component.canEdit() || $component.data().type() === $component.featureTypes.CUSTOM_FE,
+                            if: ($component.canEdit() && !$component.featureId()) || $component.data().type() === $component.featureTypes.CUSTOM_FE,
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CUSTOM_FE ? 'active' : null }),
                             click: setType.bind(null, $component.featureTypes.CUSTOM_FE)
                         ">

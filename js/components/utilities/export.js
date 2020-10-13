@@ -72,7 +72,7 @@ define([
         }
 
         async loadExportJSON() {
-            if (this.entityId() !== 0) {
+            if (this.entityId() !== 0 && this.entityId() !== '0') {
                 this.loading(true);
                 const res = await this.exportService(this.entityId());
                 this.exportEntity(res);

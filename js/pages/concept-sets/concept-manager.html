@@ -68,10 +68,10 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
 
         <!-- ko if: hasInfoAccess() -->
-            <!-- ko ifnot: currentConcept().STANDARD_CONCEPT == 'S' -->
+            <!-- ko if: currentConcept().STANDARD_CONCEPT == 'N' -->
                 <div>No hierarchy found for non-standard concepts.</div>
             <!-- /ko -->
-			<!-- ko if: currentConcept().STANDARD_CONCEPT == 'S' -->
+			<!-- ko ifnot: currentConcept().STANDARD_CONCEPT == 'N' -->
 				<div data-bind="css: classes('hierarchy-filters')">
 					<div class="row">
 						<div class="pull-left" data-bind="css: classes('filter-view')">View:</div>

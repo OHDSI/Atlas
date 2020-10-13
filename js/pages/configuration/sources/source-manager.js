@@ -303,9 +303,6 @@ define([
       if (this.dirtyFlag().isDirty() && !confirm('Source changes are not saved. Would you like to continue?')) {
         return;
       }
-      this.selectedSource(null);
-      this.selectedSourceId(null);
-      this.dirtyFlag().reset();
       this.goToConfigure();
     }
 
@@ -347,6 +344,9 @@ define([
     }
 
     goToConfigure() {
+      this.selectedSource(null);
+      this.selectedSourceId(null);
+      this.dirtyFlag().reset();
       commonUtils.routeTo('/configure');
     }
 

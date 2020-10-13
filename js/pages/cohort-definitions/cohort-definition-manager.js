@@ -476,7 +476,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 				// check if the cohort has been generated
 					var sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.reportSourceKey());
-					if (this.getStatusMessage(sourceInfo) != 'COMPLETE') {
+					if (this.getStatusMessage(sourceInfo) != 'COMPLETED') {
 						this.generateReportsEnabled(false);
 					return "cohort_not_generated";
 				}
@@ -1072,7 +1072,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (info.status() === "COMPLETE" && !info.isValid())
 					return !info.isCanceled() ? "FAILED" : "CANCELED";
 				else
-					return info.status();
+					// replace 'COMPLETE' with 'COMPLETED' to match other complete statuses
+					return info.status() === 'COMPLETE' ? 'COMPLETED' : info.status();
 			}
 
 			getStatusTemplate(item) {
