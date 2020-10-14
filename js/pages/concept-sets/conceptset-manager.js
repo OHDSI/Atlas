@@ -79,8 +79,6 @@ define([
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
-			this.hasEvidence = this.getCurrentSource().hasEvidence;
-			this.hasEvidence = this.getCurrentSource().hasEvidence;
 
       // switches default name according to current locale
 			sharedState.localeSettings.subscribe((localeSettings) => {
@@ -252,7 +250,7 @@ define([
 			];
 			this.selectedTab = ko.observable(0);
 
-			if (!this.hasEvidence) {
+			if (!sharedState.evidenceUrl()) {
 				this.tabs = this.tabs.filter(tab => tab.key !== ViewMode.EXPLORE);
 			}
 
@@ -503,12 +501,6 @@ define([
 						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
 						modifiedDate,
 				}
-		}
-
-		getCurrentSource() {
-			const currentSource = sharedState.sources()
-				.find(source => source.sourceKey === sharedState.sourceKeyOfVocabUrl());
-			return currentSource;
 		}
 
 	}
