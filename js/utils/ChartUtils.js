@@ -1,5 +1,5 @@
 define(
-  ['d3', 'lodash'],
+  ['d3', 'lodash', 'file-saver'],
   function (d3, _) {
     // TODO: move into Visualizations repo
     class ChartUtils {      
@@ -13,101 +13,115 @@ define(
         return d3.format(',');
       }
 
-      static get chartAsPngStyles() {
-        return `
-          <![CDATA[
-            svg {
-              background: #fff;
-            }
-            .donut text {
-              font-size: 1.2rem;
-            }            
-            .lineplot .line {
-              fill: transparent;
-              stroke: #50A5BA;
-            }      
-            .lineplot  circle.focus {
-              opacity: 0;
-            }      
-            .bar {
-              fill: #50A5BA;
-            }      
-            .boxplot .bar, .boxplot .whisker, .boxplot .box, .boxplot .median {
-              stroke: #50A5BA;
-            }      
-            .boxplot .box {
-              fill: #50A5BA;
-            }
-            .g-trellis .y-guide .tick line,
-            .g-trellis .x-guide .tick line {
-              stroke: #ccc;
-              stroke-width: .6;
-            }
-            .g-trellis .y-guide .domain,
-            .g-trellis .x-guide .domain {
-              stroke: none;
-            }
-            .g-trellis .g-overlay {
-              fill: none;
-              pointer-events: all;
-            }
-            .grouper {
-              fill: none;
-              stroke: white;
-              stroke-width: 2px;
-            }
-            .treemap_zoomtarget {
-              padding: 0.5rem 20px;
-            }
-            .overlay {
-              opacity: 0;
-            }
-          ]]>`;
-      }
+			// getSVGString from http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177
+			static getSVGString( svgNode ) {
+				svgNode.setAttribute('xlink', 'http://www.w3.org/1999/xlink');
+				var cssStyleText = getCSSStyles( svgNode );
+				appendCSS( cssStyleText, svgNode );
 
-      static downloadAsPng(container) {
-        const docType = `<?xml version="1.0" standalone="no"?>      
-    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">`;
-        const svg = d3.select(container).select('svg');
-        svg.append('style').html(ChartUtils.chartAsPngStyles);
-        const source = (new XMLSerializer()).serializeToString(svg.node());
-        const blob = new Blob([`${docType}${source}`], { type: 'image/svg+xml;charset=utf-8' });
-        const url = window.URL.createObjectURL(blob);
-        const img = d3.select(container).append('img').node();
-        img.onload = () => {
-          // Now that the image has loaded, put the image into a canvas element.
-          const canvas = d3.select(container).append('canvas').node();
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-          let canvasUrl;
-          const filename = 'chart.png';// TODO: `${this.props.title.replace(/\W*/g, '')}.png`;
-          try {
-            // ie 11 will throw an exception here
-            canvasUrl = canvas.toDataURL('image/png');
-            const a = d3.select(container).append('a').node();
-            a.download = filename;
-            a.href = canvasUrl;
-            a.target = '_blank';
-            a.click();
-            a.remove();
-            canvas.remove();
-            img.remove();
-          } catch (er) {
-            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-              window.navigator.msSaveOrOpenBlob(blob, filename);
-            } else {
-              window.open(url, '_blank');
-            }
-            canvas.remove();
-            img.remove();
-          }
-        };
-        img.src = url;
-      }
+				var serializer = new XMLSerializer();
+				var svgString = serializer.serializeToString(svgNode);
+				svgString = svgString.replace(/(\w+)?:?xlink=/g, 'xmlns:xlink='); // Fix root xlink without namespace
+				svgString = svgString.replace(/NS\d+:href/g, 'xlink:href'); // Safari NS namespace fix
 
-      static mapConceptData(data) {
+				return svgString;
+
+				function getCSSStyles( parentElement ) {
+					var selectorTextArr = [];
+
+					// Add Parent element Id and Classes to the list
+					selectorTextArr.push( '#'+parentElement.id );
+					for (var c = 0; c < parentElement.classList.length; c++)
+							if ( !contains('.'+parentElement.classList[c], selectorTextArr) )
+								selectorTextArr.push( '.'+parentElement.classList[c] );
+
+					// Add Children element Ids and Classes to the list
+					var nodes = parentElement.getElementsByTagName("*");
+					for (var i = 0; i < nodes.length; i++) {
+						var id = nodes[i].id;
+						if ( !contains('#'+id, selectorTextArr) )
+							selectorTextArr.push( '#'+id );
+
+						var classes = nodes[i].classList;
+						for (var c = 0; c < classes.length; c++)
+							if ( !contains('.'+classes[c], selectorTextArr) )
+								selectorTextArr.push( '.'+classes[c] );
+					}
+
+					// Extract CSS Rules
+					var extractedCSSText = "";
+					for (var i = 0; i < document.styleSheets.length; i++) {
+						var s = document.styleSheets[i];
+
+						try {
+								if(!s.cssRules) continue;
+						} catch( e ) {
+									if(e.name !== 'SecurityError') throw e; // for Firefox
+									continue;
+								}
+
+						var cssRules = s.cssRules;
+						for (var r = 0; r < cssRules.length; r++) {
+							if ( contains( cssRules[r].selectorText, selectorTextArr ) )
+								extractedCSSText += cssRules[r].cssText;
+						}
+					}
+
+
+					return extractedCSSText;
+
+					function contains(str,arr) {
+						return arr.indexOf( str ) === -1 ? false : true;
+					}
+
+				}
+
+				function appendCSS( cssText, element ) {
+					var styleElement = document.createElement("style");
+					styleElement.setAttribute("type","text/css"); 
+					styleElement.innerHTML = cssText;
+					var refNode = element.hasChildNodes() ? element.children[0] : null;
+					element.insertBefore( styleElement, refNode );
+				}
+			}
+
+			// svgString2Image from http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177
+			static svgString2Image( svgString, width, height, format, callback ) {
+				var format = format ? format : 'png';
+
+				var imgsrc = 'data:image/svg+xml;base64,'+ btoa( unescape( encodeURIComponent( svgString ) ) ); // Convert SVG string to data URL
+
+				var canvas = document.createElement("canvas");
+				var context = canvas.getContext("2d");
+
+				canvas.width = width;
+				canvas.height = height;
+
+				var image = new Image();
+				image.onload = function() {
+					context.clearRect ( 0, 0, width, height );
+					context.drawImage(image, 0, 0, width, height);
+
+					canvas.toBlob( function(blob) {
+						var filesize = Math.round( blob.length/1024 ) + ' KB';
+						if ( callback ) callback( blob, filesize );
+					});
+				};
+
+				image.src = imgsrc;
+			}
+			
+      static downloadAsPng(container, filename) {
+				const svgString = ChartUtils.getSVGString(container);
+				const containerBBox = container.getBBox();
+				ChartUtils.svgString2Image( svgString, 2*containerBBox.width, 2*containerBBox.height, 'png', save ); // passes Blob and filesize String to the callback
+
+				function save( dataBlob, filesize ){
+					saveAs( dataBlob, filename );
+				}				
+			}
+			
+			static mapConceptData(data) {
         var result;
   
         if (data instanceof Array) {
@@ -267,6 +281,8 @@ define(
           return d.conceptId === conceptId;
         };
       }
+			
+			
     }
 
     return ChartUtils;

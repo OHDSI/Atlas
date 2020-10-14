@@ -1,25 +1,26 @@
-define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ], function (ko, view, crossfilter) {
+define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/CommonUtils', 'colvis',], 
+	function (ko, view, crossfilter, commonUtils) {
 
 	function facetedDatatable(params) {
 		var self = this;
 		var subscriptions = [];
 
+		self.dataTableId = params.dataTableId || commonUtils.getUniqueIdentifier();
 		self.selectedData = params.selectedData || null;
 		self.headersTemplateId = params.headersTemplateId;
 		self.reference = params.reference;
+		self.dtApi = params.dtApi || ko.observable();
 		self.data = params.xfObservable || ko.observable();
 		self.tableData = ko.pureComputed(function () {
 			if (self.data() && self.data().size() && self.data().size() > 0) {
-				const data = self.data().allFiltered();
-				self.selectedData && self.selectedData(data);
-				return data;
+				return self.data().allFiltered();
 			} else {
 				return [];
 			}
 		});
 		self.componentLoading = ko.observable(true);
 		self.facets = ko.observableArray();
-
+		
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
 		self.options = params.options;
 		self.columns = params.columns;
@@ -39,7 +40,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			showAll: 'Show All Columns',
 			restore: 'Reset Columns'
 		};
-		self.deferRender = params.deferRender || true;
+		self.deferRender = typeof params.deferRender != 'undefined' ? params.deferRender : true;
 		self.dom = params.dom || '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
 		self.language = params.language || {
 			search: 'Filter: '
@@ -59,7 +60,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'colvis', ],
 			]
 		}
 		self.orderClasses = params.orderClasses || false;
-		self.ordering = params.ordering || true;
+		self.ordering = params.ordering !== undefined ? params.ordering : true;
 		self.scrollOptions = params.scrollOptions || null;
 		self.createdRow = params.createdRow || null;
 

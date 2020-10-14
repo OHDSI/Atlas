@@ -67,7 +67,9 @@ define([
 					}
 				}
 				
-				traverse(JSON.parse(this.report().treemapData));
+				if (this.report()) {
+					traverse(JSON.parse(this.report().treemapData));
+				}
 				var extent = d3.extent(rates);
 				return [extent[0], Math.max(extent[0] * 1.001, extent[1])]; // padd the upper bound in the case where there is only 1 incidence rate calculated and we want to have an extent > 0
 			});

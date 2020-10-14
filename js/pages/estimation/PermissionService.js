@@ -37,7 +37,7 @@ define([
 			return AuthAPI.isPermitted(`estimation:${id}:export:get`);
 		}
 
-		static isPermittedGenerate(sourceKey, id) {
+		static isPermittedGenerate(id, sourceKey) {
 			return AuthAPI.isPermitted(`estimation:${id}:generation:*:post`) && AuthAPI.isPermitted(`source:${sourceKey}:access`);
 		}
 
@@ -45,7 +45,7 @@ define([
 			return AuthAPI.isPermitted(`estimation:${id}:generation:get`);
 		}
 
-		static isPermittedViewResults(id) {
+		static isPermittedResults(id) {
 			return AuthAPI.isPermitted(`estimation:generation:${id}:result:get`);
 		}
 

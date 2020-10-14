@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', './utils', 'text!./DemographicCriteriaTemplate.html', './ConceptSetSelector'],
+define(['knockout', '../options', '../InputTypes/Range', '../utils', 'text!./DemographicCriteriaTemplate.html', './ConceptSetSelector'],
 	function (ko, options, Range, utils, template) {
 
 	function DemographicCriteriaViewModel(params) {
@@ -39,7 +39,7 @@ define(['knockout', '../options', '../InputTypes/Range', './utils', 'text!./Demo
 			{
 				text: "Add Event End Date Criteria",
 				selected: false,
-				description: "Filter Events by End Date",
+				description: "Filter Events by End Date.",
 				action: function () {
 					if (self.Criteria.OccurrenceEndDate() == null)
 						self.Criteria.OccurrenceEndDate(new Range({

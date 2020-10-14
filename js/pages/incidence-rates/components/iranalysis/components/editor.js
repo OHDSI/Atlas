@@ -5,11 +5,13 @@ define([
 	'../StratifyRule',
 	'components/cohortbuilder/options',
 	'components/Component',
+	'utils/AutoBind',	
 	'utils/CommonUtils',
 	'conceptsetbuilder/components',
 	'components/cohort-definition-browser',				
 	'databindings',
-	'components/cohortbuilder/components'
+	'components/cohortbuilder/components',
+	'less!./editor.less',
 ], function (
 	ko,
 	view,
@@ -17,11 +19,12 @@ define([
 	StratifyRule,
 	options,
 	Component,
-	commonUtils
+	AutoBind,
+	commonUtils,
 ) {
-	class IRAnalysisEditorModel extends Component {
+	class IRAnalysisEditorModel extends AutoBind(Component) {
 		constructor(params) {
-			super(params);					
+			super(params);
 			this.options = options;
 			
 			this.analysis = params.analysis;
@@ -32,6 +35,7 @@ define([
 			this.selectedStrataRule = ko.observable();
 			this.selectedStrataRuleIndex = null;
 			this.isEditable = params.isEditable;
+			this.defaultStratifyRuleName = 'Unnamed criteria';
 
 			this.fieldOptions = [{id: 'StartDate', name: 'start date'}, {id: 'EndDate', name: 'end date'}];
 			// Subscriptions
@@ -39,18 +43,6 @@ define([
 				console.log("New analysis set.");
 				this.selectedStrataRule(params.analysis().strata()[this.selectedStrataRuleIndex]);
 			}));
-
-			this.addStudyWindow = this.addStudyWindow.bind(this);
-			this.addTargetCohort = this.addTargetCohort.bind(this);
-			this.addOutcomeCohort = this.addOutcomeCohort.bind(this);			
-			this.deleteTargetCohort = this.deleteTargetCohort.bind(this);
-			this.deleteOutcomeCohort = this.deleteOutcomeCohort.bind(this);
-			this.cohortSelected = this.cohortSelected.bind(this);
-			this.copyStrataRule = this.copyStrataRule.bind(this);
-			this.deleteStrataRule = this.deleteStrataRule.bind(this);
-			this.selectStrataRule = this.selectedStrataRule.bind(this);
-			this.addStrataRule = this.addStrataRule.bind(this);
-			this.dispose = this.dispose.bind(this);
 		}
 			
 		addStudyWindow() {
@@ -83,27 +75,28 @@ define([
 		};
 
 		copyStrataRule(rule) {
-				var copiedRule = new StratifyRule(ko.toJS(rule), this.analysis().ConceptSets);
-				copiedRule.name("Copy of: " + copiedRule.name());
+				const copiedRule = new StratifyRule(ko.toJS(rule), this.analysis().ConceptSets);
+				const name = copiedRule.name() || this.defaultStratifyRuleName;
+				copiedRule.name(`Copy of: ${name}`);
 				this.analysis().strata.push(copiedRule);
-				this.selectedStrataRule(copiedRule);
+				this.selectStrataRule(copiedRule);
 		};
 		
 		deleteStrataRule(rule) {
 			this.selectedStrataRule(null);
+			this.selectedStrataRuleIndex = null;
 			this.analysis().strata.remove(rule);
 		};
 	
 		selectStrataRule(rule) {
 			this.selectedStrataRule(rule);	
-			this.selectedStrataRuleIndex = params.analysis().strata().indexOf(rule);
-			console.log("Selected Index: " + this.selectedStrataRuleIndex);
+			this.selectedStrataRuleIndex = this.analysis().strata().indexOf(rule);
 		};
 				
 		addStrataRule() {
-			var newStratifyRule = new StratifyRule(null, this.analysis().ConceptSets);
+			const newStratifyRule = new StratifyRule(null, this.analysis().ConceptSets);
 			this.analysis().strata.push(newStratifyRule);
-			this.selectedStrataRule(newStratifyRule);			
+			this.selectStrataRule(newStratifyRule);
 		};
 		
 		dispose() {

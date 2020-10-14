@@ -6,14 +6,16 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
     isPageForeground(isForeground);
 
     if (isForeground) {
-      // when a user focuses tab, we shound immediately sync
+      // when a user focuses tab, we should immediately sync
       PollService.pollImmediately();
     }
   });
 
   class PollService {
+    constructor(){
+    }
     add(opts = {}, ...args) {
-      const { callback = () => {}, interval = 1000, isSilentAfterFirstCall = false } = opts;
+      const { callback = () => {}, interval = 1000, isSilentAfterFirstCall = false} = opts;
       const id = new Date().valueOf();
       callbacks.set(id, {
         callback,
@@ -34,6 +36,7 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
           if (isPageForeground()) {
             const silently = isSilentAfterFirstCall && totalFnCalls > 0;
             await callback(silently);
+            this.extraActionsAfterCallback();
             callbacks.set(id, { ...cb, totalFnCalls: totalFnCalls + 1 });
           }
         } catch(e) {
@@ -42,6 +45,9 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
           setTimeout(() => this.start(id), interval);
         }
       }
+    }
+
+    extraActionsAfterCallback() {
     }
 
     stop(id) {
@@ -55,5 +61,8 @@ define(['knockout', 'visibilityjs'], (ko, Visibility) => {
     }
   }
 
-  return new PollService();
+  return {
+    PollService: new PollService(),
+    PollServiceClass: PollService,
+  };
 });

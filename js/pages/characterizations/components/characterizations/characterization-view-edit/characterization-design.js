@@ -12,7 +12,8 @@ define([
     'conceptsetbuilder/InputTypes/ConceptSet',
     'services/Vocabulary',
     'lodash',
-    '../../../utils',
+    'components/conceptset/utils',
+    'const',
     'pages/characterizations/components/feature-analyses/feature-analyses-browser',
     './characterization-params-create-modal',
     'components/cohort/linked-cohort-list',
@@ -35,7 +36,8 @@ define([
     ConceptSet,
     VocabularyAPI,
     lodash,
-    utils,
+    conceptSetUtils,
+    globalConstants
 ) {
     class CharacterizationDesign extends AutoBind(Component) {
         constructor(params) {
@@ -45,78 +47,41 @@ define([
             this.characterizationId = params.characterizationId;
             this.areStratasNamesEmpty = params.areStratasNamesEmpty;
             this.duplicatedStrataNames = params.duplicatedStrataNames;
+            this.loadConceptSet = params.loadConceptSet;
 
             this.loading = ko.observable(false);
 
             this.isViewPermitted = this.isPermittedViewResolver();
+            this.isEditPermitted = params.isEditPermitted;
 
-            this.cohorts = ko.computed({
+            this.cohorts = ko.pureComputed({
                 read: () => params.design() && params.design().cohorts() || [],
                 write: (value) => params.design().cohorts(value),
             });
 
             this.strataConceptSets = ko.pureComputed({
-                read: () => params.design().strataConceptSets,
-                write: (value) => params.design().strataConceptSets(value)
+                read: () => params.design() && params.design().strataConceptSets || [],
+                write: (value) => params.design() && params.design().strataConceptSets(value)
             });
 
-            this.stratas = ko.computed({
+            this.stratas = ko.pureComputed({
                 read: () => params.design() && params.design().stratas() || [],
                 write: (value) => params.design().stratas(value),
             });
 
             this.featureAnalyses = {
                 newItemAction: this.showFeatureBrowser,
-                columns: [
-                    {
-                        title: 'ID',
-                        data: 'id',
-                        className: this.classes('col-feature-id'),
-                    },
-                    {
-                        title: 'Name',
-                        data: 'name',
-                        className: this.classes('col-feature-name'),
-                    },
-                    {
-                        title: 'Description',
-                        data: 'description',
-                        className: this.classes('col-feature-descr'),
-                    },
-                    {
-                        title: 'Actions',
-                        render: this.getRemoveCell('removeFeature'),
-                        className: this.classes('col-feature-remove'),
-                    }
-                ],
-                data: ko.computed(() => params.design() && params.design().featureAnalyses() || [])
+                columns: globalConstants.getLinkedFeatureAnalysisColumns(this),
+                data: ko.pureComputed(() => params.design() && params.design().featureAnalyses() || [])
             };
 
             this.featureAnalysesParams = {
                 newItemAction: this.showParameterCreateModal,
-                columns: [
-                    {
-                        title: 'Name',
-                        data: 'name',
-                        className: this.classes('col-param-name'),
-                    },
-                    {
-                        title: 'Value',
-                        data: 'value',
-                        className: this.classes('col-param-value'),
-                    },
-                    {
-                        title: 'Actions',
-                        render: this.getRemoveCell('removeParam', 'name'),
-                        className: this.classes('col-param-remove'),
-                    }
-                ],
-                data: ko.computed(() => params.design() && params.design().parameters() || [])
+                columns: globalConstants.getLinkedFeAParametersColumns(this),
+                data: ko.pureComputed(() => params.design() && params.design().parameters() || [])
             };
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
-            this.featureAnalysesSelected = ko.observableArray();
-            this.featureAnalysesAvailable = ko.pureComputed(() => this.featureAnalysesSelected().length > 0);
 
             this.isParameterCreateModalShown = ko.observable(false);
             this.showConceptSetBrowser = ko.observable(false);
@@ -133,7 +98,7 @@ define([
         }
 
         isPermittedViewResolver() {
-            return ko.computed(
+            return ko.pureComputed(
                 () => (this.characterizationId() ? PermissionService.isPermittedGetCC(this.characterizationId()) : true)
             );
         }
@@ -152,22 +117,11 @@ define([
             this.showFeatureAnalysesBrowser(false);
         }
 
-        importFeatures() {
+        onSelect(data = []) {
             this.closeFeatureBrowser();
-            this.featureAnalysesSelected().forEach(fe => this.attachFeature(fe));
-        }
-
-        attachFeature({ id, name, description }) {
             const ccDesign = this.design();
-            this.showFeatureAnalysesBrowser(false);
-            ccDesign.featureAnalyses(lodash.uniqBy(
-                    [
-                        ...(ccDesign.featureAnalyses() || []),
-                        { id, name, description }
-                    ],
-                    'id'
-                )
-            );
+            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description']));
+            ccDesign.featureAnalyses(featureAnalyses);
         }
 
         removeFeature(id) {
@@ -213,16 +167,33 @@ define([
             this.isParameterCreateModalShown(true);
         }
 
-        handleConceptSetImport(criteriaIdx, item) {
-          console.log('import', item);
-          this.criteriaContext({...item, criteriaIdx});
-          this.showConceptSetBrowser(true);
+        handleConceptSetImport(item, context, event) {
+            this.criteriaContext(item);
+            this.showConceptSetBrowser(true);
         }
+			
+        handleEditConceptSet(item, context) {
+          if (item.conceptSetId() == null) {
+            return;
+          }
+          this.loadConceptSet(item.conceptSetId());
+        }	
 
         onRespositoryConceptSetSelected(conceptSet, source) {
-            utils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
+            conceptSetUtils.conceptSetSelectionHandler(this.strataConceptSets(), this.criteriaContext(), conceptSet, source)
                 .done(() => this.showConceptSetBrowser(false));
         }
+      
+        onRespositoryActionComplete(result) {
+            this.showConceptSetBrowser(false);
+            if (result.action === 'add') {
+                const newId = conceptSetUtils.newConceptSetHandler(this.strataConceptSets(), this.criteriaContext());
+                this.loadConceptSet(newId)
+            }
+
+            this.criteriaContext(null);
+        }
+
     }
 
     return commonUtils.build('characterization-design', CharacterizationDesign, view);

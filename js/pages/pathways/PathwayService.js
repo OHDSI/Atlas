@@ -93,6 +93,12 @@ define([
 			.then(res => res.data);
 	}
 
+	function runDiagnostics(design) {
+        return httpService
+            .doPost(`${servicePath}/check`, design)
+            .then(res => res.data);
+	}
+	
 	return {
 		list,
 		create,
@@ -109,5 +115,6 @@ define([
 		loadExportDesignByGeneration,
 		importPathwayDesign,
 		exists,
+        runDiagnostics,
 	};
 });

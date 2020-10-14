@@ -21,6 +21,7 @@ define([
 	'./components/reports/observation',
 	'./components/reports/death',
 	'./components/reports/achillesHeel',
+	'./components/reports/observation-period',
 	'less!./data-sources.less'
 ], function (
 	ko,
@@ -101,11 +102,16 @@ define([
 					path: "achillesheel",
 					component: "report-achilles-heel",
 				},
+				{
+					name: "Observation Period",
+					path: "observationPeriod",
+					component: "report-observation-period"
+				}
 			];
 
 			this.sources = ko.computed(() => sharedState.sources().filter(function (s) {
-                return s.hasResults && s.hasVocabulary;
-            }));
+				return s.hasResults && s.hasVocabulary && authApi.isPermittedViewDataSourceReport(s.sourceKey);
+			}));
 
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);

@@ -1,4 +1,4 @@
-define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, config, options, Range, CriteriaGroup, template) {
+define(['knockout', 'appConfig', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./VisitOccurrenceTemplate.html'], function (ko, config, options, utils, Range, CriteriaGroup, template) {
 
 	function VisitOccurrenceViewModel(params) {
 		var self = this;
@@ -47,7 +47,7 @@ define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../Criter
 			{
 				text: "Add End Date Criteria",
 				selected: false,
-				description: "Filter Visit Occurrences  by the Condition End Date",
+				description: "Filter Visit Occurrences by the Condition End Date",
 				action: function () {
 					if (self.Criteria.OccurrenceEndDate() == null)
 						self.Criteria.OccurrenceEndDate(new Range({
@@ -58,7 +58,7 @@ define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../Criter
 			{
 				text: "Add Visit Type Criteria",
 				selected: false,
-				description: "Filter Condition Occurrences  by the Condition Type.",
+				description: "Filter Visit Occurrences by the Condition Type.",
 				action: function () {
 					if (self.Criteria.VisitType() == null)
 						self.Criteria.VisitType(ko.observableArray());
@@ -113,7 +113,7 @@ define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../Criter
 			{
 				text: "Add Nested Criteria...",
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the visit occurrence as the index event.",
 				action: function () {
 					if (self.Criteria.CorrelatedCriteria() == null)
 						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
@@ -142,7 +142,10 @@ define(['knockout', 'appConfig', '../options', '../InputTypes/Range', '../Criter
 			self.Criteria[propertyName](undefined);
 		}
 
-
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Visit');
+			return `The index date refers to the visit of ${conceptSetName}.`;
+		});			
 	}
 
 	// return compoonent definition

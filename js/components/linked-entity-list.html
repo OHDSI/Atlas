@@ -6,7 +6,7 @@
 	<div data-bind="css: classes('actions')">
 		<button type="button"
 			data-bind="
-				css: classes({ element: 'btn', extra: ['btn btn-primary btn-sm']}),
+				css: { 'btn btn-primary btn-sm': true, disabled: !$component.isEditPermitted()},
 				text: $component.newItemLabel,
 				click: $component.newItemAction
 		"></button>

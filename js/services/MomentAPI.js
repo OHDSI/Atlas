@@ -4,7 +4,9 @@ define(function (require, exports) {
   const PARSE_FORMAT = 'YYYY-MM-DD, H:mm';
   const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm A';
   const DATE_FORMAT = 'MM/DD/YYYY';
+  const ISO_DATE_FORMAT = 'YYYY-MM-DD';
   const DURATION_FORMAT = 'HH:mm:ss';
+  const DESIGN_DATE_TIME_FORMAT = 'YYYY-MM-DD H:mm';
   const EMPTY_DATE = '';
 
   function formatDateTime(date) {
@@ -39,17 +41,24 @@ define(function (require, exports) {
     return td.diff(fd, 'days');
   }
 
+  function formatDateToString(value, format = ISO_DATE_FORMAT) {
+    return value instanceof Date ? moment(value).format(format) : value;
+  }
+
   var api = {
     formatDateTime: formatDateTime,
     formatDate: formatDate,
     formatDuration: formatDuration,
     formatDateTimeUTC: formatDateTimeUTC,
     formatDateTimeWithFormat: formatDateTimeWithFormat,
+    formatDateToString,
     diffInDays,
     PARSE_FORMAT,
     DATE_TIME_FORMAT,
     DATE_FORMAT,
     DURATION_FORMAT,
+    DESIGN_DATE_TIME_FORMAT,
+    ISO_DATE_FORMAT
   };
 
   return api;

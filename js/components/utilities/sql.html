@@ -1,0 +1,17 @@
+<div data-bind="css: classes()">
+    <loading data-bind="visible: loading"></loading>
+    <!-- ko if: canExport() && !loading() -->
+    <tabs params="
+        modifiers: 'export-sql',
+        selectedTabKey: $component.selectedTabKey,
+        selectTab: $component.selectTab,
+        tabs: $component.tabs,
+        controlsComponent: {
+            componentName: 'copy-to-clipboard',
+            componentParams: {}
+        }
+    ">
+    </tabs>
+    <!-- /ko -->
+    <access-denied params="isAuthenticated: isAuthenticated, isPermitted: canExport"></access-denied>
+</div>

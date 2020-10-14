@@ -1,5 +1,6 @@
 <div class="paddedWrapper">
-	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable: $component.currentCohortDefinition().description"></div>
+	<!-- contenteditableSwitch must be placed AFTER contentEditable to override 'contenteditable' attribute -->
+	<div placeholder="enter a cohort definition description here" class="divtext cohort-description" data-bind="contentEditable: $component.currentCohortDefinition().description, contenteditableSwitch: canEdit()"></div>
 	<div data-bind="eventListener: [
 									{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport},
 									{ event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}
@@ -15,7 +16,7 @@
 				<div class="modal-content">
 					<div class="modal-header">Import Concept Set From Repository...</div>
 					<div class="paddedWrapper">
-						<cohort-concept-set-browser params="criteriaContext: $component.criteriaContext, cohortConceptSets: $component.currentCohortDefinition().expression().ConceptSets, onActionComplete: $component.onAtlasConceptSetSelectAction, buttonActionEnabled: true"></cohort-concept-set-browser>
+						<concept-set-browser params="criteriaContext: $component.criteriaContext, cohortConceptSets: $component.currentCohortDefinition().expression().ConceptSets, onActionComplete: $component.onAtlasConceptSetSelectAction, buttonActionEnabled: true"></concept-set-browser>
 					</div>
 				</div>
 			</div>

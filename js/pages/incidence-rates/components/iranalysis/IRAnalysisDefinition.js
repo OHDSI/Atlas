@@ -13,6 +13,9 @@ define(function (require, exports) {
 		self.description = ko.observable(data.description || null);
 		self.expression = ko.observable(new IRAnalysisExpression(data.expression))
 		self.createdBy = ko.observable(data.createdBy || null);
+		self.createdDate = ko.observable(data.createdDate || null);
+		self.modifiedBy = ko.observable(data.modifiedBy || null);
+		self.modifiedDate = ko.observable(data.modifiedDate || null);
 	}
 	return IRAnalysisDefinition;
 });

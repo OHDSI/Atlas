@@ -1,4 +1,15 @@
-<faceted-datatable data-bind="visible:loading()==false" params="orderColumn: 3, autoWidth: false, reference:reference, columns: columns, options:options, rowClick:rowClick">
-</faceted-datatable>
+<div data-bind="visible: !isLoading()">
+    <faceted-datatable params="orderColumn: 3, autoWidth: false, reference:data, columns: columns, options:options, buttons: buttons, dom: tableDom, rowClick: !multiChoice ? rowClick : null, scrollY: scrollY, selectedData: filteredData, dtApi: dtApi">
+    </faceted-datatable>
+    <div class="import-modal-footer btn-toolbar" data-bind="visible: multiChoice">
+            <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-primary" type="button" data-bind="click: $component.import, enable: $component.importEnabled">Import</button>
+            </div>
+            <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-danger" type="button" data-bind="click: $component.cancel">Cancel</button>
+            </div>
+        </div>
 
-<loading data-bind="visible:loading()" params="status: 'retrieving cohort definitions'"></loading>
+</div>
+
+<loading data-bind="visible: isLoading()" params="status: 'Retrieving cohort definitions...'"></loading>

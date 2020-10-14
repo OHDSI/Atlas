@@ -1,4 +1,7 @@
-<heading-title params="name: incidenceRateCaption(), icon: 'bolt', theme: 'dark'"></heading-title>
+<heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : '(Read only)', icon: 'bolt', theme: 'dark'"></heading-title>
+<!-- ko if: !!selectedAnalysis() && !!selectedAnalysis().id -->
+        <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
+    <!-- /ko -->
 <div data-bind="visible:!loading()">
 	<!-- ko if: selectedAnalysis() -->
 	<div>
@@ -6,7 +9,7 @@
 			<div class="input-group ir-header">
 				<input type="text" placeholder="New Incidence Rate Analysis" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !isNameFilled() }, enable: isEditable"/>
 				<div class="input-group-btn" role="group">
-					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {'btn-success': canSave()}"><i class="fa fa-save"></i></button>
+					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing()"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
 					<button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}"><i class="fa fa-copy"></i></button>
@@ -19,13 +22,11 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<div data-bind="visible: !isNameFilled()" class="empty-name-error">
-				<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
-				<label>Incidence Rate Analysis name is empty.</label>
-			</div>
+			<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
 		</div>
 
-		<ul class="nav nav-tabs">
+		<ul data-bind="css: classes({extra: 'nav nav-tabs'})">
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }, click: function() { $component.selectTab(tabs.DEFINITION) };">
 				<a>Definition</a>
 			</li>
@@ -41,11 +42,16 @@
             <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
 				<a>Utilities</a>
             </li>
-
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
+				<a>
+					Messages
+					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --><!-- /ko -->
+				</a>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
-				<div data-bind="eventListener: { event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}">
+				<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
 					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
 				</div>
 			</div>
@@ -54,9 +60,11 @@
 					<!-- Button is hidden since function exportConceptSetsCSV not yet implemented -->
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
-				<!-- ko with: selectedAnalysis().expression -->
-					<concept-set-builder params="conceptSets: ConceptSets, ref: $parent.conceptSetEditor"></concept-set-builder>
-				<!-- /ko -->
+				<incidence-rates-conceptset params="{
+					data: $component.selectedAnalysis().expression().ConceptSets,
+					canEdit: $component.isEditable,
+					conceptSetStore: $component.conceptSetStore
+				}"></incidence-rates-conceptset>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.GENERATION },
 																			eventListener: [
@@ -66,7 +74,15 @@
 				<loading data-bind="visible: exporting()" params="status: 'Exporting Analysis To CSV'"></loading>
 				<loading data-bind="visible: loadingInfo()" params="status: 'Loading Analysis Generations'"></loading>
 				<div data-bind="hidden: exporting() || loadingInfo()">
-					<ir-analysis-results params="sources: $component.sources, analysisCohorts: analysisCohorts, execute: execute, cancelExecution: cancelExecution, stoppingSources: stoppingSources, loadingSummary: loadingSummary"></ir-analysis-results>
+					<ir-analysis-results params="sources: $component.sources, 
+																			 analysisCohorts: analysisCohorts, 
+																			 execute: execute, cancelExecution: 
+																			 cancelExecution, 
+																			 stoppingSources: stoppingSources, 
+																			 loadingSummary: loadingSummary,
+																			 isTarValid: isTarValid,
+																			 criticalCount: criticalCount,
+																			 isEditable: isEditable"></ir-analysis-results>
 				</div>
 			</div>
             <div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }" class="tab-pane">
@@ -74,6 +90,7 @@
                     <ul class="nav nav-pills">
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
                         <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+						<li role="presentation" data-bind="css: {active: $component.expressionMode() == 'sql'}, click: () => $component.expressionMode('sql')"><a>SQL</a></li>
                     </ul>
                     <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
 						<import params="{
@@ -95,8 +112,19 @@
 							}"></export>
 						</div>
                     </div>
+					<div role="tabpanel" data-bind="visible: $component.expressionMode() === 'sql'" class="tab-pane">
+						<export-sql params="analysisId: $component.selectedAnalysisId,
+							expression: $component.selectedAnalysis() && $component.selectedAnalysis().expression,
+							isPermittedExport: isPermittedExportSQL,
+						 	exportSqlService: $component.exportSql"></export-sql>
+					</div>
                 </div>
-            </div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }" class="tab-pane">
+				<div class="paddedWrapper">
+					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
+				</div>
+			</div>
         </div>
 	</div>
 
@@ -105,7 +133,7 @@
 			<div class="modal-content">
 				<div class="modal-header">Select Concept Set...</div>
 				<div class="paddedWrapper">
-					<cohort-concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></cohort-concept-set-browser>
+					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
 				</div>
 			</div>
 		</div>

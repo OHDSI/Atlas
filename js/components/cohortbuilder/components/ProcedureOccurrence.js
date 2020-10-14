@@ -1,4 +1,4 @@
-define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./ProcedureOccurrenceTemplate.html'], function (ko, options, Range, Text, CriteriaGroup, template) {
+define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTypes/Text', '../CriteriaGroup', 'text!./ProcedureOccurrenceTemplate.html'], function (ko, options, utils, Range, Text, CriteriaGroup, template) {
 
 	function ProcedureOccurrenceViewModel(params) {
 		var self = this;
@@ -33,7 +33,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Procedure Type Criteria",
 				value: 2,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Type."
+				description: "Filter Procedure Occurrences by the Procedure Type."
 			},
 			{
 				text: "Add Visit Criteria",
@@ -45,19 +45,19 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Modifier Criteria",
 				value: 1,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Modifier."
+				description: "Filter Procedure Occurrences by the Modifier."
 			},
 			{
 				text: "Add Quantity Criteria",
 				value: 3,
 				selected: false,
-				description: "Filter Procedure Occurrences  by Quantity."
+				description: "Filter Procedure Occurrences by Quantity."
 			},
 			{
 				text: "Add Procedure Source Concept Criteria",
 				value: 4,
 				selected: false,
-				description: "Filter Procedure Occurrences  by the Procedure Source Concept."
+				description: "Filter Procedure Occurrences by the Procedure Source Concept."
 			},
 			/*
 			 			{
@@ -83,7 +83,7 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 				text: "Add Nested Criteria...",
 				value: 19,
 				selected: false,
-				description: "Apply criteria using the condition occurrence as the index date",
+				description: "Apply criteria using the procedure occurrence as the index event.",
 			}
 		];
 		self.actionHandler = function (data) {
@@ -158,6 +158,10 @@ define(['knockout', '../options', '../InputTypes/Range', '../InputTypes/Text', '
 			self.Criteria[propertyName](null);
 		}
 
+		self.indexMessage = ko.pureComputed(() => {
+			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Procedure');
+			return `The index date refers to the procedure of ${conceptSetName}.`;
+		});		
 
 	}
 

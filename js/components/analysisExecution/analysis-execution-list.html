@@ -1,0 +1,139 @@
+<div data-bind="css: classes()">
+  <loading data-bind="css: classes('loading-panel'), visible: loading" params="status: 'Loading ...'"></loading>
+  <div data-bind="visible: !loading()">
+    <h2 data-bind="css: classes('title')">
+      Executions
+    </h2>
+    <div data-bind="css: classes('content')">
+      <!-- ko foreach: executionGroups -->
+        <div data-bind="template: {
+          name: 'execution-group',
+          data: Object.assign({}, $data, {
+            classes: $parent.classes,
+            execColumns: $parent.execColumns,
+            isExpanded: $parent.expandedSection() === $index(),
+            toggleSection: () => $parent.toggleSection($index()),
+          })
+        }"></div>
+      <!-- /ko -->
+    </div>
+  </div>
+</div>
+
+<atlas-modal params="
+  showModal: $component.isExecutionDesignShown,
+  title: 'Design',
+  data: {
+    executionDesign: $component.executionDesign,
+    classes: $component.classes
+  }
+">
+  <loading data-bind="css: classes('loading-panel'), visible: executionDesign() == null" params="status: 'Loading ...'"></loading>
+  <div data-bind="if: executionDesign() != null">
+    <textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
+  </div>
+</atlas-modal>
+
+<modal-exit-message params="{
+    showModal: $component.isExitMessageShown,
+    title: 'Execution Exit Message',
+    exitMessage: $component.exitMessage,
+  }
+">
+</modal-exit-message>
+
+
+<script type="text/html" id="execution-group">
+  <div data-bind="css: classes('group', isExpanded ? 'expanded': null )">
+    <div data-bind="css: classes('heading')">
+      <label data-bind="css: classes('ds-title'), text: sourceName"></label>
+      <ul data-bind="css: classes({ element: 'action-list' })">
+        <li data-bind="
+          css: classes({ element: 'action' }),
+          tooltip: !$component.isGenerationPermitted(sourceKey) ? $component.getDisableReason(sourceKey) : null,
+        ">
+          <button data-bind="
+            css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+            attr: { 'disabled': !$component.isGenerationPermitted(sourceKey) },
+            click: () => $component.generate(sourceKey),
+            visible: $component.executionStatuses.COMPLETED === status()
+          ">
+            <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-play']})"></i>
+            <span data-bind="css: classes('action-text')">Generate</span>
+          </button>
+          <a role="button" class="btn btn-sm btn-danger" data-bind="
+            click: () => $component.cancelGenerate(sourceKey),
+            attr: { disabled: $component.isSourceStopping($data) },
+            visible: $component.runningExecutionStatuses.includes(status()) && !$component.runExecutionInParallel
+          ">
+            <i class="fa fa-spinner fa-spin"></i> Cancel
+          </a>
+          <a role="button" class="btn btn-sm btn-primary" data-bind="
+            click: () => $component.generate(sourceKey),
+            visible: $component.runningExecutionStatuses.includes(status()) && $component.runExecutionInParallel
+          ">
+            <i class="fa fa-spinner fa-spin"></i> Generating
+          </a>
+          <a role="button" class="btn btn-sm btn-warning" data-bind="
+            attr: { disabled: true },
+            visible: $component.executionStatuses.PENDING === status()
+          ">
+            <i class="fa fa-spinner fa-spin"></i> Pending
+          </a>
+        </li>
+        <li data-bind="
+          css: classes({ element: 'action' }),
+          tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null",
+        ">
+          <!-- ko if: $component.executionResultMode === $component.executionResultModes.VIEW -->
+            <button data-bind="
+              css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+              attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+              click: () => $component.goToLatestResults(sourceKey)"
+            ">
+              <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-eye']})"></i>
+              View latest result
+            </button>
+          <!-- /ko -->
+          <!-- ko if: $component.executionResultMode === $component.executionResultModes.DOWNLOAD -->
+            <button data-bind="
+              css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+              attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+              click: () => $component.downloadLatestResults(sourceKey)"
+            ">
+              <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-download']})"></i>
+              Download latest result
+            </button>
+          <!-- /ko -->
+        </li>
+        <li data-bind="
+          css: classes({ element: 'action' }),
+          tooltip: !$component.isResultsViewPermitted(sourceKey) ? 'Not enough permissions to view results' : null"
+        ">
+          <button data-bind="
+            css: classes({ element: 'action-btn', extra: ['btn btn-primary btn-sm']}),
+            attr: { 'disabled': !$component.isResultsViewPermitted(sourceKey) },
+            click: toggleSection,
+          ">
+            <i data-bind="css: classes({ element: 'action-ico', extra: ['fa fa-ellipsis-v']})"></i>
+            <span data-bind="text: `All executions (${submissions().length})`"></span>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <ul data-bind="css: classes('result-list')">
+      <li data-bind="css: classes('result-line')">
+        <table data-bind="
+          css: classes({ element: 'result-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+          dataTable: {
+            data: submissions,
+            options: {
+              columns: execColumns,
+              order: [[ 0, 'desc' ]],
+            }
+          }
+        "></table>
+      </li>
+    </ul>
+  </div>
+</script>

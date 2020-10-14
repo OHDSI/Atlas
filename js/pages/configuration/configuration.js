@@ -11,6 +11,8 @@ define([
   'const',
   'services/JobDetailsService',
   'services/Poll',
+  'services/job/jobDetail',
+  'services/CacheAPI',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -25,7 +27,9 @@ define([
   sharedState,
   constants,
   jobDetailsService,
-  PollService
+  {PollService},
+  jobDetail,
+  cacheApi,
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -68,11 +72,14 @@ define([
         }
       });
 
-		  this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canClearServerCache = ko.pureComputed(() => {
+        return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
+      });
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
-        interval: 5000,
+        interval: 5000
       });
     }
 
@@ -84,8 +91,16 @@ define([
       return this.sourceJobs.get(job.executionId);
     }
 
-    checkJobs() {
-      this.jobListing().forEach(job => {
+    async checkJobs() {
+      const notifications = await jobDetailsService.listRefreshCacheJobs();
+      const jobs = notifications.data.map(n => {
+          const job = new jobDetail();
+          job.status(n.status);
+          job.executionId = n.executionId;
+          return job;
+      });
+
+      jobs.forEach(job => {
         let source = this.getSource(job);
         if (source && (job.isComplete() || job.isFailed())) {
           this.sourceJobs.delete(job.executionId);
@@ -121,7 +136,8 @@ define([
       if (!config.userAuthenticationEnabled) {
         return false;
       } else {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey));
+        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.hasSourceAccess(source.sourceKey) && source.hasResults
+            && (source.hasVocabulary || source.hasCDM));
       }
     }
 
@@ -129,6 +145,14 @@ define([
 			localStorage.clear();
 			alert("Local Storage has been cleared.  Please refresh the page to reload configuration information.")
 		};
+
+		clearServerCache() {
+      if (confirm('Are you sure you want to clear the server cache?')) {
+        cacheApi.clearCache().then(() => {
+          alert("Server cache has been cleared.");
+        });
+      }
+    };
 
 		newSource() {
       commonUtils.routeTo('/source/0');
@@ -155,6 +179,7 @@ define([
     updateVocabPriority() {
       var newVocabUrl = sharedState.vocabularyUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultVocabularyUrl(newVocabUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
       return true;
     };
@@ -162,6 +187,7 @@ define([
     updateEvidencePriority() {
       var newEvidenceUrl = sharedState.evidenceUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.evidenceUrl === newEvidenceUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultEvidenceUrl(newEvidenceUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'CEM');
       return true;
     };
@@ -169,6 +195,7 @@ define([
     updateResultsPriority() {
       var newResultsUrl = sharedState.resultsUrl();
       var selectedSource = sharedState.sources().find((item) => { return item.resultsUrl === newResultsUrl; });
+      sharedState.priorityScope() === 'application' && sharedState.defaultResultsUrl(newResultsUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Results');
       return true;
     };

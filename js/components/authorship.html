@@ -1,0 +1,6 @@
+<!-- ko if: createdBy && createdDate -->
+	<div data-bind="css: classes('container')">
+		created <span data-bind="visible: createdBy, text: `by ${createdBy}`"></span> on <span data-bind="text: createdDate"></span> 
+		<span data-bind="visible: modifiedDate">, modified <span data-bind="visible: modifiedBy, text: `by ${modifiedBy}`"></span> on <span data-bind="text: modifiedDate"></span></span>
+	</div>
+<!-- /ko -->

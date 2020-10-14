@@ -36,7 +36,7 @@
 	</div>
 </atlas-modal>
 
-<div class="panel panel-primary cohort-definition-panel">
+<div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
 		Cohort Entry Events <i data-bind="click: function () { $component.helpCohortEventsOpened(true) }" class="fa fa-question-circle pull-right"></i>
 	</div>
@@ -93,7 +93,7 @@
 		<div data-bind="with: expression">
 			<div data-bind="if: AdditionalCriteria">
 				<div><b>Restrict intial events to:</b></div>
-				<criteria-group params="{expression: $data, group: AdditionalCriteria}"> </criteria-group>
+				<criteria-group params="{expression: $data, group: AdditionalCriteria, indexMessage: 'The index date refers to the event from the Cohort Entry criteria.'}"> </criteria-group>
 				<div style="padding: 3px 0px" data-bind="with: QualifiedLimit">Limit initial events to:
 					<select data-bind="options: $component.options.resultLimitOptions,
 					optionsText: function(item) { return item.name },
@@ -111,7 +111,7 @@
 </div>
 </div>
 
-<div class="panel panel-primary cohort-definition-panel">
+<div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
 		Inclusion Criteria <i data-bind="click: function () { $component.helpInclusionCriteriaOpened(true) }" class="fa fa-question-circle pull-right"></i>
 	</div>
@@ -165,7 +165,7 @@
 </div>
 
 
-<div class="panel panel-primary cohort-definition-panel">
+<div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
 		Cohort Exit <i data-bind="click: function () { $component.helpCohortExitOpened(true) }" class="fa fa-question-circle pull-right"></i>
 	</div>
@@ -226,7 +226,7 @@
 	</div>
 </div>
 
-<div class="panel panel-primary cohort-definition-panel">
+<div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
 		Cohort Eras
 	</div>

@@ -1,0 +1,33 @@
+<div data-bind="if: $component.jobListing().length <= 0">
+    Notifications for jobs will be displayed here. A job could include cohort generation, cohort reporting, or other tasks that can take a long time to complete. This top right notification icon will highlight <i class="fa fa-bell pending"></i> if you
+    have new notifications available.
+</div>
+<div data-bind="if: $component.jobListing().length > 0">
+    <table data-bind="css: classes({ element: 'jobs-table', extra: ['table'] })">
+        <thead>
+        <th>Job Name</th>
+        <th>Duration</th>
+        <th>End time</th>
+        <th>Status</th>
+        </thead>
+        <tbody>
+        <!-- ko foreach: jobListing -->
+        <tr data-bind="css: { warning: !viewed() }">
+            <td data-bind="css: $parent.classes('job-name')">
+                <div data-bind="if: $parent.jobNameClick">
+                    <i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> 
+                    <a data-bind="click: () => { $parent.jobNameClick($data); }, text: $data.name" class="linkish"></a>
+                </div>
+                <div data-bind="if: !$parent.jobNameClick">
+                    <i data-bind="css: $parent.classes({ element: 'job-ico', extra: ['fa fa-tasks'] })"></i> 
+                    <span data-bind="text: $data.name"></span>
+                </div>
+            </td>
+            <td data-bind="css: $parent.classes('job-duration'), html: duration"></td>
+            <td data-bind="css: $parent.classes('job-end'), html: endDate"></td>
+            <td data-bind="css: $parent.classes('job-status'), html: status"></td>
+        </tr>
+        <!-- /ko -->
+        </tbody>
+    </table>
+</div>

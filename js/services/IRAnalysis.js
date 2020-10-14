@@ -5,6 +5,7 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var authApi = require('services/AuthAPI');
 	const httpService = require('services/http');
+	const fileService = require('services/file');
 
 	function pruneJSON(key, value) {
 		if (value === 0 || value) {
@@ -179,6 +180,33 @@ define(function (require, exports) {
 				return response;
 			});
     }
+
+   function exportSql({ analysisId, expression } = {}) {
+			return httpService
+				.doPost(`${config.webAPIRoot}ir/sql`, { analysisId, expression })
+				.then(res => res.data)
+				.catch(response => {
+					authApi.handleAccessDenied(response);
+					return response;
+				});
+	 }
+
+	 function exportConceptSets(id) {
+		return fileService.loadZip(`${config.webAPIRoot}ir/${id}/export/conceptset`);
+	}
+ 
+	function runDiagnostics(design) {
+		var designCopy = JSON.parse(ko.toJSON(design));
+		
+		if (typeof designCopy.expression != 'string') {
+			designCopy.expression = JSON.stringify(designCopy.expression);
+		}
+
+		return httpService
+			.doPost(`${config.webAPIRoot}ir/check`, designCopy)
+			.then(res => res.data);
+	}
+	 
 	
 	var api = {
 		getAnalysisList: getAnalysisList,
@@ -195,6 +223,9 @@ define(function (require, exports) {
 		exists,
 		importAnalysis: importAnalysis,
 		exportAnalysis: exportAnalysis,
+		exportSql,
+		exportConceptSets,
+		runDiagnostics,
 	};
 
 	return api;

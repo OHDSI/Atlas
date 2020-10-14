@@ -23,7 +23,7 @@
 				<faceted-datatable params="
           columns: chartFormats.table.columns,
           reference: tableData,
-          rowClick: currentConcept,
+          rowClick: chartFormats.table.onclick,
           dom: chartFormats.table.dom,
           buttons: chartFormats.table.buttons,
           rowCallback: chartFormats.table.rowCallback,
@@ -45,6 +45,17 @@
 	<loading params="status: 'Loading Drilldown Report'"></loading>
 </atlas-modal>
 <!-- ko if: currentConcept() -->
-<report-treemap-drilldown params="context: context, currentReport: currentReport, currentConcept: currentConcept, byFrequency: byFrequency, byUnit: byUnit, byType: byType, byValueAsConcept: byValueAsConcept, byQualifier: byQualifier, byOperator: byOperator"></report-treemap-drilldown>
+<report-treemap-drilldown params="
+	context: context, 
+	currentReport: currentReport, 
+	currentConcept: currentConcept, 
+	byFrequency: byFrequency, 
+	byUnit: byUnit, 
+	byType: byType, 
+	byValueAsConcept: byValueAsConcept, 
+	byQualifier: byQualifier, 
+	byOperator: byOperator, 
+	byLengthOfEra: byLengthOfEra">
+</report-treemap-drilldown>
 <!-- /ko -->
 <!--/ko-->

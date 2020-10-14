@@ -46,6 +46,13 @@ div.criteriaGroup div.additionalCriteria > div > div.criteriaSection {
 div.criteriaGroup table {
 	width: 100%;
 }
+
+div.criteriaGroup div.indexMessage {
+	font-style:italic;
+	margin-bottom: 2px;
+}
+
+
 div.criteriaSection {
 	position: relative;
 	/* background-color: #eee; */
@@ -93,9 +100,8 @@ img.deleteIcon {
 }
 table.criteriaTable>tbody>tr>td {
 	/* padding-top:3px; */
-	line-height: 32px;
 	height: 32px;
-	vertical-align: middle;
+	vertical-align: top;
 }
 .smallInputField {
 	width: 100px;
@@ -212,4 +218,15 @@ div.criteria-group-container {
 
 .btn.btn-cycle {
 	vertical-align:baseline;
+}
+
+div.no-inclusion-message__container {
+	padding-top: 20px;
+	text-align: center;
+}
+
+div.no-inclusion-message__container > div {
+	display: inline-block;
+	font-size:2em;
+	font-weight:bold;
 }

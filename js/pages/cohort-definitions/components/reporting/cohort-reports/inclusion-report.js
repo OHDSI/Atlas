@@ -3,12 +3,14 @@ define([
 	'components/Component',
 	'./const',
 	'utils/CommonUtils',
+	'text!./inclusion-report.html',
 	'./feasibility-report-viewer-with-header'
 ], function (
 	ko,
 	Component,
 	constants,
 	commonUtils,
+	view,
 ) {
 	class CohortInclusionReport extends Component {
 
@@ -33,6 +35,6 @@ define([
 	return commonUtils.build(
 		'cohort-report-inclusion',
 		CohortInclusionReport,
-		`<tabs params="tabs: $component.tabs, modifiers: ['header-right', 'header-sm', 'nested']"></tabs>`
+		view
 	);
 });

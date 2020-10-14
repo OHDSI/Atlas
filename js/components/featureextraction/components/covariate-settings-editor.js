@@ -22,6 +22,7 @@ define([
             this.longTermLabel = ko.pureComputed(() => {
                 return this.getWindowLabel(this.covariateSettings.longTermStartDays());
             });
+            this.isEditPermitted = params.isEditPermitted;
     
             this.mediumTermLabel = ko.pureComputed(() => {
                 return this.getWindowLabel(this.covariateSettings.mediumTermStartDays());

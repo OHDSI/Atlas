@@ -3,20 +3,56 @@ define([
     'text!./characterization-exec-wrapper.html',
     'components/Component',
     'utils/CommonUtils',
-    './characterization-executions',
+    'services/JobPollService',
+    'const',
+    'pages/characterizations/services/CharacterizationService',
+	'pages/characterizations/services/PermissionService',
     './characterization-results',
+    'components/analysisExecution/analysis-execution-list',
 ], function (
     ko,
     view,
     Component,
-    commonUtils
+    commonUtils,
+    JobPollService,
+    consts,
+    CharacterizationService,
+    PermissionService,
 ) {
     class CharacterizationExecWrapper extends Component {
         constructor(params) {
             super();
 
             this.executionId = params.executionId;
-            this.componentParams = params;
+            this.criticalCount = params.criticalCount;
+            this.design = params.design;
+            this.designDirtyFlag = params.designDirtyFlag;
+
+            const extraExecutionPermissions = ko.computed(() => !this.designDirtyFlag().isDirty() 
+                && this.design() && this.design().cohorts().length 
+                && params.isEditPermitted()
+                && this.criticalCount() <= 0);       
+                
+            const generationDisableReason = ko.computed(() => {
+                if (this.designDirtyFlag().isDirty()) return consts.disabledReasons.DIRTY;
+                if (this.criticalCount() > 0) return consts.disabledReasons.INVALID_DESIGN;
+                if (this.design() && !this.design().cohorts().length) return consts.disabledReasons.EMPTY_COHORTS;
+                return consts.disabledReasons.ACCESS_DENIED;
+            });            
+            this.componentParams = {
+                tableColumns: ['Date', 'Design', 'Status', 'Duration', 'Results'],
+                runExecutionInParallel: false,
+                resultsPathPrefix: '/cc/characterizations/',
+                analysisId: params.characterizationId,
+                ExecutionService: CharacterizationService,
+                PermissionService,
+                PollService: JobPollService,
+                extraExecutionPermissions,
+                generationDisableReason,
+                executionResultMode: consts.executionResultModes.VIEW,
+                selectedSourceId: params.selectedSourceId,
+                ...params,
+            };
         }
     }
 

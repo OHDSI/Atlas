@@ -5,7 +5,7 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
-	'./utils',
+	'../utils',
 	'../options',
 	'less!./WindowedCriteria.less',
 ], function(

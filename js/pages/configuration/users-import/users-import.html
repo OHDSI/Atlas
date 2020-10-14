@@ -105,7 +105,7 @@
         <!-- Final page -->
         <div data-bind="if: wizardStep() === WIZARD_STEPS.FINISH">
             <div data-bind="css: classes({extra: 'padded'})">
-                <step-header params="header: 'User import from directory has started...'"></step-header>
+                <step-header params="header: stepMessage"></step-header>
                 <div data-bind="css: classes('loader'), visible: loading()">
                     <loading params="status:'loading'" />
                 </div>

@@ -22,9 +22,13 @@
 	<div data-bind="css: classes('filter')">
 		<visualizations-filter-panel params="{ filterList: $component.filterList, live: true }"/>
 	</div>
-
+	
+	<h3 data-bind="css: $component.classes('analysis-name')">Pathways Analysis for <span data-bind="text: pathwaysObserver().title"></span></h3>
+	
+	<nav-pills params="{ pills: $component.pills, selected: $component.mode}"></nav-pills>
+	
 	<!-- ko with: pathwaysObserver -->
-		<h3 data-bind="css: $component.classes('analysis-name')">Pathways Analysis for <span data-bind="text: title"></span></h3>
+	<div data-bind="if: $component.mode() == $component.MODE_VISUALIZATION, css: $component.classes('content')">
 		<div data-bind="if: !eventCodes.length && !cohortPathways.length && !eventCohorts.length">
 			No pathways were found
 		</div>
@@ -69,8 +73,9 @@
 					<div class="panel-body">
 						<sunburst data-bind="css: $component.classes('sunburst')"
 								  params="data: () => pathway,
-								minHeight: 300,
-								format: {
+										filename: `${targetCohortName}_sunburst.png`,
+										minHeight: 300,
+										format: {
 										tipClass: $component.classes('d3-tip'),
 										split: $component.splitPathway,
 										colors: $parent.colors,
@@ -94,8 +99,8 @@
 								<thead>
 								<tr>
 									<th>Name</th>
-									<th>% Remain</th>
-									<th>% Diff</th>
+									<th>Remain</th>
+									<th>Diff</th>
 								</tr>
 								</thead>
 								<tbody data-bind="foreach: pathDetails().tableData">
@@ -106,10 +111,10 @@
 										</div>
 									</td>
 									<td data-bind="css: $component.classes('detail-table-col-remain')">
-										<span data-bind="text: $component.formatPct(remainPct)"></span>
+										<span data-bind="text: $component.formatDetailValue(personCount, remainPct)"></span>
 									</td>
 									<td data-bind="css: $component.classes('detail-table-col-diff')">
-										<span data-bind="text: $component.formatPct(diffPct)"></span>
+										<span data-bind="text: $component.formatDetailValue(diff, diffPct)"></span>
 									</td>
 								</tr>
 								</tbody>
@@ -119,6 +124,13 @@
 				</div>
 			</div>
 		<!-- /ko -->
+	</div>		
+	<!-- /ko -->
+
+	<!-- ko with: results -->
+	<div data-bind="if: $component.mode() == $component.MODE_TABULAR, css: $component.classes('content')">
+		<pathway-tableview params="{ results: $data, filterList: $component.filterList()[0] }"></pathway-tableview>
+	</div>
 	<!-- /ko -->
 
 	<atlas-modal params="showModal: $component.isExecutionDesignShown, title: 'Design', data: { executionDesign: $component.executionDesign, loadExecutionDesignError: $component.loadExecutionDesignError, classes: $component.classes }">

@@ -5,13 +5,20 @@ define([
 	'utils/AutoBind',
 	'services/Vocabulary',
 	'utils/CommonUtils',
+	'services/ConceptSet',
+	'components/conceptset/ConceptSetStore',
+  'components/conceptset/utils',
+	'utils/Renderers',
 	'atlas-state',
 	'services/http',
 	'./const',
 	'services/AuthAPI',
 	'./PermissionService',
+	'const',
 	'faceted-datatable',
 	'components/heading',
+	'components/conceptLegend/concept-legend',
+	'components/conceptAddBox/concept-add-box',
 	'less!./concept-manager.less',
 ], function (
 	ko,
@@ -20,31 +27,36 @@ define([
 	AutoBind,
 	vocabularyProvider,
 	commonUtils,
+	conceptSetService,
+	ConceptSetStore,
+  conceptSetUtils,
+	renderers,
 	sharedState,
 	httpService,
 	constants,
 	authApi,
-	PermissionService
+	PermissionService,
+	globalConstants,
 ) {
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
 			super(params);
 			this.currentConceptId = ko.observable();
 			this.currentConcept = ko.observable();
+
 			this.currentConceptMode = ko.observable('details');
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
 			this.commonUtils = commonUtils;
+			this.renderers = renderers;
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(true);
-			this.renderConceptSelector = commonUtils.renderConceptSelector.bind(this);
 			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
-
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
-
+			this.isCurrentConceptAddButtonActive = ko.pureComputed(() => this.currentConcept() && (this.currentConcept().includeDescendants() || this.currentConcept().includeMapped() || this.currentConcept().isExcluded()));
 			this.subscriptions.push(
 				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
@@ -110,18 +122,12 @@ define([
 			};
 
 			this.relatedConceptsColumns = [{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-					if (sharedState.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
+				title: '',
+				render: () => renderers.renderCheckbox('isSelected'),
 				orderable: false,
-				searchable: false
-			}, {
+				searchable: false,
+				className: 'text-center',
+			},{
 				title: 'Id',
 				data: 'CONCEPT_ID'
 			}, {
@@ -149,9 +155,13 @@ define([
 			}, {
 				title: 'Distance',
 				data: function (d) {
-					return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {
-						return o.RELATIONSHIP_DISTANCE;
-					}))
+					if (d.RELATIONSHIPS) {
+						return Math.max.apply(Math, d.RELATIONSHIPS.map(function (o) {
+							return o.RELATIONSHIP_DISTANCE;
+						}))
+					} else {
+						return 0;
+					}
 				}
 			}, {
 				title: 'Domain',
@@ -196,10 +206,6 @@ define([
 			super.onPageCreated();
 		}
 
-		renderCurrentConceptSelector() {
-			return this.renderConceptSelector(null, null, this.currentConcept());
-		}
-
 		onRouterParamsChanged({ conceptId }) {
 			if (conceptId !== this.currentConceptId() && conceptId !== undefined) {
 				this.currentConceptId(conceptId);
@@ -214,23 +220,32 @@ define([
 			const promises = [];
 			const sourceData = [];
 			for (const source of sources) {
-				if (authApi.hasSourceAccess(source.sourceKey)) {
+				const { sourceName, sourceKey, resultsUrl } = source;
+				if (authApi.hasSourceAccess(sourceKey)) {
 					// await is harmless here since it will pull data sequentially while it can be done in parallel
-					let promise = httpService.doPost(`${source.resultsUrl}conceptRecordCount`, [this.currentConceptId()]).then(({ data }) => {
+					let promise = httpService.doPost(`${resultsUrl}conceptRecordCount`, [this.currentConceptId()]).then(({ data }) => {
 						const recordCountObject = data.length > 0 ? Object.values(data[0])[0] : null;
 						if (recordCountObject) {
 							sourceData.push({
-								sourceName: source.sourceName,
+								sourceName,
 								recordCount: recordCountObject[0],
 								descendantRecordCount: recordCountObject[1]
 							});
 						}
+					}).catch(err => {
+						const failedMsg = 'Failed to load data';
+						sourceData.push({
+							sourceName,
+							recordCount: failedMsg,
+							descendantRecordCount: failedMsg,
+						});
 					});
 					promises.push(promise);
 				}
 			}
-
-			await Promise.all(promises);
+			
+			// Promise.allSettled works since Chrome v76 so we need polyfill for it
+			await Promise.allSettled(promises);
 			return sourceData;
 		}
 
@@ -240,6 +255,23 @@ define([
 			const sourceData = await this.fetchRecordCounts(sourcesWithResults);
 			this.loadingSourceCounts(false);
 			this.sourceCounts(sourceData);
+		}
+
+    addConcept(options, conceptSetStore = ConceptSetStore.repository()) {
+      // add the current concept
+      const items = commonUtils.buildConceptSetItems([this.currentConcept()], options);
+      conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+    }
+    
+    // produces a closure to wrap options and source around a function
+    // that accepts the source selected concepts list
+		addConcepts(options, conceptSetStore = ConceptSetStore.repository()) {
+			return (conceptsArr, isCurrentConcept = false) => {
+				const concepts = commonUtils.getSelectedConcepts(conceptsArr);
+				const items = commonUtils.buildConceptSetItems(concepts, options);
+				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+				commonUtils.clearConceptsSelectionState(conceptsArr);
+			}
 		}
 
 		hasRelationship(concept, relationships) {
@@ -253,6 +285,29 @@ define([
 				}
 			}
 			return false;
+		}
+
+		enhanceConcept(concept) {
+			return {
+				...concept,
+				isSelected: ko.observable(false),
+			};
+		}
+
+		addToConceptSetExpression(data, currentConcept = false, source = 'repository') {
+			const concepts = commonUtils.getSelectedConcepts(ko.unwrap(data));
+			conceptSetService.addConceptsToConceptSet({ concepts, source });
+			if (currentConcept) {
+				const newCurrentConceptObject = {
+					...this.currentConceptArray()[0],
+					...data[0],
+				};
+				this.currentConceptArray([newCurrentConceptObject]);
+			}
+		}
+
+		toggleCurrentConcept(field) {
+			this.currentConcept()[field](!this.currentConcept()[field]());
 		}
 
 		metagorize(metarchy, related) {
@@ -272,7 +327,7 @@ define([
 			}
 
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
-			this.currentConcept(data);
+			this.currentConcept(this.enhanceConcept(data));
 			this.isLoading(false);
 			// load related concepts once the concept is loaded
 			this.loadingRelated(true);
@@ -283,18 +338,14 @@ define([
 			};
 
 			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');
-			for (var i = 0; i < related.length; i++) {
-				this.metagorize(this.metarchy, related[i]);
+			const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
+			for (var i = 0; i < relatedConcepts.length; i++) {
+				this.metagorize(this.metarchy, relatedConcepts[i]);
 			}
 
-			await vocabularyProvider.loadDensity(related);
-			var currentConceptObject = _.find(related, c => c.CONCEPT_ID == this.currentConceptId());
-			if (currentConceptObject !== undefined){
-			    this.currentConceptArray([currentConceptObject]);
-			} else {
-				this.currentConceptArray([]);
-			}
-			this.relatedConcepts(related);
+			await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
+			this.currentConceptArray([this.currentConcept()]);
+			this.relatedConcepts(relatedConcepts);
 
 			this.loadingRelated(false);
 		}

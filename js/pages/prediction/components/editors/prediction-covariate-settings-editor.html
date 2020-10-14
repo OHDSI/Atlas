@@ -1,6 +1,6 @@
 <div class="paddedWrapper">
     <div>
-        <label>What concepts do you want to include in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+        <label>What concepts do you want to include in baseline covariates in the patient-level prediction model? (Leave blank if you want to include everything)</label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: $component.covariateSettings.includedCovariateConceptSet().name" />
             <span class="input-group-btn">
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div>
-        <label>What concepts do you want to exclude in baseline covariates in the propensity score model? (Leave blank if you want to include everything)</label>
+        <label>What concepts do you want to exclude in baseline covariates in the patient-level prediction model? (Leave blank if you want to include everything)</label>
         <div class="input-group">
             <input class="form-control" type="text" disabled data-bind="value: $component.covariateSettings.excludedCovariateConceptSet().name" />
             <span class="input-group-btn">
@@ -41,7 +41,7 @@
 </div>
 <hr/>
 <h4>Select Covariates</h4>
-<covar-settings-editor params="covariateSettings: $component.covariateSettings"></covar-settings-editor>
+<covar-settings-editor params="covariateSettings: $component.covariateSettings, isEditPermitted: $component.isEditPermitted"></covar-settings-editor>
 <atlas-modal params="{
     showModal: showConceptSetSelector,
     modifiers: ['lg'],
@@ -53,5 +53,5 @@
         showConceptSetSelector: $component.showConceptSetSelector,
     }
 }">
-    <cohort-concept-set-browser params="{onRespositoryConceptSetSelected: data => conceptsetSelected(data)}"></cohort-concept-set-browser>
+    <concept-set-browser params="{onRespositoryConceptSetSelected: data => conceptsetSelected(data)}"></concept-set-browser>
 </atlas-modal>

@@ -1,8 +1,6 @@
-define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'const'], function (ko, cache, jobDetail, ohdsiUtil, constants) {
+
 	var state = {};
-	state.resultsUrl = ko.observable();
-	state.vocabularyUrl = ko.observable();
-	state.evidenceUrl = ko.observable();
 	state.jobListing = ko.observableArray();
 	state.priorityScope = ko.observable('session');
 	state.roles = ko.observableArray();
@@ -10,6 +8,29 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	state.sources = ko.observableArray([]);
 	state.currentView = ko.observable('loading');
 	state.loading = ko.observable(false);
+
+	const updateKey = (key, value) => value ? sessionStorage.setItem(key, value) : sessionStorage.removeItem(key);
+	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
+	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
+	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
+	state.vocabularyUrl.subscribe(value => updateKey('vocabularyUrl', value));
+	state.evidenceUrl.subscribe(value => updateKey('evidenceUrl', value));
+	state.resultsUrl.subscribe(value => updateKey('resultsUrl', value));
+
+	// This default values are stored during initialization
+	// and used to reset after session finished
+	state.defaultVocabularyUrl = ko.observable();
+	state.defaultEvidenceUrl = ko.observable();
+	state.defaultResultsUrl = ko.observable();
+	state.defaultVocabularyUrl.subscribe((value) => state.vocabularyUrl(value));
+	state.defaultEvidenceUrl.subscribe((value) => state.evidenceUrl(value));
+	state.defaultResultsUrl.subscribe((value) => state.resultsUrl(value));
+
+	state.resetCurrentDataSourceScope = function() {
+		state.vocabularyUrl(state.defaultVocabularyUrl());
+		state.evidenceUrl(state.defaultEvidenceUrl());
+		state.resultsUrl(state.defaultResultsUrl());
+	}
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
@@ -23,14 +44,10 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	});
 	state.appInitializationStatus = ko.observable(constants.applicationStatuses.initializing);
 
-	state.clearSelectedConcepts = function () {
-		this.selectedConceptsIndex = {};
-		this.selectedConcepts([]);
-	}
-
 	state.IRAnalysis = {
 		current: ko.observable(null),
-		selectedId: ko.observable(null)
+		selectedId: ko.observable(null),
+		selectedSourceId: ko.observable(null),
 	}
 	state.IRAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.IRAnalysis.current()));
 
@@ -45,6 +62,11 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
 	};
+	state.FeatureAnalysis.current.subscribe(newValue => {
+		if (newValue != null) {
+			state.FeatureAnalysis.dirtyFlag(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
+		}
+	});
 	state.FeatureAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.FeatureAnalysis.current()));
 
 	// Pathways State
@@ -90,24 +112,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 	state.includedConceptsMap = ko.observable({});
 	state.includedSourcecodes = ko.observableArray();
 	state.currentConceptSetMode = ko.observable('details');
-
-	state.ConceptSet = {
-		current: ko.observable(),
-		source: ko.observable(),
-		negativeControls: ko.observable(),
-	};
-	state.ConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({
-		header: state.ConceptSet.current,
-		details: state.selectedConcepts,
-	}));
-	state.ConceptSet.current.subscribe((newValue) => {
-		if (newValue != null) {
-			state.ConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag({
-				header: state.ConceptSet.current,
-				details: state.selectedConcepts,
-			}));
-		}
-	});
+	state.includedHash = ko.observable();
 
 	state.currentConceptIdentifierList = ko.observable();
 	state.resolvingConceptSetExpression = ko.observable(false);
@@ -118,15 +123,31 @@ define(['knockout', 'lscache', 'services/job/jobDetail',  'assets/ohdsi.util', '
 		info: ko.observable(),
 		mode: ko.observable('definition'),
 		sourceInfo: ko.observableArray(),
+		lastUpdatedId: ko.observable(),
 	};
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortDefinition.current()));
 	state.CohortDefinition.current.subscribe(newValue => {
 		if (newValue != null) {
-			state.CohortDefinition.dirtyFlag(new ohdsiUtil.dirtyFlag(state.CohortDefinition.current()));
+			state.CohortDefinition.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
 		}
 	});
 	state.cohortDefinitions = ko.observableArray();
+	
 
+	// repository concept state
+	state.RepositoryConceptSet = {
+		current: ko.observable(),
+		negativeControls : ko.observable(),
+	}
+	
+	state.RepositoryConceptSet.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.RepositoryConceptSet.current()));
+	state.RepositoryConceptSet.current.subscribe(newValue => {
+		if (newValue != null) {
+			state.RepositoryConceptSet.dirtyFlag(new ohdsiUtil.dirtyFlag(newValue));
+		}
+	});
+	
+	state.activeConceptSet = ko.observable();
 
 	return state;
 });

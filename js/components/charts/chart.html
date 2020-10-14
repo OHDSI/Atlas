@@ -1,4 +1,9 @@
-<div data-bind="chart: { data: data, minHeight: minHeight, format: format, renderer: renderer }, if: data"></div>
+<!-- ko if: data -->
+<div data-bind="css: chartClasses('container')">
+	<button data-bind="css: chartClasses('export-button'),if: $component.filename, click: $component.export">Export</button>
+	<div data-bind="chart: { data: data, minHeight: minHeight, format: format, renderer: renderer }"></div>
+</div>	
+<!-- /ko -->
 <!-- ko ifnot: data -->
   <empty-state></empty-state>
 <!-- /ko -->

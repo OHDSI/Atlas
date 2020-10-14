@@ -57,6 +57,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 
 		let origState = new Map();
 		let changedObservablesCount = ko.observable();
+		let changedCount = ko.observable();
 
 		const getObjectObservables = function (obj, res, currentPath = '') {
 			if (typeof obj === 'object') {
@@ -81,6 +82,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			for (let i in observables) {
 				(function(key) {
 					let subscription = observables[key].subscribe(newVal => {
+						changedCount(changedCount() + 1);
 						const stateEntry = state.get(key);
 						const isTypeChanged = ko.toJSON(newVal) === '""' && stateEntry.origVal === 'null';
 						if (ko.toJSON(newVal) !== stateEntry.origVal && !isTypeChanged && !stateEntry.wasChanged) {
@@ -106,6 +108,7 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			origState = new Map();
 			addObservablesToState(origState, observables);
 			changedObservablesCount(0);
+			changedCount(0);
 		};
 
 		const result = function () {},
@@ -117,6 +120,15 @@ define(['jquery', 'knockout', 'lz-string', 'lodash', 'crossfilter'], function ($
 			return _isInitiallyDirty() || changedObservablesCount();
 		}).extend({
 			rateLimit: 200
+		});
+
+		result.isChanged = ko.pureComputed(function () {
+			return changedCount();
+		}).extend({
+			rateLimit: {
+				timeout: 1000,
+				method: "notifyWhenChangesStop"
+			}
 		});
 
 		result.reset = function () {

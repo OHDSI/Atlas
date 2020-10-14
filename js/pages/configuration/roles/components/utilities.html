@@ -1,0 +1,54 @@
+<div role="tabpanel">
+
+    <div class="paddedWrapper">
+        <ul class="nav nav-pills">
+            <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
+            <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+        </ul>
+
+
+
+        <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'import'" class="tab-pane">
+
+            <!-- ko if: validationErrors -->
+            <div class="alert alert-danger" role="alert"  data-bind="text: validationErrors"></div>
+            <!-- /ko -->
+            <!-- ko if: fixableValidationErrors() -->
+            <div class="alert alert-danger" role="alert">
+                Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.
+                <a href="#" class="alert-link" data-bind="click: () => $component.fixJsonErrors()">Fix JSON</a>
+            </div>
+            <!-- /ko -->
+
+            <!-- ko if: validationWarnings -->
+            <div class="alert alert-warning" role="alert"  data-bind="text: validationWarnings"></div>
+            <!-- /ko -->
+            <!-- ko if: fixableValidationWarnings() -->
+            <div class="alert alert-warning" role="alert">
+                Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.
+                <a href="#" class="alert-link" data-bind="click: () => $component.fixJsonWarnings()">Remove the permissions</a>
+            </div>
+            <!-- /ko -->
+
+            <import params="{
+							entityId: currentRoleId,
+							isPermittedImport: isPermittedImport,
+							importService: importService,
+							importJSON: importJSON,
+							isJSONValid: isJSONValid,
+							afterImportSuccess: afterImportSuccess
+						}"></import>
+        </div>
+        <div role="tabpanel" data-bind="visible: $component.expressionMode() == 'export'" class="tab-pane">
+            <div class="paddedWrapper">
+                <export params="{
+								entityId: currentRoleId,
+								isPermittedExport: isPermittedExport,
+								exportService: exportService,
+								dirtyFlag: dirtyFlag,
+								message: { entityName: 'role' }
+							}"></export>
+            </div>
+        </div>
+    </div>
+</div>

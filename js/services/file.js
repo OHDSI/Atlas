@@ -8,11 +8,12 @@ define(
   ) => {
     class FileService {
       // jQuery won't allow to set responseType other than 'text'
-      loadZip(url, filename) {
+      loadZip(url, filename, method = 'GET', params = {}) {
         const promise = new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
-          xhr.open("GET", url, true);
+          xhr.open(method, url, true);
           xhr.setRequestHeader("Authorization", authApi.getAuthorizationHeader());
+          xhr.setRequestHeader("Content-type", "application/json");
           xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
               resolve();
@@ -24,7 +25,7 @@ define(
           }
           xhr.onerror = reject;
           xhr.responseType = "arraybuffer";
-          xhr.send();
+          xhr.send(JSON.stringify(params));
         });
 
         return promise;

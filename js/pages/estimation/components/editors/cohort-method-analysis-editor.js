@@ -14,6 +14,7 @@ define([
 	'./outcome-model-args-editor',
 	'featureextraction/components/covariate-settings-editor',
 	'components/cohort-definition-browser',
+	'less!./cohort-method-analysis.less',
 ], function (
 	ko,
 	view,
@@ -33,6 +34,7 @@ define([
 			this.options = estimationConstants.options;
 			this.subscriptions = params.subscriptions;
 			this.editorMode = ko.observable('all');
+			this.isEditPermitted = params.isEditPermitted;
 			this.showCovariateSelector = ko.observable(false);
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);
@@ -117,6 +119,11 @@ define([
 				this.analysis.stratifyByPsAndCovariates(this.matchStratifySelection() === "stratifyOnPsAndCovariates");
 				this.setCreatePs();
 			}));
+			
+			
+			this.subscriptions.push(this.analysis.fitOutcomeModelArgs.inversePtWeighting.subscribe(newValue => {
+				this.setCreatePs();
+			}));
 		}
 
 		toggleControlDisplay() {
@@ -155,6 +162,9 @@ define([
 				this.analysis.createPs(
 					!(this.matchStratifySelection() === "none" && this.trimSelection() === "none")
 				);
+			}
+			if (this.analysis.fitOutcomeModelArgs.inversePtWeighting()) {
+				this.analysis.createPs(true);
 			}
 		}
 

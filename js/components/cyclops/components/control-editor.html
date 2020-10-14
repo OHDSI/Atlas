@@ -1,13 +1,13 @@
 <div>
     <label>Maximum iterations of Cyclops to attempt before returning a failed-to-converge error.</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.maxIterations, eventType:'blur', ko_autocomplete: { value: $component.control.maxIterations, source: $component.options.maxIterationOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.maxIterations, eventType:'blur', ko_autocomplete: { value: $component.control.maxIterations, source: $component.options.maxIterationOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
     <label>Maximum relative change in convergence criterion from successive iterations to achieve convergence.</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.tolerance, eventType:'blur', ko_autocomplete: { value: $component.control.tolerance, source: $component.options.toleranceOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.tolerance, eventType:'blur', ko_autocomplete: { value: $component.control.tolerance, source: $component.options.toleranceOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
@@ -45,19 +45,19 @@
 <div>
     <label>Number of random folds to employ in cross validation:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.fold, eventType:'blur', ko_autocomplete: { value: $component.control.fold, source: $component.options.foldOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.fold, eventType:'blur', ko_autocomplete: { value: $component.control.fold, source: $component.options.foldOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
     <label>Number of repetitions of <span data-bind="text: $component.control.fold"></span>-fold cross validation:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.cvRepetitions, eventType:'blur', ko_autocomplete: { value: $component.control.cvRepetitions, source: $component.options.cvRepetitions, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.cvRepetitions, eventType:'blur', ko_autocomplete: { value: $component.control.cvRepetitions, source: $component.options.cvRepetitions, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
     <label>Number of repetitions of data for cross validation:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.minCVData, eventType:'blur', ko_autocomplete: { value: $component.control.minCVData, source: $component.options.minCVData, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span cclass="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.minCVData, eventType:'blur', ko_autocomplete: { value: $component.control.minCVData, source: $component.options.minCVData, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
@@ -76,7 +76,7 @@
 <div>
     <label>Starting variance for auto-search cross-validation; -1 = use estimate based on data:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.startingVariance, eventType:'blur', ko_autocomplete: { value: $component.control.startingVariance, source: $component.options.startingVariance, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.startingVariance, eventType:'blur', ko_autocomplete: { value: $component.control.startingVariance, source: $component.options.startingVariance, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
@@ -88,7 +88,7 @@
 <div data-bind="visible: $component.control.useKKTSwindle()">
     <label>Size multiplier for active set:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.tuneSwindle, eventType:'blur', ko_autocomplete: { value: $component.control.tuneSwindle, source: $component.options.tuneSwindle, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.tuneSwindle, eventType:'blur', ko_autocomplete: { value: $component.control.tuneSwindle, source: $component.options.tuneSwindle, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
@@ -100,12 +100,12 @@
 <div>
     <label>Initial bound:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.initialBound, eventType:'blur', ko_autocomplete: { value: $component.control.initialBound, source: $component.options.initialBound, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.initialBound, eventType:'blur', ko_autocomplete: { value: $component.control.initialBound, source: $component.options.initialBound, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>
 <div>
     <label>Max bound count:</label>
     <div class="input-group">
-        <span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: $component.control.maxBoundCount, eventType:'blur', ko_autocomplete: { value: $component.control.maxBoundCount, source: $component.options.maxBoundCount, minLength: 0, maxShowItems: 10, scroll: true }" />
+        <span class="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.maxBoundCount, eventType:'blur', ko_autocomplete: { value: $component.control.maxBoundCount, source: $component.options.maxBoundCount, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>
 </div>

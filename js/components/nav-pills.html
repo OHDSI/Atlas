@@ -1,0 +1,5 @@
+	<ul data-bind="css: classes({ element: 'nav', extra: 'nav nav-pills' }), foreach: pills">
+		<li role="presentation" data-bind="css: $component.classes({ element: 'nav-pill', extra: key == $component.selected() ? 'active' : null }), click: $component.onSelect">
+			<a data-bind="text: name"></a>
+		</li>
+	</ul>

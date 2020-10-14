@@ -18,6 +18,7 @@ define([
 
 			this.control = ko.isObservable(params.control) ? params.control() : params.control;
 			this.options = options;
+			this.isEditPermitted = params.isEditPermitted;
 		}
 	}
 

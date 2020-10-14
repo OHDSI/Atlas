@@ -42,7 +42,6 @@ define(['knockout',
 			this.negativeControls = params.negativeControls;
 			this.dirtyFlag = params.dirtyFlag;
 			this.saveConceptSet = params.saveConceptSet;
-			this.currentConceptSet = sharedState.ConceptSet.current;
 			this.conceptSetValid = ko.observable(false);
 			this.conceptSetValidText = ko.observable("");
 			this.conceptDomainId = ko.observable(null);
@@ -113,7 +112,7 @@ define(['knockout',
 			this.canGenerate = ko.pureComputed(() => {
 				var isDirty = this.dirtyFlag() && this.dirtyFlag()
 					.isDirty();
-				var isNew = this.currentConceptSet() && (this.currentConceptSet()
+				var isNew = this.conceptSet() && (this.conceptSet()
 					.id == 0);
 				var canGenerate = !(isDirty || isNew);
 				return (canGenerate);
@@ -127,7 +126,6 @@ define(['knockout',
 				conceptSetService.getGenerationInfo(id)
 					.then((infoList) => {
 						var hasPending = false;
-						console.log("poll for evidence....")
 
 						infoList.forEach(info => {
 							// obtain source reference

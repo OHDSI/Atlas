@@ -1,9 +1,11 @@
 define([
     'services/http',
+    'services/file',
     'appConfig',
-    'utils/ExecutionUtils'
+    'utils/ExecutionUtils',
 ], function (
     httpService,
+    fileService,
     config,
     executionUtils,
 ) {
@@ -43,7 +45,7 @@ define([
         return httpService.doPut(config.webAPIRoot + 'cohort-characterization/' + id, design).then(res => res.data);
     }
 
-    function loadCharacterizationExecutionList(id) {
+    function listExecutions(id) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/generation')
             .then(res => executionUtils.generateVersionTags(res.data));
@@ -55,20 +57,25 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationResults(generationId, thresholdLevel) {
+    function loadCharacterizationResults(generationId, params) {
         return httpService
-            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result'
-                + (thresholdLevel ? ('?thresholdLevel=' + thresholdLevel) : ''))
+            .doPost(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result', params)
             .then(res => res.data);
     }
 
-    function loadCharacterizationExportDesignByGeneration(generationId) {
+    function loadCharacterizationResultsCount(generationId) {
+        return httpService
+            .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/result/count')
+            .then(res => res.data);
+    }
+
+    function loadExportDesignByGeneration(generationId) {
         return httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/generation/' + generationId + '/design')
             .then(res => res.data);
     }
 
-    function runGeneration(ccId, sourcekey) {
+    function generate(ccId, sourcekey) {
         return httpService
             .doPost(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourcekey)
             .then(res => res.data);
@@ -98,6 +105,15 @@ define([
             .then(res => res.data);
     }
 
+    function exportConceptSets(id) {
+        return fileService.loadZip(`${config.webAPIRoot}cohort-characterization/${id}/export/conceptset`);
+    }
+	function runDiagnostics(design) {
+        return httpService
+            .doPost(`${config.webAPIRoot}cohort-characterization/check`, design)
+            .then(res => res.data);
+	}
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -107,13 +123,16 @@ define([
         copyCharacterization,
         updateCharacterization,
         deleteCharacterization,
-        loadCharacterizationExecutionList,
+        listExecutions,
         loadCharacterizationExecution,
         loadCharacterizationResults,
-        loadCharacterizationExportDesignByGeneration,
-        runGeneration,
+        loadCharacterizationResultsCount,
+        loadExportDesignByGeneration,
+        generate,
         getPrevalenceStatsByGeneration,
         cancelGeneration,
         exists,
+        exportConceptSets,
+        runDiagnostics,
     };
 });

@@ -46,9 +46,9 @@ define([
 		}));
 	}
 
-	function getJobHistory(provider) {
+	function getJobHistory(id) {
 		return httpService
-			.doGet(consts.Api.userImportJob + `/${provider}/history`)
+			.doGet(consts.Api.userImportJob + `/${id}/history`)
 			.then(res => res.data);
 	}
 

@@ -58,7 +58,7 @@ define([
                 {
                     title: 'Updated',
                     className: this.classes('tbl-col', 'updated'),
-                    render: datatableUtils.getDateFieldFormatter('updatedAt'),
+                    render: datatableUtils.getDateFieldFormatter('modifiedDate'),
                 },
                 {
                     title: 'Author',
@@ -71,15 +71,19 @@ define([
                 Facets: [
                     {
                         'caption': 'Created',
-                        'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
+                        'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
                     },
                     {
                         'caption': 'Updated',
-                        'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
+                        'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
                     },
                     {
                         'caption': 'Author',
                         'binding': datatableUtils.getFacetForCreatedBy,
+                    },
+                    {
+                        'caption': 'Designs',
+                        'binding': datatableUtils.getFacetForDesign,
                     },
                 ]
             };
@@ -92,7 +96,7 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
-                    datatableUtils.coalesceField(res.content, 'updatedAt', 'createdAt');
+                    datatableUtils.coalesceField(res.content, 'modifiedDate', 'createdDate');
                     this.data(res.content);
                     this.loading(false);
                 });

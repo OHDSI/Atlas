@@ -1,7 +1,7 @@
 define([
-	'knockout', 
+	'knockout',
 	'text!./prediction-specification-view-edit.html',
-	'utils/AutoBind',	
+	'utils/AutoBind',
 	'components/Component',
 	'utils/CommonUtils',
 	'../const',
@@ -13,9 +13,10 @@ define([
 	'featureextraction/components/temporal-covariate-settings-editor',
 	'components/cohort-definition-browser',
 	'faceted-datatable',
+	'less!./prediction-specification-view-edit.less',
 ], function (
-	ko, 
-	view, 
+	ko,
+	view,
 	AutoBind,
 	Component,
 	commonUtils,
@@ -40,13 +41,18 @@ define([
 			this.specificationPillMode = ko.observable('all');
 			this.targetCohorts = params.targetCohorts;
 			this.outcomeCohorts = params.outcomeCohorts;
-			this.currentCohortList = ko.observable(null);;
+			this.currentCohortList = ko.observable(null);
 			this.showCohortSelector = ko.observable(false);
 			this.covariateSettings = this.patientLevelPredictionAnalysis().covariateSettings;
 			this.modelSettings = this.patientLevelPredictionAnalysis().modelSettings;
 			this.populationSettings = this.patientLevelPredictionAnalysis().populationSettings;
 			this.modelSettingsOptions = ModelSettings.options;
 			this.defaultCovariateSettings = constants.defaultNontemporalCovariates;
+			this.isEditPermitted = params.isEditPermitted;
+			this.cohortTableColumns = constants.getCohortTableColumns(this.isEditPermitted());
+			this.populationSettingsTableColumns = constants.getPopulationSettingsTableColumns(this.isEditPermitted());
+			this.modelSettingsTableColumns = constants.getModelSettingsTableColumns(this.isEditPermitted());
+			this.covariateSettingsTableColumns = constants.getCovariateSettingsTableColumns(this.isEditPermitted());
 		}
 
 		removeTargetCohort(data, obj, tableRow, rowIndex) {
@@ -65,7 +71,7 @@ define([
 				this.deleteFromTable(this.modelSettings, obj, rowIndex);
 			} else {
 				this.editModelSettings(data);
-			}		
+			}
 		}
 
 		covariateSettingRowClickHandler(data, obj, tableRow, rowIndex) {
@@ -88,7 +94,7 @@ define([
 			} else {
 				this.editPopulationSettings(data);
 			}
-		}			
+		}
 
 		addTarget() {
 			this.currentCohortList(this.targetCohorts);
@@ -100,10 +106,9 @@ define([
 			this.showCohortSelector(true);
 		}
 
-		cohortSelected(id, name) {
-			if (this.currentCohortList()().filter(a => a.id === parseInt(id)).length == 0) {
-				this.currentCohortList().push(new Cohort({id: id, name: name}));
-			}
+		cohortSelected(items) {
+			const cohortList = items.map(({ id, name }) => new Cohort({ id, name }));
+			this.currentCohortList()(cohortList);
 			this.showCohortSelector(false);
 		}
 
@@ -130,8 +135,8 @@ define([
 			this.editorHeading(headingPrefix + 'Covariate Settings');
 			this.editorDescription('Add or update the covariate settings');
 			this.editorComponentName(editorNamePrefix + 'prediction-covar-settings-editor');
-			this.editorComponentParams({ 
-				covariateSettings: this.patientLevelPredictionAnalysis().covariateSettings()[index], 
+			this.editorComponentParams({
+				covariateSettings: this.patientLevelPredictionAnalysis().covariateSettings()[index],
 			});
 			this.managerMode('editor');
 		}
@@ -152,8 +157,9 @@ define([
 			this.editorDescription('Add or update the covariate settings');
 			this.editorComponentName('prediction-covar-settings-editor');
 			this.editorComponentParams({
-				covariateSettings: settings, 
-				subscriptions: this.subscriptions,				
+				covariateSettings: settings,
+				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor');
 		}
@@ -173,7 +179,7 @@ define([
 			this.editorHeading(option.name + ' Model Settings');
 			this.editorDescription('Use the options below to edit the model settings');
 			this.editorComponentName('model-settings-editor');
-			this.editorComponentParams({ 
+			this.editorComponentParams({
 				subscriptions: this.subscriptions,
 				modelSettings: modelSettings,
 				editor: editor,
@@ -194,12 +200,13 @@ define([
 			this.editorHeading('Population Settings');
 			this.editorDescription('Add or update the population settings');
 			this.editorComponentName('population-settings-editor');
-			this.editorComponentParams({ 
+			this.editorComponentParams({
 				populationSettings: settings,
 				subscriptions: this.subscriptions,
+				isEditPermitted: this.isEditPermitted
 			});
 			this.managerMode('editor');
-		}		
+		}
 
 		closeEditor() {
 			this.editorArray.valueHasMutated();

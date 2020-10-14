@@ -110,7 +110,7 @@ define([
       });
 
       this.isDeletePermitted = ko.pureComputed(() => {
-        return authApi.isPermittedDeleteSource(this.selectedSource().key());
+        return authApi.isPermittedDeleteSource(this.selectedSource() && this.selectedSource().key());
       });
 
       this.canEdit = ko.pureComputed(() => {
@@ -152,6 +152,7 @@ define([
         { name: 'Impala', id: 'impala' },
         { name: 'Microsoft PDW', id: 'pdw' },
         { name: 'IBM Netezza', id: 'netezza' },
+        { name: 'Hive LLAP', id: 'hive'},
       ];
 
       this.sourceCaption = ko.computed(() => {
@@ -302,9 +303,6 @@ define([
       if (this.dirtyFlag().isDirty() && !confirm('Source changes are not saved. Would you like to continue?')) {
         return;
       }
-      this.selectedSource(null);
-      this.selectedSourceId(null);
-      this.dirtyFlag().reset();
       this.goToConfigure();
     }
 
@@ -346,6 +344,9 @@ define([
     }
 
     goToConfigure() {
+      this.selectedSource(null);
+      this.selectedSourceId(null);
+      this.dirtyFlag().reset();
       commonUtils.routeTo('/configure');
     }
 

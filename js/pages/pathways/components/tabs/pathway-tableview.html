@@ -1,0 +1,33 @@
+<div data-bind="css: classes(), if: reportData">
+	<div data-bind="foreach: reportData().cohorts">
+		<div data-bind="css: $component.classes('cohort-title')"><span data-bind="text: 'Cohort:  ' + name"></span></div>
+		<hr>
+		<div data-bind="css: $component.classes('table-title')"><span data-bind="text: `Table ${$index()+1}a :` + ' All Pathways'"></span></div>
+		<div> 
+			Maximum Path Length: <select data-bind="options: $component.pathLengthOptions, value: $component.pathLength"></select> 
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportPathwayReport">Export</button>
+		</div>		
+		<table data-bind="dynamicDataTable: $component.getPathwayGroupDatatable($data, $component.pathLength())"></table>
+
+		<div>
+			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}b :` + ' Event Cohort Counts by Rank'"></span>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportCountsByRank">Export</button>
+		</div>
+		<table data-bind="dataTable: $component.getEventCohortByRankDatatable($data)"></table>
+		
+		<div>
+			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}c :` + ' Event Cohort Counts'"></span>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportEventCohortCounts">Export</button>
+		</div>
+		<table data-bind="dataTable: $component.getEventCohortCountsDatatable($data)"></table>
+		
+		<div>
+			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}d :` + ' Distinct Event Cohorts'"></span>
+			<button data-bind="css: $component.classes('export-button'), click: $component.exportDistinctEventCohortCounts">Export</button>			
+		</div>
+		<table data-bind="dataTable: $component.getDistinctEventCohortCountsDatatable($data)"></table>
+		
+		<hr>
+		
+	</div>
+</div>

@@ -18,15 +18,19 @@ define((require, exports) => {
 		},
 		{
 			'caption': 'Created',
-			'binding': (o) => datatableUtils.getFacetForDate(o.createdAt)
+			'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
 		},
 		{
-			'caption': 'Updated',
-			'binding': (o) => datatableUtils.getFacetForDate(o.updatedAt)
+			'caption': 'Last Modified',
+			'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 		},
 		{
 			'caption': 'Author',
-			'binding': (o) => o.createdBy || 'anonymous',
+			'binding': datatableUtils.getFacetForCreatedBy,
+		},
+		{
+			'caption': 'Designs',
+			'binding': datatableUtils.getFacetForDesign,
 		},
 	];
 
@@ -55,14 +59,14 @@ define((require, exports) => {
 			render: datatableUtils.getDateFieldFormatter('createdDate'),
 		},
 		{
-			title: 'Updated',
+			title: 'Modified',
 			className: classes('tbl-col', 'updated'),
 			render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 		},
 		{
 			title: 'Author',
 			className: classes('tbl-col', 'author'),
-			data: 'createdBy',
+			data: datatableUtils.getFacetForCreatedBy,
 		},
 
 	];

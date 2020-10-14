@@ -1,0 +1,24 @@
+<div>
+    <table width="100%" class="stripe compact hover" cellspacing="0" data-bind="dataTable:{
+            data: $component.permissionItems,
+            options: {
+                        dom: 'lfiprt',
+                        language: {
+                            search : 'Filter:'
+                        },
+                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                        orderClasses: false,
+                        deferRender: true,
+                        autoWidth: false,
+                        ordering: true,
+                        columnDefs: [
+                                { targets: 0, width: '80px', orderable: false },
+                        ],
+                        columns: [
+                                { title: 'Included', class:'text-center', render: function() { return renderCheckbox('isRolePermission', $component.canEditRolePermissions()); } },
+                                { title: 'Permission', data: 'permission' },
+                                { title: 'Description', data: 'description' }
+                        ]
+                }
+        }"></table>
+</div>

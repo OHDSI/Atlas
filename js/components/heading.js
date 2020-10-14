@@ -19,6 +19,7 @@ define([
 			this.hasIcon = ko.computed(() => {
 				return this.icon != null;
 			});
+			this.description = params.description;
 		}
 	}
 

@@ -17,11 +17,7 @@ define(
       CONCEPT_SETS: 'conceptsets',
       GENERATION: 'generation',
       UTILITIES: 'utilities',
-    };
-
-    const disabledReasons = {
-      DIRTY: 'Save changes to generate',
-      ACCESS_DENIED: 'Access denied',
+      WARNINGS: 'warnings',
     };
 
     function isInProgress(currentStatus) {
@@ -32,7 +28,6 @@ define(
       apiPaths,
       status,
       isInProgress,
-      disabledReasons,
       tabs,
     };
   }

@@ -1,0 +1,17 @@
+<loading params="status: 'Loading Included Concepts'" data-bind="visible: loading"></loading>
+<div data-bind="hidden: loading">
+    <faceted-datatable params="{columns: $component.includedConceptsColumns, 
+															 options: $component.includedConceptsOptions, 
+                               reference: $component.includedConcepts, 
+                               drawCallback: $component.includedDrawCallback,
+															 rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
+    <concept-add-box params="{
+        isActive: canAddConcepts,
+        onSubmit: addConcepts
+      }"></concept-add-box>
+</div>
+<conceptset-concept-modal params="{
+  isShown: $component.ancestorsModalIsShown,
+  conceptSetList: $component.ancestors,
+  title: 'Common Ancestors'
+}"></conceptset-concept-modal>

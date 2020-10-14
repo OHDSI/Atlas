@@ -39,7 +39,9 @@ define([
 			this.exportEntity = ko.observable();
 			this.exportService = PathwayService.loadExportDesign;
 			this.importService = PathwayService.importPathwayDesign;
+			this.afterImportSuccess = params.afterImportSuccess;
 
+			this.subscriptions = [];
 			// subscriptions
 			this.subscriptions.push(this.analysisId.subscribe((newVal) => {
 				this.loadExportJSON();
@@ -60,6 +62,9 @@ define([
 			}
 		}
 
+		dispose() {
+			this.subscriptions.forEach(s => s.dispose());
+		}
 	}
 
 	return commonUtils.build('pathway-utils', PathwayUtils, view);

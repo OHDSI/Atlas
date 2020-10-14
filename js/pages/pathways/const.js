@@ -3,6 +3,7 @@ define((require, exports) => {
 
 	const pathwayGenerationStatus = {
 		STARTED: 'STARTED',
+		STARTING: 'STARTING',
 		COMPLETED: 'COMPLETED',
 	};
 
@@ -12,7 +13,6 @@ define((require, exports) => {
 
 	return {
 		pageTitle,
-		pathwayGenerationStatus,
 		combinationWindowOptions,
 		minCellCountOptions,
 		maxDepthOptions

@@ -41,7 +41,7 @@ define(function (require, exports) {
 			return createdByUsernameGetter() === username;
 		};
 
-		component.isOwner = ko.computed(() => component.isOwnerFn(authApi.subject()));
+		component.isOwner = config.userAuthenticationEnabled && ko.computed(() => component.isOwnerFn(authApi.subject()));
 
 		component.loadAccessList = () => {
 			return loadEntityAccessList(entityTypeGetter(), entityIdGetter());

@@ -43,9 +43,12 @@
 					element: 'input',
 					extra: 'form-control'
 				}),
-				" />
+				disable: loading()" />
 			<div class="input-group-btn">
-				<button class="pull-right btn btn-primary" title="Search" type="submit"><i class="fa fa-search"></i></button>
+				<button class="pull-right btn btn-primary" title="Search" type="submit"
+					data-bind="disable: loading()">
+					<i class="fa fa-search"></i>
+				</button>
 			</div>
 		</div>
 	</form>
@@ -97,5 +100,11 @@
 		<div class="clear"></div>
 	</div>
 </div>
-
+<!-- ko if: searchExecuted() && data().length > 0 -->
+<concept-add-box params="{
+	isActive: $component.canAddConcepts,
+	onSubmit: addConcepts,
+	canSelectSource: true,
+}"></concept-add-box>
+<!-- /ko -->
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

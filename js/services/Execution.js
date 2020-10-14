@@ -58,10 +58,14 @@ define(function(require, exports){
   }
 
   function checkExecutionEngineStatus(isAuthenticated) {
-    if (isAuthenticated && config.useExecutionEngine) {
-      getEngineStatus().then(({ data: v }) => {
-        config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
-      });
+    if (authApi.isPermittedGetExecutionService()) {
+      if (isAuthenticated && config.useExecutionEngine) {
+        getEngineStatus().then(({ data: v }) => {
+          config.api.isExecutionEngineAvailable(v.status === 'ONLINE')
+        });
+      }  
+    } else {
+      console.warn('There isn\'t permission to get execution engine status');
     }
   }
 

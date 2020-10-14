@@ -13,23 +13,32 @@ define([
 	'services/job/jobDetail',
 	'services/AuthAPI',
 	'services/file',
-	'services/Poll',
+	'services/JobPollService',
+	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/ExceptionUtils',
+	'components/conceptset/ConceptSetStore',
+	'components/conceptset/utils',
 	'./const',
 	'const',
+	'components/checks/warnings',
+	'components/checks/warnings-badge',
 	'./components/iranalysis/main',
+	'./components/iranalysis/components/ir-conceptset',
 	'databindings',
-	'conceptsetbuilder/components',
 	'circe',
 	'components/heading',
 	'utilities/import',
 	'utilities/export',
+	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'components/name-validation',
+	'less!./ir-manager.less',
+	'components/authorship',
 ], function (
 	ko,
 	view,
@@ -45,13 +54,16 @@ define([
 	jobDetail,
 	authAPI,
 	FileService,
-	PollService,
+	JobPollService,
+	{ isPermittedExportSQL },
 	GlobalPermissionService,
 	{ entityType },
 	Page,
 	AutoBind,
 	commonUtils,
 	exceptionUtils,
+	ConceptSetStore,
+	conceptSetUtils,
 	constants,
 	globalConstants,
 ) {
@@ -70,6 +82,7 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
@@ -87,7 +100,7 @@ define([
 					)
 			});
 			this.isEditable = ko.pureComputed(() => {
-				return this.selectedAnalysisId() === null
+				return this.selectedAnalysisId() === null || this.selectedAnalysisId() === 0
 					|| !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
@@ -104,6 +117,7 @@ define([
 						&& !this.dirtyFlag().isDirty()
 					)
 			});
+			this.isPermittedExportSQL = isPermittedExportSQL;
 			this.selectedAnalysisId.subscribe((id) => {
 				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
 					authAPI.loadUserInfo();
@@ -112,7 +126,6 @@ define([
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
-			this.conceptSetEditor = ko.observable(); // stores a reference to the concept set editor
 			this.sources = ko.observableArray();
 			this.stoppingSources = ko.observable({});
 
@@ -130,7 +143,6 @@ define([
 				}
 				return analysisCohorts;
 			});
-
 			this.showConceptSetBrowser = ko.observable(false);
 			this.criteriaContext = ko.observable();
 			this.generateActionsSettings = {
@@ -150,14 +162,33 @@ define([
 
 			this.expressionMode = ko.observable('import');
 
-			this.isNameFilled = ko.computed(() => {
-				return this.selectedAnalysis() && this.selectedAnalysis().name();
+			this.isNameFilled = ko.pureComputed(() => {
+				return this.selectedAnalysis() && this.selectedAnalysis().name() && this.selectedAnalysis().name().trim();
 			});
-			this.isNameCorrect = ko.computed(() => {
-				return this.isNameFilled() && this.selectedAnalysis().name() !== this.defaultName;
+			this.isNameCharactersValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameCharactersValid(this.selectedAnalysis().name());
 			});
-			this.canSave = ko.computed(() => {
-				return this.isEditable() && this.isNameCorrect() && this.dirtyFlag().isDirty() && !this.isRunning();
+			this.isNameLengthValid = ko.computed(() => {
+				return this.isNameFilled() && commonUtils.isNameLengthValid(this.selectedAnalysis().name());
+			});
+			this.isDefaultName = ko.computed(() => {
+				return this.isNameFilled() && this.selectedAnalysis().name().trim() === this.defaultName;
+			});
+
+			this.isNameCorrect = ko.pureComputed(() => {
+				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
+			});
+			
+			this.isTarValid = ko.pureComputed(() => {
+				const analysis = this.selectedAnalysis() && this.selectedAnalysis().expression();
+				if (analysis == null) return;
+				return !(analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField() && analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset());			});
+			
+			this.canSave = ko.pureComputed(() => {
+				return this.isEditable() 
+					&& this.isNameCorrect() 
+					&& this.dirtyFlag().isDirty() 
+					&& !this.isRunning();
 			});
 			this.error = ko.observable();
 			this.isSaving = ko.observable(false);
@@ -169,6 +200,21 @@ define([
 
 			this.exportService = IRAnalysisService.exportAnalysis;
 			this.importService = IRAnalysisService.importAnalysis;
+			this.exportSqlService = this.exportSql;
+			this.criticalCount = ko.observable(0);
+			this.isDiagnosticsRunning = ko.observable(false);
+
+			this.warningParams = ko.observable({
+				current: this.selectedAnalysis,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
+				onDiagnoseCallback: this.diagnose.bind(this),
+				checkOnInit: true,
+			});
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
@@ -188,6 +234,11 @@ define([
 			return authAPI.isPermitted(`ir:${id}:design:get`);
 		}
 
+		diagnose() {
+			if (this.selectedAnalysis()) {
+				return IRAnalysisService.runDiagnostics(this.selectedAnalysis());
+			}
+		}
 
 		getExecutionInfo(info) {
 			if (info && info.executionInfo) {
@@ -310,7 +361,7 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = PollService.add({
+			this.pollId = JobPollService.add({
 				callback: silently => this.pollForInfo({ silently }),
 				interval: 10000,
 				isSilentAfterFirstCall: true,
@@ -321,15 +372,28 @@ define([
 			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
-
-		onConceptSetSelectAction(result, valueAccessor) {
-			this.showConceptSetBrowser(false);
-
-			if (result.action === 'add') {
-				var newConceptSet = this.conceptSetEditor().createConceptSet();
-				this.criteriaContext() && this.criteriaContext().conceptSetId(newConceptSet.id);
-				this.activeTab(this.tabs.CONCEPT_SETS);
+		
+		handleEditConceptSet(item, context) {
+			if (item.conceptSetId() == null) {
+				return;
 			}
+			this.loadConceptSet(item.conceptSetId());
+		}
+			
+		loadConceptSet(conceptSetId) {
+			this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
+			this.conceptSetStore.isEditable(this.isEditable());
+			commonUtils.routeTo(`/iranalysis/${this.selectedAnalysisId()}/conceptsets`);
+		}
+
+		onConceptSetSelectAction(result) {
+			this.showConceptSetBrowser(false);
+			if (result.action === 'add') {
+				const conceptSets = this.selectedAnalysis().expression().ConceptSets;
+				const newId = conceptSetUtils.newConceptSetHandler(conceptSets, this.criteriaContext());
+				this.loadConceptSet(newId)
+			}
+
 			this.criteriaContext(null);
 		}
 
@@ -350,6 +414,8 @@ define([
 			this.selectedAnalysis(null);
 			this.selectedAnalysisId(null);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+			this.conceptSetStore.clear();
+
 			this.sources().forEach(function (source) {
 				source.info(null);
 			});
@@ -367,6 +433,9 @@ define([
 		async save() {
 			this.isSaving(true);
 			this.loading(true);
+
+			let irName = this.selectedAnalysis().name();
+			this.selectedAnalysis().name(irName.trim());
 
 			// Next check to see that an incidence rate with this name does not already exist
 			// in the database. Also pass the id so we can make sure that the current incidence rate is excluded in this check.
@@ -457,6 +526,7 @@ define([
 				this.refreshDefs();
 				this.activeTab(this.tabs.DEFINITION);
 				this.close();
+				this.warningParams().checkOnInit = false;
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
 				alert('An error occurred while attempting to import an incidence rate.');
@@ -499,11 +569,30 @@ define([
 			!this.selectedAnalysis() && this.newAnalysis();
 		}
 
+		async exportSql({ analysisId = 0, expression = {} } = {}) {
+			const sql = await IRAnalysisService.exportSql({
+				analysisId,
+				expression,
+			});
+			return sql;
+		}
+
+		getAuthorship() {
+			const createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
+			const modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
+			return {
+                createdBy: this.selectedAnalysis().createdBy() ? this.selectedAnalysis().createdBy().name : '',
+                createdDate: createdDate,
+                modifiedBy: this.selectedAnalysis().modifiedBy() ? this.selectedAnalysis().modifiedBy().name : '',
+                modifiedDate: modifiedDate,
+			};
+		}
+
 		// cleanup
 		dispose() {
 			super.dispose();
 			this.incidenceRateCaption && this.incidenceRateCaption.dispose();
-			PollService.stop(this.pollId);
+			JobPollService.stop(this.pollId);
 		}
 	}
 

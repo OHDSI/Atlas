@@ -28,7 +28,7 @@ define([
 			this.currentConceptSet = ko.observable(null);
 			this.showConceptSetSelector = ko.observable(false);
 			this.includedCovariateIds = ko.observable(this.covariateSettings.includedCovariateIds() && this.covariateSettings.includedCovariateIds().length > 0 ? this.analysis.getDbCohortMethodDataArgs.covariateSettings.includedCovariateIds().join() : '');
-
+			this.isEditPermitted = params.isEditPermitted;
 			this.subscriptions.push(this.includedCovariateIds.subscribe(newValue => {
 				this.covariateSettings.includedCovariateIds(dataTypeConverterUtils.commaDelimitedListToNumericArray(newValue));
 			}));

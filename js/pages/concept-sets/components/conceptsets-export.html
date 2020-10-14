@@ -3,13 +3,13 @@
   <b>Instructions:</b>
   Select the concept sets for export by selecting each row in the grid. When done, use the 'Export Concept Sets' button which will start the download in a new window.
   <hr/>
-  <cohort-concept-set-browser params="
+  <concept-set-browser params="
     criteriaContext: criteriaContext,
     onRespositoryConceptSetSelected: exportOnConceptSetSelected,
     onActionComplete: onExportAction,
     buttonActionText: 'Export Concept Sets',
     repositoryConceptSetTableId: 'exportConceptSetTable'
-  "></cohort-concept-set-browser>
+  "></concept-set-browser>
   <hr/>
   <b><span data-bind="text: exportRowCount()"></span></b> concept sets selected for export.
 </div>

@@ -20,7 +20,7 @@ define(function (require, exports) {
 		self.progressValue = data.progressValue || 'length';
 		self.progressMax = data.progressMax || 1;
 		self.viewed = ko.observable(data.viewed != null ? data.viewed : false);
-		self.url = data.url || null;		
+		self.url = ko.observable(data.url || null);		
 		
 		self.isComplete = function() {
 			return self.status() == "COMPLETED" || self.status() == "COMPLETE";

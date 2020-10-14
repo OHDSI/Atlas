@@ -109,6 +109,7 @@ const settingsObject = {
 		"datatables.net": "../node_modules/datatables.net/js/jquery.dataTables",
 		"datatables.net-buttons": "../node_modules/datatables.net-buttons/js/dataTables.buttons",
 		"datatables.net-buttons-html5": "../node_modules/ouanalyse-datatables.net-buttons-html5/js/buttons.html5",
+		"datatables.net-select": "../node_modules/datatables.net-select/js/dataTables.select",
 		"colvis": "../node_modules/datatables.net-buttons/js/buttons.colVis.min",
 		"crossfilter": "../node_modules/crossfilter2/crossfilter",
 		"director": "../node_modules/director/build/director",
@@ -119,7 +120,6 @@ const settingsObject = {
 		"appConfig": "config",
 		"prism": "../node_modules/prismjs/prism",
 		"js-cookie": "../node_modules/js-cookie/src/js.cookie",
-
 		"d3": "../node_modules/d3/build/d3",
 		"d3-tip": "../node_modules/d3-tip/dist/index",
 		"d3-slider": "assets/d3.slider",
@@ -132,6 +132,7 @@ const settingsObject = {
 		"bootstrap-select": "../node_modules/bootstrap-select/dist/js/bootstrap-select",
 		"less-js": "../node_modules/less/dist/less",
 		"file-saver": "../node_modules/file-saver/FileSaver",
+		"jszip": "../node_modules/jszip/dist/jszip.min",
 		"numeral": "../node_modules/numeral/numeral",
 		"lz-string": "../node_modules/lz-string/libs/lz-string",
 		"colorbrewer": "../node_modules/colorbrewer/index",
@@ -139,6 +140,8 @@ const settingsObject = {
 		"bootstrap-datetimepicker": "../node_modules/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min",
 		"visibilityjs": "../node_modules/@ohdsi/visibilityjs/lib/visibility.core",
 		"ajv": "../node_modules/ajv/dist/ajv.bundle",
+		"hash-it": "../node_modules/hash-it/dist/hash-it.min",
+        "leaflet": "../node_modules/leaflet/dist/leaflet",
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",
@@ -160,13 +163,13 @@ const settingsObject = {
 		"jquery.dataTables.colVis.css": "css!styles/jquery.dataTables.colVis.css",
 		"jquery.datatables.tabletools.css": "css!styles/jquery.datatables.tabletools.css",
 		"prism.css": "css!styles/prism.css",
+        "leaflet": "css!../node_modules/leaflet/dist/leaflet.css"
 	},
 	localRefs: {
 		"configuration": "components/configuration",
 		"conceptset-editor": "components/conceptset/conceptset-editor",
 		"conceptset-modal": "components/conceptsetmodal/conceptSetSaveModal",
-		"conceptset-list-modal": "components/conceptset/conceptset-list-modal",
-		"user-bar": "components/user-bar",
+		"user-bar": "components/userbar/user-bar",
 		"faceted-datatable": "components/faceted-datatable",
 		"explore-cohort": "components/explore-cohort",
 		"r-manager": "components/r-manager",

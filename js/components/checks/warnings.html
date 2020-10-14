@@ -1,0 +1,11 @@
+<div data-bind="visible: !isInitialLoading(), eventListener: [{event:'click', selector: '.btn-fix', callback: onFixCallback }]">
+		<div data-bind="css: classes()">
+				<faceted-datatable params="{
+						columns: warningsColumns,
+						options: warningsOptions,
+						reference: warnings,
+						order: [],
+				}"></faceted-datatable>
+		</div>
+</div>
+<loading data-bind="visible: isInitialLoading()" params="status: 'Running Diagnostics'"></loading>

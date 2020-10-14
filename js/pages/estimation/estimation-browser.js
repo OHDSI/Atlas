@@ -55,6 +55,10 @@ define([
                         'caption': 'Author',
                         'binding': datatableUtils.getFacetForCreatedBy,
                     },
+                    {
+                        'caption': 'Designs',
+                        'binding': datatableUtils.getFacetForDesign,
+                    },
 				]
 			};
 

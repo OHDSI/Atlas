@@ -1,0 +1,16 @@
+<div data-bind="visible: hasEmptyName()" class="empty-name-error">
+    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+    <label>The name is empty.</label>
+</div>
+<div data-bind="visible: hasInvalidCharacters" class="empty-name-error">
+    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+    <label>The name can't contain any of the following characters: \/:*?"<>|  Please choose a different name.</label>
+</div>
+<div data-bind="visible: hasInvalidLength" class="empty-name-error">
+    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+    <label>The name length exceeds 100 symbols. Please choose a different name.</label>
+</div>
+<div data-bind="visible: hasDefaultName" class="empty-name-error">
+    <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+    <label>The name of the analysis should differ from the default one.</label>
+</div>

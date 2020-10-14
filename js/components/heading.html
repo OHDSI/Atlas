@@ -3,4 +3,7 @@
 	<i data-bind="attr: { class: `fa fa-${icon}` }"></i>
 	<!-- /ko -->
 	<span data-bind="text: title"></span>
+	<!-- ko if: !!description -->
+		<span class="description" data-bind="text: description"></span>
+	<!-- /ko -->
 </div>

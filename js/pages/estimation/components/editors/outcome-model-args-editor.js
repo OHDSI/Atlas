@@ -21,7 +21,8 @@ define([
 
 			this.outcomeModelArgs = params.outcomeModelArgs;
 			this.matchStratifySelection = params.matchStratifySelection;
-            this.options = constants.options;
+			this.options = constants.options;
+			this.isEditPermitted = params.isEditPermitted;
 			this.subscriptions = params.subscriptions;
 			this.showControlDisplay = ko.observable(false);
 			this.showPriorDisplay = ko.observable(false);

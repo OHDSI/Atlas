@@ -4,6 +4,7 @@ define([
 	'text!./MappedConcepts.html',
 	'services/VocabularyProvider',
 	'utils/CommonUtils',
+	'utils/Renderers',
 	'faceted-datatable'
 ], function (
 		$,
@@ -11,6 +12,7 @@ define([
 		template,
 		VocabularyAPI,
 		commonUtils,
+		renderers,
 		) {
 	
 	function MappedConcepts(params) {
@@ -19,7 +21,7 @@ define([
 		self.conceptSet = ko.pureComputed(function () {
 			return ko.toJS(params.conceptSet().expression);	
 		});
-
+		self.canEdit = params.canEdit;
 		self.isLoading = ko.observable(true);
 		
 		self.selectedConcepts = ko.observableArray();
@@ -27,7 +29,11 @@ define([
 		self.selectedConceptsIndex = ko.pureComputed(function () {
 			var index = {};
 			self.selectedConcepts().forEach(function (item) {
-				index[item.CONCEPT_ID] = 1;	
+				index[item.CONCEPT_ID] = {
+					isExcluded: ko.observable(item.isExcluded),
+					includeDescendants: ko.observable(item.includeDescendants),
+					includeMapped: ko.observable(item.includeMapped),
+				};
 			});
 			return index;
 		});
@@ -85,20 +91,6 @@ define([
 
 		self.tableColumns = [
 			{
-				title: '<i class="fa fa-shopping-cart"></i>',
-				render: function (s, p, d) {
-					var css = '';
-					var icon = 'fa-shopping-cart';
-
-					if (self.selectedConceptsIndex[d.CONCEPT_ID] == 1) {
-						css = ' selected';
-					}
-					return '<i class="fa ' + icon + ' ' + css + '"></i>';
-				},
-				orderable: false,
-				searchable: false
-			},
-			{
 				title: 'Id',
 				data: 'CONCEPT_ID'
 			},
@@ -121,23 +113,34 @@ define([
 				visible: false
 			},
 			{
-				title: 'RC',
-				data: 'RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
-				title: 'DRC',
-				data: 'DESCENDANT_RECORD_COUNT',
-				className: 'numeric'
-			},
-			{
 				title: 'Domain',
 				data: 'DOMAIN_ID'
 			},
 			{
 				title: 'Vocabulary',
 				data: 'VOCABULARY_ID'
-			}
+			},
+			{
+				title: 'Excluded',
+				render: () => renderers.renderCheckbox('isExcluded', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Descendants',
+				render: () => renderers.renderCheckbox('includeDescendants', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
+			{
+				title: 'Mapped',
+				render: () => renderers.renderCheckbox('includeMapped', context.canEditCurrentConceptSet()),
+				orderable: false,
+				searchable: false,
+				className: 'text-center',
+			},
 		];
 	
 		self.contextSensitiveLinkColor = function (row, data) {
@@ -166,10 +169,6 @@ define([
 			self.selectedConcepts([]);
 			VocabularyAPI.resolveConceptSetExpression(self.conceptSet()).then(function (identifiers) {
 				VocabularyAPI.getMappedConceptsById(identifiers).then(function (concepts) {
-					concepts.forEach(function (concept) {
-						concept.RECORD_COUNT = 'timeout';
-						concept.DESCENDANT_RECORD_COUNT = 'timeout';
-					});
 					self.mappedConcepts(concepts);
 				})
 				.fail(function (err) {
