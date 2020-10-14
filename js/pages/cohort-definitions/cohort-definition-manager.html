@@ -50,7 +50,7 @@
 			<!--
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }"><a>Explore</a></li>
 			-->
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.selectTab('export')">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
 				<a>Export</a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
@@ -100,7 +100,7 @@
 							<div id="cohortTextView" class="pad-10">
 								<div class="heading" data-bind="text:currentCohortDefinition().name"></div>
 								<div data-bind="text:currentCohortDefinition().description"></div>
-								<cohort-expression-viewer params="expression: currentCohortDefinition().expression"></cohort-expression-viewer>
+								<div class="cohort-printfriendly" data-bind="html:printFriendlyHtml"></div>
 								<br/>
 								<div class="heading">Appendix 1: Concept Set Definitions</div>
 								<br/>
