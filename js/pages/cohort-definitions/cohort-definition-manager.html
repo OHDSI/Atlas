@@ -98,11 +98,11 @@
 							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
 							<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
 							<div id="cohortTextView" class="pad-10">
-								<div class="heading" data-bind="text:currentCohortDefinition().name"></div>
+								<h3 data-bind="text:currentCohortDefinition().name"></h3>
 								<div data-bind="text:currentCohortDefinition().description"></div>
 								<div class="cohort-printfriendly" data-bind="html:printFriendlyHtml"></div>
 								<br/>
-								<div class="heading">Appendix 1: Concept Set Definitions</div>
+								<h3>Appendix 1: Concept Set Definitions</h3>
 								<br/>
 							</div>
 							<!-- ko foreach: sortedConceptSets -->
