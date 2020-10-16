@@ -628,6 +628,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.pollForInfoPeriodically();
+
+			this.subscriptions.push(
+				this.currentCohortDefinition.subscribe(() => ("export" === this.tabMode()) && this.currentCohortDefinition() && this.refreshPrintFriendly())
+			);
 		}
 
 		// METHODS
@@ -1317,7 +1321,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.printFriendlyLoading(true);
 				try {
 					const printFriendlyHtml = await cohortDefinitionService.getCohortPrintFriendly(ko.toJS(this.currentCohortDefinition().expression()));
-					this.printFriendlyHtml(printFriendlyHtml);
+					this.printFriendlyHtml(printFriendlyHtml.data);
 				} catch(error) {
 					console.error("Problem loading print-friendly output.", error);
 				}finally {

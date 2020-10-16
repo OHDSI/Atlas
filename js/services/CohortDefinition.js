@@ -151,17 +151,7 @@ define(function (require, exports) {
 	}
 
 	function getCohortPrintFriendly(cohortExpression) {
-		var getCohortPrintFriendlyPromise = $.ajax({
-			url: config.webAPIRoot + 'cohortdefinition/printfriendly/cohort?format=html',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify(cohortExpression),
-			error: function (error) {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			}
-		});
-		return getCohortPrintFriendlyPromise;
+		return httpService.plainTextService.doPost(config.webAPIRoot + 'cohortdefinition/printfriendly/cohort?format=html', cohortExpression);
 	}
 
 	var api = {
