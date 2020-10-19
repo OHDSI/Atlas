@@ -70,8 +70,7 @@
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.explore', 'Explore')"></a>
 			</li>
 			-->
-			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'export' }, click: () => $component.selectTab('export')">
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
@@ -134,16 +133,12 @@
 										data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></span>
 								</strong></span>
 							<div id="cohortTextView" class="pad-10">
-								<div class="heading" data-bind="text:currentCohortDefinition().name"></div>
+								<h3 data-bind="text:currentCohortDefinition().name"></h3>
 								<div data-bind="text:currentCohortDefinition().description"></div>
-								<cohort-expression-viewer params="expression: currentCohortDefinition().expression">
-								</cohort-expression-viewer>
-								<br />
-								<div class="heading">
-									<span
-										data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.appendix_1', 'Appendix 1: Concept Set Definitions')"></span>
-								</div>
-								<br />
+								<div class="cohort-printfriendly" data-bind="html:printFriendlyHtml"></div>
+								<br/>
+								<h3 data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.appendix_1', 'Appendix 1: Concept Set Definitions')"></h3>
+								<br/>
 							</div>
 							<!-- ko foreach: sortedConceptSets -->
 							<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>

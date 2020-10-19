@@ -150,22 +150,27 @@ define(function (require, exports) {
 		return httpService.doPost(config.api.url + 'cohortanalysis', cohortJob);
 	}
 
+	function getCohortPrintFriendly(cohortExpression) {
+		return httpService.plainTextService.doPost(config.webAPIRoot + 'cohortdefinition/printfriendly/cohort?format=html', cohortExpression);
+	}
+
 	var api = {
-		getCohortDefinitionList: getCohortDefinitionList,
-		saveCohortDefinition: saveCohortDefinition,
-		copyCohortDefinition: copyCohortDefinition,
-		deleteCohortDefinition: deleteCohortDefinition,
-		getCohortDefinition: getCohortDefinition,
-		getSql: getSql,
-		translateSql: translateSql,
-		generate: generate,
-		getInfo: getInfo,
-		getReport: getReport,
-		runDiagnostics: runDiagnostics,
+		getCohortDefinitionList,
+		saveCohortDefinition,
+		copyCohortDefinition,
+		deleteCohortDefinition,
+		getCohortDefinition,
+		getSql,
+		translateSql,
+		generate,
+		getInfo,
+		getReport,
+		runDiagnostics,
 		cancelGenerate,
 		getCohortCount,
-		getCohortAnalyses: getCohortAnalyses,
+		getCohortAnalyses,
 		exists: exists,
+		getCohortPrintFriendly,
 	};
 
 	return api;

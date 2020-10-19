@@ -325,6 +325,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			});
 
+			// print-friendly state
+			this.printFriendlyHtml = ko.observable();
+			this.printFriendlyLoading = ko.observable(false);
+
 			// model behaviors
 			this.onConceptSetTabRespositoryConceptSetSelected = (conceptSet) => {
 				this.showImportConceptSetModal(false);
@@ -625,6 +629,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.pollForInfoPeriodically();
+
+			this.subscriptions.push(
+				this.currentCohortDefinition.subscribe(() => ("export" === this.tabMode()) && this.currentCohortDefinition() && this.refreshPrintFriendly())
+			);
 		}
 
 		// METHODS
@@ -1310,6 +1318,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					createdDate: createdDate,
 					modifiedBy: cohortDef.modifiedBy() ? cohortDef.modifiedBy().name : '',
 					modifiedDate: modifiedDate,
+				}
+			}
+
+			async refreshPrintFriendly() {
+				this.printFriendlyLoading(true);
+				try {
+					const printFriendlyHtml = await cohortDefinitionService.getCohortPrintFriendly(ko.toJS(this.currentCohortDefinition().expression()));
+					this.printFriendlyHtml(printFriendlyHtml.data);
+				} catch(error) {
+					console.error("Problem loading print-friendly output.", error);
+				}finally {
+					this.printFriendlyLoading(false);
 				}
 			}
 	}
