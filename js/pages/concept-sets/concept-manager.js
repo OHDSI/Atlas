@@ -52,6 +52,7 @@ define([
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
 			this.loadingRelated = ko.observable(false);
+			this.loadingHierarchy =  ko.observable(false);
 			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
@@ -59,6 +60,7 @@ define([
 			this.isCurrentConceptAddButtonActive = ko.pureComputed(() => this.currentConcept() && (this.currentConcept().includeDescendants() || this.currentConcept().includeMapped() || this.currentConcept().isExcluded()));
 			this.isRelatedLoaded = false;
 			this.isCountLoaded = false;
+			this.isHierarchyLoaded = false;
 			this.subscriptions.push(
 				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
@@ -68,11 +70,16 @@ define([
 								this.isCountLoaded = true;
 							}
 							break;
-						case 'hierarchy':
 						case 'related':
 							if (!this.isRelatedLoaded) {
 								this.loadRelatedConcepts();
 								this.isRelatedLoaded = true;
+							}
+							break;
+						case 'hierarchy':
+							if (!this.isHierarchyLoaded) {
+								this.loadHierarchyConcepts();
+								this.isHierarchyLoaded = true;
 							}
 							break;
 					}
@@ -225,8 +232,11 @@ define([
 					this.loadRecordCounts();
 				}
 				this.loadConcept(this.currentConceptId());
-				if (this.currentConceptMode() == 'related' || this.currentConceptMode() == 'hierarchy') {
+				if (this.currentConceptMode() == 'related') {
 					this.loadRelatedConcepts();
+				}
+				if (this.currentConceptMode() == 'hierarchy') {
+					this.loadHierarchyConcepts();
 				}
 			}
 		}
@@ -348,13 +358,25 @@ define([
 		async loadRelatedConcepts() {
 			// load related concepts once the concept is loaded
 			this.loadingRelated(true);
+
+			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/related');
+			const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
+
+			await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
+			this.relatedConcepts(relatedConcepts);
+
+			this.loadingRelated(false);
+		}
+
+		async loadHierarchyConcepts() {
+			this.loadingHierarchy(true);
 			this.metarchy = {
 				parents: ko.observableArray(),
 				children: ko.observableArray(),
 				synonyms: ko.observableArray()
 			};
 
-			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/related');
+			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/ancestorAndDescendant');
 			const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
 			for (var i = 0; i < relatedConcepts.length; i++) {
 				this.metagorize(this.metarchy, relatedConcepts[i]);
@@ -362,9 +384,8 @@ define([
 
 			await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
 			this.currentConceptArray([this.currentConcept()]);
-			this.relatedConcepts(relatedConcepts);
 
-			this.loadingRelated(false);
+			this.loadingHierarchy(false);
 		}
 	}
 

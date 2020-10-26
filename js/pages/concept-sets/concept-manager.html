@@ -18,7 +18,7 @@
 		</li>
 
 		<li role="presentation" data-bind="click: function() {currentConceptMode('hierarchy');}, attr: {class: currentConceptMode() == 'hierarchy' ? 'active' : ''}">
-			<a><span data-bind="if:loadingRelated();">
+			<a><span data-bind="if:loadingHierarchy();">
 							<i class="fa fa-circle-o-notch fa-spin"></i>
 						</span>Hierarchy</a>
 		</li>
@@ -70,9 +70,9 @@
 		<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
 
 		<!-- ko if: hasInfoAccess() -->
-			<div data-bind="visible:loadingRelated()" class="loading">loading</div>
+			<div data-bind="visible:loadingHierarchy()" class="loading">loading</div>
 
-			<div data-bind="visible:!loadingRelated()">
+			<div data-bind="visible:!loadingHierarchy()">
 				<!-- ko if: currentConcept().STANDARD_CONCEPT == 'N' -->
 					<div>No hierarchy found for non-standard concepts.</div>
 				<!-- /ko -->
