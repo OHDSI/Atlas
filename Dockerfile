@@ -36,7 +36,7 @@ ARG CREATED=SNAPSHOT
 ARG REVISION=SNAPSHOT
 
 LABEL org.opencontainers.image.title="OHDSI ATLAS"
-LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>"
+LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
 LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.description="ATLAS is an open source software tool for researchers \
 to conduct scientific analyses on standardized observational data converted to the \
