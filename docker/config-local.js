@@ -4,7 +4,7 @@ define([], function () {
 	// WebAPI
 	configLocal.api = {
 		name: 'OHDSI',
-		url: 'http://localhost:8080/WebAPI/'
+		url: '${WEBAPI_URL}'
 	};
 
 	configLocal.cohortComparisonResultsEnabled = false;
