@@ -51,17 +51,29 @@ define([
 			this.renderers = renderers;
 			this.sourceCounts = ko.observableArray();
 			this.loadingSourceCounts = ko.observable(false);
-			this.loadingRelated = ko.observable(true);
+			this.loadingRelated = ko.observable(false);
 			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
 			this.isCurrentConceptAddButtonActive = ko.pureComputed(() => this.currentConcept() && (this.currentConcept().includeDescendants() || this.currentConcept().includeMapped() || this.currentConcept().isExcluded()));
+			this.isRelatedLoaded = false;
+			this.isCountLoaded = false;
 			this.subscriptions.push(
 				this.currentConceptMode.subscribe((mode) => {
 					switch (mode) {
 						case 'recordcounts':
-							this.loadRecordCounts();
+							if (!this.isCountLoaded) {
+								this.loadRecordCounts();
+								this.isCountLoaded = true;
+							}
+							break;
+						case 'hierarchy':
+						case 'related':
+							if (!this.isRelatedLoaded) {
+								this.loadRelatedConcepts();
+								this.isRelatedLoaded = true;
+							}
 							break;
 					}
 				})
@@ -213,6 +225,9 @@ define([
 					this.loadRecordCounts();
 				}
 				this.loadConcept(this.currentConceptId());
+				if (this.currentConceptMode() == 'related' || this.currentConceptMode() == 'hierarchy') {
+					this.loadRelatedConcepts();
+				}
 			}
 		}
 
@@ -322,13 +337,15 @@ define([
 		async loadConcept(conceptId) {
 			this.isLoading(true);
 			if (!this.hasInfoAccess()) {
-				this.loadingRelated(false);
 				return;
 			}
 
 			const { data } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId);
 			this.currentConcept(this.enhanceConcept(data));
 			this.isLoading(false);
+		}
+
+		async loadRelatedConcepts() {
 			// load related concepts once the concept is loaded
 			this.loadingRelated(true);
 			this.metarchy = {
@@ -337,7 +354,7 @@ define([
 				synonyms: ko.observableArray()
 			};
 
-			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + conceptId + '/related');
+			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/related');
 			const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
 			for (var i = 0; i < relatedConcepts.length; i++) {
 				this.metagorize(this.metarchy, relatedConcepts[i]);
