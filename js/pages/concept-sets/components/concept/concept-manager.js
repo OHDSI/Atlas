@@ -11,9 +11,9 @@ define([
 	'utils/Renderers',
 	'atlas-state',
 	'services/http',
-	'./const',
+	'../../const',
 	'services/AuthAPI',
-	'./PermissionService',
+	'../../PermissionService',
 	'const',
 	'faceted-datatable',
 	'components/heading',
@@ -53,35 +53,12 @@ define([
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 
-			this.selectedTabKey = ko.observable("details");
-
-			this.detailsParams = ko.observable({
-				currentConcept: this.currentConcept,
-				hasInfoAccess: this.hasInfoAccess,
-				isAuthenticated: this.isAuthenticated,
-				addConcept: this.addConcept.bind(this),
-			});
-
-			this.relatedParams = ko.observable({
+			this.tabParams = ko.observable({
 				currentConcept: this.currentConcept,
 				currentConceptId: this.currentConceptId,
 				hasInfoAccess: this.hasInfoAccess,
 				isAuthenticated: this.isAuthenticated,
 				addConcepts: this.addConcepts.bind(this),
-			});
-
-			this.hierarchyParams = ko.observable({
-				currentConcept: this.currentConcept,
-				currentConceptId: this.currentConceptId,
-				hasInfoAccess: this.hasInfoAccess,
-				isAuthenticated: this.isAuthenticated,
-				addConcepts: this.addConcepts.bind(this),
-			});
-
-			this.countParams = ko.observable({
-				currentConceptId: this.currentConceptId,
-				hasInfoAccess: this.hasInfoAccess,
-				isAuthenticated: this.isAuthenticated,
 			});
 		}
 

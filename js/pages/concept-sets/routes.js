@@ -25,7 +25,7 @@ define(
           });
         }),
         '/concept/:conceptId:': new AuthorizedRoute((conceptId) => {
-          require(['./concept-manager'], function () {
+          require(['./components/concept/concept-manager'], function () {
             router.setCurrentView('concept-manager', { conceptId });
           });
         }),
