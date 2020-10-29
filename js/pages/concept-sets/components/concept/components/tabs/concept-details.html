@@ -1,0 +1,54 @@
+<div id="wrapperConceptDetails">
+	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
+
+	<!-- ko if: hasInfoAccess() -->
+	<table data-bind="with: currentConcept">
+		<thead>
+			<tr>
+				<th>Property</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Concept Name</td>
+				<td data-bind="text:CONCEPT_NAME"></td>
+			</tr>
+			<tr>
+				<td>Domain Id</td>
+				<td data-bind="text:DOMAIN_ID"></td>
+			</tr>
+			<tr>
+				<td>Concept Class Id</td>
+				<td data-bind="text:CONCEPT_CLASS_ID"></td>
+			</tr>
+			<tr>
+				<td>Vocabulary Id</td>
+				<td data-bind="text:VOCABULARY_ID"></td>
+			</tr>
+			<tr>
+				<td>Concept Id</td>
+				<td data-bind="text:CONCEPT_ID"></td>
+			</tr>
+			<tr>
+				<td>Concept Code</td>
+				<td data-bind="text:CONCEPT_CODE"></td>
+			</tr>
+			<tr>
+				<td>Invalid Reason</td>
+				<td data-bind="text:INVALID_REASON_CAPTION, css: { invalid: INVALID_REASON_CAPTION != 'Valid'}"></td>
+			</tr>
+			<tr>
+				<td>Standard Concept</td>
+				<td data-bind="text:STANDARD_CONCEPT_CAPTION, css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="concept-add-container">
+			<concept-add-box params="{
+				canSelectSource: true,
+				onSubmit: $component.addConcept,
+			}"></concept-add-box>
+	</div>
+	<!-- /ko -->
+</div>
