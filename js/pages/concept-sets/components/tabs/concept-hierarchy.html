@@ -1,0 +1,121 @@
+<div id="wrapperConceptHierarchy">
+	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
+
+	<!-- ko if: hasInfoAccess() -->
+		<loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: 'Loading Hierarchy...'"></loading>
+
+		<div data-bind="visible:!isLoading()">
+			<!-- ko if: currentConcept().STANDARD_CONCEPT == 'N' -->
+				<div>No hierarchy found for non-standard concepts.</div>
+			<!-- /ko -->
+			<!-- ko ifnot: currentConcept().STANDARD_CONCEPT == 'N' -->
+				<div data-bind="css: classes('hierarchy-filters')">
+					<div class="row">
+						<div class="pull-left" data-bind="css: classes('filter-view')">View:</div>
+						<div class="pull-left">
+							<ul class="nav nav-pills">
+								<li role="presentation" data-bind="css: {active: $component.hierarchyPillMode() == 'all' }, click: function() {$component.hierarchyPillMode('all') };"><a>Full Hierarchy</a></li>
+								<li role="presentation" data-bind="css: {active: $component.hierarchyPillMode() == 'parents' }, click: function() {$component.hierarchyPillMode('parents') };"><a>Parents</a></li>
+								<li role="presentation" data-bind="css: {active: $component.hierarchyPillMode() == 'current' }, click: function() {$component.hierarchyPillMode('current') };"><a>Current</a></li>
+								<li role="presentation" data-bind="css: {active: $component.hierarchyPillMode() == 'children' }, click: function() {$component.hierarchyPillMode('children') };"><a>Children</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="wrapperParents" data-bind="visible: ['all', 'parents'].includes($component.hierarchyPillMode())">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-arrow-up"></i> Parents&nbsp;
+						</div>
+						<div class="panel-body">
+							<!-- ko if: $component.metarchy.parents().length == 0 -->
+							<div>
+								No parent concepts found
+							</div>
+							<!-- /ko -->
+							<!-- ko if: $component.metarchy.parents().length > 0 -->
+							<faceted-datatable params="{
+								orderClasses: false,
+								ordering: true,
+								order: [[ 6, 'desc' ]],
+								columns: relatedConceptsColumns,
+								options: hierarchyConceptsOptions,
+								reference: $component.metarchy.parents,
+								rowCallback: commonUtils.contextSensitiveLinkColor,
+								deferRender: true,
+							}"></faceted-datatable>
+							<!-- /ko -->
+						</div>
+							<!-- ko if: $component.metarchy.parents().length > 0 -->
+							<div class="panel-footer">
+								<concept-add-box params="{
+									canSelectSource: true,
+									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.parents),
+								}"></concept-add-box>
+							</div>
+							<!-- /ko -->
+					</div>
+				</div>
+				<div id="wrapperHierarchyAnchor" data-bind="visible: ['all', 'current'].includes($component.hierarchyPillMode())">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<i class="fa fa-arrow-right"></i> Current Concept&nbsp;
+						</div>
+						<div class="panel-body">
+								<faceted-datatable params="{
+									lengthMenu: [[-1], ['All']],
+									orderClasses: false,
+									ordering: true,
+									buttons: [],
+									dom: 'i',
+									order: [[ 6, 'desc' ]],
+									columns: relatedConceptsColumns,
+									reference: $component.currentConceptArray,
+									deferRender: true,
+								}"></faceted-datatable>
+						</div>
+						<div class="panel-footer">
+							<concept-add-box params="{
+								canSelectSource: true,
+								onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+							}"></concept-add-box>
+						</div>
+					</div>
+				</div>
+				<div id="wrapperChildren" data-bind="visible: ['all', 'children'].includes($component.hierarchyPillMode())">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<i class="fa fa-arrow-down"></i> Children&nbsp;
+							</div>
+							<div class="panel-body">
+								<!-- ko if: $component.metarchy.children().length == 0 -->
+								<div>
+									No child concepts found
+								</div>
+								<!-- /ko -->
+								<!-- ko if: $component.metarchy.children().length > 0 -->
+								<faceted-datatable params="{
+									orderClasses: false,
+									ordering: true,
+									order: [[ 6, 'desc' ]],
+									columns: relatedConceptsColumns,
+									reference: $component.metarchy.children,
+									options: hierarchyConceptsOptions,
+									deferRender: true,
+								}"></faceted-datatable>
+								<!-- /ko -->
+							</div>
+							<!-- ko if: $component.metarchy.children().length > 0 -->
+							<div class="panel-footer">
+								<concept-add-box params="{
+									canSelectSource: true,
+									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.children),
+								}"></concept-add-box>
+							</div>
+							<!-- /ko -->
+						</div>
+				</div>
+			<!-- /ko -->
+		</div>
+	<!-- /ko -->
+</div>
