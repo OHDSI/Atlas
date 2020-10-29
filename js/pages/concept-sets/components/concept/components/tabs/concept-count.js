@@ -67,10 +67,13 @@ define([
 
 		async loadRecordCounts() {
 			this.isLoading(true);
-			const sourcesWithResults = sharedState.sources().filter(source => source.hasResults);
-			const sourceData = await this.fetchRecordCounts(sourcesWithResults);
-			this.isLoading(false);
-			this.sourceCounts(sourceData);
+			try {
+					const sourcesWithResults = sharedState.sources().filter(source => source.hasResults);
+					const sourceData = await this.fetchRecordCounts(sourcesWithResults);
+					this.sourceCounts(sourceData);
+			} finally {
+					this.isLoading(false);
+			}
 		}
 	}
 

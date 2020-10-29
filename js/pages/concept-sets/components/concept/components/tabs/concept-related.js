@@ -151,13 +151,15 @@ define([
 		async loadRelatedConcepts() {
 			this.isLoading(true);
 
-			const { data: related } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/related');
-			const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
+			try {
+					const {data: related} = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/related');
+					const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
 
-			await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
-			this.relatedConcepts(relatedConcepts);
-
-			this.isLoading(false);
+					await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
+					this.relatedConcepts(relatedConcepts);
+			} finally {
+					this.isLoading(false);
+			}
 		}
 	}
 
