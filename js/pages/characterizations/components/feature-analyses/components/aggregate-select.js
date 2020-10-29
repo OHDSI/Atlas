@@ -26,7 +26,7 @@ define([
 		},
 		{
 			type: 'DrugEra',
-			domains: ['DRUG']
+			domains: ['DRUG_ERA']
 		},
 		{
 			type: 'DrugExposure',
@@ -46,8 +46,12 @@ define([
         },
         {
             type: 'ConditionEra',
-            domains: ['CONDITION']
-        }
+            domains: ['CONDITION_ERA']
+        },
+			{
+					type: 'ConditionOccurrence',
+					domains: ['CONDITION']
+			}
 	];
 
 	class AggregateSelector extends AutoBind(Component) {
