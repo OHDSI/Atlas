@@ -27,7 +27,6 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-            'conceptset-list-modal',
           ], function() {
             // not re-render component if it was rendered already
             router.setCurrentView('cohort-definition-manager', {
@@ -51,7 +50,6 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-            'conceptset-list-modal',
           ], function() {
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
@@ -75,7 +73,6 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-            'conceptset-list-modal',
           ], function() {
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
@@ -83,7 +80,6 @@ define(
               sourceKey,
               mode: 'samples',
             })
-            sharedState.ConceptSet.source('cohort')
             sharedState.CohortDefinition.mode('samples')
           })
         }
