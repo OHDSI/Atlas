@@ -1,6 +1,6 @@
 <span class="conceptList" data-bind="foreach: ConceptList">
 	<span class="conceptItem">
-		<span data-bind="click: $component.removeConcept.bind($component)" class="fa fa-times"></span>
+		<span data-bind="click: $component.removeConcept.bind($component), title: ko.i18n('common.remove', 'Remove')" class="fa fa-times"></span>
 		<span data-bind="text: CONCEPT_NAME"></span>
 	</span>
 </span>

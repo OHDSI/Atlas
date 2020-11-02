@@ -1,0 +1,39 @@
+<!-- ko if: isLoading() -->
+<loading></loading>
+<!-- /ko -->
+
+<!-- ko if: !isLoading() -->
+	<heading-title params="name: 'Vocabulary > Concept', icon: 'search', theme: 'dark'"></heading-title>
+	<div class="asset-heading" data-bind="with:currentConcept()">
+		<span data-bind="css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}, text:CONCEPT_NAME"></span>
+	</div>
+
+	<tabs params="
+		tabs: [
+			{
+				title: 'Details',
+				key: 'details',
+				componentName: 'concept-details',
+				componentParams: $component.tabParams
+			},
+			{
+				title: 'Related Concepts',
+				key: 'related',
+				componentName: 'concept-related',
+				componentParams: $component.tabParams
+			},
+			{
+				title: 'Hierarchy',
+				key: 'hierarchy',
+				componentName: 'concept-hierarchy',
+				componentParams: $component.tabParams
+			},
+			{
+				title: 'Record Counts',
+				key: 'count',
+				componentName: 'concept-count',
+				componentParams: $component.tabParams
+			},
+		]">
+	</tabs>
+<!-- /ko -->

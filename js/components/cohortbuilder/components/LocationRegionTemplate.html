@@ -29,7 +29,7 @@
 				<col />
 			</colgroup>
 			<tr data-bind="if: StartDate() != null, visible: StartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('StartDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('StartDate') }" class="fa fa-times" title="Remove" /></td>
 				<td>
 
 					<span data-bind="text: ko.i18n('components.locationRegion.criteria.startDate.text', 'start is:')"></span>
@@ -37,7 +37,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: EndDate() != null, visible: EndDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('EndDate') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('EndDate') }" class="fa fa-times" title="Remove" /></td>
 				<td>
 
 					<span data-bind="text: ko.i18n('components.locationRegion.criteria.endDate.text', 'end is:')"></span>
@@ -45,7 +45,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" title="Remove" /></td>
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
 				</td>
