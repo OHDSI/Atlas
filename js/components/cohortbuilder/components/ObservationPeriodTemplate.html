@@ -30,7 +30,7 @@
 				<col />
 			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
 						<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_2', 'limited to the patients first observation period')"></span>
@@ -39,7 +39,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_3', 'using specified period:')"></span>
 
@@ -47,7 +47,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_4', 'observation period start is:')"></span>
 
@@ -55,7 +55,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodEndDate() != null, visible: PeriodEndDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_5', 'observation period end is:')"></span>
 
@@ -63,7 +63,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodType() != null, visible: PeriodType() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodType') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodType') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_6', 'Period Type is:')"></span>
 
@@ -71,7 +71,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_7', 'with age in years at period start')"></span>
 
@@ -79,7 +79,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_8', 'with age in years at period end')"></span>
 
@@ -87,7 +87,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodLength() != null, visible: PeriodLength() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_9', 'with period duration')"></span>
 
@@ -97,7 +97,7 @@
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: 'The index date refers to the observation period.'}"></criteria-group>
 				</td>
