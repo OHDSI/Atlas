@@ -14,7 +14,9 @@ define(
             router.setCurrentView('cohort-definitions');
           });
         }),
-        '/cohortdefinition/:cohortDefinitionId/conceptsets/:conceptSetId/:mode': new AuthorizedRoute((cohortDefinitionId, conceptSetId, mode) => {
+
+      '/cohortdefinition/:cohortDefinitionId/samples': new AuthorizedRoute(
+        cohortDefinitionId => {
           require([
             'components/conceptset/ConceptSetStore',
             'components/cohortbuilder/CohortDefinition',
@@ -25,9 +27,79 @@ define(
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
-          ], function (ConceptSetStore) {
-            sharedState.CohortDefinition.mode('conceptsets');
-            sharedState.activeConceptSet(ConceptSetStore.cohortDefinition());
+          ], function() {
+            // not re-render component if it was rendered already
+            router.setCurrentView('cohort-definition-manager', {
+              cohortDefinitionId,
+              mode: 'samples',
+            })
+            sharedState.ConceptSet.source('cohort')
+            sharedState.CohortDefinition.mode('samples')
+          })
+        }
+      ),
+
+      '/cohortdefinition/:cohortDefinitionId/samples/:sourceKey': new AuthorizedRoute(
+        (cohortDefinitionId, sourceKey) => {
+          require([
+            'components/cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definition-browser',
+            'conceptset-editor',
+            './components/reporting/cost-utilization/report-manager',
+            'explore-cohort',
+          ], function() {
+            router.setCurrentView('cohort-definition-manager', {
+              cohortDefinitionId,
+              sourceKey,
+              mode: 'samples',
+            })
+            sharedState.ConceptSet.source('cohort')
+            sharedState.CohortDefinition.mode('samples')
+          })
+        }
+      ),
+
+      '/cohortdefinition/:cohortDefinitionId/samples/:sourceKey/:sampleId': new AuthorizedRoute(
+        (cohortDefinitionId, sourceKey, sampleId) => {
+          require([
+            'components/cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definition-browser',
+            'conceptset-editor',
+            './components/reporting/cost-utilization/report-manager',
+            'explore-cohort',
+          ], function() {
+            router.setCurrentView('cohort-definition-manager', {
+              cohortDefinitionId,
+              sampleId,
+              sourceKey,
+              mode: 'samples',
+            })
+            sharedState.CohortDefinition.mode('samples')
+          })
+        }
+      ),
+
+      '/cohortdefinition/:cohortDefinitionId/conceptsets/:conceptSetId/:mode': new AuthorizedRoute(
+        (cohortDefinitionId, conceptSetId, mode) => {
+          require([
+            'components/conceptset/ConceptSetStore',
+            'components/cohortbuilder/CohortDefinition',
+            'components/atlas.cohort-editor',
+            './cohort-definitions',
+            './cohort-definition-manager',
+            'components/cohort-definition-browser',
+            'conceptset-editor',
+            './components/reporting/cost-utilization/report-manager',
+            'explore-cohort',
+          ], function(ConceptSetStore) {
+            sharedState.CohortDefinition.mode('conceptsets')
+            sharedState.activeConceptSet(ConceptSetStore.cohortDefinition())
             router.setCurrentView('cohort-definition-manager', {
               cohortDefinitionId,
               mode: 'conceptsets',
@@ -46,7 +118,7 @@ define(
             './components/reporting/cost-utilization/report-manager',
             'explore-cohort',
             'components/conceptset/concept-modal',
-          ], function () {
+          ], function() {
             // Determine the view to show on the cohort manager screen based on the path
             path = path.split("/");
             let view = 'definition';

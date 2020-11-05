@@ -16,6 +16,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'atlas-state',
 	'clipboard',
 	'd3',
+	'services/Sample',
 	'services/Jobs',
 	'services/job/jobDetail',
 	'services/JobDetailsService',
@@ -76,6 +77,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	sharedState,
 	clipboard,
 	d3,
+	sampleService,
 	jobService,
 	jobDetail,
 	jobDetailsService,
@@ -108,6 +110,81 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
 	}
 
+	function gender(code) {
+		if(code==8507) return 'Male'
+		if(code==8532) return 'Female'
+		else return "Other"
+	}
+
+	function mapSampleListData(originalData) {
+		return originalData.map(el => {
+			let selectionCriteria;
+			let mode;
+			if(el.age) {
+				switch (el.age.mode) {
+					case 'between':
+						mode = 'Between'
+						break;
+					case 'notBetween':
+						mode = 'Not between'
+						break;
+					case 'lessThan':
+						mode= 'Less than'
+						break;
+					case 'lessThanOrEqual':
+						mode= 'Less than or equal'
+						break;
+					case 'equalTo':
+						mode= 'Equal'
+						break;
+					case 'greaterThan':
+						mode= 'Greater than'
+						break;
+					case 'greaterThanOrEqual':
+						mode= 'Greater than or equal'
+						break;
+					default:
+						break;
+				}
+			} else {
+				mode = ''
+			}
+			if((mode=='Between'||mode=='Not between')&& el.age) {
+				selectionCriteria = `${mode} ${el.age.min} and ${el.age.max}`
+			} else if(el.age) {
+				selectionCriteria = `${mode} ${el.age.value}`
+			} else {
+				selectionCriteria = 'Random age'
+			}
+			if(el.gender.otherNonBinary&&el.gender.conceptIds.length==2) {
+				selectionCriteria =`Mix, ${selectionCriteria}`
+			} else {
+				if (el.gender.otherNonBinary) {
+					selectionCriteria = `Other, ${selectionCriteria}`
+				}
+				if (el.gender.conceptIds[0]) {
+					selectionCriteria =  `${gender(el.gender.conceptIds[0])}, ${selectionCriteria}`
+				}
+				if (el.gender.conceptIds[1]) {
+					selectionCriteria =  `${gender(el.gender.conceptIds[1])}, ${selectionCriteria}`
+				}
+			}
+			const sampleId = el.id;
+			const sampleName = el.name || ''
+			const patientCounts = el.size
+			const createdBy = el.createdBy && el.createdBy.name || ''
+			const createdOn = new Date(el.createdDate).toLocaleString()
+			return {
+				sampleId,
+				sampleName,
+				selectionCriteria,
+				patientCounts,
+				createdBy,
+				createdOn,
+			}
+		})
+	}
+
 	class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
@@ -123,7 +200,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cohortDefinitionSourceInfo = sharedState.CohortDefinition.sourceInfo;
 			this.dirtyFlag = sharedState.CohortDefinition.dirtyFlag;
 			this.conceptSets = ko.computed(() => this.currentCohortDefinition() && this.currentCohortDefinition().expression().ConceptSets);
-			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().cohortDefinition);			
+			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().cohortDefinition);
 			this.sourceAnalysesStatus = {};
 			this.reportCohortDefinitionId = ko.observable();
 			this.reportSourceKey = ko.observable();
@@ -136,6 +213,210 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.service = cohortDefinitionService;
 			this.defaultName = globalConstants.newEntityNames.cohortDefinition;
 			this.isReportGenerating = ko.observable(false);
+
+			// sample states
+			this.showSampleCreatingModal = ko.observable(false)
+			this.sampleSourceKey = ko.observable()
+			this.isSampleGenerating = ko.observable(false)
+			this.isLoadingSampleData = ko.observable(false)
+			this.cohortDefinitionIdOnRoute=ko.observable()
+			// new sample state
+			this.newSampleCreatingLoader = ko.observable(false)
+			this.sampleName=ko.observable('')
+			this.patientCount=ko.observable()
+			this.sampleAgeType = ko.observable('')
+			this.isAgeRange =ko.observable(false)
+			this.firstAge = ko.observable()
+			this.secondAge = ko.observable()
+			this.isMaleSample=ko.observable(false)
+			this.isFeMaleSample=ko.observable(false)
+			this.isOtherGenderSample=ko.observable(false)
+			//error state
+			this.isAgeRangeError = ko.observable()
+			this.firstAgeError = ko.observable()
+			this.sampleNameError=ko.observable()
+			this.patientCountError=ko.observable()
+			//reset sample state after closing
+			this.showSampleCreatingModal.subscribe(val =>{
+				if(!val) this.resetSampleForm()
+			})
+
+			//sampleSourceKey changes => get list of samples
+			this.sampleSourceKey.subscribe(val => {
+				const cohortId = this.currentCohortDefinition()?
+					this.currentCohortDefinition().id():
+				 	this.cohortDefinitionIdOnRoute()
+				if(!val) {
+					history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples`)
+					return
+				};
+				history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples/${val}`)
+				this.getSampleList(cohortId)
+			})
+
+			//validation input value
+			this.sampleAgeType.subscribe(val => {
+				this.isAgeRange(val=='between'||val=='notBetween')
+			})
+			this.isAgeRange.subscribe(val => {
+					this.firstAgeError(undefined)
+					this.isAgeRangeError(undefined)
+					this.firstAge(null)
+					this.secondAge(null)
+			})
+			this.secondAge.subscribe(val => {
+				let secondAge;
+				if(val!=null) {
+					secondAge = Number(val)
+			 } else {
+				secondAge == val
+			 }
+				if(secondAge==null&&this.firstAge()==null) {
+					this.isAgeRangeError(undefined)
+					this.firstAgeError(undefined)
+					return
+				}
+				if (this.isAgeRange()) {
+					if(!Number.isInteger(secondAge)||secondAge<0||!this.firstAge()||!secondAge||secondAge==this.firstAge()) {
+						this.isAgeRangeError(true)
+					} else {
+						this.isAgeRangeError(false)
+					}
+				} else {
+					this.isAgeRangeError(undefined)
+				}
+			})
+
+			this.firstAge.subscribe(val => {
+				let firstAge;
+				if(val!=null) {
+					 firstAge = Number(val)
+				} else {
+					firstAge == val
+				}
+				if(firstAge==null&&this.secondAge()==null) {
+					this.isAgeRangeError(undefined)
+					this.firstAgeError(undefined)
+					return
+				}
+
+				if(this.isAgeRange()) {
+					if(!Number.isInteger(firstAge)||!this.secondAge()||!secondAge||firstAge<0||firstAge==this.secondAge()) {
+						this.isAgeRangeError(true)
+					} else {
+						this.isAgeRangeError(false)
+					}
+				}
+
+				if(!this.isAgeRange()) {
+					if(!Number.isInteger(firstAge)||firstAge<0) {
+						this.firstAgeError(true)
+					} else {
+						this.firstAgeError(false)
+					}
+				}
+			})
+
+			this.sampleName.subscribe(val =>{
+				if(!val.trim()) {
+					this.sampleNameError(true)
+				} else {
+					this.sampleNameError(false)
+				}
+			})
+
+			this.patientCount.subscribe(val =>{
+				if(!val||!Number.isInteger(Number(val))||Number(val)<=0) {
+					this.patientCountError(true)
+				} else {
+					this.patientCountError(false)
+				}
+			})
+			//sample list
+			this.sampleListCols = [
+				{
+					title: 'Sample Id',
+					data:'sampleId',
+					visible: false,
+				},
+        {
+          title: 'Sample name',
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['sampleName'],
+						linkish: true,
+					})),
+        },
+        {
+          title: 'Number of patients',
+          data: 'patientCounts',
+        },
+        {
+          title: 'Selection criteria',
+          data: 'selectionCriteria',
+        },
+        {
+          title: 'Created by',
+          data: 'createdBy',
+				},
+				{
+					title: 'Created on',
+					data: 'createdOn'
+				},
+				{
+					title: 'Delete',
+					sortable: false,
+					render: function() {return `<i class="sample-list fa fa-trash" aria-hidden="true"></i>`}
+				}
+			]
+			this.sampleList = ko.observableArray()
+
+			// Sample data table
+			this.sampleCols =  [
+				{
+					title: '',
+					sortable: false,
+					data: 'selected',
+					render: function(d) {
+						return `<span data-bind="css: { selected: ${d}}" class="sample-select fa fa-check"></span>`
+					}
+				},
+        {
+					title: 'Person ID',
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['personId'],
+						linkish: true,
+					})),
+				},
+				{
+					title: 'Gender',
+					data: 'gender',
+				},
+				{
+					title: 'Age at index',
+					data: 'ageIndex',
+				},
+				{
+					title: 'Number of events',
+					data: 'eventCounts',
+				}
+			]
+			this.selectedSampleId = ko.observable('')
+			this.selectedSampleName = ko.observable('')
+			this.sampleDataLoading = ko.observable(false)
+			this.sampleData =ko.observableArray([])
+
+			this.isCohortGenerated = ko.computed(() => {
+				const sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.sampleSourceKey());
+				if (sourceInfo&&this.getStatusMessage(sourceInfo) == 'COMPLETE') {
+					return true
+				}
+				return false
+			})
+			this.enableViewPatients = ko.computed(() => {
+				return this.sampleData().filter(el=>el.selected).length>0;
+			})
+			//end of sample states
+
 			this.cdmSources = ko.computed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
@@ -382,7 +663,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					},
 				]
 			};
-			
+
 			this.stopping = ko.pureComputed(() => this.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {}));
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 
@@ -623,9 +904,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),
-				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy() 
+				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
 					&& this.currentCohortDefinition().createdBy().login
 			});
+
+			this.tabMode.subscribe(mode => {
+				if(mode&&this.currentCohortDefinition()&&mode!=='samples') {
+					const cohortId = this.currentCohortDefinition().id()
+					// use push state to prevent the component to re-render
+					history.pushState(null, '', `#/cohortdefinition/${cohortId}`)
+				}
+			})
 
 			this.pollForInfoPeriodically();
 
@@ -683,6 +972,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			async save () {
+				const result = window.confirm('Modify cohort definition will delete all created samples, do you still want to proceed?')
+				if(!result) return
+				this.sampleSourceKey(null)
 				this.isSaving(true);
 
 				let cohortDefinitionName = this.currentCohortDefinition().name();
@@ -887,13 +1179,21 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			onRouterParamsChanged(params) {
-				let { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey } = params;
+				let { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey, sampleId } = params;
+				this.cohortDefinitionIdOnRoute(cohortDefinitionId)
 				// cohortDefinitionId can be undefined in case of following links fron notifications
 				// when another tab of the same cohort definition is selected
 				if (!cohortDefinitionId && this.currentCohortDefinition()) {
 					cohortDefinitionId = this.currentCohortDefinition().id();
 				}
 				this.tabMode(mode);
+				if(sourceKey) {
+					this.sampleSourceKey(sourceKey)
+				}
+				if(sampleId) {
+					this.selectedSampleId(sampleId)
+					this.fetchSampleData({sampleId, sourceKey, cohortDefinitionId})
+				}
 				if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
 					this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
 				} else if (selectedSourceId) {
@@ -1048,7 +1348,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.conceptSetStore.isEditable(this.canEdit());
 				commonUtils.routeTo(`/cohortdefinition/${this.currentCohortDefinition().id()}/conceptsets/`);
 			}
-		
+
 			reload () {
 				if (this.modifiedJSON.length > 0) {
 					var updatedExpression = JSON.parse(this.modifiedJSON);
@@ -1327,6 +1627,224 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}finally {
 					this.printFriendlyLoading(false);
 				}
+			}
+
+			// samples methods
+			clickSampleTab() {
+				this.tabMode('samples')
+				const cohortId = this.currentCohortDefinition().id()
+				history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples`)
+			}
+			addNewSample() {
+				this.showSampleCreatingModal(true)
+			}
+
+			validateSampleForm() {
+				// if a mandotory field is not yet filled at all, it should be error
+				if(this.sampleNameError()==undefined) this.sampleNameError(true)
+				if(this.patientCountError()==undefined) this.patientCountError(true)
+				if(!this.isAgeRange()) {
+					// not-madatory field
+					if(this.firstAgeError()==undefined) this.firstAgeError(false);
+					if(!this.firstAgeError()&&!this.sampleNameError()&&!this.patientCountError()) {
+						return true
+					}
+					return false
+				} else {
+					// not madatory field
+					if(this.isAgeRangeError()==undefined) this.isAgeRangeError(false)
+					if(!this.isAgeRangeError()&&!this.sampleNameError()&&!this.patientCountError()) {
+						return true
+					}
+					return false
+				}
+			}
+
+			resetSampleForm() {
+				this.sampleName('')
+				this.patientCount('')
+				this.sampleAgeType('lessThan')
+				this.firstAge(null)
+				this.secondAge(null)
+				this.isMaleSample(false)
+				this.isFeMaleSample(false)
+				this.isOtherGenderSample(false)
+
+				this.isAgeRangeError(undefined)
+				this.firstAgeError(undefined)
+				this.sampleNameError(undefined)
+				this.patientCountError(undefined)
+				this.isAgeRange(false)
+			}
+
+			createNewSample() {
+				const allValidated = this.validateSampleForm()
+				if(!allValidated) return
+				// create Sample
+				const cohortDefinitionId =this.currentCohortDefinition().id();
+				const sourceKey=this.sampleSourceKey()
+				const name = this.sampleName();
+				const size = Number(this.patientCount());
+				const ageMode = this.sampleAgeType();
+				let conceptIds = [];
+				let otherNonBinary = false
+				const selectAllGender = !this.isMaleSample()&&!this.isFeMaleSample()&&!this.isOtherGenderSample()
+				if(this.isMaleSample()||selectAllGender) {
+					conceptIds.push(8507)
+				}
+				if(this.isFeMaleSample()||selectAllGender) {
+					conceptIds.push(8532)
+				}
+				if(this.isOtherGenderSample()||selectAllGender) {
+					otherNonBinary = true
+				}
+
+				const firstAge = Number(this.firstAge());
+				const secondAge = Number(this.secondAge());
+				let age;
+				if(this.firstAge()==null&&this.secondAge()==null) {
+					age = null
+				} else {
+					age = {
+						value: this.isAgeRange()?null:firstAge,
+						mode: ageMode,
+						min:this.isAgeRange()? firstAge<secondAge?firstAge:secondAge : null,
+						max:this.isAgeRange()? firstAge<secondAge?secondAge:firstAge : null
+					}
+				}
+
+				const	payload = {
+						name,
+						size,
+						age,
+						gender: {otherNonBinary, conceptIds}
+					}
+				this.newSampleCreatingLoader(true)
+				sampleService.createSample(payload, {cohortDefinitionId, sourceKey})
+				.then(res => {
+					console.log('res', res)
+					if(res.ok) {
+						const newData= mapSampleListData([res.data])
+						this.sampleList.unshift(...newData)
+						this.showSampleCreatingModal(false)
+					}
+					//close pop-up
+				})
+				.catch((error) => {
+					console.error(error)
+					alert('Error when creating sample, please try again later')
+				})
+				.finally(() => {
+					this.newSampleCreatingLoader(false)
+				})
+			}
+
+			getSampleList(cohortId) {
+				this.isLoadingSampleData(true)
+				const cohortDefinitionId= cohortId || this.currentCohortDefinition().id();
+				// if (cohortDefinitionId==0) return
+				const sourceKey=this.sampleSourceKey()
+				sampleService.getSampleList({cohortDefinitionId, sourceKey})
+				.then(res => {
+					if(res.generationStatus!="COMPLETE") {
+						this.sampleSourceKey(null)
+						alert('Cohort should be generated before creating samples')
+						return
+					}
+					const sampleListData = mapSampleListData(res.samples)
+					this.sampleList(sampleListData)
+				})
+				.catch(error=>{
+					console.error(error)
+					alert('Error when fetching sample list, please try again later')
+				})
+				.finally(() => {
+					this.isLoadingSampleData(false)
+				})
+			}
+
+			onSampleListRowClick(d, e) {
+				// find index of click
+				const {sampleId} = d;
+				const rowIndex = this.sampleList().findIndex(el=>el.sampleId == sampleId)
+
+				const cohortDefinitionId= this.currentCohortDefinition().id();
+				const sourceKey=this.sampleSourceKey();
+				if(e.target.className=='sample-list fa fa-trash') {
+					//TODO: Delete row
+					sampleService.deleteSample({cohortDefinitionId, sourceKey, sampleId})
+					.then(res=>{
+						if(res.ok) {
+							this.sampleList.splice(rowIndex, 1)
+						}
+					})
+					.catch(() => {
+						alert('Error when deleting sample, please try again later')
+					})
+				} else {
+					//TODO: details sample
+					this.fetchSampleData({sampleId, sourceKey, cohortDefinitionId})
+				}
+			}
+
+			fetchSampleData({sampleId, sourceKey, cohortDefinitionId}) {
+				this.sampleDataLoading(true)
+				sampleService.getSample({ cohortDefinitionId, sourceKey, sampleId })
+				.then(res=>{
+					this.selectedSampleId(sampleId)
+					this.selectedSampleName(res.name)
+					this.showSampleDataTable(res.elements)
+					history.pushState(null, '', `#/cohortdefinition/${cohortDefinitionId}/samples/${sourceKey}/${sampleId}`)
+				})
+				.catch(error => {
+					console.error(error);
+					alert('Error when fetching sample data, please try again later')
+				})
+				.finally(() => {
+					this.sampleDataLoading(false)
+				})
+			}
+
+			onSampleDataClick(d) {
+				const selectedPatients = this.sampleData().filter(el=>el.selected).map(el=>el.personId);
+				//change checkbox state
+
+				if (selectedPatients.includes(d.personId)) {
+					this.sampleData.replace(d, { ...d, selected: !d.selected })
+				} else {
+					if (selectedPatients.length == 2) {
+						alert('You can only select maximum 2 patients')
+						return
+					}
+					this.sampleData.replace(d, { ...d, selected: !d.selected })
+				}
+			}
+
+			showSampleDataTable(sample) {
+				const transformedSampleData = sample.map(el => ({
+					personId: el.personId,
+					gender: gender(el.genderConceptId),
+					ageIndex: el.age,
+					eventCounts: el.recordCount || '',
+					selected: false
+				}))
+
+				this.sampleData(transformedSampleData);
+			}
+
+			viewSamplePatient() {
+				const sampleId = this.selectedSampleId()
+				const cohortDefinitionId= this.currentCohortDefinition().id();
+				const sourceKey=this.sampleSourceKey();
+				const selectedPatients = this.sampleData().filter(el=>el.selected).map(el=>el.personId);
+				if(selectedPatients.length==0) {
+					alert('You must select one or two patients to proceed')
+					return
+				}
+				if(selectedPatients[1]) {
+					window.open(`#/profiles/${sourceKey}/${selectedPatients[0]}/${cohortDefinitionId}/${sampleId}/${selectedPatients[1]}`)
+				}
+				window.open(`#/profiles/${sourceKey}/${selectedPatients[0]}/${cohortDefinitionId}/${sampleId}`)
 			}
 	}
 
