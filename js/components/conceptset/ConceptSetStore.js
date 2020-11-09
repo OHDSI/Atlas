@@ -186,7 +186,7 @@ define([
 			function conceptCols(c) { 
 				return {
 					"Concept ID": c.CONCEPT_ID, 
-					"Cocnept Code": c.CONCEPT_CODE, 
+					"Concept Code": c.CONCEPT_CODE, 
 					"Concept Name": c.CONCEPT_NAME,
 					"Domain": c.DOMAIN_ID, 
 					"Vocabulary": c.VOCABULARY_ID, 
