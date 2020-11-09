@@ -1775,7 +1775,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					alert('Error when deleting sample, please try again later');
 				})
 			} else if (e.target.className == 'sample-list fa fa-refresh') {
-				this.sampleDataLoading(false);
+				this.sampleDataLoading(true);
 				this.refreshSample({sampleId, sourceKey, cohortDefinitionId})
 				.then(res => {
 					this.showSampleDataTable(res.elements);
@@ -1807,12 +1807,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		refreshSample({sampleId, sourceKey, cohortDefinitionId}) {
-			sampleService.refreshSample({cohortDefinitionId, sourceKey, sampleId})
-			.then(res=>{
-				if(res.ok) {
-					console.log("todo, refresh result table with new sample");
-				}
-			})
+			return sampleService.refreshSample({cohortDefinitionId, sourceKey, sampleId})
 			.catch(() => {
 				alert('Error when refreshing sample, please try again later');
 			})
