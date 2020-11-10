@@ -268,6 +268,15 @@ define([
 					return true;
 			}
 		}
+
+		self.getDistinctOptions = function (criteria) {
+			let distinctOptions = [{id: "DOMAIN_CONCEPT", name: "Standard Concept"}, {id: "START_DATE", name: "Start Date"}];
+			if (self.hasVO(criteria)) {
+				distinctOptions.push({id: "VISIT_ID", name: "Visit"});
+			}
+			return distinctOptions;
+		}
+	
 	}
 
 	// return compoonent definition

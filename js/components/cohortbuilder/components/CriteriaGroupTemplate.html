@@ -115,21 +115,16 @@
 									</span>
 
 									<span data-bind="text: ko.i18n('components.criteriaGroup.with','with')"></span>
-									<select data-bind=" options: $component.options.occurrenceTypeOptions,
-														optionsText: 'name',
-														optionsValue: 'id',
-														value: Occurrence.Type" />
-									<!--									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" /> -->
+									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
 									<span contenteditable="true" class="numericInputField dropdown"
-										data-bind="htmlValue: Occurrence.Count.numeric(),
+												data-bind="htmlValue: Occurrence.Count.numeric(), 
 																	 eventType: 'blur', 
-																	 ko_autocomplete: { value: Occurrence.Count, source: $component.options.occurrenceCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())},
-														text: Occurrence.IsDistinct() ?
-															  ko.i18n('components.criteriaGroup.usingDistinct','using distinct') :
-															  ko.i18n('components.criteriaGroup.usingAll','using all')
-									"></button> <span
-										data-bind="text: ko.i18n('components.criteriaGroup.occurrencesOf','occurrences of:')"></span>
+																	 ko_autocomplete: { value: Occurrence.Count, source: $component.options.occurrenceCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" />									
+									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ?
+															ko.i18n('components.criteriaGroup.usingDistinct','using distinct') :
+															ko.i18n('components.criteriaGroup.usingAll','using all')"></button>
+									<!-- ko if: !$data.Occurrence.IsDistinct() --> <span data-bind="text: ko.i18n('components.criteriaGroup.occurrencesOf','occurrences of:')"></span>  <!-- /ko -->
+									<!-- ko if: $data.Occurrence.IsDistinct() --> <select data-bind="options: $component.getDistinctOptions($data.Criteria), optionsText: 'name', optionsValue: 'id', value: $data.Occurrence.CountColumn" />  <!-- /ko -->
 								</div>
 								<div data-bind="component: {
 									name: $component.getCriteriaComponent($data.Criteria),

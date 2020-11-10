@@ -220,6 +220,7 @@ define([
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
 				entityIdGetter: () => this.selectedAnalysisId(),
 				createdByUsernameGetter: () => this.selectedAnalysis() && this.selectedAnalysis().createdBy()
+					&& this.selectedAnalysis().createdBy().login
 			});
 
 			// startup actions
