@@ -46,12 +46,6 @@ define([
 			this.subscriptions.push(this.useRegularization.subscribe(newValue => {
 				constants.setRegularization(newValue, this.outcomeModelArgs.prior);
 			}));			
-
-			this.stratified = ko.pureComputed(() => {
-				var stratified = (this.matchStratifySelection() !== "none");
-				this.outcomeModelArgs.stratified(stratified);
-				return stratified; 
-			});
 		}
 
 		toggleControlDisplay() {
