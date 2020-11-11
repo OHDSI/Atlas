@@ -68,6 +68,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 
 	const includedConceptsOptions = {
 		xssSafe: true,
+		autoWidth:false,
 		Facets: [
 			{
 				'caption': 'Vocabulary',
