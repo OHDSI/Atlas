@@ -449,27 +449,26 @@
 				isFeMaleSample: isFeMaleSample,
 				isOtherGenderSample: isOtherGenderSample,
 				createNewSample: createNewSample,
-				newSampleCreatingLoader: newSampleCreatingLoader
+				newSampleCreatingLoader: newSampleCreatingLoader,
+				isSampleFormValid: isSampleFormValid
 			}
-			id='sampleCreatingModal'
-			}"
-		>
+		}">
 			<form data-bind="submit: createNewSample" class="sampleCreatingForm" novalidate>
 				<div class="form-group" data-bind="css: {'has-error': sampleNameError()==true, 'has-success': sampleNameError()==false}">
 					<span class="help-block">*Mandatory fields</span>
 					<label for="sampleCreatingName" class="control-label">*Sample name</label>
 					<input required data-bind="textInput: sampleName" type="text" id="sampleCreatingName" class="form-control" placeholder="Enter sample name">
-					<span class="help-block" data-bind="visible: sampleNameError()==true">Sample name cannot be empty</span>
+					<span class="help-block" data-bind="visible: sampleNameError()">Sample name cannot be empty</span>
 				</div>
-				<div class="form-group" data-bind="css: {'has-error': patientCountError()==true, 'has-success': patientCountError()==false}">
-					<label for="sampleCreatingPatientCount" class="control-label">*Number of patients</label>
-					<input step="1" data-bind="textInput: patientCount" type="number" class="form-control" id="sampleCreatingPatientCount" placeholder="Enter a number">
-					<span class="help-block" data-bind="visible: patientCountError()==true">Number of patients must be a positive integer</span>
+				<div class="form-group" data-bind="css: {'has-error': patientCountError(), 'has-success': !patientCountError()}">
+					<label class="control-label">*Number of patients</label>
+					<input step="1" data-bind="textInput: patientCount.numeric()" type="number" class="form-control" placeholder="Enter a number">
+					<span class="help-block" data-bind="visible: patientCountError()">Number of patients must be a positive integer</span>
 				</div>
 
 				<div class="form-group ageRange">
 					<label
-						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError()==true||firstAgeError()==true, myCustomTextSuccess: isAgeRangeError()==false}"
+						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError() || firstAgeError(), myCustomTextSuccess: !isAgeRangeError()}"
 						for="sampleCreatingAge"
 						class="control-label">
 						Select age criteria
@@ -477,7 +476,7 @@
 					<div class="row">
 						<div class="col-md-7" style="padding-left: 0">
 							<select
-								data-bind="value: sampleAgeType, css: {myCustomInputError: isAgeRangeError()==true||firstAgeError()==true, myCustomInputSuccess: isAgeRangeError()==false}"
+								data-bind="value: sampleAgeType, css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !isAgeRangeError()}"
 								id="sampleCreatingAge"
 								class="form-control">
 									<option value="lessThan">Less than</option>
@@ -491,23 +490,21 @@
 						</div>
 						<div data-bind="css: {'col-md-2':isAgeRange(), 'col-md-5':!isAgeRange()}">
 							<input
-								data-bind="textInput: firstAge, css: {myCustomInputError: isAgeRangeError()==true||firstAgeError()==true, myCustomInputSuccess: isAgeRangeError()==false}"
+								data-bind="textInput: firstAge.numeric(), css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !(isAgeRangeError() || firstAgeError())}"
 								type="text"
 								class="form-control"
 								placeholder="Enter a number">
-								<span data-bind="visible: firstAgeError()==true, css: {myCustomTextError: firstAgeError()==true, myCustomTextSuccess: firstAgeError()==false}">Age must be a non-negative integer</span>
+								<span data-bind="visible: !isAgeRange() && firstAgeError(), css: {myCustomTextError: firstAgeError(), myCustomTextSuccess: !firstAgeError()}">Age must be a non-negative integer</span>
 						</div>
-						<div class="col-md-1" data-bind="visible: isAgeRange">
-							<button class="btn btn-link  disabled" style="color: black" >and</button>
-						</div>
+						<div class="col-md-1" data-bind="visible: isAgeRange"><div style="margin-top: .5em; text-align: center">and</div></div>
 						<div class="col-md-2" data-bind="visible: isAgeRange">
 							<input
-							data-bind="textInput: secondAge, css: {myCustomInputError: isAgeRangeError()==true, myCustomInputSuccess: isAgeRangeError()==false}"
+							data-bind="textInput: secondAge.numeric(), css: {myCustomInputError: isAgeRangeError, myCustomInputSuccess: !isAgeRangeError()}"
 							type="text"
 							class="form-control"
 							placeholder="Enter a number">
 						</div>
-						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError()==true, myCustomTextSuccess: isAgeRangeError()==false}">First and second age must be non-negative integers and not equal</span>
+						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError(), myCustomTextSuccess: !isAgeRangeError()}">First and second age must be non-negative integers and not equal</span>
 					</div>
 				</div>
 
@@ -530,7 +527,7 @@
 						</div>
 				</div>
 				 <!-- ko if: !newSampleCreatingLoader() -->
-				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="submit" class="btn btn-primary" data-bind="enable: isSampleFormValid()">Submit</button>
 				 <!-- /ko -->
 				 <!-- ko if: newSampleCreatingLoader() -->
 				<button class="btn btn-primary" type="button" disabled>

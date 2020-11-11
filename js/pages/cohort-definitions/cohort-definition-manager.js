@@ -225,22 +225,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.sampleName=ko.observable('');
 			this.patientCount=ko.observable();
 			this.sampleAgeType = ko.observable('');
-			this.isAgeRange =ko.observable(false);
 			this.firstAge = ko.observable();
 			this.secondAge = ko.observable();
 			this.isMaleSample=ko.observable(false);
 			this.isFeMaleSample=ko.observable(false);
 			this.isOtherGenderSample=ko.observable(false);
 			//error state
-			this.isAgeRangeError = ko.observable();
-			this.firstAgeError = ko.observable();
-			this.sampleNameError=ko.observable();
-			this.patientCountError=ko.observable();
-			//reset sample state after closing
-			this.trackSub( this.showSampleCreatingModal.subscribe(val =>{
-					if(!val) this.resetSampleForm();
-				})
-			);
+			this.isAgeRange =ko.pureComputed(() => ['between','notBetween'].includes(this.sampleAgeType()));
+			this.isAgeRangeError = ko.pureComputed(() => this.isAgeRange() && (this.firstAge() == null || this.secondAge() == null));
+			this.firstAgeError = ko.pureComputed(() => this.firstAge() == null || this.firstAge() < 0);
+			this.sampleNameError=ko.pureComputed(() => this.sampleName().trim() == "");
+			this.patientCountError=ko.pureComputed(() => !(this.patientCount() > 0)); // this works because null == 0
 
 			//sampleSourceKey changes => get list of samples
 			this.trackSub(this.sampleSourceKey.subscribe(val => {
@@ -256,85 +251,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}));
 
 			//validation input value
-			this.trackSub(this.sampleAgeType.subscribe(val => {
-				this.isAgeRange(val=='between'||val=='notBetween')
-			}));
-
-			this.trackSub(this.isAgeRange.subscribe(val => {
-					this.firstAgeError(undefined)
-					this.isAgeRangeError(undefined)
-					this.firstAge(null)
-					this.secondAge(null)
-			}));
-
-			this.trackSub(this.secondAge.subscribe(val => {
-				let secondAge;
-				if(val!=null) {
-					secondAge = Number(val)
-				} else {
-					secondAge == val
-				}
-				if(secondAge==null&&this.firstAge()==null) {
-					this.isAgeRangeError(undefined)
-					this.firstAgeError(undefined)
-					return
-				}
-				if (this.isAgeRange()) {
-					if(!Number.isInteger(secondAge)||secondAge<0||!this.firstAge()||!secondAge||secondAge==this.firstAge()) {
-						this.isAgeRangeError(true)
-					} else {
-						this.isAgeRangeError(false)
-					}
-				} else {
-					this.isAgeRangeError(undefined)
-				}
-			}));
-
-			this.trackSub(this.firstAge.subscribe(val => {
-				let firstAge;
-				if(val!=null) {
-					 firstAge = Number(val)
-				} else {
-					firstAge == val
-				}
-				if(firstAge==null&&this.secondAge()==null) {
-					this.isAgeRangeError(undefined)
-					this.firstAgeError(undefined)
-					return
-				}
-
-				if(this.isAgeRange()) {
-					if(!Number.isInteger(firstAge)||!this.secondAge()||!this.secondAge()||firstAge<0||firstAge==this.secondAge()) {
-						this.isAgeRangeError(true)
-					} else {
-						this.isAgeRangeError(false)
-					}
-				}
-
-				if(!this.isAgeRange()) {
-					if(!Number.isInteger(firstAge)||firstAge<0) {
-						this.firstAgeError(true)
-					} else {
-						this.firstAgeError(false)
-					}
-				}
-			}));
-
-			this.trackSub(this.sampleName.subscribe(val =>{
-				if(!val.trim()) {
-					this.sampleNameError(true)
-				} else {
-					this.sampleNameError(false)
-				}
-			}));
-
-			this.trackSub(this.patientCount.subscribe(val =>{
-				if(!val||!Number.isInteger(Number(val))||Number(val)<=0) {
-					this.patientCountError(true)
-				} else {
-					this.patientCountError(false)
-				}
-			}));
 
 			//sample list
 			this.sampleListCols = [
@@ -1625,28 +1541,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples`);
 		}
 		addNewSample() {
+			this.resetSampleForm();
 			this.showSampleCreatingModal(true);
 		}
 
-		validateSampleForm() {
+		isSampleFormValid() {
 			// if a mandotory field is not yet filled at all, it should be error
-			if(this.sampleNameError()==undefined) this.sampleNameError(true);
-			if(this.patientCountError()==undefined) this.patientCountError(true);
-			if(!this.isAgeRange()) {
-				// not-madatory field
-				if(this.firstAgeError()==undefined) this.firstAgeError(false);
-				if(!this.firstAgeError()&&!this.sampleNameError()&&!this.patientCountError()) {
-					return true;
-				}
-				return false;
-			} else {
-				// not madatory field
-				if(this.isAgeRangeError()==undefined) this.isAgeRangeError(false)
-				if(!this.isAgeRangeError()&&!this.sampleNameError()&&!this.patientCountError()) {
-					return true;
-				}
-				return false;
-			}
+			return !(this.sampleNameError() || this.patientCountError() || this.firstAgeError() || this.isAgeRangeError());
 		}
 
 		resetSampleForm() {
@@ -1658,18 +1559,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isMaleSample(false);
 			this.isFeMaleSample(false);
 			this.isOtherGenderSample(false);
-
-			this.isAgeRangeError(undefined);
-			this.firstAgeError(undefined);
-			this.sampleNameError(undefined);
-			this.patientCountError(undefined);
-			this.isAgeRange(false);
 		}
 
 		createNewSample() {
-			const allValidated = this.validateSampleForm()
-			if(!allValidated) return;
-			// create Sample
 			const cohortDefinitionId =this.currentCohortDefinition().id();
 			const sourceKey=this.sampleSourceKey()
 			const name = this.sampleName();
@@ -1688,10 +1580,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				otherNonBinary = true;
 			}
 
-			const firstAge = Number(this.firstAge());
-			const secondAge = Number(this.secondAge());
+			const firstAge = this.firstAge();
+			const secondAge = this.secondAge();
 			let age;
-			if(this.firstAge()==null&&this.secondAge()==null) {
+			if(firstAge==null && secondAge==null) {
 				age = null;
 			} else {
 				age = {
