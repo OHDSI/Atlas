@@ -122,8 +122,8 @@ define([
     }
     
     async refresh(mode) {
-      if (this.resolvingConceptSetExpression()) // do nothing
-        return false;
+      if (this.resolvingConceptSetExpression() || this.conceptSetInclusionIdentifiers() == null) // do nothing
+				return false;
       switch (mode) {
         case ViewMode.INCLUDED:
           this.includedConcepts() == null && await this.loadIncluded();

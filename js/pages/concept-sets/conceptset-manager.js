@@ -267,8 +267,6 @@ define([
 				}
 			}));  
 			
-			// initially resolve the concept set
-			this.conceptSetStore.resolveConceptSetExpression();
 			this.conceptSetStore.isEditable(this.canEdit());
 		}
 
