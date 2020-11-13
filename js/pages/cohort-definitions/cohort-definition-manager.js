@@ -231,11 +231,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isFeMaleSample=ko.observable(false);
 			this.isOtherGenderSample=ko.observable(false);
 			//error state
-			this.isAgeRange =ko.pureComputed(() => ['between','notBetween'].includes(this.sampleAgeType()));
-			this.isAgeRangeError = ko.pureComputed(() => this.isAgeRange() && (this.firstAge() == null || this.secondAge() == null));
-			this.firstAgeError = ko.pureComputed(() => this.firstAge() == null || this.firstAge() < 0);
 			this.sampleNameError=ko.pureComputed(() => this.sampleName().trim() == "");
 			this.patientCountError=ko.pureComputed(() => !(this.patientCount() > 0)); // this works because null == 0
+			this.isAgeRange =ko.pureComputed(() => ['between','notBetween'].includes(this.sampleAgeType()));
+			this.firstAgeError = ko.pureComputed(() => this.firstAge() != null && this.firstAge() < 0);
+			this.isAgeRangeError = ko.pureComputed(() => this.isAgeRange() && (this.firstAgeError() || (this.secondAge() != null && this.secondAge() < 0) || this.firstAge() == this.secondAge()));
 
 			//sampleSourceKey changes => get list of samples
 			this.trackSub(this.sampleSourceKey.subscribe(val => {
@@ -1562,6 +1562,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		createNewSample() {
+			
+			if (!this.isSampleFormValid()) { // do nothing
+				return;
+			}
+
 			const cohortDefinitionId =this.currentCohortDefinition().id();
 			const sourceKey=this.sampleSourceKey()
 			const name = this.sampleName();
