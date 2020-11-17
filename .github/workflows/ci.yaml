@@ -18,28 +18,32 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      # Caches NPM dependencies, as long as the package-lock.json is not modified
       - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+
       - name: Use Node.js 12
         uses: actions/setup-node@v1
         with:
           node-version: 12
 
-      # Compile the code
-      - name: Install dependencies
-        working-directory: ./radar-app-config-frontend
+      - name: Build code
         run: npm run build
 
+  # Check that the docker image builds correctly
+  # Push to ohdsi/atlas:master for commits on master.
   docker:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       # Add Docker labels and tags
@@ -67,8 +71,9 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name != 'pull_request' }}  # Push the master branch only
           tags: ${{ steps.docker_meta.outputs.tags }}
+          # Use runtime labels from docker_meta as well as fixed labels
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
             org.opencontainers.image.title="OHDSI ATLAS"

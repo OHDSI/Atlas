@@ -56,6 +56,8 @@ jobs:
           files: 'atlas.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+  # Build and push tagged release docker image to
+  # ohdsi/atlas:<version> and ohdsi/atlas:latest.
   docker:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -91,9 +93,11 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
+          # Allow running the image on the architectures supported by nginx-unprivileged:alpine.
           platforms: linux/amd64,linux/arm/v6,linux/386,linux/ppc64le,linux/s390x
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
+          # Use runtime labels from docker_meta as well as fixed labels
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
             org.opencontainers.image.title="OHDSI ATLAS"
