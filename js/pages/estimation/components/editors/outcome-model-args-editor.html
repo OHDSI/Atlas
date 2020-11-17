@@ -5,7 +5,7 @@
             <select class="form-control" data-bind="options: $component.options.outcomeModelTypeOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.modelType"></select>
         </div>
     </div>
-    <div data-bind="visible: $component.stratified">
+    <div>
         <label data-bind="text: ko.i18n('ple.spec.outcomeModelPanel.regression', 'Should the regression be conditioned on the strata defined in the population object (e.g. by matching or stratifying on propensity scores)?')"></label>
         <div class="input-group">
             <select class="form-control" data-bind="options: $component.options.yesNoOptions, optionsText:'name', optionsValue:'id', value: $component.outcomeModelArgs.stratified"></select>
