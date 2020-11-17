@@ -5,8 +5,10 @@ on:
   release:
     types: [published]
 
-jobs:
+env:
+  DOCKER_IMAGE: ohdsi/atlas
 
+jobs:
   upload:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -63,7 +65,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: ohdsi/atlas
+          images: ${{ env.DOCKER_IMAGE }}
           tag-match: v(.*)
           tag-match-group: 1
 
@@ -94,3 +96,7 @@ jobs:
             ${{ steps.docker_meta.outputs.labels }}
             org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
             org.opencontainers.image.vendor="OHDSI"
+
+      - name: Inspect image
+        run: |
+          docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}

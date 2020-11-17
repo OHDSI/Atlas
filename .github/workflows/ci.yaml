@@ -8,6 +8,9 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  DOCKER_IMAGE: ohdsi/atlas
+
 jobs:
   # Build and test the code
   build:
@@ -59,7 +62,7 @@ jobs:
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
         with:
-          images: ohdsi/atlas
+          images: ${{ env.DOCKER_IMAGE }}
 
       # Setup docker build environment
       - name: Set up QEMU
@@ -88,3 +91,7 @@ jobs:
             ${{ steps.docker_meta.outputs.labels }}
             org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
             org.opencontainers.image.vendor="OHDSI"
+
+      - name: Inspect image
+        run: |
+          docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
