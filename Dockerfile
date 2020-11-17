@@ -28,11 +28,10 @@ RUN RUN find . -type f "(" \
 # Production Nginx image
 FROM nginxinc/nginx-unprivileged:1.19-alpine
 
-LABEL org.opencontainers.image.title="OHDSI ATLAS"
+LABEL org.opencontainers.image.title="OHDSI-Atlas"
 LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
-LABEL org.opencontainers.image.description="ATLAS is an open source software tool for researchers \
-to conduct scientific analyses on standardized observational data converted to the \
-OMOP Common Data Model. It is served as a static site by Nginx."
+LABEL org.opencontainers.image.description="ATLAS is an open source software tool for researchers to \
+conduct scientific analyses on standardized observational data"
 LABEL org.opencontainers.image.licenses="Apache-2.0"
 LABEL org.opencontainers.image.vendor="OHDSI"
 LABEL org.opencontainers.image.source="https://github.com/OHDSI/Atlas"

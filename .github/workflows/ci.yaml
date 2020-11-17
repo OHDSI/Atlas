@@ -1,5 +1,5 @@
-# Continuous integration, including test and integration test
-name: CI Node
+# Continuous integration
+name: CI
 
 # Run in master and dev branches and in all pull requests to those branches
 on:
@@ -76,10 +76,5 @@ jobs:
           # Use runtime labels from docker_meta as well as fixed labels
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
-            org.opencontainers.image.title="OHDSI ATLAS"
             org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
-            org.opencontainers.image.description="ATLAS is an open source software tool for researchers \
-              to conduct scientific analyses on standardized observational data converted to the \
-              OMOP Common Data Model. It is served as a static site by Nginx."
-            org.opencontainers.image.licenses="Apache-2.0"
             org.opencontainers.image.vendor="OHDSI"
