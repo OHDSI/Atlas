@@ -6,10 +6,7 @@ define(['services/http', 'appConfig'], function(httpService, config) {
         {
           ...payload,
         }
-      )
-      .catch(error => {
-        console.log(error)
-      })
+      ).then(res => res.data);
   }
 
   function getSampleList({ cohortDefinitionId, sourceKey }) {

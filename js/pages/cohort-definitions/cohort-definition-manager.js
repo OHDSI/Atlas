@@ -154,10 +154,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			} else if(el.age) {
 				selectionCriteria = `${mode} ${el.age.value}`
 			} else {
-				selectionCriteria = 'Random age'
+				selectionCriteria = 'Any age'
 			}
 			if(el.gender.otherNonBinary&&el.gender.conceptIds.length==2) {
-				selectionCriteria =`Mix, ${selectionCriteria}`
+				selectionCriteria =`Any Gender, ${selectionCriteria}`
 			} else {
 				if (el.gender.otherNonBinary) {
 					selectionCriteria = `Other, ${selectionCriteria}`
@@ -235,7 +235,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.patientCountError=ko.pureComputed(() => !(this.patientCount() > 0)); // this works because null == 0
 			this.isAgeRange =ko.pureComputed(() => ['between','notBetween'].includes(this.sampleAgeType()));
 			this.firstAgeError = ko.pureComputed(() => this.firstAge() != null && this.firstAge() < 0);
-			this.isAgeRangeError = ko.pureComputed(() => this.isAgeRange() && (this.firstAgeError() || (this.secondAge() != null && this.secondAge() < 0) || this.firstAge() == this.secondAge()));
+			this.isAgeRangeError = ko.pureComputed(() => this.isAgeRange() // age range selected
+						&& !(this.firstAge() == null && this.secondAge() == null) // one is non-null 
+						&& (this.firstAge() == null || this.secondAge() == null || this.firstAge() < 0 || this.secondAge() < 0 || this.firstAge() == this.secondAge())); //  has invalid value
 
 			//sampleSourceKey changes => get list of samples
 			this.trackSub(this.sampleSourceKey.subscribe(val => {
@@ -1561,7 +1563,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isOtherGenderSample(false);
 		}
 
-		createNewSample() {
+		async createNewSample() {
 			
 			if (!this.isSampleFormValid()) { // do nothing
 				return;
@@ -1588,7 +1590,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			const firstAge = this.firstAge();
 			const secondAge = this.secondAge();
 			let age;
-			if(firstAge==null && secondAge==null) {
+			if((this.isAgeRange() && (firstAge==null && secondAge==null)) || (!this.isAgeRange() && firstAge == null)) {
 				age = null;
 			} else {
 				age = {
@@ -1606,22 +1608,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					gender: {otherNonBinary, conceptIds}
 				};
 			this.newSampleCreatingLoader(true);
-			sampleService.createSample(payload, {cohortDefinitionId, sourceKey})
-			.then(res => {
-				if(res.ok) {
-					const newData= mapSampleListData([res.data]);
-					this.sampleList.unshift(...newData);
-					this.showSampleCreatingModal(false);
-				}
-				//close pop-up
-			})
-			.catch((error) => {
+			try {
+				const res = await sampleService.createSample(payload, {cohortDefinitionId, sourceKey});
+				const newData= mapSampleListData([res]);
+				this.sampleList.unshift(...newData);
+				this.showSampleCreatingModal(false);
+			} catch(error) {
 				console.error(error);
 				alert('Error when creating sample, please try again later');
-			})
-			.finally(() => {
+			} finally {
 				this.newSampleCreatingLoader(false);
-			})
+			}
 		}
 
 		getSampleList(cohortId) {
