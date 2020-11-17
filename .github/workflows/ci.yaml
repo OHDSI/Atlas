@@ -46,6 +46,14 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       # Add Docker labels and tags
       - name: Docker meta
         id: docker_meta
@@ -71,6 +79,8 @@ jobs:
         with:
           context: ./
           file: ./Dockerfile
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
           push: ${{ github.event_name != 'pull_request' }}  # Push the master branch only
           tags: ${{ steps.docker_meta.outputs.tags }}
           # Use runtime labels from docker_meta as well as fixed labels

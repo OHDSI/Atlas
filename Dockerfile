@@ -1,5 +1,5 @@
 # Build the source
-FROM node:12 as builder
+FROM node:12-alpine as builder
 
 WORKDIR /code
 

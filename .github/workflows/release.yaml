@@ -20,24 +20,16 @@ jobs:
         with:
           node-version: 12
 
-      - name: Cache
-        uses: actions/cache@v2.0.0
-        with:
-          # A list of files, directories, and wildcard patterns to cache and restore
-          path: |
-            ~/.gradle/caches/jars-3
-            ~/.gradle/caches/modules-2/files-2.1/
-            ~/.gradle/caches/modules-2/metadata-2.96/
-            ~/.gradle/native
-            ~/.gradle/wrapper
-          # An explicit key for restoring and saving the cache
-          key: ${{ runner.os }}-gradle
-      - uses: actions/cache@v2
+      - name: NPM cache
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
 
       # Compile the code
       - name: Build code
@@ -94,7 +86,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           # Allow running the image on the architectures supported by nginx-unprivileged:alpine.
-          platforms: linux/amd64,linux/arm/v6,linux/386,linux/ppc64le,linux/s390x
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           # Use runtime labels from docker_meta as well as fixed labels
