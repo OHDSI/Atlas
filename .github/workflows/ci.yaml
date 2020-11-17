@@ -35,7 +35,12 @@ jobs:
         run: npm run build
 
   docker:
-    - uses: actions/checkout@v2
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
@@ -60,7 +65,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.docker_meta.outputs.labels }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
             org.opencontainers.image.title="OHDSI ATLAS"
