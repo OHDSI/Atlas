@@ -94,9 +94,11 @@ jobs:
           # Use runtime labels from docker_meta as well as fixed labels
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
-            org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
-            org.opencontainers.image.vendor="OHDSI"
+            maintainer=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.authors=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.vendor=OHDSI
 
       - name: Inspect image
         run: |
+          docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
           docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}

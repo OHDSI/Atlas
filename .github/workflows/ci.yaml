@@ -72,6 +72,7 @@ jobs:
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -85,12 +86,19 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
           push: ${{ github.event_name != 'pull_request' }}  # Push the master branch only
+          load: ${{ github.event_name == 'pull_request' }}  # Otherwise, just load it locally
           tags: ${{ steps.docker_meta.outputs.tags }}
           # Use runtime labels from docker_meta as well as fixed labels
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
-            org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
-            org.opencontainers.image.vendor="OHDSI"
+            maintainer=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.authors=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.vendor=OHDSI
+
+      # If the image was pushed, we need to pull it again to inspect it
+      - name: Pull image
+        if: ${{ github.event_name != 'pull_request' }}
+        run: docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
 
       - name: Inspect image
         run: |
