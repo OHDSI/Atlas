@@ -469,15 +469,7 @@ define([
 		}
 
 		async afterImportSuccess(res) {
-			this.loading(true);
-
-			const header = res;
-			const specification = JSON.parse(res.specification);
-			this.loadParsedAnalysisFromServer(header, specification);
-			
-			this.loading(false);
-
-			document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
+			commonUtils.routeTo('/prediction/' + res.id);
 		};
 
 		getAuthorship() {

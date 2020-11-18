@@ -564,14 +564,6 @@ define([
 		}
 
 		async afterImportSuccess(res) {
-			this.loading(true);
-
-			const header = res;
-			const specification = JSON.parse(res.specification);
-			this.setParsedAnalysis(header, specification);
-			
-			this.loading(false);
-
 			commonUtils.routeTo('/estimation/cca/' + res.id);
 		};
 
