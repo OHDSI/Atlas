@@ -59,7 +59,9 @@ define([
             },
             {
               title: 'Value field',
-              data: (row, type) => (row.faType === 'CRITERIA_SET' && row.aggregateName) || "Events count",
+              data: (row, type) => {
+                  return (row.faType === 'CRITERIA_SET' && row.aggregateName) || "Events count";
+              }
             }];
         }
 
