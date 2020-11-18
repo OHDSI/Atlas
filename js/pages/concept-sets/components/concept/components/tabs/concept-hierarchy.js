@@ -160,8 +160,13 @@ define([
 							this.metagorize(this.metarchy, relatedConcepts[i]);
 					}
 
-					await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
+					const parents = this.metarchy.parents();
+					const children = this.metarchy.children();
+
+					await vocabularyProvider.loadDensity([...parents, ...children, this.currentConcept()]);
 					this.currentConceptArray([this.currentConcept()]);
+				  this.metarchy.parents(parents);
+				  this.metarchy.children(children);
 			} finally {
 					this.isLoading(false);
 			}
