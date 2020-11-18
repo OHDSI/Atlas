@@ -60,7 +60,11 @@ define([
             {
               title: 'Value field',
               data: (row, type) => {
-                  return (row.faType === 'CRITERIA_SET' && row.aggregateName) || "Events count";
+                  let data = (row.faType === 'CRITERIA_SET' && row.aggregateName) || "Events count" ;
+                  if (row.missingMeansZero) {
+                      data = data + "*"; // mark missingMeansZero elements with a * in table
+                  }
+                  return data;
               }
             }];
         }
