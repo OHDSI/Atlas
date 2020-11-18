@@ -160,8 +160,8 @@ define([
 					this.metagorize(this.metarchy, relatedConcepts[i]);
 				}
 
-				const parents = this.metarchy.parents();
-				const children = this.metarchy.children();
+				let parents = this.metarchy.parents();
+				let children = this.metarchy.children();
 
 				await vocabularyProvider.loadDensity([...parents, ...children, this.currentConcept()]);
 				this.currentConceptArray([this.currentConcept()]);
