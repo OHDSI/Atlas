@@ -67,6 +67,8 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 	];
 
 	const includedConceptsOptions = {
+		xssSafe: true,
+		autoWidth:false,
 		Facets: [
 			{
 				'caption': 'Vocabulary',
@@ -124,16 +126,17 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 				// In such case we would call API with set of NULLs which both doesn't make sense and breaks some DBs.
 				// Therefore, we first check if there is real data to send to API.
 				if (data[0] && data[0].CONCEPT_ID) {
-					await loadAndApplyAncestors(data, conceptSetStore);
-					const columnIndex = columns.findIndex(v => v.data === 'ANCESTORS');
-					api.cells(null, columnIndex).invalidate();
-					rows.nodes().each((element, index) => {
-						const rowData = data[index];
-						commonUtils.contextSensitiveLinkColor(element, rowData);
-						const context = ko.contextFor(element);
-						ko.cleanNode(element);
-						ko.applyBindings(context, element);
-					})
+					loadAndApplyAncestors(data, conceptSetStore).then(() => {
+						const columnIndex = columns.findIndex(v => v.data === 'ANCESTORS');
+						api.cells(null, columnIndex).invalidate();
+						rows.nodes().each((element, index) => {
+							const rowData = data[index];
+							commonUtils.contextSensitiveLinkColor(element, rowData);
+							const context = ko.contextFor(element);
+							ko.cleanNode(element);
+							ko.applyBindings(context, element);
+						});
+					});
 				}
 			}
 		}
@@ -154,7 +157,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 	function getAncestorsRenderFunction() {
 		return (s,p,d) => {
 			if (d.ANCESTORS != null) {
-				const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('\n');
+				const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('<br/>');
 				return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: '${tooltip}'">${d.ANCESTORS.length}</a>`
 			} else {
 				return `<i class="fa fa-circle-o-notch fa-spin"></i>`;

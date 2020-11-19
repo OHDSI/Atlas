@@ -5,11 +5,8 @@ define([
 	'utils/AutoBind',
   'utils/CommonUtils',
   'utils/Renderers',
-  'services/ConceptSet',
-  'components/conceptset/ConceptSetStore',
   'components/conceptset/utils',
   'atlas-state',
-  'const',
   'components/conceptLegend/concept-legend',
 ], function (
 	ko,
@@ -18,11 +15,8 @@ define([
   AutoBind,
   commonUtils,
   renderers,
-  conceptSetService,
-  ConceptSetStore,
   conceptSetUtils,
   sharedState,
-  globalConstants,
 ) {
 	class ConceptsetExpression extends AutoBind(Component) {
 		constructor(params) {
@@ -103,7 +97,7 @@ define([
     }
 
     normalizeData() {
-      return this.selectedConcepts().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) }));
+      return this.conceptSetItems().map((concept, idx) => ({ ...concept, idx, isSelected: ko.observable(!!concept.isSelected) }));
     }
 
     renderCheckbox(field) {
@@ -120,14 +114,14 @@ define([
 			this.conceptSetStore.removeItemsByIndex(idxForRemoval);
     }
 
-		selectAllConceptSetItems(key, areAllSelected) {
-			if (!this.canEditCurrentConceptSet()) {
-				return;
+    async selectAllConceptSetItems(key, areAllSelected) {
+      if (!this.canEditCurrentConceptSet()) {
+        return;
       }
-      this.selectedConcepts().forEach(concept => {
-        concept[key](!areAllSelected);
+      this.conceptSetItems().forEach(conceptSetItem => {
+        conceptSetItem[key](!areAllSelected);
       })
-			conceptSetService.resolveConceptSetExpression({ source: globalConstants.conceptSetSources.repository });
+      await this.conceptSetStore.resolveConceptSetExpression();
     }
 
     navigateToSearchPage() {

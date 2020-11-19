@@ -21,6 +21,9 @@ define([
 		if (key === 'externalLibraries' && _.isArray(objValue)) {
 			return objValue.concat(srcValue);
 		}
+		if (key === 'authProviders' && _.isArray(srcValue)) {
+			return srcValue;
+		}
 	};
 
 	config.webAPIRoot = config.api.url;

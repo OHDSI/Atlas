@@ -71,12 +71,13 @@
 									<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
 									with
 									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
-<!--									<select data-bind="options: $component.options.occurrenceCountOptions, value: Occurrence.Count" /> -->
 									<span contenteditable="true" class="numericInputField dropdown" 
 												data-bind="htmlValue: Occurrence.Count.numeric(), 
 																	 eventType: 'blur', 
 																	 ko_autocomplete: { value: Occurrence.Count, source: $component.options.occurrenceCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" />									
-									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> occurrences of:
+									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> 
+									<!-- ko if: !$data.Occurrence.IsDistinct() --> occurrences of:  <!-- /ko -->
+									<!-- ko if: $data.Occurrence.IsDistinct() --> <select data-bind="options: $component.getDistinctOptions($data.Criteria), optionsText: 'name', optionsValue: 'id', value: $data.Occurrence.CountColumn" />  <!-- /ko -->
 								</div>
 								<div data-bind="component: {
 									name: $component.getCriteriaComponent($data.Criteria),
@@ -88,7 +89,7 @@
 									<window-input params="Window: StartWindow"></window-input> <cycle-toggle-input params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									<!-- ko if: EndWindow -->
 									<div>
-										<i data-bind="click: $component.removeEndWindow" class="fa fa-times" /> and <cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
+										<i data-bind="click: $component.removeEndWindow" class="fa fa-times"  title="Remove"/> and <cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
 										<window-input params="Window: EndWindow"></window-input> <cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									</div>
 									<!-- /ko -->
