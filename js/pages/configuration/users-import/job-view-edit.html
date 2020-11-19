@@ -3,7 +3,7 @@
 
     <div data-bind="css: classes({ extra: 'asset-heading' })">
         <div data-bind="css: classes({ element: 'button-panel', extra: 'input-group' })">
-            <select data-bind="css: classes({ element: 'provider-select' }), options: providers, optionsText: 'label', optionsValue: 'value', value: job().providerType">
+            <select data-bind="css: classes({ element: 'provider-select' }), options: providers, optionsText: 'label', optionsValue: 'value', value: selectedProvider">
             </select>
             <div data-bind="css: classes({ element: 'button-group', extra: 'input-group-btn' })">
                 <button type="button" class="btn btn-success" data-bind="click: $component.saveJob, css: {disabled:!$component.isSavePermitted()}"><i class="fa fa-save"></i></button>
