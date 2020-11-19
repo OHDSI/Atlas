@@ -141,7 +141,8 @@ const settingsObject = {
 		"visibilityjs": "../node_modules/@ohdsi/visibilityjs/lib/visibility.core",
 		"ajv": "../node_modules/ajv/dist/ajv.bundle",
 		"hash-it": "../node_modules/hash-it/dist/hash-it.min",
-        "leaflet": "../node_modules/leaflet/dist/leaflet",
+		"leaflet": "../node_modules/leaflet/dist/leaflet",
+		"html2canvas": "../node_modules/html2canvas/dist/html2canvas.min"
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",

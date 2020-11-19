@@ -4,6 +4,9 @@
 		<hr>
 		<div data-bind="css: $component.classes('table-title')"><span data-bind="text: `Table ${$index()+1}a :` + ' All Pathways'"></span></div>
 		<div> 
+			Person counts stratified by pathway sequence, limited to <span data-bind="text: $component.pathLength"></span> steps.
+		</div>		
+		<div> 
 			Maximum Path Length: <select data-bind="options: $component.pathLengthOptions, value: $component.pathLength"></select> 
 			<button data-bind="css: $component.classes('export-button'), click: $component.exportPathwayReport">Export</button>
 		</div>		
@@ -13,19 +16,28 @@
 			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}b :` + ' Event Cohort Counts by Rank'"></span>
 			<button data-bind="css: $component.classes('export-button'), click: $component.exportCountsByRank">Export</button>
 		</div>
+		<div> 
+			The number of unique event cohorts within each rank of the pathway analysis results.
+		</div>		
 		<table data-bind="dataTable: $component.getEventCohortByRankDatatable($data)"></table>
 		
 		<div>
 			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}c :` + ' Event Cohort Counts'"></span>
 			<button data-bind="css: $component.classes('export-button'), click: $component.exportEventCohortCounts">Export</button>
 		</div>
+		<div> 
+			The number of unique event cohorts across all ranks of the pathway analysis results.
+		</div>		
 		<table data-bind="dataTable: $component.getEventCohortCountsDatatable($data)"></table>
 		
 		<div>
-			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}d :` + ' Distinct Event Cohorts'"></span>
+			<span data-bind="css: $component.classes('table-title'), text: `Table ${$index()+1}d :` + ' Distinct Event Cohort or Combination'"></span>
 			<button data-bind="css: $component.classes('export-button'), click: $component.exportDistinctEventCohortCounts">Export</button>			
 		</div>
-		<table data-bind="dataTable: $component.getDistinctEventCohortCountsDatatable($data)"></table>
+		<div> 
+			The number of people that have unique event cohorts or conbimations found across all ranks of the pathway analysis results.
+		</div>		
+<table data-bind="dataTable: $component.getDistinctEventCohortCountsDatatable($data)"></table>
 		
 		<hr>
 		

@@ -26,7 +26,7 @@ define(
       }
 
       saveAsPng() {
-        ChartUtils.downloadAsPng(this.element);
+        ChartUtils.downloadSvgAsPng(this.element);
       }
 
       setChartRenderMethod(fu) {

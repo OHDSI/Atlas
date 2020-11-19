@@ -1,6 +1,6 @@
 define(
-  ['d3', 'lodash', 'file-saver'],
-  function (d3, _) {
+  ['d3', 'lodash', 'html2canvas', 'file-saver'],
+  function (d3, _, html2canvas) {
     // TODO: move into Visualizations repo
     class ChartUtils {      
       static get formatPercent() {
@@ -111,7 +111,7 @@ define(
 				image.src = imgsrc;
 			}
 			
-      static downloadAsPng(container, filename) {
+      static downloadSvgAsPng(container, filename) {
 				const svgString = ChartUtils.getSVGString(container);
 				const containerBBox = container.getBBox();
 				ChartUtils.svgString2Image( svgString, 2*containerBBox.width, 2*containerBBox.height, 'png', save ); // passes Blob and filesize String to the callback
@@ -119,7 +119,15 @@ define(
 				function save( dataBlob, filesize ){
 					saveAs( dataBlob, filename );
 				}				
-			}
+      }
+      
+      static downloadElementAsPng(domElement, filename) {
+        html2canvas(domElement).then( canvas => {
+          canvas.toBlob(dataBlob => {
+            saveAs(dataBlob, filename);
+          });
+        });
+      }
 			
 			static mapConceptData(data) {
         var result;

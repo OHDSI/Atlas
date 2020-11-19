@@ -43,7 +43,7 @@ define([
 		
 		export() {
 			const svg = this.container.element.querySelector('svg');
-			ChartUtils.downloadAsPng(svg, this.filename || "untitled.png");
+			ChartUtils.downloadSvgAsPng(svg, this.filename || "untitled.png");
 		}
 		
 		dispose() {

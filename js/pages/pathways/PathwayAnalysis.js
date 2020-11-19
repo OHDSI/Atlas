@@ -27,6 +27,8 @@ define(function (require, exports) {
 			
 			this.maxDepth = ko.observable(data.maxDepth||5);
 			this.maxDepth.numericValue = this.maxDepth.numeric();
+
+			this.allowRepeats = ko.observable(data.allowRepeats||false);
 		}
 
 	}
