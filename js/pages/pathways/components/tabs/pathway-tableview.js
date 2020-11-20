@@ -316,7 +316,7 @@ define([
 				row.cohortPercent = 100.0 * row.personCount / pathwayGroup.cohortCount;
 			});
 
-			// add the zedro-case to result
+			// add the zero-case to result
 			data.push({
 				eventCohorts: 0, 
 				personCount: (pathwayGroup.cohortCount - pathwayGroup.pathwayCount),
