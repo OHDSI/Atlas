@@ -64,6 +64,7 @@ define([
 						pathwayCount: pathwayGroup.totalPathwaysCount,
 						pathways: pathwayGroup.pathways.map(p => ({ // split pathway paths into paths and counts
 							path : p.path.split('-')
+								.filter(step => step != "end") // remove end markers from pathway
 								.map(p => +p)																		
 								.concat(Array(MAX_PATH_LENGTH).fill(null)) // pad end of paths to be at least MAX_PATH_LENGTH
 								.slice(0,MAX_PATH_LENGTH), // limit path to MAX_PATH_LENGTH.
@@ -290,17 +291,14 @@ define([
 		getDistinctEventCohortCounts(pathwayGroup)
 		{
 			const pathways = pathwayGroup.pathways;
-			const eventCodes = this.reportData().eventCodes;
-			let dataMap = pathways.reduce((acc,cur) => { // reduce pathways an Array of ranks containing a Map of counts by event cohort
+			let dataMap = pathways.reduce((acc,cur) => { // reduce pathways an Array of ranks containing a Map of counts by comboId
 				const visited = new Map();
 				for (let i = 0; i < cur.path.length; i++) {
-					eventCodes.filter(ec => ec.isCombo == false && (ec.code & cur.path[i]) > 0).forEach(ec => {
-						if (visited.has(ec.code)) return; // do not add this event cohort to the total if the event cohort has already been seen in this path
-						visited.set(ec.code, true);
-					});
+					const comboId = cur.path[i];
+					if (comboId != null && !visited.has(comboId)) visited.set(comboId, true); // add new comboIds to path set, paths can contain null
 				}
 				
-				const eventCohorts = Array.from(visited.keys());
+				const eventCohorts = Array.from(visited.keys()); // keys() = distinct comboIDs in path
 				
 				if (!acc.has(eventCohorts.length)) {
 					acc.set(eventCohorts.length, {eventCohorts: eventCohorts.length, personCount : cur.personCount}); // copy out to new object to avoid pollution of main data object
@@ -311,12 +309,21 @@ define([
 				return acc;
 			}, new Map());
 			
-			const data = Array.from(Array.from(dataMap.values())).concat([{eventCohorts: 0, personCount: (pathwayGroup.cohortCount - pathwayGroup.pathwayCount)}]);
+			const data = Array.from(dataMap.values());
 			
 			data.forEach(row => { // add pathway and cohort percents
 				row.pathwayPercent = 100.0 * row.personCount / pathwayGroup.pathwayCount;
 				row.cohortPercent = 100.0 * row.personCount / pathwayGroup.cohortCount;
 			});
+
+			// add the zero-case to result
+			data.push({
+				eventCohorts: 0, 
+				personCount: (pathwayGroup.cohortCount - pathwayGroup.pathwayCount),
+				pathwayPercent: 0,
+				cohortPercent: 100.0 * (pathwayGroup.cohortCount - pathwayGroup.pathwayCount) / pathwayGroup.cohortCount
+			});
+
 			return data;			
 		}
 		
