@@ -17,7 +17,59 @@
 							order: [[3, 'desc']],
 							columns: columns,
            }
-        }">
+				}">
+	<thead>
+		<th>
+			<!-- ko if: canEditCurrentConceptSet -->
+				<span data-bind="
+					css: classes({
+							element: 'checkmark',
+							extra: `fa fa-check ${areAllItemsCheckedForRemoval() ? 'selected' : ''}`
+					}),
+					click: toggleSelectedItemsForRemoval
+				"></span>
+			<!-- /ko -->
+	</th>
+		<th>Concept Id</th>
+		<th>Concept Code</th>
+		<th>Concept Name</th>
+		<th>Domain</th>
+		<th>Standard Concept Code</th>
+		<th>Standard Concept Caption</th>
+		<th>
+			<!-- ko if: canEditCurrentConceptSet -->
+				<span data-bind="
+					css: classes({
+							element: 'checkmark',
+							extra: `fa fa-check ${allExcludedChecked() ? 'selected' : ''}`
+					}),
+					click: toggleExcluded
+				"></span>
+			<!-- /ko --> Exclude
+		</th>
+		<th>
+			<!-- ko if: canEditCurrentConceptSet -->
+			<span data-bind="
+				css: classes({
+						element: 'checkmark',
+						extra: `fa fa-check ${allDescendantsChecked() ? 'selected' : ''}`
+				}),
+				click: toggleDescendants
+			"></span>
+			<!-- /ko --> Descendants
+		</th>
+		<th>
+				<!-- ko if: canEditCurrentConceptSet -->
+					<span data-bind="
+						css: classes({
+								element: 'checkmark',
+								extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
+						}),
+						click: toggleMapped
+					"></span>
+				<!-- /ko --> Mapped
+		</th>
+	</thead>
 </table>
 <concept-legend></concept-legend>
 <div class="clear"></div>
