@@ -62,6 +62,7 @@ define([
 			this.job = ko.observable({});
 			this.jobDirtyFlag = ko.observable({ isDirty: () => false });
 			this.providers = ko.observableArray();
+			this.selectedProvider = ko.observable();
 			this.isSavePermitted = ko.computed(() => permissionService.isPermittedEdit(this.jobId()) && this.jobDirtyFlag().isDirty());
 			this.isDeletePermitted = ko.computed(() => permissionService.isPermittedDelete(this.jobId()));
 			this.jobEnds = ko.observable("never");
@@ -78,7 +79,7 @@ define([
 				weekdays: this.weekdays,
 				jobEnds: this.jobEnds,
 				rolesMapping: this.roleGroups,
-				provider: this.job().providerType,
+				provider: this.selectedProvider,
 			};
 		}
 
@@ -99,7 +100,7 @@ define([
 				...job,
 				enabled: ko.observable(job.enabled),
 				preserveRoles: ko.observable(job.preserveRoles),
-				providerType: ko.observable(job.providerType),
+				providerType: this.selectedProvider,
 				startDate: ko.observable(toDate(job.startDate)),
 				frequency: ko.observable(job.frequency),
 				recurringUntilDate: ko.observable(toDate(job.recurringUntilDate)),
@@ -148,7 +149,10 @@ define([
 			} else {
 				this.loading(true);
 				jobService.getJob(jobId)
-					.then(res => this.setupJob(res))
+					.then(res => {
+						this.selectedProvider(res.providerType);
+						this.setupJob(res);
+					})
 					.finally(() => this.loading(false));
 			}
 		}
