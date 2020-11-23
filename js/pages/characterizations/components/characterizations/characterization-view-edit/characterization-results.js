@@ -106,7 +106,7 @@ define([
             this.resultsCountFiltered = ko.observable();
             this.downloading = ko.observableArray();
 
-            this.executionId.subscribe(id => id && this.loadData());
+            this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));
             this.loadData();
         }
 

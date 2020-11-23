@@ -24,6 +24,8 @@ define([
     'assets/ohdsi.util',
     '../../utils',
     'const',
+    './const',
+    'lodash',
     'less!./feature-analysis-view-edit.less',
     './fa-view-edit/fa-design',
     './fa-view-edit/fa-conceptset',
@@ -77,6 +79,8 @@ define([
       { label: 'Distribution', value: 'DISTRIBUTION' },
     ];
 
+    const defaultDomain = { label: 'Any', value: componentConst.ANY_DOMAIN };
+
     class FeatureAnalysisViewEdit extends AutoBind(Clipboard(Page)) {
         constructor(params) {
             super(params);
@@ -85,8 +89,11 @@ define([
             this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().featureAnalysis);
             this.conceptSets = ko.pureComputed(() => this.data() && this.data().conceptSets)
             this.domains = ko.observable([]);
+            this.aggregates = ko.observable({});
             this.previousDesign = {};
             this.defaultName = globalConstants.newEntityNames.featureAnalysis;
+            this.defaultAggregate = ko.observable();
+
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
 
@@ -158,6 +165,8 @@ define([
               getEmptyWindowedCriteria: this.getEmptyWindowedCriteria,
               conceptSetStore: this.conceptSetStore,
               loadConceptSet: this.loadConceptSet,
+              defaultAggregate: this.defaultAggregate,
+              aggregates: this.aggregates,
             });
             this.tabs = ko.computed(() => {
                 const tabs = [
@@ -188,6 +197,7 @@ define([
 
         async onPageCreated() {
             await this.loadDomains();
+            await this.loadAggregates();
             super.onPageCreated();
         }
 
@@ -249,6 +259,34 @@ define([
             });
         }
 
+        selectAggregate(item, data) {
+            console.log('setAggregate', data);
+            data.aggregate(item);
+        }
+
+        async loadAggregates() {
+            const aggregates = await FeatureAnalysisService.loadAggregates();
+            const aggregateMap = lodash.sortBy(aggregates.reduce((map, ag) => {
+                ag.isDefault && this.defaultAggregate(ag);
+                const domainId = ag.domain || componentConst.ANY_DOMAIN;
+                let domain = map.find(d => d.value === domainId);
+                if (!domain) {
+                    domain = {
+                        ...this.domains().find(d => d.value === domainId) || defaultDomain,
+                      aggregates: [],
+                    };
+                    map.push(domain);
+                }
+                domain.aggregates.push(ag);
+                return map;
+                }, []), a => a.label)
+              .map(d => ({
+                ...d,
+                aggregates: lodash.sortBy(d.aggregates, a => a.name),
+              }));
+            this.aggregates(aggregateMap);
+        }
+
         async loadDomains() {
             const domains = await FeatureAnalysisService.loadFeatureAnalysisDomains();
             this.domains(domains.map(d => ({ label: d.name, value: d.id })));
@@ -295,6 +333,7 @@ define([
                         id: c.id,
                         name: ko.observable(c.name),
                         criteriaType: c.criteriaType,
+                        aggregate: ko.observable(c.aggregate),
                     };
                     if (c.criteriaType === 'CriteriaGroup') {
                         return {
@@ -353,6 +392,7 @@ define([
             return {
                 name: ko.observable(''),
                 criteriaType: 'CriteriaGroup',
+                aggregate: ko.observable(ko.unwrap(this.defaultAggregate)),
                 conceptSets: this.data().conceptSets,
                 expression: ko.observable(new CriteriaGroup(null, this.data().conceptSets)),
             };
@@ -364,6 +404,7 @@ define([
             return {
                 name: ko.observable(''),
                 criteriaType: 'WindowedCriteria',
+                aggregate: ko.observable(ko.unwrap(this.defaultAggregate)),
                 expression: ko.observable(new WindowedCriteria(data, this.data().conceptSets)),
             };
         }

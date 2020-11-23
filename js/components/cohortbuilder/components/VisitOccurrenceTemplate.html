@@ -101,16 +101,16 @@
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: PlaceOfServiceLocation() !== undefined, visible: PlaceOfServiceLocation() !== undefined">
+			<tr data-bind="if: PlaceOfServiceLocation() != null, visible: PlaceOfServiceLocation() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceLocation') }" class="fa fa-times" title="Remove" /></td>
 				<td>
 					<div>
 						with a Place of Service located in:
-						<conceptset-selector params="conceptSetId: PlaceOfServiceLocation, conceptSets: $component.expression.ConceptSets, defaultText: 'Any Location'"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: PlaceOfServiceLocation(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Location'"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: PlaceOfServiceDistance() !== undefined, visible: PlaceOfServiceDistance() !== undefined">
+			<tr data-bind="if: PlaceOfServiceDistance() != null, visible: PlaceOfServiceDistance() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceDistance') }" class="fa fa-times" title="Remove" /></td>
 				<td>
 					<div>

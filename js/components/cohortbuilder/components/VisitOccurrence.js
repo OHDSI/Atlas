@@ -105,8 +105,8 @@ define(['knockout', 'appConfig', '../options', '../utils', '../InputTypes/Range'
 				selected: false,
 				description: "Filter Visit Occurrences based on where Place of Service is located.",
 				action: function () {
-					if (self.Criteria.PlaceOfServiceLocation() === undefined) {
-						self.Criteria.PlaceOfServiceLocation(null);
+					if (self.Criteria.PlaceOfServiceLocation() == null) {
+						self.Criteria.PlaceOfServiceLocation(ko.observable());
 					}
 				}
 			},
@@ -127,7 +127,7 @@ define(['knockout', 'appConfig', '../options', '../utils', '../InputTypes/Range'
 				selected: false,
 				description: "Filter Visit Occurrences based on distance from Place of Service to Patient.",
 				action: function () {
-					if (self.Criteria.PlaceOfServiceDistance() === undefined) {
+					if (self.Criteria.PlaceOfServiceDistance() == null) {
 						self.Criteria.PlaceOfServiceDistance(new Range());
 					}
 				}
@@ -139,7 +139,7 @@ define(['knockout', 'appConfig', '../options', '../utils', '../InputTypes/Range'
 		self.options = options;
 
 		self.removeCriterion = function (propertyName) {
-			self.Criteria[propertyName](undefined);
+			self.Criteria[propertyName](null);
 		}
 
 		self.indexMessage = ko.pureComputed(() => {
