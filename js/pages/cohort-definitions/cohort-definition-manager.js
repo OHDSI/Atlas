@@ -967,7 +967,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		isCancelDisabled(source) {
-			return this.isSourceStopping(source)() || this.isProcessingByAnother(source);
+			return this.isSourceStopping(source)() || (config.userAuthenticationEnabled ? this.isProcessingByAnother(source) : false);
 		}
 
 		isProcessingByAnother(source) {
