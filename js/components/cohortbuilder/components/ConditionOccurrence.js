@@ -41,6 +41,15 @@ define(['knockout', '../options', '../utils', '../InputTypes/Range', '../InputTy
 
 			},
 			{
+				text: "Add Condition Status",
+				selected: false,
+				description: "Filter Condition Occurrences based on condition status.",
+				action: function () {
+					if (self.Criteria.ConditionStatus() == null)
+						self.Criteria.ConditionStatus(ko.observableArray());
+				}
+			},
+			{
 				text: "Add Condition Start Date",
 				selected: false,
 				description: "Filter Condition Occurrences by the Condition Start Date.",
