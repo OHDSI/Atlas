@@ -28,8 +28,8 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 
 		VocabularyProvider.getDomains().then(function (domains) {
 			if (self.SelectedDomain != null) {
-				const domainList = domains.filter(d => d != self.SelectedDomain); // moving selected domain to top
-				self.DomainOptions([self.SelectedDomain].concat(domains));
+				const domainList = domains.filter(d => d != self.SelectedDomain);
+				self.DomainOptions([self.SelectedDomain].concat(domainList)); // moving selected domain to top
 			} else {
 				self.DomainOptions(domains);
 			}
