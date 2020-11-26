@@ -46,6 +46,13 @@
 					<date-range params="Range: OccurrenceEndDate"></date-range>
 				</td>
 			</tr>
+			<tr data-bind="if: ConditionStatus() != null, visible: ConditionStatus() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('ConditionStatus') }" class="fa fa-times" title="Remove" /></td>
+				<td>
+					with a condition status of:
+					<concept-list params="PickerParams: { DefaultDomain: 'Condition Status', DefaultQuery: ''}, ConceptList: ConditionStatus()"></concept-list>
+				</td>
+			</tr>
 			<tr data-bind="if: ConditionType() != null, visible: ConditionType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ConditionType') }" class="fa fa-times" title="Remove" /></td>
 				<td>

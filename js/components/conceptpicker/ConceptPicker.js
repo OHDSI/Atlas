@@ -27,7 +27,13 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 		self.dtApi = ko.observable();
 
 		VocabularyProvider.getDomains().then(function (domains) {
-			self.DomainOptions(domains);
+			if (self.SelectedDomain != null) {
+				const domainList = domains.filter(d => d != self.SelectedDomain);
+				self.DomainOptions([self.SelectedDomain].concat(domainList)); // moving selected domain to top
+			} else {
+				self.DomainOptions(domains);
+			}
+
 			if (params.DefaultQuery != null) {
 				self.search().then(() => self.ProviderReady(true));
 			} else {
