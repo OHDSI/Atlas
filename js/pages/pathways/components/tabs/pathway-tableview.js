@@ -28,11 +28,12 @@ define([
 		};
 	}
 
-	function columnValueBuilder (label, field, formatter) {
+	function columnValueBuilder (label, field, formatter, width) {
 		return {
 			title: label,
 			data: (d) => formatter ? formatter(d[field]) : d[field] + "", // had to append '' because 0 value was not printing.
-			defaultContent: ''
+			defaultContent: '',
+			width: width || '10%'
 		};
 	}
 
@@ -120,9 +121,8 @@ define([
 			return {
 				data: data,
 				options: {
-					autoWidth:true,
 					order: [[pathCols.length, 'desc']],
-					columnDefs: statCols.map((c,i) => ({width: "7%", targets: pathCols.length + i, className: 'stat'})),
+					columnDefs: statCols.map((c,i) => ({targets: pathCols.length + i, className: 'stat'})),
 					columns :  [...pathCols, ...statCols]
 				}
 			}
@@ -187,10 +187,9 @@ define([
 			return {
 				data: data,
 				options: {
-					autoWidth:true,
 					order: [[2, 'desc']],
 					columns : [
-						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver),
+						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver, '60%'),
 						columnValueBuilder("Rank", "rank"),
 						columnValueBuilder("Count", "personCount"),
 						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
@@ -256,10 +255,9 @@ define([
 			return {
 				data: data,
 				options: {
-					autoWidth:true,
 					order: [[1, 'desc']],
 					columns : [
-						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver),
+						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver, '70%'),
 						columnValueBuilder("Count", "personCount"),
 						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
 						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
@@ -333,10 +331,9 @@ define([
 			return {
 				data: data,
 				options: {
-					autoWidth:true,
 					order: [[1, 'desc']],
 					columns : [
-						columnValueBuilder("Distinct Event Cohorts", "eventCohorts", (v) => `Exactly ${v}`),
+						columnValueBuilder("Distinct Event Cohorts", "eventCohorts", (v) => `Exactly ${v}`, '70%'),
 						columnValueBuilder("Count", "personCount"),
 						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
 						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
