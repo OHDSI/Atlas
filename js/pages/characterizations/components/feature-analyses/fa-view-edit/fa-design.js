@@ -52,10 +52,7 @@ define([
 			this.loadConceptSet = params.loadConceptSet;
 			this.defaultAggregate = params.defaultAggregate;
 			this.aggregates = params.aggregates;
-			this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions
-				.filter(a => a.type !== 'Demographic')  // OHDSI/Atlas#2389
-				.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
-
+			this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
 
 			this.conceptSets = ko.pureComputed({
 					read: () => params.data() && params.data().conceptSets || [],
