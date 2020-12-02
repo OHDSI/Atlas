@@ -111,7 +111,7 @@
                         ><i class="fa fa-trash-o"></i></button>
                     </div>
                     <!-- Aggregate -->
-                    <div data-bind="if: $parent.data().statType() === 'DISTRIBUTION'">
+                    <div data-bind="if: $parent.data().statType() === 'DISTRIBUTION' && $data.criteriaType !== 'DemographicCriteria'">
                         <aggregate-select params="aggregates: $component.aggregates, currentAggregate: $data.aggregate, domains: $component.domains, criteria: $data"></aggregate-select>
                     </div>
                     <div data-bind="if: $data.criteriaType === 'CriteriaGroup'">

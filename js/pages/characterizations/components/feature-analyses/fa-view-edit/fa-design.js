@@ -54,7 +54,6 @@ define([
 			this.aggregates = params.aggregates;
 			this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
 
-
 			this.conceptSets = ko.pureComputed({
 					read: () => params.data() && params.data().conceptSets || [],
 					write: (value) => params.data().conceptSets(value),
