@@ -38,12 +38,52 @@ define([
 				{ title: ko.i18n('columns.exclude', 'Exclude'), class: 'text-center', orderable: false, render: () => this.renderCheckbox('isExcluded') },
 				{ title: ko.i18n('columns.descendants', 'Descendants'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeDescendants') },
 				{ title: ko.i18n('columns.mapped', 'Mapped'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeMapped') }
-]
+			];
+
+			// header state
+			this.conceptsForRemovalLength = ko.pureComputed(() => this.conceptSetItems().filter(row => row.isSelected()).length);
+			this.areAllItemsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.conceptSetItems().length);
+      this.allExcludedChecked = ko.pureComputed(() => {
+        return this.conceptSetItems().find(item => !item.isExcluded()) === undefined;
+      });
+      this.allDescendantsChecked = ko.pureComputed(() => {
+        return this.conceptSetItems().find(item => !item.includeDescendants()) === undefined;
+      });
+      this.allMappedChecked = ko.pureComputed(() => {
+        return this.conceptSetItems().find(item => !item.includeMapped()) === undefined;
+      });
 		}
 
 		renderCheckbox(field) {
 			return renderers.renderConceptSetCheckbox(this.canEditCurrentConceptSet, field);
 		}
+
+    toggleExcluded() {
+      this.selectAllConceptSetItems('isExcluded', this.allExcludedChecked());
+    }
+
+    toggleDescendants() {
+      this.selectAllConceptSetItems('includeDescendants', this.allDescendantsChecked());
+    }
+
+    toggleMapped() {
+      this.selectAllConceptSetItems('includeMapped', this.allMappedChecked());
+    }
+
+    toggleSelectedItemsForRemoval() {
+        const areAllItemsCheckedForRemoval = this.areAllItemsCheckedForRemoval();
+        this.conceptSetItems().forEach(item => item.isSelected(!areAllItemsCheckedForRemoval));
+		}
+
+    selectAllConceptSetItems(key, areAllSelected) {
+      if (!this.canEditCurrentConceptSet()) {
+        return;
+      }
+      this.conceptSetItems().forEach(conceptSetItem => {
+        conceptSetItem[key](!areAllSelected);
+      })
+    }
+
 	}
 
 	return commonUtils.build('conceptset-editor', ConceptSetEditor, view);

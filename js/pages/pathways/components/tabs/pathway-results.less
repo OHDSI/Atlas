@@ -123,6 +123,21 @@
     margin-top: 1rem;
   }
 
+	&__legend-container {
+		position:relative;
+	}
+	
+	&__legend-export-button {
+		display:none;
+		position:absolute;
+		top:0px;
+		right:0px;		
+	}
+
+	&__legend-container:hover > &__legend-export-button {
+		display:block;
+	}  
+
   &__plot-panel {
     flex-grow: 5;
   }
@@ -156,7 +171,7 @@
 
   &__sunburst .node {
     stroke: #fff;
-    stroke-width: 2;
+    stroke-width: 0px;
   }
 
   &__debug {

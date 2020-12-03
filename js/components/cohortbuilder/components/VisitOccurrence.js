@@ -110,8 +110,8 @@ define([
         ...constants.visitAttributes.addPlaceServiceLocation,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfServiceLocation() === undefined) {
-            self.Criteria.PlaceOfServiceLocation(null);
+          if (self.Criteria.PlaceOfServiceLocation() === null) {
+            self.Criteria.PlaceOfServiceLocation(ko.observable());
           }
         },
       },
@@ -132,7 +132,7 @@ define([
         ...constants.visitAttributes.addPlaceServiceDistance,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfServiceDistance() === undefined) {
+          if (self.Criteria.PlaceOfServiceDistance() === null) {
             self.Criteria.PlaceOfServiceDistance(new Range());
           }
         },
@@ -143,9 +143,9 @@ define([
     self.Criteria = params.criteria.VisitOccurrence;
     self.options = options;
 
-    self.removeCriterion = function (propertyName) {
-      self.Criteria[propertyName](undefined);
-    };
+		self.removeCriterion = function (propertyName) {
+			self.Criteria[propertyName](null);
+		}
 
     self.indexMessage = ko.i18nformat(
       'components.conditionVisit.indexDataText',

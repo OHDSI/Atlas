@@ -107,7 +107,7 @@ define([
             this.downloading = ko.observableArray();
             this.datatableLanguage = ko.i18n('datatable.language');
 
-            this.executionId.subscribe(id => id && this.loadData());
+            this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));
             this.loadData();
         }
 

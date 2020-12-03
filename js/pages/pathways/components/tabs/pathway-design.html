@@ -71,6 +71,19 @@
 					</td>
 					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.maximumPathLength.description', 'Maximum number of steps in a given pathway to be included in the sunburst plot.')"></td>
 				</tr>
+				<tr data-bind="css: classes('setting-line')">
+					<td data-bind="css: classes('setting-title')">Allow repeats:</td>
+					<td>
+						<select
+								class="form-control"
+								data-bind="
+										css: classes('setting-input'),
+										value: design().allowRepeats,
+										options: [false, true],
+										enable:isEditPermitted()"></select>
+					</td>
+					<td data-bind="css: classes('setting-description')">Allow cohort events/combos to appear multiple times in the same pathway.</td>
+				</tr>
 			</table>
 		</div>
 	</div>

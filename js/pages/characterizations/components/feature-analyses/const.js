@@ -70,9 +70,12 @@ define((require, exports) => {
 
 	];
 
+	const ANY_DOMAIN = 'ANY';
+
 	return {
 			FeatureAnalysisFacets,
 			FeatureAnalysisColumns,
+			ANY_DOMAIN,
 		};
 	}
 );

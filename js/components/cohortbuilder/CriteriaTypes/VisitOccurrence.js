@@ -54,7 +54,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 
-		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation);
+		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation != null ? ko.observable(data.PlaceOfServiceLocation) : null);
 		self.PlaceOfServiceDistance = ko.observable(data.PlaceOfServiceDistance && new Range(data.PlaceOfServiceDistance));
 	}
 

@@ -58,6 +58,15 @@ define([
             self.Criteria.Gender(ko.observableArray());
         },
       },
+			{
+				text: "Add Condition Status",
+				selected: false,
+				description: "Filter Condition Occurrences based on condition status.",
+				action: function () {
+					if (self.Criteria.ConditionStatus() == null)
+						self.Criteria.ConditionStatus(ko.observableArray());
+				}
+			},
       {
         ...constants.occurrenceAttributes.addStartDate,
         selected: false,

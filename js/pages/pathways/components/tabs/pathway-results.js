@@ -12,6 +12,7 @@ define([
 	'atlascharts',
 	'd3',
 	'components/visualizations/filter-panel/utils',
+	'utils/ChartUtils',
 	'components/visualizations/filter-panel/filter-panel',
 	'components/charts/sunburst',
 	'components/nav-pills',
@@ -30,7 +31,8 @@ define([
 	momentAPI,
 	AtlasCharts,
 	d3,
-	filterUtils
+	filterUtils,
+	ChartUtils,
 ) {
 
 	const percentFormat = d3.format(".1%");
@@ -297,6 +299,12 @@ define([
 				this.loadExecutionDesignError(true);
 				console.error(e);
 			}
+		}
+
+		exportLegend(data,event) {
+			const tableElement = event.target.parentElement.querySelector('table');
+			const filename = `${data.targetCohortName}.png`;
+			ChartUtils.downloadElementAsPng(tableElement, filename);
 		}
 
 	}

@@ -61,6 +61,10 @@
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.generation', 'Generation')"></a>
 			</li>
 
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
+				<a>Samples</a>
+			</li>
+
 			<li role="presentation"
 				data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.reporting', 'Reporting')"></a>
@@ -457,8 +461,186 @@
 					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
 				</div>
 			</div>
+				<!-- samples content  -->
+				<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'samples' }" class="tab-pane">
+					<div class="pad-5">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								Sample Selections
+							</div>
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-sm-12">
+										<select class="form-control"
+										data-bind="css :{ invalid: $component.sampleSourceKey()==undefined },
+											options: $component.cdmSources(),
+											optionsValue:'sourceKey', optionsText:'sourceName',
+											value:$component.sampleSourceKey,
+											optionsCaption:'Select a Source'">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="pull-right"
+							data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()"
+						>
+							<button
+								type="button"
+								class="btn btn-sm btn-primary"
+								data-bind="click:addNewSample"
+							>
+								Add new sample
+							</button>
+						</div>
+						<!--  samples list table -->
+						<div data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()">
+							<faceted-datatable
+							params="{
+								reference: sampleList,
+								columns: sampleListCols,
+								order: [[0,'asc']],
+								pageLength: 5,
+								rowClick: onSampleListRowClick,
+							}"
+							/>
+						</div>
+						<!-- A sample data table -->
+						<div data-bind="visible: $component.sampleSourceKey() && $component.selectedSampleId() && !$component.sampleDataLoading()">
+							<faceted-datatable
+							params="{
+								reference: sampleData,
+								columns: sampleCols,
+								order: [[0,'asc']],
+								pageLength: 15,
+								rowClick: onSampleDataClick,
+							}"
+							/>
+						</div>
+
+						<loading data-bind="visible: $component.sampleDataLoading()"></loading>
+						<!-- notifications -->
+						<div data-bind="visible: sampleData() && sampleData().length == 0">
+							<div class="panel panel-danger" data-bind="visible: !$component.isCohortGenerated">
+								<div class="panel-heading">
+									Cohort Not Generated
+								</div>
+								<div class="panel-body">
+									This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 		</div>
 	</div>
+		<atlas-modal params="{
+			showModal: showSampleCreatingModal,
+			title: 'Create new sample',
+			data: {
+				sampleName: sampleName,
+				sampleNameError: sampleNameError,
+				patientCount: patientCount,
+				patientCountError: patientCountError,
+				sampleAgeType: sampleAgeType,
+				isAgeRange: isAgeRange,
+				isAgeRangeError: isAgeRangeError,
+				firstAge: firstAge,
+				firstAgeError: firstAgeError,
+				secondAge: secondAge,
+				isMaleSample: isMaleSample,
+				isFeMaleSample: isFeMaleSample,
+				isOtherGenderSample: isOtherGenderSample,
+				createNewSample: createNewSample,
+				newSampleCreatingLoader: newSampleCreatingLoader,
+				isSampleFormValid: isSampleFormValid
+			}
+		}">
+			<form data-bind="submit: createNewSample" class="sampleCreatingForm" novalidate>
+				<div class="form-group" data-bind="css: {'has-error': sampleNameError()==true, 'has-success': sampleNameError()==false}">
+					<span class="help-block">*Mandatory fields</span>
+					<label for="sampleCreatingName" class="control-label">*Sample name</label>
+					<input required data-bind="textInput: sampleName" type="text" id="sampleCreatingName" class="form-control" placeholder="Enter sample name">
+					<span class="help-block" data-bind="visible: sampleNameError()">Sample name cannot be empty</span>
+				</div>
+				<div class="form-group" data-bind="css: {'has-error': patientCountError(), 'has-success': !patientCountError()}">
+					<label class="control-label">*Number of patients</label>
+					<input step="1" data-bind="textInput: patientCount.numeric()" type="number" class="form-control" placeholder="Enter a number">
+					<span class="help-block" data-bind="visible: patientCountError()">Number of patients must be a positive integer</span>
+				</div>
+
+				<div class="form-group ageRange">
+					<label
+						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError() || firstAgeError(), myCustomTextSuccess: !isAgeRangeError()}"
+						for="sampleCreatingAge"
+						class="control-label">
+						Select age criteria
+					</label>
+					<div class="row">
+						<div class="col-md-7" style="padding-left: 0">
+							<select
+								data-bind="value: sampleAgeType, css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !isAgeRangeError()}"
+								id="sampleCreatingAge"
+								class="form-control">
+									<option value="lessThan">Less than</option>
+									<option value="lessThanOrEqual">Less or equal to</option>
+									<option value="equalTo">Equal to</option>
+									<option value="greaterThan">Greater than</option>
+									<option value="greaterThanOrEqual">Greater or equal to</option>
+									<option value="between">Between</option>
+									<option value="notBetween">Not between</option>
+							</select>
+						</div>
+						<div data-bind="css: {'col-md-2':isAgeRange(), 'col-md-5':!isAgeRange()}">
+							<input
+								data-bind="textInput: firstAge.numeric(), css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !(isAgeRangeError() || firstAgeError())}"
+								type="text"
+								class="form-control"
+								placeholder="Enter a number">
+								<span data-bind="visible: !isAgeRange() && firstAgeError(), css: {myCustomTextError: firstAgeError(), myCustomTextSuccess: !firstAgeError()}">Age must be a non-negative integer</span>
+						</div>
+						<div class="col-md-1" data-bind="visible: isAgeRange"><div style="margin-top: .5em; text-align: center">and</div></div>
+						<div class="col-md-2" data-bind="visible: isAgeRange">
+							<input
+							data-bind="textInput: secondAge.numeric(), css: {myCustomInputError: isAgeRangeError, myCustomInputSuccess: !isAgeRangeError()}"
+							type="text"
+							class="form-control"
+							placeholder="Enter a number">
+						</div>
+						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError(), myCustomTextSuccess: !isAgeRangeError()}">First and second age must be non-negative integers and not equal</span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="control-label">Indicate gender (leave empty to select all gender)</label>
+					<div class="checkbox">
+						<label>
+							<input type="checkbox" data-bind="checked: isMaleSample"> Male
+						</label>
+					</div>
+					<div class="checkbox">
+							<label>
+								<input type="checkbox" data-bind="checked: isFeMaleSample"> Female
+							</label>
+						</div>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" data-bind="checked: isOtherGenderSample"> Other
+							</label>
+						</div>
+				</div>
+				 <!-- ko if: !newSampleCreatingLoader() -->
+				<button type="submit" class="btn btn-primary" data-bind="enable: isSampleFormValid()">Submit</button>
+				 <!-- /ko -->
+				 <!-- ko if: newSampleCreatingLoader() -->
+				<button class="btn btn-primary" type="button" disabled>
+					<i class="fa fa-spinner fa-spin"></i>
+					Creating sample...
+				</button>
+				 <!-- /ko -->
+			</form>
+	</atlas-modal>
+
 	<atlas-modal params="{
 		showModal: analysisTypesOpened,
 		iconClass: 'fa fa-group',

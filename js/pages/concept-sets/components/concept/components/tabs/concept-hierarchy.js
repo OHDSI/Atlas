@@ -148,22 +148,27 @@ define([
 		async loadHierarchyConcepts() {
 			this.isLoading(true);
 			try {
-					this.metarchy = {
-							parents: ko.observableArray(),
-							children: ko.observableArray(),
-							synonyms: ko.observableArray()
-					};
+				this.metarchy = {
+					parents: ko.observableArray(),
+					children: ko.observableArray(),
+					synonyms: ko.observableArray()
+				};
 
-					const {data: related} = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/ancestorAndDescendant');
-					const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
-					for (var i = 0; i < relatedConcepts.length; i++) {
-							this.metagorize(this.metarchy, relatedConcepts[i]);
-					}
+				const {data: related} = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + this.currentConceptId() + '/ancestorAndDescendant');
+				const relatedConcepts = related.map(concept => this.enhanceConcept(concept))
+				for (var i = 0; i < relatedConcepts.length; i++) {
+					this.metagorize(this.metarchy, relatedConcepts[i]);
+				}
 
-					await vocabularyProvider.loadDensity([...relatedConcepts, this.currentConcept()]);
-					this.currentConceptArray([this.currentConcept()]);
+				let parents = this.metarchy.parents();
+				let children = this.metarchy.children();
+
+				await vocabularyProvider.loadDensity([...parents, ...children, this.currentConcept()]);
+				this.currentConceptArray([this.currentConcept()]);
+				this.metarchy.parents(parents);
+				this.metarchy.children(children);
 			} finally {
-					this.isLoading(false);
+				this.isLoading(false);
 			}
 		}
 	}

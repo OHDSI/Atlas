@@ -31,6 +31,9 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.ConditionTypeExclude = ko.observable(data.ConditionTypeExclude || null);
 		self.StopReason = ko.observable(data.StopReason && new Text(data.StopReason));
 		self.ConditionSourceConcept = ko.observable(data.ConditionSourceConcept != null ? ko.observable(data.ConditionSourceConcept) : null);
+		self.ConditionStatus = ko.observable(data.ConditionStatus && ko.observableArray(data.ConditionStatus.map(function (d) {
+			return new Concept(d);
+		})));
 
 		// Derived Fields
 		self.First = ko.observable(data.First || null);
@@ -41,14 +44,10 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 
-	  /* Do we still need prior enroll days inside the individual criteria?
-		self.PriorEnrollDays = ko.observable((typeof data.PriorEnrollDays == "number") ? data.PriorEnrollDays : null);
-		self.AfterEnrollDays = ko.observable((typeof data.AfterEnrollDays == "number") ? data.AfterEnrollDays : null);
-		*/
-	 
 		self.ProviderSpecialty = ko.observable(data.ProviderSpecialty && ko.observableArray(data.ProviderSpecialty.map(function (d) {
 			return new Concept(d);
 		})));
+
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
@@ -61,9 +60,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		return this;
 	}
 	
-	
-	
-
 	return ConditionOccurrence;
 
 });
