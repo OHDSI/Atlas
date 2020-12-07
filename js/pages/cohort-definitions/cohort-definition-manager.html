@@ -62,7 +62,7 @@
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
-				<a>Samples</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.samples', 'Samples')"></a>
 			</li>
 
 			<li role="presentation"
@@ -465,9 +465,7 @@
 				<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'samples' }" class="tab-pane">
 					<div class="pad-5">
 						<div class="panel panel-primary">
-							<div class="panel-heading">
-								Sample Selections
-							</div>
+							<div class="panel-heading" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.sampleSelections', 'Sample Selections')"></div>
 							<div class="panel-body">
 								<div class="row">
 									<div class="col-sm-12">
@@ -476,7 +474,7 @@
 											options: $component.cdmSources(),
 											optionsValue:'sourceKey', optionsText:'sourceName',
 											value:$component.sampleSourceKey,
-											optionsCaption:'Select a Source'">
+											optionsCaption: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.selectASource', 'Select a Source')">
 										</select>
 									</div>
 								</div>
@@ -488,10 +486,7 @@
 							<button
 								type="button"
 								class="btn btn-sm btn-primary"
-								data-bind="click:addNewSample"
-							>
-								Add new sample
-							</button>
+								data-bind="click:addNewSample, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.addNewSample', 'Add new sample')"></button>
 						</div>
 						<!--  samples list table -->
 						<div data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()">
@@ -502,6 +497,7 @@
 								order: [[0,'asc']],
 								pageLength: 5,
 								rowClick: onSampleListRowClick,
+								language: ko.i18n('datatable.language')
 							}"
 							/>
 						</div>
@@ -514,6 +510,7 @@
 								order: [[0,'asc']],
 								pageLength: 15,
 								rowClick: onSampleDataClick,
+								language: ko.i18n('datatable.language')
 							}"
 							/>
 						</div>
@@ -522,12 +519,8 @@
 						<!-- notifications -->
 						<div data-bind="visible: sampleData() && sampleData().length == 0">
 							<div class="panel panel-danger" data-bind="visible: !$component.isCohortGenerated">
-								<div class="panel-heading">
-									Cohort Not Generated
-								</div>
-								<div class="panel-body">
-									This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.
-								</div>
+								<div class="panel-heading" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_1', 'Cohort Not Generated')"></div>
+								<div class="panel-body" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.cohortNotGeneratedNote', 'This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.')"></div>
 							</div>
 						</div>
 					</div>

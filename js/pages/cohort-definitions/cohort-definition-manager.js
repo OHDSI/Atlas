@@ -257,35 +257,35 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			//sample list
 			this.sampleListCols = [
 				{
-					title: 'Sample Id',
+					title: ko.i18n('columns.sampleId', 'Sample Id'),
 					data:'sampleId',
 					visible: false,
 				},
         {
-          title: 'Sample name',
+          title: ko.i18n('columns.sampleName', 'Sample name'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['sampleName'],
 						linkish: true,
 					})),
         },
         {
-          title: 'Number of patients',
+          title: ko.i18n('columns.numberOfPatients', 'Number of patients'),
           data: 'patientCounts',
         },
         {
-          title: 'Selection criteria',
+          title: ko.i18n('columns.selectionCriteria', 'Selection criteria'),
           data: 'selectionCriteria',
         },
         {
-          title: 'Created by',
+          title: ko.i18n('columns.author', 'Author'),
           data: 'createdBy',
 				},
 				{
-					title: 'Created on',
+					title: ko.i18n('columns.created', 'Created'),
 					data: 'createdOn'
 				},
 				{
-					title: 'Action',
+					title: ko.i18n('columns.action', 'Action'),
 					sortable: false,
 					render: function() {return `<i class="sample-list fa fa-trash" aria-hidden="true"></i> <i class="sample-list fa fa-refresh" aria-hidden="true"></i>`}
 				}
@@ -295,18 +295,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			// Sample data table
 			this.sampleCols =  [
         {
-					title: 'Person ID',
+					title: ko.i18n('columns.personId', 'Person ID'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['personId'],
 						linkish: true,
 					})),
 				},
 				{
-					title: 'Gender',
+					title: ko.i18n('columns.gender', 'Gender'),
 					data: 'gender',
 				},
 				{
-					title: 'Age at index',
+					title: ko.i18n('columns.ageAtIndex', 'Age at index'),
 					data: 'ageIndex',
 				}
 			];
@@ -1634,7 +1634,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			.then(res => {
 				if(res.generationStatus!="COMPLETE") {
 					this.sampleSourceKey(null);
-					alert('Cohort should be generated before creating samples');
+					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.cohortShouldBeGenerated', 'Cohort should be generated before creating samples')());
 					return;
 				}
 				const sampleListData = mapSampleListData(res.samples);
@@ -1642,7 +1642,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			})
 			.catch(error=>{
 				console.error(error);
-				alert('Error when fetching sample list, please try again later');
+				alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorFetchingList', 'Error when fetching sample list, please try again later')());
 			})
 			.finally(() => {
 				this.isLoadingSampleData(false)
@@ -1670,7 +1670,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				})
 				.catch(() => {
-					alert('Error when deleting sample, please try again later');
+					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorDeleting', 'Error when deleting sample, please try again later')());
 				})
 			} else if (e.target.className == 'sample-list fa fa-refresh') {
 				this.sampleDataLoading(true);
@@ -1697,7 +1697,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			})
 			.catch(error => {
 				console.error(error);
-				alert('Error when fetching sample data, please try again later');
+				alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorFetchingData', 'Error when fetching sample data, please try again later')());
 			})
 			.finally(() => {
 				this.sampleDataLoading(false);
@@ -1707,7 +1707,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		refreshSample({sampleId, sourceKey, cohortDefinitionId}) {
 			return sampleService.refreshSample({cohortDefinitionId, sourceKey, sampleId})
 			.catch(() => {
-				alert('Error when refreshing sample, please try again later');
+				alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorRefreshing', 'Error when refreshing sample, please try again later')());
 			})
 		}
 
