@@ -224,7 +224,7 @@ define([
         }
 
         isCopyPermittedResolver() {
-            return ko.pureComputed(() => this.data().type() !== 'PRESET' && PermissionService.isPermittedCopyFa(this.featureId()));
+            return ko.pureComputed(() => this.data() && this.data().type() !== 'PRESET' && PermissionService.isPermittedCopyFa(this.featureId()));
         }
 
         isDeletePermittedResolver(id) {
