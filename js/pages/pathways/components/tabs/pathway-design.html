@@ -30,7 +30,7 @@
 		<div data-bind="css: classes('settings')">
 			<table>
 				<tr data-bind="css: classes('setting-line')">
-						<td data-bind="css: classes('setting-title')">Combination Window:</td>
+						<td data-bind="css: classes('setting-title')">Collapse Days:</td>
 						<td>
 							<input
 									class="form-control"
@@ -41,7 +41,7 @@
 										ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 							/>
 						</td>
-						<td data-bind="css: classes('setting-description')">Window of time when two event cohorts need to overlap to be considered a combination.</td>
+						<td data-bind="css: classes('setting-description')">Any dates found within the specified collapse days will be reassigned the earliest date.  Collapsing dates reduces pathway variation, leading to a reduction in 'noise' in the result.</td>
 				</tr>
 				<tr data-bind="css: classes('setting-line')">
 					<td data-bind="css: classes('setting-title')">Minimum cell count:</td>
