@@ -14,8 +14,8 @@ define([
 	commonUtils
 ) {
 	class Histogram extends Chart {
-		constructor(params) {
-			super(params);
+		constructor(params, element) {
+			super(params, element);
 			this.renderer = new atlascharts.histogram();
 		}
 

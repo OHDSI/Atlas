@@ -16,7 +16,7 @@ define(
 			// getSVGString from http://bl.ocks.org/Rokotyan/0556f8facbaf344507cdc45dc3622177
 			static getSVGString( svgNode ) {
 				svgNode.setAttribute('xlink', 'http://www.w3.org/1999/xlink');
-				var cssStyleText = getCSSStyles( svgNode );
+        var cssStyleText = getCSSStyles( svgNode );
 				appendCSS( cssStyleText, svgNode );
 
 				var serializer = new XMLSerializer();
@@ -24,57 +24,21 @@ define(
 				svgString = svgString.replace(/(\w+)?:?xlink=/g, 'xmlns:xlink='); // Fix root xlink without namespace
 				svgString = svgString.replace(/NS\d+:href/g, 'xlink:href'); // Safari NS namespace fix
 
-				return svgString;
+        return svgString;
+        
+        function getCSSStyles( parentElement ) {
 
-				function getCSSStyles( parentElement ) {
-					var selectorTextArr = [];
+          const cssRules = new Set();
+          const nodes = [...parentElement.getElementsByTagName("*")];
+          nodes.forEach(node => {
+            const nodeCssRules = [...document.styleSheets].reduce((a,c) => a.concat([...c.cssRules].filter(r => node.matches(r.selectorText))), []);
+            nodeCssRules.forEach(r => { 
+              cssRules.add(r);
+            });
+          });
 
-					// Add Parent element Id and Classes to the list
-					selectorTextArr.push( '#'+parentElement.id );
-					for (var c = 0; c < parentElement.classList.length; c++)
-							if ( !contains('.'+parentElement.classList[c], selectorTextArr) )
-								selectorTextArr.push( '.'+parentElement.classList[c] );
-
-					// Add Children element Ids and Classes to the list
-					var nodes = parentElement.getElementsByTagName("*");
-					for (var i = 0; i < nodes.length; i++) {
-						var id = nodes[i].id;
-						if ( !contains('#'+id, selectorTextArr) )
-							selectorTextArr.push( '#'+id );
-
-						var classes = nodes[i].classList;
-						for (var c = 0; c < classes.length; c++)
-							if ( !contains('.'+classes[c], selectorTextArr) )
-								selectorTextArr.push( '.'+classes[c] );
-					}
-
-					// Extract CSS Rules
-					var extractedCSSText = "";
-					for (var i = 0; i < document.styleSheets.length; i++) {
-						var s = document.styleSheets[i];
-
-						try {
-								if(!s.cssRules) continue;
-						} catch( e ) {
-									if(e.name !== 'SecurityError') throw e; // for Firefox
-									continue;
-								}
-
-						var cssRules = s.cssRules;
-						for (var r = 0; r < cssRules.length; r++) {
-							if ( contains( cssRules[r].selectorText, selectorTextArr ) )
-								extractedCSSText += cssRules[r].cssText;
-						}
-					}
-
-
-					return extractedCSSText;
-
-					function contains(str,arr) {
-						return arr.indexOf( str ) === -1 ? false : true;
-					}
-
-				}
+          return [...cssRules.values()].reduce((a,c) => a + c.cssText, "");
+        }
 
 				function appendCSS( cssText, element ) {
 					var styleElement = document.createElement("style");
