@@ -89,7 +89,7 @@ define([
 			} else if (artifactVersion.match(/.*-(RC\d*)/)) {
 				qualifier = ' ' + artifactVersion.match(/.*-(RC\d*)/)[1];
 			}
-			return info.version + qualifier || '';
+			return info.version + (qualifier || '');
 		}
 
 		newCohortDefinition() {
