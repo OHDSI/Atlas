@@ -942,8 +942,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			// reset view after save
 			try {
 				const result = await cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id());
-				PollService.stop(this.pollTimeoutId);
-				document.location = "#/cohortdefinition/" + result.id;
+				commonUtils.routeTo(constants.paths.details(result.id));
 			} finally {
 				this.isCopying(false);
 			}
