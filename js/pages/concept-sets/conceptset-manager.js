@@ -266,7 +266,8 @@ define([
 				} finally {
 				}
 			}));  
-			
+
+			this.conceptSetStore.resolveConceptSetExpression();
 			this.conceptSetStore.isEditable(this.canEdit());
 		}
 
