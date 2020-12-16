@@ -108,7 +108,7 @@ define([
         this.resolvingConceptSetExpression(true);
         this.resolveCount.increment();
         const currentResolve = this.resolveCount.value();
-        const conceptSetExpression = this.current().expression;
+		const conceptSetExpression = this.current().expression;
         const identfiers = await vocabularyService.resolveConceptSetExpression(conceptSetExpression)
         if (currentResolve != this.resolveCount.value()) {
           return Promise.reject(constants.RESOLVE_OUT_OF_ORDER);
@@ -126,7 +126,8 @@ define([
 				return false;
       switch (mode) {
         case ViewMode.INCLUDED:
-          this.includedConcepts() == null && await this.loadIncluded();
+		  this.includedConcepts() != null && await this.resolveConceptSetExpression();
+		  this.includedConcepts() == null && await this.loadIncluded();
           break;
         case ViewMode.SOURCECODES:
           this.includedSourcecodes() == null && await this.loadSourceCodes();
@@ -140,6 +141,8 @@ define([
 		}
     
     async loadIncluded() {
+	// 	console.log('load included');
+	//   await this.resolveConceptSetExpression();
       const conceptIds = this.conceptSetInclusionIdentifiers();
       try {
         this.loadingIncluded(true);
