@@ -141,8 +141,6 @@ define([
 		}
     
     async loadIncluded() {
-	// 	console.log('load included');
-	//   await this.resolveConceptSetExpression();
       const conceptIds = this.conceptSetInclusionIdentifiers();
       try {
         this.loadingIncluded(true);
