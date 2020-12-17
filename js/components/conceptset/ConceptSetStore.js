@@ -80,19 +80,17 @@ define([
 			this.source = props.source || "unnamed";
 			this.title = props.title || "unnamed";
       
-      		this.resolveCount = counter(); // handle out of order resolves
+			this.resolveCount = counter(); // handle out of order resolves
 
 			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
-				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
-			this.selectedTab  = ko.observable(ViewMode.EXPRESSION);
+				.extend({ rateLimit: { timeout: 500, method: "notifyWhenChangesStop" } });
 
 			// watch for any change to expression items (observer has a delay)
 			this.observer.subscribe(async () => {
 			    try {
 				    await this.resolveConceptSetExpression();
-				    await this.refresh(this.selectedTab());
 			  	} catch (err) {
-				  	if (err != RESOLVE_OUT_OF_ORDER)
+				  	if (err !== RESOLVE_OUT_OF_ORDER)
 					  	console.info(err);
 				  	else
 					  	throw(err);
@@ -123,7 +121,7 @@ define([
         this.resolvingConceptSetExpression(true);
         this.resolveCount.increment();
         const currentResolve = this.resolveCount.value();
-		const conceptSetExpression = this.current().expression;
+        const conceptSetExpression = this.current().expression;
         const identfiers = await vocabularyService.resolveConceptSetExpression(conceptSetExpression)
         if (currentResolve != this.resolveCount.value()) {
           return Promise.reject(constants.RESOLVE_OUT_OF_ORDER);
@@ -141,7 +139,7 @@ define([
 				return false;
       switch (mode) {
         case ViewMode.INCLUDED:
-		  this.includedConcepts() == null && await this.loadIncluded();
+          this.includedConcepts() == null && await this.loadIncluded();
           break;
         case ViewMode.SOURCECODES:
           this.includedSourcecodes() == null && await this.loadSourceCodes();

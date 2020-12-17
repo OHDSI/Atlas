@@ -254,6 +254,9 @@ define([
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
+			this.conceptSetStore.observer.subscribe(async () => {
+					await this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key);
+			})
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -261,7 +264,6 @@ define([
 			this.changeMode(conceptSetId, mode);
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByMode(mode));
-				this.conceptSetStore.selectedTab(this.getIndexByMode(mode));
 			}
 		}
 
@@ -314,7 +316,7 @@ define([
 		}
 
 		dispose() {
-      		super.dispose();
+			super.dispose();
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
