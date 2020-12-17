@@ -18,7 +18,7 @@ define([
 	JSZip,
 ) {
 
-	const {ViewMode} = constants;
+	const { ViewMode,  RESOLVE_OUT_OF_ORDER } = constants;
 
 	// define a counter that can be 'frozen' from ConceptSetStore
 	const counter = () => {
@@ -82,6 +82,24 @@ define([
       
       		this.resolveCount = counter(); // handle out of order resolves
 
+			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
+				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
+			this.selectedTab  = ko.observable(ViewMode.EXPRESSION);
+
+			// watch for any change to expression items (observer has a delay)
+			this.observer.subscribe(async () => {
+			    try {
+				    await this.resolveConceptSetExpression();
+				    await this.refresh(this.selectedTab());
+			  	} catch (err) {
+				  	if (err != RESOLVE_OUT_OF_ORDER)
+					  	console.info(err);
+				  	else
+					  	throw(err);
+			  	} finally {
+			  	}
+			});  
+			  
 			this.isEditable = ko.observable(false);
 		}
 
@@ -123,7 +141,6 @@ define([
 				return false;
       switch (mode) {
         case ViewMode.INCLUDED:
-		  this.includedConcepts() != null && await this.resolveConceptSetExpression();
 		  this.includedConcepts() == null && await this.loadIncluded();
           break;
         case ViewMode.SOURCECODES:

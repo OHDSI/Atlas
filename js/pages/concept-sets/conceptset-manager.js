@@ -63,7 +63,7 @@ define([
     lodash,
 ) {
   
-  const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+  const { ViewMode } = constants;
   
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -79,8 +79,6 @@ define([
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
-			this.observer = ko.pureComputed(() => ko.toJSON(this.conceptSetStore.current() && this.conceptSetStore.current().expression.items()))
-				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -255,20 +253,6 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			// watch for any change to expression items (observer has a delay)
-      		this.subscriptions.push(this.observer.subscribe(async () => {
-				try {
-					await this.conceptSetStore.resolveConceptSetExpression();
-					await this.conceptSetStore.refresh(this.tabs[this.selectedTab()||0].key);
-				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORER)
-						console.info(err);
-					else
-						throw(err);
-				} finally {
-				}
-			}));  
-
 			this.conceptSetStore.isEditable(this.canEdit());
 		}
 
@@ -277,6 +261,7 @@ define([
 			this.changeMode(conceptSetId, mode);
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByMode(mode));
+				this.conceptSetStore.selectedTab(this.getIndexByMode(mode));
 			}
 		}
 
