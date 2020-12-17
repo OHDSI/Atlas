@@ -63,7 +63,7 @@ define([
     lodash,
 ) {
   
-  const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+  const { ViewMode } = constants;
   
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -253,21 +253,10 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			// watch for any change to expression items (observer has a delay)
-      this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
-				try {
-					await this.conceptSetStore.resolveConceptSetExpression();
-					await this.conceptSetStore.refresh(this.tabs[this.selectedTab()||0].key);
-				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORER)
-						console.info(err);
-					else
-						throw(err);
-				} finally {
-				}
-			}));  
-			
 			this.conceptSetStore.isEditable(this.canEdit());
+			this.conceptSetStore.observer.subscribe(async () => {
+					await this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key);
+			})
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -327,7 +316,7 @@ define([
 		}
 
 		dispose() {
-      super.dispose();
+			super.dispose();
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);

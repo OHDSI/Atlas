@@ -23,7 +23,7 @@ define([
 		incidenceRates: 'incidenceRates',
 	};
 	
-	const RESOLVE_OUT_OF_ORDER = 'resolveConceptSetExpression() resolved out of oder';
+	const RESOLVE_OUT_OF_ORDER = 'resolveConceptSetExpression() resolved out of order';
 
 	return {
 		importTypes,
