@@ -80,10 +80,7 @@ define([
 			this.source = props.source || "unnamed";
 			this.title = props.title || "unnamed";
       
-      this.resolveCount = counter(); // handle out of order resolves
-
-			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
-				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
+      		this.resolveCount = counter(); // handle out of order resolves
 
 			this.isEditable = ko.observable(false);
 		}

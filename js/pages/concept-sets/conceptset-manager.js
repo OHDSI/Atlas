@@ -79,6 +79,8 @@ define([
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
+			this.observer = ko.pureComputed(() => ko.toJSON(this.conceptSetStore.current() && this.conceptSetStore.current().expression.items()))
+				.extend({ rateLimit: { timeout: 1000, method: "notifyWhenChangesStop" } });
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
@@ -254,7 +256,7 @@ define([
 			});
 
 			// watch for any change to expression items (observer has a delay)
-      this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+      		this.subscriptions.push(this.observer.subscribe(async () => {
 				try {
 					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.tabs[this.selectedTab()||0].key);
@@ -327,7 +329,7 @@ define([
 		}
 
 		dispose() {
-      super.dispose();
+      		super.dispose();
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
