@@ -121,7 +121,6 @@ define([
       this.conceptSetItems().forEach(conceptSetItem => {
         conceptSetItem[key](!areAllSelected);
       })
-      await this.conceptSetStore.resolveConceptSetExpression();
     }
 
     navigateToSearchPage() {

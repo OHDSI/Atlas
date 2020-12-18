@@ -36,7 +36,7 @@ define([
 	globalConstants
 ) {
 
-	const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+	const {ViewMode, RESOLVE_OUT_OF_ORDER} = constants;
 	
 	class ConceptSetList extends AutoBind(Component) {
 
@@ -134,7 +134,7 @@ define([
 					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.selectedTabKey());
 				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORER)
+					if (err != RESOLVE_OUT_OF_ORDER)
 						console.info(err);
 					else
 						throw(err);
