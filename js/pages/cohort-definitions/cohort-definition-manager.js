@@ -943,8 +943,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			// reset view after save
 			try {
 				const result = await cohortDefinitionService.copyCohortDefinition(this.currentCohortDefinition().id());
-				PollService.stop(this.pollTimeoutId);
-				document.location = "#/cohortdefinition/" + result.id;
+				commonUtils.routeTo(constants.paths.details(result.id));
 			} finally {
 				this.isCopying(false);
 			}
@@ -1134,10 +1133,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			let cdsi = {};
 			cdsi.name = source.sourceName;
 			cdsi.sourceKey = source.sourceKey;
+			cdsi.sourceId = source.sourceId;
 			if (sourceInfo != null) {
 				cdsi.isValid = ko.observable(sourceInfo.isValid);
 				cdsi.isCanceled = ko.observable(sourceInfo.isCanceled);
-				cdsi.sourceId = sourceInfo.id.sourceId;
 				cdsi.status = ko.observable(sourceInfo.status);
 				const date = new Date(sourceInfo.startTime);
 				cdsi.startTime = ko.observable(momentApi.formatDateTime(date));
