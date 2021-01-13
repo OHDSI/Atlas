@@ -51,6 +51,9 @@ define([
       this.allMappedChecked = ko.pureComputed(() => {
         return this.conceptSetItems().find(item => !item.includeMapped()) === undefined;
       });
+
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
+			console.log( params.tableOptions)
 		}
 
 		renderCheckbox(field) {

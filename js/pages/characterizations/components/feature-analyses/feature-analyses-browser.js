@@ -24,6 +24,8 @@ define([
 				Facets: feConst.FeatureAnalysisFacets,
 			};
 			
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
+			
 			this.columns = [
 				...this.columns,
 				{

@@ -30,7 +30,7 @@ define([
 			this.hasInfoAccess = params.hasInfoAccess;
 			this.isAuthenticated = params.isAuthenticated;
 			this.addConcepts = params.addConcepts;
-
+			this.tableOptions = commonUtils.getTableOptions('M');
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
 			this.commonUtils = commonUtils;

@@ -508,7 +508,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.selectedSource = ko.observable();
 			this.selectedReportSource = ko.observable();
-
+			this.tableOptions = commonUtils.getTableOptions('L');
 			this.sortedConceptSets = ko.pureComputed((d) => {
 				if (this.currentCohortDefinition() != null) {
 					var clone = this.currentCohortDefinition().expression().ConceptSets().slice(0);

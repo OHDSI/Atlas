@@ -77,10 +77,18 @@
             classes: $component.classes,
             selectedData: $component.design().featureAnalyses,
             showModal: showFeatureAnalysesBrowser,
+            tableOptions: $component.tableOptions,
         }
     "
     >
-        <feature-analyses-browser params="onSelect: data => onSelect(data), selectedData: selectedData, scrollY: '50vh', multiChoice: true, showModal: showModal"></feature-analyses-browser>
+        <feature-analyses-browser params="
+            onSelect: data => onSelect(data),
+            selectedData: selectedData,
+            scrollY: '50vh',
+            multiChoice: true,
+            showModal: showModal,
+            tableOptions: tableOptions,
+        "></feature-analyses-browser>
     </atlas-modal>
 
     <atlas-modal params="{
@@ -90,14 +98,17 @@
     data: {
         criteriaContext: $component.criteriaContext,
         strataConceptSets: $component.strataConceptSets(),
-        onActionComplete: $component.onRespositoryActionComplete
+        onActionComplete: $component.onRespositoryActionComplete,
+        tableOptions: $component.tableOptions,
     }
 }">
         <div class="paddedWrapper">
             <concept-set-browser params="
                         criteriaContext: criteriaContext,
                         cohortConceptSets: strataConceptSets,
-                        onActionComplete: onActionComplete
+                        onActionComplete: onActionComplete,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
                     "></concept-set-browser>
         </div>
     </atlas-modal>

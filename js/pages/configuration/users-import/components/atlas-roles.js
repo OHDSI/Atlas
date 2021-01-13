@@ -17,7 +17,7 @@ define([
 			constructor(params) {
 				super(params);
 				this.roles = params.roles || [];
-
+				this.tableOptions = commonUtils.getTableOptions('L');
 				this.renderCheckbox = this.renderCheckbox.bind(this);
 			}
 

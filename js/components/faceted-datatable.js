@@ -45,11 +45,9 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 		self.language = params.language || {
 			search: 'Filter: '
 		};
-		self.pageLength = params.pageLength || 15;
-		self.lengthMenu = params.lengthMenu || [
-			[15, 30, 45, 100, -1],
-			[15, 30, 45, 100, 'All']
-		];
+		const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
+		self.pageLength = params.pageLength || pageLength;
+		self.lengthMenu = params.lengthMenu || lengthMenu;
 		self.order = params.order || [
 			[1, 'desc']
 		];

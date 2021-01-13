@@ -3,6 +3,7 @@ define([
 	'text!./atlas.cohort-editor.html',
 	'appConfig',
 	'atlas-state',
+	'Utils/CommonUtils',
 	'components/cohortbuilder/CohortDefinition',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'components/conceptset/utils',
@@ -17,6 +18,7 @@ define([
 	view,
 	config,
 	sharedState,
+	commonUtils,
 	CohortDefinition,
 	ConceptSet,
 	conceptSetUtils,
@@ -33,7 +35,7 @@ define([
 		self.tabWidget = ko.observable();
 		self.cohortExpressionEditor = ko.observable();
 		self.showModal = ko.observable(false);
-
+		self.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 		// model behaviors
 
 		self.handleConceptSetImport = function (item, context, event) {

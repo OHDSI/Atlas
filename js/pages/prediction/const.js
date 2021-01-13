@@ -3,6 +3,7 @@ define(
     const pageTitle = 'Prediction';
     const ko = require('knockout');
     const config = require('appConfig');
+    const commonUtils = require('Utils/CommonUtils');
     const _ = require('lodash');
     const consts = require('const');
 
@@ -151,11 +152,7 @@ define(
         },
       ],
       fullAnalysisTableOptions: {
-        pageLength: 10,
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            ['10', '25', '50', '100', 'All']
-        ],
+        ...commonUtils.getTableOptions('S'),
         dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         Facets: [{
@@ -179,20 +176,12 @@ define(
         ]
       },
       specificationSummaryTableOptions: {
-        pageLength: 10,
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            ['10', '25', '50', '100', 'All']
-        ],
+        ...commonUtils.getTableOptions('S'),
         dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
       },
       covariateSettingsTableOptions: {
-        pageLength: 10,
-        lengthMenu: [
-            [10, 25, 50, 100, -1],
-            ['10', '25', '50', '100', 'All']
-        ],
+        ...commonUtils.getTableOptions('S'),
         dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         //'<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';

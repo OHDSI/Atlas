@@ -24,6 +24,11 @@ define([
 			super(params);
 			this.showModal = params.showModal;
 			this.data = ko.observableArray();
+			console.log(params);
+			const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
+			this.pageLength = params.pageLength || pageLength;
+			this.lengthMenu = params.lengthMenu || lengthMenu;
+
 			this.options = {
 				Facets: [
 					{

@@ -31,6 +31,8 @@ define([
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
+			console.log(params)
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 			this.canAddConcepts = ko.pureComputed(() => this.includedSourcecodes() && this.includedSourcecodes().some(item => item.isSelected()));
 		}
 
