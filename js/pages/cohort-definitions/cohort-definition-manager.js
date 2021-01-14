@@ -439,13 +439,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				return path;
 			});
-			this.exportTabMode.subscribe(val => {
+			this.trackSub(this.exportTabMode.subscribe(val => {
 				if (val === 'cartoon') {
 					setTimeout(() => {
 						this.delayedCartoonUpdate('ready');
 					}, 10);
 				}
-			});
+			}));
 			this.canSave = ko.pureComputed(()=> {
 				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
