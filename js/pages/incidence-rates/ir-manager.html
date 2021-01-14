@@ -22,8 +22,13 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+			<name-validation params="
+				hasEmptyName: !isNameFilled(),
+				hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+				hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+				hasDefaultName: isDefaultName(),
+				analysisName: 'IR analysis',
+			"></name-validation>
 		</div>
 
 		<ul data-bind="css: classes({extra: 'nav nav-tabs'})">

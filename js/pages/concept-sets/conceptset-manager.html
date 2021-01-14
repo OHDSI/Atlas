@@ -27,8 +27,13 @@
         <!-- /ko -->
       </div>
     </div>
-    <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
-                            hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+    <name-validation params="
+      hasEmptyName: !isNameFilled(),
+      hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
+      hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+      hasDefaultName: isDefaultName(),
+      analysisName: 'concept set'
+    "></name-validation>
   </div>
   <tabs params="
     componentParams: $component.componentParams,

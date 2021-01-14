@@ -21,8 +21,13 @@
 				<!-- /ko -->
 			</div>
 		</div>
-		<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(), 
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+		<name-validation params="
+			hasEmptyName: !isNameFilled(),
+			hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+			hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+			hasDefaultName: isDefaultName(),
+			analysisName: 'cohort pathway',
+		"></name-validation>
 	</div>
 
 	<tabs data-bind="visible: !$component.loading()" params="
