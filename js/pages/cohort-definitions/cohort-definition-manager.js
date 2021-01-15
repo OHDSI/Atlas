@@ -437,13 +437,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (path === 'export') {
 						path += '/' + this.exportTabMode();
 				}
-				if (this.exportTabMode() === 'cartoon') {
+				return path;
+			});
+			this.trackSub(this.exportTabMode.subscribe(val => {
+				if (val === 'cartoon') {
 					setTimeout(() => {
 						this.delayedCartoonUpdate('ready');
 					}, 10);
 				}
-				return path;
-			});
+			}));
 			this.canSave = ko.pureComputed(()=> {
 				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
