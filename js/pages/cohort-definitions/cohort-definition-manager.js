@@ -241,15 +241,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			//sampleSourceKey changes => get list of samples
 			this.trackSub(this.sampleSourceKey.subscribe(val => {
-				const cohortId = this.currentCohortDefinition()?
-					this.currentCohortDefinition().id():
-				 	this.cohortDefinitionIdOnRoute()
-				if(!val) {
-					history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples`)
-					return
-				};
-				history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples/${val}`)
-				this.getSampleList(cohortId)
+				const cohortId = this.currentCohortDefinition() ? this.currentCohortDefinition().id() : this.cohortDefinitionIdOnRoute();
+				if (val) {
+					history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples/${val}`);
+					this.getSampleList(cohortId);
+				}
 			}));
 
 			//validation input value
@@ -819,15 +815,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
 					&& this.currentCohortDefinition().createdBy().login
 			});
-
-// todo: look into if this subscription is necessary
-			this.trackSub(this.tabMode.subscribe(mode => {
-				if(mode&&this.currentCohortDefinition()&&mode!=='samples') {
-					const cohortId = this.currentCohortDefinition().id()
-					// use push state to prevent the component to re-render
-					history.pushState(null, '', `#/cohortdefinition/${cohortId}`)
-				}
-			}));
 
 			this.pollForInfoPeriodically();
 
