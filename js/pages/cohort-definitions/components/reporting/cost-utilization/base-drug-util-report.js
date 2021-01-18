@@ -5,13 +5,14 @@ define(
     'pages/cohort-definitions/components/reporting/cost-utilization/base-report',
     'appConfig',
     'utils/BemHelper',
+    'utils/CommonUtils',
     'appConfig',
     'pages/cohort-definitions/const',
     'services/CohortResults',
     'components/visualizations/filter-panel/filter-panel',
     'less!./drug-util-detailed.less',
   ],
-  function (ko, view, BaseCostUtilReport, appConfig, BemHelper, config, costUtilConst, CohortResultsService) {
+  function (ko, view, BaseCostUtilReport, appConfig, BemHelper, commonUtils, config, costUtilConst, CohortResultsService) {
 
     const DRUG_SOURCE_TYPE = 'drugType';
 
@@ -105,6 +106,8 @@ define(
           },
           ...(appConfig.enableCosts ? this.getCostColumns() : []),
         ];
+
+        this.tableOptions = commonUtils.getTableOptions('M');
       }
 
       getFilterList() {

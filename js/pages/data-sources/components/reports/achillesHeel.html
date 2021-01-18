@@ -5,7 +5,12 @@
 		Achilles Heel Results
 	</div>
 	<div class="panel-body">
-		<faceted-datatable params="columns: columns, reference: data"></faceted-datatable>
+		<faceted-datatable params="
+			columns: columns,
+			reference: data,
+			pageLength: tableOptions.pageLength,
+			lengthMenu: tableOptions.lengthMenu,
+		"></faceted-datatable>
 	</div>
 </div>
 <!--/ko-->

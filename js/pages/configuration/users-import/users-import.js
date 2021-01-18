@@ -109,7 +109,7 @@ define(['knockout',
 				this.isSearchGroupDialog = ko.observable();
 				this.isAtlasRolesDialog = ko.observable();
 				this.pollId = null;
-
+				this.tableOptions = commonUtils.getTableOptions('L');
 				this.init();
 			}
 

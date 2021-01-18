@@ -24,7 +24,7 @@ define([
 			this.hasInfoAccess = params.hasInfoAccess;
 			this.isAuthenticated = params.isAuthenticated;
 			this.hasRCAccess = ko.computed(() => this.hasInfoAccess() && PermissionService.isPermittedGetRC(sharedState.sourceKeyOfVocabUrl()));
-
+			this.tableOptions = commonUtils.getTableOptions('L');
 			// this.commonUtils = commonUtils;
 			this.sourceCounts = ko.observableArray();
 			this.isLoading = ko.observable(false);

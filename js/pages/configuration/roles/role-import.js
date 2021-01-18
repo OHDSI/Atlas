@@ -45,7 +45,7 @@ define([
 
         this.isAuthenticated = AuthService.isAuthenticated;
         this.hasAccess = AuthService.isPermittedCreateRole;
-
+        this.tableOptions = commonUtils.getTableOptions('S');
         this.updateExisting();
         this.json.subscribe(this.parseJSON);
         this.warnings = ko.observable({});

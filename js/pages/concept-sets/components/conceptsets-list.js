@@ -35,6 +35,7 @@ define([
 			this.canCreateConceptSet = ko.pureComputed(function () {
 				return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
 			});
+			this.tableOptions = commonUtils.getTableOptions('L');
 		}
 
 		onRespositoryConceptSetSelected (conceptSet) {

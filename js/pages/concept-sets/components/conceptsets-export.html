@@ -8,7 +8,9 @@
     onRespositoryConceptSetSelected: exportOnConceptSetSelected,
     onActionComplete: onExportAction,
     buttonActionText: 'Export Concept Sets',
-    repositoryConceptSetTableId: 'exportConceptSetTable'
+    repositoryConceptSetTableId: 'exportConceptSetTable',
+    pageLength: tableOptions.pageLength,
+    lengthMenu: tableOptions.lengthMenu,
   "></concept-set-browser>
   <hr/>
   <b><span data-bind="text: exportRowCount()"></span></b> concept sets selected for export.

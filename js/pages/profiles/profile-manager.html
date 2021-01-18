@@ -36,9 +36,9 @@
 								columns: highlightColumns,
 								options: highlightOptions,
 								order: [[4,'desc']],
-								pageLength: 5,
 								rowClick: highlightRowClick,
-								dom: highlightDom
+								dom: highlightDom,
+								pageLength: highilightTableOptions.pageLength,
 							}"></faceted-datatable>
 			</div>
 		</div>
@@ -120,7 +120,9 @@
 								columns: columns,
 								options: options,
 								order: [[3,'asc']],
-								searchFilter: searchHighlight
+								searchFilter: searchHighlight,
+								pageLength: tableOptions.pageLength,
+								lengthMenu: tableOptions.lengthMenu,
 							}"></faceted-datatable>
 					</div>
 				</div>

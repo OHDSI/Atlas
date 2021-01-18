@@ -33,7 +33,7 @@ define([
 			];
 			this.data = ko.observableArray();
 			this.template = '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
-		
+			this.tableOptions = commonUtils.getTableOptions('L');
 			this.loadData();
 		}
 
