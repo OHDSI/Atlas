@@ -3,7 +3,7 @@ define([
 	'text!./atlas.cohort-editor.html',
 	'appConfig',
 	'atlas-state',
-	'Utils/CommonUtils',
+	'utils/CommonUtils',
 	'components/cohortbuilder/CohortDefinition',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'components/conceptset/utils',

@@ -5,7 +5,7 @@ define(
     const config = require('appConfig');
     const _ = require('lodash');
     const consts = require('const');
-    const commonUtils = require('Utils/CommonUtils');
+    const commonUtils = require('utils/CommonUtils');
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
