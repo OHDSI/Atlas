@@ -355,6 +355,7 @@ define([
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to save a concept set.');
+			} finally {
 				this.loading(false);
 				this.isSaving(false);
 			}
