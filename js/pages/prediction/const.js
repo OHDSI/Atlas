@@ -3,7 +3,7 @@ define(
     const pageTitle = 'Prediction';
     const ko = require('knockout');
     const config = require('appConfig');
-    const commonUtils = require('Utils/CommonUtils');
+    const commonUtils = require('utils/CommonUtils');
     const _ = require('lodash');
     const consts = require('const');
 
