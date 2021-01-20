@@ -103,6 +103,7 @@ define([
 				this.searchColumns = [{
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),
+					orderable: false,
 				},{
 					title: 'Id',
 					data: 'CONCEPT_ID'
