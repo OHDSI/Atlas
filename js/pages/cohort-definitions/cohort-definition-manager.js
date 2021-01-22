@@ -410,7 +410,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.hasAccessToReadCohortReport = (sourceKey) => {
 				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.currentCohortDefinition().id(), sourceKey);
 			}
-			if (!this.hasAccess()) return;
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
