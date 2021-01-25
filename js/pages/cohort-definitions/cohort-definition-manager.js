@@ -393,11 +393,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (!this.isAuthenticated()) {
 					return false;
 				}
-				if (this.isNew()) {
+				if (this.currentCohortDefinition() && this.isNew()) {
 					return this.authApi.isPermittedCreateCohort();
 				}
 
-				return this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id());
+				return this.authApi.isPermittedReadCohorts() ||
+					(this.currentCohortDefinition() && this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id()));
 			});
 
 			this.hasAccessToGenerate = (sourceKey) => {
