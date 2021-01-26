@@ -40,13 +40,12 @@ define([
             this.importJSON.subscribe(function (jsonString) {
                 self.validateJson(jsonString);
             });
-            this.exportService = this.exportJson;
             this.importService = this.importJson;
         }
 
         initFromParams(params) {
             this.dirtyFlag = params.dirtyFlag;
-
+            this.exportService = params.exportJson;
             this.roleName = params.roleName;
             this.userItems = params.userItems;
             this.permissionList = params.permissions;
@@ -73,24 +72,6 @@ define([
 
         isPermittedExport(id) {
             return this.canReadRole();
-        }
-
-        getUsersList() {
-            return this.userItems()
-                .filter(user => user.isRoleUser());
-        }
-
-        getPermissionsList() {
-            return this.permissionItems()
-                .filter(permission => permission.isRolePermission());
-        }
-
-        exportJson() {
-            return {
-                role: this.roleName(),
-                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
-                users: this.getUsersList().map(u => ({ id: u.login })),
-            };
         }
 
         importJson(jsonObject) {
