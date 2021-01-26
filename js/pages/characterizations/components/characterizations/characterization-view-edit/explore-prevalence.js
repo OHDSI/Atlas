@@ -40,6 +40,7 @@ define([
 			this.exploring = ko.observable();
 			this.relations = ko.computed(() => this.prepareTabularData(this.data()));
 			this.exploringTitle = ko.pureComputed(() => this.exploring() ? 'Exploring concept hierarchy for: ' + this.exploring() : null );
+			this.tableOptions = commonUtils.getTableOptions('M');
 			this.loadData(this.explore);
 		}
 

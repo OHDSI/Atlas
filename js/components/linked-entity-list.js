@@ -24,6 +24,7 @@ define([
 			this.data = params.data;
 			this.columns = params.columns;
 			this.isEditPermitted = params.isEditPermitted;
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('S');
 		}
 	}
 

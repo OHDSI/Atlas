@@ -26,7 +26,7 @@ define([
 				this.provider = params.provider || ko.observable("ad");
 				this.role = params.role || ko.observable();
 				this.hasResults = ko.observable(false);
-
+				this.tableOptions = commonUtils.getTableOptions('L');
 				this.role.subscribe((newRole) => {
 					this.searchResults([]);
 					this.searchText("");

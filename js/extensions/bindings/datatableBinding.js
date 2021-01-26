@@ -6,6 +6,7 @@ define([
 	'xss',
 	'moment',
 	'services/MomentAPI',
+	'utils/CommonUtils',
 	'datatables.net-buttons',
 	'colvis',
 	'datatables.net-buttons-html5',
@@ -17,7 +18,8 @@ define([
 	config,
 	filterXSS,
 	moment,
-	momentApi
+	momentApi,
+	commonUtils,
 	) {
 
 	function renderSelected(s, p, d) {
@@ -89,6 +91,9 @@ define([
 					? { ...defaultPlaceholder, ...binding.options.language  }
 					: defaultPlaceholder;
 				binding.options.language = language;
+				const defaultTableOptions = commonUtils.getTableOptions('M')
+				binding.options.pageLength = binding.options.pageLength || defaultTableOptions.pageLength;
+				binding.options.lengthMenu = binding.options.lengthMenu || defaultTableOptions.lengthMenu;
 
 				// allow row level binding context
 				const createdRow = binding.options.createdRow;

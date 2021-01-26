@@ -31,7 +31,7 @@ define([
             this.isNewRole = params.isNewRole;
             this.roleId = params.roleId;
             this.userItems = params.userItems;
-
+            this.tableOptions = commonUtils.getTableOptions('L');
             this.areUsersSelected = ko.pureComputed(() => { return !!this.userItems().find(user => user.isRoleUser()); });
             this.canEditRoleUsers = ko.pureComputed(() => { return authApi.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRoleUsers(this.roleId())); })
 

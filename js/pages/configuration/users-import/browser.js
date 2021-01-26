@@ -36,7 +36,7 @@ define([
 				this.canCreate = ko.pureComputed(() => permissionService.isPermittedCreate());
 				this.loading = ko.observable();
 				this.data = ko.observableArray();
-
+				this.tableOptions = commonUtils.getTableOptions('L');
 				this.gridColumns = [
 					{
 						title: 'Provider',

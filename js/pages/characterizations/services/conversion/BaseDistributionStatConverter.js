@@ -31,7 +31,7 @@ define([
 
         getRowId(stat) {
             // Transform stratas into rows
-            return stat.strataId;
+            return stat.strataId * 100000 + stat.covariateId;
         }
 
         getResultObject(stat) {
@@ -48,7 +48,24 @@ define([
               title: 'Strata',
               data: 'strataName',
               className: this.classes('col-distr-title'),
+              // visible: false,
 							xssSafe:false,
+            },
+            {
+              title: 'Covariate',
+              data: 'covariateName',
+              className: this.classes('col-distr-cov'),
+              xssSafe: false,
+            },
+            {
+              title: 'Value field',
+              data: (row, type) => {
+                  let data = (row.faType === 'CRITERIA_SET' && row.aggregateName) || "Events count" ;
+                  if (row.missingMeansZero) {
+                      data = data + "*"; // mark missingMeansZero elements with a * in table
+                  }
+                  return data;
+              }
             }];
         }
 

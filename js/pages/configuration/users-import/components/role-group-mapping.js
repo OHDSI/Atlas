@@ -23,6 +23,7 @@ define([
 			this.rolesMapping = params.rolesMapping || ko.observableArray([]);
 			this.provider = params.provider;
 			this.searchResults = ko.observableArray();
+			this.tableOptions = commonUtils.getTableOptions('L');
 		}
 
 		onRolesRowClick(data) {

@@ -33,7 +33,7 @@ define([
 			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService, conceptSetUtils);
 			this.includedConceptsOptions = conceptSetUtils.includedConceptsOptions;
 			this.canAddConcepts = ko.pureComputed(() => this.includedConcepts() && this.includedConcepts().some(item => item.isSelected()));
-
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 			this.ancestorsModalIsShown = ko.observable(false);
 			this.ancestors = ko.observableArray([]);
 			this.showAncestorsModal = conceptSetUtils.getAncestorsModalHandler({

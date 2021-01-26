@@ -71,6 +71,8 @@
                                     dom: 'Blftipr',
                                     rowCallback: $component.isRowGreyed,
                                     order: $data.defaultSort,
+                                    pageLength: $component.tableOptions.pageLength,
+                                    lengthMenu: $component.tableOptions.lengthMenu,
                                 }
                             }
                         ">
@@ -133,7 +135,8 @@
                                     xScale: $component.scatterXScale,
                                     yScale: $component.scatterYScale,
                                     tooltip: $component.tooltipBuilder
-                                }"
+                                },
+                                filename: `characterization_${$component.characterizationId()}_execution_${$component.executionId()}_${$component.analysisTitle($data)}`"
                             />
                         </div>
                     <!-- /ko -->

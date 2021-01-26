@@ -84,8 +84,9 @@ define([
             this.data = ko.observable([]);
             this.domains = ko.observableArray();
             this.filterList = ko.observableArray([]);
-            this.selectedItems = ko.computed(() => filterUtils.getSelectedFilterValues(this.filterList()));
+            this.selectedItems = ko.pureComputed(() => filterUtils.getSelectedFilterValues(this.filterList()));
             this.analysisList = ko.observableArray([]);
+            this.canExportAll = ko.pureComputed(() => this.data().analyses && this.data().analyses.length > 0);
 
             this.stratifiedByTitle = ko.pureComputed(() => this.design().stratifiedBy || '');
 
@@ -105,8 +106,8 @@ define([
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
             this.downloading = ko.observableArray();
-
-            this.executionId.subscribe(id => id && this.loadData());
+            this.tableOptions = commonUtils.getTableOptions('M');
+            this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));
             this.loadData();
         }
 
@@ -507,11 +508,7 @@ define([
 
         analysisTitle(data) {
             const strata = data.stratified ? (' / stratified by ' + this.stratifiedByTitle()): '';
-            return ko.computed(() => (data.domainId ? (data.domainId + ' / ') : '') + data.analysisName + strata);
-        }
-
-        canExportAll() {
-            return ko.computed(() => this.data().analyses && this.data().analyses.length > 0);
+            return (data.domainId ? (data.domainId + ' / ') : '') + data.analysisName + strata;
         }
     }
 

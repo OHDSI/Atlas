@@ -16,8 +16,8 @@ define([
 	ChartUtils
 ) {
 	class Treemap extends Chart {
-		constructor(params) {
-			super(params);
+		constructor(params, element) {
+			super(params, element);
 			this.renderer = new atlascharts.treemap();
 			this.storeParams(params);
 			if (params.data()) {

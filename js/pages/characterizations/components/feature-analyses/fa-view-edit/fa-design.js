@@ -14,6 +14,7 @@ define([
 	'components/conceptset/utils',
 	'pages/characterizations/const',
 	'components/multi-select',
+	'../components/aggregate-select',
 	'less!./fa-design.less',
 ], function (
 	ko,
@@ -49,8 +50,9 @@ define([
 			this.formatCriteriaOption = cohortbuilderUtils.formatDropDownOption;
 			this.demoCustomSqlAnalysisDesign = constants.demoCustomSqlAnalysisDesign;
 			this.loadConceptSet = params.loadConceptSet;
+			this.defaultAggregate = params.defaultAggregate;
+			this.aggregates = params.aggregates;
 			this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
-
 
 			this.conceptSets = ko.pureComputed({
 					read: () => params.data() && params.data().conceptSets || [],
@@ -66,6 +68,7 @@ define([
 			return {
 				name: ko.observable(''),
 				criteriaType: 'DemographicCriteria',
+				aggregate: ko.observable(ko.unwrap(this.defaultAggregate)),
 				expression: ko.observable(new DemographicGriteria()),
 			};
 		}

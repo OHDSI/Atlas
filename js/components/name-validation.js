@@ -16,6 +16,7 @@ define([
       this.hasInvalidCharacters = params.hasInvalidCharacters;
       this.hasInvalidLength = params.hasInvalidLength;
       this.hasDefaultName = params.hasDefaultName;
+      this.defaultNameErrorText =`The name of the ${params.analysisName || 'analysis'} should differ from the default one.`;
     }
   }
 

@@ -63,7 +63,7 @@ define([
     lodash,
 ) {
   
-  const {ViewMode, RESOLVE_OUT_OF_ORER} = constants;
+  const { ViewMode } = constants;
   
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -170,55 +170,65 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isDeleting() || this.isOptimizing();
 			});
+			this.optimizeTableOptions = commonUtils.getTableOptions('M');
+			const tableOptions = commonUtils.getTableOptions('L');
 			this.tabs = [
 				{
-          title: 'Concept Set Expression',
-          key: ViewMode.EXPRESSION,
-          componentName: 'conceptset-expression',
-          componentParams: { ...params, 
-                            canEditCurrentConceptSet: this.canEdit, 
-														conceptSetStore: this.conceptSetStore,
-													},
+					title: 'Concept Set Expression',
+					key: ViewMode.EXPRESSION,
+					componentName: 'conceptset-expression',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEditCurrentConceptSet: this.canEdit, 
+						conceptSetStore: this.conceptSetStore,
+					},
 				},
 				{
-          title: 'Included Concepts',
-          key: ViewMode.INCLUDED,
-          componentName: 'conceptset-list-included',
-          componentParams: { ...params, canEdit: this.canEdit,
-														currentConceptSet: this.conceptSetStore.current,
-                            conceptSetStore: this.conceptSetStore,
-                            loading: this.conceptSetStore.loadingIncluded,
-														activeConceptSet: ko.observable(this.conceptSetStore),
-                           },
-          hasBadge: true,
+					title: 'Included Concepts',
+					key: ViewMode.INCLUDED,
+					componentName: 'conceptset-list-included',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEdit: this.canEdit,
+						currentConceptSet: this.conceptSetStore.current,
+						conceptSetStore: this.conceptSetStore,
+						loading: this.conceptSetStore.loadingIncluded,
+						activeConceptSet: ko.observable(this.conceptSetStore),
+					},
+					hasBadge: true,
 				},
 				{
-          title: 'Included Source Codes',
-          key: ViewMode.SOURCECODES,
-          componentName: 'conceptset-list-included-sourcecodes',
-          componentParams:  { ...params, canEdit: this.canEdit,
-														 conceptSetStore: this.conceptSetStore,
-														 loading: this.conceptSetStore.loadingSourceCodes},
-														 activeConceptSet: ko.observable(this.conceptSetStore),
-														},
-				{
-          title: 'Explore Evidence',
-          key: ViewMode.EXPLORE,
-          componentName: 'explore-evidence',
-          componentParams: {
-            ...params,
-            saveConceptSet: this.saveConceptSet,
-          },
+					title: 'Included Source Codes',
+					key: ViewMode.SOURCECODES,
+					componentName: 'conceptset-list-included-sourcecodes',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						loading: this.conceptSetStore.loadingSourceCodes},
+						activeConceptSet: ko.observable(this.conceptSetStore),
 				},
 				{
-          title: 'Export',
-          key: ViewMode.EXPORT,
-          componentName: 'conceptset-list-export',
-          componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
+					title: 'Explore Evidence',
+					key: ViewMode.EXPLORE,
+					componentName: 'explore-evidence',
+					componentParams: {
+						...params,
+						saveConceptSet: this.saveConceptSet,
+					},
+				},
+				{
+					title: 'Export',
+					key: ViewMode.EXPORT,
+					componentName: 'conceptset-list-export',
+					componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
 				},
 				{
 					title: 'Import',
-          key: ViewMode.IMPORT,
+					key: ViewMode.IMPORT,
 					componentName: 'conceptset-list-import',
 					componentParams: { 
 						...params,
@@ -229,14 +239,14 @@ define([
 					},
 				},
 				{
-          title: 'Compare',
-          key: ViewMode.COMPARE,
-          componentName: 'conceptset-compare',
-          componentParams: {
-            ...params,
-            saveConceptSetFn: this.saveConceptSet,
-            saveConceptSetShow: this.saveConceptSetShow,
-          },
+					title: 'Compare',
+					key: ViewMode.COMPARE,
+					componentName: 'conceptset-compare',
+					componentParams: {
+						...params,
+						saveConceptSetFn: this.saveConceptSet,
+						saveConceptSetShow: this.saveConceptSetShow,
+					},
 				},
 			];
 			this.selectedTab = ko.observable(0);
@@ -253,21 +263,10 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
-			// watch for any change to expression items (observer has a delay)
-      this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
-				try {
-					await this.conceptSetStore.resolveConceptSetExpression();
-					await this.conceptSetStore.refresh(this.tabs[this.selectedTab()||0].key);
-				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORER)
-						console.info(err);
-					else
-						throw(err);
-				} finally {
-				}
-			}));  
-			
 			this.conceptSetStore.isEditable(this.canEdit());
+			this.conceptSetStore.observer.subscribe(async () => {
+					await this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key);
+			})
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -327,7 +326,7 @@ define([
 		}
 
 		dispose() {
-      super.dispose();
+			super.dispose();
 			this.onConceptSetModeChanged && this.onConceptSetModeChanged.dispose();
 			this.fade(false); // To close modal immediately, otherwise backdrop will freeze and remain at new page
 			this.isOptimizeModalShown(false);
@@ -356,6 +355,7 @@ define([
 				}
 			} catch (e) {
 				alert('An error occurred while attempting to save a concept set.');
+			} finally {
 				this.loading(false);
 				this.isSaving(false);
 			}

@@ -29,7 +29,7 @@ define([
         return this.prepareData(this.rawData());
       });
 			this.container = container;
-			this.filename = params.filename || 'untitledChart.png';
+			this.filename = ko.unwrap(params.filename);
     }
 
     prepareData(rawData) {
@@ -43,7 +43,7 @@ define([
 		
 		export() {
 			const svg = this.container.element.querySelector('svg');
-			ChartUtils.downloadAsPng(svg, this.filename || "untitled.png");
+			ChartUtils.downloadSvgAsPng(svg, this.filename || "untitled.png");
 		}
 		
 		dispose() {

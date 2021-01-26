@@ -43,6 +43,7 @@ define([
 			this.isAuthenticated 	= authApi.isAuthenticated;
 			this.canReadCohorts 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled);
 			this.canCreateCohort 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled);
+			this.tableOptions = commonUtils.getTableOptions('L');
 		}
 
 		newDefinition(data, event) {

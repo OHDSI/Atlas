@@ -40,7 +40,7 @@ define([
       this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(row => row.isSelected()).length);
       this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
       this.buttonTooltip = conceptSetUtils.getPermissionsText(this.canEditCurrentConceptSet());
-
+      this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
       this.columns = [
         {
           class: 'text-center',
@@ -121,7 +121,6 @@ define([
       this.conceptSetItems().forEach(conceptSetItem => {
         conceptSetItem[key](!areAllSelected);
       })
-      await this.conceptSetStore.resolveConceptSetExpression();
     }
 
     navigateToSearchPage() {
