@@ -47,7 +47,11 @@ define([
     }) {
       super();
       this.analysisId = analysisId;
-      this.analysisId.subscribe(() => this.loadData());
+      this.analysisId.subscribe((id) => {
+        if (id) {
+          this.loadData();
+        }
+      });
       this.resultsPathPrefix = resultsPathPrefix;
       this.downloadApiPaths = downloadApiPaths;
       this.downloadFileName = downloadFileName;
