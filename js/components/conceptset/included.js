@@ -55,8 +55,8 @@ define([
 				conceptSetStore: this.conceptSetStore,
 			});
 			commonUtils.clearConceptsSelectionState(this.includedConcepts);
-    }
-	
+			this.conceptSetStore.loadingIncluded(false);
+		}
 	}
 
 	return commonUtils.build('conceptset-list-included', IncludedConcepts, view);
