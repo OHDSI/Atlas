@@ -280,6 +280,9 @@ define([
 		async changeMode(conceptSetId, mode) {
 			if (conceptSetId !== undefined) {
 				await this.loadConceptSet(conceptSetId);
+				if (mode === ViewMode.INCLUDED) {
+					await this.conceptSetStore.resolveConceptSetExpression();
+				}
 				await this.conceptSetStore.refresh(mode);
 			}
 			//this.currentConceptSetMode(mode);
