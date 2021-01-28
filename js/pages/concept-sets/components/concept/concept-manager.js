@@ -59,6 +59,7 @@ define([
 				hasInfoAccess: this.hasInfoAccess,
 				isAuthenticated: this.isAuthenticated,
 				addConcepts: this.addConcepts.bind(this),
+				addConcept: this.addConcept
 			});
 		}
 
