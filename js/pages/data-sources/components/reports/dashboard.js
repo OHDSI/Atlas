@@ -23,6 +23,9 @@ define([
 	Report,
 	Component
 ) {
+
+	const FORMAT_VALUES_BIGGER_THAN = 99999;
+
 	class Dashboard extends Report {
 		constructor(params) {
 			super(params);
@@ -73,7 +76,8 @@ define([
 				var formatter = d3.format(".5s");
 				data.summary.forEach(function (d) {
 					if (!isNaN(d.attributeValue)) {
-						d.attributeValue = formatter(d.attributeValue);
+						d.attributeValue = d.attributeValue > FORMAT_VALUES_BIGGER_THAN
+							? formatter(d.attributeValue) : d.attributeValue;
 					}
 				});
 				this.summary(data.summary);
