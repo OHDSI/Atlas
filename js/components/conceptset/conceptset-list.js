@@ -133,11 +133,13 @@ define([
 			
 			// watch for any change to expression items (observer has a delay)
 			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				// when the conceptSetStore changes (either through a new concept set being selected or changes to concept set options), the concept set resolves and the view is refreshed.
+				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)
 				try {
 					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.selectedTabKey());
 				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORDER)
+					if (err == RESOLVE_OUT_OF_ORDER)
 						console.info(err);
 					else
 						throw(err);

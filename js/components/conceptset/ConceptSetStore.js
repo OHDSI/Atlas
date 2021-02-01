@@ -18,7 +18,7 @@ define([
 	JSZip,
 ) {
 
-	const { ViewMode,  RESOLVE_OUT_OF_ORDER } = constants;
+	const { ViewMode } = constants;
 
 	// define a counter that can be 'frozen' from ConceptSetStore
 	const counter = () => {
@@ -85,19 +85,6 @@ define([
 			this.observer = ko.pureComputed(() => ko.toJSON(this.current() && this.current().expression.items()))
 				.extend({ rateLimit: { timeout: 500, method: "notifyWhenChangesStop" } });
 
-			// watch for any change to expression items (observer has a delay)
-			this.observer.subscribe(async () => {
-			    try {
-				    await this.resolveConceptSetExpression();
-			  	} catch (err) {
-				  	if (err !== RESOLVE_OUT_OF_ORDER)
-					  	console.info(err);
-				  	else
-					  	throw(err);
-			  	} finally {
-			  	}
-			});  
-			  
 			this.isEditable = ko.observable(false);
 		}
 
