@@ -53,7 +53,6 @@ define([
       });
 
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
-			console.log( params.tableOptions)
 		}
 
 		renderCheckbox(field) {

@@ -63,7 +63,7 @@ define([
     lodash,
 ) {
   
-  const { ViewMode } = constants;
+  const { ViewMode, RESOLVE_OUT_OF_ORDER } = constants;
   
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -265,7 +265,17 @@ define([
 
 			this.conceptSetStore.isEditable(this.canEdit());
 			this.conceptSetStore.observer.subscribe(async () => {
+				// when the conceptSetStore changes (either through a new concept set being loaded or changes to concept set options), the concept set resolves and the view is refreshed.
+				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)
+				try {
+					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key);
+				} catch (err) {
+					if (err == RESOLVE_OUT_OF_ORDER)
+						console.info(err);
+					else
+						throw(err);
+				}
 			})
 		}
 
@@ -280,12 +290,8 @@ define([
 		async changeMode(conceptSetId, mode) {
 			if (conceptSetId !== undefined) {
 				await this.loadConceptSet(conceptSetId);
-				if (mode === ViewMode.INCLUDED) {
-					await this.conceptSetStore.resolveConceptSetExpression();
-				}
-				await this.conceptSetStore.refresh(mode);
 			}
-			//this.currentConceptSetMode(mode);
+			await this.conceptSetStore.refresh(mode);
 		}
 
 		renderCheckbox(field, readonly = false) {
@@ -308,7 +314,6 @@ define([
 			sharedState.activeConceptSet(this.conceptSetStore);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				conceptSetUtils.createRepositoryConceptSet(this.conceptSetStore);
-				await this.conceptSetStore.resolveConceptSetExpression();
 				this.loading(false);
 			}
 			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
