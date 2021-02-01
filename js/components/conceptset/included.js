@@ -47,7 +47,6 @@ define([
 		}
 
 		addConcepts(options) {
-			this.conceptSetStore.loadingIncluded(true);
 			const concepts = commonUtils.getSelectedConcepts(this.includedConcepts);
 			const items = commonUtils.buildConceptSetItems(concepts, options);
 			conceptSetUtils.addItemsToConceptSet({
@@ -55,7 +54,6 @@ define([
 				conceptSetStore: this.conceptSetStore,
 			});
 			commonUtils.clearConceptsSelectionState(this.includedConcepts);
-			this.conceptSetStore.loadingIncluded(false);
 		}
 	}
 
