@@ -8,3 +8,4 @@ js/config-local.js
 js/version.js
 package-lock.json
 .vscode
+.DS_Store
