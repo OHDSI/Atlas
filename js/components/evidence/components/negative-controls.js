@@ -11,6 +11,7 @@ define(['knockout',
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'services/AuthAPI',
+	'conceptsetbuilder/InputTypes/ConceptSet',
 	'assets/ohdsi.util',
 	'databindings',
 	'evidence',
@@ -28,7 +29,8 @@ define(['knockout',
 	sharedState,
 	jobDetailsService,
 	momentApi,
-	authApi
+	authApi,
+	ConceptSet
 ) {
 	class NegativeControls extends Component {
 		constructor(params) {
@@ -479,9 +481,6 @@ define(['knockout',
 				var dtItems = $('#negControlResults table')
 					.DataTable()
 					.data();
-				var conceptSet = {};
-				conceptSet.id = 0;
-				conceptSet.name = this.newConceptSetName;
 				var selectedConcepts = [];
 				_.each(dtItems, (item) => {
 					var concept;
@@ -505,8 +504,15 @@ define(['knockout',
 						includeMapped: ko.observable(false),
 					}
 					selectedConcepts.push(newItem);
-				})
-				this.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
+				});
+				const conceptSet = new ConceptSet({
+					id: 0,
+					name: this.newConceptSetName(),
+					expression: {
+						items: selectedConcepts
+					}
+				});
+				this.saveConceptSet(conceptSet, "#txtNewConceptSetName");
 				this.showNegControlsSaveNewModal(false);
 			}
 
