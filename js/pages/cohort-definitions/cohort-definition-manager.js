@@ -1622,6 +1622,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		getSampleList(cohortId) {
 			this.isLoadingSampleData(true);
+			this.selectedSampleId(null);
 			const cohortDefinitionId= cohortId || this.currentCohortDefinition().id();
 			// if (cohortDefinitionId==0) return
 			const sourceKey=this.sampleSourceKey();
