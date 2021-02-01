@@ -1,12 +1,13 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<!-- ko if: hasAccess -->
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko if: currentCohortDefinition() && currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
-	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
-	<!-- ko if: hasAccess -->
 	<div data-bind="currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
@@ -551,7 +552,7 @@
 		<b>Full Analysis</b>
 		<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
 	</atlas-modal>
-	<!-- /ko -->
+
 	<atlas-modal params="{
 		showModal: cohortLinkModalOpened,
 		iconClass: 'fa fa-group',
@@ -611,3 +612,5 @@
 <script type="text/html" id="failed-status-tmpl">
 	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $data.status"></a>
 </script>
+
+<!-- /ko -->
