@@ -56,6 +56,9 @@ define([
 			this.analysisId = ko.observable();
 			this.executionId = ko.observable();
 			this.loading = ko.observable(false);
+			this.isAuthenticated = ko.pureComputed(() => {
+				return authApi.isAuthenticated();
+			});
 			this.defaultName = constants.newEntityNames.pathway;
 
 			this.isNameFilled = ko.computed(() => {
@@ -74,6 +77,7 @@ define([
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
 
+			this.isViewPermitted = this.isViewPermittedResolver();
 			this.canEdit = this.isEditPermittedResolver();
 			this.canSave = this.isSavePermittedResolver();
 			this.canDelete = this.isDeletePermittedResolver();
@@ -160,6 +164,12 @@ define([
 		setupSection(section) {
 				const tabKey = section === 'results' ? 'executions' : section;
 				this.selectedTabKey(tabKey || 'design');
+		}
+
+		isViewPermittedResolver() {
+			return ko.computed(
+				() => PermissionService.isPermittedLoad(this.analysisId())
+			);
 		}
 
 		isEditPermittedResolver() {

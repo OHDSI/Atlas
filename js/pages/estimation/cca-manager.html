@@ -1,4 +1,8 @@
 <loading data-bind="visible: loading"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
+
+<!-- ko if: isViewPermitted -->
+
  <div data-bind="if:!loading()">
     <heading-title params="name: populationCaption(), description: canEdit() ? '' : '(Read only)', icon: 'balance-scale', theme: 'dark'"></heading-title>
     <!-- ko if: !!estimationAnalysis() && !!estimationAnalysis().id -->
@@ -70,3 +74,5 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<!-- /ko -->

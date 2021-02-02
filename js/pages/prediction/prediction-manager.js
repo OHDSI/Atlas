@@ -72,8 +72,12 @@ define([
 			this.selectTab = this.selectTab.bind(this);
 			this.selectedTabKey = ko.observable(router.routerParams().section);
 
-			this.isAuthenticated = authAPI.isAuthenticated;
-			this.hasAccess = authAPI.isPermittedReadPlps;
+			this.isAuthenticated = ko.pureComputed(() => {
+				return authAPI.isAuthenticated();
+			});
+			this.isViewPermitted = ko.pureComputed(() => {
+				return authAPI.isPermittedReadPlps();
+			});
 
 			this.options = constants.options;
 			this.config = config;
@@ -396,7 +400,7 @@ define([
 			PredictionService.getPrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				this.loading(false);
-			});
+			}).catch(() => this.loading(false));
 		}
 
 		resetDirtyFlag() {

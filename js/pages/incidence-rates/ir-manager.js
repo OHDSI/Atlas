@@ -81,13 +81,22 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.exporting = ko.observable();
+			this.isAuthenticated = ko.pureComputed(() => {
+				return authAPI.isAuthenticated();
+			});
 			this.defaultName = globalConstants.newEntityNames.incidenceRate;
 			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
+			this.isViewPermitted = ko.pureComputed(() => {
+				return !config.userAuthenticationEnabled
+					|| (
+						config.userAuthenticationEnabled
+						&& authAPI.isPermittedReadIRs()
+					)
+			});
 			this.canCreate = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
 				|| (
 					config.userAuthenticationEnabled
-					&& authAPI.isAuthenticated
 					&& authAPI.isPermittedCreateIR()
 				)
 			});
@@ -95,7 +104,6 @@ define([
 				return !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
-						&& authAPI.isAuthenticated
 						&& authAPI.isPermittedDeleteIR(this.selectedAnalysisId())
 					)
 			});
@@ -104,7 +112,6 @@ define([
 					|| !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
-						&& authAPI.isAuthenticated
 						&& authAPI.isPermittedEditIR(this.selectedAnalysisId())
 					)
 			});
@@ -112,7 +119,6 @@ define([
 				return !config.userAuthenticationEnabled
 					|| (
 						config.userAuthenticationEnabled
-						&& authAPI.isAuthenticated
 						&& authAPI.isPermittedCopyIR(this.selectedAnalysisId())
 						&& !this.dirtyFlag().isDirty()
 					)

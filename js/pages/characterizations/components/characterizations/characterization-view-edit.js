@@ -67,6 +67,9 @@ define([
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
             this.defaultName = constants.newEntityNames.characterization;
+            this.isAuthenticated = ko.pureComputed(() => {
+                return authApi.isAuthenticated();
+            });
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name() && this.design().name().trim();
             });
@@ -82,6 +85,7 @@ define([
             this.isNameCorrect = ko.computed(() => {
                 return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
+            this.isViewPermitted = this.isViewPermittedResolver();
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
@@ -168,6 +172,12 @@ define([
             }
         }
 
+        isViewPermittedResolver() {
+            return ko.pureComputed(
+                () => PermissionService.isPermittedGetCC(this.characterizationId())
+            );
+        }
+
         isEditPermittedResolver() {
             return ko.pureComputed(
                 () => (this.characterizationId() ? PermissionService.isPermittedUpdateCC(this.characterizationId()) : PermissionService.isPermittedCreateCC())
@@ -220,10 +230,13 @@ define([
             if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
             } else {
-                this.loading(true);
-                const res = await CharacterizationService.loadCharacterizationDesign(id);
-                this.setupDesign(new CharacterizationAnalysis(res));
-                this.loading(false);
+                try {
+                    this.loading(true);
+                    const res = await CharacterizationService.loadCharacterizationDesign(id);
+                    this.setupDesign(new CharacterizationAnalysis(res));
+                } finally {
+                    this.loading(false);
+                }
             }
         }
 

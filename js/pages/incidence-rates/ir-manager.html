@@ -1,4 +1,8 @@
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
+
+<!-- ko if: isViewPermitted -->
 <heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : '(Read only)', icon: 'bolt', theme: 'dark'"></heading-title>
+
 <!-- ko if: !!selectedAnalysis() && !!selectedAnalysis().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
@@ -155,3 +159,5 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<!-- /ko -->
