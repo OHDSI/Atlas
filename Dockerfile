@@ -23,7 +23,7 @@ RUN find . -type f "(" \
         -o -name "*.svg" \
         -o -name "*.xml" \
       ")" -print0 \
-      | xargs -0 -n 1 gzip -k
+      | xargs -0 -n 1 gzip -kf
 
 # Production Nginx image
 FROM nginxinc/nginx-unprivileged:1.19-alpine
