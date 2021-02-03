@@ -83,7 +83,7 @@ define([
 					};
 				}
 				if (stratas[st.strataId] === undefined) {
-					stratas[st.strataId] = st.strataName || 'All stratas';
+					stratas[st.strataId] = st.strataName || 'All strata';
 				}
 				const stat = stats[st.covariateId];
 				stat.count[st.strataId] = st.count;
