@@ -21,11 +21,13 @@ define([
 		'lodash',
 		'crossfilter',
 		'assets/ohdsi.util',
+		'./annotation/view-models/AnnotationWidget',
 		'd3-tip',
 		'databindings',
 		'faceted-datatable',
 		'extensions/bindings/profileChart',
 		'less!./profile-manager.less',
+		'less!./annotation/annotation.less',
 		'components/heading',
 	'components/ac-access-denied'
 	],
@@ -51,6 +53,7 @@ define([
 		_,
 		crossfilter,
 		util,
+		AnnotationWidget
 	) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
@@ -337,6 +340,11 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+				// BEGIN ANNOTATION
+				if (this.cohortDefinitionId()) {
+					this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName);
+				}
+				// END ANNOTATION
 
 				this.plugins = pluginRegistry.findByType(globalConstants.pluginTypes.PROFILE_WIDGET);
 			}
