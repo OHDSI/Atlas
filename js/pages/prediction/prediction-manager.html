@@ -1,4 +1,8 @@
 <loading data-bind="visible: loading"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
+
+<!-- ko if: isViewPermitted -->
+
 <div data-bind="if:!loading()">
   <heading-title params="name: predictionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'heartbeat', theme: 'dark'"></heading-title>
   <!-- ko if: !!patientLevelPredictionAnalysis() && !!patientLevelPredictionAnalysis().id -->
@@ -61,7 +65,6 @@
     ]">
   </tabs>
 </div>
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,
@@ -71,3 +74,5 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<!-- /ko -->
