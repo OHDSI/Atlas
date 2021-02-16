@@ -254,7 +254,7 @@ define([
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
-			this.conceptSetStore.observer.subscribe(async () => {
+			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
 				// when the conceptSetStore changes (either through a new concept set being loaded or changes to concept set options), the concept set resolves and the view is refreshed.
 				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)
 				try {
@@ -266,7 +266,10 @@ define([
 					else
 						throw(err);
 				}
-			})
+			}));
+
+			// initially resolve the concept set
+			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));			
 		}
 
 		onRouterParamsChanged(params, newParams) {
