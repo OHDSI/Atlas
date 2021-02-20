@@ -541,8 +541,8 @@ define(['knockout',
 			this.conceptsetSelected = (d) => {
 				$('#ncModalConceptSetSelect').modal('hide');
 				conceptSetService.getConceptSet(d.id).then((csInfo) => {
-					this.csTarget(csInfo.id);
-					this.csTargetCaption(csInfo.name);
+					this.csTarget(csInfo.data.id);
+					this.csTargetCaption(csInfo.data.name);
 				});
 			}
 
