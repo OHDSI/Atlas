@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'atlas-state',
 	'text!./search.html',
+	'appConfig',
 	'services/AuthAPI',
 	'components/conceptset/utils',
 	'../PermissionService',
@@ -24,6 +25,7 @@ define([
 	ko,
 	sharedState,
 	view,
+	config,
 	authApi,
 	conceptSetUtils,
 	PermissionService,
@@ -97,7 +99,7 @@ define([
 					'csvHtml5',
 					'pdfHtml5'
 				];
-				this.tableOptions = commonUtils.getTableOptions('L');
+
 				this.searchColumns = [{
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),

@@ -10,17 +10,16 @@
     <!-- ko ifnot: loading() -->
     <table data-bind="
         dataTable: {
-        data: relations().stats,
-        options: {
-            autoWidth: false,
-            order: [1, 'desc'],
-            columns: relations().columns,
-            buttons: $component.getButtonsConfig(),
-            dom: 'Blftipr',
-            pageLength: $component.tableOptions.pageLength,
-            lengthMenu: $component.tableOptions.lengthMenu,
+					data: relations().stats,
+					options: {
+						autoWidth: false,
+						order: [1, 'desc'],
+						columns: relations().columns,
+						buttons: $component.getButtonsConfig(),
+						dom: 'Blftipr',
+					}
         }
-    }">
+    ">
         <thead>
             <!-- ko if: relations().stratas.length > 1 -->
             <tr>

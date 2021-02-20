@@ -86,7 +86,6 @@ define([
             this.isParameterCreateModalShown = ko.observable(false);
             this.showConceptSetBrowser = ko.observable(false);
             this.criteriaContext = ko.observable();
-            this.tableOptions = commonUtils.getTableOptions('M');
         }
 
         checkStrataNames(data, event) {

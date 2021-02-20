@@ -106,7 +106,7 @@ define([
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
             this.downloading = ko.observableArray();
-            this.tableOptions = commonUtils.getTableOptions('M');
+
             this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));
             this.loadData();
         }

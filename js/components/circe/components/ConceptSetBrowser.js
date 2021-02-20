@@ -1,16 +1,4 @@
-define([
-	'knockout',
-	'text!./ConceptSetBrowserTemplate.html',
-	'services/VocabularyProvider',
-	'appConfig',
-	'conceptsetbuilder/InputTypes/ConceptSet',
-	'services/AuthAPI',
-	'utils/DatatableUtils',
-	'utils/CommonUtils',
-	'components/ac-access-denied',
-	'databindings',
-	'css!./style.css'
-], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
+define(['knockout', 'text!./ConceptSetBrowserTemplate.html', 'services/VocabularyProvider', 'appConfig', 'conceptsetbuilder/InputTypes/ConceptSet', 'services/AuthAPI', 'utils/DatatableUtils', 'components/ac-access-denied', 'databindings', 'css!./style.css'], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -173,12 +161,8 @@ define([
 				render: datatableUtils.getCreatedByFormatter(),
 			}
 		];
-
-		const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
-		this.pageLength = params.pageLength || pageLength;
-		this.lengthMenu = params.lengthMenu || lengthMenu;
 	}
-	
+
 	var component = {
 		viewModel: CohortConceptSetBrowser,
 		template: template

@@ -27,7 +27,6 @@ define([
 			this.exportConceptSets = [];
 			this.isInProgress = ko.observable(false);
 			this.criteriaContext = sharedState.criteriaContext;
-			this.tableOptions = commonUtils.getTableOptions('L');
 		}
 
 		onExportAction (result) {

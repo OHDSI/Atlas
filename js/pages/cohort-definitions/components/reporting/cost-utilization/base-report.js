@@ -8,7 +8,6 @@ define(
     'd3',
     'services/MomentAPI',
     'utils/CsvUtils',
-    'utils/CommonUtils',
     'numeral',
     'services/CohortResults',
     'lodash'
@@ -22,7 +21,6 @@ define(
     d3,
     MomentAPI,
     CsvUtils,
-    commonUtils,
     numeral
   , CohortResultsService, lodash) {
 
@@ -74,7 +72,6 @@ define(
         this.emptyTickFormat = () => null;
         this.formatDate = val => MomentAPI.formatDate(val, 'D MMM Y'); // TODO: display interval
         this.formatRounded = d3.format(".0s");
-        this.tableOptions = commonUtils.getTableOptions('M');
       }
 
       static conceptsToOptions(conceptList) {

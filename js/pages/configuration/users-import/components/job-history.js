@@ -27,7 +27,6 @@ define([
 			this.job = params.job;
 			this.jobHistory = ko.observableArray();
 			this.loading = ko.observable();
-			this.tableOptions = commonUtils.getTableOptions('L');
 			this.datatableUtils = datatableUtils;
 			this.loadHistory();
 			this.jobId.subscribe(() => this.loadHistory());

@@ -20,11 +20,7 @@
                 css: classes({ element: 'drugs-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                 dataTable:{
                     data: $component.dataList,
-                    options: {
-                        columns: $component.drugsTableColumns,
-                        pageLength: $component.tableOptions.pageLength,
-                        lengthMenu: $component.tableOptions.lengthMenu,
-                    },
+                    options: {columns: $component.drugsTableColumns},
                     onRowClick: $component.onDrugSelect
                 }
                 "

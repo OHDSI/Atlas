@@ -156,7 +156,10 @@ define([
       ];
 
       this.compareResultsOptions = {
-        ...commonUtils.getTableOptions('L'),
+        lengthMenu: [
+          [10, 25, 50, 100, -1],
+          ['10', '25', '50', '100', 'All']
+        ],
         order: [
           [1, 'asc'],
           [2, 'desc']

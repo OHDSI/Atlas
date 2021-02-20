@@ -43,7 +43,6 @@ define([
       runExecutionInParallel,
       PollService,
       selectedSourceId,
-      tableOptions,
     }) {
       super();
       this.analysisId = analysisId;
@@ -61,7 +60,7 @@ define([
       this.PollService = PollService;
       this.selectedSourceId = selectedSourceId;
       this.selectedSourceId.subscribe(() => this.expandSelectedSource());
-      this.tableOptions = tableOptions || CommonUtils.getTableOptions('S');
+
       this.loading = ko.observable(false);
       this.downloading = ko.observableArray();
 

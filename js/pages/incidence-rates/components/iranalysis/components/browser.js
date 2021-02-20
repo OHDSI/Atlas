@@ -19,7 +19,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.analysisList = params.analysisList;
-			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
+
 			this.options = {
 				Facets: [
 					{

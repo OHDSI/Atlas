@@ -35,8 +35,6 @@
 							<!-- /ko -->
 							<!-- ko if: $component.metarchy.parents().length > 0 -->
 							<faceted-datatable params="{
-								pageLength: tableOptions.pageLength,
-								lengthMenu: tableOptions.lengthMenu,
 								orderClasses: false,
 								ordering: true,
 								order: [[ 6, 'desc' ]],
@@ -65,8 +63,7 @@
 						</div>
 						<div class="panel-body">
 								<faceted-datatable params="{
-									pageLength: tableOptions.pageLength,
-									lengthMenu: tableOptions.lengthMenu,
+									lengthMenu: [[-1], ['All']],
 									orderClasses: false,
 									ordering: true,
 									buttons: [],
@@ -100,8 +97,6 @@
 								<faceted-datatable params="{
 									orderClasses: false,
 									ordering: true,
-									pageLength: tableOptions.pageLength,
-									lengthMenu: tableOptions.lengthMenu,
 									order: [[ 6, 'desc' ]],
 									columns: relatedConceptsColumns,
 									reference: $component.metarchy.children,

@@ -11,7 +11,6 @@ define(['knockout', 'jquery', 'utils/CommonUtils', 'text!./concept-modal.html', 
 			// see: https://github.com/twbs/bootstrap/issues/489
 			$('.modal.in').modal('hide');
 		}
-		self.tableOptions = commonUtils.getTableOptions('M');
 	}
 	const component = {
 		viewModel: ConceptSetListModal,

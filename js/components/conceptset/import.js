@@ -37,7 +37,6 @@ define([
 			this.canEdit = params.canEdit;
 			this.showImportConceptSetModal = ko.observable();
 			this.selectedTabKey = ko.observable('concept-identifiers');
-			this.tableOptions = commonUtils.getTableOptions('M');
 			this.tabs = [
 				{
 					title: 'Concept Identifiers',

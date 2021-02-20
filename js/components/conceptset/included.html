@@ -5,10 +5,7 @@
       options: $component.includedConceptsOptions, 
       reference: $component.includedConcepts, 
       drawCallback: $component.includedDrawCallback,
-      rowCallback: commonUtils.contextSensitiveLinkColor,
-      pageLength: tableOptions.pageLength,
-      lengthMenu: tableOptions.lengthMenu,
-    }"></faceted-datatable>
+      rowCallback: commonUtils.contextSensitiveLinkColor}"></faceted-datatable>
     <concept-add-box params="{
         isActive: canAddConcepts,
         onSubmit: addConcepts

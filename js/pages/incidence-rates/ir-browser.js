@@ -36,7 +36,7 @@ define([
       this.canCreateIR = ko.pureComputed(() => {
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
       });
-      this.tableOptions = commonUtils.getTableOptions('L');
+
       // startup actions
       if (this.isAuthenticated() && this.canReadIRs()) {
         this.refresh();

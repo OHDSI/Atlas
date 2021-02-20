@@ -51,7 +51,6 @@ define([
 			this.onDelete = params.onDelete;
 			this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.canEdit(), 'edit');
 			this.copyButtonTooltipText = conceptSetUtils.getPermissionsText(this.canCreateConceptSet(), 'create');
-			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 		}
 
 		showSaveConceptSet() {

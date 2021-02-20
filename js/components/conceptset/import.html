@@ -10,15 +10,12 @@
 		showModal: $component.showImportConceptSetModal,
 		title: 'Import Concept Set From Repository...',
 		data: {
-			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
-			tableOptions: $component.tableOptions,
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport
 		}
 	"
 >
     <concept-set-browser params="
 			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
-			buttonActionEnabled: false,
-			pageLength: tableOptions.pageLength,
-			lengthMenu: tableOptions.lengthMenu,
+			buttonActionEnabled: false
 		"></concept-set-browser>
 </atlas-modal>

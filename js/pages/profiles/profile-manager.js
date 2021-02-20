@@ -179,8 +179,7 @@ define([
 				});
 				this.startDate = ko.computed(() => this.dateRange().startDate);
 				this.endDate = ko.computed(() => this.dateRange().endDate);
-				this.tableOptions = commonUtils.getTableOptions('L');
-				this.highilightTableOptions = commonUtils.getTableOptions('M');
+
 				this.dimensions = {
 					'Domain': {
 						caption: 'Domain',

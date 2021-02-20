@@ -5,7 +5,6 @@ define(
     const config = require('appConfig');
     const _ = require('lodash');
     const consts = require('const');
-    const commonUtils = require('utils/CommonUtils');
 
     const apiPaths = {
       downloadCcaAnalysisPackage: (id, name) => `estimation/${id}/download?packageName=${name}`,
@@ -269,7 +268,11 @@ define(
             },
         ],
         comparisonTableOptions: {
-            ...commonUtils.getTableOptions('S'),
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                ['10', '25', '50', '100', 'All']
+            ],
             dom: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         },
         analysisSettingsTableColumns: [
@@ -351,7 +354,11 @@ define(
             },
         ],
         analysisSettingsTableOptions: {
-            ...commonUtils.getTableOptions('S'),
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                ['10', '25', '50', '100', 'All']
+            ],
             dom: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
         },
         fullAnalysisTableColumns: [
@@ -401,7 +408,11 @@ define(
             }
         ],
         fullAnalysisTableOptions: {
-            ...commonUtils.getTableOptions('S'),
+            pageLength: 10,
+            lengthMenu: [
+                [10, 25, 50, 100, -1],
+                ['10', '25', '50', '100', 'All']
+            ],
             dom: '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
             domNoButtons: '<<"row vertical-align"<"col-xs-6"l><"col-xs-6 search"f>><"row vertical-align"><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>',
             Facets: [{
