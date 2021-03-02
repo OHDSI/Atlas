@@ -36,9 +36,9 @@
 								columns: highlightColumns,
 								options: highlightOptions,
 								order: [[4,'desc']],
-								pageLength: 5,
 								rowClick: highlightRowClick,
 								dom: highlightDom,
+								pageLength: highilightTableOptions.pageLength,
 								language: ko.i18n('datatable.language')
 							}"></faceted-datatable>
 			</div>
@@ -123,6 +123,8 @@
 								options: options,
 								order: [[3,'asc']],
 								searchFilter: searchHighlight,
+								pageLength: tableOptions.pageLength,
+								lengthMenu: tableOptions.lengthMenu,
 								language: ko.i18n('datatable.language')
 							}"></faceted-datatable>
 					</div>

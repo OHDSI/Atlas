@@ -43,10 +43,7 @@ define([
 			this.reference = ko.observableArray();
 			this.dataCompleteReference = ko.observableArray();
 			this.dom = '<<"row vertical-align"<"col-xs-6"<"dt-btn"B>l><"col-xs-6 search"f>><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>><t><"row vertical-align"<"col-xs-3"i><"col-xs-9"p>>>';
-			this.lengthMenu = params.lengthMenu || [
-				[15, 30, 45, 100, -1],
-				[15, 30, 45, 100, 'All']
-			];
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 			this.visualizationPacks = cohortReportingService.visualizationPacks;
 			this.costUtilConst = costUtilConst;
 			this.activeReportDrilldown = ko.observable(false);
@@ -640,7 +637,7 @@ define([
 											order: [5, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
-											lengthMenu: this.lengthMenu,
+											...this.tableOptions,
 											autoWidth: false,
 											data: table_data,
 											"createdRow": function (row, data, dataIndex) {
@@ -754,7 +751,7 @@ define([
 											order: [6, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
-											lengthMenu: this.lengthMenu,
+											...this.tableOptions,
 											autoWidth: false,
 											data: table_data,
 											"createdRow": function (row, data, dataIndex) {
@@ -871,7 +868,7 @@ define([
 											order: [5, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
-											lengthMenu: this.lengthMenu,
+											...this.tableOptions,
 											autoWidth: false,
 											data: table_data,
 											"createdRow": function (row, data, dataIndex) {
@@ -982,7 +979,7 @@ define([
 											},
 											dom: this.dom,
 											buttons: this.buttons,
-											lengthMenu: this.lengthMenu,
+											...this.tableOptions,
 											autoWidth: false,
 											order: [6, 'desc'],
 											data: table_data,
@@ -1374,7 +1371,7 @@ define([
 											order: [6, 'desc'],
 											dom: this.dom,
 											buttons: this.buttons,
-											lengthMenu: this.lengthMenu,
+											...this.tableOptions,
 											autoWidth: false,
 											data: table_data,
 											"createdRow": function (row, data, dataIndex) {
@@ -1497,7 +1494,7 @@ define([
 												order: [5, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
-												lengthMenu: this.lengthMenu,
+												...this.tableOptions,
 												autoWidth: false,
 												data: table_data,
 												columns: [{
@@ -1623,7 +1620,7 @@ define([
 												order: [6, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
-												lengthMenu: this.lengthMenu,
+												...this.tableOptions,
 												data: table_data,
 												autoWidth: false,
 												columns: [{
@@ -1751,7 +1748,7 @@ define([
 												order: [6, 'desc'],
 												dom: this.dom,
 												buttons: this.buttons,
-												lengthMenu: this.lengthMenu,
+												...this.tableOptions,
 												autoWidth: false,
 												data: table_data,
 												columns: [{
@@ -2145,7 +2142,7 @@ define([
 									order: [],
 									dom: this.dom,
 									buttons: this.buttons,
-									lengthMenu: this.lengthMenu,
+									...this.tableOptions,
 									data: care_site_data,
 									columns: [{
 										data: 'institution'

@@ -1,5 +1,7 @@
 <concept-set-browser params="
   onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
   onActionComplete: onConceptSetBrowserAction,
-  disableConceptSetButton: currentConceptSet() != undefined || !canCreateConceptSet()
+  disableConceptSetButton: currentConceptSet() != undefined || !canCreateConceptSet(),
+  pageLength: tableOptions.pageLength,
+  lengthMenu: tableOptions.lengthMenu,
 "></concept-set-browser>

@@ -1,3 +1,4 @@
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
 <div data-bind="html: $component.template"></div>
 
 <!-- ko if:data -->
@@ -23,8 +24,13 @@
                 <!-- /ko -->
             </div>
         </div>
-        <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+        <name-validation params="
+            hasEmptyName: !isNameFilled(),
+            hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+            hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+            hasDefaultName: isDefaultName(),
+            analysisName: 'feature analysis',
+        "></name-validation>
     </div>
 
     <!-- ko if: selectedTabKey -->

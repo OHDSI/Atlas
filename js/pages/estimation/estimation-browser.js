@@ -40,7 +40,7 @@ define([
 
 			this.isAuthenticated = authAPI.isAuthenticated;
 			this.hasAccess = authAPI.isPermittedReadEstimations;
-
+			this.tableOptions = commonUtils.getTableOptions('L');
 			this.options = {
 				Facets: [
                     {

@@ -10,17 +10,18 @@
     <!-- ko ifnot: loading() -->
     <table data-bind="
         dataTable: {
-					data: relations().stats,
-					options: {
-						autoWidth: false,
-						order: [1, 'desc'],
-						columns: relations().columns,
-						buttons: $component.getButtonsConfig(),
-						dom: 'Blftipr',
-						language: ko.i18n('datatable.language')
-					}
+        data: relations().stats,
+        options: {
+            autoWidth: false,
+            order: [1, 'desc'],
+            columns: relations().columns,
+            buttons: $component.getButtonsConfig(),
+            dom: 'Blftipr',
+            pageLength: $component.tableOptions.pageLength,
+            lengthMenu: $component.tableOptions.lengthMenu,
+            language: ko.i18n('datatable.language')
         }
-    ">
+    }">
         <thead>
             <!-- ko if: relations().stratas.length > 1 -->
             <tr>

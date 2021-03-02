@@ -122,5 +122,27 @@ define(function () {
 
    appConfig.externalLibraries = [];
 
+   appConfig.commonDataTableOptions = {
+     pageLength: {
+       S: 10,
+       M: 25,
+       L: 50,
+     },
+     lengthMenu: {
+       S: [
+        [10, 15, 25, 50, -1],
+        ['10', '15', '20', '25', '50', 'All'],
+       ],
+       M: [
+        [10, 25, 50, 100, -1],
+        ['10', '25', '50', '100', 'All'],
+       ],
+       L: [
+        [25, 50, 75, 100, -1],
+        ['25', '50', '75', '100', 'All'],
+       ],
+     }
+   };
+
 	return appConfig;
 });

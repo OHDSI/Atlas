@@ -52,6 +52,7 @@ define([
 			this.cohortName = this.explore.cohortName;
 			this.exploring = ko.observable();
 			this.relations = ko.computed(() => this.prepareTabularData(this.data()));
+			this.tableOptions = commonUtils.getTableOptions('M');
 			this.exploringTitle = ko.pureComputed(() => this.exploring() ? ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.exploringConceptHierarchyFor', 'Exploring concept hierarchy for: ')() + ' ' + this.exploring() : null );
 			this.loadData(this.explore);
 		}
@@ -95,7 +96,7 @@ define([
 					};
 				}
 				if (stratas[st.strataId] === undefined) {
-					stratas[st.strataId] = st.strataName || ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.allStratas', 'All stratas')();
+					stratas[st.strataId] = st.strataName || ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.allStrata', 'All strata')();
 				}
 				const stat = stats[st.covariateId];
 				stat.count[st.strataId] = st.count;

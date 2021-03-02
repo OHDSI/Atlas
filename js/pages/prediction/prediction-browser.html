@@ -6,9 +6,15 @@
 		extra: `pull-right btn btn-sm btn-primary ${canCreatePrediction() ? '' : 'disabled'}`,
 	})"></span>
 
-	<faceted-datatable 
-	data-bind="visible: loading()==false" 
-	params="order: [[4, 'desc']], reference: reference, language: ko.i18n('datatable.language'), columns: columns, options: options"></faceted-datatable>
+	<faceted-datatable data-bind="visible: loading()==false" params="
+		order: [[4, 'desc']],
+		reference: reference,
+		columns: columns,
+		options: options,
+		pageLength: tableOptions.pageLength,
+		lengthMenu: tableOptions.lengthMenu,
+		language: ko.i18n('datatable.language')
+	"></faceted-datatable>
 
 	<loading data-bind="visible:loading()" params="status: ko.i18n('predictions.retrievingPredictions', 'retrieving predictions')"></loading>
 </div>

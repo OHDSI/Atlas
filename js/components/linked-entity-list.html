@@ -15,7 +15,12 @@
 		css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
 		dataTable:{
 			data: $component.data,
-			options: {columns: $component.columns, language: $component.language}
+			options: {
+				columns: $component.columns,
+				pageLength: $component.tableOptions.pageLength,
+				lengthMenu: $component.tableOptions.lengthMenu,
+				language: $component.language
+			}
 		}
 	"/>
 </div>

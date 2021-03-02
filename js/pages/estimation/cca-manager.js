@@ -9,6 +9,7 @@ define([
 	'const',
 	'atlas-state',
 	'pages/Router',
+	'services/AuthAPI',
 	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
@@ -44,6 +45,7 @@ define([
 	globalConstants,
 	sharedState,
 	router,
+	authApi,
 	PermissionService,
 	GlobalPermissionService,
 	{ entityType },
@@ -71,6 +73,9 @@ define([
 			this.options = constants.options;
 			this.config = config;
 			this.loading = ko.observable(true);
+			this.isAuthenticated = ko.pureComputed(() => {
+				return authApi.isAuthenticated();
+			});
 			this.estimationAnalysis = sharedState.estimationAnalysis.current;
 			this.selectedAnalysisId = sharedState.estimationAnalysis.selectedId;
 			this.dirtyFlag = sharedState.estimationAnalysis.dirtyFlag;
@@ -105,6 +110,10 @@ define([
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
+			});
+
+			this.isViewPermitted = ko.pureComputed(() => {
+				return PermissionService.isPermittedLoad(this.selectedAnalysisId());
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -522,7 +531,7 @@ define([
 					this.setCohortMethodAnalysisList();
 					this.loading(false);
 				}
-			});
+			}).catch(() => this.loading(false));
 		}
 
 		onRouterParamsChanged({ id, section, sourceId }) {

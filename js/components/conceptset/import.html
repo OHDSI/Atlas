@@ -10,12 +10,15 @@
 		showModal: $component.showImportConceptSetModal,
 		title: ko.i18n('components.atlasCohortEditor.importConceptSet', 'Import Concept Set From Repository...'),
 		data: {
-			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport
+			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
+			tableOptions: $component.tableOptions,
 		}
 	"
 >
     <concept-set-browser params="
 			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
-			buttonActionEnabled: false
+			buttonActionEnabled: false,
+			pageLength: tableOptions.pageLength,
+			lengthMenu: tableOptions.lengthMenu,
 		"></concept-set-browser>
 </atlas-modal>

@@ -1,4 +1,5 @@
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('cc.viewEdit.loadingCohortCharacterization', 'Loading Cohort Characterization...')"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
 
 <!-- ko if:design -->
 <div data-bind="css: classes()">
@@ -21,8 +22,13 @@
                 <!-- /ko -->
             </div>
         </div>
-        <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+        <name-validation params="
+            hasEmptyName: !isNameFilled(),
+            hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+            hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+            hasDefaultName: isDefaultName(),
+            analysisName: 'characterization',
+        "></name-validation>
     </div>
 
     <tabs data-bind="visible: !$component.loading()" params="

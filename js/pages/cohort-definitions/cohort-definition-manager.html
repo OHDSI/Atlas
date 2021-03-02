@@ -1,12 +1,13 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<!-- ko if: hasAccess -->
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko if: currentCohortDefinition() && currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
-	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
-	<!-- ko if: hasAccess -->
 	<div data-bind="currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
@@ -38,8 +39,13 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+			<name-validation params="
+				hasEmptyName: !isNameFilled(),
+				hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+				hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+				hasDefaultName: isDefaultName(),
+				analysisName: 'cohort definition',
+			"></name-validation>
 
 		</div>
 
@@ -495,7 +501,8 @@
 								reference: sampleList,
 								columns: sampleListCols,
 								order: [[0,'asc']],
-								pageLength: 5,
+								pageLength: tableOptions.pageLength,
+								lengthMenu: tableOptions.lengthMenu,
 								rowClick: onSampleListRowClick,
 								language: ko.i18n('datatable.language')
 							}"
@@ -647,7 +654,7 @@
 		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_3', 'Full Analysis')"></b>
 		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_3', 'Runs a complete set of characterization reports. (estimated: 60 minutes)')"></p>
 	</atlas-modal>
-	<!-- /ko -->
+
 	<atlas-modal params="{
 		showModal: cohortLinkModalOpened,
 		iconClass: 'fa fa-group',
@@ -706,3 +713,5 @@
 <script type="text/html" id="failed-status-tmpl">
 	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $component.getStatusMessageTranslated($data.status)"></a>
 </script>
+
+<!-- /ko -->

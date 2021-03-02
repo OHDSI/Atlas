@@ -1,4 +1,8 @@
 <loading data-bind="visible: loading"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
+
+<!-- ko if: isViewPermitted -->
+
 <div data-bind="if:!loading()">
   <heading-title params="name: predictionCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'heartbeat', theme: 'dark'"></heading-title>
   <!-- ko if: !!patientLevelPredictionAnalysis() && !!patientLevelPredictionAnalysis().id -->
@@ -32,8 +36,13 @@
               <!-- /ko -->
           </div>
       </div>
-      <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+      <name-validation params="
+        hasEmptyName: !isNameFilled(),
+        hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+        hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+        hasDefaultName: isDefaultName(),
+        analysisName: 'PLP analysis',
+      "></name-validation>
   </div>
 
   <tabs data-bind="visible: !$component.loading()" params="
@@ -69,7 +78,6 @@
     ]">
   </tabs>
 </div>
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,
@@ -79,3 +87,5 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<!-- /ko -->

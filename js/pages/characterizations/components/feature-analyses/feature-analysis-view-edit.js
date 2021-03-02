@@ -96,7 +96,9 @@ define([
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
             this.loading = ko.observable(false);
-
+            this.isAuthenticated = ko.pureComputed(() => {
+                return authApi.isAuthenticated();
+            });
             this.isCopying = ko.observable(false);
 
             this.canEdit = this.isUpdatePermittedResolver();
@@ -121,6 +123,7 @@ define([
                     this.isNameCorrect() &&
                     (this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit());
             });
+            this.isViewPermitted = this.isViewPermittedResolver();
             this.canDelete = this.isDeletePermittedResolver();
             this.isNewEntity = this.isNewEntityResolver();
             this.canCopy = this.isCopyPermittedResolver();
@@ -219,6 +222,12 @@ define([
             return PermissionService.isPermittedCreateFa();
         }
 
+        isViewPermittedResolver() {
+            return ko.pureComputed(
+                () => PermissionService.isPermittedGetFa(this.featureId())
+            );
+        }
+
         isUpdatePermittedResolver() {
             return ko.computed(() => this.featureId() === 0 || PermissionService.isPermittedUpdateFa(this.featureId()));
         }
@@ -301,12 +310,13 @@ define([
             if (this.dataDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.fa.unsavedConfirmation', 'Your changes are not saved. Would you like to continue?')))) {
                 return;
             }
-            this.loading(true);
-
-            const featureAnalysis = await FeatureAnalysisService.loadFeatureAnalysis(id);
-            this.setupAnalysisData(featureAnalysis);
-
-            this.loading(false);
+            try {
+                this.loading(true);
+                const featureAnalysis = await FeatureAnalysisService.loadFeatureAnalysis(id);
+                this.setupAnalysisData(featureAnalysis);
+            } finally {
+                this.loading(false);
+            }
         }
 
         setupAnalysisData({ id = 0, name = '', descr = '', domain = null, type = '', design= '', conceptSets = [], statType = 'PREVALENCE', createdBy, createdDate, modifiedBy, modifiedDate }) {

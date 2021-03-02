@@ -11,6 +11,7 @@ define(['knockout',
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'services/AuthAPI',
+	'conceptsetbuilder/InputTypes/ConceptSet',
 	'assets/ohdsi.util',
 	'databindings',
 	'evidence',
@@ -28,7 +29,8 @@ define(['knockout',
 	sharedState,
 	jobDetailsService,
 	momentApi,
-	authApi
+	authApi,
+	ConceptSet
 ) {
 	class NegativeControls extends Component {
 		constructor(params) {
@@ -280,33 +282,22 @@ define(['knockout',
 								evidenceSources[i].csToInclude = ko.observable(giParams.csToInclude != null ? giParams.csToInclude : 0);
 								evidenceSources[i].csToExclude = ko.observable(giParams.csToExclude != null ? giParams.csToExclude : 0);
 
-								var csToIncludePromise = $.Deferred();
-								if (evidenceSources[i].csToInclude() > 0) {
-									csToIncludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToInclude());
+								if (evidenceSources[i].csToInclude()) {
+									conceptSetService.getConceptSet(evidenceSources[i].csToInclude()).then((csInfo) => {
+										evidenceSources[i].csToIncludeCaption(csInfo.data.name);
+										evidenceSources[i].csToIncludeLoading(false);
+									});
 								} else {
-									csToIncludePromise.resolve();
 									evidenceSources[i].csToIncludeLoading(false);
 								}
-								var csToExcludePromise = $.Deferred();
-								if (evidenceSources[i].csToExclude() > 0) {
-									csToExcludePromise = conceptSetService.getConceptSet(evidenceSources[i].csToExclude());
+								if (evidenceSources[i].csToExclude()) {
+									conceptSetService.getConceptSet(evidenceSources[i].csToExclude()).then((csInfo) => {
+										evidenceSources[i].csToExcludeCaption(csInfo.data.name);
+										evidenceSources[i].csToExcludeLoading(false);
+									});
 								} else {
-									csToExcludePromise.resolve();
 									evidenceSources[i].csToExcludeLoading(false);
 								}
-
-								$.when(csToIncludePromise, csToExcludePromise)
-									.done(function (csInclude, csExclude) {
-										if (csInclude != null && csInclude.length > 0) {
-											evidenceSources[i].csToIncludeCaption(csInclude[0].name);
-											evidenceSources[i].csToIncludeLoading(false);
-										}
-										if (csExclude != null && csExclude.length > 0) {
-											evidenceSources[i].csToExcludeCaption(csExclude[0].name);
-											evidenceSources[i].csToExcludeLoading(false);
-										}
-								});
-
 
 								if (gi[0].status == "RUNNING") {
 									this.pollForInfo();
@@ -479,9 +470,6 @@ define(['knockout',
 				var dtItems = $('#negControlResults table')
 					.DataTable()
 					.data();
-				var conceptSet = {};
-				conceptSet.id = 0;
-				conceptSet.name = this.newConceptSetName;
 				var selectedConcepts = [];
 				_.each(dtItems, (item) => {
 					var concept;
@@ -505,8 +493,15 @@ define(['knockout',
 						includeMapped: ko.observable(false),
 					}
 					selectedConcepts.push(newItem);
-				})
-				this.saveConceptSet("#txtNewConceptSetName", conceptSet, selectedConcepts);
+				});
+				const conceptSet = new ConceptSet({
+					id: 0,
+					name: this.newConceptSetName(),
+					expression: {
+						items: selectedConcepts
+					}
+				});
+				this.saveConceptSet(conceptSet, "#txtNewConceptSetName");
 				this.showNegControlsSaveNewModal(false);
 			}
 
@@ -535,8 +530,8 @@ define(['knockout',
 			this.conceptsetSelected = (d) => {
 				$('#ncModalConceptSetSelect').modal('hide');
 				conceptSetService.getConceptSet(d.id).then((csInfo) => {
-					this.csTarget(csInfo.id);
-					this.csTargetCaption(csInfo.name);
+					this.csTarget(csInfo.data.id);
+					this.csTargetCaption(csInfo.data.name);
 				});
 			}
 

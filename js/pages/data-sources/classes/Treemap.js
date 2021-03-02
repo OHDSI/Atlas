@@ -2,6 +2,7 @@ define([
 	'knockout',
 	'atlascharts',
 	'utils/ChartUtils',
+	'utils/CommonUtils',
 	'const',
 	'services/http',
 	'services/AuthAPI',
@@ -12,6 +13,7 @@ define([
 	ko,
 	atlascharts,
 	ChartUtils,
+	commonUtils,
 	constants,
 	httpService,
 	authApi,
@@ -107,10 +109,10 @@ define([
 							orderSequence: ['desc', 'asc']
 						}
 					],
-					pageLength: 15,
 					lengthChange: false,
 					deferRender: true,
 					destroy: true,
+					...commonUtils.getTableOptions('L'),
 				},
 			};
 			// to pass down to drilldown

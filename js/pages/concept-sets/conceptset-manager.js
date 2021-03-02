@@ -31,10 +31,10 @@ define([
 	'components/tabs',
 	'components/modal',
 	'./components/tabs/conceptset-expression',
-  'components/conceptset/included',
+	'components/conceptset/included',
 	'components/conceptset/included-sourcecodes',
-  'components/conceptset/import',
-  'components/conceptset/export',
+	'components/conceptset/import',
+	'components/conceptset/export',
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
@@ -63,7 +63,7 @@ define([
     lodash,
 ) {
   
-  const { ViewMode } = constants;
+  const { ViewMode, RESOLVE_OUT_OF_ORDER } = constants;
   
 	class ConceptsetManager extends AutoBind(Page) {
 		constructor(params) {
@@ -80,7 +80,7 @@ define([
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
 
-      // switches default name according to current locale
+			// switches default name according to current locale
 			sharedState.localeSettings.subscribe((localeSettings) => {
 				if (this.currentConceptSet() && (this.currentConceptSet().name() === this.defaultName)) {
 					let name = localeSettings.const.newEntityNames.conceptSet;
@@ -179,55 +179,65 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isDeleting() || this.isOptimizing();
 			});
+			this.optimizeTableOptions = commonUtils.getTableOptions('M');
+			const tableOptions = commonUtils.getTableOptions('L');
 			this.tabs = [
 				{
-          title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
-          key: ViewMode.EXPRESSION,
-          componentName: 'conceptset-expression',
-          componentParams: { ...params,
-                            canEditCurrentConceptSet: this.canEdit,
-														conceptSetStore: this.conceptSetStore,
-													},
+					title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
+					key: ViewMode.EXPRESSION,
+					componentName: 'conceptset-expression',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEditCurrentConceptSet: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+					},
 				},
 				{
-          title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
-          key: ViewMode.INCLUDED,
-          componentName: 'conceptset-list-included',
-          componentParams: { ...params, canEdit: this.canEdit,
-														currentConceptSet: this.conceptSetStore.current,
-                            conceptSetStore: this.conceptSetStore,
-                            loading: this.conceptSetStore.loadingIncluded,
-														activeConceptSet: ko.observable(this.conceptSetStore),
-                           },
-          hasBadge: true,
+					title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
+					key: ViewMode.INCLUDED,
+					componentName: 'conceptset-list-included',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEdit: this.canEdit,
+						currentConceptSet: this.conceptSetStore.current,
+						conceptSetStore: this.conceptSetStore,
+						loading: this.conceptSetStore.loadingIncluded,
+						activeConceptSet: ko.observable(this.conceptSetStore),
+					},
+					hasBadge: true,
 				},
 				{
-          title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Included Source Codes'),
-          key: ViewMode.SOURCECODES,
-          componentName: 'conceptset-list-included-sourcecodes',
-          componentParams:  { ...params, canEdit: this.canEdit,
-														 conceptSetStore: this.conceptSetStore,
-														 loading: this.conceptSetStore.loadingSourceCodes},
-														 activeConceptSet: ko.observable(this.conceptSetStore),
-														},
-				{
-          title: ko.i18n('cs.manager.tabs.exploreEvidence', 'Explore Evidence'),
-          key: ViewMode.EXPLORE,
-          componentName: 'explore-evidence',
-          componentParams: {
-            ...params,
-            saveConceptSet: this.saveConceptSet,
-          },
+					title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Included Source Codes'),
+					key: ViewMode.SOURCECODES,
+					componentName: 'conceptset-list-included-sourcecodes',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						loading: this.conceptSetStore.loadingSourceCodes},
+						activeConceptSet: ko.observable(this.conceptSetStore),
 				},
 				{
-          title: ko.i18n('cs.manager.tabs.export', 'Export'),
-          key: ViewMode.EXPORT,
-          componentName: 'conceptset-list-export',
-          componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
+					title: ko.i18n('cs.manager.tabs.exploreEvidence', 'Explore Evidence'),
+					key: ViewMode.EXPLORE,
+					componentName: 'explore-evidence',
+					componentParams: {
+						...params,
+						saveConceptSet: this.saveConceptSet,
+					},
+				},
+				{
+					title: ko.i18n('cs.manager.tabs.export', 'Export'),
+					key: ViewMode.EXPORT,
+					componentName: 'conceptset-list-export',
+					componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.import', 'Import'),
-          key: ViewMode.IMPORT,
+					key: ViewMode.IMPORT,
 					componentName: 'conceptset-list-import',
 					componentParams: {
 						...params,
@@ -238,14 +248,14 @@ define([
 					},
 				},
 				{
-          title: ko.i18n('cs.manager.tabs.compare', 'Compare'),
-          key: ViewMode.COMPARE,
-          componentName: 'conceptset-compare',
-          componentParams: {
-            ...params,
-            saveConceptSetFn: this.saveConceptSet,
-            saveConceptSetShow: this.saveConceptSetShow,
-          },
+					title: ko.i18n('cs.manager.tabs.compare', 'Compare'),
+					key: ViewMode.COMPARE,
+					componentName: 'conceptset-compare',
+					componentParams: {
+						...params,
+						saveConceptSetFn: this.saveConceptSet,
+						saveConceptSetShow: this.saveConceptSetShow,
+					},
 				},
 			];
 			this.selectedTab = ko.observable(0);
@@ -263,9 +273,22 @@ define([
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
-			this.conceptSetStore.observer.subscribe(async () => {
+			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				// when the conceptSetStore changes (either through a new concept set being loaded or changes to concept set options), the concept set resolves and the view is refreshed.
+				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)
+				try {
+					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key);
-			})
+				} catch (err) {
+					if (err == RESOLVE_OUT_OF_ORDER)
+						console.info(err);
+					else
+						throw(err);
+				}
+			}));
+
+			// initially resolve the concept set
+			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -279,9 +302,8 @@ define([
 		async changeMode(conceptSetId, mode) {
 			if (conceptSetId !== undefined) {
 				await this.loadConceptSet(conceptSetId);
-				await this.conceptSetStore.refresh(mode);
 			}
-			//this.currentConceptSetMode(mode);
+			await this.conceptSetStore.refresh(mode);
 		}
 
 		renderCheckbox(field, readonly = false) {
@@ -304,7 +326,6 @@ define([
 			sharedState.activeConceptSet(this.conceptSetStore);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				conceptSetUtils.createRepositoryConceptSet(this.conceptSetStore);
-				await this.conceptSetStore.resolveConceptSetExpression();
 				this.loading(false);
 			}
 			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
@@ -354,6 +375,7 @@ define([
 				}
 			} catch (e) {
 				alert(ko.i18n('cs.manager.csSaveErrorMessage', 'An error occurred while attempting to save a concept set.')());
+			} finally {
 				this.loading(false);
 				this.isSaving(false);
 			}

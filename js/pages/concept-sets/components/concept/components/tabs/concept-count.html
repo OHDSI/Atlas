@@ -14,7 +14,8 @@
 								options: {
 									dom: 't',
 									language: ko.i18n('datatable.language'),
-									lengthMenu: [[-1], ['All']],
+									pageLength: tableOptions.pageLength,
+									lengthMenu: tableOptions.lengthMenu,
 									orderClasses: false,
 									ordering: true,
 									order: [[ 2, 'desc' ]],

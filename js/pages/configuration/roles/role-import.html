@@ -35,6 +35,8 @@
         <table data-bind="dataTable: {
           data: roles(),
           options: {
+            pageLength: tableOptions.pageLength,
+            lengthMenu: tableOptions.lengthMenu,
             columns: [
               { data: 'role', title: ko.i18n('columns.roleName', 'Role name') },
               { data: 'usersList', title: ko.i18n('columns.includedUsers', 'Included users') },

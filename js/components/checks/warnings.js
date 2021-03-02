@@ -48,6 +48,7 @@ function (
 					],
 				}],
 			};
+			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('L');
 			this.subscriptions = [
 				// Entities use different methods of initialization
 				this.changeFlag.subscribe(() => this.runDiagnostics()),

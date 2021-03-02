@@ -241,15 +241,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			//sampleSourceKey changes => get list of samples
 			this.trackSub(this.sampleSourceKey.subscribe(val => {
-				const cohortId = this.currentCohortDefinition()?
-					this.currentCohortDefinition().id():
-				 	this.cohortDefinitionIdOnRoute()
-				if(!val) {
-					history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples`)
-					return
-				};
-				history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples/${val}`)
-				this.getSampleList(cohortId)
+				const cohortId = this.currentCohortDefinition() ? this.currentCohortDefinition().id() : this.cohortDefinitionIdOnRoute();
+				if (val) {
+					history.pushState(null, '', `#/cohortdefinition/${cohortId}/samples/${val}`);
+					this.getSampleList(cohortId);
+				}
 			}));
 
 			//validation input value
@@ -397,11 +393,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (!this.isAuthenticated()) {
 					return false;
 				}
-				if (this.isNew()) {
+				if (this.currentCohortDefinition() && this.isNew()) {
 					return this.authApi.isPermittedCreateCohort();
 				}
 
-				return this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id());
+				return this.authApi.isPermittedReadCohorts() ||
+					(this.currentCohortDefinition() && this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id()));
 			});
 
 			this.hasAccessToGenerate = (sourceKey) => {
@@ -414,7 +411,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.hasAccessToReadCohortReport = (sourceKey) => {
 				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.currentCohortDefinition().id(), sourceKey);
 			}
-			if (!this.hasAccess()) return;
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
@@ -437,13 +433,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (path === 'export') {
 						path += '/' + this.exportTabMode();
 				}
-				if (this.exportTabMode() === 'cartoon') {
+				return path;
+			});
+			this.trackSub(this.exportTabMode.subscribe(val => {
+				if (val === 'cartoon') {
 					setTimeout(() => {
 						this.delayedCartoonUpdate('ready');
 					}, 10);
 				}
-				return path;
-			});
+			}));
 			this.canSave = ko.pureComputed(()=> {
 				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
 			});
@@ -507,7 +505,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.selectedSource = ko.observable();
 			this.selectedReportSource = ko.observable();
-
+			this.tableOptions = commonUtils.getTableOptions('L');
 			this.sortedConceptSets = ko.pureComputed((d) => {
 				if (this.currentCohortDefinition() != null) {
 					var clone = this.currentCohortDefinition().expression().ConceptSets().slice(0);
@@ -818,15 +816,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
 					&& this.currentCohortDefinition().createdBy().login
 			});
-
-// todo: look into if this subscription is necessary
-			this.trackSub(this.tabMode.subscribe(mode => {
-				if(mode&&this.currentCohortDefinition()&&mode!=='samples') {
-					const cohortId = this.currentCohortDefinition().id()
-					// use push state to prevent the component to re-render
-					history.pushState(null, '', `#/cohortdefinition/${cohortId}`)
-				}
-			}));
 
 			this.pollForInfoPeriodically();
 
@@ -1626,6 +1615,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		getSampleList(cohortId) {
 			this.isLoadingSampleData(true);
+			this.selectedSampleId(null);
 			const cohortDefinitionId= cohortId || this.currentCohortDefinition().id();
 			// if (cohortDefinitionId==0) return
 			const sourceKey=this.sampleSourceKey();

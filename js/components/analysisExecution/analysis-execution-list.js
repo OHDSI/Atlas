@@ -43,10 +43,15 @@ define([
       runExecutionInParallel,
       PollService,
       selectedSourceId,
+      tableOptions,
     }) {
       super();
       this.analysisId = analysisId;
-      this.analysisId.subscribe(() => this.loadData());
+      this.analysisId.subscribe((id) => {
+        if (id) {
+          this.loadData();
+        }
+      });
       this.resultsPathPrefix = resultsPathPrefix;
       this.downloadApiPaths = downloadApiPaths;
       this.downloadFileName = downloadFileName;
@@ -56,7 +61,7 @@ define([
       this.PollService = PollService;
       this.selectedSourceId = selectedSourceId;
       this.selectedSourceId.subscribe(() => this.expandSelectedSource());
-
+      this.tableOptions = tableOptions || CommonUtils.getTableOptions('S');
       this.loading = ko.observable(false);
       this.downloading = ko.observableArray();
 

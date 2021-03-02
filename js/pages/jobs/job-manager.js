@@ -27,6 +27,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.jobs = ko.observableArray([]);
+			this.tableOptions = commonUtils.getTableOptions('L');
 			this.columns = ko.observableArray([
 				{title: ko.i18n('columns.executionId', 'Execution Id'), data: 'executionId'},
 				{title: ko.i18n('columns.jobName', 'Job Name'), data: 'jobParameters.jobName'},

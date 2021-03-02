@@ -3,7 +3,8 @@
             data: $component.userItems,
             options: {
                         dom: 'lfiprt',
-                        lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
                         orderClasses: false,
                         deferRender: true,
                         autoWidth: false,

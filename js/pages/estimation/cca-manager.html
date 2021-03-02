@@ -1,4 +1,8 @@
 <loading data-bind="visible: loading"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
+
+<!-- ko if: isViewPermitted -->
+
  <div data-bind="if:!loading()">
     <heading-title params="name: populationCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'balance-scale', theme: 'dark'"></heading-title>
     <!-- ko if: !!estimationAnalysis() && !!estimationAnalysis().id -->
@@ -19,8 +23,13 @@
             <!-- /ko -->
           </div>
         </div>
-        <name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+        <name-validation params="
+            hasEmptyName: !isNameFilled(),
+            hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+            hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+            hasDefaultName: isDefaultName(),
+            analysisName: 'PLE analysis',
+        "></name-validation>
     </div>
 
     <tabs data-bind="visible: !$component.loading()" params="
@@ -65,3 +74,5 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<!-- /ko -->

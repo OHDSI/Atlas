@@ -31,7 +31,7 @@ define([
             this.isNewRole = params.isNewRole;
             this.roleId = params.roleId;
             this.permissionItems = params.permissionItems;
-
+            this.tableOptions = commonUtils.getTableOptions('L');
             this.canEditRolePermissions = ko.pureComputed(() => { return authApi.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())); });
         }
 

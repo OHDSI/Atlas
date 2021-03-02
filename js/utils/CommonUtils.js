@@ -1,6 +1,7 @@
 define([
 		'knockout',
 		'atlas-state',
+		'appConfig',
 		'pages/Page',
 		'services/MomentAPI',
 		'urijs',
@@ -9,6 +10,7 @@ define([
 	(
 		ko,
 		sharedState,
+		appConfig,
 		Page,
 		momentApi,
 		URI,
@@ -224,6 +226,14 @@ define([
 		return d ? momentApi.formatDateTimeWithFormat(d, format) : '';
 	}
 
+	const getTableOptions = (variant = 'M') => {
+		const { commonDataTableOptions: opts } = appConfig;
+		return Object.keys(opts).reduce((p, c) => ({
+			...p, 
+			[c]: opts[c][variant],
+		}), {});
+	}
+
 	return {
 		build,
 		confirmAndDelete,
@@ -250,5 +260,6 @@ define([
 		formatDateForAuthorship,
 		isNameCharactersValid,
 		isNameLengthValid,
+		getTableOptions,
 	};
 });

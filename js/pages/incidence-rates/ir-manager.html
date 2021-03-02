@@ -1,4 +1,8 @@
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
+
+<!-- ko if: isViewPermitted -->
 <heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'bolt', theme: 'dark'"></heading-title>
+
 <!-- ko if: !!selectedAnalysis() && !!selectedAnalysis().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
@@ -22,8 +26,13 @@
 					<!-- /ko -->
 				</div>
 			</div>
-			<name-validation params="hasEmptyName: !isNameFilled(), hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
-                                 hasInvalidLength: isNameFilled() && !isNameLengthValid(), hasDefaultName: isDefaultName()"></name-validation>
+			<name-validation params="
+				hasEmptyName: !isNameFilled(),
+				hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
+				hasInvalidLength: isNameFilled() && !isNameLengthValid(),
+				hasDefaultName: isDefaultName(),
+				analysisName: 'IR analysis',
+			"></name-validation>
 		</div>
 
 		<ul data-bind="css: classes({extra: 'nav nav-tabs'})">
@@ -150,3 +159,5 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<!-- /ko -->

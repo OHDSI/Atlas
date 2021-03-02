@@ -8,7 +8,11 @@
             <span data-bind="tooltip: $component.disableConceptSetExport() ? $component.disableConceptSetExportMessage() : null" data-placement="bottom"><button type="button" class="btn btn-sm btn-success" data-bind="click:function() { exportConceptSetCSV(); }, css: {'disabled': disableConceptSetExport}"><i class="fa fa-download" aria-hidden="true"></i> <span data-bind="text: ko.i18n('components.conceptSet.exportAllToCSV', 'Export All Concept Sets To CSV')"></span></button></span>
             <!-- /ko -->
         </div>
-        <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{ data: conceptSets, options: options, api: tableApi }">
+        <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+            data: conceptSets,
+            options: options,
+            api: tableApi,
+        }">
         </table>
         <!-- ko if: currentConceptSet() -->
         <loading params="status: ko.i18n('components.conceptSet.importingConceptSet', 'Importing Concept Set')" data-bind="visible: importing()"></loading>

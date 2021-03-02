@@ -29,7 +29,7 @@ define([
 			this.loading = ko.observable(false);
 			this.config = config;
 			this.analysisList = ko.observableArray();
-
+			this.tableOptions = commonUtils.getTableOptions('L');
 			this.canList = PermissionService.isPermittedList;
 			this.canCreate = PermissionService.isPermittedCreate;
 		}

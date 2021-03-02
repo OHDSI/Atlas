@@ -8,7 +8,9 @@
     onRespositoryConceptSetSelected: exportOnConceptSetSelected,
     onActionComplete: onExportAction,
     buttonActionText: ko.i18n('cs.browser.exportConceptSetsButton', 'Export Concept Sets'),
-    repositoryConceptSetTableId: 'exportConceptSetTable'
+    repositoryConceptSetTableId: 'exportConceptSetTable',
+    pageLength: tableOptions.pageLength,
+    lengthMenu: tableOptions.lengthMenu,
   "></concept-set-browser>
   <hr/>
   <span data-bind="html: ko.i18nformat('cs.browser.exportConceptSetsNumber', '<b><%=num%></b> concept sets selected for export.', {num: exportRowCount()})"></span>

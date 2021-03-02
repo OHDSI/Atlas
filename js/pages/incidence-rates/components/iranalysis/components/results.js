@@ -249,7 +249,7 @@ define([
 		}
 
 		closeReport() {
-			this.selectedReport(null);
+			this.selectedSourceId(null);
 		}
 
 		msToTime(s) {

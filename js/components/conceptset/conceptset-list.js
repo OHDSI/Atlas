@@ -56,11 +56,13 @@ define([
 			this.currentCohortDefinitionMode = sharedState.CohortDefinition.mode;
 			this.loading = ko.observable();
 			this.tableApi = ko.observable();
+			const tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 			this.options = {
 				deferRender: true,
 				orderClasses: false,
 				autoWidth: false,
 				order: [ 1, 'asc' ],
+				...commonUtils.getTableOptions('S'),
 				columnDefs: [
 					{ width: '25px', targets: 0},
 					{ width: '100%', targets: 1},
@@ -80,6 +82,7 @@ define([
 			this.selectedTabKey = ko.observable(ViewMode.EXPRESSION);
 			const tabParams = {
 				...params,
+				tableOptions,
 				conceptSetStore: this.conceptSetStore,
 				activeConceptSet: ko.observable(this.conceptSetStore), // addConceptBox expectes an observable for activeConceptSet
 				currentConceptSet: this.conceptSetStore.current,
@@ -128,11 +131,13 @@ define([
 			
 			// watch for any change to expression items (observer has a delay)
 			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				// when the conceptSetStore changes (either through a new concept set being selected or changes to concept set options), the concept set resolves and the view is refreshed.
+				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)
 				try {
 					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.selectedTabKey());
 				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORDER)
+					if (err == RESOLVE_OUT_OF_ORDER)
 						console.info(err);
 					else
 						throw(err);

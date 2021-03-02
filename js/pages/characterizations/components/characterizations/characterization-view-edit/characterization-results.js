@@ -106,6 +106,7 @@ define([
             this.totalResultsCount = ko.observable();
             this.resultsCountFiltered = ko.observable();
             this.downloading = ko.observableArray();
+            this.tableOptions = commonUtils.getTableOptions('M');
             this.datatableLanguage = ko.i18n('datatable.language');
 
             this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));

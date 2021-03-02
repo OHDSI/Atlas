@@ -10,7 +10,8 @@
 								restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
 							},
 							rowCallback: $component.commonUtils.contextSensitiveLinkColor,
-							lengthMenu: [[25, 50, 100, -1], [25, 50, 100,'All']],
+							lengthMenu: $component.tableOptions.lengthMenu,
+							pageLength: $component.tableOptions.pageLength,
 							orderClasses: false,
 							deferRender: true,
 							autoWidth: false,

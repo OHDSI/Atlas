@@ -42,7 +42,7 @@ define([
       this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(row => row.isSelected()).length);
       this.areAllConceptsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.data().length);
       this.buttonTooltip = conceptSetUtils.getPermissionsText(this.canEditCurrentConceptSet());
-
+      this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
       this.columns = [
         {
           class: 'text-center',

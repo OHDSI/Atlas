@@ -1,0 +1,104 @@
+# Create release files
+name: Release
+
+on:
+  release:
+    types: [published]
+
+env:
+  DOCKER_IMAGE: ohdsi/atlas
+
+jobs:
+  upload:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: NPM cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install
+
+      # Compile the code
+      - name: Build code
+        run: npm run build:docker
+
+      - name: Make distribution
+        run: |
+          mkdir atlas
+          cp -r LICENSE README.md node_modules js images index.html atlas
+          zip -r atlas.zip atlas
+
+      # Upload it to GitHub
+      - name: Upload to GitHub
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: 'atlas.zip'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Build and push tagged release docker image to
+  # ohdsi/atlas:<version> and ohdsi/atlas:latest.
+  docker:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+
+      # Add Docker labels and tags
+      - name: Docker meta
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          tag-match: v(.*)
+          tag-match-group: 1
+
+      # Setup docker build environment
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile
+          # Allow running the image on the architectures supported by nginx-unprivileged:alpine.
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          push: true
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          # Use runtime labels from docker_meta as well as fixed labels
+          labels: |
+            ${{ steps.docker_meta.outputs.labels }}
+            maintainer=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.authors=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.vendor=OHDSI
+
+      - name: Inspect image
+        run: |
+          docker pull ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
+          docker image inspect ${{ env.DOCKER_IMAGE }}:${{ steps.docker_meta.outputs.version }}
