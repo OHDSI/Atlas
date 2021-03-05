@@ -53,6 +53,10 @@ define(function(require, exports) {
       if (this.isSecureUrl(requestUrl)) {
         const headers = super.getHeaders();
         headers['Action-Location'] = location;
+        const sessionId = localStorage.getItem("auditTrailSession");
+        if (sessionId) {
+          headers['Audit-Trail-Session'] = sessionId;
+        }
         return headers;
       }
       return {};

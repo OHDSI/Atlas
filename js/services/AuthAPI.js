@@ -5,6 +5,7 @@ define(function(require, exports) {
     var ko = require('knockout');
     var cookie = require('services/CookieAPI');
     var TOKEN_HEADER = 'Bearer';
+    var AUDIT_TRAIL_SESSION_HEADER = 'Audit-Trail-Session';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
     const httpService = require('services/http');
 
@@ -17,6 +18,8 @@ define(function(require, exports) {
     };
 
     const signInOpened = ko.observable(false);
+
+    const auditTrailSessionLsKey = "auditTrailSession";
 
     function getBearerToken() {
         return localStorage.bearerToken && localStorage.bearerToken !== 'null' && localStorage.bearerToken !== 'undefined' ? localStorage.bearerToken : null;
@@ -54,6 +57,10 @@ define(function(require, exports) {
             if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
                 xhr.setRequestHeader('Authorization', getAuthorizationHeader());
                 xhr.setRequestHeader('Action-Location', location);
+                const sessionId = localStorage.getItem(auditTrailSessionLsKey);
+                if (sessionId) {
+                    xhr.setRequestHeader(AUDIT_TRAIL_SESSION_HEADER, sessionId);
+                }
             }
         }
     });
@@ -480,15 +487,19 @@ define(function(require, exports) {
 
     const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`);
 
-	const setAuthParams = (tokenHeader, permissionsStr = '') => {
+	const setAuthParams = (tokenHeader, permissionsStr = '', sessionId) => {
         !!tokenHeader && token(tokenHeader);
         !!permissionsStr && permissions(permissionsStr.split('|'));
+        if (sessionId) {
+            localStorage.setItem(auditTrailSessionLsKey, sessionId);
+        }
     };
 
     var resetAuthParams = function () {
         token(null);
         subject(null);
         permissions(null);
+        localStorage.removeItem(auditTrailSessionLsKey);
     };
 
     const runAs = function(login, success, error) {
@@ -595,6 +606,7 @@ define(function(require, exports) {
 
         loadUserInfo,
         TOKEN_HEADER,
+        AUDIT_TRAIL_SESSION_HEADER,
         runAs,
     };
 

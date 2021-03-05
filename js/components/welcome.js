@@ -71,7 +71,8 @@ define([
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
             sharedState.resetCurrentDataSourceScope();
-            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
+            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions,
+                jqXHR.getResponseHeader(authApi.AUDIT_TRAIL_SESSION_HEADER));
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
                 self.isBadCredentials(null);
