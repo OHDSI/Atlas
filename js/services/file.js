@@ -15,10 +15,6 @@ define(
           xhr.setRequestHeader("Authorization", authApi.getAuthorizationHeader());
           xhr.setRequestHeader("Content-type", "application/json");
           xhr.setRequestHeader("Action-Location", location);
-          const sessionId = localStorage.getItem("auditTrailSession");
-          if (sessionId) {
-            headers['Audit-Trail-Session'] = sessionId;
-          }
           xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
               resolve();
