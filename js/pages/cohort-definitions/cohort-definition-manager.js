@@ -25,8 +25,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
+	'utils/CsvUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
+	'./Validation/ValidationTool',
 	'services/Poll',
 	'services/JobPollService',
 	'services/file',
@@ -86,8 +88,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	AutoBind,
 	Clipboard,
 	commonUtils,
+	CsvUtils,
 	costUtilConst,
 	authApi,
+	ValidationTool,
 	{PollService},
 	JobPollService,
 	FileService,
@@ -325,6 +329,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cdmSources = ko.pureComputed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
+
+			if (this.model.currentCohortDefinition().id()) {
+				this.validationTool = new ValidationTool(this.model.currentCohortDefinition().id(), this.model.currentCohortDefinition().name());
+			}
 
 			this.cohortDefinitionCaption = ko.pureComputed(() => {
 				if (this.currentCohortDefinition()) {

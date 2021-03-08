@@ -66,6 +66,7 @@ define([
 		class ProfileManager extends AutoBind(Page) {
 			constructor(params) {
 				super(params);
+				this.url = window.location
 				this.sharedState = sharedState;
 				this.aspectRatio = ko.observable();
 				this.config = config;
@@ -74,6 +75,10 @@ define([
 
 				this.sourceKey = ko.observable(router.routerParams().sourceKey);
 				this.personId = ko.observable(router.routerParams().personId);
+
+				this.sampleName = this.url.toString().split("/");
+				this.sampleName = this.sampleName[this.sampleName.length-1].split('_').join(' ')
+
 				this.personRecords = ko.observableArray();
 
 				this.cohortDefinitionId = ko.observable(router.routerParams().cohortDefinitionId);
