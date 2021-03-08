@@ -330,8 +330,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
 
-			if (this.model.currentCohortDefinition().id()) {
-				this.validationTool = new ValidationTool(this.model.currentCohortDefinition().id(), this.model.currentCohortDefinition().name());
+			if (this.currentCohortDefinition()) {
+				this.validationTool = new ValidationTool(this.currentCohortDefinition().id(), this.currentCohortDefinition().name());
 			}
 
 			this.cohortDefinitionCaption = ko.pureComputed(() => {
