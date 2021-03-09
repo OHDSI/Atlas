@@ -44,7 +44,7 @@
 				hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
 				hasInvalidLength: isNameFilled() && !isNameLengthValid(),
 				hasDefaultName: isDefaultName(),
-				analysisName: 'cohort definition',
+				analysisName: ko.i18n('components.nameValidation.cohortDefinition', 'cohort definition'),
 			"></name-validation>
 
 		</div>
@@ -536,7 +536,7 @@
 	</div>
 		<atlas-modal params="{
 			showModal: showSampleCreatingModal,
-			title: 'Create new sample',
+			title: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.title', 'Create new sample'),
 			data: {
 				sampleName: sampleName,
 				sampleNameError: sampleNameError,
@@ -558,23 +558,22 @@
 		}">
 			<form data-bind="submit: createNewSample" class="sampleCreatingForm" novalidate>
 				<div class="form-group" data-bind="css: {'has-error': sampleNameError()==true, 'has-success': sampleNameError()==false}">
-					<span class="help-block">*Mandatory fields</span>
-					<label for="sampleCreatingName" class="control-label">*Sample name</label>
-					<input required data-bind="textInput: sampleName" type="text" id="sampleCreatingName" class="form-control" placeholder="Enter sample name">
-					<span class="help-block" data-bind="visible: sampleNameError()">Sample name cannot be empty</span>
+					<span class="help-block" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.mandatoryFields', '* Mandatory fields')"></span>
+					<label for="sampleCreatingName" class="control-label" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.sampleName', '* Sample name')"></label>
+					<input required data-bind="textInput: sampleName, placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.sampleNamePlaceholder', 'Enter sample name')" type="text" id="sampleCreatingName" class="form-control">
+					<span class="help-block" data-bind="visible: sampleNameError(), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.sampleNameEmpty', 'Sample name cannot be empty')"></span>
 				</div>
 				<div class="form-group" data-bind="css: {'has-error': patientCountError(), 'has-success': !patientCountError()}">
-					<label class="control-label">*Number of patients</label>
-					<input step="1" data-bind="textInput: patientCount.numeric()" type="number" class="form-control" placeholder="Enter a number">
-					<span class="help-block" data-bind="visible: patientCountError()">Number of patients must be a positive integer</span>
+					<label class="control-label" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.numberOfPatients', '* Number of patients')"></label>
+					<input step="1" data-bind="textInput: patientCount.numeric(), placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.numberOfPatientsPlaceholder', 'Enter a number')" type="number" class="form-control">
+					<span class="help-block" data-bind="visible: patientCountError(), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.numberOfPatientsEmpty', 'Number of patients must be a positive integer')"></span>
 				</div>
 
 				<div class="form-group ageRange">
 					<label
-						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError() || firstAgeError(), myCustomTextSuccess: !isAgeRangeError()}"
+						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError() || firstAgeError(), myCustomTextSuccess: !isAgeRangeError()}, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.selectAgeCriteria', 'Select age criteria')"
 						for="sampleCreatingAge"
 						class="control-label">
-						Select age criteria
 					</label>
 					<div class="row">
 						<div class="col-md-7" style="padding-left: 0">
@@ -582,60 +581,58 @@
 								data-bind="value: sampleAgeType, css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !isAgeRangeError()}"
 								id="sampleCreatingAge"
 								class="form-control">
-									<option value="lessThan">Less than</option>
-									<option value="lessThanOrEqual">Less or equal to</option>
-									<option value="equalTo">Equal to</option>
-									<option value="greaterThan">Greater than</option>
-									<option value="greaterThanOrEqual">Greater or equal to</option>
-									<option value="between">Between</option>
-									<option value="notBetween">Not between</option>
+									<option value="lessThan" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.lessThan', 'Less than')"></option>
+									<option value="lessThanOrEqual" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.lessOrEqualTo', 'Less or equal to')"></option>
+									<option value="equalTo" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.equalTo', 'Equal to')"></option>
+									<option value="greaterThan" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.greaterThan', 'Greater than')"></option>
+									<option value="greaterThanOrEqual" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.greaterOrEqualTo', 'Greater or equal to')"></option>
+									<option value="between" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.between', 'Between')"></option>
+									<option value="notBetween" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.notBetween', 'Not between')"></option>
 							</select>
 						</div>
 						<div data-bind="css: {'col-md-2':isAgeRange(), 'col-md-5':!isAgeRange()}">
 							<input
-								data-bind="textInput: firstAge.numeric(), css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !(isAgeRangeError() || firstAgeError())}"
+								data-bind="textInput: firstAge.numeric(), css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !(isAgeRangeError() || firstAgeError())}, placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.agePlaceholder', 'Enter a number')"
 								type="text"
-								class="form-control"
-								placeholder="Enter a number">
-								<span data-bind="visible: !isAgeRange() && firstAgeError(), css: {myCustomTextError: firstAgeError(), myCustomTextSuccess: !firstAgeError()}">Age must be a non-negative integer</span>
+								class="form-control">
+								<span data-bind="visible: !isAgeRange() && firstAgeError(), css: {myCustomTextError: firstAgeError(), myCustomTextSuccess: !firstAgeError()}, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.ageError', 'Age must be a non-negative integer')"></span>
 						</div>
-						<div class="col-md-1" data-bind="visible: isAgeRange"><div style="margin-top: .5em; text-align: center">and</div></div>
+						<div class="col-md-1" data-bind="visible: isAgeRange"><div style="margin-top: .5em; text-align: center" data-bind="text: ko.i18n('common.and', 'and')"></div></div>
 						<div class="col-md-2" data-bind="visible: isAgeRange">
 							<input
-							data-bind="textInput: secondAge.numeric(), css: {myCustomInputError: isAgeRangeError, myCustomInputSuccess: !isAgeRangeError()}"
+							data-bind="textInput: secondAge.numeric(), css: {myCustomInputError: isAgeRangeError, myCustomInputSuccess: !isAgeRangeError()}, placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.agePlaceholder', 'Enter a number')"
 							type="text"
-							class="form-control"
-							placeholder="Enter a number">
+							class="form-control">
 						</div>
-						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError(), myCustomTextSuccess: !isAgeRangeError()}">First and second age must be non-negative integers and not equal</span>
+						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError(), myCustomTextSuccess: !isAgeRangeError()}, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.ageError2', 'First and second age must be non-negative integers and not equal')"></span>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label class="control-label">Indicate gender (leave empty to select all gender)</label>
+					<label class="control-label" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.indicateGender', 'Indicate gender (leave empty to select all gender)')"></label>
 					<div class="checkbox">
 						<label>
-							<input type="checkbox" data-bind="checked: isMaleSample"> Male
+							<input type="checkbox" data-bind="checked: isMaleSample"><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.male', 'Male')"></span>
 						</label>
 					</div>
 					<div class="checkbox">
 							<label>
-								<input type="checkbox" data-bind="checked: isFeMaleSample"> Female
+								<input type="checkbox" data-bind="checked: isFeMaleSample"><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.female', 'Female')"></span>
 							</label>
 						</div>
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" data-bind="checked: isOtherGenderSample"> Other
+								<input type="checkbox" data-bind="checked: isOtherGenderSample"><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.other', 'Other')"></span>
 							</label>
 						</div>
 				</div>
 				 <!-- ko if: !newSampleCreatingLoader() -->
-				<button type="submit" class="btn btn-primary" data-bind="enable: isSampleFormValid()">Submit</button>
+				<button type="submit" class="btn btn-primary" data-bind="enable: isSampleFormValid(), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.submit', 'Submit')"></button>
 				 <!-- /ko -->
 				 <!-- ko if: newSampleCreatingLoader() -->
 				<button class="btn btn-primary" type="button" disabled>
 					<i class="fa fa-spinner fa-spin"></i>
-					Creating sample...
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.creatingSample', 'Creating sample...')"></span>
 				</button>
 				 <!-- /ko -->
 			</form>

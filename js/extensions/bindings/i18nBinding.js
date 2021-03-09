@@ -1,5 +1,5 @@
 define(['knockout', 'atlas-state', 'lodash'],
-	function(ko, sharedState, {get, template}){
+	function(ko, sharedState, {get, template, mapValues}){
 		ko.i18n = function(key, defaultValue, subtree) {
 			return ko.pureComputed({
 				read: () => {
@@ -24,7 +24,8 @@ define(['knockout', 'atlas-state', 'lodash'],
 			}
 			return ko.pureComputed(() => {
 				const tmpl = ko.i18n(key, defaultValue);
-				return template(ko.unwrap(tmpl))(options);
+				const unwrappedOptions = mapValues(options, ko.unwrap);
+				return template(ko.unwrap(tmpl))(unwrappedOptions);
 			});
 		};
 

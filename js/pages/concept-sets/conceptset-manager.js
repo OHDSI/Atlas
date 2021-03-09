@@ -75,19 +75,9 @@ define([
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
-			this.conceptSetName = ko.observable(this.defaultName);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
-
-			// switches default name according to current locale
-			sharedState.localeSettings.subscribe((localeSettings) => {
-				if (this.currentConceptSet() && (this.currentConceptSet().name() === this.defaultName)) {
-					let name = localeSettings.const.newEntityNames.conceptSet;
-					this.currentConceptSet().name(name);
-					this.defaultName = name;
-				}
-			});
 
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
