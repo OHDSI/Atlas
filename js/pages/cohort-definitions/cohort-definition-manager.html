@@ -1,12 +1,13 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<!-- ko if: hasAccess -->
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
 	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko if: currentCohortDefinition() && currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
-	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
 
-	<!-- ko if: hasAccess -->
 	<div data-bind="currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
@@ -361,7 +362,6 @@
 					<explore-cohort params="{showSelectionArea: false } "></explore-cohort>
 				</div>
 			</div>
-
 			<div role="tabpanel " data-bind="css: { active: tabMode()=='validate' }" class="tab-pane ">
 				<div data-bind="with: validationTool">
 					<div class="paddedWrapper">
@@ -394,7 +394,7 @@
 						<div class="tab-content">
 							<div role="tabpanel" data-bind="css: {active: valTabMode()=='qset'}" class="tab-pane">
 								<div data-bind="with: questionSet">
-								</br>
+								<br>
 									<div class="panel panel-primary" data-bind="visible: $parent.valTabMode() == 'qset' && qset().length  > 0">
 										<div class="panel-heading">
 											Current Question Set
@@ -433,8 +433,6 @@
 											Create New Question Set 
 										</div>
 										<div data-bind="with: questionSetForm">
-
-					
 											<div class="panel-body">
 												<div class="row">
 													<div class="col-sm-1"  style="margin-top: 7px;">
@@ -452,42 +450,42 @@
 									
 												</div>
 												<ul data-bind="foreach: questions">
-												</br>
-														<div class="row">
-															<div class="col-sm-4">
-																<label>  Question <span data-bind="text: ($index() + 1)"></span>:</label>
-																<input class="form-control" type="text" data-bind="value: text" placeholder="Question Text">
-															</div>
-															<div class="col-sm-2">
-																<label>  Question Type</label>
-																<select class="form-control" data-bind="options: $parent.questionTypes(), value: type"></select>
-															</div>
-															<div class="col-sm-2">
-																<label>Required</label>
-																<select class="form-control" data-bind="options: $parent.bools(), value: required"></select>
-															</div>
-															<div class="col-sm-2">
-																<label>Case Question</label>
-																<select class="form-control" data-bind="options: $parent.bools(), value: caseQuestion"></select>
-															</div>
-															<div class="col-sm-2" style="margin-top: 23px;">
-																<button class="btn btn-success btn-sm" data-bind="click: addAnswer, disable: type() == 'Text' || type() == undefined"><i class="fa fa-plus"></i></button>
-																<button class="btn btn-danger btn-sm" title="Delete" data-bind="click: $parent.removeQuestion"><i class="fa fa-trash-o"></i></button>
-															</div>
+													<br>
+													<div class="row">
+														<div class="col-sm-4">
+															<label>  Question <span data-bind="text: ($index() + 1)"></span>:</label>
+															<input class="form-control" type="text" data-bind="value: text" placeholder="Question Text">
 														</div>
-														<ul data-bind="foreach: answers">
-															<div class="row">
-																<li>
-																	<div class="col-sm-10">
-																		<input class="form-control" type="text" data-bind="value: text" placeholder="Answer Text">
-																	</div>
-																	<div class="col-sm-1" style="margin-top: 4px;">
-																		<u><a data-bind="click: $parent.removeAnswer" style="color: red;">remove</a></u>
-																	</div>
-																</li>
-																
-															</div>
-														</ul>
+														<div class="col-sm-2">
+															<label>  Question Type</label>
+															<select class="form-control" data-bind="options: $parent.questionTypes(), value: type"></select>
+														</div>
+														<div class="col-sm-2">
+															<label>Required</label>
+															<select class="form-control" data-bind="options: $parent.bools(), value: required"></select>
+														</div>
+														<div class="col-sm-2">
+															<label>Case Question</label>
+															<select class="form-control" data-bind="options: $parent.bools(), value: caseQuestion"></select>
+														</div>
+														<div class="col-sm-2" style="margin-top: 23px;">
+															<button class="btn btn-success btn-sm" data-bind="click: addAnswer, disable: type() == 'Text' || type() == undefined"><i class="fa fa-plus"></i></button>
+															<button class="btn btn-danger btn-sm" title="Delete" data-bind="click: $parent.removeQuestion"><i class="fa fa-trash-o"></i></button>
+														</div>
+													</div>
+													<ul data-bind="foreach: answers">
+														<div class="row">
+															<li>
+																<div class="col-sm-10">
+																	<input class="form-control" type="text" data-bind="value: text" placeholder="Answer Text">
+																</div>
+																<div class="col-sm-1" style="margin-top: 4px;">
+																	<u><a data-bind="click: $parent.removeAnswer" style="color: red;">remove</a></u>
+																</div>
+															</li>
+															
+														</div>
+													</ul>
 												</ul>
 											</div>
 										</div>
@@ -498,7 +496,7 @@
 
 							</div>
 							<div role="tabpanel" data-bind="css:{active: valTabMode()=='validate'}" class="tab-pane">
-								<br/>
+								<br>
 								<div class="row mt-5">
 									<!-- <button class="btn btn-success btn-sm" data-bind="disable: sampleSourceKey() == undefined , click: toggleCreateValSet">Create Validation Set</button> -->
 								</div>
@@ -510,10 +508,10 @@
 									<div class="panel-body">
 										<div class="row">
 											<div class="col-sm-3">
-												<input class="form-control" type="text" data-bind="value: sampleName, disable: sampleSourceKey() == undefined" placeholder="Name"></select>
+												<input class="form-control" type="text" data-bind="value: sampleName, disable: sampleSourceKey() == undefined" placeholder="Name">
 											</div>
 											<div class="col-sm-3">
-													<input class="form-control" type="number" data-bind="value: sampleSize, disable: sampleSourceKey() == undefined" placeholder="Sample Size"></select>
+													<input class="form-control" type="number" data-bind="value: sampleSize, disable: sampleSourceKey() == undefined" placeholder="Sample Size">
 											</div>
 											<div class="col-sm-3">
 													<button class="btn btn-success btn-sm" data-bind="disable: sampleSize() == undefined || sampleName == undefined, click: newValSample">Create Sample</button>
@@ -543,7 +541,7 @@
 												<tr>
 													<td data-bind="text: name"></td>
 													<td data-bind="text: size"></td>
-													<td data-bind="text: annotated"></td">
+													<td data-bind="text: annotated"></td>
 													<td><a type="button" class="btn btn-success btn-sm" data-bind="attr: {href: $data.url}">Validate</a></td>
 													<td><a type="button" class="btn btn-success btn-sm" data-bind="click: function() {$parent.fixSamples($index)}">View</a></td>
 													<td><a type="button" class="btn btn-success btn-sm" data-bind="click: function() {$parent.exportAnnotations($data.name)}">Export</a></td>
@@ -579,84 +577,83 @@
 					</div>
 				</div>
 			</div>
-
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">
 				<div class="paddedWrapper">
 					<div data-bind="component: { name: 'warnings', params: $component.warningParams }"></div>
 				</div>
 			</div>
-				<!-- samples content  -->
-				<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'samples' }" class="tab-pane">
-					<div class="pad-5">
-						<div class="panel panel-primary">
-							<div class="panel-heading">
-								Sample Selections
-							</div>
-							<div class="panel-body">
-								<div class="row">
-									<div class="col-sm-12">
-										<select class="form-control"
-										data-bind="css :{ invalid: $component.sampleSourceKey()==undefined },
-											options: $component.cdmSources(),
-											optionsValue:'sourceKey', optionsText:'sourceName',
-											value:$component.sampleSourceKey,
-											optionsCaption:'Select a Source'">
-										</select>
-									</div>
-								</div>
-							</div>
+			<!-- samples content  -->
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'samples' }" class="tab-pane">
+				<div class="pad-5">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							Sample Selections
 						</div>
-						<div class="pull-right"
-							data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()"
-						>
-							<button
-								type="button"
-								class="btn btn-sm btn-primary"
-								data-bind="click:addNewSample"
-							>
-								Add new sample
-							</button>
-						</div>
-						<!--  samples list table -->
-						<div data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()">
-							<faceted-datatable
-							params="{
-								reference: sampleList,
-								columns: sampleListCols,
-								order: [[0,'asc']],
-								pageLength: tableOptions.pageLength,
-								lengthMenu: tableOptions.lengthMenu,
-								rowClick: onSampleListRowClick,
-							}"
-							/>
-						</div>
-						<!-- A sample data table -->
-						<div data-bind="visible: $component.sampleSourceKey() && $component.selectedSampleId() && !$component.sampleDataLoading()">
-							<faceted-datatable
-							params="{
-								reference: sampleData,
-								columns: sampleCols,
-								order: [[0,'asc']],
-								pageLength: 15,
-								rowClick: onSampleDataClick,
-							}"
-							/>
-						</div>
-
-						<loading data-bind="visible: $component.sampleDataLoading()"></loading>
-						<!-- notifications -->
-						<div data-bind="visible: sampleData() && sampleData().length == 0">
-							<div class="panel panel-danger" data-bind="visible: !$component.isCohortGenerated">
-								<div class="panel-heading">
-									Cohort Not Generated
-								</div>
-								<div class="panel-body">
-									This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-sm-12">
+									<select class="form-control"
+									data-bind="css :{ invalid: $component.sampleSourceKey()==undefined },
+										options: $component.cdmSources(),
+										optionsValue:'sourceKey', optionsText:'sourceName',
+										value:$component.sampleSourceKey,
+										optionsCaption:'Select a Source'">
+									</select>
 								</div>
 							</div>
 						</div>
 					</div>
+					<div class="pull-right"
+						data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()"
+					>
+						<button
+							type="button"
+							class="btn btn-sm btn-primary"
+							data-bind="click:addNewSample"
+						>
+							Add new sample
+						</button>
+					</div>
+					<!--  samples list table -->
+					<div data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()">
+						<faceted-datatable
+						params="{
+							reference: sampleList,
+							columns: sampleListCols,
+							order: [[0,'asc']],
+							pageLength: tableOptions.pageLength,
+							lengthMenu: tableOptions.lengthMenu,
+							rowClick: onSampleListRowClick,
+						}"
+						/>
+					</div>
+					<!-- A sample data table -->
+					<div data-bind="visible: $component.sampleSourceKey() && $component.selectedSampleId() && !$component.sampleDataLoading()">
+						<faceted-datatable
+						params="{
+							reference: sampleData,
+							columns: sampleCols,
+							order: [[0,'asc']],
+							pageLength: 15,
+							rowClick: onSampleDataClick,
+						}"
+						/>
+					</div>
+
+					<loading data-bind="visible: $component.sampleDataLoading()"></loading>
+					<!-- notifications -->
+					<div data-bind="visible: sampleData() && sampleData().length == 0">
+						<div class="panel panel-danger" data-bind="visible: !$component.isCohortGenerated">
+							<div class="panel-heading">
+								Cohort Not Generated
+							</div>
+							<div class="panel-body">
+								This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.
+							</div>
+						</div>
+					</div>
 				</div>
+			</div>
 		</div>
 	</div>
 		<atlas-modal params="{
@@ -779,7 +776,7 @@
 		<b>Full Analysis</b>
 		<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
 	</atlas-modal>
-	<!-- /ko -->
+
 	<atlas-modal params="{
 		showModal: cohortLinkModalOpened,
 		iconClass: 'fa fa-group',
@@ -839,3 +836,5 @@
 <script type="text/html" id="failed-status-tmpl">
 	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $data.status"></a>
 </script>
+
+<!-- /ko -->
