@@ -101,35 +101,6 @@ define([
 							  xssSafe:false,
             };
         }
-
-        calcStdDiff(cohorts, stat) {
-            const firstCohortId = cohorts[0].cohortId;
-            const secondCohortId = cohorts[1].cohortId;
-
-            if (!stat.count[0] || !stat.pct[0]) {
-                return null;
-            }
-
-            return this.calcStdDiffForPrevelanceCovs(
-                { sumValue: stat.count[0][firstCohortId], pct: stat.pct[0][firstCohortId] },
-                { sumValue: stat.count[0][secondCohortId], pct: stat.pct[0][secondCohortId] }
-            );
-		}
-
-        calcStdDiffForPrevelanceCovs(cov1, cov2) {
-            const n1 = cov1.sumValue / (cov1.pct / 100);
-            const n2 = cov2.sumValue / (cov2.pct / 100);
-
-            const mean1 = cov1.sumValue / n1;
-            const mean2 = cov2.sumValue / n2;
-
-            const sd1 = Math.sqrt((n1 * cov1.sumValue + cov1.sumValue) / (n1 * n1));
-            const sd2 = Math.sqrt((n2 * cov2.sumValue + cov2.sumValue) / (n2 * n2));
-
-            const sd = Math.sqrt(sd1 * sd1 + sd2 * sd2);
-
-            return (mean2 - mean1) / sd;
-        }
     }
 
     return PrevalenceStatConverter;
