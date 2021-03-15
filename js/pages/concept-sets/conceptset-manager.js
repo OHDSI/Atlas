@@ -40,6 +40,7 @@ define([
 	'components/security/access/configure-access-modal',
 	'components/authorship',
 	'components/name-validation',
+	'components/ac-access-denied',
 ], function (
 	ko,
 	view,
@@ -120,6 +121,7 @@ define([
 				return authApi.isPermittedCreateConceptset();
 			});
 			this.hasAccess = authApi.isPermittedReadConceptsets;
+			this.hasPrioritySourceAccess = ko.observable(true);
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.currentConceptSet()) {
@@ -323,6 +325,7 @@ define([
 				return;
 			}
 			try {
+				this.hasPrioritySourceAccess(true);
 				const conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
 				const expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
@@ -330,7 +333,9 @@ define([
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
 				this.conceptSetStore.isEditable(this.canEdit());
 			} catch(err) {
-				console.error(err);
+				if (err.status === 403) {
+					this.hasPrioritySourceAccess(false);
+				}
 			}
 			this.loading(false);
 		}
