@@ -168,7 +168,7 @@
 
 <!-- /ko -->
 
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess && hasPrioritySourceAccess"></access-denied>
 
 <configure-access-modal params="
 	isModalShown: $component.isAccessModalShown,
