@@ -13,7 +13,7 @@ define(function(require, exports){
 		// default navigator lang
 		const navigatorLang = (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage;
 		if (navigatorLang && navigatorLang.length >= 2) {
-			return navigatorLang.substr(0, 2); // currently we do use only two letters code (ISO 639-1)
+			return navigatorLang.substr(0, 2); // ISO 639-1
 		}
 
 		return config.defaultLocale;
