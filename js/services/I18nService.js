@@ -5,7 +5,18 @@ define(function(require, exports){
 	const sharedState = require('atlas-state');
 
 	function getCurrentLocale() {
-		return localStorage.locale && localStorage.locale !== 'null' ? localStorage.locale : config.defaultLocale;
+		// stored lang
+		if (localStorage.locale && localStorage.locale !== 'null') {
+			return localStorage.locale;
+		}
+
+		// default navigator lang
+		const navigatorLang = (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage;
+		if (navigatorLang && navigatorLang.length >= 2) {
+			return navigatorLang.substr(0, 2); // currently we do use only two letters code (ISO 639-1)
+		}
+
+		return config.defaultLocale;
 	}
 
 	function getLocale(locale) {
