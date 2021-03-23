@@ -5,7 +5,9 @@
 /js/assets/fonts
 /js/assets/images
 js/config-local.js
+js/config-gis.js
 js/version.js
 package-lock.json
 .vscode
 .DS_Store
+Broadsea-WebTools/
