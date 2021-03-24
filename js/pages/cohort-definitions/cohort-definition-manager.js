@@ -368,7 +368,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isNew = ko.pureComputed(() => {
 				return !this.currentCohortDefinition() || (this.currentCohortDefinition().id() === 0);
 			});
-			this.canEdit = ko.computed(() => {
+			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
 					return false;
 				}
