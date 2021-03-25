@@ -44,8 +44,8 @@ define(['services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI', '../const'
             d.hasOwnProperty('createdBy') && !!d.createdBy
                 ? typeof d.createdBy === 'string'
                     ? d.createdBy
-                    : typeof d.createdBy === 'object' && !!d.createdBy.login
-                    ? d.createdBy.login
+                    : typeof d.createdBy === 'object' && !!d.createdBy.name
+                    ? d.createdBy.name
                     : 'anonymous'
                 : 'anonymous';
 
@@ -54,7 +54,7 @@ define(['services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI', '../const'
         const getFacetForCreatedBy = getCreatedByLogin;
 
         const getFacetForDesign = d =>
-            d.hasWriteAccess || (d.createdBy && authApi.subject() === d.createdBy.login)
+            d.hasWriteAccess || (d.createdBy && authApi.subject() === d.createdBy.name)
                 ? "My designs"
                 : "Other designs";
 
