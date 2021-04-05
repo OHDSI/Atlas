@@ -146,7 +146,8 @@ define(['knockout',
 
 			testConnection() {
 				userService.testConnection(this.importProvider())
-					.then((data) => this.connectionCheck(data));
+					.then((data) => this.connectionCheck(data))
+					.catch(this.connectionCheck({state: 'FAILED', message: 'Connection failed'}));
 			}
 
 			testConnectionClick() {
