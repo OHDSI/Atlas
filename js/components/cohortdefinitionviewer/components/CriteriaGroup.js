@@ -46,17 +46,17 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 			else
 				return "unknown-criteria";
 		};
-		
+
 		self.groupType = ko.pureComputed(function() {
-			return self.options.groupTypeOptions.find((item) =>
-				self.group() && item.id == self.group().Type()
-			).name;
+			return ko.unwrap(self.options.groupTypeOptions.find((item) =>
+			self.group() && item.id == self.group().Type()
+		).name);
 		});
 		
 		self.getOccurrenceType = function(occurenceType) {
-			return self.options.occurrenceTypeOptions.find((item) =>
-				item.id == occurenceType
-			).name;
+			return ko.unwrap(self.options.occurrenceTypeOptions.find((item) =>
+			item.id == occurenceType
+		).name);
 		};
 		
 		

@@ -1,9 +1,10 @@
 define(
   (require, exports) => {
+    const ko = require('knockout');
     const buildRoutes = require('./routes');
 
     return {
-      title: 'Home',
+      title: ko.i18n('navigation.home', 'Home'),
       buildRoutes,
       navUrl: () => '#/home',
       icon: 'home',

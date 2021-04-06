@@ -1,12 +1,16 @@
 <div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
-    <div data-bind="css: classes({extra: ['panel-heading']})">
-        Schedule
-    </div>
+    <div data-bind="css: classes({extra: ['panel-heading']}), text: ko.i18n('configuration.userImport.scheduler.schedule', 'Schedule')"></div>
     <div data-bind="css: classes({ extra: 'panel-body' })">
-        <label data-bind="css: classes({extra: 'btn'})"><input data-bind="checked: job().enabled" type="checkbox" /> Enabled</label>
-        <label data-bind="css: classes({extra: 'btn'})"><input data-bind="checked: job().preserveRoles" type="checkbox" /> Preserve assigned roles</label>
+        <label data-bind="css: classes({extra: 'btn'})">
+            <input data-bind="checked: job().enabled" type="checkbox" />
+            <span data-bind="text: ko.i18n('configuration.userImport.scheduler.enabled', 'Enabled')"></span>
+        </label>
+        <label data-bind="css: classes({extra: 'btn'})">
+            <input data-bind="checked: job().preserveRoles" type="checkbox" />
+            <span data-bind="text: ko.i18n('configuration.userImport.scheduler.preserveAssignedRoles', 'Preserve assigned roles')"></span>
+        </label>
         <div data-bind="css: classes({ element: 'schedule', extra: 'form-group'})">
-            <label data-bind="css: classes({extra: 'btn'})">Start on:</label>
+            <label data-bind="css: classes({extra: 'btn'}), text: ko.i18n('configuration.userImport.scheduler.startOn', 'Start on:')"></label>
             <div data-bind="css: classes({extra: ['input-group', 'date']})">
                 <input placeholder="YYYY-MM-DD" data-bind="dateTimePicker: job().startDate, format: 'yyyy-mm-dd hh:ii', css: classes({extra: 'form-control'}) " />
                 <span data-bind="css: classes({extra: 'input-group-addon'})">
@@ -15,27 +19,29 @@
             </div>
         </div>
         <div data-bind="css: classes({ element: 'schedule', extra: 'form-group' })">
-            <label data-bind="css: classes({extra: 'btn'})">Execute:</label>
+            <label data-bind="css: classes({extra: 'btn'}), text: ko.i18n('configuration.userImport.scheduler.execute', 'Execute:')"></label>
             <select data-bind="css: classes({ extra: 'form-control' }), options: executionOptions, optionsText: 'label', optionsValue: 'value', value: job().frequency"></select>
         </div>
         <div data-bind="css: classes({ element: 'schedule', extra: 'form-group'}), visible: weeklyVisible">
-            <label data-bind="css: classes({extra: 'btn'})">Repeat on:</label>
+            <label data-bind="css: classes({extra: 'btn'}), text: ko.i18n('configuration.userImport.scheduler.repeat', 'Repeat on:')"></label>
             <weekdays params="weekdays: weekdays"></weekdays>
         </div>
         <div data-bind="css: classes({ extra: ['panel', 'panel-primary'] }), visible: notOnceVisible">
-            <div data-bind="css: classes({ extra: 'panel-heading' })">Ends</div>
+            <div data-bind="css: classes({ extra: 'panel-heading' }), text: ko.i18n('configuration.userImport.scheduler.ends', 'Ends')"></div>
             <div data-bind="css: classes({ element: 'ends', extra: 'panel-body' })">
                 <div data-bind="css: classes('ends-label')">
-                    <label data-bind="css: classes({extra: ['btn']})"><input name="ends" value="never" type="radio" data-bind="checked: jobEnds" /> Never</label>
+                    <label data-bind="css: classes({extra: ['btn']})"><input name="ends" value="never" type="radio" data-bind="checked: jobEnds" /> <span data-bind="text: ko.i18n('configuration.userImport.scheduler.never', 'Never')"></span></label>
                 </div>
                 <div data-bind="css: classes('ends-label')">
-                    <label data-bind="css: classes({extra: 'btn'})"><input name="ends" value="after" data-bind="checked: jobEnds" type="radio" /> After
+                    <label data-bind="css: classes({extra: 'btn'})"><input name="ends" value="after" data-bind="checked: jobEnds" type="radio" />
+                        <span data-bind="text: ko.i18n('configuration.userImport.scheduler.after', 'After')"></span>
                         <input data-bind="value: job().recurringTimes, css: classes('ends-after'), enable: jobEnds() === jobEndOptions.AFTER">
-                        <label data-bind="css: classes({extra: 'btn'})">executions</label>
+                        <label data-bind="css: classes({extra: 'btn'}), title: ko.i18n('configuration.userImport.scheduler.executions', 'executions')"></label>
                     </label>
                 </div>
                 <div data-bind="css: classes('ends-label')">
-                    <label data-bind="css: classes({ extra: 'btn'})"><input name="ends" value="on" data-bind="checked: jobEnds" type="radio" /> On
+                    <label data-bind="css: classes({ extra: 'btn'})"><input name="ends" value="on" data-bind="checked: jobEnds" type="radio" />
+                        <span data-bind="text: ko.i18n('configuration.userImport.scheduler.on', 'On')"></span>
                         <input placeholder="YYYY-MM-DD" data-bind="enable: jobEnds() === jobEndOptions.ON, dateTimePicker: job().recurringUntilDate, format: 'yyyy-mm-dd hh:ii', css: classes({element: 'ends-on', extra: 'form-control'}) " />
                     </label>
                 </div>

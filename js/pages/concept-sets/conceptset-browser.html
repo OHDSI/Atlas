@@ -1,16 +1,16 @@
-<heading-title params="name: 'Concept Sets', icon: 'shopping-cart', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('cs.browser.caption', 'Concept Sets'), icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
 <div data-bind="css: classes({ extra: 'flexed' }), if: isAuthenticated() && hasAccess()">
     <tabs params="
         componentParams: $component.componentParams,
         tabs: [
             {
-                title: 'List',
+                title: ko.i18n('cs.browser.tabs.list', 'List'),
                 componentName: 'conceptsets-list',
                 componentParams: componentParams,
             },
             {
-                title: 'Export',
+                title: ko.i18n('cs.browser.tabs.export', 'Export'),
                 componentName: 'conceptsets-export',
                 componentParams: componentParams,
             }

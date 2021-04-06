@@ -1,7 +1,5 @@
 <div data-bind="css: classes({ extra: ['panel', 'panel-primary'] })">
-    <div class="panel-heading">
-        Filter panel
-    </div>
+    <div class="panel-heading" data-bind="text: ko.i18n('components.filterPanel.title', 'Filter panel')"></div>
     <div data-bind="css: classes({ element: 'body', extra: ['panel-body'] })">
         <ul data-bind="css: classes('list')">
             <!-- ko foreach: filterList -->
@@ -27,16 +25,8 @@
         </ul>
         <!-- ko if: !live -->
             <div data-bind="css: classes('btn-group')">
-                <button
-                        data-bind="{ css: classes({ element: 'btn', extra: ['btn', 'btn-sm', 'btn-success'] }), click: apply }"
-                >
-                    Apply
-                </button>
-                <button
-                        data-bind="{ css: classes({ element: 'btn', modifiers: ['cancel'], extra: ['btn', 'btn-sm', 'btn-default'] }), click: clear }"
-                >
-                    Clear
-                </button>
+                <button data-bind="css: classes({ element: 'btn', extra: ['btn', 'btn-sm', 'btn-success'] }), click: apply , text: ko.i18n('components.filterPanel.buttons.apply', 'Apply')"></button>
+                <button data-bind="css: classes({ element: 'btn', modifiers: ['cancel'], extra: ['btn', 'btn-sm', 'btn-default'] }), click: clear, text: ko.i18n('components.filterPanel.buttons.clear', 'Clear')"></button>
             </div>
         <!-- /ko -->
     </div>

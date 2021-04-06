@@ -165,7 +165,7 @@ define(['knockout',
 			this.generate = (service, event) => {
 				// Check to make sure the concept set is valid before calling the service
 				if (!this.conceptSetValid()) {
-					alert("The concept set is not marked as valid to generate results. Please make sure this concept set contains only CONDITIONS or DRUGS.");
+					alert(ko.unwrap(ko.i18n('components.evidencePairViewer.evidencePairViewerText_6', 'The concept set is not marked as valid to generate results. Please make sure this concept set contains only CONDITIONS or DRUGS.')));
 					return;
 				}
 
@@ -227,10 +227,10 @@ define(['knockout',
 						conceptDomainId = "Drug";
 						targetDomainId = "Condition";
 					} else {
-						this.conceptSetValidText("Your saved concepts come from multiple domains or from a domain outside of conditions or drugs. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
+						this.conceptSetValidText = ko.i18n('cs.manager.exploreEvidence.invalidCsWarning', 'Your saved concepts come from multiple domains or from a domain outside of conditions or drugs. The concept set must contain ONLY conditions OR drugs in order to explore evidence.');
 					}
 				} else {
-					this.conceptSetValidText("You must define a concept set with drugs found in the RxNorm vocabulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.");
+					this.conceptSetValidText = ko.i18n('cs.manager.exploreEvidence.noCsWarning', 'You must define a concept set with drugs found in the RxNorm vocabulary at the Ingredient class level OR Conditions from SNOMED. The concept set must contain ONLY conditions OR drugs in order to explore evidence.');
 				}
 				this.conceptSetValid(conceptSetValid);
 				this.conceptDomainId(conceptDomainId);

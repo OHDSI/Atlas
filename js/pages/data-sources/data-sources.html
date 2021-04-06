@@ -1,4 +1,4 @@
-<heading-title params="name: 'Data Sources', icon: 'area-chart', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('dataSources.headingTitle', 'Data Sources'), icon: 'area-chart', theme: 'dark'"></heading-title>
 
 <access-denied params="isAuthenticated: $component.isAuthenticated, isPermitted: canViewCdmResults"></access-denied>
 
@@ -7,26 +7,26 @@
 	<div class="reportControls pad-5">
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  currentSource()==undefined }, options: sources, optionsText:'sourceName', value: currentSource, optionsCaption:'Select a Source'"></select>
+				<select class="form-control" data-bind="css : { invalid:  currentSource()==undefined }, options: sources, optionsText: 'sourceName', value: currentSource, optionsCaption: ko.i18n('dataSources.selectASource', 'Select a Source')"></select>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12">
-				<select class="form-control" data-bind="css : { invalid:  selectedReport()==undefined }, options: reports, optionsCaption:'Select a Report', optionsText:'name', value: selectedReport, disable: !currentSource()"></select>
+				<select class="form-control" data-bind="css : { invalid:  selectedReport()==undefined }, options: reports, optionsCaption: ko.i18n('dataSources.selectAReport', 'Select a Report'), optionsText: 'name', value: selectedReport, disable: !currentSource()"></select>
 			</div>
 		</div>
 		<div class="clear"></div>
 	</div>
 	<!-- /ko -->
 
-	<loading params="status: 'loading report'" data-bind="visible: isReportLoading()">
+	<loading params="status: ko.i18n('dataSources.loadingReport', 'Loading report')" data-bind="visible: isReportLoading()">
 	</loading>
 
 	<div class="paddedWrapper text-center error" data-bind="visible: hasError()">
 		<div>
 			<i class="fa fa-exclamation-circle"></i>
 		</div>
-		<div data-bind="text: errorMessage() || 'Error loading report'"></div>
+		<div data-bind="text: errorMessage() || ko.i18n('dataSources.errorLoadingReport', 'Error loading report')"></div>
 	</div>
 
 	<div id="report" class="flexed" data-bind="if: currentReport() && !hasError()">

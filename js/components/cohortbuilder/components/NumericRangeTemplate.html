@@ -1,3 +1,7 @@
 <select data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op"></select> 
-<input class="numericInputField" style="width:25px" data-bind="value: Range().Value.numeric(), autoGrowInput: {comfortZone: 8}"></input>
-<span data-bind="if: Range().Op().substr(-2) == 'bt'"> and <input class="numericInputField" style="width:25px" data-bind="value: Range().Extent.numeric(), autoGrowInput: {comfortZone: 8}"></input> 
+<input class="numericInputField" style="width:25px" 
+data-bind="value: Range().Value.numeric(), autoGrowInput: {comfortZone: 8}"></input>
+<span data-bind="if: Range().Op().substr(-2) == 'bt'"> 
+  <span data-bind="text: ko.i18n('components.dateRange.and', 'and')"></span>
+  <input class="numericInputField" style="width:25px" data-bind="value: Range().Extent.numeric(), autoGrowInput: {comfortZone: 8}"/>
+</span> 

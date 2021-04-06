@@ -59,24 +59,24 @@ define(
 
         this.tableColumns = [
           {
-            title: 'Period start',
+            title: ko.i18n('columns.periodStart', 'Period start'),
             data: 'periodStart',
             className: this.classes('tbl-col', 'period-start'),
           },
           {
-            title: 'Period end',
+            title: ko.i18n('columns.periodEnd', 'Period end'),
             data: 'periodEnd',
             className: this.classes('tbl-col', 'period-end'),
           },
           {
-            title: 'Persons',
+            title: ko.i18n('columns.personsCount', 'Persons'),
             data: 'personsCount',
             className: this.classes('tbl-col', 'persons-count'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Persons %',
+            title: ko.i18n('columns.personsPct', 'Persons %'),
             data: 'personsPct',
             className: this.classes('tbl-col', 'persons-pct'),
             showInChart: true,
@@ -84,42 +84,42 @@ define(
             yFormat: BaseCostUtilReport.formatPercents,
           },
           {
-            title: 'Records',
+            title: ko.i18n('columns.visitsCount', 'Records'),
             data: 'visitsCount',
             className: this.classes('tbl-col', 'records-total'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records/1K',
+            title: ko.i18n('columns.visitsPer1000', 'Records/1K'),
             data: 'visitsPer1000',
             className: this.classes('tbl-col', 'records-per-1000'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records/1K +record',
+            title: ko.i18n('columns.visitsPer1000WithVisits', 'Records/1K +record'),
             data: 'visitsPer1000WithVisits',
             className: this.classes('tbl-col', 'records-per-1000-with-records'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Records/1K/Year',
+            title: ko.i18n('columns.visitsPer1000PerYear', 'Records/1K/Year'),
             data: 'visitsPer1000PerYear',
             className: this.classes('tbl-col', 'records-per-1000-per-year'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Days of Stay',
+            title: ko.i18n('columns.lengthOfStayTotal', 'Days of Stay'),
             data: 'lengthOfStayTotal',
             className: this.classes('tbl-col', 'total-length-stay'),
             showInChart: true,
             render: BaseCostUtilReport.formatFullNumber,
           },
           {
-            title: 'Avg. Days of Stay',
+            title: ko.i18n('columns.lengthOfStayAvg', 'Avg. Days of Stay'),
             data: 'lengthOfStayAvg',
             className: this.classes('tbl-col', 'total-length-avg'),
             showInChart: true,
@@ -144,14 +144,14 @@ define(
           costUtilConst.getPeriodTypeFilter(this.periods),
           {
             type: 'select',
-            label: 'Visit',
+            label: ko.i18n('cohortDefinitions.filters.visit', 'Visit'),
             name: VISIT_CONCEPT,
             options: ko.observableArray([]),
             selectedValue: ko.observable(null),
           },
           {
             type: 'select',
-            label: 'Visit type',
+            label: ko.i18n('cohortDefinitions.filters.visitType', 'Visit type'),
             name: VISIT_TYPE_CONCEPT,
             options: ko.observableArray([]),
             selectedValue: ko.observable(null),
@@ -163,7 +163,7 @@ define(
       setupVisitConceptOptions(conceptList) {
         const filter = this.filterList().find(filter => filter.name === VISIT_CONCEPT);
         filter.options([
-          { label: 'All visits', value: null },
+          { label: ko.i18n('options.allVisits', 'All visits'), value: null },
           ...VisitUtilReport.conceptsToOptions(conceptList)
         ]);
       }
@@ -171,7 +171,7 @@ define(
       setupVisitTypeConceptOptions(conceptList) {
         const filter = this.filterList().find(filter => filter.name === VISIT_TYPE_CONCEPT);
         filter.options([
-          { label: 'All visit types', value: null },
+          { label: ko.i18n('options.allVisitTypes', 'All visit types'), value: null },
           ...VisitUtilReport.conceptsToOptions(conceptList)
         ]);
       }

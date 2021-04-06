@@ -5,6 +5,7 @@ define([
 		'pages/Page',
 		'services/MomentAPI',
 		'urijs',
+	  'const'
 	],
 	(
 		ko,
@@ -13,6 +14,7 @@ define([
 		Page,
 		momentApi,
 		URI,
+		constants
 	) => {
 
 	const build = function (name, viewModelClass, template) {
@@ -211,8 +213,7 @@ define([
 	}
 		
 	const isNameLengthValid = function(name) {
-		const maxFileNameLength = 100;
-		return name.length <= maxFileNameLength;
+		return name.length <= constants.maxEntityNameLength;
 	}
 
 	const isNameCharactersValid = function(name) {

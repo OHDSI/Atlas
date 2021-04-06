@@ -41,7 +41,9 @@ define([
 			this.generationSources = ko.computed(() => params.sources().map(s => ({
 				...s.source,
 				disabled: this.isInProgress(s) || !this.hasSourceAccess(s.source.sourceKey),
-				disabledReason: this.isInProgress(s) ? 'Generation is in progress' : !this.hasSourceAccess(s.source.sourceKey) ? 'Access denied' : null,
+				disabledReason: this.isInProgress(s)
+					? ko.i18n('ir.results.generationInProgress', 'Generation is in progress')()
+					: !this.hasSourceAccess(s.source.sourceKey) ? ko.i18n('ir.results.accessDenied', 'Access denied')() : null,
 			})));
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
@@ -71,14 +73,14 @@ define([
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
-				return "per " + multiplier  + " years";
+				return ko.i18nformat('ir.results.perYears', 'per <%=multiplier%> years', {multiplier: multiplier})();
 			});
 
 			this.ipCaption = ko.pureComputed(() => {
 				var multiplier = this.rateMultiplier();
 				if (multiplier >= 1000)
 					multiplier = (multiplier / 1000) + "k"
-				return "per " + multiplier  + " persons";
+				return ko.i18nformat('ir.results.perPersons', 'per <%=multiplier%> persons', {multiplier: multiplier})();
 			});
 
 			// observable subscriptions
@@ -87,7 +89,7 @@ define([
 				if (this.selectedSourceId()) // this will cause a report refresh
 					this.expandSelectedSource();
 			}));
-			
+
 			this.subscriptions.push(this.selectedOutcome.subscribe((newVal) => {
 				if (this.selectedSourceId()) // this will cause a report refresh
 					this.expandSelectedSource();
@@ -96,13 +98,13 @@ define([
 			this.executionDisabled = ko.pureComputed(() => {
 				return (this.dirtyFlag().isDirty() || !this.isTarValid() || this.criticalCount() > 0);
 			});
-			
-			this.executionDisabledReason = ko.pureComputed(() => { 
+
+			this.executionDisabledReason = ko.pureComputed(() => {
 				if (!this.executionDisabled()) return null;
-				if (this.dirtyFlag().isDirty()) return globalConsts.disabledReasons.DIRTY;
-				if (!this.isTarValid()) return globalConsts.disabledReasons.INVALID_TAR;
-				if (this.criticalCount() > 0) return globalConsts.disabledReasons.INVALID_DESIGN;
-				return globalConsts.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConsts.disabledReasons.DIRTY);
+				if (!this.isTarValid()) return ko.unwrap(globalConsts.disabledReasons.INVALID_TAR);
+				if (this.criticalCount() > 0) return ko.unwrap(globalConsts.disabledReasons.INVALID_DESIGN);
+				return ko.unwrap(globalConsts.disabledReasons.ACCESS_DENIED);
 			});
 
 			this.disableExportAnalysis = ko.pureComputed(() => {
@@ -113,7 +115,7 @@ define([
 		}
 
 		reportDisabledReason(source) {
-			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? globalConsts.disabledReasons.ACCESS_DENIED : null);
+			return ko.pureComputed(() => !this.hasSourceAccess(source.sourceKey) ? ko.unwrap(globalConsts.disabledReasons.ACCESS_DENIED) : null);
 		}
 
 		isExecutionDisabled(source) {
@@ -233,14 +235,14 @@ define([
 			})
 			.catch(er => {
 				console.error(er);
-				alert('There was an error while loading generation result reports');
+				alert(ko.i18n('ir.results.loadingGenerationResultErrorMessage', 'There was an error while loading generation result reports')());
 				this.isLoading(false);
 			});
 		};
 
 		runGenerations(selectedSources) {
 			if (!this.analysisCohorts().targetCohorts().length || !this.analysisCohorts().outcomeCohorts().length) {
-				alert('You should select at least one target and outcome cohort to generate');
+				alert(ko.i18n('ir.results.selectTargetAndOutcomeAlert', 'You should select at least one target and outcome cohort to generate')());
 				return false;
 			}
 			selectedSources.forEach(source => this.execute(source.sourceKey));

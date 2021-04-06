@@ -59,7 +59,7 @@ define([
 			this.isAuthenticated = ko.pureComputed(() => {
 				return authApi.isAuthenticated();
 			});
-			this.defaultName = constants.newEntityNames.pathway;
+			this.defaultName = ko.unwrap(constants.newEntityNames.pathway);
 
 			this.isNameFilled = ko.computed(() => {
 				return this.design() && this.design().name() && this.design().name().trim();
@@ -110,7 +110,7 @@ define([
 			});
 			this.pathwayCaption = ko.computed(() => {
 				if (this.design() && this.design().id !== undefined && this.design().id !== 0) {
-					return `Cohort Pathway #${this.design().id}`;
+					return ko.i18nformat('pathways.manager.caption', 'Cohort Pathway #<%=id%>', {id: this.design().id})();
 				}
 				return this.defaultName;
 			});
@@ -197,9 +197,9 @@ define([
 		}
 
 		async load(id) {
-			if (this.design() && (this.design().id === id || 0 == id)) return; // this design is already loaded.
+			if (this.design() && (this.design().id === id || 0 === id)) return; // this design is already loaded.
 
-			if(this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?"))
+			if(this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('pathways.manager.messages.beforeClose', 'Your changes are not saved. Would you like to continue?'))))
 				return;
 
 			if (id < 1) {
@@ -222,7 +222,7 @@ define([
 			try {
 				const results = await PathwayService.exists(this.design().name(), this.design().id === undefined ? 0 : this.design().id);
 				if (results > 0) {
-					alert('A cohort pathway with this name already exists. Please choose a different name.');
+					alert(ko.unwrap(ko.i18n('pathways.manager.messages.alreadyExists', 'A cohort pathway with this name already exists. Please choose a different name.')));
 				} else {
 					if (!this.design().id) {
 						const newAnalysis = await PathwayService.create(this.design());
@@ -234,7 +234,7 @@ define([
 					}
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save a cohort pathway.');
+				alert(ko.unwrap(ko.i18n('pathways.manager.messages.saveFailed', 'An error occurred while attempting to save a cohort pathway.')));
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -250,7 +250,7 @@ define([
 		}
 
 		async del() {
-			if (confirm('Are you sure?')) {
+			if (confirm(ko.unwrap(ko.i18n('pathways.manager.messages.deleteConfirmation', 'Are you sure?')))) {
 				this.isDeleting(true);
 				this.loading(true);
 				await PathwayService.del(this.design().id);
@@ -261,7 +261,7 @@ define([
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('pathways.manager.messages.beforeClose', 'Your changes are not saved. Would you like to continue?')))) {
 				return;
 			}
 			this.design(null);

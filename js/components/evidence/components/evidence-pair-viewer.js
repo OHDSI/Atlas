@@ -30,42 +30,42 @@ define([
 
 			this.columns = [
 				{
-					title: 'Linkout',
+					title: ko.i18n('columns.linkout', 'Linkout'),
 					render: function(s, p, d) {
 						return '<span class="linkish">' + d.evidenceTitle + '</span>';
 					},
 					width: "50%",
 				},
 				{
-					title: 'Unique Identifier',
+					title: ko.i18n('columns.uniqueIdentifier', 'Unique Identifier'),
 					data: d => d.uniqueIdentifier,
 					visible: false,
 				},
 				{
-					title: 'Evidence Source',
+					title: ko.i18n('columns.evidenceSource', 'Evidence Source'),
 					data: d => d.evidenceSource,
 					visible: false,
 				},
 				{
-					title: 'Drug Concept Id',
+					title: ko.i18n('columns.drugConceptId', 'Drug Concept Id'),
 					data: d => d.drugConceptId,
 					visible: false,
 				},
 				{
-					title: 'Drug Concept Name',
+					title: ko.i18n('columns.drugConceptName', 'Drug Concept Name'),
 					data: d => d.drugConceptName,
 				},
 				{
-					title: 'Condition Concept Id',
+					title: ko.i18n('columns.conditionConceptId', 'Condition Concept Id'),
 					data: d => d.hoiConceptId,
 					visible: false,
 				},
 				{
-					title: 'Condition Concept Name',
+					title: ko.i18n('columns.conditionConceptName', 'Condition Concept Name'),
 					data: d => d.hoiConceptName,
 				},
 				{
-					title: 'Mapping Type',
+					title: ko.i18n('columns.mappingType', 'Mapping Type'),
 					data: d => d.mappingType,
 				},
 			];
@@ -80,11 +80,11 @@ define([
 				],
 				Facets: [
 					{
-						'caption': 'Mapping Type',
+						'caption': ko.i18n('facets.caption.mappingType', 'Mapping Type'),
 						'binding': d => d.mappingType,
 					},
 					{
-						'caption': 'Source',
+						'caption': ko.i18n('facets.caption.source', 'Source'),
 						'binding': d => d.evidenceSource,
 					},
 				]
@@ -162,9 +162,9 @@ define([
 
 			this.helpTextDisplay = function() {
 				if (!this.showHelpText()) {
-					return "Click here for more information about this evidence list"
+					return ko.unwrap(ko.i18n('components.evidencePairViewer.evidencePairViewerText_4', 'Click here for more information about this evidence list'))
 				} else {
-					return "Hide details"
+					return ko.unwrap(ko.i18n('components.evidencePairViewer.evidencePairViewerText_5', 'Hide details'))
 				}
 			}
 			

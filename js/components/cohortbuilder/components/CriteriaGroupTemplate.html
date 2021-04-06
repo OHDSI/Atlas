@@ -9,26 +9,58 @@
 				<tr>
 					<td>
 						<span data-bind="if: parentGroup">
-							<span data-bind="	if: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0"><span data-bind="	text: parentGroup().Type() == 'ALL' ? 'And ' : 'Or '"></span>having</span>
-						<span data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">having</span>
+							<span
+								data-bind="	if: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">
+								<span data-bind="text: parentGroup().Type() == 'ALL'
+										? ko.i18n('common.and', 'and')
+										: ko.i18n('common.or', 'or')"></span>
+								<span data-bind="text:ko.i18n('components.criteriaGroup.having','having')"></span>
+							</span>
+							<span
+								data-bind="	ifnot: (parentGroup().CriteriaList().length > 0) || (parentGroup().DemographicCriteriaList().length > 0) || parentGroup().Groups().indexOf(group()) > 0">
+								<span data-bind="text:ko.i18n('components.criteriaGroup.having','having')"></span>
+							</span>
 						</span>
-						<span data-bind="ifnot: parentGroup">having</span>
-						<select data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
+						<span data-bind="ifnot: parentGroup">
+							<span data-bind="text: ko.i18n('components.criteriaGroup.having','having')"></span>
+						</span>
+
+						<select
+							data-bind="options: $component.options.groupTypeOptions, optionsText: 'name', optionsValue: 'id', value: group().Type"></select>
 						<!-- ko if: group().Type().startsWith("AT_") -->
-						<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: group().Count.numeric(), eventType:'blur', ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
-						/>
+						<span contenteditable="true" class="numericInputField dropdown"
+							data-bind="htmlValue: group().Count.numeric(),
+							             eventType:'blur',
+							             ko_autocomplete: { value: group().Count, source: $component.groupCountOptions(), minLength: 0, maxShowItems: 10, scroll: true }" />
 						<!-- /ko -->
-						of the following criteria:
+						<span
+							data-bind="text: ko.i18n('components.criteriaGroup.followingCriteria', 'of the following criteria:')"></span>
 					</td>
 					<td>
-						<drop-down-menu params="actions: $component.addCriteriaActions, title: 'Add criteria to group...', formatOption: $component.formatOption"></drop-down-menu>
+						<div class="btn-group pull-right">
+							<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i
+									class="fa fa-plus"></i>
+								<span
+									data-bind="text: ko.i18n('components.criteriaGroup.addCriteria', 'Add criteria to group...')"></span>
+								<span class="caret"></span></button>
+							<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
+								<li><a data-bind="click:action" href="#">
+										<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+										<div class="optionDescription"
+											data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+									</a></li>
+							</ul>
+						</div>
+						<!-- <drop-down-menu
+						params="actions: $component.addCriteriaActions, title: ko.i18n('components.criteriaGroup.addCriteria', 'Add criteria to group...'), formatOption: $component.formatOption"></drop-down-menu> -->
 					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 
-	<div style="min-height: 10px;" data-bind="sortable: {data: group().DemographicCriteriaList, connectClass: 'demographicCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+	<div style="min-height: 10px;"
+		data-bind="sortable: {data: group().DemographicCriteriaList, connectClass: 'demographicCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
 		<div class="demographicCriteria">
 			<table>
 				<colgroup>
@@ -40,7 +72,13 @@
 						<td>
 							<div class="criteria-content">
 								<div class="occurrenceSection">
-									<span data-bind="if: ($index() > 0)"><span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span> with the following event criteria:
+									<span data-bind="if: ($index() > 0)">
+										<span data-bind="text: $component.group().Type() == 'ALL'
+												? ko.i18n('common.and', 'and')
+												: ko.i18n('common.or', 'or')"></span>
+									</span>
+									<span
+										data-bind="text: ko.i18n('components.criteriaGroup.withFollowingCriteria', 'with the following event criteria:')"></span>
 								</div>
 								<div>
 									<demographic-criteria params="criteria: $data"></demographic-criteria>
@@ -48,7 +86,8 @@
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger"
+								data-bind="text: ko.i18n('components.criteriaGroup.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removeCriteria($parent.group().DemographicCriteriaList, data) }"></button>
 						</td>
 					</tr>
 				</tbody>
@@ -56,7 +95,8 @@
 		</div>
 	</div>
 
-	<div style="min-height: 10px;" data-bind="sortable: {data: group().CriteriaList, connectClass: 'additionalCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+	<div style="min-height: 10px;"
+		data-bind="sortable: {data: group().CriteriaList, connectClass: 'additionalCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
 		<div class="additionalCriteria">
 			<table>
 				<colgroup>
@@ -68,15 +108,22 @@
 						<td>
 							<div class="criteria-content ui-front">
 								<div class="occurrenceSection">
-									<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)"><span data-bind="	text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
-									with
+									<span data-bind="if: ($parent.group().DemographicCriteriaList().length > 0 || $index() > 0)">
+										<span data-bind="text: $component.group().Type() == 'ALL'
+												? ko.i18n('common.and', 'and')
+												: ko.i18n('common.or', 'or')"></span>
+									</span>
+
+									<span data-bind="text: ko.i18n('components.criteriaGroup.with','with')"></span>
 									<select data-bind="options: $component.options.occurrenceTypeOptions, optionsText: 'name', optionsValue: 'id', value: Occurrence.Type" />
-									<span contenteditable="true" class="numericInputField dropdown" 
+									<span contenteditable="true" class="numericInputField dropdown"
 												data-bind="htmlValue: Occurrence.Count.numeric(), 
 																	 eventType: 'blur', 
 																	 ko_autocomplete: { value: Occurrence.Count, source: $component.options.occurrenceCountOptions, minLength: 0, maxShowItems: 10, scroll: true }" />									
-									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ? 'using distinct' : 'using all'"></button> 
-									<!-- ko if: !$data.Occurrence.IsDistinct() --> occurrences of:  <!-- /ko -->
+									<button data-bind="click: function() { Occurrence.IsDistinct(!Occurrence.IsDistinct())}, text: Occurrence.IsDistinct() ?
+															ko.i18n('components.criteriaGroup.usingDistinct','using distinct') :
+															ko.i18n('components.criteriaGroup.usingAll','using all')"></button>
+									<!-- ko if: !$data.Occurrence.IsDistinct() --> <span data-bind="text: ko.i18n('components.criteriaGroup.occurrencesOf','occurrences of:')"></span>  <!-- /ko -->
 									<!-- ko if: $data.Occurrence.IsDistinct() --> <select data-bind="options: $component.getDistinctOptions($data.Criteria), optionsText: 'name', optionsValue: 'id', value: $data.Occurrence.CountColumn" />  <!-- /ko -->
 								</div>
 								<div data-bind="component: {
@@ -85,28 +132,52 @@
 								}"></div>
 
 								<div class="indexWindowSection">
-									where <cycle-toggle-input params="{value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
-									<window-input params="Window: StartWindow"></window-input> <cycle-toggle-input params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
+									<span data-bind="text:ko.i18n('components.criteriaGroup.where', 'where')"></span>
+									<cycle-toggle-input
+										params="{value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}">
+									</cycle-toggle-input>
+									<span data-bind="text:ko.i18n('components.criteriaGroup.between','between')"></span><br />
+
+									<window-input params="Window: StartWindow"></window-input>
+									<cycle-toggle-input
+										params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}">
+									</cycle-toggle-input>
 									<!-- ko if: EndWindow -->
 									<div>
-										<i data-bind="click: $component.removeEndWindow" class="fa fa-times"  title="Remove"/> and <cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input> between
-										<window-input params="Window: EndWindow"></window-input> <cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
+										<i data-bind="click: $component.removeEndWindow, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" />
+										<span data-bind="text:ko.i18n('components.criteriaGroup.and', 'and')"></span>
+										<cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input>
+										<span data-bind="text:ko.i18n('components.criteriaGroup.between', 'between')"></span>
+										<window-input params="Window: EndWindow"></window-input>
+										<cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									</div>
 									<!-- /ko -->
 									<!-- ko ifnot: EndWindow -->
-									<span class="linkish" data-bind="click: $component.addEndWindow"><i>add additional constraint</i></span>
+									<span class="linkish" data-bind="click: $component.addEndWindow"><i>
+											<span
+												data-bind="text:ko.i18n('components.criteriaGroup.addAdditionalConstraint', 'add additional constraint')"></span>
+
+										</i></span>
 									<!-- /ko -->
-									<div class="indexMessage"><span class="indexMessage" data-bind="text: $component.indexMessage"></span></div>
+									<div class="indexMessage"><span class="indexMessage" data-bind="text: $component.indexMessage"></span>
+									</div>
 								</div>
 
 								<div class="restrictVisitSection" data-bind="if: $component.hasVO($data.Criteria)">
-									<input type="checkbox" data-bind="checked: RestrictVisit"> restrict to the same visit occurrence<br/>
+									<input type="checkbox" data-bind="checked: RestrictVisit">
+									<span
+										data-bind="text:ko.i18n('components.criteriaGroup.criteriaGroupText_1','restrict to the same visit occurrence')"></span><br />
 								</div>
-								<input type="checkbox" data-bind="checked: IgnoreObservationPeriod"> allow events from outside observation period<br/>
+								<input type="checkbox" data-bind="checked: IgnoreObservationPeriod">
+								<span
+									data-bind="text:ko.i18n('components.criteriaGroup.criteriaGroupText_2','allow events from outside observation period')"></span><br />
 							</div>
 						</td>
 						<td>
-							<button class="deletecriteria btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">Delete Criteria</button>
+							<button class="deletecriteria btn btn-sm btn-danger"
+								data-bind="click: function (data, event) { $component.removeCriteria($parent.group().CriteriaList, data) }">
+								<span data-bind="text:ko.i18n('components.criteriaGroup.deleteCriteria','Delete Criteria')"></span>
+							</button>
 						</td>
 					</tr>
 				</tbody>
@@ -116,8 +187,15 @@
 
 	<!-- ko foreach: group().Groups -->
 	<div class="critera-group-container" style="position:relative">
-		<criteria-group params="{expression: $component.expression, group: ko.observable($data), parentGroup: $parent.group(), indexMessage: $component.indexMessage}"></criteria-group>
-		<button class="deletegroup btn btn-sm btn-danger" data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">Delete Group</button>
+		<criteria-group params="{expression: $component.expression,
+								group: ko.observable($data),
+								parentGroup: $parent.group(),
+								indexMessage: $component.indexMessage}"></criteria-group>
+		<button class="deletegroup btn btn-sm btn-danger"
+			data-bind="click: function (data, event) { $component.removeCriteria($parent.group().Groups, data) }">
+
+			<span data-bind="text:ko.i18n('components.criteriaGroup.deleteGroup','Delete Group')"></span>
+		</button>
 	</div>
 	<!-- /ko -->
 </div>

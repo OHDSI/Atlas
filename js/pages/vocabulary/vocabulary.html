@@ -1,6 +1,6 @@
 <div data-bind="css: classes()">
 	<div data-bind="css: classes('header')">
-		<heading-title params="name: 'Search', icon: 'search', theme: 'dark'"></heading-title>
+		<heading-title params="name: ko.i18n('search.headingTitle', 'Search'), icon: 'search', theme: 'dark'"></heading-title>
 	</div>
 	<div data-bind="css: classes('content')">
 		<vocabulary-search params="query: query"></vocabulary-search>

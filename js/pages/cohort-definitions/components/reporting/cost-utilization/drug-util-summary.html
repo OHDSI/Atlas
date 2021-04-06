@@ -11,9 +11,11 @@
     <div data-bind="visible: !loading()">
         <div data-bind="css: classes('toolbar')">
             <div data-bind="css: classes('descr')">
-                Click on a drug to get detailed statistics:
+                <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.drugUtilSummaryText_1', 'Click on a drug to get detailed statistics:')"></span>
             </div>
-            <button type="button" data-bind="css: classes({ element: 'save-csv-btn', extra: ['btn btn-primary']}), click: $component.saveAsCsv">Save as CSV</button>
+            <button type="button" data-bind="css: classes({ element: 'save-csv-btn', extra: ['btn btn-primary']}), click: $component.saveAsCsv">
+                <span data-bind="css: classes('save-csv-link'), text: ko.i18n('cohortDefinitions.costUtilization.saveAsCSV', 'Save as CSV')"></span>
+            </button>
         </div>
         <div data-bind="css: classes('table-block')">
             <table data-bind="

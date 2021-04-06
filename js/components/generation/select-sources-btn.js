@@ -20,7 +20,7 @@ define([
 		constructor(params) {
 			super(params);
 
-			this.label = typeof params.label === 'undefined' ? 'Generate' : params.label;
+			this.label = typeof params.label === 'undefined' ? ko.i18n('components.generation.generate', 'Generate') : params.label;
 			this.wasGenerated = typeof params.wasGenerated === 'undefined' ? false : params.wasGenerated;
 
 			this.sources = params.sources || ko.observableArray();
@@ -48,7 +48,7 @@ define([
 			}
 			
 			if (selectedSources.length === 0) {
-				alert('Pick at least one source to generate')
+				alert(ko.i18n('components.generation.pickAtLeastOneSourceAlert', 'Pick at least one source to generate')())
 			}
 			this.callback(selectedSources);
 			this.hidePopup();

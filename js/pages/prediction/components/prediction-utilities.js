@@ -58,6 +58,7 @@ define([
 			this.isPermittedExport = PermissionService.isPermittedExport;
 			this.isPermittedImport = PermissionService.isPermittedImport;
 			this.afterImportSuccess = params.afterImportSuccess;
+			this.language = ko.i18n('datatable.language');
 
 			this.specificationValid = ko.pureComputed(() => this.criticalCount() <= 0);
 

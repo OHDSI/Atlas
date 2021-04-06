@@ -66,7 +66,7 @@ define([
 						pathways: pathwayGroup.pathways.map(p => ({ // split pathway paths into paths and counts
 							path : p.path.split('-')
 								.filter(step => step != "end") // remove end markers from pathway
-								.map(p => +p)																		
+								.map(p => +p)
 								.concat(Array(MAX_PATH_LENGTH).fill(null)) // pad end of paths to be at least MAX_PATH_LENGTH
 								.slice(0,MAX_PATH_LENGTH), // limit path to MAX_PATH_LENGTH.
 							personCount: p.personCount
@@ -108,22 +108,24 @@ define([
 			let pathCols = Array(MAX_PATH_LENGTH)
 				.fill()
 				.map((v,i) => {
-					const col = columnPathBuilder(`Step ${i+1}`, i, this.pathCodeResolver);
+					const colName = ko.i18nformat('pathways.manager.executions.results.tableview.stepN', 'Step <%=i%>', {i: i+1});
+					const col = columnPathBuilder(ko.unwrap(colName), i, this.pathCodeResolver);
 					col.visible = i < pathLength;
 					return col;
 				});					
-			let statCols = [columnValueBuilder("Count", "personCount")];
+			let statCols = [columnValueBuilder(ko.i18n('columns.count', 'Count')(), "personCount")];
 			let data = this.getPathwayGroupData(pathwayGroup, pathLength);
 
-			statCols.push(columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat));
-			statCols.push(columnValueBuilder("% of Cohort", "cohortPercent", percentFormat));
+			statCols.push(columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway')(), "pathwayPercent", percentFormat));
+			statCols.push(columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort')(), "cohortPercent", percentFormat));
 
 			return {
 				data: data,
 				options: {
 					order: [[pathCols.length, 'desc']],
 					columnDefs: statCols.map((c,i) => ({targets: pathCols.length + i, className: 'stat'})),
-					columns :  [...pathCols, ...statCols]
+					columns :  [...pathCols, ...statCols],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}
@@ -189,12 +191,13 @@ define([
 				options: {
 					order: [[2, 'desc']],
 					columns : [
-						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver, '60%'),
-						columnValueBuilder("Rank", "rank"),
-						columnValueBuilder("Count", "personCount"),
-						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
-						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
-					]
+						columnValueBuilder(ko.i18n('columns.eventCohort', 'Event Cohort'), "code", this.pathCodeResolver, '60%'),
+						columnValueBuilder(ko.i18n('columns.rank', 'Rank'), "rank"),
+						columnValueBuilder(ko.i18n('columns.Count', 'Count'), "personCount"),
+						columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway'), "pathwayPercent", percentFormat),
+						columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort'), "cohortPercent", percentFormat)
+					],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}
@@ -257,11 +260,12 @@ define([
 				options: {
 					order: [[1, 'desc']],
 					columns : [
-						columnValueBuilder("Event Cohort", "code", this.pathCodeResolver, '70%'),
-						columnValueBuilder("Count", "personCount"),
-						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
-						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
-					]
+						columnValueBuilder(ko.i18n('columns.eventCohort', 'Event Cohort'), "code", this.pathCodeResolver, '70%'),
+						columnValueBuilder(ko.i18n('columns.Count', 'Count'), "personCount"),
+						columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway'), "pathwayPercent", percentFormat),
+						columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort'), "cohortPercent", percentFormat)
+					],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}
@@ -316,13 +320,13 @@ define([
 
 			// add the zero-case to result
 			data.push({
-				eventCohorts: 0, 
+				eventCohorts: 0,
 				personCount: (pathwayGroup.cohortCount - pathwayGroup.pathwayCount),
 				pathwayPercent: 0,
 				cohortPercent: 100.0 * (pathwayGroup.cohortCount - pathwayGroup.pathwayCount) / pathwayGroup.cohortCount
 			});
 
-			return data;			
+			return data;
 		}
 		
 		getDistinctEventCohortCountsDatatable(pathwayGroup) {
@@ -333,11 +337,12 @@ define([
 				options: {
 					order: [[1, 'desc']],
 					columns : [
-						columnValueBuilder("Distinct Event Cohorts", "eventCohorts", (v) => `Exactly ${v}`, '70%'),
-						columnValueBuilder("Count", "personCount"),
-						columnValueBuilder("% with Pathway", "pathwayPercent", percentFormat),
-						columnValueBuilder("% of Cohort", "cohortPercent", percentFormat)
-					]
+						columnValueBuilder(ko.i18n('columns.distinctEventCohorts', 'Distinct Event Cohorts'), "eventCohorts", (v) => ko.i18nformat('pathways.manager.executions.results.tableview.exactly', 'Exactly <%=v%>', {v: v})(), '70%'),
+						columnValueBuilder(ko.i18n('columns.count', 'Count'), "personCount"),
+						columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway'), "pathwayPercent", percentFormat),
+						columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort'), "cohortPercent", percentFormat)
+					],
+					language: ko.i18n('datatable.language')
 				}
 			}
 		}		

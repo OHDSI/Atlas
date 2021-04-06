@@ -18,9 +18,12 @@ define(function (require) {
 	var treemap = require("./treemapBinding");
 	var d3ChartBinding = require("./d3ChartBinding");
 	var tooltipBinding = require("./tooltipBinding");
+	var placeholderBinding = require("./placeholderBinding");
+	var titleBinding = require("./titleBinding");
 	var chart = require('./chart');
 	var bootstrapCollapsable = require('./bootstrapCollapsable');
 	var numericExtender = require('./numericExtender');
 	var childChangesExtender = require('./childChangesExtender');
 	var alphaNumericExtender = require('./alphaNumericExtender');
+	var i18nBinding = require('./i18nBinding');
 });

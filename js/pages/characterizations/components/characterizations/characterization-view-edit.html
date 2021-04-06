@@ -1,21 +1,21 @@
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization...'"></loading>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('cc.viewEdit.loadingCohortCharacterization', 'Loading Cohort Characterization...')"></loading>
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
 
 <!-- ko if:design -->
 <div data-bind="css: classes()">
-    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : '(Read only)', icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark'"></heading-title>
     <!-- ko if: !!design() && !!design().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
     <div class="asset-heading">
         <div class="input-group">
-            <input type="text" placeholder="New Characterization" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
+            <input type="text" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
             <div class="input-group-btn">
-                <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }"><i class="fa fa-save"></i></button>
-                <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+                <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+                <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity() -->
-                <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }" title="Create a copy of this cohort characterization"><i class="fa fa-copy"></i></button>
-                <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+                <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }, title: , title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+                <button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
                 <button type="button" class="btn btn-danger"  data-bind="click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
@@ -27,7 +27,7 @@
             hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
             hasInvalidLength: isNameFilled() && !isNameLengthValid(),
             hasDefaultName: isDefaultName(),
-            analysisName: 'characterization',
+            analysisName: ko.i18n('components.nameValidation.characterization', 'characterization'),
         "></name-validation>
     </div>
 
@@ -36,13 +36,13 @@
         selectTab: $component.selectTab,
         tabs: [
             {
-                title: 'Design',
+                title: ko.i18n('cc.viewEdit.tabs.design', 'Design'),
                 key: 'design',
                 componentName: 'characterization-design',
                 componentParams: $component.componentParams,
             },
             {
-                title: 'Concept Sets',
+                title: ko.i18n('cc.viewEdit.tabs.conceptSets', 'Concept Sets'),
                 key: 'conceptsets',
                 componentName: 'characterization-conceptsets',
                 componentParams: $component.componentParams,
@@ -54,13 +54,13 @@
                 componentParams: $component.componentParams,
             },
             {
-                title: 'Utilities',
+                title: ko.i18n('cc.viewEdit.tabs.utilities', 'Utilities'),
                 key: 'utilities',
                 componentName: 'characterization-view-edit-utils',
                 componentParams: $component.componentParams,
             },
             {
-                title: 'Messages', 
+                title: ko.i18n('cc.viewEdit.tabs.messages', 'Messages'),
                 key: 'messages',
                 componentName: 'warnings',
                 componentParams: $component.warningParams,

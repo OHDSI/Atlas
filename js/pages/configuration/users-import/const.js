@@ -9,7 +9,7 @@ define([
   const WIZARD_STEPS = {
     PROVIDERS: 'providers',
     MAPPING: 'mapping',
-		IMPORT: 'import',
+	IMPORT: 'import',
     FINISH: 'finish',
   };
 
