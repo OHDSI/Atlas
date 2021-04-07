@@ -82,8 +82,6 @@ define(['knockout',
 				this.usersList = ko.observableArray();
 				this.linkClasses = this.classes('link');
 				this.connectionCheck = ko.observable();
-				this.showConnectionDetails = ko.observable();
-				this.detailsButtonText = ko.computed(() => "Details " + (this.showConnectionDetails() ? "<<<" : ">>>"))
 				this.infoMessageClass = ko.computed(() => {
 					const modifier = this.connectionCheck() ? String(this.connectionCheck().state).toLowerCase() : '';
 					return this.classes('info-message', modifier);
