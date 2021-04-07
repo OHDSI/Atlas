@@ -155,10 +155,6 @@ define(['knockout',
 				this.testConnection();
 			}
 
-			toggleConnectionDetails() {
-				this.showConnectionDetails(!this.showConnectionDetails());
-			}
-
 			startPolling(jobId) {
 				this.pollId = PollService.add({
 					callback: () => this.updateJobStatus(jobId),
