@@ -147,7 +147,7 @@ define(['knockout',
 			testConnection() {
 				userService.testConnection(this.importProvider())
 					.then((data) => this.connectionCheck(data))
-					.catch(this.connectionCheck({state: 'FAILED', message: 'Connection failed. Please see server logs for details.'}));
+					.catch(this.connectionCheck({state: 'FAILED', message: ko.i18n('configuration.userImport.wizard.provider.connection.failed', 'Connection failed. Please see server logs for details.')}));
 			}
 
 			testConnectionClick() {
