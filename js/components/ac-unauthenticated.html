@@ -1,5 +1,8 @@
 <div>
     <p>
-        This feature is protected. Please, <a href="" data-bind="click: function () { $component.signInOpened(true) }">log in</a>.
+        <span data-bind="text: ko.i18n('components.accessDenied.unauthenticated.message', 'This feature is protected. Please,')"></span>
+        <a href="" data-bind="
+        click: function () { $component.signInOpened(true) },
+        text: ko.i18n('components.accessDenied.unauthenticated.login', 'log in')"></a>.
     </p>
 </div>

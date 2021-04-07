@@ -7,7 +7,7 @@ define(['knockout', 'text!./DateOffsetStrategyTemplate.html'], function (ko, tem
 			return ko.utils.unwrapObservable(params.strategy).DateOffset;
 		});
 				
-		self.fieldOptions = [{id: 'StartDate', name: 'start date'}, {id: 'EndDate', name: 'end date'}]
+		self.fieldOptions = [{id: 'StartDate', name: ko.i18n('options.startDate', 'start date')}, {id: 'EndDate', name: ko.i18n('options.endDate', 'end date')}]
 		
 		self.fieldName = ko.pureComputed(function() {
 			return self.fieldOptions.filter(function (option) { return option.id == ko.utils.unwrapObservable(self.strategy().DateField); })[0].name;

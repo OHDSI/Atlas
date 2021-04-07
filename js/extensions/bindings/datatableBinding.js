@@ -68,6 +68,40 @@ define([
         return abxX < absY ? -1 : abxX>absY ? 1 : 0;
 	}
 
+	function mapColumns(element, binding, xssOptions) {
+
+		const columns = ko.unwrap(binding.options.columns);
+
+		if (columns && columns[0] === 'select') {
+			columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected };
+			$(element).on("click","td > span.fa.fa-check-circle", function () {
+				$(this).toggleClass('selected');
+			});
+		}
+		return columns.map((column) => {
+			const originalRender = column.render;
+			const originalDataAccessor = column.data;
+			const hasOriginalRender = typeof originalRender === 'function';
+			const hasDataAccessor = typeof originalDataAccessor === 'function';
+
+			if (binding.options.xssSafe || column.xssSafe) return column; // disable XSS filtering if column is marked 'safe'
+
+			return Object.assign({}, column, {
+				title: ko.unwrap(column.title),
+				//todo yar this title is not observer, shout be fix
+				// title: column.title,
+				data: hasDataAccessor
+					? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
+					: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
+				render: hasOriginalRender
+					? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
+					// https://datatables.net/reference/option/columns.render
+					// "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
+					: $.fn.dataTable.render.text()
+			});
+		});
+	}
+
 	ko.bindingHandlers.dataTable = {
 
 		init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -85,12 +119,6 @@ define([
 			// initialise the dataTable with those options.
 			if (binding.options) {
 
-				// Set default placeholder for datatables search input
-				const defaultPlaceholder = { searchPlaceholder: 'Search...' };
-				const language = binding.options.language
-					? { ...defaultPlaceholder, ...binding.options.language  }
-					: defaultPlaceholder;
-				binding.options.language = language;
 				const defaultTableOptions = commonUtils.getTableOptions('M')
 				binding.options.pageLength = binding.options.pageLength || defaultTableOptions.pageLength;
 				binding.options.lengthMenu = binding.options.lengthMenu || defaultTableOptions.lengthMenu;
@@ -105,36 +133,16 @@ define([
 					ko.applyBindings(bindingContext.createChildContext(data), row);
 				};
 				// test for 'select' column (must be first column in column definition
-				const columns = binding.options.columns;
 
-				if (columns && columns[0] == 'select') {
-					columns[0] = { width:'20px', orderable: false, class: 'select', render: renderSelected };
-					$(element).on("click","td > span.fa.fa-check-circle", function () {
-						$(this).toggleClass('selected');
-					});
-				}
 
 				const xssOptions = config.xssOptions;
 
-				binding.options.columns = columns.map((column) => {
-					const originalRender = column.render;
-					const originalDataAccessor = column.data;
-					const hasOriginalRender = typeof originalRender === 'function';
-					const hasDataAccessor = typeof originalDataAccessor === 'function';
+				const oColumns = mapColumns(element, binding, xssOptions);
 
-					// do not apply xss filtering if the table is marked safe, and the column is not marked not safe
-					if (binding.options.xssSafe && column.xssSafe != false) return column; // disable XSS filtering if column is marked 'safe'
-
-					return Object.assign({}, column, {
-						data: hasDataAccessor
-							? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
-							: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
-						render: hasOriginalRender
-							? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
-              // https://datatables.net/reference/option/columns.render
-              // "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
-							: $.fn.dataTable.render.text()
-					});
+				const language = binding.options.language;
+				const options = Object.assign({}, binding.options, {
+					columns: oColumns,
+					language: ko.unwrap(language),
 				});
 
 				// For case of complex header which uses data-bindings (https://datatables.net/examples/advanced_init/complex_header.html)
@@ -142,7 +150,24 @@ define([
 					ko.applyBindings(bindingContext, $(element).find('thead')[0]);
 				}
 
-				$(element).DataTable(binding.options);
+				let subscription = null;
+				if (! $.fn.dataTable.isDataTable(element)) {
+					$(element).DataTable(Object.assign({}, options));
+
+					if (ko.isComputed(language)) {
+						subscription = language.subscribe((newLanguage) => {
+							$(element).DataTable().clear().destroy();
+							const opts = Object.assign({}, options, {
+								columns: mapColumns(element, binding, xssOptions),
+								language: newLanguage,
+								destroy: true,
+							});
+							const table = $(element).DataTable(opts);
+							table.rows.add(ko.unwrap(binding.data || binding));
+							table.draw();
+						});
+					}
+				}
 
 				if (binding.api != null)
 				{
@@ -158,10 +183,14 @@ define([
 				if (!!binding.options.scrollY) {
 					setTimeout(() => 	$(element).DataTable().columns.adjust().draw('page'), 0);
 				}
+
 				// setup dispose callback:
 				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 					// This will be called when the element is removed by Knockout or
 					// if some other part of your code calls ko.removeNode(element)
+					if (subscription) {
+						subscription.dispose();
+					}
 					$(element).DataTable().destroy(true);
 					$(element).empty();
 				});

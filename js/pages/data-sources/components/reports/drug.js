@@ -26,7 +26,7 @@ define([
 			this.byType = true;
 			this.chartFormats.table.columns.splice(1, 0,
 				{
-					title: 'Ingredient',
+					title: ko.i18n('columns.ingredient', 'Ingredient'),
 					data: 'ingredient',
 					className: 'treemap__tbl-col--medium'
 				});

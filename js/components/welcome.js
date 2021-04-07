@@ -3,8 +3,9 @@ define([
     'text!./welcome.html',
     'appConfig',
     'services/AuthAPI',
-	'utils/BemHelper',
+	  'utils/BemHelper',
     'atlas-state',
+    'services/MomentAPI',
     'less!welcome.less'
 ],
     function (
@@ -14,6 +15,7 @@ define([
     authApi,
     BemHelper,
     sharedState,
+    momentApi,
     ) {
     const componentName = 'welcome';
 
@@ -35,24 +37,24 @@ define([
         self.expiration = ko.computed(function () {
             var expDate = authApi.tokenExpirationDate();
             return expDate
-                ? expDate.toLocaleString()
+                ? momentApi.formatDateTime(expDate)
                 : null;
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
 			  self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
         self.runAsLogin = ko.observable();
-		self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
+        self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
             if (self.isInProgress())
-                return "Please wait...";
+                return ko.i18n('components.welcome.wait', 'Please wait...')();
             if (self.errorMsg())
                 return self.errorMsg();
             if (self.isLoggedIn()) {
                 if (self.expiration()) {
-                    return "Logged in as '" + self.login() + "' (exp: " + self.expiration() + ")";
+                    return ko.i18nformat('components.welcome.loggedInExp', 'Logged in as \'<%=login%>\' (exp: <%=expiration%>)', {login: self.login(), expiration: self.expiration()})();
                 } else {
-                    return "Logged in as '" + self.login() + "'";
+                    return ko.i18nformat('components.welcome.loggedIn', 'Logged in as \'<%=login%>\'', {login: self.login()})();
                 }
             }
             return 'Not logged in';
@@ -97,7 +99,7 @@ define([
                     password: data.elements.lg_password.value
                 },
                 success: self.onLoginSuccessful,
-                error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Bad credentials'),
+                error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.badCredentials', 'Bad credentials')()),
             });
         };
 
@@ -118,7 +120,7 @@ define([
                         withCredentials: true
                     },
                     success: self.onLoginSuccessful,
-                    error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, 'Login failed'),
+                    error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.loginFailed', 'Login failed')()),
                 });
             } else {
                 const parts = window.location.href.split('#');

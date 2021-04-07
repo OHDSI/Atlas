@@ -1,7 +1,9 @@
 define([
+  'knockout',
     './BaseStatConverter',
 	'./DistributionStat',
 ], function (
+    ko,
     BaseStatConverter,
 	DistributionStat,
 ) {
@@ -45,7 +47,7 @@ define([
 
         getDefaultColumns(analysis) {
             return [{
-              title: 'Strata',
+              title: ko.i18n('columns.strata', 'Strata'),
               data: 'strataName',
               className: this.classes('col-distr-title'),
               // visible: false,

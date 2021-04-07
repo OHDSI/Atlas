@@ -1,29 +1,45 @@
 <!-- ko with: Criteria -->
-an observation period
+<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_11', 'an observation period')"></span>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
-	<li>limited to the patients first observation period</li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_2', 'limited to the patients first observation period')"></span>
+	</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(UserDefinedPeriod) != null -->
-	<li>using specified period: <period-viewer params="Period: UserDefinedPeriod"></period-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_3', 'using specified period:')"></span>
+		<period-viewer params="Period: UserDefinedPeriod"></period-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodStartDate) != null -->
-	<li>period start is <date-range-viewer params="Range: PeriodStartDate"></date-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_4', 'observation period start is:')"></span>
+		<date-range-viewer params="Range: PeriodStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodEndDate) != null -->
-	<li>period end is <date-range-viewer params="Range: PeriodEndDate"></date-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_5', 'observation period end is:')"></span>
+		<date-range-viewer params="Range: PeriodEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodType) != null -->
-	<li>period type is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(PeriodType)"></concept-list-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_12', 'period type is any of:')"></span>
+		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(PeriodType)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodLength) != null -->
-	<li>with period duration <numeric-range-viewer params="Range: PeriodLength"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_9', 'with period duration')"></span>
+		<numeric-range-viewer params="Range: PeriodLength"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtStart) != null -->
-	<li>with age in years at period start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_7', 'with age in years at period start')"></span>
+		<numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
-	<li>with age in years at period end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_8', 'with age in years at period end')"></span>
+		<numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	

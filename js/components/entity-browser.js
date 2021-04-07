@@ -26,13 +26,13 @@ define([
             this.buttons = !!this.multiChoice
                 ? [
                       {
-                          text: 'Select All',
+                          text: ko.i18n('common.selectAll', 'Select All')(),
                           action: () => this.toggleSelected(true),
                           className: this.classes({ extra: 'btn btn-sm btn-success' }),
                           init: this.removeClass('dt-button'),
                       },
                       {
-                          text: 'Deselect All',
+                          text: ko.i18n('common.deselectAll', 'Deselect All')(),
                           action: () => this.toggleSelected(false),
                           className: this.classes({ extra: 'btn btn-sm btn-primary' }),
                           init: this.removeClass('dt-button'),

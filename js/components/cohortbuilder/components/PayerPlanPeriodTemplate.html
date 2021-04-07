@@ -6,13 +6,19 @@
 				<col />
 			</colgroup>
 			<tr>
-				<td>payer plan periods with the following criteria:
+				<td>
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_1', 'payer plan periods with the following criteria:')"></span>
+
 				</td>
 				<td>
 					<div class="btn-group pull-right">
-						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> Add attribute...<span class="caret"></span></button>
+						<button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i> 
+							<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.addAttribute', 'Add attribute...')"></span><span class="caret"></span></button>
 						<ul class="dropdown-menu" data-bind="foreach:$component.addActions">
-							<li><a data-bind="html:$component.formatOption($data), click:action" href="#"></a></li>
+							<li><a data-bind="click:action" href="#">
+								<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+								<div class="optionDescription" data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+							</a></li>
 						</ul>
 					</div>
 				</td>				
@@ -24,143 +30,170 @@
 				<col />
 			</colgroup>		
 			<tr data-bind="if: First() != null, visible: First() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('First') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('First') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						limited to the patients first payer plan period
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_2', 'limited to the patients first payer plan period')"></span>
+
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
-					with age at period start
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_3', 'with age at period start')"></span>
+
 					<numeric-range params="Range: AgeAtStart"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: AgeAtEnd() != null, visible: AgeAtEnd() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtEnd') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
-					with age at period end
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_4', 'with age at period end')"></span>
+
 					<numeric-range params="Range: AgeAtEnd"></numeric-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodLength() != null, visible: PeriodLength() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodLength') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times"  /></td>
 				<td>
-					with period duration
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_5', 'with period duration')"></span>
+
 					<numeric-range params="Range: PeriodLength"></numeric-range> days.
 				</td>
 			</tr>
 			<tr data-bind="if: Gender() != null, visible: Gender() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('Gender') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						with a gender of:
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_6', 'with a gender of:')"></span>
+
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()"> </concept-list>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: UserDefinedPeriod() != null, visible: UserDefinedPeriod() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('UserDefinedPeriod') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
-					using specified period:
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_7', 'using specified period:')"></span>
+
 					<period-input params="Period: UserDefinedPeriod"></period-input>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodStartDate() != null, visible: PeriodStartDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodStartDate') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
-					payer plan period start is:
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_8', 'payer plan period start is:')"></span>
+
 					<date-range params="Range: PeriodStartDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PeriodEndDate() != null, visible: PeriodEndDate() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodEndDate') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
-					payer plan period end is:
+					<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_9', 'payer plan period end is:')"></span>
+
 					<date-range params="Range: PeriodEndDate"></date-range>
 				</td>
 			</tr>
 			<tr data-bind="if: PayerConcept() != null, visible: PayerConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PayerConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PayerConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Payer Concept is
-						<conceptset-selector params="conceptSetId: PayerConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_10', 'Payer Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: PayerConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anyPayer', 'Any Payer')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlanConcept() != null, visible: PlanConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlanConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlanConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Plan Concept is
-						<conceptset-selector params="conceptSetId: PlanConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_11', 'Plan Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: PlanConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anyPlan', 'Any Plan')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: SponsorConcept() != null, visible: SponsorConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('SponsorConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('SponsorConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Sponsor Concept is
-						<conceptset-selector params="conceptSetId: SponsorConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_12', 'Sponsor Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: SponsorConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anySponsor', 'Any Sponsor')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: StopReasonConcept() != null, visible: StopReasonConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Stop Reason Concept is
-						<conceptset-selector params="conceptSetId: StopReasonConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_13', 'Stop Reason Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: StopReasonConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anyStopReason', 'Any Stop Reason')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PayerSourceConcept() != null, visible: PayerSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PayerSourceConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PayerSourceConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times"  /></td>
 				<td>
 					<div>
-						Payer Source Concept is
-						<conceptset-selector params="conceptSetId: PayerSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Payer Source'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_14', 'Payer Source Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: PayerSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anyPayerSource', 'Any Payer Source')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: PlanSourceConcept() != null, visible: PlanSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PlanSourceConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('PlanSourceConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Plan Source Concept is
-						<conceptset-selector params="conceptSetId: PlanSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Plan Source'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_15', 'Plan Source Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: PlanSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anyPlanSource', 'Any Plan Source')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: SponsorSourceConcept() != null, visible: SponsorSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('SponsorSourceConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('SponsorSourceConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Sponsor Source Concept is
-						<conceptset-selector params="conceptSetId: SponsorSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Sponsor Source'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_16', 'Sponsor Source Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: SponsorSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anySponsorSource', 'Any Sponsor Source')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: StopReasonSourceConcept() != null, visible: StopReasonSourceConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonSourceConcept') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('StopReasonSourceConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						Stop Reason Source Concept is
-						<conceptset-selector params="conceptSetId: StopReasonSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 'Any Stop Reason Source'"></conceptset-selector>
+						<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_17', 'Stop Reason Source Concept is')"></span>
+
+						<conceptset-selector params="conceptSetId: StopReasonSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
+						ko.i18n('components.conditionPayerPlanPeriod.anyStopReasonSource', 'Any Stop Reason Source')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }" class="fa fa-times" title="Remove" /></td>
+				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td style="background-color: white">
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
 				</td>
 			</tr>
 		</table>
-		<span class="fa fa-exclamation-triangle" style="color:#d4bd09"></span><i> Note: Payer Plan Period criteria is only available in CDM v5.3 and later.</i>
+		<span class="fa fa-exclamation-triangle" style="color:#d4bd09"></span>
+		<i>
+			<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_18', 'Note: Payer Plan Period criteria is only available in CDM v5.3 and later.')"></span>
+		</i>
 	</div>
 </div>

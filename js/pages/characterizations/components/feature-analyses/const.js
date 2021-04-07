@@ -1,6 +1,5 @@
 define((require, exports) => {
-
-	const constants = require('pages/characterizations/const');
+	const ko = require('knockout');
 	const datatableUtils = require('utils/DatatableUtils');
 	const feAnalysisTypes = {
 		PRESET: 'Preset',
@@ -9,38 +8,38 @@ define((require, exports) => {
 	};
 	const FeatureAnalysisFacets = [
 		{
-			'caption': 'Type',
+			'caption': ko.i18n('facets.caption.type', 'Type'),
 			'binding': (o) => feAnalysisTypes[o.type]
 		},
 		{
-			'caption': 'Domain',
+			'caption': ko.i18n('facets.caption.domain', 'Domain'),
 			'binding': (o) => datatableUtils.getFacetForDomain(o.domain),
 		},
 		{
-			'caption': 'Created',
+			'caption': ko.i18n('facets.caption.created', 'Created'),
 			'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
 		},
 		{
-			'caption': 'Last Modified',
+			'caption': ko.i18n('facets.caption.updated', 'Updated'),
 			'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 		},
 		{
-			'caption': 'Author',
+			'caption': ko.i18n('facets.caption.author', 'Author'),
 			'binding': datatableUtils.getFacetForCreatedBy,
 		},
 		{
-			'caption': 'Designs',
+			'caption': ko.i18n('facets.caption.designs', 'Designs'),
 			'binding': datatableUtils.getFacetForDesign,
 		},
 	];
 
 	const FeatureAnalysisColumns = (classes) => [
 		{
-			title: 'Id',
+			title: ko.i18n('columns.id', 'Id'),
 			data: 'id'
 		},
 		{
-			title: 'Name',
+			title: ko.i18n('columns.name', 'Name'),
 			data: 'name',
 			className: classes('tbl-col', 'name'),
 			render: datatableUtils.getLinkFormatter(d => ({
@@ -49,22 +48,22 @@ define((require, exports) => {
 			})),
 		},
 		{
-			title: 'Description',
+			title: ko.i18n('columns.description', 'Description'),
 			data: 'description',
 			className: classes('tbl-col', 'descr'),
 		},
 		{
-			title: 'Created',
+			title: ko.i18n('columns.created', 'Created'),
 			className: classes('tbl-col', 'created'),
 			render: datatableUtils.getDateFieldFormatter('createdDate'),
 		},
 		{
-			title: 'Modified',
+			title: ko.i18n('columns.updated', 'Updated'),
 			className: classes('tbl-col', 'updated'),
 			render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 		},
 		{
-			title: 'Author',
+			title: ko.i18n('columns.author', 'Author'),
 			className: classes('tbl-col', 'author'),
 			data: datatableUtils.getFacetForCreatedBy,
 		},

@@ -34,9 +34,9 @@ define([
 			this.chartFormats = {
 				prevalenceByGenderAgeYear: {
 					trellisSet: null,
-					trellisLabel: "Age Decile",
-					seriesLabel: "Year of Observation",
-					yLabel: "Prevalence Per 1000 People",
+					trellisLabel: ko.i18n('dataSources.deathReport.ageDecile', 'Age Decile'),
+					seriesLabel: ko.i18n('dataSources.deathReport.yearOfObservation', 'Year of Observation'),
+					yLabel: ko.i18n('dataSources.deathReport.prevalencePer1000People', 'Prevalence Per 1000 People'),
 					xFormat: d3.timeFormat("%Y"),
 					yFormat: d3.format("0.2f"),
 					tickPadding: 20,
@@ -48,8 +48,8 @@ define([
 					xScale: null,
 					xFormat: d3.timeFormat("%m/%Y"),
 					tickFormat: d3.timeFormat("%Y"),
-					xLabel: "Date",
-					yLabel: "Prevalence per 1000 People",
+					xLabel: ko.i18n('dataSources.deathReport.date', 'Date'),
+					yLabel: ko.i18n('dataSources.deathReport.prevalencePer1000People', 'Prevalence Per 1000 People'),
 					yFormat: d3.format("0.2f"),
 					getTooltipBuilder: options => {
 						return d => {
@@ -70,8 +70,8 @@ define([
 					}
 				},
 				ageBoxplot: {
-					yLabel: 'Age at first occurence',
-					xLabel: 'Gender',
+					yLabel: ko.i18n('dataSources.deathReport.ageAtFirstOccurence', 'Age at first occurence'),
+					xLabel: ko.i18n('dataSources.deathReport.gender', 'Gender'),
 					yFormat: d3.format(',.1s'),
 					valueFormatter: d3.format('d'),
 				},

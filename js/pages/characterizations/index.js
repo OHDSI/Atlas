@@ -26,7 +26,7 @@ define(
 		});
 
     return {
-      title: constants.pageTitle,
+      title: ko.i18n('navigation.characterizations', constants.pageTitle()),
       buildRoutes,
       icon: 'line-chart',
       statusCss,

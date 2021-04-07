@@ -27,23 +27,23 @@ define(
 
         this.drugsTableColumns = [
           {
-            title: 'OMOP Concept',
+            title: ko.i18n('columns.drugId', 'OMOP Concept'),
             data: 'drugId',
             className: this.classes('tbl-col', 'drug-id'),
             render: id => `<a href=\"#/concept/${id}\">${id}</a>`,
           },
           {
-            title: 'Drug',
+            title: ko.i18n('columns.drugName', 'Drug'),
             data: 'drugName',
             className: this.classes('tbl-col', 'drug'),
           },
           {
-            title: 'Concept vocabulary',
+            title: ko.i18n('columns.drugVocabularyId', 'Concept vocabulary'),
             data: 'drugVocabularyId',
             className: this.classes('tbl-col', 'drug-vocab'),
           },
           {
-            title: 'Concept class',
+            title: ko.i18n('columns.drugClass', 'Concept class'),
             data: 'drugClass',
             className: this.classes('tbl-col', 'drug-class'),
           },

@@ -431,26 +431,24 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 			cohdef
 		} = {}) {
 			var pcList = getCrits(cohdef, "primary", "crit");
-			var title = '<div class="heading">Primary Criteria</div>';
+			var title = '<div class="heading">' + ko.unwrap(ko.i18n('components.expressionCartoonBindings.primaryCriteria', 'Primary Criteria')) + '</div>';
 			var pLimitType = cohdef.PrimaryCriteria.PrimaryCriteriaLimit.Type;
-			var pcPlural = pLimitType === 'All' ? 's' : '';
-			var oneOrAny = pLimitType === 'All' ? 'any' : 'one';
-			var pcCritMatch = pcList.length === 1 ?
-				'the following primary criterion' :
-				`${oneOrAny} of the following ${pcList.length} primary criteria`;
-			var limitMsg = pLimitType === 'All' ?
-				`Results will be generated for every person event matching
-					${pcCritMatch}.
-					Final results will be limited to
-						${cohdef.ExpressionLimit.Type === 'All' ?
-									'those' :
-									'the ' + cohdef.ExpressionLimit.Type.toLowerCase()}
-						events matching any additional criteria and inclusion rules.` :
-				`Results will be generated for the ${pLimitType.toLowerCase()}
-											single event matching ${pcCritMatch}.`;
+			var pcPlural = pLimitType === 'All' ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.s', 's')) : '';
+			var oneOrAny = pLimitType === 'All' ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.any', 'any')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.one', 'one'));
+			var thoseOrthe = cohdef.ExpressionLimit.Type === 'All' ?
+			ko.unwrap(ko.i18n('components.expressionCartoonBindings.those', 'those')) :
+			ko.unwrap(ko.i18n('components.expressionCartoonBindings.the', 'the')) + ' ' + cohdef.ExpressionLimit.Type.toLowerCase();
 
-			var resultDateMsg = `Result index date${pcPlural} will be the start date${pcPlural} of the
-													matching primary criteria event${pcPlural}.`;
+			var pcCritMatch = pcList.length === 1 ?
+			ko.unwrap(ko.i18n('components.expressionCartoonBindings.expressionCartoonBindingsText_1', 'the following primary criterion')) :
+				ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_2', '<%=oneOrAny%> of the following <%=pcListLength%> primary criteria', {oneOrAny: oneOrAny, pcListLength: pcList.length}));
+			var limitMsg = pLimitType === 'All' ?
+				ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_3', 'Results will be generated for every person event matching <%=pcCritMatch%>. Final results will be limited to <%=thoseOrthe%> events matching any additional criteria and inclusion rules.', {pcCritMatch: pcCritMatch, thoseOrthe: thoseOrthe}))
+				:
+				ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_4', 'Results will be generated for the <%=pLimitTypeToLowerCase%> single event matching <%=pcCritMatch%>.', {pLimitTypeToLowerCase: pLimitType.toLowerCase(), pcCritMatch: pcCritMatch}))
+				;
+
+			var resultDateMsg = ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_5', 'Result index date<%=pcPlural%> will be the start date<%=pcPlural%> of the matching primary criteria event<%=pcPlural%>.', {pcPlural: pcPlural}));
 			var rightHeader =
 				/*
 				`Duration from Start
@@ -530,13 +528,14 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 		} = {}) {
 			var html = '';
 			if (!critgroup) {
-				html = 'No criteria group';
+				html = ko.unwrap(ko.i18n('components.expressionCartoonBindings.noCriteriaGroup', 'No criteria group'));
 			} else {
-				var all_any = `Restrict to people having events matching
-											${critgroup.Type.toLowerCase()} of the
-											following criteria.`;
+				var all_any = 
+				ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_6', 'Restrict to people having events matching <%=critgroupTypeToLowerCase%> of the following criteria.', {critgroupTypeToLowerCase: critgroup.Type.toLowerCase()}));
+				var rightHeaderMessage1 = ko.unwrap(ko.i18n('components.expressionCartoonBindings.expressionCartoonBindingsText_7', 'Events must start within bracketed period'));
+				var rightHeaderMessage2 = ko.unwrap(ko.i18n('components.expressionCartoonBindings.expressionCartoonBindingsText_8', 'relative to index date. Lines and arrows represent required duration of these events.'));
 				var rightHeader = `
-						Events must start within bracketed period
+						${rightHeaderMessage1}
 						(<svg style="display:inline-block" height="10px" width="38px">
 							<path class="curly-brace"
 										d="${ makeCurlyBrace(
@@ -547,8 +546,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 																			10,
 																			0.6)}" />
 						</svg>)
-						relative to index date.
-						Lines and arrows represent required duration of these events.
+						${rightHeaderMessage2}
 					`;
 
 				html += `${all_any}${rightHeader}
@@ -594,9 +592,8 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 			cohdef,
 			acsect
 		}) {
-			var title = '<div class="heading">Additional Criteria</div>';
-			if (!acsect)
-				title = '<div class="heading">No additional criteria</div>';
+			var titleMessage = !acsect ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.noAdditionalCriteria', 'No additional criteria')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.additionalCriteria', 'Additional Criteria')) 
+			var title = `<div class="heading">${titleMessage}</div>`;
 			d3element.select('div.header-content').html(title);
 			if (!acsect) return;
 			var body = d3element.select('div.section-body');
@@ -652,13 +649,15 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 		function connectorText(nodes, parentcrit, subgroup) {
 			var groupMsg, groupConnector;
 			if (parentcrit.PrimaryCriteriaLimit) {
-				groupMsg = `${parentcrit.PrimaryCriteriaLimit.Type} of`;
-				groupConnector = 'or';
+				groupMsg = ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.paramOf', '<%=param%> of', {param: parentcrit.PrimaryCriteriaLimit.Type}));
+				groupConnector = ko.unwrap(ko.i18n('components.expressionCartoonBindings.or', 'or'));
 			} else {
-				groupMsg = `${parentcrit.Type[0]}${parentcrit.Type.slice(1).toLowerCase()} of`;
+				groupMsg = 
+				ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.paramOf', '<%=param%> of', {param: parentcrit.Type[0] + parentcrit.Type.slice(1).toLowerCase()}));
 				if (parentcrit.Type.match(/^AT/))
-					groupMsg = `At ${parentcrit.Type.slice(3).toLowerCase()} ${parentcrit.Count} of`;
-				groupConnector = parentcrit.Type === 'ALL' ? 'and' : 'or';
+					groupMsg = 
+					ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.atParamOf', 'At <%=param%> of', {param: parentcrit.Type.slice(3).toLowerCase() + ' ' + parentcrit.Count}));
+				groupConnector = parentcrit.Type === 'ALL' ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.and', 'and')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.or', 'or'));
 			}
 
 			nodes.selectAll('div.indent-bar')
@@ -760,9 +759,8 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 			cohdef,
 			rules
 		} = {}) {
-			var html = '<div class="heading">Inclusion Rules</div>';
-			if (!rules.length)
-				html = '<div class="subheading">No inclusion rules</div>';
+			var titleMessage = !rules.length ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.noInclusionRules', 'No inclusion rules')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.inclusionRules', 'Inclusion rules')) 
+			var html = `<div class="heading">${titleMessage}</div>`;
 			var headerHtml = `
 									<div class="critgroup section-header row header-row">
 										<div class="col-xs-12 header-content">
@@ -1264,31 +1262,32 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 		function niceDomain(domain) {
 			switch (domain) {
 				case "ConditionOccurrence":
-					return "condition";
+					console.log(ko.unwrap(ko.i18n('components.expressionCartoonBindings.condition', 'condition')));
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.condition', 'condition'));
 				case "DrugExposure":
-					return "drug";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.drug', 'drug'));
 				case "DrugEra":
-					return "drug era";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.drugEra', 'drug era'));
 				case "ConditionEra":
-					return "condition era";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.conditionEra', 'condition era'));
 				case "DoseEra":
-					return "dose era";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.doseEra', 'dose era'));
 				case "ProcedureOccurrence":
-					return "procedure";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.procedure', 'procedure'));
 				case "Observation":
-					return "observation";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.observation', 'observation'));
 				case "DeviceExposure":
-					return "device";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.device', 'device'));
 				case "Measurement":
-					return "measurement";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.measurement', 'measurement'));
 				case "Specimen":
-					return "specimen";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.specimen', 'specimen'));
 				case "Death":
-					return "death";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.death', 'death'));
 				case "ObservationPeriod":
-					return "observation period";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.observationPeriod', 'observation period'));
 				case "VisitOccurrence":
-					return "visit"
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.visit', 'visit'));
 				default:
 					return domain;
 			}
@@ -1304,7 +1303,7 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 			var name = conceptName(crit, cohdef);
 			if (name)
 				return `${dom}: ${name}`;
-			return `any ${dom}`;
+			return ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.anyParam', 'any <%=param%>', {param: dom}));
 		}
 
 		//returns path string d for <path d="This string">
@@ -1362,27 +1361,27 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 
 		function addCritOccurrenceText(ac) {
 			var oc = ac.Occurrence;
-			return `with ${['exactly','at most','at least'][oc.Type]}
-							${oc.Count} using ${oc.IsDistinct ? 'distinct' : 'all'} occurrences`;
+			var distinctOrAll = oc.IsDistinct ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.distinct', 'distinct')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.all', 'all'));
+			return ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_9', 'with <%=type%> <%%=count> using <%=distinctOrAll%> occurrences', {type: ['exactly','at most','at least'][oc.Type], count: oc.Count, distinctOrAll: distinctOrAll}));
 		}
 
 		function addCritWindowText(ac) {
 			var sw = ac.StartWindow;
-			return `occurring between
-							${sw.Start.Days} days ${sw.Start.Coeff===-1 ? 'before' : 'after'} and
-							${sw.End.Days} days ${sw.End.Coeff===-1 ? 'before' : 'after'} index`;
+			var beforeArAfterStart = sw.Start.Coeff===-1 ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.before', 'before')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.after', 'after'));
+			var beforeArAfterEnd = sw.End.Coeff===-1 ? ko.unwrap(ko.i18n('components.expressionCartoonBindings.before', 'before')) : ko.unwrap(ko.i18n('components.expressionCartoonBindings.after', 'after'));
+			return ko.unwrap(ko.i18nformat('components.expressionCartoonBindings.expressionCartoonBindingsText_10', 'occurring between <%=startDays%> days <%=beforeArAfterStart%> and <%=endDays%> days <%=beforeArAfterEnd%> index', {startDays: sw.Start.Days, endDays: sw.End.Days, beforeArAfterStart: beforeArAfterStart, beforeArAfterEnd: beforeArAfterEnd}));
 		}
 
 		function durType(crit) {
 			if ("EraLength" in crit) {
-				return "Era";
+				return ko.unwrap(ko.i18n('components.expressionCartoonBindings.era', 'Era'));
 			}
 			switch (getCrit("domain", crit)) {
 				case "DrugExposure":
-					return "Days supply";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.daysSupply', 'Days supply'));
 				case "ObservationPeriod":
 				case "VisitOccurrence":
-					return "Visit";
+					return ko.unwrap(ko.i18n('components.expressionCartoonBindings.visitCapital', 'Visit'));
 			}
 		}
 

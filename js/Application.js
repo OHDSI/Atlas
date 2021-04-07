@@ -10,6 +10,7 @@ define(
 		'jquery',
 		'services/Execution',
 		'services/SourceAPI',
+		'services/I18nService',
 		'services/EventBus',
 		'services/ConceptSet',
 		'utils/CommonUtils',
@@ -29,6 +30,7 @@ define(
 		$, // TODO: get rid of jquery
 		executionService,
 		sourceApi,
+		i18nService,
 		EventBus,
 		conceptSetService,
 		commonUtils,
@@ -66,24 +68,24 @@ define(
 				});
 				this.appInitializationErrorMessage =  ko.computed(() => {
 					if (this.noSourcesAvailable()) {
-						return 'the current webapi has no sources defined.<br/>please add one or more on <a href="#/configure">configuration</a> page.'
+						return ko.i18n('commonErrors.noSources', 'The current WebAPI has no sources defined.<br/>Please add one or more on <a href="#/configure">configuration</a> page.')();
 					} else if (this.appInitializationStatus() !== constants.applicationStatuses.noSourcesAvailable) {
-						return 'unable to connect to an instance of the webapi.<br/>please contact your administrator to resolve this issue.'
+						return ko.i18n('commonErrors.webapiConnectError', 'Unable to connect to an instance of the WebAPI.<br/>Please contact your administrator to resolve this issue.')();
 					}
 				});
 				this.pageTitle = ko.pureComputed(() => {
 					let pageTitle = "ATLAS";
 					switch (this.router.currentView()) {
 						case 'loading':
-							pageTitle = `${pageTitle}: Loading`;
+							pageTitle = `${pageTitle}: ` + ko.i18n('common.loading', 'Loading')();
 							break;
 						default:
-							pageTitle = `${pageTitle}: ${this.router.activeRoute().title}`;
+							pageTitle = `${pageTitle}: ${ko.unwrap(this.router.activeRoute().title)}`;
 							break;
 					}
 
 					if (this.hasUnsavedChanges()) {
-						pageTitle = `*${pageTitle} (unsaved)`;
+						pageTitle = `*${pageTitle} ` + ko.i18n('common.unsaved', '(unsaved)')();
 					}
 
 					return pageTitle;
@@ -105,6 +107,13 @@ define(
 					}, document.getElementsByTagName('html')[0]);
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
+
+					try{
+						await i18nService.getAvailableLocales();
+					} catch (e) {
+						reject(e.message);
+					}
+
 					if (config.userAuthenticationEnabled) {
 						try {
 							await authApi.loadUserInfo();
@@ -117,10 +126,10 @@ define(
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
-					
+
 					resolve();
 				});
-				
+
 				return promise;
 			}
 

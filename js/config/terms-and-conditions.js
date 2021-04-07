@@ -1,9 +1,17 @@
-define(['text!./terms-and-conditions-content.html', 'less!./terms-and-conditions.less',], function (content) {
+define([
+	'text!./terms-and-conditions-content-en.html',
+	'text!./terms-and-conditions-content-ru.html',
+	'text!./terms-and-conditions-content-ko.html',
+	'less!./terms-and-conditions.less'
+], function (contentEn, contentRu, contentKo) {
+
 	var termsAndConditions = {
-    header: 'License Agreement',
-    description: 'In order to use the SNOMED International SNOMED CT Browser and HemOnc, please accept the following license agreement:',
-    content,
-    acceptanceExpiresInDays: 30,
+    contents: {
+    	en: contentEn,
+    	ru: contentRu,
+			ko: contentKo
+		},
+    acceptanceExpiresInDays: 30
   };
 
 	return {

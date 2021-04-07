@@ -84,7 +84,7 @@ define([
 			this.isAuthenticated = ko.pureComputed(() => {
 				return authAPI.isAuthenticated();
 			});
-			this.defaultName = globalConstants.newEntityNames.incidenceRate;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.incidenceRate);
 			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
 			this.isViewPermitted = ko.pureComputed(() => {
 				return !config.userAuthenticationEnabled
@@ -161,7 +161,7 @@ define([
 			};
 			this.incidenceRateCaption = ko.computed(() => {
 				if (this.selectedAnalysis() && this.selectedAnalysisId() !== null && this.selectedAnalysisId() !== 0) {
-					return 'Incidence Rate Analysis #' + this.selectedAnalysisId();
+					return ko.i18nformat('ir.caption', 'Incidence Rate Analysis #<%=id%>', {id: this.selectedAnalysisId()})();
 				}
 				return this.defaultName;
 			});
@@ -184,16 +184,16 @@ define([
 			this.isNameCorrect = ko.pureComputed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
-			
+
 			this.isTarValid = ko.pureComputed(() => {
 				const analysis = this.selectedAnalysis() && this.selectedAnalysis().expression();
 				if (analysis == null) return;
 				return !(analysis.timeAtRisk.start.DateField() == analysis.timeAtRisk.end.DateField() && analysis.timeAtRisk.end.Offset() <= analysis.timeAtRisk.start.Offset());			});
-			
+
 			this.canSave = ko.pureComputed(() => {
-				return this.isEditable() 
-					&& this.isNameCorrect() 
-					&& this.dirtyFlag().isDirty() 
+				return this.isEditable()
+					&& this.isNameCorrect()
+					&& this.dirtyFlag().isDirty()
 					&& !this.isRunning();
 			});
 			this.error = ko.observable();
@@ -379,14 +379,14 @@ define([
 			this.criteriaContext(item);
 			this.showConceptSetBrowser(true);
 		}
-		
+
 		handleEditConceptSet(item, context) {
 			if (item.conceptSetId() == null) {
 				return;
 			}
 			this.loadConceptSet(item.conceptSetId());
 		}
-			
+
 		loadConceptSet(conceptSetId) {
 			this.conceptSetStore.current(this.selectedAnalysis().expression().ConceptSets().find(item => item.id == conceptSetId));
 			this.conceptSetStore.isEditable(this.isEditable());
@@ -429,8 +429,7 @@ define([
 		}
 
 		closeAndShowList() {
-
-			if (this.dirtyFlag().isDirty() && !confirm("Incidence Rate Analysis changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('ir.notSavedMessage', 'Incidence Rate Analysis changes are not saved. Would you like to continue?')())) {
 				return;
 			}
 			this.close();
@@ -449,7 +448,7 @@ define([
 			try{
 				const results = await IRAnalysisService.exists(this.selectedAnalysis().name(), this.selectedAnalysisId() == undefined ? 0 : this.selectedAnalysisId());
 				if (results > 0) {
-					alert('An incidence rate with this name already exists. Please choose a different name.');
+					alert(ko.i18n('ir.nameConflict', 'An incidence rate with this name already exists. Please choose a different name.')());
 				} else {
 					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
 					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
@@ -457,7 +456,7 @@ define([
 					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save an incidence rate.');
+				alert(ko.i18n('ir.savingError', 'An error occurred while attempting to save an incidence rate.')());
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -465,7 +464,7 @@ define([
 		}
 
 		delete() {
-			if (!confirm("Delete incidence rate analysis? Warning: deletion can not be undone!"))
+			if (!confirm(ko.i18n('ir.deleteConfirmation', 'Delete incidence rate analysis? Warning: deletion can not be undone!')()))
 				return;
 
 			this.isDeleting(true);
@@ -477,7 +476,7 @@ define([
 		}
 
 		removeResult(analysisResult) {
-			if (confirm(`Do you really want to remove result of ${analysisResult.source.sourceName} ?`)) {
+			if (confirm(ko.i18nformat('ir.deleteResultConfirmation', 'Do you really want to remove result of <%=name%>?', {name:analysisResult.source.sourceName})())) {
 				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
 					const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 					source.info(null);

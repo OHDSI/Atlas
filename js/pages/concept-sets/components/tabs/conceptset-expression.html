@@ -3,13 +3,14 @@
         xssSafe: true,
         data: data(),
         options: {
+          language: datatableLanguage,
           dom: 'Clfiprt',
           colVis: {
-            buttonText: 'Change Columns',
+            buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
             align: 'right',
             overlayFade: 0,
-            showAll: 'Show All Columns',
-            restore: 'Reset Columns'
+            showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+            restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
           },
           rowCallback: commonUtils.contextSensitiveLinkColor,
           pageLength: tableOptions.pageLength,
@@ -32,13 +33,13 @@
               click: toggleSelectedConceptsForRemoval
             "></span>
           <!-- /ko -->
-      </th>
-        <th>Concept Id</th>
-        <th>Concept Code</th>
-        <th>Concept Name</th>
-        <th>Domain</th>
-        <th>Standard Concept Code</th>
-        <th>Standard Concept Caption</th>
+        </th>
+        <th data-bind="text: ko.i18n('columns.conceptId', 'Concept Id')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptCode', 'Concept Code')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptName', 'Concept Name')"></th>
+        <th data-bind="text: ko.i18n('columns.domain', 'Domain')"></th>
+        <th data-bind="text: ko.i18n('columns.standardConceptCode', 'Standard Concept Code')"></th>
+        <th data-bind="text: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption')"></th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
             <span data-bind="
@@ -48,7 +49,8 @@
               }),
               click: toggleExcluded
             "></span>
-          <!-- /ko --> Exclude
+          <!-- /ko -->
+          <span data-bind="text: ko.i18n('columns.exclude', 'Exclude')"></span>
         </th>
         <th>
           <!-- ko if: canEditCurrentConceptSet -->
@@ -59,18 +61,20 @@
             }),
             click: toggleDescendants
           "></span>
-          <!-- /ko --> Descendants
+          <!-- /ko -->
+          <span data-bind="text: ko.i18n('columns.descendants', 'Descendants')"></span>
         </th>
         <th>
-            <!-- ko if: canEditCurrentConceptSet -->
-              <span data-bind="
-                css: classes({
-                    element: 'checkmark',
-                    extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
-                }),
-                click: toggleMapped
-              "></span>
-            <!-- /ko --> Mapped
+          <!-- ko if: canEditCurrentConceptSet -->
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
+              }),
+              click: toggleMapped
+            "></span>
+          <!-- /ko -->
+          <span data-bind="text: ko.i18n('columns.mapped', 'Mapped')"></span>
         </th>
       </thead>
   </table>
@@ -78,23 +82,24 @@
   <concept-legend></concept-legend>
   <div class="row">
     <span data-bind="tooltip: buttonTooltip">
-      <button 
-        class="btn btn-danger btn-sm" 
+      <button
+        class="btn btn-danger btn-sm"
         data-bind="
-          click: removeConceptsFromConceptSet, 
+          click: removeConceptsFromConceptSet,
           css: { disabled: conceptsForRemovalLength() === 0 || !canEditCurrentConceptSet() },
-          text: conceptsForRemovalLength() === 1 ? 'Remove selected concept' : 'Remove selected concepts',
+          text: ko.i18n('components.conceptSet.removeSelected', 'Remove Selected'),
         "
       ></button>
     </span>
     <span data-bind="tooltip: buttonTooltip">
-      <button 
-      class="btn btn-success btn-sm" 
+      <button
+      class="btn btn-success btn-sm"
       data-bind="
         click: navigateToSearchPage,
-        css: { disabled: !canEditCurrentConceptSet() }
+        css: { disabled: !canEditCurrentConceptSet() },
+        text: ko.i18n('components.conceptSet.addConcepts', 'Add concepts')
       "
-    >Add concepts</button>
+    ></button>
     </span>
   </div>
 </div>

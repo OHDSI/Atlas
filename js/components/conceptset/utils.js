@@ -20,47 +20,47 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
 		},
 		{
-			title: 'Id',
+			title: ko.i18n('columns.id', 'Id'),
 			data: 'CONCEPT_ID'
 		},
 		{
-			title: 'Code',
+			title: ko.i18n('columns.code', 'Code'),
 			data: 'CONCEPT_CODE'
 		},
 		{
-			title: 'Name',
+			title: ko.i18n('columns.name', 'Name'),
 			data: 'CONCEPT_NAME',
 			render: commonUtils.renderLink,
 		},
 		{
-			title: 'Class',
+			title: ko.i18n('columns.class', 'Class'),
 			data: 'CONCEPT_CLASS_ID'
 		},
 		{
-			title: 'Standard Concept Caption',
+			title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 			data: 'STANDARD_CONCEPT_CAPTION',
 			visible: false
 		},
 		{
-			title: 'RC',
+			title: ko.i18n('columns.rc', 'RC'),
 			data: 'RECORD_COUNT',
 			className: 'numeric'
 		},
 		{
-			title: 'DRC',
+			title: ko.i18n('columns.drc', 'DRC'),
 			data: 'DESCENDANT_RECORD_COUNT',
 			className: 'numeric'
 		},
 		{
-			title: 'Domain',
+			title: ko.i18n('columns.domain', 'Domain'),
 			data: 'DOMAIN_ID'
 		},
 		{
-			title: 'Vocabulary',
+			title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 			data: 'VOCABULARY_ID'
 		},
 		{
-			title: 'Ancestors',
+			title: ko.i18n('columns.ancestors', 'Ancestors'),
 			data: 'ANCESTORS',
 			render: getAncestorsRenderFunction()
 		},
@@ -71,43 +71,43 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 		autoWidth:false,
 		Facets: [
 			{
-				'caption': 'Vocabulary',
+				'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 				'binding': (o) => {
 					return o.VOCABULARY_ID;
 				}
 			},
 			{
-				'caption': 'Class',
+				'caption': ko.i18n('facets.caption.class', 'Class'),
 				'binding': (o) => {
 					return o.CONCEPT_CLASS_ID;
 				}
 			},
 			{
-				'caption': 'Domain',
+				'caption': ko.i18n('facets.caption.domain', 'Domain'),
 				'binding': (o) => {
 					return o.DOMAIN_ID;
 				}
 			},
 			{
-				'caption': 'Standard Concept',
+				'caption': ko.i18n('facets.caption.standardConcept', 'Standard Concept'),
 				'binding': (o) => {
 					return o.STANDARD_CONCEPT_CAPTION;
 				}
 			},
 			{
-				'caption': 'Invalid Reason',
+				'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
 				'binding': (o) => {
 					return o.INVALID_REASON_CAPTION;
 				}
 			},
 			{
-				'caption': 'Has Records',
+				'caption': ko.i18n('facets.caption.hasRecords', 'Has Records'),
 				'binding': (o) => {
 					return parseInt(o.RECORD_COUNT) > 0;
 				}
 			},
 			{
-				'caption': 'Has Descendant Records',
+				'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
 				'binding': (o) => {
 					return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 				}
@@ -358,7 +358,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 	}
 
 	function getPermissionsText(clause = false, action = 'edit') {
-		return ko.unwrap(clause) ? null : `Not enough permissions to ${action} Concept Set`;
+		return ko.unwrap(clause) ? null : ko.i18nformat('components.conceptSet.notEnoughPermissions', 'Not enough permissions to <%=action%> Concept Set', {action: action});
 	}
 	
   return {

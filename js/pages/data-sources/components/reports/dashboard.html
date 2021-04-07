@@ -2,9 +2,7 @@
 <heading-title params="name: title"></heading-title>
 <div class="col-sm-12 col-md-6">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			CDM Summary
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.cdmSummary', 'CDM Summary')"></div>
 		<div class="panel-body">
 			<table class="stripe compact hover dataTable no-footer">
 				<tbody data-bind="foreach: summary()">
@@ -20,9 +18,7 @@
 
 <div class="col-xs-12 col-md-6">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Population by Gender
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.populationByGender', 'Population by Gender')"></div>
 		<div class="panel-body">
 			<donut params="data: genderConceptData"></donut>
 		</div>
@@ -31,9 +27,7 @@
 
 <div class="col-xs-12 col-md-12">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Age at First Observation
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.ageAtFirstObservation', 'Age at First Observation')"></div>
 		<div class="panel-body">
 			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
 		</div>
@@ -42,9 +36,7 @@
 
 <div class="col-xs-12 col-md-12">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Cumulative Observation
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.cumulativeObservation', 'Cumulative Observation')"></div>
 		<div class="panel-body">
 			<atlasline class="evidenceVisualization" params="data: observationLineData, format: chartFormats.observationLine"></atlasline>
 		</div>
@@ -53,9 +45,7 @@
 
 <div class="col-xs-12 col-md-12">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Persons With Continuous Observation By Month
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.personsWithContinuousObservationByMonth', 'Persons With Continuous Observation By Month')"></div>
 		<div class="panel-body">
 			<atlasline class="evidenceVisualization" params="data: byMonthSeriesData, format: chartFormats.byMonthSeries"></atlasline>
 		</div>

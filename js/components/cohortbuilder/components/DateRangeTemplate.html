@@ -1,3 +1,8 @@
-<select data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op"></select> 
-<input placeholder="YYYY-MM-DD" class="dateField" data-bind="datepicker: Range().Value, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
-<span data-bind="if: Range().Op().substr(-2) == 'bt'"> and <input placeholder="YYYY-MM-DD" class="dateField" data-bind="datepicker: Range().Extent, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /></span>
+<select
+  data-bind="options: $component.operationOptions, optionsText: 'name', optionsValue: 'id', value: Range().Op"></select>
+<input class="dateField"
+  data-bind="attr: {placeholder: ko.i18n('components.dateRange.firstPlaceholder', 'YYYY-MM-DD')}, datepicker: Range().Value, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+<span data-bind="if: Range().Op().substr(-2) == 'bt'">
+  <span data-bind="text: ko.i18n('components.dateRange.and', 'and')"></span>
+  <input class="dateField"
+    data-bind="attr: {placeholder: ko.i18n('components.dateRange.firstPlaceholder', 'YYYY-MM-DD')}, datepicker: Range().Extent, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" /></span>

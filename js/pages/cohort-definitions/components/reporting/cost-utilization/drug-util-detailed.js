@@ -30,12 +30,12 @@ define(
 
         this.drugsTableColumns = [
           {
-            title: 'Period start',
+            title: ko.i18n('columns.periodStart', 'Period start'),
             data: 'periodStart',
             className: this.classes('tbl-col', 'period-start'),
           },
           {
-            title: 'Period end',
+            title: ko.i18n('columns.periodEnd', 'Period end'),
             data: 'periodEnd',
             className: this.classes('tbl-col', 'period-end'),
           },
