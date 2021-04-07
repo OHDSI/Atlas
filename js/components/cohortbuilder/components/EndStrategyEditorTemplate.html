@@ -1,10 +1,11 @@
 <div>
-	Event will persist until: 
+	<span data-bind="text: ko.i18n('components.endStrategyEditor.eventWillPersistUntil', 'Event will persist until:')"></span> 
 	<select data-bind="options: $component.strategyOptions,
 		optionsText: function(item) { return item.text },
 		optionsValue: 'name',
 		value: strategyType">
 	</select>
+	<span data-bind="text: ko.i18n('components.endStrategyEditor.eventWillPersistUntil2', '')"></span>
 </div>
 <div data-bind="if: ko.utils.unwrapObservable(strategy) != null">
 	<div data-bind="component: {

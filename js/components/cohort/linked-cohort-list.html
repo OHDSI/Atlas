@@ -12,7 +12,7 @@
 <atlas-modal params="
 	showModal: $component.showModal,
 	dialogExtraClasses: [ $component.classes('cohort-definitions-modal') ],
-	title: 'Choose a Cohort definition',
+	title: ko.i18n('components.linkedCohortList.dialog.title', 'Choose a Cohort definition'),
 	data: {
 		cohortSelected: $component.cohortSelected,
 		classes: $component.classes,
@@ -26,5 +26,5 @@
 		data-bind="css: classes('modal-cohort-list')"
 		params="onSelect: data => cohortSelected(data), selectedData: data, showModal: showModal, multiChoice: multiChoice">
 	</cohort-definition-browser>
-	</div>
+</div>
 </atlas-modal>

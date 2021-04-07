@@ -1,2 +1,7 @@
-<span data-bind="text: ko.utils.unwrapObservable(Window.Start.Days) != null ? ko.utils.unwrapObservable(Window.Start.Days) : 'all'" /> days <span data-bind="text: $component.getCoeffName(ko.utils.unwrapObservable(Window.Start.Coeff))"></span>
-and <span data-bind="text: ko.utils.unwrapObservable(Window.End.Days) != null ? ko.utils.unwrapObservable(Window.End.Days) : 'all'" /> days <span data-bind="text: $component.getCoeffName(ko.utils.unwrapObservable(Window.End.Coeff))"></span>
+<span data-bind="text: ko.utils.unwrapObservable(Window.Start.Days) != null ? ko.utils.unwrapObservable(Window.Start.Days) : ko.i18n('components.windowInput.windowInputText_1', 'All')" />
+    <span data-bind="text: ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
+<span data-bind="text: $component.getCoeffName(ko.utils.unwrapObservable(Window.Start.Coeff))"></span>
+    <span data-bind="text: ko.i18n('components.windowInput.windowInputText_3', 'and')"></span>
+<span data-bind="text: ko.utils.unwrapObservable(Window.End.Days) != null ? ko.utils.unwrapObservable(Window.End.Days) : ko.i18n('components.windowInput.windowInputText_1', 'All')" />
+    <span data-bind="text: ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
+<span data-bind="text: $component.getCoeffName(ko.utils.unwrapObservable(Window.End.Coeff))"></span>

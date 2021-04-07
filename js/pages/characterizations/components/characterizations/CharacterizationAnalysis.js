@@ -1,6 +1,7 @@
 define(function(require, exports){
 
 	const ko = require('knockout');
+	const constants = require('const');
 	const ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
 	const CriteriaGroup = require('components/cohortbuilder/CriteriaGroup');
 
@@ -9,7 +10,8 @@ define(function(require, exports){
 			let data = design || {};
 
 			Object.assign(this, data);
-			this.name = ko.observable(data.name || 'New Characterization');
+			this.defaultName = ko.unwrap(constants.newEntityNames.characterization);
+			this.name = ko.observable(data.name || this.defaultName);
 			this.cohorts = ko.observableArray(data.cohorts);
 			this.featureAnalyses = ko.observableArray(data.featureAnalyses);
 			this.parameters = ko.observableArray(data.parameters);

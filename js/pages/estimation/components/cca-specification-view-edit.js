@@ -67,7 +67,7 @@ define([
 				this.deleteFromTable(this.cohortMethodAnalysisList, obj, rowIndex);
 			} else if (
 				obj.target.className.indexOf("btn-copy") >= 0 ||
-				obj.target.className.indexOf("fa-clone") >= 0
+				obj.target.parentElement.className.indexOf("btn-copy") >= 0
 			) {
 				this.copyAnalysisSettings(obj, rowIndex);
 			} else {
@@ -77,7 +77,7 @@ define([
 
 		addAnalysis() {
 			this.cohortMethodAnalysisList.push(
-				new CohortMethodAnalysis({description: "New analysis " + (this.cohortMethodAnalysisList().length + 1)}, this.defaultCovariateSettings())
+				new CohortMethodAnalysis({description: ko.i18n('ple.spec.newAnalysis', 'New analysis')() + ' ' + (this.cohortMethodAnalysisList().length + 1)}, this.defaultCovariateSettings())
 			);
 			// Get the index
 			const index = this.cohortMethodAnalysisList().length - 1;
@@ -86,8 +86,8 @@ define([
 
 		editAnalysis(analysis) {
 			this.editorArray = this.cohortMethodAnalysisList;
-			this.editorHeading('Analysis Settings');
-			this.editorDescription('Add or update the analysis settings');
+			this.editorHeading(ko.i18n('ple.spec.analysisSettings', 'Analysis Settings'));
+			this.editorDescription(ko.i18n('ple.spec.analysisSettingsDescription', 'Add or update the analysis settings'));
 			this.editorComponentName('cohort-method-analysis-editor');
 			this.editorComponentParams({ 
 				analysis: analysis,
@@ -100,7 +100,7 @@ define([
 		copyAnalysisSettings(obj, index) {
 			const newAnalysis = ko.toJS(this.cohortMethodAnalysisList()[index]);
 			newAnalysis.analysisId = this.cohortMethodAnalysisList().length + 1;
-			newAnalysis.description = "COPY OF " + newAnalysis.description;
+			newAnalysis.description = ko.i18nformat('common.copyOf', 'Copy of <%=name%>', {name: newAnalysis.description})();
 			this.cohortMethodAnalysisList.push(new CohortMethodAnalysis(newAnalysis));
 		}
 
@@ -115,8 +115,8 @@ define([
 
 		editComparison(comparison) {
 			this.editorArray = this.comparisons;
-			this.editorHeading('Comparison');
-			this.editorDescription('Add or update the target, comparator, outcome(s) cohorts and negative control outcomes');
+			this.editorHeading(ko.i18n('ple.spec.comparison', 'Comparison'));
+			this.editorDescription(ko.i18n('ple.spec.comparisonDescription', 'Add or update the target, comparator, outcome(s) cohorts and negative control outcomes'));
 			this.editorComponentName('comparison-editor');
 			this.editorComponentParams({ 
 				comparison: comparison,

@@ -91,7 +91,7 @@ define([
             this.domains = ko.observable([]);
             this.aggregates = ko.observable({});
             this.previousDesign = {};
-            this.defaultName = globalConstants.newEntityNames.featureAnalysis;
+            this.defaultName = ko.unwrap(globalConstants.newEntityNames.featureAnalysis);
             this.defaultAggregate = ko.observable();
 
             this.dataDirtyFlag = sharedState.FeatureAnalysis.dirtyFlag;
@@ -136,7 +136,7 @@ define([
             this.featureCaption = ko.computed(() => {
                 if (this.data()){
                     if (this.featureId() !== 0) {
-                        return `Feature Analysis #${this.featureId()}`;
+                        return ko.i18nformat('cc.fa.caption', 'Feature Analysis #<%=id%>', {id: this.featureId()})();
                     } else {
                         return this.defaultName;
                     }
@@ -174,7 +174,7 @@ define([
             this.tabs = ko.computed(() => {
                 const tabs = [
                     {
-                      title: 'Design',
+                      title: ko.i18n('cc.fa.tabs.design', 'Design'),
                       key: 'design',
                       componentName: 'feature-analysis-design',
                       componentParams: this.componentParams,
@@ -182,7 +182,7 @@ define([
                 ];
                 if (this.data() && this.data().type() === this.featureTypes.CRITERIA_SET) {
                     tabs.push({
-                      title: 'Concept Sets',
+                      title: ko.i18n('cc.fa.tabs.conceptSets', 'Concept Sets'),
                       key: 'conceptset',
                       componentName: 'feature-analysis-conceptset',
                       componentParams: this.componentParams,
@@ -259,15 +259,15 @@ define([
         getSaveTooltipTextComputed() {
             return ko.computed(() => {
                if (!(this.featureId() === 0 ? this.isCreatePermitted() : this.canEdit())) {
-                   return 'Not enough permissions';
+                   return ko.i18n('common.notEnoughPermissions', 'Not enough permissions')();
                } else if (this.areRequiredFieldsFilled()) {
                    if (!this.dataDirtyFlag().isDirty()){
-                       return 'No changes to persist';
+                       return ko.i18n('common.noChangesToPersist', 'No changes to persist')();
                    } else {
                        return "";
                    }
                } else {
-                   return 'Design or Name are empty';
+                   return ko.i18n('cc.fa.designOrNameAreEmpty', 'Design or Name are empty')();
                }
             });
         }
@@ -307,7 +307,7 @@ define([
 
         async loadDesign(id) {
             if (this.data() && (this.data().id || 0 === id)) return;
-            if (this.dataDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            if (this.dataDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.fa.unsavedConfirmation', 'Your changes are not saved. Would you like to continue?')))) {
                 return;
             }
             try {
@@ -434,7 +434,7 @@ define([
            try{
                 const results = await FeatureAnalysisService.exists(this.data().name(), this.featureId());
                 if (results > 0) {
-                    alert('A feature analysis with this name already exists. Please choose a different name.');
+                    alert(ko.unwrap(ko.i18n('cc.fa.nameExistsAlert', 'A feature analysis with this name already exists. Please choose a different name.')));
                 } else {
                     if (this.featureId() < 1) {
                         const res = await FeatureAnalysisService.createFeatureAnalysis(this.data());
@@ -446,7 +446,7 @@ define([
                     }
                 }
             } catch (e) {
-                alert('An error occurred while attempting to save a feature analysis.');
+                alert(ko.unwrap(ko.i18n('cc.fa.saveError', 'An error occurred while attempting to save a feature analysis.')));
             } finally {
                this.isSaving(false);
                this.loading(false);
@@ -468,7 +468,7 @@ define([
         }
 
         closeAnalysis() {
-            if (this.dataDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            if (this.dataDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.fa.unsavedConfirmation', 'Your changes are not saved. Would you like to continue?')))) {
               return;
             }
             this.data(null);

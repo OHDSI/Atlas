@@ -18,7 +18,7 @@ define([
 	Report,
 	Component
 ) {
-	class DataDensity extends Report {
+	class datadensity extends Report {
 		constructor(params) {
 			super(params);
 
@@ -43,8 +43,8 @@ define([
 					tickFormat: d3.timeFormat("%m/%Y"),
 					xValue: "xCalendarMonth",
 					yValue: "yRecordCount",
-					xLabel: "Year",
-					yLabel: "# of Records",
+					xLabel: ko.i18n('dataSources.datadensityReport.year', 'Year'),
+					yLabel: ko.i18n('dataSources.datadensityReport.numberOfRecords', '# of Records'),
 					showLegend: true,
 					getTooltipBuilder,
 				},
@@ -54,16 +54,16 @@ define([
 					tickFormat: d3.timeFormat("%m/%Y"),
 					xValue: "xCalendarMonth",
 					yValue: "yRecordCount",
-					xLabel: "Year",
-					yLabel: "Records Per Person",
+					xLabel: ko.i18n('dataSources.datadensityReport.year', 'Year'),
+					yLabel: ko.i18n('dataSources.datadensityReport.recordsPerPerson', 'Records Per Person'),
 					showLegend: true,
 					getTooltipBuilder,
 				},
 				conceptsPerPerson: {
 					yMax: 0,
 					yFormat: d3.format(',.1s'),
-					xLabel: 'Concept Type',
-					yLabel: 'Concepts per Person',
+					xLabel: ko.i18n('dataSources.datadensityReport.conceptType', 'Concept Type'),
+					yLabel: ko.i18n('dataSources.datadensityReport.conceptsPerPerson', 'Concepts per Person'),
 					valueFormatter: d3.format('d'),
 				},
 			};
@@ -132,5 +132,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('report-datadensity', DataDensity, view);
+	return commonUtils.build('report-datadensity', datadensity, view);
 });

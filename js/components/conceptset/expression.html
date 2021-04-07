@@ -1,15 +1,13 @@
 <loading params="status: 'Loading Concept Set Expression'" data-bind="visible: loading()"></loading>
 <div class="paddedWrapper" data-bind="hidden: loading">
-    <div class="heading">
-        Name:
-    </div>
+    <div class="heading" data-bind="text: ko.i18n('components.conceptSet.name', 'Name:')"></div>
     <div class="divtext" placeholder="Concept Set Name" data-bind="attr: { contenteditable:canEdit() }, htmlValue:currentConceptSet().name"></div>
     <conceptset-editor params="conceptSetItems:data, canEditCurrentConceptSet: canEdit"></conceptset-editor>
 
     <div class="clear"></div>
     <div data-bind="css: classes({element: 'button-pane', extra: 'pull-right'})">
         <span data-bind="tooltip: buttonTooltipText">
-            <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { $component.addConcepts(); }, enable: canEdit">Add Concepts</button>
+            <button type="button" class="btn btn-sm btn-success" data-bind="click:function() { $component.addConcepts(); }, enable: canEdit, text: ko.i18n('components.conceptSet.addConcepts', 'Add Concepts')"></button>
         </span>
         <span data-bind="tooltip: buttonTooltipText">
             <button
@@ -18,17 +16,17 @@
                 data-bind="
                     click:function() { $component.deleteConcepts(); }, 
                     css: { disabled: conceptsForRemovalLength() === 0 || !canEdit() },
-                    text: conceptsForRemovalLength() === 1 ? 'Remove Selected Concept' : 'Remove Selected Concepts'"
+                    text: ko.i18n('components.conceptSet.removeSelected', 'Remove Selected')"
             ></button>
         </span>
         
         <span data-bind="tooltip: buttonTooltipText">
-            <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.onDelete(); }, enable: canEdit">Delete Concept Set</button>
+            <button type="button" class="btn btn-sm btn-danger" data-bind="click:function() { $component.onDelete(); }, enable: canEdit, text: ko.i18n('components.conceptSet.deleteConceptSet', 'Delete Concept Set')"></button>
         </span>
         <span data-bind="tooltip: copyButtonTooltipText">
-            <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet">Copy To Concept Set Repository</button>
+            <button type="button" class="btn btn-sm btn-success" data-bind="click:function(){ $component.showSaveConceptSet(); }, enable: canCreateConceptSet, text: ko.i18n('components.conceptSet.copyToConceptSetRepository', 'Copy To Concept Set Repository')"></button>
         </span>
-        <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.onClose(); }">Close Concept Set</button>
+        <button type="button" class="btn btn-sm btn-primary" data-bind="click: function() { $component.onClose(); }, text: ko.i18n('components.conceptSet.closeConceptSet', 'Close Concept Set')"></button>
     </div>
 </div>
 <conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>

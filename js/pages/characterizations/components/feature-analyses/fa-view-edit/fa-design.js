@@ -52,13 +52,16 @@ define([
 			this.loadConceptSet = params.loadConceptSet;
 			this.defaultAggregate = params.defaultAggregate;
 			this.aggregates = params.aggregates;
-			this.windowedActions = cohortbuilderConsts.AddWindowedCriteriaActions.map(a => ({...a, action: this.buildAddCriteriaAction(a.type) }));
 
 			this.conceptSets = ko.pureComputed({
 					read: () => params.data() && params.data().conceptSets || [],
 					write: (value) => params.data().conceptSets(value),
 			});
-			
+
+			this.windowedActions = Object.keys(cohortbuilderConsts.windowedAttributes).map(a => {
+				return {...cohortbuilderConsts.windowedAttributes[a], action: this.buildAddCriteriaAction(cohortbuilderConsts.CriteriaTypes[a]) }
+			});
+
 			// Concept set import for criteria
 			this.criteriaContext = ko.observable();
 			this.showConceptSetBrowser = ko.observable();
@@ -79,10 +82,10 @@ define([
 
 		buildAddCriteriaAction(type) {
 			return () => this.addWindowedCriteria(type);
-	}
+		}
 
 		addWindowedCriteria(type) {
-			const criteria = type === cohortbuilderConsts.CriteriaTypes.DEMOGRAPHIC ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
+			const criteria = type === cohortbuilderConsts.CriteriaTypes.addDemographic ? this.getEmptyDemographicCriteria() : this.getEmptyWindowedCriteria(type);
 			this.data().design([...this.data().design(), criteria]);
 		}
 

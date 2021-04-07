@@ -3,7 +3,7 @@
 
 <!-- ko if: hasAccess -->
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
-	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : '(Read only)', icon: 'users', theme: 'dark'"></heading-title>
+	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'users', theme: 'dark'"></heading-title>
 	<!-- ko if: currentCohortDefinition() && currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
@@ -11,18 +11,30 @@
 	<div data-bind="currentCohortDefinition() != null">
 		<div class="asset-heading">
 			<div class="input-group">
-				<input class="form-control" type="text" placeholder="New Cohort Definition" data-bind="enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }"/>
+				<input class="form-control" type="text"
+					data-bind="placeholder: ko.i18n('const.newEntityNames.cohortDefinition', 'New Cohort Definition'), enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }" />
 				<div class="input-group-btn">
-					<button class="btn btn-success" title="Save cohort definition" data-bind="click: save, enable: canSave() && !isProcessing()"><i class="fa fa-save"></i></button>
-					<button class="btn btn-primary" title="Close cohort definition" data-bind="click: close, css: { disabled: isProcessing() }"><i class="fa fa-times"></i></button>
+					<button class="btn btn-success"
+						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.saveCohortTitle', 'Save cohort definition'), click: save, enable: canSave() && !isProcessing()"><i
+							class="fa fa-save"></i></button>
+					<button class="btn btn-primary"
+						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.closeCohortTitle', 'Close cohort definition'), click: close, css: { disabled: isProcessing() }"><i
+							class="fa fa-times"></i></button>
 					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
-					<button class="btn btn-primary" title="Create a copy of this cohort definition" data-bind="click: copy, enable: canCopy() && !isProcessing()"><i class="fa fa-copy"></i></button>
-					<button class="btn btn-primary" title="Get a link to this cohort definition" data-bind="enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
-					<button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+					<button class="btn btn-primary"
+						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.createCopyCohortTitle', 'Create a copy of this cohort definition'), click: copy, enable: canCopy() && !isProcessing()"><i
+							class="fa fa-copy"></i></button>
+					<button class="btn btn-primary"
+						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.getLinkCohortTitle', 'Get a link to this cohort definition'), enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i
+							class="fa fa-link"></i></button>
+					<button class="btn btn-primary"
+						data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
 						<i class="fa fa-lock"></i>
 					</button>
 					<!-- ko if: !isRunning() -->
-					<button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing()"><i class="fa fa-trash-o"></i></button>
+					<button class="btn btn-danger"
+						data-bind="title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
+							class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
 				</div>
@@ -32,47 +44,56 @@
 				hasInvalidCharacters: isNameFilled() && !isNameCharactersValid(),
 				hasInvalidLength: isNameFilled() && !isNameLengthValid(),
 				hasDefaultName: isDefaultName(),
-				analysisName: 'cohort definition',
+				analysisName: ko.i18n('components.nameValidation.cohortDefinition', 'cohort definition'),
 			"></name-validation>
 
 		</div>
 
 		<ul class="nav nav-tabs">
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.selectTab('definition'); }">
-				<a>Definition <i data-bind="click: function () { $component.cohortDefinitionOpened(true) }" class="fa fa-question-circle-o"></i></a>
+			<li role="presentation"
+				data-bind="css: { active: $component.tabMode() == 'definition' }, click: function() { $component.selectTab('definition'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.definition', 'Definition')"><i
+						data-bind="click: function () { $component.cohortDefinitionOpened(true) }"
+						class="fa fa-question-circle-o"></i></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.selectTab('conceptsets'); }">
-				<a>Concept Sets</a>
+			<li role="presentation"
+				data-bind="css: { active: $component.tabMode() == 'conceptsets' }, click: function() { $component.selectTab('conceptsets'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.conceptSets', 'Concept Sets')"></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
-				<a>Generation</a>
+			<li role="presentation"
+				data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.generation', 'Generation')"></a>
 			</li>
 
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
-				<a>Samples</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.samples', 'Samples')"></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
-				<a>Reporting</a>
+			<li role="presentation"
+				data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.reporting', 'Reporting')"></a>
 			</li>
 			<!--
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }"><a>Explore</a></li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.explore', 'Explore')"></a>
+			</li>
 			-->
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
-				<a>Export</a>
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
 				<a>
-					Messages
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages')"></span>
 					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --> <!-- /ko -->
 				</a>
 			</li>
 		</ul>
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'definition' }" class="tab-pane">
-				<atlas.cohort-editor params="canEditCurrentCohortDefinition: canEdit, loadConceptSet: loadConceptSet"></atlas.cohort-editor>
+				<atlas.cohort-editor params="canEditCurrentCohortDefinition: canEdit, loadConceptSet: loadConceptSet">
+				</atlas.cohort-editor>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'conceptsets' }" class="tab-pane">
 				<conceptset-list params="{
@@ -85,41 +106,55 @@
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'export' }" class="tab-pane">
 				<ul class="nav nav-pills">
-					<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'printfriendly' }, click: function() { $component.exportTabMode('printfriendly'); }">
-						<a>Text View</a>
+					<li role="presentation"
+						data-bind="css: { active: $component.exportTabMode() == 'printfriendly' }, click: function() { $component.exportTabMode('printfriendly'); }">
+						<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.textView', 'Text View')"></a>
 					</li>
 
-					<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon'); }">
-						<a>Graphical View</a>
+					<li role="presentation"
+						data-bind="css: { active: $component.exportTabMode() == 'cartoon' }, click: function() { $component.exportTabMode('cartoon'); }">
+						<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.graphicalView', 'Graphical View')"></a>
 					</li>
 
-					<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json'); }">
-						<a>JSON</a>
+					<li role="presentation"
+						data-bind="css: { active: $component.exportTabMode() == 'json' }, click: function() { $component.exportTabMode('json'); }">
+						<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.json', 'JSON')"></a>
 					</li>
 
-					<li role="presentation" data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.exportTabMode('sql');}">
-						<a>SQL</a>
+					<li role="presentation"
+						data-bind="css: { active: $component.exportTabMode() == 'sql' }, click: function() { $component.exportTabMode('sql');}">
+						<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sql', 'SQL')"></a>
 					</li>
 				</ul>
 
 				<div class="tab-content">
-					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}" class="tab-pane">
+					<div role="tabpanel" data-bind="css: {active: $component.exportTabMode() == 'printfriendly'}"
+						class="tab-pane">
 						<div class="paddedWrapper">
-							<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyTextViewClipboard" data-bind="click: copyTextViewToClipboard" data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
-							<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+							<button class="btn btn-sm btn-primary" id="btnCopyTextViewClipboard"
+								data-bind="attr: {title: ko.i18n('common.copyToClipboard', 'Copy To Clipboard')}, click: copyTextViewToClipboard"
+								data-clipboard-target="#cohortTextView"><i class="fa fa-clipboard" aria-hidden="true"></i>
+								<span
+									data-bind="text: ko.i18n('common.copyToClipboard', 'Copy To Clipboard')"></span>
+							</button>&nbsp;&nbsp;
+							<span id="copyTextViewMessage" style="display:none" class="alert alert-success" role="alert"><i
+									class="fa fa-check-square-o" aria-hidden="true"></i><strong>
+									<span
+										data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></span>
+								</strong></span>
 							<div id="cohortTextView" class="pad-10">
 								<h3 data-bind="text:currentCohortDefinition().name"></h3>
 								<div data-bind="text:currentCohortDefinition().description"></div>
 								<div class="cohort-printfriendly" data-bind="html:printFriendlyHtml"></div>
 								<br/>
-								<h3>Appendix 1: Concept Set Definitions</h3>
+								<h3 data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.appendix_1', 'Appendix 1: Concept Set Definitions')"></h3>
 								<br/>
 							</div>
 							<!-- ko foreach: sortedConceptSets -->
 							<div><span data-bind="text: ($index() + 1)"></span>. <span data-bind="text: $data.name"></span></div>
 							<div style="padding-left:20px">
-							    <conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
-							    <br/>
+								<conceptset-viewer params="{conceptSet: $data}"></conceptset-viewer>
+								<br />
 							</div>
 							<!-- /ko -->
 						</div>
@@ -136,7 +171,8 @@
 																		criteria: $data} }'></div>
 									<!-- /ko -->
 									<!-- ko if: $data.Criteria -->
-									<span data-bind="text: Occurrence.Count"></span> <span data-bind="text: Occurrence.IsDistinct ? 'distinct' : ''"></span> occurrence
+									<span data-bind="text: Occurrence.Count"></span> <span
+										data-bind="text: Occurrence.IsDistinct ? 'distinct' : ''"></span> occurrence
 									<span data-bind="text: Occurrence.Count != 1 ? 's' : ''"></span> of
 									<span data-bind="component: {
 																				name: $component.getCriteriaIndexComponent($data.Criteria),
@@ -154,15 +190,27 @@
 														delayedCartoonUpdate: $component.delayedCartoonUpdate}"></div>
 						</div>
 					</div>
-					<div role="tabpanel" data-bind="if: $component.tabMode() === 'export' && $component.exportTabMode() == 'json', css: { active: $component.exportTabMode() == 'json' }" class="tab-pane">
-						<textarea id="cohortExpressionJSON" class="code" style="width: 100%; height: 300px" data-bind="textInput: $component.expressionJSON"></textarea>
+					<div role="tabpanel"
+						data-bind="if: $component.tabMode() === 'export' && $component.exportTabMode() == 'json', css: { active: $component.exportTabMode() == 'json' }"
+						class="tab-pane">
+						<textarea id="cohortExpressionJSON" class="code" style="width: 100%; height: 300px"
+							data-bind="textInput: $component.expressionJSON"></textarea>
 						<div class="row">
 							<div class="col-md-6" style="float: left">
-								<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionJSONClipboard" data-bind="click: copyCohortExpressionJSONToClipboard" data-clipboard-target="#cohortExpressionJSON"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>&nbsp;&nbsp;
-								<span id="copyCohortExpressionJSONMessage" style="display:none" class="alert alert-success" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+								<button class="btn btn-sm btn-primary" title="Copy to clipboard" id="btnCopyExpressionJSONClipboard"
+									data-bind="attr: {title: ko.i18n('common.copyToClipboard', 'Copy To Clipboard')}, click: copyCohortExpressionJSONToClipboard"
+									data-clipboard-target="#cohortExpressionJSON"><i class="fa fa-clipboard" aria-hidden="true"></i>
+									<span
+										data-bind="text: ko.i18n('common.copyToClipboard', 'Copy To Clipboard')"></span>
+								</button>&nbsp;&nbsp;
+								<span id="copyCohortExpressionJSONMessage" style="display:none" class="alert alert-success"
+									role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>
+										<span
+											data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></span></strong></span>
 							</div>
 							<div class="col-md-6" style="text-align: right">
-								<button class="btn btn-sm btn-primary" data-bind="click: $component.reload">Reload</button>
+								<button class="btn btn-sm btn-primary"
+									data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.reload', 'Reload'), click: $component.reload"></button>
 							</div>
 						</div>
 					</div>
@@ -177,20 +225,30 @@
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
-				<div class="heading">Available CDM Sources</div>
+				<div class="heading"
+					data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.availableCDMSources', 'Available CDM Sources')">
+				</div>
 				<table class="cohort-generate-sources">
 					<thead>
 						<th></th>
-						<th>Source Name</th>
-						<th class="text-right nowrap">Generation Status</th>
-						<th class="text-right nowrap">People</th>
-						<th class="text-right nowrap">Records</th>
-						<th class="text-right nowrap">Generated</th>
-						<th class="text-right nowrap">Generation Duration</th>
+						<th data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name')"></th>
+						<th class="text-right nowrap"
+							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationStatus', 'Generation Status')"></th>
+						<th class="text-right nowrap" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.people', 'People')">
+						</th>
+						<th class="text-right nowrap"
+							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.records', 'Records')"></th>
+						<th class="text-right nowrap"
+							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generated', 'Generated')"></th>
+						<th class="text-right nowrap"
+							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration')">
+						</th>
 						<th></th>
 					</thead>
-					<tbody data-bind="foreach:cohortDefinitionSourceInfo, css: {overflow: cohortDefinitionSourceInfo().length > 3, 'max-height': $component.selectedReportSource()}">
-						<tr data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
+					<tbody
+						data-bind="foreach:cohortDefinitionSourceInfo, css: {overflow: cohortDefinitionSourceInfo().length > 3, 'max-height': $component.selectedReportSource()}">
+						<tr
+							data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
 							<td>
 								<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
 									<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="right">
@@ -198,19 +256,19 @@
 												data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate($data.sourceKey)},
 																		visible: !$component.isSourceRunning($data),
 																		click: (data, event) => $component.generateCohort(data)">
-												<i class="fa fa-play"></i>&nbsp;Generate
+												<i class="fa fa-play"></i>&nbsp;<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generate', 'Generate')"></span>
 										</button>
 									</span>
 								</span>
-								<a role="button" class="btn btn-sm btn-danger"
-									 data-bind="click:$component.cancelGenerate,
+								<a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
-															attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> Cancel
+															attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
 								</a>
 							</td>
 							<td class="nowrap" data-bind="text:name"></td>
 							<td class="statusIndicator text-right nowrap">
-								<span data-bind="template: { name: $component.getStatusTemplate, data: { item: $data, status: $component.getStatusMessage($data)} }"></span>
+								<span
+									data-bind="template: { name: $component.getStatusTemplate, data: { item: $data, status: $component.getStatusMessage($data)} }"></span>
 							</td>
 							<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.personCount)">
 							</td>
@@ -221,42 +279,64 @@
 							<td class="text-right nowrap" data-bind="text: executionDuration">
 							</td>
 							<td>
-								<div class="btn btn-sm btn-primary" data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
+								<div class="btn btn-sm btn-primary"
+									data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
 									<i class="fa fa-eye"></i>
-									<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey) ? 'Hide Reports' : 'View Reports')"></span>
+									<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey)
+										? ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.hideReports', 'Hide Reports')
+										: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
 								</div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 				<!-- ko if: selectedReportSource() -->
-					<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource"></cohort-reports>
+				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
 				<div class="pad-5">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-							Report Selections
+							<span
+								data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.reportSelections', 'Report Selections')"></span>
 						</div>
 						<div class="panel-body">
 							<div class="row">
 								<div class="btn-group pull-right pad-5">
-									<button class="btn btn-primary btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAllAnalyses">Full Analysis</button>
-									<button class="btn btn-success btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateQuickAnalysis">Quick Analysis</button>
-									<button class="btn btn-info btn-sm" data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.selectHealthcareAnalyses">Utilization</button>
-									<button class="btn btn-default btn-sm" data-bind="visible: $component.generateReportsEnabled, click: function () { $component.analysisTypesOpened(true) }"><i class="fa fa-question-circle text-primary"></i></button>
+									<button class="btn btn-primary btn-sm"
+										data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateAllAnalyses">
+										<span
+											data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.fullAnalysis', 'Full Analysis')"></span>
+
+									</button>
+									<button class="btn btn-success btn-sm"
+										data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.generateQuickAnalysis">
+										<span
+											data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.quickAnalysis', 'Quick Analysis')"></span>
+
+									</button>
+									<button class="btn btn-info btn-sm"
+										data-bind="visible: $component.generateReportsEnabled, css : {disabled:!$component.generateReportsEnabled()}, attr : {'disabled':!$component.generateReportsEnabled()}, click:$component.selectHealthcareAnalyses">
+										<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.utilization', 'Utilization')"></span>
+
+									</button>
+									<button class="btn btn-default btn-sm"
+										data-bind="visible: $component.generateReportsEnabled, click: function () { $component.analysisTypesOpened(true) }"><i
+											class="fa fa-question-circle text-primary"></i></button>
 								</div>
 							</div>
 
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="css : { invalid: $component.reportSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.reportSourceKey, optionsCaption:'Select a Source'"></select>
+									<select class="form-control"
+										data-bind="css : { invalid: $component.reportSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value:$component.reportSourceKey, optionsCaption: ko.i18n('dataSources.selectASource', 'Select a Source')"></select>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-sm-12">
-									<select class="form-control" data-bind="visible: showReportNameDropdown,disable: $component.loadingReport, attr:{disabled: $component.loadingReport}, css : {invalid: $component.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$component.reportReportName"></select>
+									<select class="form-control"
+										data-bind="visible: showReportNameDropdown,disable: $component.loadingReport, attr:{disabled: $component.loadingReport}, css : {invalid: $component.reportReportName()==undefined }, options:reportingAvailableReports, optionsCaption:$component.reportOptionCaption, optionsText:'name', optionsValue:'name', value:$component.reportReportName"></select>
 								</div>
 							</div>
 						</div>
@@ -265,39 +345,45 @@
 					<div data-bind="visible: !$component.isReportGenerating()">
 						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='cohort_not_generated'">
 							<div class="panel-heading">
-								Cohort Not Generated
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_1', 'Cohort Not Generated')"></span>
 							</div>
 							<div class="panel-body">
-								This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_2', 'This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing reporting.')"></span>
 							</div>
 						</div>
 						<div class="panel panel-danger" data-bind="visible: $component.reportingState()=='reports_not_generated'">
 							<div class="panel-heading ">
-								Reports Not Generated
+
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_3', 'Reports Not Generated')"></span>
 							</div>
 							<div class="panel-body">
-								Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.
+
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_4', 'Reports have not yet been generated for this cohort. Please click the generate button below to generate the reports.')"></span>
 							</div>
 						</div>
 						<div class="panel panel-info" data-bind="visible: $component.reportingState()=='awaiting_selection'">
 							<div class="panel-heading ">
-								Make a Selection
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_5', 'Make a Selection')"></span>
+
 							</div>
 							<div class="panel-body">
-								Please make a selection in the Report Selections panel.
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_6', 'Please make a selection in the Report Selections panel.')"></span>
+
 							</div>
 						</div>
-						<div class="panel panel-info" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
+						<div class="panel panel-info"
+							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='generating_reports')">
 							<div class="panel-heading ">
-								Generating Reports
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_7', 'Generating Reports')"></span>
+
 							</div>
 							<div class="panel-body">
 								<table class="pad-5" style="width:100%;">
 									<thead>
-										<th>Job Name</th>
-										<th>Start Date</th>
-										<th>Duration</th>
-										<th>Status</th>
+										<th data-bind="text: ko.i18n('columns.jobName', 'Job Name')"></th>
+										<th data-bind="text: ko.i18n('columns.startDate', 'Start Date')"></th>
+										<th data-bind="text: ko.i18n('columns.duration', 'Duration')"></th>
+										<th data-bind="text: ko.i18n('columns.status', 'Status')"></th>
 									</thead>
 									<tbody>
 										<tr data-bind="with:$component.currentJob">
@@ -310,31 +396,43 @@
 								</table>
 							</div>
 						</div>
-						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
+						<div class="panel panel-danger"
+							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='report_unavailable')">
 							<div class="panel-heading ">
-								Report Unavailable
+
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_8', 'Report Unavailable')"></span>
 							</div>
 							<div class="panel-body">
-								The report you requested is not available. Please click the generate button to generate cohort reports for this data source.
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_9', 'The report you requested is not available. Please click the generate button to generate cohort reports for this data source.')"></span>
+
 							</div>
 						</div>
-						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
+						<div class="panel panel-danger"
+							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.reportingState()=='unknown_cohort_report_state')">
 							<div class="panel-heading ">
-								Whoops
+
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_10', 'Whoops')"></span>
 							</div>
 							<div class="panel-body">
-								The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_11', 'The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on ')"></span>
+
+								<a href="https://www.github.com/ohdsi/atlas"><i
+										class="fa fa-github"></i> Github</a>.
 							</div>
 							<div class="panel-footer">
 								<div data-bind="html:$component.reportingError"></div>
 							</div>
 						</div>
-						<div class="panel panel-danger" data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
+						<div class="panel panel-danger"
+							data-bind="visible: (!$component.reportingSourceStatusLoading() && $component.createReportJobFailed)">
 							<div class="panel-heading ">
-								Create Reporting Job Failed
+
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_12', 'Create Reporting Job Failed')"></span>
 							</div>
 							<div class="panel-body">
-								The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on <a href="https://www.github.com/ohdsi/atlas"><i class="fa fa-github"></i> Github</a>.
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_11', 'The reporting system has encountered an error. Please provide the following details to your ATLAS administration team or submit an issue on ')"></span>
+								<a href="https://www.github.com/ohdsi/atlas"><i
+										class="fa fa-github"></i> Github</a>.
 							</div>
 							<div class="panel-footer">
 								<div data-bind="html:$component.createReportJobError"></div>
@@ -342,17 +440,22 @@
 						</div>
 						<div class="panel panel-warning" data-bind="visible: $component.reportingSourceStatusLoading()">
 							<div class="panel-heading ">
-								Please Wait
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_13', 'Please Wait')"></span>
+
 							</div>
 							<div class="panel-body">
-								Please wait while for the report status to be loaded.
+
+								<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_14', 'Please wait while for the report status to be loaded.')"></span>
 							</div>
 						</div>
 					</div>
 				</div>
-				<loading params="status:'loading'" data-bind="visible:$root.router.currentView() == 'loading' || $component.loadingReport()">
+				<loading params="status:'loading'"
+					data-bind="visible:$root.router.currentView() == 'loading' || $component.loadingReport()">
 				</loading>
-				<report-manager data-bind="visible:$component.reportingState()=='report_active' " params="{reportSourceKey: reportSourceKey, loadingReport: loadingReport, reportReportName: reportReportName, reportCohortDefinitionId: reportCohortDefinitionId, reportTriggerRun: reportTriggerRun, showSelectionArea: false} "></report-manager>
+				<report-manager data-bind="visible:$component.reportingState()=='report_active' "
+					params="{reportSourceKey: reportSourceKey, loadingReport: loadingReport, reportReportName: reportReportName, reportCohortDefinitionId: reportCohortDefinitionId, reportTriggerRun: reportTriggerRun, showSelectionArea: false} ">
+				</report-manager>
 			</div>
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
@@ -368,9 +471,7 @@
 				<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'samples' }" class="tab-pane">
 					<div class="pad-5">
 						<div class="panel panel-primary">
-							<div class="panel-heading">
-								Sample Selections
-							</div>
+							<div class="panel-heading" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.sampleSelections', 'Sample Selections')"></div>
 							<div class="panel-body">
 								<div class="row">
 									<div class="col-sm-12">
@@ -379,7 +480,7 @@
 											options: $component.cdmSources(),
 											optionsValue:'sourceKey', optionsText:'sourceName',
 											value:$component.sampleSourceKey,
-											optionsCaption:'Select a Source'">
+											optionsCaption: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.selectASource', 'Select a Source')">
 										</select>
 									</div>
 								</div>
@@ -391,10 +492,7 @@
 							<button
 								type="button"
 								class="btn btn-sm btn-primary"
-								data-bind="click:addNewSample"
-							>
-								Add new sample
-							</button>
+								data-bind="click:addNewSample, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.addNewSample', 'Add new sample')"></button>
 						</div>
 						<!--  samples list table -->
 						<div data-bind="visible: !$component.isLoadingSampleData() && $component.sampleSourceKey()">
@@ -406,6 +504,7 @@
 								pageLength: tableOptions.pageLength,
 								lengthMenu: tableOptions.lengthMenu,
 								rowClick: onSampleListRowClick,
+								language: ko.i18n('datatable.language')
 							}"
 							/>
 						</div>
@@ -418,6 +517,7 @@
 								order: [[0,'asc']],
 								pageLength: 15,
 								rowClick: onSampleDataClick,
+								language: ko.i18n('datatable.language')
 							}"
 							/>
 						</div>
@@ -426,12 +526,8 @@
 						<!-- notifications -->
 						<div data-bind="visible: sampleData() && sampleData().length == 0">
 							<div class="panel panel-danger" data-bind="visible: !$component.isCohortGenerated">
-								<div class="panel-heading">
-									Cohort Not Generated
-								</div>
-								<div class="panel-body">
-									This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.
-								</div>
+								<div class="panel-heading" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.cohortDefinitionManagerText_1', 'Cohort Not Generated')"></div>
+								<div class="panel-body" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.cohortNotGeneratedNote', 'This cohort has not been generated in the data source you selected. Please return to the generation tab to generate the cohort before accessing samples.')"></div>
 							</div>
 						</div>
 					</div>
@@ -440,7 +536,7 @@
 	</div>
 		<atlas-modal params="{
 			showModal: showSampleCreatingModal,
-			title: 'Create new sample',
+			title: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.title', 'Create new sample'),
 			data: {
 				sampleName: sampleName,
 				sampleNameError: sampleNameError,
@@ -462,23 +558,22 @@
 		}">
 			<form data-bind="submit: createNewSample" class="sampleCreatingForm" novalidate>
 				<div class="form-group" data-bind="css: {'has-error': sampleNameError()==true, 'has-success': sampleNameError()==false}">
-					<span class="help-block">*Mandatory fields</span>
-					<label for="sampleCreatingName" class="control-label">*Sample name</label>
-					<input required data-bind="textInput: sampleName" type="text" id="sampleCreatingName" class="form-control" placeholder="Enter sample name">
-					<span class="help-block" data-bind="visible: sampleNameError()">Sample name cannot be empty</span>
+					<span class="help-block" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.mandatoryFields', '* Mandatory fields')"></span>
+					<label for="sampleCreatingName" class="control-label" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.sampleName', '* Sample name')"></label>
+					<input required data-bind="textInput: sampleName, placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.sampleNamePlaceholder', 'Enter sample name')" type="text" id="sampleCreatingName" class="form-control">
+					<span class="help-block" data-bind="visible: sampleNameError(), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.sampleNameEmpty', 'Sample name cannot be empty')"></span>
 				</div>
 				<div class="form-group" data-bind="css: {'has-error': patientCountError(), 'has-success': !patientCountError()}">
-					<label class="control-label">*Number of patients</label>
-					<input step="1" data-bind="textInput: patientCount.numeric()" type="number" class="form-control" placeholder="Enter a number">
-					<span class="help-block" data-bind="visible: patientCountError()">Number of patients must be a positive integer</span>
+					<label class="control-label" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.numberOfPatients', '* Number of patients')"></label>
+					<input step="1" data-bind="textInput: patientCount.numeric(), placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.numberOfPatientsPlaceholder', 'Enter a number')" type="number" class="form-control">
+					<span class="help-block" data-bind="visible: patientCountError(), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.numberOfPatientsEmpty', 'Number of patients must be a positive integer')"></span>
 				</div>
 
 				<div class="form-group ageRange">
 					<label
-						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError() || firstAgeError(), myCustomTextSuccess: !isAgeRangeError()}"
+						data-bind="value: sampleAgeType, css: {myCustomTextError: isAgeRangeError() || firstAgeError(), myCustomTextSuccess: !isAgeRangeError()}, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.selectAgeCriteria', 'Select age criteria')"
 						for="sampleCreatingAge"
 						class="control-label">
-						Select age criteria
 					</label>
 					<div class="row">
 						<div class="col-md-7" style="padding-left: 0">
@@ -486,60 +581,58 @@
 								data-bind="value: sampleAgeType, css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !isAgeRangeError()}"
 								id="sampleCreatingAge"
 								class="form-control">
-									<option value="lessThan">Less than</option>
-									<option value="lessThanOrEqual">Less or equal to</option>
-									<option value="equalTo">Equal to</option>
-									<option value="greaterThan">Greater than</option>
-									<option value="greaterThanOrEqual">Greater or equal to</option>
-									<option value="between">Between</option>
-									<option value="notBetween">Not between</option>
+									<option value="lessThan" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.lessThan', 'Less than')"></option>
+									<option value="lessThanOrEqual" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.lessOrEqualTo', 'Less or equal to')"></option>
+									<option value="equalTo" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.equalTo', 'Equal to')"></option>
+									<option value="greaterThan" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.greaterThan', 'Greater than')"></option>
+									<option value="greaterThanOrEqual" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.greaterOrEqualTo', 'Greater or equal to')"></option>
+									<option value="between" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.between', 'Between')"></option>
+									<option value="notBetween" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.notBetween', 'Not between')"></option>
 							</select>
 						</div>
 						<div data-bind="css: {'col-md-2':isAgeRange(), 'col-md-5':!isAgeRange()}">
 							<input
-								data-bind="textInput: firstAge.numeric(), css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !(isAgeRangeError() || firstAgeError())}"
+								data-bind="textInput: firstAge.numeric(), css: {myCustomInputError: isAgeRangeError() || firstAgeError(), myCustomInputSuccess: !(isAgeRangeError() || firstAgeError())}, placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.agePlaceholder', 'Enter a number')"
 								type="text"
-								class="form-control"
-								placeholder="Enter a number">
-								<span data-bind="visible: !isAgeRange() && firstAgeError(), css: {myCustomTextError: firstAgeError(), myCustomTextSuccess: !firstAgeError()}">Age must be a non-negative integer</span>
+								class="form-control">
+								<span data-bind="visible: !isAgeRange() && firstAgeError(), css: {myCustomTextError: firstAgeError(), myCustomTextSuccess: !firstAgeError()}, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.ageError', 'Age must be a non-negative integer')"></span>
 						</div>
-						<div class="col-md-1" data-bind="visible: isAgeRange"><div style="margin-top: .5em; text-align: center">and</div></div>
+						<div class="col-md-1" data-bind="visible: isAgeRange"><div style="margin-top: .5em; text-align: center" data-bind="text: ko.i18n('common.and', 'and')"></div></div>
 						<div class="col-md-2" data-bind="visible: isAgeRange">
 							<input
-							data-bind="textInput: secondAge.numeric(), css: {myCustomInputError: isAgeRangeError, myCustomInputSuccess: !isAgeRangeError()}"
+							data-bind="textInput: secondAge.numeric(), css: {myCustomInputError: isAgeRangeError, myCustomInputSuccess: !isAgeRangeError()}, placeholder: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.agePlaceholder', 'Enter a number')"
 							type="text"
-							class="form-control"
-							placeholder="Enter a number">
+							class="form-control">
 						</div>
-						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError(), myCustomTextSuccess: !isAgeRangeError()}">First and second age must be non-negative integers and not equal</span>
+						<span data-bind="visible: isAgeRangeError(), css: {myCustomTextError: isAgeRangeError(), myCustomTextSuccess: !isAgeRangeError()}, text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.ageError2', 'First and second age must be non-negative integers and not equal')"></span>
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label class="control-label">Indicate gender (leave empty to select all gender)</label>
+					<label class="control-label" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.indicateGender', 'Indicate gender (leave empty to select all gender)')"></label>
 					<div class="checkbox">
 						<label>
-							<input type="checkbox" data-bind="checked: isMaleSample"> Male
+							<input type="checkbox" data-bind="checked: isMaleSample"><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.male', 'Male')"></span>
 						</label>
 					</div>
 					<div class="checkbox">
 							<label>
-								<input type="checkbox" data-bind="checked: isFeMaleSample"> Female
+								<input type="checkbox" data-bind="checked: isFeMaleSample"><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.female', 'Female')"></span>
 							</label>
 						</div>
 						<div class="checkbox">
 							<label>
-								<input type="checkbox" data-bind="checked: isOtherGenderSample"> Other
+								<input type="checkbox" data-bind="checked: isOtherGenderSample"><span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.other', 'Other')"></span>
 							</label>
 						</div>
 				</div>
 				 <!-- ko if: !newSampleCreatingLoader() -->
-				<button type="submit" class="btn btn-primary" data-bind="enable: isSampleFormValid()">Submit</button>
+				<button type="submit" class="btn btn-primary" data-bind="enable: isSampleFormValid(), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.submit', 'Submit')"></button>
 				 <!-- /ko -->
 				 <!-- ko if: newSampleCreatingLoader() -->
 				<button class="btn btn-primary" type="button" disabled>
 					<i class="fa fa-spinner fa-spin"></i>
-					Creating sample...
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.modal.creatingSample', 'Creating sample...')"></span>
 				</button>
 				 <!-- /ko -->
 			</form>
@@ -548,21 +641,21 @@
 	<atlas-modal params="{
 		showModal: analysisTypesOpened,
 		iconClass: 'fa fa-group',
-		title: 'Analysis Types',
+		title: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.title', 'Analysis Types'),
 		data: {}
 	}">
-		<b>Quick Analysis</b>
-		<p>Runs minimal analysis to provide a quick overview of this cohort's year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)</p>
-		<b>Healthcare Utilization</b>
-		<p>Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)</p>
-		<b>Full Analysis</b>
-		<p>Runs a complete set of characterization reports. (estimated: 60 minutes)</p>
+		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_1', 'Quick Analysis')"></b>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_1', 'Runs minimal analysis to provide a quick overview of this cohort\'s year of birth, demographics, drug eras and condition eras. (estimated: 10 minutes)')"></p>
+		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_2', 'Healthcare Utilization')"></b>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_2', 'Runs analyses to provide Exposure, Visit and Drug Utilization reports. (estimated: 10 - 40 minutes)')"></p>
+		<b data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.bold_3', 'Full Analysis')"></b>
+		<p data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.analysisTypes.text_3', 'Runs a complete set of characterization reports. (estimated: 60 minutes)')"></p>
 	</atlas-modal>
 
 	<atlas-modal params="{
 		showModal: cohortLinkModalOpened,
 		iconClass: 'fa fa-group',
-		title: 'Link to Cohort Definition',
+		title: ko.i18n('cohortDefinitions.cohort.modals.linkToCohortDefinition.title', 'Link to Cohort Definition'),
 		templateWrapperClass: {},
 		data: {
 			cohortDefinitionLink: $component.cohortDefinitionLink,
@@ -571,33 +664,32 @@
 		<div data-bind="css: $parent.classes({ element: 'modal-body', extra: 'modal-body' })">
 			<input readonly data-bind="value: cohortDefinitionLink" type="text" class="form-control text-cursor">
 		</div>
-		<div data-bind="css: $parent.classes({ element: 'modal-footer', extra: 'modal-footer' })">
-			This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.
+		<div data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.linkToCohortDefinition.text_1', 'This link can be used to access this cohort definition directly from the WebAPI from other tools like R as well as for importing across ATLAS instances.'), css: $parent.classes({ element: 'modal-footer', extra: 'modal-footer' })">
 		</div>
 	</atlas-modal>
 
 	<atlas-modal params="{
 		showModal: cohortDefinitionOpened,
-		title: 'Cohort Definition',
+		title: ko.i18n('cohortDefinitions.cohort.modals.cohortDefinition.title', 'Cohort Definition'),
 		data: {}
 	}">
-		A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort
-		entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events.
-		Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.
+		<div data-bind="text: ko.i18n('cohortDefinitions.cohort.modals.cohortDefinition.text_1', 'A cohort is defined as the set of persons satisfying one or more inclusion criteria for a duration of time. One person may qualify for one cohort multiple times during non-overlapping time intervals. Cohorts are constructed in ATLAS by specifying cohort entry criteria and cohort exit criteria. Cohort entry criteria involve selecting one or more initial events, which determine the start date for cohort entry, and optionally specifying additional inclusion criteria which filter to the qualifying events. Cohort exit criteria are applied to each cohort entry record to determine the end date when the person’s episode no longer qualifies for the cohort.')">
+		</div>
 	</atlas-modal>
 
 	<modal-pick-options params="{
 		showModal: $component.showUtilizationToRunModal,
-		title: 'Configure reports to run',
+		title: ko.i18n('cohortDefinitions.cohort.modals.configureReportsToRun.title', 'Configure reports to run'),
 		options: $component.utilReportOptions,
-		submitLabel: 'Run',
+		submitLabel: ko.i18n('cohortDefinitions.cohort.modals.configureReportsToRun.run', 'Run'),
 		submit: $component.generateHealthcareAnalyses,
 	}"></modal-pick-options>
-	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow"></conceptset-save>
+	<conceptset-save params="conceptSetName: newConceptSetName, onSave: saveConceptSet, show: saveConceptSetShow">
+	</conceptset-save>
 
 	<modal-exit-message params="{
 		showModal: isExitMessageShown,
-		title: 'Generation Exit Message',
+		title: ko.i18n('cohortDefinitions.cohortDefinitionManager.generationExitMessage', 'Generation Exit Message'),
 		exitMessage: $component.exitMessage,
 	}"></modal-exit-message>
 </div>
@@ -612,11 +704,11 @@
 "></configure-access-modal>
 
 <script type="text/html" id="success-status-tmpl">
-	<span data-bind="text: $data.status"></span>
+	<span data-bind="text: $component.getStatusMessageTranslated($data.status)"></span>
 </script>
 
 <script type="text/html" id="failed-status-tmpl">
-	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $data.status"></a>
+	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $component.getStatusMessageTranslated($data.status)"></a>
 </script>
 
 <!-- /ko -->

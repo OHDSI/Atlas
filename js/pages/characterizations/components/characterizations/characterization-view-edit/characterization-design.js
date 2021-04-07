@@ -106,7 +106,7 @@ define([
 
         getRemoveCell(action, identifierField = 'id') {
             return (s, p, d) => {
-                return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}')">Remove</a>`;
+                return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}'), text: ko.i18n('cc.viewEdit.design.fa.actions.remove', 'Remove')">Remove</a>`;
             }
         }
 
@@ -148,7 +148,7 @@ define([
 
         addStrata() {
             const strata = {
-              name: ko.observable('New Subgroup'),
+              name: ko.i18n('cc.viewEdit.design.subgroups.newSubgroup', 'New Subgroup'),
               criteria: ko.observable(new CriteriaGroup(null, this.strataConceptSets))
             };
             const ccDesign = this.design();

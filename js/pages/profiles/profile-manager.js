@@ -67,7 +67,7 @@ define([
 				this.aspectRatio = ko.observable();
 				this.config = config;
 				this.filterHighlightsText = ko.observable();
-				this.loadingStatus = ko.observable('loading');
+				this.loadingStatus = ko.i18n('common.loading', 'Loading');
 
 				this.sourceKey = ko.observable(router.routerParams().sourceKey);
 				this.personId = ko.observable(router.routerParams().personId);
@@ -136,7 +136,7 @@ define([
 				this.loadConceptSets(this.cohortDefSource());
 
 				this.sourceKeyCaption = ko.computed(() => {
-					return this.sourceKey() || "Select a Data Source";
+					return this.sourceKey() || ko.i18n('profiles.selectADataSource', 'Select a Data Source')();
 				});
 				this.personRequests = {};
 				this.personRequest;
@@ -266,7 +266,7 @@ define([
 					else
 						this.highlight([]);
 				});
-				this.cohortDefinitionButtonText = ko.observable('Click Here to Select a Cohort');
+				this.cohortDefinitionButtonText = ko.i18n('profiles.clickHereToSelectACohort', 'Click Here to Select a Cohort');
 
 				this.showSection = {
 					profileChart: ko.observable(true),
@@ -278,34 +278,34 @@ define([
 					data: 'highlight()',
 					sortable: false
 				}, {
-					title: 'Concept Name',
+					title: ko.i18n('columns.conceptName', 'Concept Name'),
 					data: 'caption'
 				}, {
-					title: 'Domain',
+					title: ko.i18n('columns.domain', 'Domain'),
 					data: 'domain'
 				}, {
-					title: 'Total Records',
+					title: ko.i18n('columns.totalRecords', 'Total Records'),
 					data: 'count'
 				}];
 
 				this.columns = [{
-						title: 'Concept Id',
+						title: ko.i18n('columns.conceptId', 'Concept Id'),
 						data: 'conceptId'
 					},
 					{
-						title: 'Concept Name',
+						title: ko.i18n('columns.conceptName', 'Concept Name'),
 						data: 'conceptName'
 					},
 					{
-						title: 'Domain',
+						title: ko.i18n('columns.domain', 'Domain'),
 						data: 'domain'
 					},
 					{
-						title: 'Start Day',
+						title: ko.i18n('columns.startDay', 'Start Day'),
 						data: 'startDay'
 					},
 					{
-						title: 'End Day',
+						title: ko.i18n('columns.endDay', 'End Day'),
 						data: 'endDay'
 					}
 				];
@@ -327,7 +327,7 @@ define([
 				this.highlightOptions = {};
 				this.options = {
 					Facets: [{
-						'caption': 'Domain',
+						'caption': ko.i18n('facets.caption.domain', 'Domain'),
 						'binding': d => d.domain,
 					}]
 				};
@@ -348,13 +348,13 @@ define([
 
 				let url = constants.paths.person(this.sourceKey(), this.personId());
 
-				this.loadingStatus('loading profile data from database');
+				this.loadingStatus = ko.i18n('profiles.loadingProfile', 'loading profile data from database');
 				this.personRequest = this.personRequests[url] = profileService.getProfile(this.sourceKey(), this.personId(), this.cohortDefinitionId())
 					.then((person) => {
 						if (this.personRequest !== this.personRequests[url]) {
 							return;
 						}
-						this.loadingStatus('processing profile data');
+						this.loadingStatus = ko.i18n('profiles.processingProfile', 'processing profile data');
 						person.personId = this.personId();
 						this.loadingPerson(false);
 						let cohort;
@@ -448,7 +448,7 @@ define([
 			setHighlights(colorIndex) {
 				const dt = $('#highlight-table table').DataTable();
 				const rows = dt.rows('.selected');
-				var selectedData = rows.data();
+				const selectedData = rows.data();
 				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.getHighlightBackground(colorIndex)); // set the swatch color
 					selectedData[i].recs.forEach(r => {
@@ -471,7 +471,7 @@ define([
 			clearHighlights() {
 				const dt = $('#highlight-table table').DataTable();
 				const rows = dt.rows('.selected');
-				var selectedData = rows.data();
+				const selectedData = rows.data();
 				for (let i = 0; i < selectedData.length; i++) {
 					selectedData[i].highlight(this.defaultColor); // set the swatch color
 					selectedData[i].recs.forEach(r => {

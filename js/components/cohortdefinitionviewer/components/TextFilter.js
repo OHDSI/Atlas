@@ -6,22 +6,22 @@ define(['knockout', 'text!./TextFilterTemplate.html'], function (ko, componentTe
 		
 		self.operationOptions = [{
 			id: 'startsWith',
-			name: 'starting with'
+			name: ko.i18n('options.startsWith', 'starting with')
 		}, {
 			id: 'contains',
-			name: 'containing'
+			name: ko.i18n('options.contains', 'containing')
 		}, {
 			id: 'endsWith',
-			name: 'ending with'
+			name: ko.i18n('options.endsWith', 'ending with')
 		}, {
 			id: '!startsWith',
-			name: 'not starting with'
+			name: ko.i18n('options.notStartsWith', 'not starting with')
 		}, {
 			id: '!contains',
-			name: 'not containing'
+			name: ko.i18n('options.notContains', 'not containing')
 		}, {
 			id: '!endsWith',
-			name: 'not ending with'
+			name: ko.i18n('options.notEndsWith', 'not ending with')
 		}];
 		
 		self.opName = ko.pureComputed(function() {

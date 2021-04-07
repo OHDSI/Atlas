@@ -16,6 +16,7 @@ define(function () {
   appConfig.enableCosts = false;
 	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	appConfig.supportMail = "atlasadmin@your.org";
+	appConfig.defaultLocale = "en";
 	appConfig.authProviders = [
     {
       "name": "Windows",

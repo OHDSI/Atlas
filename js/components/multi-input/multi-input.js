@@ -47,7 +47,9 @@ define([
           return (this.selectedValues && this.hasDefaults() && !(_.isEqual(_.sortBy(this.selectedValues()), _.sortBy(this.defaultValues))));
         });
         this.defaultText = ko.pureComputed(() => {
-          return this.enableDefaults() ? 'Reset to default' : 'Using default';
+          return this.enableDefaults() ?
+            ko.i18n('predictions.resetToDefault', 'Reset to default') :
+            ko.i18n('predictions.usingDefault', 'Using Default');
         })
       }
 

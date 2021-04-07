@@ -45,43 +45,43 @@ define([
 		self.facetOptions = {
 			Facets: [
 				{
-					'caption': 'Vocabulary',
+					'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 					'binding': function (o) {
 						return o.VOCABULARY_ID;
 					}
 				},
 				{
-					'caption': 'Class',
+					'caption': ko.i18n('facets.caption.class', 'Class'),
 					'binding': function (o) {
 						return o.CONCEPT_CLASS_ID;
 					}
 				},
 				{
-					'caption': 'Domain',
+					'caption': ko.i18n('facets.caption.domain', 'Domain'),
 					'binding': function (o) {
 						return o.DOMAIN_ID;
 					}
 				},
 				{
-					'caption': 'Standard Concept',
+					'caption': ko.i18n('facets.caption.standardConcept', 'Standard Concept'),
 					'binding': function (o) {
 						return o.STANDARD_CONCEPT_CAPTION;
 					}
 				},
 				{
-					'caption': 'Invalid Reason',
+					'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
 					'binding': function (o) {
 						return o.INVALID_REASON_CAPTION;
 					}
 				},
 				{
-					'caption': 'Has Records',
+					'caption': ko.i18n('facets.caption.hasRecords', 'Has Records'),
 					'binding': function (o) {
 						return parseInt(o.RECORD_COUNT) > 0;
 					}
 				},
 				{
-					'caption': 'Has Descendant Records',
+					'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
 					'binding': function (o) {
 						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 					}

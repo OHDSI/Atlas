@@ -4,8 +4,6 @@
                             options: {
                                         dom: 'Bliprt',
                                         buttons: [],
-                                        language: {
-                                        },
                                         pageLength: tableOptions.pageLength,
                                         lengthMenu: tableOptions.lengthMenu,
                                         orderClasses: false,
@@ -14,10 +12,19 @@
                                         ordering: true,
                                         order: [[ 1, 'asc' ]],
                                         columns: [
-                                            { title: 'Selected', class: 'text-center', width: '1.5rem', render: function(){ return renderCheckbox('selected'); } },
-                                            { title: 'Atlas role', width: '100%', data: 'role' },
+                                            {
+                                                title: ko.i18n('columns.selected', 'Selected'),
+                                                class: 'text-center', width: '1.5rem',
+                                                render: function(){ return renderCheckbox('selected'); }
+                                            },
+                                            {
+                                                title: ko.i18n('columns.atlasRole', 'Atlas role'),
+                                                width: '100%',
+                                                data: 'role'
+                                            },
                                         ],
                                         stripeClasses : [ 'roleItem' ],
+                                        language: ko.i18n('datatable.language')
                                 }
                               }, css: classes({ extra: ['stripe','compact','hover'] })">
     </table>

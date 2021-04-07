@@ -1,2 +1,4 @@
-starting <input placeholder="YYYY-MM-DD" class="dateField" data-bind="datepicker: Period().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
-and ending <input placeholder="YYYY-MM-DD" class="dateField" data-bind="datepicker: Period().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+<span data-bind="text: ko.i18n('components.period.starting', 'starting')"></span>
+<input placeholder="YYYY-MM-DD" class="dateField" data-bind="datepicker: Period().StartDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />
+<span data-bind="text: ko.i18n('components.period.andEnding', 'and ending')"></span>
+<input placeholder="YYYY-MM-DD" class="dateField" data-bind="datepicker: Period().EndDate, datepickerOptions: { defaultDate: new Date(), dateFormat: 'yy-mm-dd' }" />

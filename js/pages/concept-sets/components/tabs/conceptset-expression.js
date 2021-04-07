@@ -35,6 +35,8 @@ define([
         return this.conceptSetItems().find(item => !item.includeMapped()) === undefined;
       });
 
+			this.datatableLanguage = ko.i18n('datatable.language');
+
 			this.data = ko.pureComputed(() => this.conceptSetItems().map((item, idx) => ({ ...item, idx, isSelected: ko.observable() })));
 
       this.conceptsForRemovalLength = ko.pureComputed(() => this.data().filter(row => row.isSelected()).length);
