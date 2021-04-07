@@ -84,8 +84,6 @@ define(['knockout',
 				this.usersList = ko.observableArray();
 				this.linkClasses = this.classes('link');
 				this.connectionCheck = ko.observable();
-				this.showConnectionDetails = ko.observable();
-				this.detailsButtonText = ko.computed(() => ko.i18n('configuration.userImport.wizard.selectSource.buttons.details', 'Details')() + (this.showConnectionDetails() ? " <<<" : " >>>"))
 				this.infoMessageClass = ko.computed(() => {
 					const modifier = this.connectionCheck() ? String(this.connectionCheck().state).toLowerCase() : '';
 					return this.classes('info-message', modifier);
@@ -148,16 +146,13 @@ define(['knockout',
 
 			testConnection() {
 				userService.testConnection(this.importProvider())
-					.then((data) => this.connectionCheck(data));
+					.then((data) => this.connectionCheck(data))
+					.catch(this.connectionCheck({state: 'FAILED', message: ko.i18n('configuration.userImport.wizard.provider.connection.failed', 'Connection failed. Please see server logs for details.')}));
 			}
 
 			testConnectionClick() {
 				this.preventNext = true;
 				this.testConnection();
-			}
-
-			toggleConnectionDetails() {
-				this.showConnectionDetails(!this.showConnectionDetails());
 			}
 
 			startPolling(jobId) {

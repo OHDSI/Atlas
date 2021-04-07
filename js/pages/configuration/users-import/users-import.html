@@ -14,13 +14,6 @@
                     <div data-bind="css: classes({extra: ['panel', 'panel-warning', 'padded']})">
                         <div data-bind="css: classes({extra: ['panel-body']})">
                             <div data-bind="css: infoMessageClass(), text: connectionCheck().message"></div>
-                            <div data-bind="if: connectionCheck() && connectionCheck().state === 'FAILED'">
-                                <button data-bind="click: toggleConnectionDetails, css: classes({extra: ['btn', 'btn-sm', 'btn-info']}), text: detailsButtonText"></button>
-                                <div data-bind="if: showConnectionDetails(), css: classes('connection-details')">
-                                    <pre data-bind="text: connectionCheck().details, css: classes({extra: 'radius-border'})">
-                                    </pre>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
