@@ -24,6 +24,7 @@ define([
         const bemHelper = new BemHelper(componentName);
 		this.classes = bemHelper.run.bind(bemHelper);
         self.token = authApi.token;
+        self.reloginRequired = authApi.reloginRequired;
         self.loadUserInfo = authApi.loadUserInfo;
         self.setAuthParams = authApi.setAuthParams;
         self.resetAuthParams = authApi.resetAuthParams;
