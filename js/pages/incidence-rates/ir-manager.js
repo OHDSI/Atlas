@@ -222,6 +222,8 @@ define([
 				checkOnInit: true,
 			});
 
+			this.isDesignCorrect = ko.pureComputed(() => this.criticalCount() === 0);
+
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.INCIDENCE_RATE,
 				entityIdGetter: () => this.selectedAnalysisId(),
