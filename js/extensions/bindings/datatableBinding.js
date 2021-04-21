@@ -84,21 +84,23 @@ define([
 			const hasOriginalRender = typeof originalRender === 'function';
 			const hasDataAccessor = typeof originalDataAccessor === 'function';
 
-			if (binding.options.xssSafe || column.xssSafe) return column; // disable XSS filtering if column is marked 'safe'
-
-			return Object.assign({}, column, {
-				title: ko.unwrap(column.title),
-				//todo yar this title is not observer, shout be fix
-				// title: column.title,
-				data: hasDataAccessor
-					? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
-					: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
-				render: hasOriginalRender
-					? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
-					// https://datatables.net/reference/option/columns.render
-					// "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
-					: $.fn.dataTable.render.text()
-			});
+			if (binding.options.xssSafe || column.xssSafe) { // disable XSS filtering if column is marked 'safe'
+				return Object.assign({}, column, {
+					title: ko.unwrap(column.title)
+				});
+			} else {
+				return Object.assign({}, column, {
+					title: ko.unwrap(column.title),
+					data: hasDataAccessor
+						? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
+						: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
+					render: hasOriginalRender
+						? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
+						// https://datatables.net/reference/option/columns.render
+						// "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
+						: $.fn.dataTable.render.text()
+				});
+			}
 		});
 	}
 
