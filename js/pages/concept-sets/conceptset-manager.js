@@ -262,6 +262,7 @@ define([
 				entityTypeGetter: () => entityType.CONCEPT_SET,
 				entityIdGetter: () => this.currentConceptSet() && this.currentConceptSet().id,
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
+					&& this.currentConceptSet().createdBy.login
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
