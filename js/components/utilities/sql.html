@@ -1,6 +1,6 @@
 <div data-bind="css: classes()">
     <loading data-bind="visible: loading"></loading>
-    <!-- ko if: canExport() && !loading() -->
+    <!-- ko if: canExport() && !loading() && isDesignCorrect() -->
     <tabs params="
         modifiers: 'export-sql',
         selectedTabKey: $component.selectedTabKey,
@@ -12,6 +12,9 @@
         }
     ">
     </tabs>
+    <!-- /ko -->
+    <!-- ko if: !isDesignCorrect() -->
+    <div data-bind="css: classes('error-message'), text: ko.i18n('components.exportSql.incorrectDesign', 'Cannot generate SQL: design of the analysis is incorrect')"></div>
     <!-- /ko -->
     <access-denied params="isAuthenticated: isAuthenticated, isPermitted: canExport"></access-denied>
 </div>
