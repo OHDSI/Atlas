@@ -107,7 +107,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 						$.each(self.oOptions.Facets, function (i, facetConfig) {
 							var isArray = facetConfig.isArray || false;
 							var dimension = self.data().dimension(function (d) {
-								return self.facetDimensionHelper(facetConfig.binding(d));
+								return self.facetDimensionHelper(ko.unwrap(facetConfig.binding(d)));
 							}, isArray);
 							var facet = {
 								'caption': facetConfig.caption,
