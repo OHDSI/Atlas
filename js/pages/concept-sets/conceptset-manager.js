@@ -10,6 +10,7 @@ define([
 	'components/conceptset/utils',
 	'services/Vocabulary',
 	'services/Permission',
+	'services/Tags',
 	'components/security/access/const',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'conceptsetbuilder/InputTypes/ConceptSetItem',
@@ -38,6 +39,7 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
+	'components/tags/tags',
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',
@@ -53,6 +55,7 @@ define([
 	utils,
 	vocabularyAPI,
 	GlobalPermissionService,
+	TagsService,
 	{ entityType },
 	ConceptSet,
 	ConceptSetItem,
@@ -262,6 +265,11 @@ define([
 				entityTypeGetter: () => entityType.CONCEPT_SET,
 				entityIdGetter: () => this.currentConceptSet() && this.currentConceptSet().id,
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
+			});
+
+			TagsService.decorateComponent(this, {
+				assetTypeGetter: () => TagsService.ASSET_TYPE.CONCEPT_SET,
+				assetGetter: () => this.currentConceptSet()
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());

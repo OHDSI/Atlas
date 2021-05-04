@@ -6,4 +6,9 @@
 	<!-- ko if: !!description -->
 		<span class="description" data-bind="text: description"></span>
 	<!-- /ko -->
+	<div data-bind="foreach: getTags()" class="tags">
+		<span class="tag">
+			<i class="fa fa-tag"></i> <span data-bind="text: name"></span>
+		</span>
+	</div>
 </div>

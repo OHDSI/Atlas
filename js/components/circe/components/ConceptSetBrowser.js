@@ -100,6 +100,7 @@ define([
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
 					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
+					datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
 					self.repositoryConceptSets(results);
 					self.loading(false);
 				})

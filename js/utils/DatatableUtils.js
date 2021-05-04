@@ -64,6 +64,31 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
 
         const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
 
+        const addTagGroupsToFacets = (list, facets) => {
+            const tagGroups = new Set();
+            list.forEach(e => {
+               if (e.tags) {
+                   const tagGroupsForElement = e.tags.filter(t => !t.groups || t.groups.length === 0);
+                   tagGroupsForElement.forEach(tg => tagGroups.add(tg.name));
+               }
+            });
+            tagGroups.forEach(tg => {
+                facets.unshift({
+                    caption: tg,
+                    binding: (o) => {
+                        let returnedArray = o.tags && o.tags.length > 0
+                            ? o.tags
+                                .filter(t => t.groups && t.groups.length > 0
+                                    && t.groups.filter(otg => otg.name === tg).length > 0)
+                                .map(t => t.name)
+                            : [];
+                        return returnedArray.length > 0 ? returnedArray : ['Untagged'];
+                    },
+                    isArray: true
+                });
+            });
+        };
+
         const renderExecutionStatus = () => (s, p, d) => {
             const { executionStatuses } = consts;
             const status = ko.i18n(`executionStatus.values.${s}`, s)();
@@ -130,6 +155,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             renderCountColumn,
             getFacetForDomain,
             coalesceField,
+            addTagGroupsToFacets,
             renderExecutionStatus,
             renderExecutionDuration,
             renderExecutionResultsView,

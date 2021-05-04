@@ -3,7 +3,7 @@
 
 <!-- ko if: hasAccess -->
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
-	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'users', theme: 'dark'"></heading-title>
+	<heading-title params="name: cohortDefinitionCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'users', theme: 'dark', tags: currentCohortDefinition().tags"></heading-title>
 	<!-- ko if: currentCohortDefinition() && currentCohortDefinition().id() != 0 -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
@@ -21,6 +21,8 @@
 						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.closeCohortTitle', 'Close cohort definition'), click: close, css: { disabled: isProcessing() }"><i
 							class="fa fa-times"></i></button>
 					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
+					<button class="btn btn-primary"
+						data-bind="title: ko.i18n('common.tags', 'Tags'), visible: canEdit(), click: () => isTagsModalShown(!isTagsModalShown()), css: { disabled: isProcessing() }"><i class="fa fa-tags"></i></button>
 					<button class="btn btn-primary"
 						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.createCopyCohortTitle', 'Create a copy of this cohort definition'), click: copy, enable: canCopy() && !isProcessing()"><i
 							class="fa fa-copy"></i></button>
@@ -702,6 +704,14 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<tags-modal params="
+	isModalShown: $component.isTagsModalShown,
+	tagsList: $component.tagsList,
+	assignTagFn: $component.assignTag,
+	unassignTagFn: $component.unassignTag,
+	suggestFn: $component.loadTagsSuggestions
+"></tags-modal>
 
 <script type="text/html" id="success-status-tmpl">
 	<span data-bind="text: $component.getStatusMessageTranslated($data.status)"></span>

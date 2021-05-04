@@ -5,6 +5,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/MomentAPI',
 	'services/ConceptSet',
 	'services/Permission',
+	'services/Tags',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
@@ -52,6 +53,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
 	'components/security/access/configure-access-modal',
+	'components/tags/tags',
 	'components/authorship',
 	'utilities/sql',
 	'components/conceptset/conceptset-list',
@@ -66,6 +68,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	momentApi,
 	conceptSetService,
 	PermissionService,
+	TagsService,
 	conceptSetUitls,
 	datatableUtils,
 	CohortExpression,
@@ -810,11 +813,34 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				reportSourceKey: this.reportSourceKey,
 
 			}
+
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),
 				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
 					&& this.currentCohortDefinition().createdBy().login
+			});
+
+			TagsService.decorateComponent(this, {
+				assetTypeGetter: () => TagsService.ASSET_TYPE.COHORT_DEFINITION,
+				assetGetter: () => this.currentCohortDefinition(),
+				addTagToAsset: (tag) => {
+					const tags = this.currentCohortDefinition().tags(),
+						isDirty = this.dirtyFlag().isDirty();
+					tags.push(tag);
+					this.currentCohortDefinition().tags(tags);
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+					}
+				},
+				removeTagFromAsset: (tag) => {
+					const tags = this.currentCohortDefinition().tags,
+						isDirty = this.dirtyFlag().isDirty();
+					tags(tags().filter(t => t.id !== tag.id));
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+					}
+				},
 			});
 
 			this.pollForInfoPeriodically();

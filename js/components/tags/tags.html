@@ -1,0 +1,58 @@
+<atlas-modal params="showModal: $component.isModalShown, title: ko.i18n('components.tags.title', 'Assign Tags'),
+         data: {
+            classes: classes,
+            isLoading: isLoading,
+            tagName: tagName,
+            newCustomTagName: newCustomTagName,
+            columns: columns,
+            tagsList: tagsList,
+            assignTag: assignTag,
+            unassignTag: unassignTag,
+            createNewCustomTag: createNewCustomTag,
+            tagsOptions: tagsOptions,
+            tagsSearch: tagsSearch
+         }">
+    <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('common.loading', 'Loading...')"></loading>
+    <div data-bind="css: classes()">
+        <div data-bind="if: !isLoading()">
+            <div data-bind="css: classes('new-tag')">
+                <label data-bind="css: classes('assign-tag-label'), text: ko.i18n('components.tags.assignExistingTag', 'Assign tag:')"></label>
+                <div class="input-group">
+                    <input
+                            class="form-control"
+                            data-bind="
+                                textInput: tagsSearch,
+                                value: tagName,
+                                eventType: 'blur',
+                                ko_autocomplete: {
+                                    source: tagsOptions(),
+                                    minLength: 0,
+                                    maxShowItems: 10
+                                }">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" data-bind="click: assignTag, attr: { disabled: !(tagName() && tagName().length) }, text: ko.i18n('common.assign', 'Assign')"></button>
+                    </span>
+                </div>
+<!--                <label data-bind="css: classes('new-tag-label'), text: ko.i18n('components.tags.newCustomTag', 'New custom tag:')"></label>
+                <div class="input-group">
+                    <input class="form-control" data-bind="value: newCustomTagName">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" data-bind="click: createNewCustomTag, attr: { disabled: !(newCustomTagName() && newCustomTagName().length) }, text: ko.i18n('common.create', 'Create')"></button>
+                    </span>
+                </div>-->
+                <div data-bind="css: classes('tags-list')">
+                    <label data-bind="css: classes('tags-list-label'), text: ko.i18n('components.tags.assignedTags', 'Assigned tags:')"></label>
+                    <div>
+                        <table data-bind="
+                            css: classes({ element: 'tags-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                            dataTable:{
+                                data: tagsList,
+                                options: {columns: columns, language: ko.i18n('datatable.language')},
+                            }
+                        "/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</atlas-modal>

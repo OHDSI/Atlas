@@ -20,6 +20,12 @@ define([
 				return this.icon != null;
 			});
 			this.description = params.description;
+			this.tags = params.tags;
+		}
+
+		getTags() {
+			const tags = ko.unwrap(this.tags);
+			return tags && tags.filter(t => t.groups && t.groups.length > 0);
 		}
 	}
 

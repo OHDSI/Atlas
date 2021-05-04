@@ -10,6 +10,7 @@ define([
 	'databindings',
 	'faceted-datatable',
 	'components/heading',
+	'less!./cohort-definitions.less',
 ], function (
 	ko,
 	view,

@@ -97,6 +97,7 @@ define([
                 .loadCharacterizationList()
                 .then(res => {
                     datatableUtils.coalesceField(res.content, 'modifiedDate', 'createdDate');
+                    datatableUtils.addTagGroupsToFacets(res.content, this.gridOptions.Facets);
                     this.data(res.content);
                     this.loading(false);
                 });
