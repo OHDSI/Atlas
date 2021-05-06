@@ -2,18 +2,14 @@
          data: {
             classes: classes,
             isLoading: isLoading,
-            tagName: tagName,
-            newCustomTagName: newCustomTagName,
             tagsList: tagsList,
             availableTagsList: availableTagsList,
+            newCustomTagName: newCustomTagName,
             columns: columns,
             availableTagsColumns: availableTagsColumns,
             assignTag: assignTag,
-            assignSuggestedTag: assignSuggestedTag,
             unassignTag: unassignTag,
             createNewCustomTag: createNewCustomTag,
-            tagsOptions: tagsOptions,
-            tagsSearch: tagsSearch,
             tableOptions: tableOptions
          }">
     <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('common.loading', 'Loading...')"></loading>
@@ -24,18 +20,9 @@
                 <div class="input-group">
                     <input
                             class="form-control"
-                            data-bind="
-                                placeholder: ko.i18n('components.tags.tagName', 'Tag name'),
-                                textInput: tagsSearch,
-                                value: tagName,
-                                eventType: 'blur',
-                                ko_autocomplete: {
-                                    source: tagsOptions(),
-                                    minLength: 0,
-                                    maxShowItems: 10
-                                }">
+                            data-bind="placeholder: ko.i18n('components.tags.tagName', 'Tag name'), textInput: newCustomTagName">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button" data-bind="click: assignSuggestedTag, attr: { disabled: !(tagName() && tagName().length) }, text: ko.i18n('common.create', 'Create')"></button>
+                        <button class="btn btn-primary" type="button" data-bind="click: createNewCustomTag, attr: { disabled: !(newCustomTagName() && newCustomTagName().length) }, text: ko.i18n('common.create', 'Create')"></button>
                     </span>
                 </div>
                 <div data-bind="css: classes('tags-list')">

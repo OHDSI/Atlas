@@ -64,25 +64,32 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
 
         const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
 
-        const addTagGroupsToFacets = (list, facets) => {
-            const tagGroups = new Set();
-            list.forEach(e => {
-               if (e.tags) {
-                   const tagGroupsForElement = e.tags.filter(t => !t.groups || t.groups.length === 0);
-                   tagGroupsForElement.forEach(tg => tagGroups.add(tg.name));
-               }
+        const idComparator = (a, b) => a.id - b.id;
+
+        const extractTagGroups = (assetsList) => {
+            const tagGroups = [];
+            assetsList.forEach(e => {
+                if (e.tags) {
+                    const tagGroupsForElement = e.tags.filter(t => !t.groups || t.groups.length === 0);
+                    tagGroupsForElement.forEach(tg => tagGroups.push(tg));
+                }
             });
-            tagGroups.forEach(tg => {
+            return tagGroups
+                .filter((tg, index, self) => self.findIndex(t => t.id === tg.id) === index)
+                .sort(idComparator);
+        };
+
+        const addTagGroupsToFacets = (list, facets) => {
+            extractTagGroups(list).sort().reverse().forEach(tg => {
                 facets.unshift({
-                    caption: tg,
+                    caption: tg.name,
                     binding: (o) => {
-                        let returnedArray = o.tags && o.tags.length > 0
+                        let tags = o.tags && o.tags.length > 0
                             ? o.tags
-                                .filter(t => t.groups && t.groups.length > 0
-                                    && t.groups.filter(otg => otg.name === tg).length > 0)
+                                .filter(t => t.groups && t.groups.length > 0 && t.groups.filter(otg => otg.id === tg.id).length > 0)
                                 .map(t => t.name)
                             : [];
-                        return returnedArray.length > 0 ? returnedArray : ['Untagged'];
+                        return tags.length > 0 ? tags : ['Untagged'];
                     },
                     isArray: true
                 });
@@ -90,21 +97,14 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
         };
 
         const addTagGroupsToColumns = (list, columns) => {
-            const tagGroups = new Set();
-            list.forEach(e => {
-               if (e.tags) {
-                   const tagGroupsForElement = e.tags.filter(t => !t.groups || t.groups.length === 0);
-                   tagGroupsForElement.forEach(tg => tagGroups.add(tg.name));
-               }
-            });
-            tagGroups.forEach(tg => {
+            extractTagGroups(list).forEach(tg => {
                 columns.push({
-                    title: tg,
-                    visible: false,
+                    title: tg.name,
+                    visible: !!tg.showGroup,
                     render: (s, p, d) => {
                         const tags = d.tags && d.tags.length > 0
                             ? d.tags
-                                .filter(t => t.groups && t.groups.length > 0 && t.groups.filter(otg => otg.name === tg).length > 0)
+                                .filter(t => t.groups && t.groups.length > 0 && t.groups.filter(otg => otg.id === tg.id).length > 0)
                                 .map(t => t.name)
                             : [];
                         return tags.join(', ');

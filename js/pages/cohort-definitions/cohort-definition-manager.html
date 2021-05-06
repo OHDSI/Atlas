@@ -145,13 +145,16 @@
 										data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></span>
 								</strong></span>
 							<div id="cohortTextView" class="pad-10">
-
-								<!-- ko if: currentCohortDefinition().tags() -->
-								<span>Tags:</span> <span data-bind="text: tagNamesList().join(', ')"></span>
-								<!-- /ko -->
-
 								<h3 data-bind="text:currentCohortDefinition().name"></h3>
 								<div data-bind="text:currentCohortDefinition().description"></div>
+
+								<!-- ko if: currentCohortDefinition().tags().length > 0 -->
+								<h3>Tags</h3>
+								<span data-bind="foreach: tagGroupsList()">
+									<b><span data-bind="text: name"></span>:</b> <span data-bind="text: tags"></span><br>
+								</span>
+								<!-- /ko -->
+
 								<div class="cohort-printfriendly" data-bind="html:printFriendlyHtml"></div>
 								<br/>
 								<h3 data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.appendix_1', 'Appendix 1: Concept Set Definitions')"></h3>

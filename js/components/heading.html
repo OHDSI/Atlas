@@ -7,8 +7,8 @@
 		<span class="description" data-bind="text: description"></span>
 	<!-- /ko -->
 	<div data-bind="foreach: getTags()" class="tags">
-		<span class="tag">
-			<i class="fa fa-tag"></i> <span data-bind="text: ellipsisName, title: fullName"></span>
+		<span class="tag" data-bind="attr: { style: 'background-color: ' + tagColor }">
+			<i data-bind="attr: { class: tagIcon }"></i> <span data-bind="text: ellipsisName, title: fullName"></span>
 		</span>
 	</div>
 </div>

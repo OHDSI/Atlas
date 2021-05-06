@@ -50,6 +50,7 @@ define([
 			};
 
 			this.columns = ko.observableArray([
+				...this.columns,
 				{
 					title: ko.i18n('columns.id', 'Id'),
 					className: 'id-column',

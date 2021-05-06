@@ -24,14 +24,16 @@ define([
 		}
 
 		getTags() {
-			const tags = ko.unwrap(this.tags);
-			return tags && tags
+			return this.tags && ko.unwrap(this.tags)
 				.filter(t => t.groups && t.groups.length > 0)
+				.sort((t1, t2) => t1.groups[0].id - t2.groups[0].id)
 				.map(t => {
 					return {
 						...t,
 						fullName: t.name,
-						ellipsisName: t.name.length > 22 ? t.name.substring(0, 20) + '...' : t.name
+						ellipsisName: t.name.length > 22 ? t.name.substring(0, 20) + '...' : t.name,
+						tagColor: t.color || t.groups[0].color || '#cecece',
+						tagIcon: t.icon || t.groups[0].icon || 'fa fa-tag'
 					}
 				});
 		}

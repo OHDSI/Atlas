@@ -15,12 +15,12 @@ define(function (require) {
     };
 
     async function loadTagsSuggestions(namePart) {
-        const res = await httpService.doGet(config.webAPIRoot + `tag/`, { namePart });
+        const res = await httpService.doGet(config.webAPIRoot + `tag/search`, { namePart });
         return res.data;
     }
 
     async function loadAvailableTags() {
-        const res = await httpService.doGet(config.webAPIRoot + `tag/all/`);
+        const res = await httpService.doGet(config.webAPIRoot + `tag/`);
         return res.data;
     }
 
@@ -38,12 +38,30 @@ define(function (require) {
 
         component.tagsList = () => {
             const tags = ko.unwrap(assetGetter().tags);
-            return tags && tags.filter(t => t.groups && t.groups.length > 0);
+            return tags && tags.filter(t => t.groups && t.groups.length > 0)
+                .sort((t1, t2) => t1.groups[0].id - t2.groups[0].id);
         }
 
         component.tagNamesList = () => {
             const tags = component.tagsList();
-            return tags && tags.map(t => t.name);
+            return tags; // && tags.map(t => t.groups[0] + ': ' + t.name);
+        }
+
+        component.tagGroupsList = () => {
+            const tags = component.tagsList();
+            const tagGroups = [];
+            tags.forEach(tag => {
+                tag.groups.forEach(tg => tagGroups.push(tg));
+            });
+            return tagGroups
+                .filter((tg, index, self) => self.findIndex(t => t.id === tg.id) === index)
+                .sort((a, b) => a.id - b.id)
+                .map((group) => {
+                    return {
+                        name: group.name,
+                        tags: tags.filter(t => t.groups.filter(tg => tg.id === group.id).length > 0).map(t => t.name).join(', ')
+                    }
+                });
         }
 
         component.assignTag = (tag) => {
