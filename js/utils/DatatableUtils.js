@@ -89,6 +89,30 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             });
         };
 
+        const addTagGroupsToColumns = (list, columns) => {
+            const tagGroups = new Set();
+            list.forEach(e => {
+               if (e.tags) {
+                   const tagGroupsForElement = e.tags.filter(t => !t.groups || t.groups.length === 0);
+                   tagGroupsForElement.forEach(tg => tagGroups.add(tg.name));
+               }
+            });
+            tagGroups.forEach(tg => {
+                columns.push({
+                    title: tg,
+                    visible: false,
+                    render: (s, p, d) => {
+                        const tags = d.tags && d.tags.length > 0
+                            ? d.tags
+                                .filter(t => t.groups && t.groups.length > 0 && t.groups.filter(otg => otg.name === tg).length > 0)
+                                .map(t => t.name)
+                            : [];
+                        return tags.join(', ');
+                    }
+                });
+            });
+        };
+
         const renderExecutionStatus = () => (s, p, d) => {
             const { executionStatuses } = consts;
             const status = ko.i18n(`executionStatus.values.${s}`, s)();
@@ -156,6 +180,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             getFacetForDomain,
             coalesceField,
             addTagGroupsToFacets,
+            addTagGroupsToColumns,
             renderExecutionStatus,
             renderExecutionDuration,
             renderExecutionResultsView,

@@ -19,6 +19,11 @@ define(function (require) {
         return res.data;
     }
 
+    async function loadAvailableTags() {
+        const res = await httpService.doGet(config.webAPIRoot + `tag/all/`);
+        return res.data;
+    }
+
     function assignTag(assetType, assetId, tagId) {
         return httpService.doPost(config.webAPIRoot + `${assetType}/${assetId}/tag/`, tagId);
     }
@@ -36,6 +41,11 @@ define(function (require) {
             return tags && tags.filter(t => t.groups && t.groups.length > 0);
         }
 
+        component.tagNamesList = () => {
+            const tags = component.tagsList();
+            return tags && tags.map(t => t.name);
+        }
+
         component.assignTag = (tag) => {
             return assignTag(assetTypeGetter(), assetGetter().id(), tag.id).then(() => {
                 addTagToAsset(tag);
@@ -50,6 +60,10 @@ define(function (require) {
 
         component.loadTagsSuggestions = (searchStr) => {
             return loadTagsSuggestions(searchStr);
+        };
+
+        component.loadAvailableTags = () => {
+            return loadAvailableTags();
         };
     }
 

@@ -84,21 +84,23 @@ define([
 			const hasOriginalRender = typeof originalRender === 'function';
 			const hasDataAccessor = typeof originalDataAccessor === 'function';
 
-			if (binding.options.xssSafe || column.xssSafe) return column; // disable XSS filtering if column is marked 'safe'
-
-			return Object.assign({}, column, {
-				title: ko.unwrap(column.title),
-				//todo yar this title is not observer, shout be fix
-				// title: column.title,
-				data: hasDataAccessor
-					? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
-					: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
-				render: hasOriginalRender
-					? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
-					// https://datatables.net/reference/option/columns.render
-					// "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
-					: $.fn.dataTable.render.text()
-			});
+			if (binding.options.xssSafe || column.xssSafe) { // disable XSS filtering if column is marked 'safe'
+				return Object.assign({}, column, {
+					title: ko.unwrap(column.title)
+				});
+			} else {
+				return Object.assign({}, column, {
+					title: ko.unwrap(column.title),
+					data: hasDataAccessor
+						? d => filterAbsoluteUrls(filterXSS(originalDataAccessor(d), xssOptions))
+						: filterAbsoluteUrls(filterXSS(originalDataAccessor, xssOptions)),
+					render: hasOriginalRender
+						? (s, p, d) => filterAbsoluteUrls(filterXSS(originalRender(s, p, d), xssOptions))
+						// https://datatables.net/reference/option/columns.render
+						// "render" property having "string" or "object" data type is not obvious for filtering, so do not pass such things to UI for now
+						: $.fn.dataTable.render.text()
+				});
+			}
 		});
 	}
 
@@ -150,12 +152,13 @@ define([
 					ko.applyBindings(bindingContext, $(element).find('thead')[0]);
 				}
 
-				let subscription = null;
+				let languageSubscription = null;
+				let columnsSubscription = null;
 				if (! $.fn.dataTable.isDataTable(element)) {
 					$(element).DataTable(Object.assign({}, options));
 
 					if (ko.isComputed(language)) {
-						subscription = language.subscribe((newLanguage) => {
+						languageSubscription = language.subscribe((newLanguage) => {
 							$(element).DataTable().clear().destroy();
 							const opts = Object.assign({}, options, {
 								columns: mapColumns(element, binding, xssOptions),
@@ -163,6 +166,29 @@ define([
 								destroy: true,
 							});
 							const table = $(element).DataTable(opts);
+							table.rows.add(ko.unwrap(binding.data || binding));
+							table.draw();
+						});
+					}
+
+					// dynamic columns
+					if (ko.isObservable(binding.options.columns)) {
+						columnsSubscription = binding.options.columns.subscribe(() => {
+							const el = $(element);
+							el.DataTable().clear().destroy();
+
+							// HTML table headers for new columns have to be built dynamically
+							// https://datatables.net/forums/discussion/42893/dynamically-generating-columns
+							const oldColumnsLength = options.columns.length;
+							const newColumns = mapColumns(element, binding, xssOptions);
+							const newColumnsLength = newColumns.length;
+							const headers = el.find("thead > tr");
+							for (let i = oldColumnsLength; i < newColumnsLength; i++) {
+								headers.append("<th></th>");
+							}
+
+							options.columns = newColumns;
+							const table = el.DataTable(options);
 							table.rows.add(ko.unwrap(binding.data || binding));
 							table.draw();
 						});
@@ -188,8 +214,11 @@ define([
 				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 					// This will be called when the element is removed by Knockout or
 					// if some other part of your code calls ko.removeNode(element)
-					if (subscription) {
-						subscription.dispose();
+					if (languageSubscription) {
+						languageSubscription.dispose();
+					}
+					if (columnsSubscription) {
+						columnsSubscription.dispose();
 					}
 					$(element).DataTable().destroy(true);
 					$(element).empty();

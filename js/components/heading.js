@@ -25,7 +25,15 @@ define([
 
 		getTags() {
 			const tags = ko.unwrap(this.tags);
-			return tags && tags.filter(t => t.groups && t.groups.length > 0);
+			return tags && tags
+				.filter(t => t.groups && t.groups.length > 0)
+				.map(t => {
+					return {
+						...t,
+						fullName: t.name,
+						ellipsisName: t.name.length > 22 ? t.name.substring(0, 20) + '...' : t.name
+					}
+				});
 		}
 	}
 

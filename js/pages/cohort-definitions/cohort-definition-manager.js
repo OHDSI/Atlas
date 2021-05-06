@@ -840,7 +840,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					if (!isDirty) {
 						this.dirtyFlag().reset();
 					}
-				},
+				}
 			});
 
 			this.pollForInfoPeriodically();

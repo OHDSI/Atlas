@@ -8,7 +8,7 @@
 	<!-- /ko -->
 	<div data-bind="foreach: getTags()" class="tags">
 		<span class="tag">
-			<i class="fa fa-tag"></i> <span data-bind="text: name"></span>
+			<i class="fa fa-tag"></i> <span data-bind="text: ellipsisName, title: fullName"></span>
 		</span>
 	</div>
 </div>

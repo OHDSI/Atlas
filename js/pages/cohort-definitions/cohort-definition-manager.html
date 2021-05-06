@@ -145,6 +145,11 @@
 										data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></span>
 								</strong></span>
 							<div id="cohortTextView" class="pad-10">
+
+								<!-- ko if: currentCohortDefinition().tags() -->
+								<span>Tags:</span> <span data-bind="text: tagNamesList().join(', ')"></span>
+								<!-- /ko -->
+
 								<h3 data-bind="text:currentCohortDefinition().name"></h3>
 								<div data-bind="text:currentCohortDefinition().description"></div>
 								<div class="cohort-printfriendly" data-bind="html:printFriendlyHtml"></div>
@@ -710,7 +715,8 @@
 	tagsList: $component.tagsList,
 	assignTagFn: $component.assignTag,
 	unassignTagFn: $component.unassignTag,
-	suggestFn: $component.loadTagsSuggestions
+	suggestFn: $component.loadTagsSuggestions,
+	loadAvailableTagsFn: $component.loadAvailableTags
 "></tags-modal>
 
 <script type="text/html" id="success-status-tmpl">
