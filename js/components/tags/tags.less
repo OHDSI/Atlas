@@ -1,14 +1,39 @@
 .tags-modal {
-  &__assign-tag-label, &__new-tag-label, &__tags-list-label {
+
+  .bold {
+    font-weight: bold;
+  }
+
+  &__new-tag-label, &__tags-list-label, &__available-tags-list-label {
     font-size: 1.4rem;
   }
 
-  &__new-tag-label, &__tags-list {
-    margin-top: 1.5rem;
+  &__new-tag-label, &__tags-list-label {
+    margin-top: 1.3rem;
+  }
+
+  &__new-tag-label {
+    color: #0070dd;
+    cursor: pointer;
+  }
+  &__new-tag-label:hover {
+    color: #23527c;
+  }
+
+  .groups-dropdown {
+    padding: 7px;
+    margin-left: -1px;
+    width: fit-content;
+    width: -moz-fit-content;
   }
 
   &__action-link {
     cursor: pointer;
+  }
+
+  .reference-tag {
+    cursor: help;
+    border-bottom: 1px dotted blue;
   }
 
   .dataTable {

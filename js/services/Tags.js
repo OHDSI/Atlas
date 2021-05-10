@@ -32,6 +32,10 @@ define(function (require) {
         return httpService.doDelete(config.webAPIRoot + `${assetType}/${assetId}/tag/${tagId}`);
     }
 
+    function createNewTag(tag) {
+        return httpService.doPost(config.webAPIRoot + `tag/`, tag);
+    }
+
     function decorateComponent(component, { assetTypeGetter, assetGetter, addTagToAsset, removeTagFromAsset }) {
 
         component.isTagsModalShown = ko.observable(false);
@@ -82,6 +86,10 @@ define(function (require) {
 
         component.loadAvailableTags = () => {
             return loadAvailableTags();
+        };
+
+        component.createNewTag = (tag) => {
+            return createNewTag(tag);
         };
     }
 
