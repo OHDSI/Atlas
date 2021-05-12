@@ -22,6 +22,7 @@ define(function(require, exports){
 				name: ko.observable(s.name),
 				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets)),
 			}))) || []);
+			this.tags = ko.observableArray(data.tags);
 		}
 	}
 

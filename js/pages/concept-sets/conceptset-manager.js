@@ -267,9 +267,29 @@ define([
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 			});
 
+			this.tags = ko.observableArray();
 			TagsService.decorateComponent(this, {
 				assetTypeGetter: () => TagsService.ASSET_TYPE.CONCEPT_SET,
-				assetGetter: () => this.currentConceptSet()
+				assetGetter: () => this.currentConceptSet(),
+				addTagToAsset: (tag) => {
+					const isDirty = this.currentConceptSetDirtyFlag().isDirty();
+					this.currentConceptSet().tags.push(tag);
+					this.tags(this.currentConceptSet().tags);
+					if (!isDirty) {
+						this.currentConceptSetDirtyFlag().reset();
+						//this.warningParams.valueHasMutated();
+					}
+				},
+				removeTagFromAsset: (tag) => {
+					const isDirty = this.currentConceptSetDirtyFlag().isDirty();
+					this.currentConceptSet().tags = this.currentConceptSet().tags
+						.filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0);
+					this.tags(this.currentConceptSet().tags);
+					if (!isDirty) {
+						this.currentConceptSetDirtyFlag().reset();
+						//this.warningParams.valueHasMutated();
+					}
+				}
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
@@ -340,6 +360,7 @@ define([
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
 				this.conceptSetStore.isEditable(this.canEdit());
+				this.tags(this.currentConceptSet().tags);
 			} catch(err) {
 				if (err.status === 403) {
 					this.hasPrioritySourceAccess(false);

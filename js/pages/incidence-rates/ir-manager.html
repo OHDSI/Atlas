@@ -1,7 +1,7 @@
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
 
 <!-- ko if: isViewPermitted -->
-<heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'bolt', theme: 'dark'"></heading-title>
+<heading-title params="name: incidenceRateCaption(), description: isEditable() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'bolt', theme: 'dark', tags: tags"></heading-title>
 
 <!-- ko if: !!selectedAnalysis() && !!selectedAnalysis().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
@@ -16,6 +16,7 @@
 					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
 					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
+					<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: isEditable(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
 					<button class="btn btn-primary" data-bind="click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
 					<button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
 						<i class="fa fa-lock"></i>
@@ -54,7 +55,7 @@
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
 				<a>
 					<span data-bind="text: ko.i18n('ir.tabs.messages', 'Messages')"></span>
-					<!-- ko component: { name: 'warnings-badge', params: warningParams() } --><!-- /ko -->
+					<!-- ko component: { name: 'warnings-badge', params: ko.unwrap(warningParams) } --><!-- /ko -->
 				</a>
 			</li>
 		</ul>
@@ -159,5 +160,17 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+
+<tags-modal params="
+	isModalShown: $component.isTagsModalShown,
+	tagsList: $component.tagsList,
+	assignTagFn: $component.assignTag,
+	unassignTagFn: $component.unassignTag,
+	createNewTagFn: $component.createNewTag,
+	loadAvailableTagsFn: $component.loadAvailableTags,
+	checkAssignPermissionFn: $component.checkAssignPermission,
+	checkUnassignPermissionFn: $component.checkUnassignPermission
+"></tags-modal>
 
 <!-- /ko -->

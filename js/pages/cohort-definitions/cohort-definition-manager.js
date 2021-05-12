@@ -825,20 +825,20 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				assetTypeGetter: () => TagsService.ASSET_TYPE.COHORT_DEFINITION,
 				assetGetter: () => this.currentCohortDefinition(),
 				addTagToAsset: (tag) => {
-					const tags = this.currentCohortDefinition().tags(),
-						isDirty = this.dirtyFlag().isDirty();
-					tags.push(tag);
-					this.currentCohortDefinition().tags(tags);
+					const isDirty = this.dirtyFlag().isDirty();
+					this.currentCohortDefinition().tags.push(tag);
 					if (!isDirty) {
 						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
 					}
 				},
 				removeTagFromAsset: (tag) => {
 					const tags = this.currentCohortDefinition().tags,
 						isDirty = this.dirtyFlag().isDirty();
-					tags(tags().filter(t => t.id !== tag.id));
+					tags(tags().filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0));
 					if (!isDirty) {
 						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
 					}
 				}
 			});
@@ -1069,7 +1069,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		diagnose() {
 			if (this.currentCohortDefinition()) {
-				return cohortDefinitionService.runDiagnostics(this.currentCohortDefinition().expression());
+				return cohortDefinitionService.runDiagnostics(this.currentCohortDefinition());
 			}
 		}
 

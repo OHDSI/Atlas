@@ -3,12 +3,13 @@ define(function (require) {
     const ko = require('knockout');
     const config = require('appConfig');
     const httpService = require('services/http');
+    const authService = require('services/AuthAPI');
 
     const ASSET_TYPE = {
         COHORT_DEFINITION: 'cohortdefinition',
-        CONCEPT_SET: 'conseptset',
-        COHORT_CHARACTERIZATION: 'cohortcharacterization',
-        PATHWAY_ANALYSIS: 'pathway',
+        CONCEPT_SET: 'conceptset',
+        COHORT_CHARACTERIZATION: 'cohort-characterization',
+        PATHWAY_ANALYSIS: 'pathway-analysis',
         INCIDENCE_RATE: 'ir',
         ESTIMATION: 'ple',
         PREDICTION: 'plp'
@@ -32,8 +33,24 @@ define(function (require) {
         return httpService.doDelete(config.webAPIRoot + `${assetType}/${assetId}/tag/${tagId}`);
     }
 
+    function assignProtectedTag(assetType, assetId, tagId) {
+        return httpService.doPost(config.webAPIRoot + `${assetType}/${assetId}/protectedtag/`, tagId);
+    }
+
+    function unassignProtectedTag(assetType, assetId, tagId) {
+        return httpService.doDelete(config.webAPIRoot + `${assetType}/${assetId}/protectedtag/${tagId}`);
+    }
+
     function createNewTag(tag) {
         return httpService.doPost(config.webAPIRoot + `tag/`, tag);
+    }
+
+    function checkPermissionForAssignProtectedTag(assetType, assetId) {
+        return authService.isPermitted(`${assetType}:${assetId}:protectedtag:post`);
+    }
+
+    function checkPermissionForUnassignProtectedTag(assetType, assetId, tagId) {
+        return authService.isPermitted(`${assetType}:${assetId}:protectedtag:${tagId}:delete`);
     }
 
     function decorateComponent(component, { assetTypeGetter, assetGetter, addTagToAsset, removeTagFromAsset }) {
@@ -44,11 +61,6 @@ define(function (require) {
             const tags = ko.unwrap(assetGetter().tags);
             return tags && tags.filter(t => t.groups && t.groups.length > 0)
                 .sort((t1, t2) => t1.groups[0].id - t2.groups[0].id);
-        }
-
-        component.tagNamesList = () => {
-            const tags = component.tagsList();
-            return tags; // && tags.map(t => t.groups[0] + ': ' + t.name);
         }
 
         component.tagGroupsList = () => {
@@ -69,13 +81,19 @@ define(function (require) {
         }
 
         component.assignTag = (tag) => {
-            return assignTag(assetTypeGetter(), assetGetter().id(), tag.id).then(() => {
+            const assignPromise = tag.permissionProtected
+                ? assignProtectedTag(assetTypeGetter(), ko.unwrap(assetGetter().id), tag.id)
+                : assignTag(assetTypeGetter(), ko.unwrap(assetGetter().id), tag.id);
+            return assignPromise.then(() => {
                 addTagToAsset(tag);
             });
         };
 
         component.unassignTag = (tag) => {
-            return unassignTag(assetTypeGetter(), assetGetter().id(), tag.id).then(() => {
+            const unassignPromise = tag.permissionProtected
+                ? unassignProtectedTag(assetTypeGetter(), ko.unwrap(assetGetter().id), tag.id)
+                : unassignTag(assetTypeGetter(), ko.unwrap(assetGetter().id), tag.id)
+            return unassignPromise.then(() => {
                 removeTagFromAsset(tag);
             });
         };
@@ -91,6 +109,14 @@ define(function (require) {
         component.createNewTag = (tag) => {
             return createNewTag(tag);
         };
+
+        component.checkAssignPermission = (tag) => {
+            return checkPermissionForAssignProtectedTag(assetTypeGetter(), ko.unwrap(assetGetter().id));
+        }
+
+        component.checkUnassignPermission = (tag) => {
+            return checkPermissionForUnassignProtectedTag(assetTypeGetter(), ko.unwrap(assetGetter().id), tag.id);
+        }
     }
 
     return {

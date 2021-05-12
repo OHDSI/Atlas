@@ -55,7 +55,7 @@ function (
 			];
 			if (!params.checkChangesOnly) {
 				// Entities use different methods of initialization
-				if (params.checkOnInit) {
+				if (ko.unwrap(params.checkOnInit)) {
 					this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
 				} else {
 					this.runDiagnostics();

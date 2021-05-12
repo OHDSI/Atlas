@@ -4,6 +4,7 @@ define([
 	'../PathwayService',
 	'../PermissionService',
 	'services/Permission',
+	'services/Tags',
 	'components/security/access/const',
 	'../PathwayAnalysis',
 	'atlas-state',
@@ -23,6 +24,7 @@ define([
 	'./tabs/pathway-utils',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
+	'components/tags/tags',
 	'components/checks/warnings',
 	'components/heading',
 	'components/authorship',
@@ -33,6 +35,7 @@ define([
 	PathwayService,
 	PermissionService,
 	GlobalPermissionService,
+	TagsService,
 	{ entityType },
 	PathwayAnalysis,
 	sharedState,
@@ -125,6 +128,28 @@ define([
 				entityTypeGetter: () => entityType.PATHWAY_ANALYSIS,
 				entityIdGetter: () => this.analysisId(),
 				createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+			});
+
+			TagsService.decorateComponent(this, {
+				assetTypeGetter: () => TagsService.ASSET_TYPE.PATHWAY_ANALYSIS,
+				assetGetter: () => this.design(),
+				addTagToAsset: (tag) => {
+					const isDirty = this.dirtyFlag().isDirty();
+					this.design().tags.push(tag);
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				},
+				removeTagFromAsset: (tag) => {
+					const isDirty = this.dirtyFlag().isDirty();
+					this.design().tags(this.design().tags()
+						.filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0));
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				}
 			});
 		}
 

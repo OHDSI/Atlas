@@ -37,6 +37,54 @@ define([
         return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
       });
       this.tableOptions = commonUtils.getTableOptions('L');
+
+      this.options = {
+        Facets: [
+          {
+            'caption': ko.i18n('facets.caption.created', 'Created'),
+            'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+          },
+          {
+            'caption': ko.i18n('facets.caption.updated', 'Updated'),
+            'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+          },
+          {
+            'caption': ko.i18n('facets.caption.author', 'Author'),
+            'binding': datatableUtils.getFacetForCreatedBy,
+          },
+          {
+            'caption': ko.i18n('facets.caption.designs', 'Designs'),
+            'binding': datatableUtils.getFacetForDesign,
+          },
+        ]
+      };
+
+      this.columns = ko.observableArray([
+        {
+          title: ko.i18n('columns.id', 'Id'),
+          data: 'id'
+        },
+        {
+          title: ko.i18n('columns.name', 'Name'),
+          render: datatableUtils.getLinkFormatter(d => ({
+            label: d['name'],
+            linkish: true,
+          })),
+        },
+        {
+          title: ko.i18n('columns.created', 'Created'),
+          render: datatableUtils.getDateFieldFormatter('createdDate'),
+        },
+        {
+          title: ko.i18n('columns.updated', 'Updated'),
+          render: datatableUtils.getDateFieldFormatter('modifiedDate'),
+        },
+        {
+          title: ko.i18n('columns.author', 'Author'),
+          render: datatableUtils.getCreatedByFormatter(),
+        }
+      ]);
+
       // startup actions
       if (this.isAuthenticated() && this.canReadIRs()) {
         this.refresh();
@@ -49,6 +97,8 @@ define([
         .getAnalysisList()
         .then(({ data }) => {
           datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
+          datatableUtils.addTagGroupsToFacets(data, this.options.Facets);
+          datatableUtils.addTagGroupsToColumns(data, this.columns)
           this.analysisList(data);
           this.loading(false);
         });

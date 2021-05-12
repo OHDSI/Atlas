@@ -3,7 +3,7 @@
 
 <!-- ko if: design -->
 <div data-bind="css: classes(), visible: !$component.loading()">
-	<heading-title params="name: pathwayCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'sitemap', theme: 'dark'"></heading-title>
+	<heading-title params="name: pathwayCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'sitemap', theme: 'dark', tags: design().tags"></heading-title>
 	<!-- ko if: !!design() && !!design().id -->
 		<!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
 	<!-- /ko -->
@@ -15,6 +15,7 @@
 				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="click: $component.close, css: {disabled: isProcessing()}, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
 				<!-- ko ifnot: isNewEntity -->
+				<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
 				<button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')"><i class="fa fa-lock"></i></button>
 				<button type="button" class="btn btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete() || isProcessing()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
@@ -73,3 +74,14 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<tags-modal params="
+	isModalShown: $component.isTagsModalShown,
+	tagsList: $component.tagsList,
+	assignTagFn: $component.assignTag,
+	unassignTagFn: $component.unassignTag,
+	createNewTagFn: $component.createNewTag,
+	loadAvailableTagsFn: $component.loadAvailableTags,
+	checkAssignPermissionFn: $component.checkAssignPermission,
+	checkUnassignPermissionFn: $component.checkUnassignPermission
+"></tags-modal>

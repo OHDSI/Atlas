@@ -30,6 +30,8 @@ define(function (require, exports) {
 			this.maxDepth.numericValue = this.maxDepth.numeric();
 
 			this.allowRepeats = ko.observable(data.allowRepeats||false);
+
+			this.tags = ko.observableArray(data.tags);
 		}
 
 	}

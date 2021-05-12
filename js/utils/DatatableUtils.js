@@ -40,16 +40,16 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             }
         };
 
-        const getCreatedByLogin = d =>
+        const getCreatedByLogin = (d, emptyFieldSubstitute = 'anonymous') =>
             d.hasOwnProperty('createdBy') && !!d.createdBy
                 ? typeof d.createdBy === 'string'
                     ? d.createdBy
                     : typeof d.createdBy === 'object' && !!d.createdBy.login
                     ? d.createdBy.login
-                    : 'anonymous'
-                : 'anonymous';
+                    : emptyFieldSubstitute
+                : emptyFieldSubstitute;
 
-        const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
+        const getCreatedByFormatter = (emptyFieldSubstitute) => (s, p, d) => getCreatedByLogin(d, emptyFieldSubstitute);
 
         const getFacetForCreatedBy = getCreatedByLogin;
 

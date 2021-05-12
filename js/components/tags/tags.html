@@ -11,7 +11,13 @@
             groupsForCustomTags: groupsForCustomTags,
             columns: columns,
             availableTagsColumns: availableTagsColumns,
-            availableTagGroupsColumns: availableTagGroupsColumns,
+
+            referenceTagGroupsList: referenceTagGroupsList,
+            referenceTagGroupsColumns: referenceTagGroupsColumns,
+            referenceTagsGroupName: referenceTagsGroupName,
+            referenceTagsList: referenceTagsList,
+            referenceTagsColumns: referenceTagsColumns,
+
             assignTag: assignTag,
             unassignTag: unassignTag,
             createNewCustomTag: createNewCustomTag,
@@ -23,7 +29,7 @@
     <ul class="nav nav-tabs">
         <li role="presentation"
             data-bind="css: { active: selectedTab() == 'tags-assignment' }, click: function() { selectTab('tags-assignment'); }">
-            <a data-bind="text: 'Tags assignment'"></a>
+            <a data-bind="text: 'Study Asset Tags'"></a>
         </li>
 
         <li role="presentation"
@@ -88,20 +94,37 @@
     </div>
 
     <div data-bind="css: classes(), if: !isLoading() && selectedTab() === 'reference'">
-        Tags general description<br>
 
-        <label data-bind="css: classes('tags-list-label'), text: ko.i18n('components.tags.availableTagGroups', 'Available Tag Groups:')"></label>
+        <label data-bind="css: classes('reference-tags-list-label'), text: ko.i18n('components.tags.tagGroups', 'Tag Groups:')"></label>
         <table data-bind="
                 css: classes({ element: 'tags-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                 dataTable:{
-                    data: availableTagGroupsList,
+                    data: referenceTagGroupsList,
                     options: {
-                        columns: availableTagGroupsColumns,
+                        columns: referenceTagGroupsColumns,
                         pageLength: tableOptions.pageLength,
                         lengthMenu: tableOptions.lengthMenu,
                         language: ko.i18n('datatable.language')
                     },
                 }
             "/>
+
+        <div data-bind="if: referenceTagsList().length > 0">
+            <label data-bind="css: classes('tags-list-label')">
+                <b>Tag group:</b> <span data-bind="text: referenceTagsGroupName"></span>
+            </label>
+            <table data-bind="
+                    css: classes({ element: 'tags-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                    dataTable:{
+                        data: referenceTagsList,
+                        options: {
+                            columns: referenceTagsColumns,
+                            pageLength: tableOptions.pageLength,
+                            lengthMenu: tableOptions.lengthMenu,
+                            language: ko.i18n('datatable.language')
+                        },
+                    }
+                "/>
+        </div>
     </div>
 </atlas-modal>

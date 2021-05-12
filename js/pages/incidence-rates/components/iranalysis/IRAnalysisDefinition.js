@@ -16,6 +16,7 @@ define(function (require, exports) {
 		self.createdDate = ko.observable(data.createdDate || null);
 		self.modifiedBy = ko.observable(data.modifiedBy || null);
 		self.modifiedDate = ko.observable(data.modifiedDate || null);
+		self.tags = ko.observableArray(data.tags);
 	}
 	return IRAnalysisDefinition;
 });

@@ -3,7 +3,7 @@
 <!-- /ko -->
 
 <!-- ko if: (currentConceptSet() != null && !loading()) -->
-<heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'),  icon: 'shopping-cart', theme: 'dark', tags: currentConceptSet().tags"></heading-title>
+<heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'),  icon: 'shopping-cart', theme: 'dark', tags: tags"></heading-title>
 <!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} -->
 	<!-- /ko -->
@@ -20,7 +20,7 @@
           <i class="fa fa-copy"></i>
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
-        <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), css: { disabled: isProcessing() }, title: ko.i18n('cs.manager.tags', 'Tags')"><i class="fa fa-tags"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
         <button type="button" class="btn btn-primary" data-bind="click: optimize, css: { disabled: !canOptimize() || isProcessing() }, text: ko.i18n('cs.manager.optimize', 'Optimize')"></button>
         <button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
             <i class="fa fa-lock"></i>
@@ -189,5 +189,8 @@
 	tagsList: $component.tagsList,
 	assignTagFn: $component.assignTag,
 	unassignTagFn: $component.unassignTag,
-	suggestFn: $component.loadTagsSuggestions
+	createNewTagFn: $component.createNewTag,
+	loadAvailableTagsFn: $component.loadAvailableTags,
+	checkAssignPermissionFn: $component.checkAssignPermission,
+	checkUnassignPermissionFn: $component.checkUnassignPermission
 "></tags-modal>

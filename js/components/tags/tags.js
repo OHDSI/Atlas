@@ -4,6 +4,8 @@ define([
     'components/Component',
     'utils/CommonUtils',
     'utils/AutoBind',
+    'utils/DatatableUtils',
+    'services/AuthAPI',
     'less!./tags.less',
     'databindings',
 ], function (
@@ -11,7 +13,9 @@ define([
     view,
     Component,
     commonUtils,
-    AutoBind
+    AutoBind,
+    datatableUtils,
+    authApi
 ) {
     class TagsModal extends AutoBind(Component) {
         constructor(params) {
@@ -28,12 +32,18 @@ define([
             this.newCustomTagGroup = ko.observable();
             this.groupsForCustomTags = ko.observableArray();
 
+            this.referenceTagGroupsList = ko.observableArray();
+            this.referenceTagsGroupName = ko.observable('');
+            this.referenceTagsList = ko.observableArray();
+
             this.isLoading = ko.observable(false);
 
             this.assignTagFn = params.assignTagFn;
             this.unassignTagFn = params.unassignTagFn;
             this.createNewTagFn = params.createNewTagFn;
             this.loadAvailableTagsFn = params.loadAvailableTagsFn;
+            this.checkAssignPermissionFn = params.checkAssignPermissionFn;
+            this.checkUnassignPermissionFn = params.checkUnassignPermissionFn;
 
             this.tableOptions = commonUtils.getTableOptions('XS');
 
@@ -54,6 +64,9 @@ define([
                     title: ko.i18n('columns.action', 'Action'),
                     sortable: false,
                     render: (s, p, d) => {
+                        if (d.permissionProtected && !this.checkUnassignPermissionFn(d)) {
+                            return 'Not permitted';
+                        }
                         d.unassign = () => this.unassignTag(d);
                         return `<a data-bind="css: '${this.classes('action-link')}', click: unassign, text: ko.i18n('components.tags.unassign', 'Unassign')"></a>`
                     }
@@ -73,32 +86,64 @@ define([
                 },
                 {
                     title: ko.i18n('columns.tagName', 'Usage count'),
-                    width: '40px',
+                    width: '80px',
                     data: 'count'
                 },
                 {
                     title: ko.i18n('columns.action', 'Action'),
+                    width: '80px',
                     sortable: false,
                     render: (s, p, d) => {
+                        if (d.permissionProtected && !this.checkAssignPermissionFn(d)) {
+                            return 'Not permitted';
+                        }
                         d.assign = () => this.assignTag(d);
                         return `<a data-bind="css: '${this.classes('action-link')}', click: assign, text: ko.i18n('components.tags.assign', 'Assign')"></a>`
                     }
                 }
             ];
 
-            this.availableTagGroupsColumns = [
+            this.referenceTagGroupsColumns = [
                 {
                     title: ko.i18n('columns.group', 'Tag Group'),
-                    render: (s, p, d) => {
-                        return `<span class='bold'>${d.name}</span><br>Long description of the tag group`
-                    }
+                    data: 'name',
+                    width: '30%',
                 },
                 {
-                    title: ko.i18n('columns.tagName', 'Included Tags'),
+                    title: ko.i18n('columns.tagName', 'Description'),
+                    data: 'description',
+                    width: '50%',
+                },
+                {
+                    title: ko.i18n('columns.action', 'Action'),
+                    sortable: false,
+                    width: '50%',
                     render: (s, p, d) => {
-                        const tags = this.availableTagsList().filter(t => t.groups.filter(tg => tg.id === d.id).length > 0)
-                            .concat(this.tagsList().filter(t => t.groups.filter(tg => tg.id === d.id).length > 0));
-                        return tags.map(t => `<span class="reference-tag">${t.name}</span>`).sort().join('<br>');
+                        d.showIncludedTagsTable = () => this.showIncludedTagsTable(d);
+                        return `<a data-bind="css: '${this.classes('action-link')}', click: showIncludedTagsTable, text: ko.i18n('components.tags.showTags', 'Show tags')">Show tags</a>`
+                    }
+                },
+            ];
+
+            this.referenceTagsColumns = [
+                {
+                    title: ko.i18n('columns.group', 'Tag Name'),
+                    data: 'name'
+                },
+                {
+                    title: ko.i18n('columns.created', 'Created'),
+                    className: 'date-column',
+                    render: datatableUtils.getDateFieldFormatter('createdDate'),
+                },
+                {
+                    title: ko.i18n('columns.author', 'Author'),
+                    className: 'author-column',
+                    render: datatableUtils.getCreatedByFormatter('System'),
+                },
+                {
+                    title: ko.i18n('columns.tagName', 'Description'),
+                    render: (s, p, d) => {
+                        return d.description || '-';
                     }
                 },
             ];
@@ -109,6 +154,8 @@ define([
                 }
                 this.isLoading(true);
                 try {
+                    this.referenceTagsGroupName('');
+                    this.referenceTagsList([]);
                     this.tagsList(this.getTagsList());
                     this.loadAvailableTags();
                 } catch (ex) {
@@ -129,18 +176,31 @@ define([
             }));
             this.availableTagGroupsList(res.filter(t => !t.groups || t.groups.length === 0));
             this.groupsForCustomTags(this.availableTagGroupsList().filter(tg => tg.allowCustom));
+            this.referenceTagGroupsList(this.availableTagGroupsList().filter(tg => tg.description));
         }
 
         async assignTag(tag) {
             try {
+                let allowAssign = true;
 
                 // non-multi-selection group check
                 const nonMultiSelectedTagGroups = tag.groups.filter(tg => !tg.multiSelection);
                 if (nonMultiSelectedTagGroups.length > 0) {
                     nonMultiSelectedTagGroups.forEach(ntg => {
                         this.tagsList().filter(t => t.groups.filter(tg => tg.id === ntg.id).length > 0)
-                            .forEach(t => this.unassignTag(t));
+                            .forEach(t => {
+                                if (t.permissionProtected && !this.checkUnassignPermissionFn(t)) {
+                                    allowAssign = false;
+                                    alert(`Cannot unassign protected tag: ${t.name}`);
+                                    return;
+                                }
+                                this.unassignTag(t)
+                            });
                     });
+                }
+
+                if (!allowAssign) {
+                    return;
                 }
 
                 await this.assignTagFn(tag);
@@ -189,6 +249,13 @@ define([
 
         exists(tagName) {
             return this.availableTagsList().find(t => t.name === tagName) || this.tagsList().find(t => t.name === tagName);
+        }
+
+        showIncludedTagsTable(tagGroup) {
+            const tags = this.availableTagsList().filter(t => t.groups.filter(tg => tg.id === tagGroup.id).length > 0)
+                .concat(this.tagsList().filter(t => t.groups.filter(tg => tg.id === tagGroup.id).length > 0));
+            this.referenceTagsList(tags);
+            this.referenceTagsGroupName(tagGroup.name);
         }
     }
 
