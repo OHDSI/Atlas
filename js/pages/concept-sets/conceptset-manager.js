@@ -176,6 +176,20 @@ define([
 			});
 			this.optimizeTableOptions = commonUtils.getTableOptions('M');
 			const tableOptions = commonUtils.getTableOptions('L');
+
+			this.isDiagnosticsRunning = ko.observable(false);
+			this.criticalCount = ko.observable(0);
+			this.warningParams = ko.observable({
+				current: this.currentConceptSet,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
+				onDiagnoseCallback: this.diagnose.bind(this),
+			});
+
 			this.tabs = [
 				{
 					title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
@@ -252,6 +266,14 @@ define([
 						saveConceptSetShow: this.saveConceptSetShow,
 					},
 				},
+				{
+					title: ko.i18n('cs.manager.tabs.messages', 'Messages'),
+					key: ViewMode.MESSAGES,
+					componentName: 'warnings',
+					componentParams: this.warningParams,
+					hasBadge: true,
+					preload: true,
+				},
 			];
 			this.selectedTab = ko.observable(0);
 
@@ -277,7 +299,7 @@ define([
 					this.tags(this.currentConceptSet().tags);
 					if (!isDirty) {
 						this.currentConceptSetDirtyFlag().reset();
-						//this.warningParams.valueHasMutated();
+						this.warningParams.valueHasMutated();
 					}
 				},
 				removeTagFromAsset: (tag) => {
@@ -287,7 +309,7 @@ define([
 					this.tags(this.currentConceptSet().tags);
 					if (!isDirty) {
 						this.currentConceptSetDirtyFlag().reset();
-						//this.warningParams.valueHasMutated();
+						this.warningParams.valueHasMutated();
 					}
 				}
 			});
@@ -534,6 +556,11 @@ define([
 						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
 						modifiedDate,
 				}
+		}
+		diagnose() {
+			if (this.currentConceptSet()) {
+				return conceptSetService.runDiagnostics(this.currentConceptSet());
+			}
 		}
 
 	}

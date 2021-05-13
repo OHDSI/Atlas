@@ -11,6 +11,7 @@ define(
       IMPORT: conceptSetConstants.ViewMode.IMPORT,
       EXPLORE: 'explore',
       COMPARE: 'compare',
+      MESSAGES: 'messages',
     };
 		
     const pageTitle = 'Concept Sets';

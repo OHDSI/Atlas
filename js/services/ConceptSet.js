@@ -71,7 +71,13 @@ define(function (require) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copy-name")
 			.then(({ data }) => data);
 	}
-	
+
+	function runDiagnostics(conceptSet) {
+		return httpService
+			.doPost(`${config.webAPIRoot}conceptset/check`, conceptSet)
+			.then(res => res.data);
+	}
+
 	const api = {
 		loadConceptSet,
 		loadConceptSetExpression,
@@ -84,6 +90,7 @@ define(function (require) {
 		exists,
 		saveConceptSet,
 		saveConceptSetItems,
+		runDiagnostics
 	};
 
 	return api;
