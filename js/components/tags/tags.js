@@ -65,7 +65,7 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         if (d.permissionProtected && !this.checkUnassignPermissionFn(d)) {
-                            return 'Not permitted';
+                            return `<span data-bind="text: ko.i18n('components.tags.notPermitted', 'Not permitted')"></span>`;
                         }
                         d.unassign = () => this.unassignTag(d);
                         return `<a data-bind="css: '${this.classes('action-link')}', click: unassign, text: ko.i18n('components.tags.unassign', 'Unassign')"></a>`
@@ -85,7 +85,7 @@ define([
                     data: 'name'
                 },
                 {
-                    title: ko.i18n('columns.tagName', 'Usage count'),
+                    title: ko.i18n('columns.usageCount', 'Usage count'),
                     width: '80px',
                     data: 'count'
                 },
@@ -95,7 +95,7 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         if (d.permissionProtected && !this.checkAssignPermissionFn(d)) {
-                            return 'Not permitted';
+                            return `<span data-bind="text: ko.i18n('components.tags.notPermitted', 'Not permitted')"></span>`;
                         }
                         d.assign = () => this.assignTag(d);
                         return `<a data-bind="css: '${this.classes('action-link')}', click: assign, text: ko.i18n('components.tags.assign', 'Assign')"></a>`
@@ -105,12 +105,12 @@ define([
 
             this.referenceTagGroupsColumns = [
                 {
-                    title: ko.i18n('columns.group', 'Tag Group'),
+                    title: ko.i18n('columns.group', 'Group'),
                     data: 'name',
                     width: '30%',
                 },
                 {
-                    title: ko.i18n('columns.tagName', 'Description'),
+                    title: ko.i18n('columns.description', 'Description'),
                     data: 'description',
                     width: '50%',
                 },
@@ -120,14 +120,14 @@ define([
                     width: '50%',
                     render: (s, p, d) => {
                         d.showIncludedTagsTable = () => this.showIncludedTagsTable(d);
-                        return `<a data-bind="css: '${this.classes('action-link')}', click: showIncludedTagsTable, text: ko.i18n('components.tags.showTags', 'Show tags')">Show tags</a>`
+                        return `<a data-bind="css: '${this.classes('action-link')}', click: showIncludedTagsTable, text: ko.i18n('components.tags.showTags', 'Show tags')"></a>`
                     }
                 },
             ];
 
             this.referenceTagsColumns = [
                 {
-                    title: ko.i18n('columns.group', 'Tag Name'),
+                    title: ko.i18n('columns.name', 'Name'),
                     data: 'name'
                 },
                 {
@@ -141,7 +141,7 @@ define([
                     render: datatableUtils.getCreatedByFormatter('System'),
                 },
                 {
-                    title: ko.i18n('columns.tagName', 'Description'),
+                    title: ko.i18n('columns.description', 'Description'),
                     render: (s, p, d) => {
                         return d.description || '-';
                     }
@@ -191,7 +191,7 @@ define([
                             .forEach(t => {
                                 if (t.permissionProtected && !this.checkUnassignPermissionFn(t)) {
                                     allowAssign = false;
-                                    alert(`Cannot unassign protected tag: ${t.name}`);
+                                    alert(ko.i18nformat('components.tags.tabs.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name}));
                                     return;
                                 }
                                 this.unassignTag(t)
@@ -224,7 +224,7 @@ define([
         async createNewCustomTag() {
             const existingTag = this.exists(this.newCustomTagName());
             if(existingTag) {
-                alert(`Tag ${this.newCustomTagName()} already exists.`);
+                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()}));
                 return;
             }
 

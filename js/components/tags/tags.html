@@ -29,12 +29,12 @@
     <ul class="nav nav-tabs">
         <li role="presentation"
             data-bind="css: { active: selectedTab() == 'tags-assignment' }, click: function() { selectTab('tags-assignment'); }">
-            <a data-bind="text: 'Study Asset Tags'"></a>
+            <a data-bind="text: ko.i18n('components.tags.tabs.studyAssetTags', 'Study Asset Tags')"></a>
         </li>
 
         <li role="presentation"
             data-bind="css: { active: selectedTab() == 'reference' }, click: function() { selectTab('reference'); }">
-            <a data-bind="text: 'Reference'"></a>
+            <a data-bind="text: ko.i18n('components.tags.tabs.reference', 'Reference')"></a>
         </li>
     </ul>
 
@@ -66,7 +66,7 @@
             <div class="input-group" data-bind="if: showCreateCustomTag()">
                 <input
                         class="form-control"
-                        data-bind="placeholder: ko.i18n('components.tags.tagName', 'Tag name'), textInput: newCustomTagName">
+                        data-bind="placeholder: ko.i18n('components.tags.tagNamePlaceholder', 'Tag name'), textInput: newCustomTagName">
                 <span class="input-group-btn">
                     <select class="form-control groups-dropdown" data-bind="options: groupsForCustomTags, optionsText: 'name', optionsValue: 'id', value: newCustomTagGroup" />
                 </span>
@@ -111,7 +111,7 @@
 
         <div data-bind="if: referenceTagsList().length > 0">
             <label data-bind="css: classes('tags-list-label')">
-                <b>Tag group:</b> <span data-bind="text: referenceTagsGroupName"></span>
+                <b data-bind="text: ko.i18n('components.tags.tagGroup', 'Tag group:')"></b> <span data-bind="text: referenceTagsGroupName"></span>
             </label>
             <table data-bind="
                     css: classes({ element: 'tags-table', extra: ['table', 'table-bordered', 'table-hover'] }),
