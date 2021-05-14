@@ -5,7 +5,6 @@ define([
     'utils/CommonUtils',
     'utils/AutoBind',
     'utils/DatatableUtils',
-    'services/AuthAPI',
     'less!./tags.less',
     'databindings',
 ], function (
@@ -14,8 +13,7 @@ define([
     Component,
     commonUtils,
     AutoBind,
-    datatableUtils,
-    authApi
+    datatableUtils
 ) {
     class TagsModal extends AutoBind(Component) {
         constructor(params) {
@@ -191,7 +189,7 @@ define([
                             .forEach(t => {
                                 if (t.permissionProtected && !this.checkUnassignPermissionFn(t)) {
                                     allowAssign = false;
-                                    alert(ko.i18nformat('components.tags.tabs.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name}));
+                                    alert(ko.i18nformat('components.tags.tabs.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name})());
                                     return;
                                 }
                                 this.unassignTag(t)
@@ -224,7 +222,7 @@ define([
         async createNewCustomTag() {
             const existingTag = this.exists(this.newCustomTagName());
             if(existingTag) {
-                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()}));
+                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()})());
                 return;
             }
 
