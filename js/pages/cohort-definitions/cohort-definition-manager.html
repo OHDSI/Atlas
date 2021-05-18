@@ -657,6 +657,28 @@
 		</div>
 	</div>
 		<atlas-modal params="{
+			showModal: annotationLinkShown,
+			title: 'Annotate Sample',
+			data: {
+				annotationSetsLoading: annotationSetsLoading,
+				annotationSets: annotationSets,
+				annotationSetCols: annotationSetCols,
+				onAnnotationListClick: onAnnotationListClick
+			}
+		}">
+			<div>
+				<loading data-bind="visible: annotationSetsLoading()"></loading>
+				<faceted-datatable data-bind="visible: !annotationSetsLoading()"
+						params="{
+							reference: annotationSets,
+							columns: annotationSetCols,
+							order: [[0,'asc']],
+							rowClick: onAnnotationListClick,
+						}"
+				/>
+			</div>
+		</atlas-modal>
+		<atlas-modal params="{
 			showModal: showSampleCreatingModal,
 			title: 'Create new sample',
 			data: {

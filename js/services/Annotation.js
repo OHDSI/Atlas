@@ -15,7 +15,7 @@ define(function (require, exports) {
       });
   
       return response;
-    }
+    };
   
     const getAnnotationByCohortIdbySubjectIdBySetId = function(set, cohort, subject, sourceKey) {
       const data = {
@@ -30,7 +30,7 @@ define(function (require, exports) {
       });
   
       return response;
-    }
+    };
   
     const getAnnotationNavigation = function(sampleName, cohort, subject, source) {
       const data = {
@@ -45,16 +45,27 @@ define(function (require, exports) {
         console.error('Can\'t find annotation navigation');
       });
       return response;
-    }
+    };
   
     const createOrUpdateAnnotation = function(data) {
       return httpService.doPost(`${config.webAPIRoot}annotations`, data).then(({ annotation }) => data);
-    }
+    };
+
+    const linkAnnotationToSamples = function(data) {
+        console.log(data);
+        const response = httpService.doPost(`${config.webAPIRoot}annotations/sample`, data).then(({ link }) => data);
+        response.catch((er) => {
+            console.error('Unable to link annotation to sample');
+        });
+
+        return response;
+    };
   
     return {
-      getAnnotationSets,
-      getAnnotationByCohortIdbySubjectIdBySetId,
-      getAnnotationNavigation,
-      createOrUpdateAnnotation
+        getAnnotationSets,
+        getAnnotationByCohortIdbySubjectIdBySetId,
+        getAnnotationNavigation,
+        createOrUpdateAnnotation,
+        linkAnnotationToSamples
     };
   });
