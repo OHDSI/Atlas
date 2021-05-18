@@ -1779,7 +1779,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					'sampleId': sampleId,
 					'cohortDefinitionId': cohortDefinitionId,
 					'sourceKey': sourceKey,
-					'annotationId': d.id
+					'annotationSetId': d.id
 				})
 					.then(res => {
 						console.log('posted annotation sample link');
