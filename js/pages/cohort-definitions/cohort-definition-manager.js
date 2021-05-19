@@ -345,7 +345,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					title: 'Actions',
 					sortable: false,
 					render: function() {
-						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="Link annotation set" data-bind="click: close, css: { disabled: isAnnotationSetLinking() }">Link</button>`
+						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="Link annotation set" data-bind="css: { disabled: isAnnotationSetLinking() }">Link</button>`
 					}
 				}
 			];

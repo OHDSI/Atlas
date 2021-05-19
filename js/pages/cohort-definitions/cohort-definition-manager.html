@@ -364,21 +364,21 @@
 			</div>
 			<div role="tabpanel " data-bind="css: { active: tabMode()=='validate' }" class="tab-pane ">
 				<div data-bind="with: validationTool">
-					<div class="paddedWrapper">
-						<div class="panel panel-primary">
-							<div class="panel-heading">
-								Select Source
-							</div>
-							<div class="panel-body">
-								<div class="row">
-									<div class="col-sm-3">
-										<select class="form-control" data-bind="css : { invalid: sampleSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value: sampleSourceKey, optionsCaption:'Select a Source'"></select>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div role="tabpanel" data-bind="css: {active: $component.tabMode()=='validate'}, visible: sampleSourceKey()!=undefined, if: sampleSourceKey()!=undefined">
+<!--					<div class="paddedWrapper">-->
+<!--						<div class="panel panel-primary">-->
+<!--							<div class="panel-heading">-->
+<!--								Select Source-->
+<!--							</div>-->
+<!--							<div class="panel-body">-->
+<!--								<div class="row">-->
+<!--									<div class="col-sm-3">-->
+<!--										<select class="form-control" data-bind="css : { invalid: sampleSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value: sampleSourceKey, optionsCaption:'Select a Source'"></select>-->
+<!--									</div>-->
+<!--								</div>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--					</div>-->
+					<div role="tabpanel" data-bind="css: {active: $component.tabMode()=='validate'}">
 						<div data-bind="with: questionSet">
 							<ul class="nav nav-pills">
 								<li role="presentation" data-bind="css: { active: $parent.valTabMode() == 'qset' }, click: function() {$parent.valTabMode('qset'); }">
@@ -663,7 +663,8 @@
 				annotationSetsLoading: annotationSetsLoading,
 				annotationSets: annotationSets,
 				annotationSetCols: annotationSetCols,
-				onAnnotationListClick: onAnnotationListClick
+				onAnnotationListClick: onAnnotationListClick,
+				isAnnotationSetLinking: isAnnotationSetLinking
 			}
 		}">
 			<div>
