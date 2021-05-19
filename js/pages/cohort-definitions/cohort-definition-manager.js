@@ -57,7 +57,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/authorship',
 	'utilities/sql',
 	'components/conceptset/conceptset-list',
-	'components/name-validation'
+	'components/name-validation',
+	'components/versions/versions'
 ], function (
 	$,
 	ko,
@@ -843,6 +844,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			});
 
+			this.versionsParams = ko.observable({
+				getListFn: () => cohortDefinitionService.getVersions(this.currentCohortDefinition().id()),
+				updateVersionFn: (version) => cohortDefinitionService.updateVersion(version)
+			});
+
 			this.pollForInfoPeriodically();
 
 			this.subscriptions.push(
@@ -890,7 +896,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}, (error) => {
 					console.log("Error: " + error);
 					if(error.status == 409) {
-						alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.save', 'Cohort definition cannot be deleted because it is referenced in some analysis.')());
+						alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.deleteConflict', 'Cohort definition cannot be deleted because it is referenced in some analysis.')());
 						this.isDeleting(false);
 					} else {
 							authApi.handleAccessDenied(error);
@@ -932,8 +938,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 					sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
+					this.versionsParams.valueHasMutated();
 				} catch (e) {
-					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.save', 'An error occurred while attempting to save a cohort definition.')());
+					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.saveError', 'An error occurred while attempting to save a cohort definition.')());
 				} finally {
 					this.isSaving(false);
 				}

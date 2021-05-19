@@ -85,6 +85,9 @@
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
+			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'versions' }, click: () => { $component.selectTab('versions'); }">
+				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.versions', 'Versions')"></a>
+			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() === 'warnings' }, click: function(){ $component.selectTab('warnings'); } ">
 				<a>
 					<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.messages', 'Messages')"></span>
@@ -470,6 +473,11 @@
 			<div role="tabpanel " data-bind="css: { active: $component.tabMode()=='explore' } " class="tab-pane ">
 				<div class="paddedWrapper ">
 					<explore-cohort params="{showSelectionArea: false } "></explore-cohort>
+				</div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'versions' }" class="tab-pane">
+				<div class="paddedWrapper">
+					<div data-bind="component: { name: 'versions', params: $component.versionsParams }"></div>
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() === 'warnings' }" class="tab-pane">

@@ -154,6 +154,19 @@ define(function (require, exports) {
 		return httpService.plainTextService.doPost(config.webAPIRoot + 'cohortdefinition/printfriendly/cohort?format=html', cohortExpression);
 	}
 
+	function getVersions(cohortDefinitionId) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/`)
+			.then(({ data }) => data);
+	}
+
+	function updateVersion(version) {
+		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${version.assetId}/version/${version.id}`, {
+			id: version.id,
+			comment: version.comment,
+			archived: version.archived
+		}).then(({ data }) => data);
+	}
+
 	var api = {
 		getCohortDefinitionList,
 		saveCohortDefinition,
@@ -171,6 +184,8 @@ define(function (require, exports) {
 		getCohortAnalyses,
 		exists: exists,
 		getCohortPrintFriendly,
+		getVersions,
+		updateVersion
 	};
 
 	return api;
