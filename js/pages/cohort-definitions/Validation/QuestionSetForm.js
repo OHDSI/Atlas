@@ -1,11 +1,18 @@
 define(['knockout', 'services/Validation'], function (ko, ValidationService) {
     function QuestionSetForm(id, cohortName) {
         var self = this;
-        self.questions = ko.observableArray([])
-        self.questionSetName = ko.observable()
+        self.questions = ko.observableArray([]);
+        self.questionSetName = ko.observable();
         self.questionTypes = ko.observableArray(['Checkbox', 'Radio Button', 'Text']);
-        self.bools = ko.observableArray(['true', 'false'])
-        self.errorMessage = ko.observable()
+        self.bools = ko.observableArray(['true', 'false']);
+        self.errorMessage = ko.observable();
+
+        function Answer() {
+            var self = this;
+            self.text = ko.observable();
+            self.value = '';
+            // self.helpText = ko.observable()
+        }
 
         function Question() {
             var self = this;
@@ -14,54 +21,51 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
             self.type =ko.observable('');
             self.caseQuestion = ko.observable('');
             self.required = ko.observable('');
-            self.answers = ko.observableArray([])
+            self.answers = ko.observableArray([]);
 
             self.addAnswer = function() {
-                if (self.type() != 'Text' && self.type() != undefined) {
-                    self.answers.push(new Answer())
+                if (self.type() !== 'Text' && self.type() !== undefined) {
+                    self.answers.push(new Answer());
                 }
-            }
+            };
             self.removeAnswer = function(item) {
-                self.answers.remove(item)
-            }
-        }
-
-        function Answer() {
-            var self = this;
-            self.text = ko.observable()
-            self.value = '';
-            // self.helpText = ko.observable()
+                self.answers.remove(item);
+            };
         }
 
         self.addQuestion = function() {
             self.questions.push(new Question());
-        }
+        };
         self.removeQuestion = function(item) {
-            self.questions.remove(item)
-        }
+            self.questions.remove(item);
+        };
 
         self.createQuestionSet = function (sampleSourceKey) {
             if (self.errorMessage() != null) {
                 self.errorMessage('');
             }
 
-            //check that qset name is not undfined
-            if (self.questionSetName() == undefined) {
+            //check that qset name is not undefined
+            if (self.questionSetName() === undefined) {
                 self.errorMessage('Please enter question set name.');
                 return null;
             }
             
-            if (self.questions().length == 0) {
+            if (self.questions().length === 0) {
                 self.errorMessage("Please include at least one question");
                 return null;
             }
 
             var numCaseQuestions = 0;
-            for (var i =0; i < self.questions().length; i++) {
+            var currentAnswer = null;
+            var i;
+            var j = 0;
+            for (i =0; i < self.questions().length; i++) {
                 
-                currentQuestion = self.questions()[i]
-                numAnswers = self.questions()[i].answers().length;
-                currentQuestionType = self.questions()[i].type()
+                var currentQuestion = self.questions()[i];
+                var numAnswers = self.questions()[i].answers().length;
+                var currentQuestionType = self.questions()[i].type();
+
                 
                 //check that questions are not null or unselected
                 if (currentQuestion.text() == null ||
@@ -74,26 +78,26 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
                     }
                 
                 //enforce that all have answers unless text
-                if (numAnswers == 0 && currentQuestionType != 'Text') {
+                if (numAnswers === 0 && currentQuestionType !== 'Text') {
                     self.errorMessage('Checkbox and radio button questions must have answers');
                     break;
                 }
 
                 //check that answers don't have null values        
-                for (var j=0; j< self.questions()[i].answers().length; j++) {
-                    currentAnswer = self.questions()[i].answers()[j]
+                for (j=0; j< self.questions()[i].answers().length; j++) {
+                    currentAnswer = self.questions()[i].answers()[j];
                     if (currentAnswer.text() == null && // || currentAnswer.helpText() == null) && 
-                        currentQuestionType != 'Text') {
-                        self.errorMessage('Please do not leave answers blank.')
+                        currentQuestionType !== 'Text') {
+                        self.errorMessage('Please do not leave answers blank.');
                         break;
                     }
                 }
 
                 
                 //check that only one question is a case question
-                if (currentQuestion.caseQuestion() == 'true') {
+                if (currentQuestion.caseQuestion() === 'true') {
                     if (++numCaseQuestions > 1) {
-                        self.errorMessage('Only one question can be a case question.')
+                        self.errorMessage('Only one question can be a case question.');
                         break;
                     }
                 }
@@ -104,21 +108,21 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
                 return null;
             }
 
-            for (var i =0; i < self.questions().length; i++) {
-                if (self.questions()[i].type() == 'Text') {
+            for (i =0; i < self.questions().length; i++) {
+                if (self.questions()[i].type() === 'Text') {
                     self.questions()[i].answers.push(new Answer());
                     self.questions()[i].answers()[0].text = '';
-                    self.questions()[i].type = 'TEXTAREA'
-                } else if (self.questions()[i].type() == "Checkbox") {
-                    self.questions()[i].type = 'MULTI_SELECT'
-                    for (var j=0; j< self.questions()[i].answers().length; j++) {
-                        currentAnswer = self.questions()[i].answers()[j]
-                        currentAnswer.value = currentAnswer.text()
+                    self.questions()[i].type = 'TEXTAREA';
+                } else if (self.questions()[i].type() === "Checkbox") {
+                    self.questions()[i].type = 'MULTI_SELECT';
+                    for (j=0; j< self.questions()[i].answers().length; j++) {
+                        currentAnswer = self.questions()[i].answers()[j];
+                        currentAnswer.value = currentAnswer.text();
                     }
-                } else if (self.questions()[i].type() == "Radio Button") {
-                    self.questions()[i].type = 'SINGLE_SELECT'
-                    for (var j=0; j< self.questions()[i].answers().length; j++) {
-                        currentAnswer = self.questions()[i].answers()[j]
+                } else if (self.questions()[i].type() === "Radio Button") {
+                    self.questions()[i].type = 'SINGLE_SELECT';
+                    for (j=0; j< self.questions()[i].answers().length; j++) {
+                        currentAnswer = self.questions()[i].answers()[j];
                         currentAnswer.value = j;
                     }
                 }
@@ -128,10 +132,11 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
                         cohortSource: sampleSourceKey, 
                         cohortId: id, 
                         name: self.questionSetName(),
-                        questions: ko.toJS(self.questions())}
-            ValidationService.submitQuestionSet(JSON.stringify(data));
-            location.reload()
-        }
+                        questions: ko.toJS(self.questions())};
+            return ValidationService.submitQuestionSet(JSON.stringify(data));
+
+
+        };
     }
     QuestionSetForm.prototype.constructor = QuestionSetForm;
     return QuestionSetForm;

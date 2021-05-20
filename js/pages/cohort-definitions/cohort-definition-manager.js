@@ -345,7 +345,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					title: 'Actions',
 					sortable: false,
 					render: function() {
-						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="Link annotation set" data-bind="css: { disabled: isAnnotationSetLinking() }">Link</button>`
+						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="Link annotation set" data-bind="css: { disabled: isAnnotationSetLinking() }">Create Study</button>`
 					}
 				}
 			];
@@ -353,11 +353,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			// end validation samples
 
 			this.isCohortGenerated = ko.pureComputed(() => {
-				const sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.sampleSourceKey());
-				if (sourceInfo&&this.getStatusMessage(sourceInfo) == 'COMPLETE') {
-					return true;
-				}
-				return false;
+				const sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey === this.sampleSourceKey());
+				return !!(sourceInfo && this.getStatusMessage(sourceInfo) === 'COMPLETE');
+
 			});
 
 			//end of sample states
@@ -411,7 +409,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 
 				if (this.currentCohortDefinition() && (this.currentCohortDefinition()
-						.id() != 0)) {
+						.id() !== 0)) {
 					return authApi.isPermittedUpdateCohort(this.currentCohortDefinition()
 						.id()) || !config.userAuthenticationEnabled;
 				} else {

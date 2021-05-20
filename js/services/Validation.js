@@ -27,7 +27,7 @@ define(function (require, exports) {
     }
     function submitQuestionSet(data) {
         var url = `${config.webAPIRoot}annotations/sets`;
-        var promise = $.ajax({
+        return $.ajax({
             url: url,
             data: data, 
             method: 'POST',
@@ -40,7 +40,6 @@ define(function (require, exports) {
                 console.log("Error: " + error);
             }
         });
-        return promise;
     }
 
     const getSamples = function(sk, id) {
@@ -49,7 +48,7 @@ define(function (require, exports) {
           console.error('Unable to get Validation Sets');
         });
         return response;
-      }
+      };
 
     const exportAnnotation = function(sk, cohortId, sampleName) {
         if (sampleName.indexOf(' ') >=0) {
@@ -60,7 +59,7 @@ define(function (require, exports) {
             console.error('Unable to download CSV')
         });
         return response;
-    }
+    };
 
     const getQsets = function(id) {
         const response = httpService.doGet( `${config.webAPIRoot}annotations/sets?cohortId=${id}`).then(({ data }) => data);
@@ -68,7 +67,7 @@ define(function (require, exports) {
           console.error('Unable to get Question Sets');
         });
         return response;
-    }
+    };
 
     API = {
         createValidationSet,
