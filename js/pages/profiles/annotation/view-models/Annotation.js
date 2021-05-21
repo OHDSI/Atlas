@@ -10,10 +10,14 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
       self.sourceKey = sourceKey;
       self.sampleName = sampleName
       self.rawToForm = function(rawResults) {
+        if (!rawResults) {
+          console.log('empty annotation results');
+          return [];
+        }
         return rawResults.sort((a, b) => b.questionId - a.questionId).sort().reduce((accumulator, current) => {
-            const length = accumulator.length
+            const length = accumulator.length;
             if (length === 0 || accumulator[length - 1].questionId !== current.questionId) {
-              if (current.type == 'MULTI_SELECT') {
+              if (current.type === 'MULTI_SELECT') {
                 current.value = [current.value];
               }
               accumulator.push(current);
@@ -22,7 +26,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
             }
             return accumulator;
         }, []);
-      }
+      };
   
       self.formToRaw = function(massagedResults, questions) {
         return Object.keys(massagedResults).reduce((accumulator, current) => {

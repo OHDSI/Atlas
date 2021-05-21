@@ -7,21 +7,21 @@ define(['knockout', './AnnotationView', './SettingsView', 'services/Annotation']
       self.annotationToggleState = ko.observable(localStorage.getItem('annotationToggleState'));
   
       self.toggleAnnotationPanel = function() {
-        const nextAnnotationToggleState = this.annotationToggleState() == 'open' ? '' : 'open'
+        const nextAnnotationToggleState = this.annotationToggleState() === 'open' ? '' : 'open';
         this.annotationToggleState(nextAnnotationToggleState);
         localStorage.setItem('annotationToggleState', nextAnnotationToggleState);
-      }
+      };
   
       self.initialize = function(cohortId, personId, sourceKey, sampleName, settingsView) {
         annotationService.getAnnotationSets(cohortId, sourceKey)//TODO include source key in this lookup as well
           .then((sets) => {
-            if (sets.length == 0 || !sets) {
+            if (sets.length === 0 || !sets) {
               return self.isVisable(false);
             }
             self.annotationView = new AnnotationView(sets, cohortId, personId, sourceKey, sampleName, settingsView);
             self.isVisable(true);
-          })
-      }
+          });
+      };
   
       self.settingsView = new SettingsView(self);
       self.initialize(cohortId, personId, sourceKey, sampleName, self.settingsView);
