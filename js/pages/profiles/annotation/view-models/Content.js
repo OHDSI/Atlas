@@ -2,7 +2,7 @@ define(['knockout', './Annotation', 'services/Annotation'], function (ko, Annota
 
     function Content(set, cohortId, personId, sourceKey, annotationView, sampleName) {
       var self = this;
-      self.annotation;
+      self.annotation = null;
       self.annotationLoaded = ko.observable(false);
       self.initialize = function(set, cohortId, personId, sourceKey) {
         annotationService.getAnnotationByCohortIdbySubjectIdBySetId(set.id, cohortId, personId, sourceKey)
@@ -15,7 +15,7 @@ define(['knockout', './Annotation', 'services/Annotation'], function (ko, Annota
             }
             self.annotationLoaded(true);
           });
-      }
+      };
   
       self.initialize(set, cohortId, personId, sourceKey)
     }

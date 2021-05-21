@@ -132,7 +132,7 @@
 				<div data-bind="with: annotationWidget" style="height: 100%">
 					<div data-bind="if: isVisable" style="height: 100%">
 						<div data-bind="css: { open: annotationToggleState() == 'open' }" class="annotation-widget">
-							<button type="button" class="annotation-toggle btn btn-primary btn-xs" data-bidn="click: toggleAnnotationPanel">Validate</button>
+							<button type="button" class="annotation-toggle btn btn-primary btn-xs" data-bind="click: toggleAnnotationPanel">Validate</button>
 							<div data-bind="if: currentView() == 'annotationView'">
 								<div data-bind="with: annotationView">
 									<div class="annotation-view">

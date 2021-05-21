@@ -8,7 +8,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
       self.subjectId = subjectId;
       self.cohortId = cohortId;
       self.sourceKey = sourceKey;
-      self.sampleName = sampleName
+      self.sampleName = sampleName;
       self.rawToForm = function(rawResults) {
         if (!rawResults) {
           console.log('empty annotation results');
@@ -72,7 +72,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
             }
           }
         }, []);
-      }
+      };
   
       var massagedResults = self.rawToForm(rawResults);
   
