@@ -414,11 +414,12 @@
 										</div>
 									</div>
 									<div data-bind="visible: $parent.valTabMode() == 'selected_qset'">
-										<div class="panel-heading">
-											Current Question Set
+										<div class="validation-section">
+											<button class="btn btn-primary btn-sm" style="margin-left:16px" data-bind="click: goBack($parent)"><i class="fa fa-arrow-left"></i> Back</button>
+
 										</div>
 										<div class="panel-body">
-											<div class="row" data-bind="foreach: qset, visible: qset().length > 0">
+											<div class="row" data-bind="with: qset, visible: qset !== undefined">
 												<h5 data-bind="text: text"></h5>
 												<div class="row">
 													<div class='col-3'>
@@ -449,70 +450,81 @@
 
 									<div data-bind="visible: $parent.valTabMode() == 'new_qset'">
 										<div class="validation-section">
-											<button class="btn btn-primary " data-bind="click: $parent.valTabMode('show_qsets')">Back</button>
+											<button class="btn btn-primary btn-sm" style="margin-left:16px" data-bind="click: goBack($parent)"><i class="fa fa-arrow-left"></i> Back</button>
 
 										</div>
 										<div data-bind="with: questionSetForm">
 											<div class="panel-body">
-												<div class="row">
-													<div class="col-sm-1"  style="margin-top: 7px;">
-														<label>Question Set Name:</label>
+												<div class="row validation-row">
+													<div class="col-sm-2"  style="margin-top: 7px;">
+														<label class="validation-label">Question Set Name:</label>
 													</div>
-													<div class="col-sm-3">
+													<div class="col-sm-10">
 														<input class="form-control" type="text" data-bind="value: questionSetName" placeholder="Question Set Name">
 													</div>
-													<div class="col-sm-1"  style="margin-top: 2px;">
-														<button class="btn btn-success btn-sm" data-bind="click: addQuestion">Add Question</button>
+
+												</div>
+												<div class="row">
+
+													<div class="col-sm-2"  style="margin-top: 2px;">
+														<button class="btn btn-success btn-sm" data-bind="click: addQuestion"><i class="fa fa-plus"></i> Add Question</button>
 													</div>
-													<div class="col-sm-3" style="margin-top: 7px;">
+													<div class="col-sm-10" style="margin-top: 7px;">
 														<span data-bind="text: errorMessage()" style="color: red;"></span>
 													</div>
 									
 												</div>
-												<ul data-bind="foreach: questions">
-													<br/>
-													<div class="row">
-														<div class="col-sm-4">
-															<label>  Question <span data-bind="text: ($index() + 1)"></span>:</label>
-															<input class="form-control" type="text" data-bind="value: text" placeholder="Question Text">
-														</div>
-														<div class="col-sm-2">
-															<label>  Question Type</label>
-															<select class="form-control" data-bind="options: $parent.questionTypes(), value: type"></select>
-														</div>
-														<div class="col-sm-2">
-															<label>Required</label>
-															<select class="form-control" data-bind="options: $parent.bools(), value: required"></select>
-														</div>
-														<div class="col-sm-2">
-															<label>Case Question</label>
-															<select class="form-control" data-bind="options: $parent.bools(), value: caseQuestion"></select>
-														</div>
-														<div class="col-sm-2" style="margin-top: 23px;">
-															<button class="btn btn-success btn-sm" data-bind="click: addAnswer, disable: type() == 'Text' || type() == undefined"><i class="fa fa-plus"></i></button>
-															<button class="btn btn-danger btn-sm" title="Delete" data-bind="click: $parent.removeQuestion"><i class="fa fa-trash-o"></i></button>
-														</div>
+												<div class="row validation-row">
+													<div class="col-sm-12">
+														<label class="validation-label">Questions:</label>
 													</div>
-													<ul data-bind="foreach: answers">
-														<div class="row">
-															<li>
-																<div class="col-sm-10">
-																	<input class="form-control" type="text" data-bind="value: text" placeholder="Answer Text">
+													<div class="col-sm-12">
+														<ul data-bind="foreach: questions">
+															<br/>
+															<div class="row">
+																<div class="col-sm-4">
+																	<label>  Question <span data-bind="text: ($index() + 1)"></span>:</label>
+																	<input class="form-control" type="text" data-bind="value: text" placeholder="Question Text">
 																</div>
-																<div class="col-sm-1" style="margin-top: 4px;">
-																	<u><a data-bind="click: $parent.removeAnswer" style="color: red;">remove</a></u>
+																<div class="col-sm-2">
+																	<label>  Question Type</label>
+																	<select class="form-control" data-bind="options: $parent.questionTypes(), value: type"></select>
 																</div>
-															</li>
-															
-														</div>
-													</ul>
-												</ul>
+																<div class="col-sm-2">
+																	<label>Required</label>
+																	<select class="form-control" data-bind="options: $parent.bools(), value: required"></select>
+																</div>
+																<div class="col-sm-2">
+																	<label>Case Question</label>
+																	<select class="form-control" data-bind="options: $parent.bools(), value: caseQuestion"></select>
+																</div>
+																<div class="col-sm-2" style="margin-top: 23px;">
+																	<button class="btn btn-success btn-sm" data-bind="click: addAnswer, disable: type() == 'Text' || type() == undefined"><i class="fa fa-plus"></i></button>
+																	<button class="btn btn-danger btn-sm" title="Delete" data-bind="click: $parent.removeQuestion"><i class="fa fa-trash-o"></i></button>
+																</div>
+															</div>
+															<ul data-bind="foreach: answers">
+																<div class="row">
+																	<li>
+																		<div class="col-sm-10">
+																			<input class="form-control" type="text" data-bind="value: text" placeholder="Answer Text">
+																		</div>
+																		<div class="col-sm-1" style="margin-top: 4px;">
+																			<u><a data-bind="click: $parent.removeAnswer" style="color: red;">remove</a></u>
+																		</div>
+																	</li>
+
+																</div>
+															</ul>
+														</ul>
+													</div>
+												</div>
 											</div>
 										</div>
 
 									</div>
-									<div class="validation-section">
-										<button class="btn btn-success btn-sm " data-bind="visible: $parent.valTabMode() == 'new_qset', click: $parent.submitQsetForm">Submit Question Set</button>
+									<div class="validation-section pull-right">
+										<button class="btn btn-success" style="margin-right: 18px" data-bind="visible: $parent.valTabMode() == 'new_qset', click: $parent.submitQsetForm"><i class="fa fa-save"></i> Submit Question Set</button>
 									</div>
 								</div>
 

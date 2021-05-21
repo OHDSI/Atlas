@@ -7,6 +7,7 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
         self.bools = ko.observableArray(['true', 'false']);
         self.errorMessage = ko.observable();
 
+
         function Answer() {
             var self = this;
             self.text = ko.observable();

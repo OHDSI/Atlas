@@ -98,4 +98,13 @@
     padding-bottom: 5px;
     font-size: 12px;
 }
-  
+
+.validation-label {
+    font-size: 16px;
+}
+
+.validation-row {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 9px 3px;
+}
