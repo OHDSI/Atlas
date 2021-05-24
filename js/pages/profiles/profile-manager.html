@@ -49,7 +49,7 @@
 <div data-bind="if:$component.canViewProfiles">
 	<div class="asset-heading">
 		<form data-bind="submit:loadPerson">
-			<div class="input-group" role="group">
+			<div class="input-group" role="group" data-bind="style: { width: isAnnotationToggleVisible() ? '65%' : '100%' }">
 				<div class="input-group-btn" role="group">
 					<button type="button" title="choose a data source" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<span data-bind="text:$component.sourceKeyCaption"></span>&nbsp;&nbsp;<span class="caret"></span>
@@ -130,7 +130,7 @@
 			<!--START ANNOTATION-->
 			<div data-bind="if: person" style="height:100%; position: absolute; top:0; right:0">
 				<div data-bind="with: annotationWidget" style="height: 100%">
-					<div data-bind="if: isVisable" style="height: 100%">
+					<div data-bind="if: isVisible" style="height: 100%">
 						<div data-bind="css: { open: annotationToggleState() == 'open' }" class="annotation-widget">
 							<button type="button" class="annotation-toggle btn btn-primary btn-xs" data-bind="click: toggleAnnotationPanel">Validate</button>
 							<div data-bind="if: currentView() == 'annotationView'">

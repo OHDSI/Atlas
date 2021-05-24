@@ -349,6 +349,13 @@ define([
 				if (this.cohortDefinitionId()) {
 					this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName);
 				}
+
+				this.isAnnotationToggleVisible =  ko.computed(() => {
+					if (this.annotationWidget) {
+						return this.annotationWidget.isVisible();
+					}
+					return false;
+				});
 				// END ANNOTATION
 
 				this.plugins = pluginRegistry.findByType(globalConstants.pluginTypes.PROFILE_WIDGET);
