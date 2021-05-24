@@ -51,6 +51,7 @@
 							<div class="panel-footer">
 								<concept-add-box params="{
 									canSelectSource: true,
+									isActive: () => metarchy.parents().filter(c => c.isSelected()).length > 0,
 									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.parents),
 								}"></concept-add-box>
 							</div>
@@ -80,6 +81,7 @@
 						<div class="panel-footer">
 							<concept-add-box params="{
 								canSelectSource: true,
+								isActive: () => currentConceptArray().filter(c => c.isSelected()).length > 0,
 								onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
 							}"></concept-add-box>
 						</div>
@@ -113,6 +115,7 @@
 							<div class="panel-footer">
 								<concept-add-box params="{
 									canSelectSource: true,
+									isActive: () => metarchy.children().filter(c => c.isSelected()).length > 0,
 									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.children),
 								}"></concept-add-box>
 							</div>
