@@ -10,7 +10,7 @@ define(['knockout', './Content', './Navigation', './SetSelect'], function (ko, C
         self.loadedSelect = ko.observable(false);
 
         self.loaded = ko.computed(() => {
-            return self.loadedContent() && self.loadedNavigation() && self.loadedSelect();
+            return self.loadedContent();
         });
 
         self.initContent = function (set, cohortId, personId, sourceKey, sampleName) {
