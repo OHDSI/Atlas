@@ -976,6 +976,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				} else {
 					this.conceptSetStore.clear();
 					this.currentCohortDefinition(null);
+					this.previewVersionId(null);
+					this.previewVersion(null);
 					this.dirtyFlag().reset();
 					this.reportCohortDefinitionId(null);
 					this.reportReportName(null);
