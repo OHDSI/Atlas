@@ -159,6 +159,24 @@ define(function (require, exports) {
 			.then(({ data }) => data);
 	}
 
+	function getVersion(cohortDefinitionId, versionId) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionId}`)
+			.then(res => {
+				const cohortDef = res.data.cohortRawDTO;
+				cohortDef.expression = JSON.parse(cohortDef.expression);
+				cohortDef.versionDef = res.data.cohortVersionDTO;
+				return cohortDef;
+			}).catch(error => {
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
+			});
+	}
+
+	function copyVersion(cohortDefinitionId, versionId) {
+		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionId}/createAsset`)
+			.then(({ data }) => data);
+	}
+
 	function updateVersion(version) {
 		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${version.assetId}/version/${version.id}`, {
 			id: version.id,
@@ -185,7 +203,9 @@ define(function (require, exports) {
 		exists: exists,
 		getCohortPrintFriendly,
 		getVersions,
-		updateVersion
+		getVersion,
+		updateVersion,
+		copyVersion
 	};
 
 	return api;

@@ -6,6 +6,7 @@ define(function (require, exports) {
   const {get} = require("lodash");
   const PARSE_FORMAT = 'YYYY-MM-DD, H:mm';
   const DATE_TIME_FORMAT = 'MM/DD/YYYY h:mm A';
+  const DATE_TIME_FORMAT_WITH_SECONDS = 'MM/DD/YYYY h:mm:ss A';
   const DATE_FORMAT = 'MM/DD/YYYY';
   const ISO_DATE_FORMAT = 'YYYY-MM-DD';
   const DURATION_FORMAT = 'HH:mm:ss';
@@ -13,6 +14,7 @@ define(function (require, exports) {
   const EMPTY_DATE = '';
 
   const dateTimeFormat = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.datetime", DATE_TIME_FORMAT));
+  const dateTimeFormatWithSeconds = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.datetimeWithSeconds", DATE_TIME_FORMAT_WITH_SECONDS));
   const seconds = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.seconds", "sec"));
   const minutes = ko.computed(() => get(ko.unwrap(sharedState.localeSettings), "format.date.minutes", "min"));
 
@@ -41,9 +43,10 @@ define(function (require, exports) {
     return m.isValid() ? m.format(outFormat) : EMPTY_DATE;
   }
 
-  function formatDateTimeUTC(timestamp) {
+  function formatDateTimeUTC(timestamp, withSeconds) {
     const m = moment(typeof timestamp === 'string' ? moment.utc(timestamp).valueOf() : timestamp);
-    return m.isValid() ? m.format(dateTimeFormat()) : EMPTY_DATE;
+    let format = withSeconds ? dateTimeFormatWithSeconds() : dateTimeFormat();
+    return m.isValid() ? m.format(format) : EMPTY_DATE;
   }
 
   function diffInDays(fromDate, toDate) {

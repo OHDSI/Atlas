@@ -15,27 +15,31 @@
 					data-bind="placeholder: ko.i18n('const.newEntityNames.cohortDefinition', 'New Cohort Definition'), enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }" />
 				<div class="input-group-btn">
 					<button class="btn btn-success"
-						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.saveCohortTitle', 'Save cohort definition'), click: save, enable: canSave() && !isProcessing()"><i
+						data-bind="title: !previewVersionId() ? ko.i18n('cohortDefinitions.cohortDefinitionManager.saveCohortTitle', 'Save cohort definition') : ko.i18n('cohortDefinitions.cohortDefinitionManager.saveAsCurrent', 'Save cohort definition as current version'), click: save, enable: canSave() && !isProcessing()"><i
 							class="fa fa-save"></i></button>
+					<button class="btn btn-primary"
+							data-bind="visible: previewVersionId(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">
+						<i class="fa fa-undo"></i>
+					</button>
 					<button class="btn btn-primary"
 						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.closeCohortTitle', 'Close cohort definition'), click: close, css: { disabled: isProcessing() }"><i
 							class="fa fa-times"></i></button>
 					<!-- ko if: currentCohortDefinition().id() != null && currentCohortDefinition().id() != 0 -->
 					<button class="btn btn-primary"
-						data-bind="title: ko.i18n('common.tags', 'Tags'), visible: canEdit(), click: () => isTagsModalShown(!isTagsModalShown()), css: { disabled: isProcessing() }"><i class="fa fa-tags"></i></button>
+						data-bind="title: ko.i18n('common.tags', 'Tags'), visible: canEdit() && !previewVersionId(), click: () => isTagsModalShown(!isTagsModalShown()), css: { disabled: isProcessing() }"><i class="fa fa-tags"></i></button>
 					<button class="btn btn-primary"
-						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.createCopyCohortTitle', 'Create a copy of this cohort definition'), click: copy, enable: canCopy() && !isProcessing()"><i
+						data-bind="visible: !previewVersionId(), title: ko.i18n('cohortDefinitions.cohortDefinitionManager.createCopyCohortTitle', 'Create a copy of this cohort definition'), click: copy, enable: canCopy() && !isProcessing()"><i
 							class="fa fa-copy"></i></button>
 					<button class="btn btn-primary"
-						data-bind="title: ko.i18n('cohortDefinitions.cohortDefinitionManager.getLinkCohortTitle', 'Get a link to this cohort definition'), enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i
+						data-bind="visible: !previewVersionId(), title: ko.i18n('cohortDefinitions.cohortDefinitionManager.getLinkCohortTitle', 'Get a link to this cohort definition'), enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i
 							class="fa fa-link"></i></button>
 					<button class="btn btn-primary"
-						data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
+						data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner() && !previewVersionId(), click: () => isAccessModalShown(!isAccessModalShown())">
 						<i class="fa fa-lock"></i>
 					</button>
 					<!-- ko if: !isRunning() -->
 					<button class="btn btn-danger"
-						data-bind="title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
+						data-bind="visible: !previewVersionId(), title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
 							class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
@@ -65,24 +69,27 @@
 			</li>
 
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
+				data-bind="visible: !previewVersionId(), css: { active: $component.tabMode() == 'generation' }, click: function() { $component.selectTab('generation'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.generation', 'Generation')"></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
+			<li role="presentation"
+				data-bind="visible: !previewVersionId(), css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.samples', 'Samples')"></a>
 			</li>
 
 			<li role="presentation"
-				data-bind="css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
+				data-bind="visible: !previewVersionId(), css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.reporting', 'Reporting')"></a>
 			</li>
 			<!--
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }">
+			<li role="presentation"
+				data-bind="visible: !previewVersionId(), css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.explore', 'Explore')"></a>
 			</li>
 			-->
-			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
+			<li role="presentation"
+				data-bind="visible: !previewVersionId(), css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
 			</li>
 			<li role="presentation" data-bind="css: { active: $component.tabMode() == 'versions' }, click: () => { $component.selectTab('versions'); }">

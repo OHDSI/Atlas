@@ -105,6 +105,49 @@ define(
             });
           });
         }),
+
+        '/cohortdefinition/:cohortDefinitionId/version/:versionId': new AuthorizedRoute(
+            (cohortDefinitionId, versionId) => {
+              require([
+                  'components/cohortbuilder/CohortDefinition',
+                  'components/atlas.cohort-editor',
+                  './cohort-definitions',
+                  './cohort-definition-manager',
+                  'components/cohort-definition-browser',
+                  'conceptset-editor',
+                  'components/conceptset/concept-modal',
+              ], function() {
+                router.setCurrentView('cohort-definition-manager', {
+                  cohortDefinitionId,
+                  versionId,
+                  mode: 'definition',
+                })
+                sharedState.CohortDefinition.mode('definition')
+              })
+            }
+        ),
+
+        '/cohortdefinition/:cohortDefinitionId/current': new AuthorizedRoute(
+            (cohortDefinitionId) => {
+              require([
+                  'components/cohortbuilder/CohortDefinition',
+                  'components/atlas.cohort-editor',
+                  './cohort-definitions',
+                  './cohort-definition-manager',
+                  'components/cohort-definition-browser',
+                  'conceptset-editor',
+                  'components/conceptset/concept-modal',
+              ], function() {
+                router.setCurrentView('cohort-definition-manager', {
+                  cohortDefinitionId,
+                  currentVersion: true,
+                  mode: 'definition',
+                })
+                sharedState.CohortDefinition.mode('definition')
+              })
+            }
+        ),
+
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path = 'definition') => {
           require([
            'components/cohortbuilder/CohortDefinition',

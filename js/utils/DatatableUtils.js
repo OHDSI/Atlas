@@ -17,11 +17,11 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             return label;
         };
 
-        const getDateFieldFormatter = (field = 'createdDate', defaultValue = false) => (s, type, d) => {
+        const getDateFieldFormatter = (field = 'createdDate', defaultValue = false, withSeconds = false) => (s, type, d) => {
             if (type === "sort") {
               return (defaultValue && d[field]) || d[field] ? d[field] : defaultValue;
             } else {
-							return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field]) : defaultValue;
+							return (defaultValue && d[field]) || d[field] ? momentApi.formatDateTimeUTC(d[field], withSeconds) : defaultValue;
 						}
         };
 

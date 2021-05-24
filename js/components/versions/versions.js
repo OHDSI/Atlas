@@ -20,8 +20,15 @@ function (
 	class VersionsComponent extends AutoBind(Component) {
 		constructor(params) {
 			super(params);
-			this.getListFn = params.getListFn;
-			this.updateVersionFn = params.updateVersionFn;
+			this.versionPreviewUrl = params.versionPreviewUrl;
+			this.currentVersion = params.currentVersion;
+			this.previewVersionId = params.previewVersionId;
+			this.getList = params.getList;
+			this.updateVersion = params.updateVersion;
+			this.copyVersionFn = params.copyVersion;
+			this.isAssetDirty = params.isAssetDirty;
+			this.canAddComments = params.canAddComments;
+
 			this.isLoading = ko.observable(true);
 			this.data = ko.observableArray();
 			this.editVersion = ko.observable();
@@ -30,7 +37,7 @@ function (
 
 			this.columns = [
 				{
-					title: ko.i18n('columns.number', 'Number'),
+					title: ko.i18n('columns.version', 'Version'),
 					data: 'version'
 				},
 				{
@@ -39,12 +46,22 @@ function (
 				},
 				{
 					title: ko.i18n('columns.created', 'Created'),
-					render: datatableUtils.getDateFieldFormatter('createdDate')
+					render: datatableUtils.getDateFieldFormatter('createdDate', false, true)
 				},
 				{
 					title: ko.i18n('columns.comment', 'Comment'),
+					orderable: false,
 					render: (s, p, d) => {
+						if (d.currentVersion) {
+							return;
+						}
+
 						const comment = d.comment;
+
+						if (!this.canAddComments()) {
+							return comment || '';
+						}
+
 						d.editComment = () => this.editComment(d);
 						return comment ?
 							`${comment} <a data-bind="css: '${this.classes('action-link')}', click: editComment"><i class="fa fa-pencil"></i></a>` :
@@ -55,17 +72,25 @@ function (
 					title: ko.i18n('components.versions.preview', 'Preview'),
 					orderable: false,
 					render: (s, p, d) => {
+						if (d.currentVersion) {
+							return;
+						}
+						if (d.id === parseInt(this.previewVersionId())) {
+							return `<span data-bind="text: ko.i18n('components.versions.viewing', 'Viewing now')"></span>`;
+						}
 						d.preview = () => this.openPreview(d);
 						return `<a data-bind="css: '${this.classes('action-link')}', click: preview, text: ko.i18n('components.versions.preview', 'Preview')"></a>`
-
 					}
 				},
 				{
-					title: ko.i18n('components.versions.copy', 'Copy'),
+					title: ko.i18n('columns.copy', 'Copy'),
 					orderable: false,
 					render: (s, p, d) => {
+						if (d.currentVersion) {
+							return;
+						}
 						d.copy = () => this.copyVersion(d);
-						return `<a data-bind="css: '${this.classes('action-link')}', click: copy, text: ko.i18n('components.versions.copy', 'Copy')"></a>`
+						return `<a data-bind="css: '${this.classes('action-link')}', click: copy, text: ko.i18n('components.versions.createACopy', 'Create a copy'), title: ko.i18n('components.versions.createNewAsset', 'Create new asset from this version')"></a>`
 
 					}
 				}
@@ -90,7 +115,17 @@ function (
 		async loadData() {
 			this.isLoading(true);
 			try {
-				const data = await this.getListFn();
+				const data = await this.getList();
+
+				if (this.currentVersion()) {
+					data.push({
+						currentVersion: true,
+						version: ko.i18n('components.versions.', 'Current'),
+						createdBy: this.currentVersion().modifiedBy() || this.currentVersion().createdBy(),
+						createdDate: this.currentVersion().modifiedDate() || this.currentVersion().createdDate(),
+					});
+				}
+
 				this.data(data);
 			} catch (ex) {
 				console.log(ex);
@@ -100,7 +135,7 @@ function (
 		}
 
 		editComment(version) {
-			this.editVersion(version);
+			this.editVersion(Object.assign({}, version));
 			this.comment(version.comment);
 			this.isCommentModalShown(true);
 		}
@@ -108,25 +143,32 @@ function (
 		async submitComment() {
 			try {
 				const updated = this.editVersion();
-				updated.comment = this.comment();
-				await this.updateVersionFn(updated);
-				this.editVersion(null);
+				updated.comment = this.comment().trim();
+				await this.updateVersion(updated);
 
 				this.data(this.data().map(v => v.id === updated.id ? {...v, comment: updated.comment} : v));
 			} catch (ex) {
 				alert('Version save error');
 				console.log(ex);
 			} finally {
+				this.comment(null);
+				this.editVersion(null);
 				this.isCommentModalShown(false);
 			}
 		}
 
 		openPreview(version) {
-
+			if (this.isAssetDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+				return;
+			}
+			commonUtils.routeTo(this.versionPreviewUrl() + version.id);
 		}
 
 		copyVersion(version) {
-
+			if (this.isAssetDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+				return;
+			}
+			this.copyVersionFn(version);
 		}
 	}
 		
