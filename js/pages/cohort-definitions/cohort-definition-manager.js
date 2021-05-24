@@ -193,8 +193,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		constructor(params) {
 			super(params);
 
-			this.previewVersionId = ko.observable();
-			this.previewVersion = ko.observable();
+			this.previewVersionId = sharedState.CohortDefinition.previewVersionId;
+			this.previewVersion = sharedState.CohortDefinition.previewVersion;
 
 			this.pollTimeoutId = null;
 			this.authApi = authApi;
@@ -1149,6 +1149,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.selectedSampleId(sampleId)
 				this.fetchSampleData({sampleId, sourceKey, cohortDefinitionId})
 			}
+			if (versionId) {
+				this.previewVersionId(versionId);
+				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
+			}
+			if (currentVersion) {
+				this.previewVersionId(null);
+				this.previewVersion(null);
+				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
+			}
 			if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
 				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
 			} else if (selectedSourceId) {
@@ -1159,15 +1168,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			} else {
 				this.selectedReportSource(null);
-			}
-			if (versionId) {
-				this.previewVersionId(versionId);
-				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
-			}
-			if (currentVersion) {
-				this.previewVersionId(null);
-				this.previewVersion(null);
-				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
 			}
 		}
 

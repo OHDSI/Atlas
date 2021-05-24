@@ -127,6 +127,8 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		mode: ko.observable('definition'),
 		sourceInfo: ko.observableArray(),
 		lastUpdatedId: ko.observable(),
+		previewVersionId: ko.observable(),
+		previewVersion: ko.observable()
 	};
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({header: state.CohortDefinition.current}));
 	state.CohortDefinition.current.subscribe(newValue => {
