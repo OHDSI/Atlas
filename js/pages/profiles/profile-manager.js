@@ -351,6 +351,10 @@ define([
 				}
 
 				this.isAnnotationToggleVisible =  ko.computed(() => {
+					if (!this.annotationWidget) {
+						this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName);
+					}
+
 					if (this.annotationWidget) {
 						return this.annotationWidget.isVisible();
 					}
