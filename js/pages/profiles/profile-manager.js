@@ -356,7 +356,7 @@ define([
 					}
 
 					if (this.annotationWidget) {
-						return this.annotationWidget.isVisible();
+						return this.annotationWidget.isVisible() && this.annotationWidget.annotationToggleState() === 'open';
 					}
 					return false;
 				});
