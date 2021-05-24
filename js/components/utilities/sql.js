@@ -44,6 +44,7 @@ define([
 			this.loading = ko.observable();
 			this.isExportPermitted = this.isExportPermittedResolver();
 			this.canExport = ko.pureComputed(() => this.isExportPermitted());
+			this.isDesignCorrect = ko.pureComputed(() => params.isDesignCorrect ? params.isDesignCorrect() : true);
 			const componentParams = {
 			};
 			const sqlDialects = globalConstants.sqlDialects;

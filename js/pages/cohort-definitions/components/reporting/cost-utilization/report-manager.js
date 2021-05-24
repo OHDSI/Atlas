@@ -2188,16 +2188,16 @@ define([
 						});
 						break; // Entropy report
 
-					case this.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name:
-					case this.visualizationPacks.healthcareUtilPersonAndExposureCohort.name:
-					case this.visualizationPacks.healthcareUtilVisitRecordsBaseline.name:
-					case this.visualizationPacks.healthcareUtilVisitDatesBaseline.name:
-					case this.visualizationPacks.healthcareUtilCareSiteDatesBaseline.name:
-					case this.visualizationPacks.healthcareUtilVisitRecordsCohort.name:
-					case this.visualizationPacks.healthcareUtilVisitDatesCohort.name:
-					case this.visualizationPacks.healthcareUtilCareSiteDatesCohort.name:
-					case this.visualizationPacks.healthcareUtilDrugBaseline.name:
-					case this.visualizationPacks.healthcareUtilDrugCohort.name:
+					case ko.unwrap(this.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilPersonAndExposureCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitRecordsBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitDatesBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilCareSiteDatesBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitRecordsCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitDatesCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilCareSiteDatesCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilDrugBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilDrugCohort.name):
 						this.currentReport(this.reportReportName());
 						this.loadingReport(false);
 						break;
