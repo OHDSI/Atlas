@@ -24,6 +24,8 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.validationAnnotationSets = ko.observableArray([]);
         self.rawAnnotationSets = ko.observableArray([]);
 
+        self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
+
         self.validationAnnotationSetCols = [
             {
                 title: 'Annotation Set ID',
@@ -63,7 +65,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 var result = items[0];
                 if (e.target.className === 'btn btn-primary btn-sm annotation-set-view-btn') {
                     // id, cohortName, qSetId, qSetName, qSetQuestions, mode
-                    self.questionSet = new QuestionSet(id, cohortName, result.id, result.name, result.questions, 'VIEW');
+                    // self.questionSet = new QuestionSet(id, cohortName, result.id, result.name, result.questions, 'VIEW');
                     setTimeout(() => {
                         self.questionSet.showSelectedQset();
                         self.valTabMode(SELECTED_QUESTION_SET_VIEW);
@@ -106,7 +108,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         });
 
         self.addQuestionSet = function() {
-            self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
+            // self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
             self.valTabMode(NEW_QUESTION_SET_VIEW);
         };
 
@@ -212,7 +214,6 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         };
 
 
-        self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
         self.loadAnnotationSets();
     }
     ValidationTool.prototype.constructor = ValidationTool;

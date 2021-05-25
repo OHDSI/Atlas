@@ -396,7 +396,7 @@
 								<div data-bind="with: questionSet">
 									<br/>
 									<div class="validation-section pull-right">
-										<button class="btn btn-primary " data-bind="visible: $parent.valTabMode() == 'show_qsets', click: $parent.addQuestionSet">Create New Question Set</button>
+										<button class="btn btn-primary " data-bind="visible: $parent.valTabMode() == 'show_qsets' && !$parent.validationAnnotationSetsLoading(), click: $parent.addQuestionSet">Create New Question Set</button>
 									</div>
 									<div data-bind="visible: $parent.valTabMode() == 'show_qsets'">
 										<div>
@@ -404,11 +404,11 @@
 												<loading data-bind="visible: $parent.validationAnnotationSetsLoading()"></loading>
 												<faceted-datatable data-bind="visible: !$parent.validationAnnotationSetsLoading()"
 																   params="{
-						reference: $parent.validationAnnotationSets,
-						columns: $parent.validationAnnotationSetCols,
-						order: [[0,'asc']],
-						rowClick: $parent.onValidationAnnotationListClick,
-					}"
+																		reference: $parent.validationAnnotationSets,
+																		columns: $parent.validationAnnotationSetCols,
+																		order: [[0,'asc']],
+																		rowClick: $parent.onValidationAnnotationListClick,
+																	}"
 												/>
 											</div>
 										</div>
@@ -416,7 +416,6 @@
 									<div data-bind="visible: $parent.valTabMode() == 'selected_qset'">
 										<div class="validation-section">
 											<button class="btn btn-primary btn-sm" style="margin-left:16px" data-bind="click: goBack($parent)"><i class="fa fa-arrow-left"></i> Back</button>
-
 										</div>
 										<div class="panel-body">
 											<div class="row" data-bind="with: qset, visible: qset !== undefined">
@@ -460,7 +459,7 @@
 														<label class="validation-label">Question Set Name:</label>
 													</div>
 													<div class="col-sm-10">
-														<input class="form-control" type="text" data-bind="value: questionSetName" placeholder="Question Set Name">
+														<input class="form-control" type="text" data-bind="value: questionSetName" placeholder="Question Set Name" />
 													</div>
 
 												</div>
@@ -483,11 +482,11 @@
 															<br/>
 															<div class="row">
 																<div class="col-sm-4">
-																	<label>  Question <span data-bind="text: ($index() + 1)"></span>:</label>
-																	<input class="form-control" type="text" data-bind="value: text" placeholder="Question Text">
+																	<label>Question <span data-bind="text: ($index() + 1)"></span>:</label>
+																	<input class="form-control" type="text" data-bind="value: text" placeholder="Question Text" />
 																</div>
 																<div class="col-sm-2">
-																	<label>  Question Type</label>
+																	<label>Question Type</label>
 																	<select class="form-control" data-bind="options: $parent.questionTypes(), value: type"></select>
 																</div>
 																<div class="col-sm-2">

@@ -54,7 +54,7 @@ define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, V
         };
 
 
-    };
+    }
     QuestionSet.prototype.constructor = QuestionSet;
     return QuestionSet;
     
