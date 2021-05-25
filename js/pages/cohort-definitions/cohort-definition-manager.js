@@ -1594,7 +1594,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
 				createdBy = this.previewVersion().createdBy.name;
 				createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
-				modifiedBy = null
+				modifiedBy = null;
 				modifiedDate = null;
 			} else {
 				createdText = ko.i18n('components.authorship.created', 'created');

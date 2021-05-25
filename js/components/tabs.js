@@ -40,6 +40,7 @@ define([
 				const idx = this.tabs().indexOf(this.tabs().find(t => t.key === f.key));
 				this.addIdxToLoadedTabs(idx);
 			});
+			this.isTabHidden = (data) => data.hidden && (typeof data.hidden === 'function' ? data.hidden() : true);
 		}
 
 		addIdxToLoadedTabs(idx) {

@@ -117,7 +117,7 @@ define([
 				return (
 					!this.loading()
 					&& this.currentConceptSet() != null
-					&& this.currentConceptSetDirtyFlag().isDirty()
+					&& (this.currentConceptSetDirtyFlag().isDirty() || this.previewVersion())
 					&& this.isNameCorrect()
 					&& this.canEdit()
 				);
@@ -615,13 +615,13 @@ define([
 				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
 				createdBy = this.previewVersion().createdBy.name;
 				createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
-				modifiedBy = null
+				modifiedBy = null;
 				modifiedDate = null;
 			} else {
 				createdText = ko.i18n('components.authorship.created', 'created');
-				createdBy = lodash.get(this.currentConceptSet(), 'createdBy.name');
+				createdBy = lodash.get(conceptSet, 'createdBy.name');
 				createdDate = commonUtils.formatDateForAuthorship(conceptSet.createdDate);
-				modifiedBy = lodash.get(this.currentConceptSet(), 'modifiedBy.name');
+				modifiedBy = lodash.get(conceptSet, 'modifiedBy.name');
 				modifiedDate = commonUtils.formatDateForAuthorship(conceptSet.modifiedDate);
 			}
 

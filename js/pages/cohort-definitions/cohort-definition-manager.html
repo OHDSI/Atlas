@@ -15,7 +15,7 @@
 					data-bind="placeholder: ko.i18n('const.newEntityNames.cohortDefinition', 'New Cohort Definition'), enabled: canEdit(), textInput: currentCohortDefinition().name, css: { emptyInput: !isNameFilled() }" />
 				<div class="input-group-btn">
 					<button class="btn btn-success"
-						data-bind="title: !previewVersion() ? ko.i18n('cohortDefinitions.cohortDefinitionManager.saveCohortTitle', 'Save cohort definition') : ko.i18n('cohortDefinitions.cohortDefinitionManager.saveAsCurrent', 'Save cohort definition as current version'), click: save, enable: canSave() && !isProcessing()"><i
+						data-bind="title: !previewVersion() ? ko.i18n('common.save', 'Save') : ko.i18n('common.saveAsCurrentVersion', 'Save as current version'), click: save, enable: canSave() && !isProcessing()"><i
 							class="fa fa-save"></i></button>
 					<button class="btn btn-primary"
 							data-bind="visible: previewVersion(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">

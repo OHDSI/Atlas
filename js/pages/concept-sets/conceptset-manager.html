@@ -14,7 +14,7 @@
       <input class="form-control" id="txtConceptSetName" type="text"
       data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }, placeholder: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set')"/>
       <div class="input-group-btn">
-        <button type="button" class="btn btn-success" data-bind="click: save, css: { disabled: !canSave() || isProcessing() }, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+        <button type="button" class="btn btn-success" data-bind="click: save, css: { disabled: !canSave() || isProcessing() }, title: !previewVersion() ? ko.i18n('common.save', 'Save') : ko.i18n('common.saveAsCurrentVersion', 'Save as current version')"><i class="fa fa-save"></i></button>
         <button class="btn btn-primary"
                 data-bind="visible: previewVersion(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">
           <i class="fa fa-undo"></i>

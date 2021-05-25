@@ -55,6 +55,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortCharacterization = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
+		previewVersion: ko.observable(null),
 	};
 	state.CohortCharacterization.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortCharacterization.current()));
 
