@@ -11,6 +11,7 @@ define(
       IMPORT: conceptSetConstants.ViewMode.IMPORT,
       EXPLORE: 'explore',
       COMPARE: 'compare',
+      VERSIONS: 'versions',
       MESSAGES: 'messages',
     };
 		

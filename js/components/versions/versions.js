@@ -22,7 +22,7 @@ function (
 			super(params);
 			this.versionPreviewUrl = params.versionPreviewUrl;
 			this.currentVersion = params.currentVersion;
-			this.previewVersionId = params.previewVersionId;
+			this.previewVersion = params.previewVersion;
 			this.getList = params.getList;
 			this.updateVersion = params.updateVersion;
 			this.copyVersionFn = params.copyVersion;
@@ -75,7 +75,7 @@ function (
 						if (d.currentVersion) {
 							return;
 						}
-						if (d.id === parseInt(this.previewVersionId())) {
+						if (d.version === parseInt(this.previewVersion() && this.previewVersion().version)) {
 							return `<span data-bind="text: ko.i18n('components.versions.viewing', 'Viewing now')"></span>`;
 						}
 						d.preview = () => this.openPreview(d);
@@ -121,8 +121,8 @@ function (
 					data.push({
 						currentVersion: true,
 						version: ko.i18n('components.versions.', 'Current'),
-						createdBy: this.currentVersion().modifiedBy() || this.currentVersion().createdBy(),
-						createdDate: this.currentVersion().modifiedDate() || this.currentVersion().createdDate(),
+						createdBy: this.currentVersion().modifiedBy || this.currentVersion().createdBy,
+						createdDate: this.currentVersion().modifiedDate || this.currentVersion().createdDate,
 					});
 				}
 
@@ -146,7 +146,7 @@ function (
 				updated.comment = this.comment().trim();
 				await this.updateVersion(updated);
 
-				this.data(this.data().map(v => v.id === updated.id ? {...v, comment: updated.comment} : v));
+				this.data(this.data().map(v => v.version === updated.version ? {...v, comment: updated.comment} : v));
 			} catch (ex) {
 				alert('Version save error');
 				console.log(ex);
@@ -161,7 +161,7 @@ function (
 			if (this.isAssetDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
 				return;
 			}
-			commonUtils.routeTo(this.versionPreviewUrl() + version.id);
+			commonUtils.routeTo(this.versionPreviewUrl(version.version));
 		}
 
 		copyVersion(version) {

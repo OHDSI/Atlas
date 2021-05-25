@@ -78,6 +78,38 @@ define(function (require) {
 			.then(res => res.data);
 	}
 
+	function getVersions(conceptSetId) {
+		return httpService
+			.doGet(`${config.webAPIRoot}conceptset/${conceptSetId}/version/`)
+			.then(res => res.data);
+	}
+
+	function getVersion(conceptSetId, versionNumber) {
+		return httpService.doGet(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionNumber}`)
+			.then(res => res.data)
+			.catch(error => {
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
+			});
+	}
+
+	function getVersionExpression(conceptSetId, versionNumber) {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doGet(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionNumber}/expression` + (sourceKey ? `/${sourceKey}`: '')).then(({ data }) => data);
+	}
+
+	function copyVersion(conceptSetId, versionId) {
+		return httpService.doPut(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionId}/createAsset`)
+			.then(({ data }) => data);
+	}
+
+	function updateVersion(version) {
+		return httpService.doPut(`${config.webAPIRoot}conceptset/${version.assetId}/version/${version.version}`, {
+			comment: version.comment,
+			archived: version.archived
+		}).then(({ data }) => data);
+	}
+
 	const api = {
 		loadConceptSet,
 		loadConceptSetExpression,
@@ -90,7 +122,12 @@ define(function (require) {
 		exists,
 		saveConceptSet,
 		saveConceptSetItems,
-		runDiagnostics
+		runDiagnostics,
+		getVersions,
+		getVersion,
+		getVersionExpression,
+		updateVersion,
+		copyVersion
 	};
 
 	return api;

@@ -159,8 +159,8 @@ define(function (require, exports) {
 			.then(({ data }) => data);
 	}
 
-	function getVersion(cohortDefinitionId, versionId) {
-		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionId}`)
+	function getVersion(cohortDefinitionId, versionNumber) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionNumber}`)
 			.then(res => {
 				const cohortDef = res.data.cohortRawDTO;
 				cohortDef.expression = JSON.parse(cohortDef.expression);
@@ -172,14 +172,13 @@ define(function (require, exports) {
 			});
 	}
 
-	function copyVersion(cohortDefinitionId, versionId) {
-		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionId}/createAsset`)
+	function copyVersion(cohortDefinitionId, versionNumber) {
+		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionNumber}/createAsset`)
 			.then(({ data }) => data);
 	}
 
 	function updateVersion(version) {
-		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${version.assetId}/version/${version.id}`, {
-			id: version.id,
+		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${version.assetId}/version/${version.version}`, {
 			comment: version.comment,
 			archived: version.archived
 		}).then(({ data }) => data);

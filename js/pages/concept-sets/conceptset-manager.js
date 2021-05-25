@@ -43,6 +43,7 @@ define([
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',
+	'components/versions/versions'
 ], function (
 	ko,
 	view,
@@ -75,6 +76,7 @@ define([
 			this.commonUtils = commonUtils;
 			this.conceptSetStore = ConceptSetStore.repository();
 			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
+			this.previewVersion = sharedState.currentConceptSetPreviewVersion;
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
@@ -130,7 +132,9 @@ define([
 				if (this.currentConceptSet()) {
 					if (this.currentConceptSet().id === 0) {
 						return globalConstants.newEntityNames.conceptSet();
-					} else {
+					} else if (this.previewVersion()) {
+						return ko.i18nformat('cs.manager.captionPreview', 'Concept Set #<%=id%> - Version <%=number%> Preview', {id: this.currentConceptSet().id, number: this.previewVersion().version})();
+					}else {
 						return ko.i18nformat('cs.manager.caption', 'Concept Set #<%=id%>', {id: this.currentConceptSet().id})();
 					}
 				}
@@ -179,6 +183,27 @@ define([
 
 			this.isDiagnosticsRunning = ko.observable(false);
 			this.criticalCount = ko.observable(0);
+
+			this.versionsParams = ko.observable({
+				versionPreviewUrl: (versionNumber) => `/conceptset/${this.currentConceptSet().id}/version/${versionNumber}`,
+				currentVersion: () => this.currentConceptSet(),
+				previewVersion: () => this.previewVersion(),
+				getList: () => conceptSetService.getVersions(this.currentConceptSet().id),
+				updateVersion: (version) => conceptSetService.updateVersion(version),
+				copyVersion: async (version) => {
+					this.loading(true);
+					try {
+						const result = await conceptSetService.copyVersion(this.currentConceptSet().id, version.version);
+						this.previewVersion(null);
+						commonUtils.routeTo('/conceptset/' + result.id + '/expression');
+					} finally {
+						this.loading(false);
+					}
+				},
+				isAssetDirty: () => this.currentConceptSetDirtyFlag().isDirty(),
+				canAddComments: () => this.canEdit()
+			});
+
 			this.warningParams = ko.observable({
 				current: this.currentConceptSet,
 				warningsTotal: ko.observable(0),
@@ -237,12 +262,14 @@ define([
 						...params,
 						saveConceptSet: this.saveConceptSet,
 					},
+					hidden: () => !sharedState.evidenceUrl() || !!this.previewVersion()
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.export', 'Export'),
 					key: ViewMode.EXPORT,
 					componentName: 'conceptset-list-export',
-					componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
+					componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore},
+					hidden: () => !!this.previewVersion()
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.import', 'Import'),
@@ -255,6 +282,7 @@ define([
 						loadConceptSet: this.loadConceptSet,
 						activeConceptSet: ko.observable(this.conceptSetStore),
 					},
+					hidden: () => !!this.previewVersion()
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.compare', 'Compare'),
@@ -265,6 +293,13 @@ define([
 						saveConceptSetFn: this.saveConceptSet,
 						saveConceptSetShow: this.saveConceptSetShow,
 					},
+					hidden: () => !!this.previewVersion()
+				},
+				{
+					title: ko.i18n('cs.manager.tabs.versions', 'Versions'),
+					key: ViewMode.VERSIONS,
+					componentName: 'versions',
+					componentParams: this.versionsParams,
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.messages', 'Messages'),
@@ -277,10 +312,6 @@ define([
 			];
 			this.selectedTab = ko.observable(0);
 
-			if (!sharedState.evidenceUrl()) {
-				this.tabs = this.tabs.filter(tab => tab.key !== ViewMode.EXPLORE);
-			}
-
 			this.activeUtility = ko.observable("");
 
 			GlobalPermissionService.decorateComponent(this, {
@@ -290,7 +321,7 @@ define([
 					&& this.currentConceptSet().createdBy.login
 			});
 
-			this.tags = ko.observableArray();
+			this.tags = ko.observableArray(this.currentConceptSet() && this.currentConceptSet().tags);
 			TagsService.decorateComponent(this, {
 				assetTypeGetter: () => TagsService.ASSET_TYPE.CONCEPT_SET,
 				assetGetter: () => this.currentConceptSet(),
@@ -335,16 +366,23 @@ define([
 		}
 
 		onRouterParamsChanged(params, newParams) {
-			const {conceptSetId, mode} = Object.assign({}, params, newParams);
-			this.changeMode(conceptSetId, mode);
+			const {conceptSetId, mode, version} = Object.assign({}, params, newParams);
+			this.changeMode(conceptSetId, mode, version);
 			if (mode !== undefined) {
 				this.selectedTab(this.getIndexByMode(mode));
 			}
 		}
 
-		async changeMode(conceptSetId, mode) {
+		backToCurrentVersion() {
+			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+				return;
+			}
+			commonUtils.routeTo(`/conceptset/${this.currentConceptSet().id}/version/current`);
+		}
+
+		async changeMode(conceptSetId, mode, version) {
 			if (conceptSetId !== undefined) {
-				await this.loadConceptSet(conceptSetId);
+				await this.loadConceptSet(conceptSetId, version);
 			}
 			await this.conceptSetStore.refresh(mode);
 		}
@@ -364,21 +402,34 @@ define([
 			);
 		}
 
-		async loadConceptSet(conceptSetId) {
+		async loadConceptSet(conceptSetId, version) {
 			this.loading(true);
 			sharedState.activeConceptSet(this.conceptSetStore);
 			if (conceptSetId === 0 && !this.currentConceptSet()) {
 				conceptSetUtils.createRepositoryConceptSet(this.conceptSetStore);
 				this.loading(false);
 			}
-			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId) {
+			if ( this.currentConceptSet() && this.currentConceptSet().id === conceptSetId && !version) {
+				this.loading(false);
+				return;
+			}
+			if (version && this.previewVersion() && this.previewVersion().version === parseInt(version)) {
 				this.loading(false);
 				return;
 			}
 			try {
 				this.hasPrioritySourceAccess(true);
-				const conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
-				const expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+				let conceptSet, expression;
+				if (version && version !== 'current') {
+					const conceptSetVersion = await conceptSetService.getVersion(conceptSetId, version);
+					conceptSet = conceptSetVersion.conceptSetDTO;
+					this.previewVersion(conceptSetVersion.versionDTO);
+					expression = await conceptSetService.getVersionExpression(conceptSetId, version);
+				} else {
+					this.previewVersion(null);
+					conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
+					expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+				}
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
@@ -416,8 +467,14 @@ define([
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-					this.loading(false);
-					this.isSaving(false);
+
+					const current = this.conceptSetStore.current();
+					current.modifiedBy = savedConceptSet.data.modifiedBy;
+					current.modifiedDate = savedConceptSet.data.modifiedDate;
+					this.conceptSetStore.current(current);
+
+					this.previewVersion(null);
+
 					commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/expression');
 				}
 			} catch (e) {
@@ -444,6 +501,7 @@ define([
 				}
 				this.currentConceptSetDirtyFlag().reset();
 				sharedState.RepositoryConceptSet.current(null);
+				this.previewVersion(null);
 				commonUtils.routeTo('/conceptsets');
 			}
 		}
@@ -549,14 +607,31 @@ define([
 		}
 
 		getAuthorship() {
-		   const createdDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().createdDate);
-		   const modifiedDate = commonUtils.formatDateForAuthorship(this.currentConceptSet().modifiedDate);
-				return {
-						createdBy: lodash.get(this.currentConceptSet(), 'createdBy.name'),
-						createdDate,
-						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
-						modifiedDate,
-				}
+			const conceptSet = this.currentConceptSet();
+
+			let createdText, createdBy, createdDate, modifiedBy, modifiedDate;
+
+			if (this.previewVersion()) {
+				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
+				createdBy = this.previewVersion().createdBy.name;
+				createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
+				modifiedBy = null
+				modifiedDate = null;
+			} else {
+				createdText = ko.i18n('components.authorship.created', 'created');
+				createdBy = lodash.get(this.currentConceptSet(), 'createdBy.name');
+				createdDate = commonUtils.formatDateForAuthorship(conceptSet.createdDate);
+				modifiedBy = lodash.get(this.currentConceptSet(), 'modifiedBy.name');
+				modifiedDate = commonUtils.formatDateForAuthorship(conceptSet.modifiedDate);
+			}
+
+			return {
+				createdText: createdText,
+				createdBy: createdBy,
+				createdDate: createdDate,
+				modifiedBy: modifiedBy,
+				modifiedDate: modifiedDate,
+			}
 		}
 		diagnose() {
 			if (this.currentConceptSet()) {
