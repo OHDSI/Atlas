@@ -49,7 +49,7 @@ define([
 			];
 			// Subscriptions
 			this.subscriptions.push(this.analysis.subscribe((newVal) => {
-				console.log("New analysis set.");
+				//console.log("New analysis set.");
 				this.selectedStrataRule(params.analysis().strata()[this.selectedStrataRuleIndex]);
 			}));
 		}

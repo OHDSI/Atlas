@@ -17,6 +17,7 @@ define(
       CONCEPT_SETS: 'conceptsets',
       GENERATION: 'generation',
       UTILITIES: 'utilities',
+      VERSIONS: 'versions',
       WARNINGS: 'warnings',
     };
 

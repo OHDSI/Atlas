@@ -48,6 +48,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
 		selectedSourceId: ko.observable(null),
+		previewVersion: ko.observable(null),
 	}
 	state.IRAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.IRAnalysis.current()));
 
