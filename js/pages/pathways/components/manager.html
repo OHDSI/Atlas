@@ -12,13 +12,17 @@
 			<input type="text" class="form-control"
 			data-bind="attr: { disabled: $component.canEdit() ? null : true }, textInput: design().name, css: {emptyInput: !isNameFilled()}" />
 			<div class="input-group-btn">
-				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+				<button type="button" class="btn btn-success" data-bind="click: $component.save, css: {disabled:!canSave() || isProcessing()}, title: previewVersion() ? ko.i18n('common.saveAsCurrentVersion', 'Save as current version') : ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+				<button class="btn btn-primary"
+						data-bind="visible: previewVersion(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">
+					<i class="fa fa-undo"></i>
+				</button>
 				<button type="button" class="btn btn-primary" data-bind="click: $component.close, css: {disabled: isProcessing()}, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
 				<!-- ko ifnot: isNewEntity -->
-				<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
-				<button type="button" class="btn btn-primary" data-bind="click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
-				<button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')"><i class="fa fa-lock"></i></button>
-				<button type="button" class="btn btn-danger" data-bind="click: $component.del, css: {disabled: !canDelete() || isProcessing()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
+				<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
+				<button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+				<button class="btn btn-primary" data-bind="visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')"><i class="fa fa-lock"></i></button>
+				<button type="button" class="btn btn-danger" data-bind="visible: !previewVersion(), click: $component.del, css: {disabled: !canDelete() || isProcessing()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
 				<!-- /ko -->
 			</div>
 		</div>
@@ -45,14 +49,22 @@
 				title: ko.i18n('pathways.manager.tabs.executions', 'Executions'),
 				key: 'executions',
 				componentName: 'pathway-exec-wrapper',
-				componentParams: $component.componentParams
+				componentParams: $component.componentParams,
+				hidden: !!$component.previewVersion()
 			},
 			{
 				title: ko.i18n('pathways.manager.tabs.utilities', 'Utilities'),
 				key: 'utilities',
 				componentName: 'pathway-utils',
 				componentParams: $component.componentParams,
+				hidden: !!$component.previewVersion()
 			},
+            {
+                title: ko.i18n('pathways.manager.tabs.versions', 'Versions'),
+                key: 'versions',
+                componentName: 'versions',
+                componentParams: $component.versionsParams,
+            },
             {
                 title: ko.i18n('pathways.manager.tabs.messages', 'Messages'),
                 key: 'messages',

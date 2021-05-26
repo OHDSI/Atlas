@@ -18,6 +18,16 @@ define((require, factory) => {
 			});
 		});
 
+		const pathwaysManagerVersion = new AuthorizedRoute((id, version) => {
+			require(['./components/manager'], function () {
+				router.setCurrentView('pathways-manager', {
+					analysisId: id,
+					section: 'design',
+					version: version
+				});
+			});
+		});
+
 		const pathwaysBrowser = new AuthorizedRoute(() => {
 			require(['./components/browser'], function () {
 				router.setCurrentView('pathways-browser');
@@ -27,6 +37,7 @@ define((require, factory) => {
 		return {
 			'pathways': pathwaysBrowser,
 			'pathways/:id:': pathwaysManager,
+			'pathways/:id:/version/:version:': pathwaysManagerVersion,
 			'pathways/:id:/:section:': pathwaysManager,
 			'pathways/:id:/:section:/:subId:': pathwaysManager // for executions
 		};
