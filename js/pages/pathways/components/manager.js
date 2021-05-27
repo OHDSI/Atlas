@@ -13,6 +13,7 @@ define([
 	'pages/Page',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/ExceptionUtils',
 	'assets/ohdsi.util',
 	'const',
 	'lodash',
@@ -45,6 +46,7 @@ define([
 	Page,
 	AutoBind,
 	commonUtils,
+	exceptionUtils,
 	ohdsiUtil,
 	constants,
 	lodash
@@ -170,6 +172,8 @@ define([
 						const result = await PathwayService.copyVersion(this.design().id, version.version);
 						this.previewVersion(null);
 						commonUtils.routeTo(commonUtils.getPathwaysUrl(result.id, 'design'));
+					} catch (ex) {
+						alert(exceptionUtils.extractServerMessage(ex));
 					} finally {
 						this.isCopying(false);
 					}
@@ -259,9 +263,6 @@ define([
 		async load(id, version) {
 			if (this.design() && (this.design().id === id || 0 === id) && !version) return; // this design is already loaded.
 
-			if(this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('pathways.manager.messages.beforeClose', 'Your changes are not saved. Would you like to continue?'))))
-				return;
-
 			if (id < 1) {
 				this.setupDesign(new PathwayAnalysis());
 			} else {
@@ -277,6 +278,8 @@ define([
 						this.previewVersion(null);
 					}
 					this.setupDesign(new PathwayAnalysis(analysis));
+				} catch (ex) {
+					alert(exceptionUtils.extractServerMessage(ex));
 				} finally {
 					this.loading(false);
 				}

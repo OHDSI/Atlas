@@ -1,7 +1,7 @@
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('cc.viewEdit.loadingCohortCharacterization', 'Loading Cohort Characterization...')"></loading>
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
 
-<!-- ko if:design -->
+<!-- ko if: design() && !loading() -->
 <div data-bind="css: classes()">
     <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark', tags: design().tags"></heading-title>
     <!-- ko if: !!design() && !!design().id -->

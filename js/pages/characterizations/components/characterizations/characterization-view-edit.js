@@ -16,6 +16,7 @@ define([
     'pages/Page',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'utils/ExceptionUtils',
     'assets/ohdsi.util',
     'const',
     'lodash',
@@ -52,6 +53,7 @@ define([
     Page,
     AutoBind,
     commonUtils,
+    exceptionUtils,
     ohdsiUtil,
     constants,
     lodash
@@ -194,6 +196,8 @@ define([
                         const result = await CharacterizationService.copyVersion(this.design().id, version.version);
                         this.previewVersion(null);
                         commonUtils.routeTo(`/cc/characterizations/${result.id}`);
+                    } catch (ex) {
+                        alert(exceptionUtils.extractServerMessage(ex));
                     } finally {
                         this.isCopying(false);
                     }
@@ -285,9 +289,6 @@ define([
             if (!force && this.design() && (this.design().id || 0) === id && !version) {
                 return;
             }
-            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', 'Your changes are not saved. Would you like to continue?')))) {
-                return;
-            }
             if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
             } else {
@@ -303,6 +304,8 @@ define([
                     }
                     this.setupDesign(new CharacterizationAnalysis(design));
                     this.versionsParams.valueHasMutated();
+                } catch (ex) {
+                    alert(exceptionUtils.extractServerMessage(ex));
                 } finally {
                     this.loading(false);
                 }

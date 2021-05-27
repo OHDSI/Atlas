@@ -289,7 +289,7 @@ define([
 						this.previewVersion(null);
 						commonUtils.routeTo(`/iranalysis/${result.id}/definition`);
 					} catch(ex) {
-						alert("Could not copy analysis version. Please see server logs for details");
+						alert(exceptionUtils.extractServerMessage(ex));
 					} finally {
 						this.isCopying(false);
 					}
@@ -410,9 +410,6 @@ define([
 			if (this.selectedAnalysis() && (this.selectedAnalysis().id() === this.selectedAnalysisId()) && !version) {
 				return;
 			}
-			if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('ir.notSavedMessage', 'Incidence Rate Analysis changes are not saved. Would you like to continue?')))) {
-				return;
-			}
 
 			this.loading(true);
 			this.refreshDefs();
@@ -434,7 +431,7 @@ define([
 				this.versionsParams.valueHasMutated();
 				this.startPolling();
 			} catch (ex) {
-				alert('Could not preview analysis version. Please see server logs for details');
+				alert(exceptionUtils.extractServerMessage(ex));
 			} finally {
 				this.loading(false);
 			}
