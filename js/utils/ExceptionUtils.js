@@ -9,7 +9,7 @@ define([], function () {
 
 	function extractServerMessage(e) {
 		if (e.data && e.data.payload) {
-			return `Error! ${e.data.payload.message}`;
+			return `${e.data.payload.message}`;
 		} else {
 			return 'Error! Please see server logs for details.'
 		}

@@ -340,7 +340,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					} else if (this.previewVersion()) {
 						return ko.i18nformat('cohortDefinitions.cohortCaptionPreview', 'Cohort #<%=id%> - Version <%=number%> Preview', {id: this.currentCohortDefinition().id(), number: this.previewVersion().version})();
 					} else {
-						return ko.i18nformat('cohortDefinitions.cohortId', 'Cohort #<%=id%>', {id: this.currentCohortDefinition().id()})();
+						return ko.i18nformat('cohortDefinitions.cohortCaption', 'Cohort #<%=id%>', {id: this.currentCohortDefinition().id()})();
 					}
 				}
 			});
@@ -1175,7 +1175,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		backToCurrentVersion() {
-			if (this.dirtyFlag().isDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
 				return;
 			}
 			commonUtils.routeTo(`/cohortdefinition/${this.currentCohortDefinition().id()}/version/current`);

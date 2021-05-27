@@ -69,7 +69,7 @@ function (
 					}
 				},
 				{
-					title: ko.i18n('components.versions.preview', 'Preview'),
+					title: ko.i18n('columns.preview', 'Preview'),
 					orderable: false,
 					render: (s, p, d) => {
 						if (d.currentVersion) {
@@ -120,7 +120,7 @@ function (
 				if (this.currentVersion()) {
 					data.push({
 						currentVersion: true,
-						version: ko.i18n('components.versions.', 'Current'),
+						version: ko.i18n('components.versions.current', 'Current'),
 						createdBy: this.currentVersion().modifiedBy || this.currentVersion().createdBy,
 						createdDate: this.currentVersion().modifiedDate || this.currentVersion().createdDate,
 					});
@@ -158,14 +158,14 @@ function (
 		}
 
 		openPreview(version) {
-			if (this.isAssetDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+			if (this.isAssetDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
 				return;
 			}
 			commonUtils.routeTo(this.versionPreviewUrl(version.version));
 		}
 
 		copyVersion(version) {
-			if (this.isAssetDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+			if (this.isAssetDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
 				return;
 			}
 			this.copyVersionFn(version);

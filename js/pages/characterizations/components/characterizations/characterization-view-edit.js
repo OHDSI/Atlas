@@ -231,7 +231,7 @@ define([
         }
 
         backToCurrentVersion() {
-            if (this.designDirtyFlag().isDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
                 return;
             }
             commonUtils.routeTo(`/cc/characterizations/${this.design().id}/version/current`);

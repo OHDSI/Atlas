@@ -204,7 +204,7 @@ define([
 		}
 
 		backToCurrentVersion() {
-			if (this.dirtyFlag().isDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
 				return;
 			}
 			commonUtils.routeTo(`/pathways/${this.design().id}/version/current`);

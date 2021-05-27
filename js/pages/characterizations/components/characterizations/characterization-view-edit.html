@@ -1,7 +1,7 @@
 <loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('cc.viewEdit.loadingCohortCharacterization', 'Loading Cohort Characterization...')"></loading>
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: isViewPermitted"></access-denied>
 
-<!-- ko if: design() && !loading() -->
+<!-- ko if: !!design() && !loading() -->
 <div data-bind="css: classes()">
     <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark', tags: design().tags"></heading-title>
     <!-- ko if: !!design() && !!design().id -->
@@ -11,7 +11,7 @@
         <div class="input-group">
             <input type="text" class="form-control" data-bind="css: {emptyInput: !isNameFilled()}, attr: { disabled: isEditPermitted() ? null : true }, textInput: design().name" />
             <div class="input-group-btn">
-                <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() },title: !previewVersion() ? ko.i18n('common.save', 'Save') : ko.i18n('common.saveAsCurrentVersion', 'Save as current version')"><i class="fa fa-save"></i></button>
+                <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }, attr: {title: !previewVersion() ? ko.i18n('common.save', 'Save') : ko.i18n('common.saveAsCurrentVersion', 'Save as current version')}"><i class="fa fa-save"></i></button>
                 <button class="btn btn-primary"
                         data-bind="visible: previewVersion(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">
                     <i class="fa fa-undo"></i>

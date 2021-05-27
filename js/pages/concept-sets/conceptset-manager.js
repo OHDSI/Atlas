@@ -374,7 +374,7 @@ define([
 		}
 
 		backToCurrentVersion() {
-			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm('Unsaved changes will be lost. Proceed?')) {
+			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
 				return;
 			}
 			commonUtils.routeTo(`/conceptset/${this.currentConceptSet().id}/version/current`);
@@ -423,8 +423,8 @@ define([
 				if (version && version !== 'current') {
 					const conceptSetVersion = await conceptSetService.getVersion(conceptSetId, version);
 					conceptSet = conceptSetVersion.conceptSetDTO;
-					this.previewVersion(conceptSetVersion.versionDTO);
 					expression = await conceptSetService.getVersionExpression(conceptSetId, version);
+					this.previewVersion(conceptSetVersion.versionDTO);
 				} else {
 					this.previewVersion(null);
 					conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
