@@ -280,7 +280,7 @@ define([
 					}
 				},
 				previewVersion: () => this.previewVersion(),
-				getList: () => IRAnalysisService.getVersions(this.selectedAnalysisId()),
+				getList: () => this.selectedAnalysisId() ? IRAnalysisService.getVersions(this.selectedAnalysisId()) : [],
 				updateVersion: (version) => IRAnalysisService.updateVersion(version),
 				copyVersion: async (version) => {
 					this.isCopying(true);

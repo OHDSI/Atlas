@@ -164,7 +164,7 @@ define([
 				versionPreviewUrl: (version) => `/pathways/${this.design().id}/version/${version}`,
 				currentVersion: () => this.design(),
 				previewVersion: () => this.previewVersion(),
-				getList: () => PathwayService.getVersions(this.design().id),
+				getList: () => this.design().id ? PathwayService.getVersions(this.design().id) : [],
 				updateVersion: (version) => PathwayService.updateVersion(version),
 				copyVersion: async (version) => {
 					this.isCopying(true);
@@ -307,6 +307,7 @@ define([
 						const updatedAnalysis = await PathwayService.save(this.design().id, this.design());
 						this.setupDesign(new PathwayAnalysis(updatedAnalysis));
 					}
+					this.previewVersion(null);
 					this.versionsParams.valueHasMutated();
 				}
 			} catch (e) {

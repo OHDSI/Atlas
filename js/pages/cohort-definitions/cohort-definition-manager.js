@@ -966,11 +966,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 					}
 					sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
+					this.previewVersion(null);
 					this.versionsParams.valueHasMutated();
 				} catch (e) {
 					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.saveError', 'An error occurred while attempting to save a cohort definition.')());
 				} finally {
-					this.previewVersion(null);
 					this.isSaving(false);
 				}
 			}

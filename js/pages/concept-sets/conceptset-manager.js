@@ -188,7 +188,7 @@ define([
 				versionPreviewUrl: (versionNumber) => `/conceptset/${this.currentConceptSet().id}/version/${versionNumber}`,
 				currentVersion: () => this.currentConceptSet(),
 				previewVersion: () => this.previewVersion(),
-				getList: () => conceptSetService.getVersions(this.currentConceptSet().id),
+				getList: () => this.currentConceptSet().id ? conceptSetService.getVersions(this.currentConceptSet().id) : [],
 				updateVersion: (version) => conceptSetService.updateVersion(version),
 				copyVersion: async (version) => {
 					this.loading(true);

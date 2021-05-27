@@ -188,7 +188,7 @@ define([
                 versionPreviewUrl: (versionNumber) => `/cc/characterizations/${this.design().id}/version/${versionNumber}`,
                 currentVersion: () => this.design(),
                 previewVersion: () => this.previewVersion(),
-                getList: () => CharacterizationService.getVersions(this.design().id),
+                getList: () => this.design().id ? CharacterizationService.getVersions(this.design().id) :[],
                 updateVersion: (version) => CharacterizationService.updateVersion(version),
                 copyVersion: async (version) => {
                     this.isCopying(true);
@@ -338,6 +338,7 @@ define([
                         const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
                         this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
                     }
+                    this.previewVersion(null);
                     this.versionsParams.valueHasMutated();
                 }
             } catch (e) {

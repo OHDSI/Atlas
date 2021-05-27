@@ -117,7 +117,7 @@ function (
 			try {
 				const data = await this.getList();
 
-				if (this.currentVersion()) {
+				if (this.currentVersion() && ko.unwrap(this.currentVersion().id)) {
 					data.push({
 						currentVersion: true,
 						version: ko.i18n('components.versions.current', 'Current'),
