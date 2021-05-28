@@ -108,3 +108,9 @@
     margin: 5px;
     padding: 9px 3px;
 }
+
+.annotation-link-status {
+    margin: 5pt;
+    vertical-align: middle;
+    padding-left: 10px;
+}

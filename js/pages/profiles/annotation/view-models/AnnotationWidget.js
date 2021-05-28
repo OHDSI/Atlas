@@ -7,7 +7,7 @@ define(['knockout', './AnnotationView', './SettingsView', 'services/Annotation']
             cachedOption = 'open';
         }
         self.currentView = ko.observable("annotationView");
-        self.annotationToggleState = ko.observable(cachedOption);
+        self.annotationToggleState = ko.observable('open');
         self.isVisible = ko.observable(false);
 
         self.toggleAnnotationPanel = function () {

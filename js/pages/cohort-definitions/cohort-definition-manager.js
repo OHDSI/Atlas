@@ -345,7 +345,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					title: 'Actions',
 					sortable: false,
 					render: function() {
-						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="Link annotation set" data-bind="css: { disabled: isAnnotationSetLinking() }">Create Study</button>`
+						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="Link annotation set">Create Study</button><span class="annotation-link-status"></span>`
 					}
 				}
 			];
@@ -1773,6 +1773,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			if (e.target.className === 'btn btn-primary btn-sm annotation-link-btn') {
 				this.isAnnotationSetLinking(true);
+				const btn = e.target;
+				const status = btn.nextSibling;
+				btn.disabled = true;
+				status.textContent = "Creating study...";
 				annotationService.linkAnnotationToSamples({
 					'sampleId': sampleId,
 					'cohortDefinitionId': cohortDefinitionId,
@@ -1780,11 +1784,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					'annotationSetId': d.id
 				})
 					.then(res => {
+						status.textContent = "Study successfully created!";
 						console.log('posted annotation sample link');
 						console.log(res);
 					})
 					.catch(error=>{
 						console.error(error);
+						status.textContent = "Error creating study!";
+						btn.disabled = false;
 						alert('Error linking sample to annotations. Please try again later.');
 					})
 					.finally(() => {
