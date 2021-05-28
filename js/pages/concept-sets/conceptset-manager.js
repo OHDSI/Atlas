@@ -452,6 +452,9 @@ define([
 		}
 
 		async saveConceptSet(conceptSet, nameElementId) {
+			if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
+				return;
+			}
 			this.isSaving(true);
 			this.loading(true);
 			let conceptSetName = conceptSet.name();

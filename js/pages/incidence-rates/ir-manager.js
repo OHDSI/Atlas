@@ -533,6 +533,9 @@ define([
 		}
 
 		async save() {
+			if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
+				return;
+			}
 			this.isSaving(true);
 			this.loading(true);
 

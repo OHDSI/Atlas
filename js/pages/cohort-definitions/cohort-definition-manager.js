@@ -933,7 +933,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		async save () {
-			this.sampleSourceKey(null)
+			if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
+				return;
+			}
+
+			this.sampleSourceKey(null);
 			this.isSaving(true);
 
 			let cohortDefinitionName = this.currentCohortDefinition().name();
@@ -961,13 +965,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						definition = new CohortDefinition(savedDefinition);
 						const redirectWhenComplete = definition.id() != this.currentCohortDefinition().id();
 						this.currentCohortDefinition(definition);
+						this.previewVersion(null);
+						this.versionsParams.valueHasMutated();
 						if (redirectWhenComplete) {
 							commonUtils.routeTo(constants.paths.details(definition.id()));
 						}
 					}
 					sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
-					this.previewVersion(null);
-					this.versionsParams.valueHasMutated();
 				} catch (e) {
 					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.saveError', 'An error occurred while attempting to save a cohort definition.')());
 				} finally {
