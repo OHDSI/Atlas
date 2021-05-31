@@ -70,6 +70,18 @@
 		<empty-state params="message: noResultsFoundMessage()"></empty-state>
 	<!-- /ko -->
 	<div data-bind="visible: data().length > 0">
+		<div class="pull-right">
+			<i data-bind="attr: { class: recordCountClass }" aria-hidden="true">
+			</i>
+			<span data-bind="text: ko.i18n('search.viewCountMessage', 'View record counts for:')"></span>
+			<select data-bind="
+          options: resultSources,
+          optionsText: 'sourceName',
+          optionsValue: 'sourceKey',
+          value: currentResultSource().sourceKey,
+          event: { change: refreshRecordCounts }
+        "></select>
+		</div>
 		<faceted-datatable params="{
 			orderColumn: 7,
 			columns: searchColumns,
