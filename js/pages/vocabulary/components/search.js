@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'atlas-state',
+	'appConfig',
 	'text!./search.html',
 	'services/AuthAPI',
 	'components/conceptset/utils',
@@ -23,6 +24,7 @@ define([
 ], function (
 	ko,
 	sharedState,
+	config,
 	view,
 	authApi,
 	conceptSetUtils,
@@ -99,6 +101,9 @@ define([
 					'pdfHtml5'
 				];
 				this.tableOptions = commonUtils.getTableOptions('L');
+				this.renderColumnTitle = (elementId, title) => {
+					return `<div style="white-space: nowrap"><i id="${elementId}" class="fa fa-database" aria-hidden="true"></i> ${title}</div>`
+				}
 				this.searchColumns = [{
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),
@@ -127,13 +132,23 @@ define([
 					data: 'STANDARD_CONCEPT_CAPTION',
 					visible: false
 				}, {
-					title: ko.i18n('columns.rc', 'RC'),
+					title: this.renderColumnTitle('columnRC', ko.i18n('columns.rc', 'RC')()),
 					data: 'RECORD_COUNT',
 					className: 'numeric'
 				}, {
-					title: ko.i18n('columns.drc', 'DRC'),
+					title: this.renderColumnTitle('columnDRC', ko.i18n('columns.drc', 'DRC')()),
 					data: 'DESCENDANT_RECORD_COUNT',
 					className: 'numeric'
+				}, {
+					title: this.renderColumnTitle('columnPC', ko.i18n('columns.pc', 'PC')()),
+					data: 'PERSON_COUNT',
+					className: 'numeric',
+					visible: config.enablePersonCount
+				}, {
+					title: this.renderColumnTitle('columnDPC', ko.i18n('columns.dpc', 'DPC')()),
+					data: 'DESCENDANT_PERSON_COUNT',
+					className: 'numeric',
+					visible: config.enablePersonCount
 				}, {
 					title: ko.i18n('columns.domain', 'Domain'),
 					data: 'DOMAIN_ID'
@@ -180,6 +195,39 @@ define([
 						}
 					}]
 				};
+
+                if (config.enablePersonCount) {
+                    this.searchOptions.Facets.push({
+                        'caption': ko.i18n('facets.caption.hasPersonCount', 'Has Person Count'),
+                        'binding': function (o) {
+                            return parseInt(o.PERSON_COUNT) > 0;
+                        }
+                    }, {
+                        'caption': ko.i18n('facets.caption.hasDescendantPersonCount', 'Has Descendant Person Count'),
+                        'binding': function (o) {
+                            return parseInt(o.DESCENDANT_PERSON_COUNT) > 0;
+                        }
+                    });
+                }
+
+                this.currentResultSource = ko.observable();
+                this.resultSources = ko.computed(() => {
+                    const resultSources = [];
+                    sharedState.sources().forEach((source) => {
+                        if (source.hasResults) {
+                            resultSources.push(source);
+                            if (source.resultsUrl === sharedState.resultsUrl()) {
+                                this.currentResultSource(source);
+                            }
+                        }
+                    })
+
+                    return resultSources;
+                });
+                this.recordCountsRefreshing = ko.observable(false);
+                this.recordCountClass = ko.pureComputed(() => {
+                    return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+                });
 
 				this.isAuthenticated = authApi.isAuthenticated;
 				this.hasAccess = ko.computed(() => PermissionService.isPermittedSearch());
@@ -257,6 +305,7 @@ define([
 					return true;
 				}
 			}
+
 			executeSearch() {
 				if (!this.currentSearch() && !this.showAdvanced()) {
 					this.data([]);
@@ -384,6 +433,32 @@ define([
 
 			noResultsFoundMessage() {
 				return ko.i18n('search.noResultsFoundFor', 'No results found for')() + ' \"' + this.currentSearch() + '\"';
+			}
+
+            async refreshRecordCounts(obj, event) {
+                if (event.originalEvent) {
+                    this.recordCountsRefreshing(true);
+                    ['#columnRC', '#columnDRC', '#columnPC', '#columnDPC'].forEach(e => this.toggleCountColumnHeaderSpin(e, true));
+                    const results = this.data();
+					await vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
+					this.data(results);
+					['#columnRC', '#columnDRC', '#columnPC', '#columnDPC'].forEach(e => this.toggleCountColumnHeaderSpin(e, false));
+					this.recordCountsRefreshing(false);
+                }
+            }
+
+            toggleCountColumnHeaderSpin(elementId, enable = false) {
+				if (enable) {
+					$(elementId)
+						.removeClass("fa-database")
+						.addClass("fa-circle-o-notch")
+						.addClass("fa-spin");
+				} else {
+					$(elementId)
+						.addClass("fa-database")
+						.removeClass("fa-circle-o-notch")
+						.removeClass("fa-spin");
+				}
 			}
 		}
 
