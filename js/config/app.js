@@ -151,7 +151,7 @@ define(function () {
      }
    };
 
-   appConfig.enablePersonCount = false;
+   appConfig.enablePersonCount = true;
 
 	return appConfig;
 });
