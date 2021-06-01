@@ -418,7 +418,7 @@ define([
 				let analysis;
 				if (version && version !== 'current') {
 					const analysisVersion = await IRAnalysisService.getVersion(this.selectedAnalysisId(), version);
-					analysis = analysisVersion.irAnalysisDTO;
+					analysis = analysisVersion.entityDTO;
 					analysis.expression = JSON.parse(analysis.expression);
 					this.previewVersion(analysisVersion.versionDTO);
 				} else {

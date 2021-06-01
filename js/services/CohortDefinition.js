@@ -162,9 +162,9 @@ define(function (require, exports) {
 	function getVersion(cohortDefinitionId, versionNumber) {
 		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionNumber}`)
 			.then(res => {
-				const cohortDef = res.data.cohortRawDTO;
+				const cohortDef = res.data.entityDTO;
 				cohortDef.expression = JSON.parse(cohortDef.expression);
-				cohortDef.versionDef = res.data.cohortVersionDTO;
+				cohortDef.versionDef = res.data.versionDTO;
 				return cohortDef;
 			}).catch(error => {
 				console.log("Error: " + error);

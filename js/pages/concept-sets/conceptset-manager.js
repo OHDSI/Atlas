@@ -422,7 +422,7 @@ define([
 				let conceptSet, expression;
 				if (version && version !== 'current') {
 					const conceptSetVersion = await conceptSetService.getVersion(conceptSetId, version);
-					conceptSet = conceptSetVersion.conceptSetDTO;
+					conceptSet = conceptSetVersion.entityDTO;
 					expression = await conceptSetService.getVersionExpression(conceptSetId, version);
 					this.previewVersion(conceptSetVersion.versionDTO);
 				} else {

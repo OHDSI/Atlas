@@ -297,7 +297,7 @@ define([
                     let design;
                     if (version && version !== 'current') {
                         const designVersion = await CharacterizationService.getVersion(id, version);
-                        design = designVersion.characterizationDTO;
+                        design = designVersion.entityDTO;
                         this.previewVersion(designVersion.versionDTO);
                     } else {
                         design = await CharacterizationService.loadCharacterizationDesign(id);

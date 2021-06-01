@@ -271,7 +271,7 @@ define([
 					let analysis;
 					if (version && version !== 'current') {
 						const analysisVersion = await PathwayService.getVersion(id, version);
-						analysis = analysisVersion.pathwayAnalysisDTO;
+						analysis = analysisVersion.entityDTO;
 						this.previewVersion(analysisVersion.versionDTO);
 					} else {
 						analysis = await PathwayService.load(id);
