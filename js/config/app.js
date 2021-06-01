@@ -149,5 +149,7 @@ define(function () {
      }
    };
 
+   appConfig.enablePersonCount = false;
+
 	return appConfig;
 });
