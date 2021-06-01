@@ -384,7 +384,7 @@ define([
 					throw { message: 'No results found', results };
 				}
 
-				const promise = vocabularyProvider.loadDensity(results);
+				const promise = vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
 				promise.then(() => {
 					this.data(this.normalizeSearchResults(results));
 				});
