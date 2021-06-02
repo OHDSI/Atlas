@@ -100,10 +100,41 @@ define([
 					'csvHtml5',
 					'pdfHtml5'
 				];
+				this.columnHeadersWithIcons = [
+					{
+						id: 'rc',
+						elementId: 'columnRC',
+						title: ko.i18n('columns.rc', 'RC'),
+						tooltip: ko.i18n('columns.rcTooltip', 'Record Count'),
+						icon: 'fa-database'
+					},
+					{
+						id: 'drc',
+						elementId: 'columnDRC',
+						title: ko.i18n('columns.drc', 'DRC'),
+						tooltip: ko.i18n('columns.drcTooltip', 'Descendant Record Count'),
+						icon: 'fa-database'
+					},
+					{
+						id: 'pc',
+						elementId: 'columnPC',
+						title: ko.i18n('columns.pc', 'PC'),
+						tooltip: ko.i18n('columns.pcTooltip', 'Person Count'),
+						icon: 'fa-user'
+					},
+					{
+						id: 'dpc',
+						elementId: 'columnDPC',
+						title: ko.i18n('columns.dpc', 'DPC'),
+						tooltip: ko.i18n('columns.dpcTooltip', 'Descendant Person Count'),
+						icon: 'fa-user'
+					}
+				];
 				this.tableOptions = commonUtils.getTableOptions('L');
-				this.renderColumnTitle = (elementId, title) => {
-					return `<div style="white-space: nowrap"><i id="${elementId}" class="fa fa-database" aria-hidden="true"></i> ${title}</div>`
-				}
+				this.renderColumnTitle = (id) => {
+					const c = this.columnHeadersWithIcons.find((c) => c.id === id);
+					return `<div style="white-space: nowrap" title="${c.tooltip()}"><i id="${c.elementId}" class="fa ${c.icon}"></i> ${c.title()}</div>`
+				};
 				this.searchColumns = [{
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),
@@ -132,20 +163,20 @@ define([
 					data: 'STANDARD_CONCEPT_CAPTION',
 					visible: false
 				}, {
-					title: this.renderColumnTitle('columnRC', ko.i18n('columns.rc', 'RC')()),
+					title: this.renderColumnTitle('rc'),
 					data: 'RECORD_COUNT',
 					className: 'numeric'
 				}, {
-					title: this.renderColumnTitle('columnDRC', ko.i18n('columns.drc', 'DRC')()),
+					title: this.renderColumnTitle('drc'),
 					data: 'DESCENDANT_RECORD_COUNT',
 					className: 'numeric'
 				}, {
-					title: this.renderColumnTitle('columnPC', ko.i18n('columns.pc', 'PC')()),
+					title: this.renderColumnTitle('pc'),
 					data: 'PERSON_COUNT',
 					className: 'numeric',
 					visible: config.enablePersonCount
 				}, {
-					title: this.renderColumnTitle('columnDPC', ko.i18n('columns.dpc', 'DPC')()),
+					title: this.renderColumnTitle('dpc'),
 					data: 'DESCENDANT_PERSON_COUNT',
 					className: 'numeric',
 					visible: config.enablePersonCount
@@ -436,26 +467,28 @@ define([
 			}
 
             async refreshRecordCounts(obj, event) {
-                if (event.originalEvent) {
-                    this.recordCountsRefreshing(true);
-                    ['#columnRC', '#columnDRC', '#columnPC', '#columnDPC'].forEach(e => this.toggleCountColumnHeaderSpin(e, true));
-                    const results = this.data();
-					await vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
-					this.data(results);
-					['#columnRC', '#columnDRC', '#columnPC', '#columnDPC'].forEach(e => this.toggleCountColumnHeaderSpin(e, false));
-					this.recordCountsRefreshing(false);
-                }
+                if (!event.originalEvent) {
+					return;
+				}
+
+				this.recordCountsRefreshing(true);
+				this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, true));
+				const results = this.data();
+				await vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
+				this.data(results);
+				this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, false));
+				this.recordCountsRefreshing(false);
             }
 
-            toggleCountColumnHeaderSpin(elementId, enable = false) {
+            toggleCountColumnHeaderSpin(column, enable) {
 				if (enable) {
-					$(elementId)
-						.removeClass("fa-database")
+					$('#' + column.elementId)
+						.removeClass(column.icon)
 						.addClass("fa-circle-o-notch")
 						.addClass("fa-spin");
 				} else {
-					$(elementId)
-						.addClass("fa-database")
+					$('#' + column.elementId)
+						.addClass(column.icon)
 						.removeClass("fa-circle-o-notch")
 						.removeClass("fa-spin");
 				}
