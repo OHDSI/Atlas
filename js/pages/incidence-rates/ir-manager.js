@@ -507,6 +507,7 @@ define([
 			this.selectedAnalysisId(analysis.id);
 			this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 			this.clearResults();
+			this.versionsParams.valueHasMutated();
 			this.isCopying(false);
 			this.loading(false);
 			commonUtils.routeTo(constants.apiPaths.analysis(analysis.id));

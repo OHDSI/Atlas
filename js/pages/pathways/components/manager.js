@@ -325,6 +325,7 @@ define([
 			this.isCopying(true);
 			const copiedAnalysis = await PathwayService.copy(this.design().id);
 			this.setupDesign(new PathwayAnalysis(copiedAnalysis));
+			this.versionsParams.valueHasMutated();
 			this.isCopying(false);
 			commonUtils.routeTo(commonUtils.getPathwaysUrl(copiedAnalysis.id, 'design'));
 		}

@@ -357,6 +357,7 @@ define([
             CharacterizationService.copyCharacterization(this.characterizationId())
                 .then(res => {
                     this.setupDesign(new CharacterizationAnalysis(res));
+                    this.versionsParams.valueHasMutated();
                     this.isCopying(false);
                     commonUtils.routeTo(`cc/characterizations/${res.id}`);
                 });
