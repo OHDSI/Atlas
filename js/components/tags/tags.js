@@ -191,7 +191,11 @@ define([
                             .forEach(t => {
                                 if (t.permissionProtected && !this.checkUnassignPermissionFn(t)) {
                                     allowAssign = false;
-                                    alert(ko.i18nformat('components.tags.tabs.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name}));
+                                    alert(ko.i18nformat('components.tags.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name}));
+                                    return;
+                                }
+                                if (!confirm(ko.i18nformat('components.tags.reassignConfirm', 'The maximum number of assigned tags in the tag group "<%=tagGroup%>" is <%=maxNumber%>. The tag "<%=tagName%>" will be unassigned. Proceed?', {tagGroup: ntg.name, maxNumber: 1, tagName: t.name})())) {
+                                    allowAssign = false;
                                     return;
                                 }
                                 this.unassignTag(t)
