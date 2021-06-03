@@ -403,6 +403,10 @@ define(function(require, exports) {
         return isPermitted('source:post');
     }
 
+    var isPermittedAccessSource = function(key) {
+        return isPermitted('source:' + key + ':access');
+    }
+
     var isPermittedReadSource = function(key) {
         return isPermitted('source:' + key + ':get');
     }
@@ -578,6 +582,7 @@ define(function(require, exports) {
         isPermittedViewProfiles: isPermittedViewProfiles,
         isPermittedViewProfileDates: isPermittedViewProfileDates,
 
+        isPermittedAccessSource: isPermittedAccessSource,
         isPermittedReadSource: isPermittedReadSource,
         isPermittedCreateSource: isPermittedCreateSource,
         isPermittedEditSource: isPermittedEditSource,
