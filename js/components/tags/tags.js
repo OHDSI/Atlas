@@ -5,6 +5,7 @@ define([
     'utils/CommonUtils',
     'utils/AutoBind',
     'utils/DatatableUtils',
+    'services/AuthAPI',
     'less!./tags.less',
     'databindings',
 ], function (
@@ -13,7 +14,8 @@ define([
     Component,
     commonUtils,
     AutoBind,
-    datatableUtils
+    datatableUtils,
+    authApi
 ) {
     class TagsModal extends AutoBind(Component) {
         constructor(params) {
@@ -189,7 +191,11 @@ define([
                             .forEach(t => {
                                 if (t.permissionProtected && !this.checkUnassignPermissionFn(t)) {
                                     allowAssign = false;
-                                    alert(ko.i18nformat('components.tags.tabs.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name})());
+                                    alert(ko.i18nformat('components.tags.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name}));
+                                    return;
+                                }
+                                if (!confirm(ko.i18nformat('components.tags.reassignConfirm', 'The maximum number of assigned tags in the tag group "<%=tagGroup%>" is <%=maxNumber%>. The tag "<%=tagName%>" will be unassigned. Proceed?', {tagGroup: ntg.name, maxNumber: 1, tagName: t.name})())) {
+                                    allowAssign = false;
                                     return;
                                 }
                                 this.unassignTag(t)
@@ -222,7 +228,7 @@ define([
         async createNewCustomTag() {
             const existingTag = this.exists(this.newCustomTagName());
             if(existingTag) {
-                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()})());
+                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()}));
                 return;
             }
 
