@@ -245,7 +245,7 @@ define([
                 this.resultSources = ko.computed(() => {
                     const resultSources = [];
                     sharedState.sources().forEach((source) => {
-                        if (source.hasResults) {
+                        if (source.hasResults && authApi.isPermittedAccessSource(source.sourceKey)) {
                             resultSources.push(source);
                             if (source.resultsUrl === sharedState.resultsUrl()) {
                                 this.currentResultSource(source);
