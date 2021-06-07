@@ -39,8 +39,7 @@ define(function (require, exports) {
         sourceKey: source || '',
         sampleName: sampleName || ''
       };
-  
-      const response = httpService.doGet(`${config.webAPIRoot}annotations/navigation`, data).then(({ data }) => data);
+      const response = httpService.doGet(`${config.webAPIRoot}cohortsample/${data.cohortId}/${data.sampleName}/${data.sampleName}`, {}).then(({ data }) => data);
       response.catch((er) => {
         console.error('Can\'t find annotation navigation');
       });

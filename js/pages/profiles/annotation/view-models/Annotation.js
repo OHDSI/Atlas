@@ -40,7 +40,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
                   answerId: answerId,
                   annotationId: self.annotationId,
                   setId: self.setId
-                }
+                };
                 accumulator.push(result);
               });
               return accumulator;
@@ -55,7 +55,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
                 answerId: answerId,
                 annotationId: self.annotationId,
                 setId: self.setId
-              }
+              };
               accumulator.push(result);
               return accumulator;
             }

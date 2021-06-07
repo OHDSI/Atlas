@@ -43,7 +43,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 title: 'Actions',
                 sortable: false,
                 render: function() {
-                    return `<button class="btn btn-primary btn-sm annotation-set-view-btn" >View</button> <button class="btn btn-danger btn-sm annotation-set-delete-btn" ><i class="fa fa-trash"></i> Delete</button>`;
+                    return `<button class="btn btn-danger btn-sm annotation-set-delete-btn" ><i class="fa fa-trash"></i> Delete</button>`;
                 }
             }
         ];
