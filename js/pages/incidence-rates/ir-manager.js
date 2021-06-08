@@ -686,7 +686,7 @@ define([
 		}
 
 		getAuthorship() {
-			const conceptSet = this.selectedAnalysis();
+			const analysis = this.selectedAnalysis();
 
 			let createdText, createdBy, createdDate, modifiedBy, modifiedDate;
 
@@ -698,10 +698,10 @@ define([
 				modifiedDate = null;
 			} else {
 				createdText = ko.i18n('components.authorship.created', 'created');
-				createdBy = this.selectedAnalysis().createdBy() ? this.selectedAnalysis().createdBy().name : '';
-				createdDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().createdDate);
-				modifiedBy = this.selectedAnalysis().modifiedBy() ? this.selectedAnalysis().modifiedBy().name : '';
-				modifiedDate = commonUtils.formatDateForAuthorship(this.selectedAnalysis().modifiedDate);
+				createdBy = analysis.createdBy() ? analysis.createdBy().name : '';
+				createdDate = commonUtils.formatDateForAuthorship(analysis.createdDate);
+				modifiedBy = analysis.modifiedBy() ? analysis.modifiedBy().name : '';
+				modifiedDate = commonUtils.formatDateForAuthorship(analysis.modifiedDate);
 			}
 
 			return {
