@@ -219,7 +219,7 @@ define([
 			this.criticalCount = ko.observable(0);
 			this.isDiagnosticsRunning = ko.observable(false);
 
-			this.warningsCheckOnInit = ko.observable(true);
+			this.warningsCheckOnInit = ko.observable(!this.selectedAnalysis());
 			this.warningParams = ko.observable({
 				current: this.selectedAnalysis,
 				warningsTotal: ko.observable(0),
