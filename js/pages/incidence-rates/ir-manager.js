@@ -219,7 +219,7 @@ define([
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
-				checkOnInit: true,
+				checkOnInit: !this.selectedAnalysis(),
 			});
 
 			this.isDesignCorrect = ko.pureComputed(() => this.criticalCount() === 0);
