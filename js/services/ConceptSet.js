@@ -16,7 +16,13 @@ define(function (require) {
 
 	function loadConceptSetExpression(conceptSetId) {
 		const sourceKey = sharedState.sourceKeyOfVocabUrl();
-		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression' + (sourceKey ? `/${sourceKey}`: '')).then(({ data }) => data);
+		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression' + (sourceKey ? `/${sourceKey}`: ''))
+			.then(({ data }) => data)
+			.catch((err) => {
+				console.log((err.data && err.data.payload) ? err.data.payload : err);
+				alert((err.data && err.data.payload && err.data.payload.message) ? err.data.payload.message : 'Error occurred during resolving expression!');
+				self.isLoading(false);
+			});
 	}
 
 	function lookupIdentifiers(identifiers) {
