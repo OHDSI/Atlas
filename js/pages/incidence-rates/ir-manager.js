@@ -453,6 +453,7 @@ define([
 					alert(ko.i18n('ir.nameConflict', 'An incidence rate with this name already exists. Please choose a different name.')());
 				} else {
 					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
+					this.selectedAnalysisId(savedIR.id);
 					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
 					this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 					commonUtils.routeTo(constants.apiPaths.analysis(savedIR.id));
