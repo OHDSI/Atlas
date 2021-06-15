@@ -29,8 +29,9 @@ define([
 			this.conceptSetStore = params.conceptSetStore;
 			
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit },
-				(selected) => {
-					ko.utils.arrayForEach(this.includedSourcecodes(), ic => ic.isSelected(selected));
+				(data, selected) => {
+					const conceptIds = data.map(c => c.CONCEPT_ID);
+					ko.utils.arrayForEach(this.includedSourcecodes(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
 					this.includedSourcecodes.valueHasMutated();
 				});
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;

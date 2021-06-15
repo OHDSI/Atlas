@@ -155,14 +155,16 @@ define([
 
 							if (binding.data().length < 100) {
 								e.target.classList.toggle('selected');
-								c.selectAll(e.target.classList.contains('selected'));
+								c.selectAll($(element).DataTable().rows( { filter : 'applied'} ).data(),
+									e.target.classList.contains('selected'));
 
 							} else { // more the data - slower the all-selection/deselection. add spinner
 								e.target.classList.remove('fa-check');
 								e.target.classList.add('fa-circle-o-notch', 'fa-spin');
 								setTimeout(() => {
 									e.target.classList.toggle('selected');
-									c.selectAll(e.target.classList.contains('selected'));
+									c.selectAll($(element).DataTable().rows( { filter : 'applied'} ).data(),
+										e.target.classList.contains('selected'));
 									e.target.classList.add('fa-check');
 									e.target.classList.remove('fa-circle-o-notch', 'fa-spin');
 								}, 50);
