@@ -19,7 +19,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			className: 'text-center',
 			render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
 			renderSelectAll: context.canEditCurrentConceptSet(),
-			selectAll: (selected) => selectAllFn(selected)
+			selectAll: selectAllFn
 		},
 		{
 			title: ko.i18n('columns.id', 'Id'),

@@ -105,9 +105,9 @@ define([
 					orderable: false,
 					searchable: false,
 					renderSelectAll: true,
-					selectAll: (selected) => {
-						ko.utils.arrayForEach(this.data(), c => c.isSelected(selected));
-						this.data.valueHasMutated();
+					selectAll: (data, selected) => {
+						const conceptIds = data.map(c => c.CONCEPT_ID);
+						ko.utils.arrayForEach(this.data(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
 					}
 				},{
 					title: ko.i18n('columns.id', 'Id'),
