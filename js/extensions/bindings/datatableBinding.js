@@ -168,20 +168,9 @@ define([
 								}, 50);
 							}
 						});
-
-						// select/deselect header checkbox on all items select/deselect (not working on dynamic data - need fix)
-						binding.data().forEach(d => {
-							if (d.hasOwnProperty('isSelected')) {
-								d.isSelected.subscribe(() => {
-									if (binding.data().length === binding.data().filter(dd => dd.isSelected()).length) {
-										$(element).find("th > .select-all-" + i).addClass("selected");
-									} else {
-										$(element).find("th > .select-all-" + i).removeClass("selected");
-									}
-								});
-							}
-						});
 					});
+
+					// todo: need to add logic for automatic select/deselect header checkbox on all items select/deselect
 				}
 
 				// For case of complex header which uses data-bindings (https://datatables.net/examples/advanced_init/complex_header.html)
