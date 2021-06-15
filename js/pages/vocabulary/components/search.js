@@ -103,6 +103,12 @@ define([
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),
 					orderable: false,
+					searchable: false,
+					renderSelectAll: true,
+					selectAll: (selected) => {
+						ko.utils.arrayForEach(this.data(), c => c.isSelected(selected));
+						this.data.valueHasMutated();
+					}
 				},{
 					title: ko.i18n('columns.id', 'Id'),
 					data: 'CONCEPT_ID'
