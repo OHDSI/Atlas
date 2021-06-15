@@ -1617,7 +1617,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showSampleCreatingModal(false);
 			} catch(error) {
 				console.error(error);
-				alert('Error when creating sample, please try again later');
+				alert((error && error.data && error.data.payload && error.data.payload.message) ? 
+				error.data.payload.message : 'Error when creating sample, please try again later');
 			} finally {
 				this.newSampleCreatingLoader(false);
 			}
