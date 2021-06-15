@@ -31,8 +31,9 @@ define([
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;
 			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns({ canEditCurrentConceptSet: this.canEdit }, commonUtils,
-				(selected) => {
-					ko.utils.arrayForEach(this.includedConcepts(), ic => ic.isSelected(selected));
+				(data, selected) => {
+					const conceptIds = data.map(c => c.CONCEPT_ID);
+					ko.utils.arrayForEach(this.includedConcepts(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
 					this.includedConcepts.valueHasMutated();
 				});
 			this.includedConceptsOptions = conceptSetUtils.includedConceptsOptions;
