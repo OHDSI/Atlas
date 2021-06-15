@@ -30,7 +30,11 @@ define([
 			this.includedConcepts = this.conceptSetStore.includedConcepts;
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;
-			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns(sharedState, { canEditCurrentConceptSet: this.canEdit }, commonUtils, conceptSetService, conceptSetUtils);
+			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns({ canEditCurrentConceptSet: this.canEdit }, commonUtils,
+				(selected) => {
+					ko.utils.arrayForEach(this.includedConcepts(), ic => ic.isSelected(selected));
+					this.includedConcepts.valueHasMutated();
+				});
 			this.includedConceptsOptions = conceptSetUtils.includedConceptsOptions;
 			this.canAddConcepts = ko.pureComputed(() => this.includedConcepts() && this.includedConcepts().some(item => item.isSelected()));
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');

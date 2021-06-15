@@ -28,7 +28,11 @@ define([
 			this.canEdit = params.canEdit;
 			this.conceptSetStore = params.conceptSetStore;
 			
-			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit });
+			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit },
+				(selected) => {
+					ko.utils.arrayForEach(this.includedSourcecodes(), ic => ic.isSelected(selected));
+					this.includedSourcecodes.valueHasMutated();
+				});
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
