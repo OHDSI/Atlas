@@ -228,7 +228,7 @@ define([
         async createNewCustomTag() {
             const existingTag = this.exists(this.newCustomTagName());
             if(existingTag) {
-                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()}));
+                alert(ko.i18nformat('components.tags.tabs.tagNameExistsWarning', 'Tag <%=tagName%> already exists.', {tagName: this.newCustomTagName()})());
                 return;
             }
 
