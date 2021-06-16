@@ -1,7 +1,9 @@
 define(['jquery', 'knockout', 'jquery-ui/ui/widgets/autocomplete'], function ($, ko) {
 	ko.bindingHandlers.ko_autocomplete = {
 		init: function (element, valueAccessor, allBindingsAccessor) {
-			var autoWidget = $(element).autocomplete(valueAccessor());
+			const options = valueAccessor();
+			options.source = options.source.map(i => i.label ? {...i, label: ko.unwrap(i.label)} : i);
+			const autoWidget = $(element).autocomplete(options);
 			autoWidget.focus(function (event, ui) {
 				$(this).autocomplete("search", "");
 			});
@@ -19,7 +21,8 @@ define(['jquery', 'knockout', 'jquery-ui/ui/widgets/autocomplete'], function ($,
 			});
 		},
 		update: function (element, valueAccessor, allBindingsAccessor) {
-			$(element).autocomplete("option", "source", valueAccessor().source);
+			const source = valueAccessor().source.map(i => i.label ? {...i, label: ko.unwrap(i.label)} : i);
+			$(element).autocomplete("option", "source", source);
 		}
 	};
 });
