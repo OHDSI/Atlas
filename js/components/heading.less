@@ -24,16 +24,37 @@
     font-size: 0;
 
     .tag {
-      font-size: 11px;
+      font-size: 13px;
       display: inline-block;
+      position: relative;
       background-color: #bdbdbd;
       color: black;
       border-radius: 2px 2px;
       padding-right: 4px;
       margin: 3px 0 0 5px;
+      cursor: default;
 
       i {
         padding: 0 0 0 4px;
+      }
+
+      .tooltip {
+        display: none;
+        border: 1px solid grey;
+        border-radius: 2px 2px;
+        padding: 3px 5px;
+        background-color: white;
+        font-size: 12px;
+        top: 20px;
+        left: 0;
+        max-width: 200px;
+        width: max-content;
+        opacity: 1;
+      }
+
+      &:hover .tooltip {
+        display: block;
+        position: absolute;
       }
     }
   }

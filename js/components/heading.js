@@ -30,6 +30,9 @@ define([
 				.map(t => {
 					return {
 						...t,
+						groupLabel: t.groups.length === 1 ? ko.i18n('components.heading.tag.tooltip.group', 'Group:') :
+							ko.i18n('components.heading.tag.tooltip.groups', 'Groups:'),
+						groupList: t.groups.map(g => g.name).join(', '),
 						fullName: t.name,
 						ellipsisName: t.name.length > 22 ? t.name.substring(0, 20) + '...' : t.name,
 						tagColor: t.color || t.groups[0].color || '#cecece',
