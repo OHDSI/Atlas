@@ -4,20 +4,45 @@
     font-weight: bold;
   }
 
-  &__new-tag-label, &__tags-list-label, &__available-tags-list-label, &__reference-tags-list-label {
+  &__tag-groups-label, &__tag-list-label, &__new-tag-label {
     font-size: 1.4rem;
   }
-
-  &__new-tag-label, &__tags-list-label {
+  &__tag-list-label, &__new-tag-label {
     margin-top: 1.3rem;
   }
-
   &__new-tag-label {
     color: #0070dd;
     cursor: pointer;
   }
   &__new-tag-label:hover {
     color: #23527c;
+  }
+
+  .cell-tag-name {
+    width: 100px;
+  }
+  .cell-group-description {
+    width: 460px;
+  }
+  .cell-tag-author {
+    width: 200px;
+  }
+  .cell-tag-description {
+    width: 190px;
+  }
+  .cell-tag-type {
+    width: 80px;
+  }
+  .cell-tag-name,
+  .cell-group-description,
+  .cell-tag-description,
+  .cell-tag-type,
+  .cell-tag-author,
+  .cell-tag-action {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .groups-dropdown {
@@ -31,18 +56,12 @@
     cursor: pointer;
   }
 
-  .reference-tag {
-    cursor: help;
-    border-bottom: 1px dotted blue;
-  }
-
   .dataTable {
     width: 100% !important;
   }
 
   .dataTable th, .dataTable td {
-    /*width: 25% !important;*/
-    padding: 8px;
+    padding: 6px;
   }
 }
 
