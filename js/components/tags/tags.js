@@ -43,7 +43,7 @@ define([
             this.checkAssignPermissionFn = params.checkAssignPermissionFn;
             this.checkUnassignPermissionFn = params.checkUnassignPermissionFn;
 
-            this.tableOptions = commonUtils.getTableOptions('XS');
+            this.tableOptions = commonUtils.getTableOptions('ONLY_5');
 
             this.tagGroupsColumns = [
                 {
