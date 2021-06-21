@@ -23,20 +23,18 @@ define([
 
             this.isModalShown = params.isModalShown;
             this.getTagsList = params.tagsList;
-            this.tagsList = ko.observableArray();
-            this.availableTagsList = ko.observableArray();
-            this.availableTagGroupsList = ko.observableArray();
+            this.allTagsList = ko.observableArray();
+            this.assignedTagsList = ko.observableArray();
+            this.tagGroupsList = ko.observableArray();
+            this.currentTagGroup = ko.observable();
+            this.tagsInGroupList = ko.observableArray();
 
             this.showCreateCustomTag = ko.observable(false);
             this.newCustomTagName = ko.observable();
             this.newCustomTagGroup = ko.observable();
             this.groupsForCustomTags = ko.observableArray();
 
-            this.referenceTagGroupsList = ko.observableArray();
-            this.referenceTagsGroupName = ko.observable('');
-            this.referenceTagsList = ko.observableArray();
-
-            this.isLoading = ko.observable(false);
+            this.isLoading = ko.observable(true);
 
             this.assignTagFn = params.assignTagFn;
             this.unassignTagFn = params.unassignTagFn;
@@ -47,47 +45,80 @@ define([
 
             this.tableOptions = commonUtils.getTableOptions('XS');
 
-            this.selectedTab = ko.observable('tags-assignment');
-
-            this.columns = [
+            this.tagGroupsColumns = [
                 {
-                    title: ko.i18n('columns.group', 'Group'),
+                    title: ko.i18n('columns.name', 'Name'),
+                    width: '100px',
                     render: (s, p, d) => {
-                        return d.groups.map(g => g.name);
+                        return `<span class="cell-tag-name" data-bind="title: '${d.name}'">${d.name}</span>`;
                     }
                 },
                 {
-                    title: ko.i18n('columns.name', 'Name'),
-                    data: 'name'
+                    title: ko.i18n('columns.description', 'Description'),
+                    width: '465px',
+                    render: (s, p, d) => {
+                        return `<span class="cell-group-description" data-bind="title: '${d.description}'">${d.description}</span>`;
+                    }
+                },
+                {
+                    title: ko.i18n('columns.type', 'Type'),
+                    width: '80px',
+                    render: (s, p, d) => {
+                        d.typeText = d.type === 'CUSTOM'
+                            ? ko.i18n('components.tags.typeCustom', 'Free-form')
+                            : ko.i18n('components.tags.typeSystem', 'System');
+                        return `<span class="cell-tag-type" data-bind="text: typeText, title: typeText"></span>`;
+                    }
                 },
                 {
                     title: ko.i18n('columns.action', 'Action'),
                     sortable: false,
+                    width: '80px',
                     render: (s, p, d) => {
-                        if (d.permissionProtected && !this.checkUnassignPermissionFn(d)) {
-                            return `<span data-bind="text: ko.i18n('components.tags.notPermitted', 'Not permitted')"></span>`;
-                        }
-                        d.unassign = () => this.unassignTag(d);
-                        return `<a data-bind="css: '${this.classes('action-link')}', click: unassign, text: ko.i18n('components.tags.unassign', 'Unassign')"></a>`
+                        d.showIncludedTagsTable = () => this.showIncludedTagsTable(d);
+                        return `<a data-bind="css: '${this.classes('action-link')}', click: showIncludedTagsTable, text: ko.i18n('components.tags.showTags', 'Show tags')" class="cell-tag-action"></a>`
                     }
                 }
             ];
 
-            this.availableTagsColumns = [
+            this.tagsInGroupColumns = [
                 {
-                    title: ko.i18n('columns.group', 'Group'),
+                    title: ko.i18n('columns.name', 'Name'),
+                    width: '100px',
                     render: (s, p, d) => {
-                        return d.groups.map(g => g.name);
+                        return `<span class="cell-tag-name" data-bind="title: '${d.name}'">${d.name}</span>`;
                     }
                 },
                 {
-                    title: ko.i18n('columns.name', 'Name'),
-                    data: 'name'
+                    title: ko.i18n('columns.created', 'Created'),
+                    width: '120px',
+                    render: datatableUtils.getDateFieldFormatter('createdDate'),
                 },
                 {
-                    title: ko.i18n('columns.usageCount', 'Usage count'),
-                    width: '80px',
-                    data: 'count'
+                    title: ko.i18n('columns.author', 'Author'),
+                    width: '202px',
+                    render: (s, p, d) => {
+                        const author = datatableUtils.getCreatedByFormatter('System')(s, p, d);
+                        return `<span class="cell-tag-author" data-bind="title: '${author}'">${author}</span>`;
+                    },
+                },
+                {
+                    title: ko.i18n('columns.description', 'Description'),
+                    width: '195px',
+                    render: (s, p, d) => {
+                        const desc = d.description || '-';
+                        return `<span class="cell-tag-description" data-bind="title: '${desc}'">${desc}</span>`;
+                    }
+                },
+                {
+                    title: '',
+                    width: '16px',
+                    sortable: false,
+                    render: (s, p, d) => {
+                        if (d.assigned) {
+                            return `<span class="fa fa-tag"></span>`;
+                        }
+                    }
                 },
                 {
                     title: ko.i18n('columns.action', 'Action'),
@@ -95,88 +126,44 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         if (d.permissionProtected && !this.checkAssignPermissionFn(d)) {
-                            return `<span data-bind="text: ko.i18n('components.tags.notPermitted', 'Not permitted')"></span>`;
+                            return `<span data-bind="text: ko.i18n('components.tags.notPermitted', 'Not permitted')" class="cell-tag-action"></span>`;
                         }
-                        d.assign = () => this.assignTag(d);
-                        return `<a data-bind="css: '${this.classes('action-link')}', click: assign, text: ko.i18n('components.tags.assign', 'Assign')"></a>`
+                        if (!d.assigned) {
+                            d.assign = () => this.assignTag(d);
+                            return `<a data-bind="css: '${this.classes('action-link')}', click: assign, text: ko.i18n('components.tags.assign', 'Assign')" class="cell-tag-action"></a>`
+                        } else {
+                            d.unassign = () => this.unassignTag(d);
+                            return `<a data-bind="css: '${this.classes('action-link')}', click: unassign, text: ko.i18n('components.tags.unassign', 'Unassign')" class="cell-tag-action assigned"></a>`
+                        }
                     }
                 }
-            ];
-
-            this.referenceTagGroupsColumns = [
-                {
-                    title: ko.i18n('columns.group', 'Group'),
-                    data: 'name',
-                    width: '30%',
-                },
-                {
-                    title: ko.i18n('columns.description', 'Description'),
-                    data: 'description',
-                    width: '50%',
-                },
-                {
-                    title: ko.i18n('columns.action', 'Action'),
-                    sortable: false,
-                    width: '50%',
-                    render: (s, p, d) => {
-                        d.showIncludedTagsTable = () => this.showIncludedTagsTable(d);
-                        return `<a data-bind="css: '${this.classes('action-link')}', click: showIncludedTagsTable, text: ko.i18n('components.tags.showTags', 'Show tags')"></a>`
-                    }
-                },
-            ];
-
-            this.referenceTagsColumns = [
-                {
-                    title: ko.i18n('columns.name', 'Name'),
-                    data: 'name'
-                },
-                {
-                    title: ko.i18n('columns.created', 'Created'),
-                    className: 'date-column',
-                    render: datatableUtils.getDateFieldFormatter('createdDate'),
-                },
-                {
-                    title: ko.i18n('columns.author', 'Author'),
-                    className: 'author-column',
-                    render: datatableUtils.getCreatedByFormatter('System'),
-                },
-                {
-                    title: ko.i18n('columns.description', 'Description'),
-                    render: (s, p, d) => {
-                        return d.description || '-';
-                    }
-                },
             ];
 
             this.isModalShown.subscribe(open => {
                 if (!open) {
+                    this.allTagsList([]);
+                    this.tagsInGroupList([]);
                     return;
                 }
-                this.isLoading(true);
-                try {
-                    this.referenceTagsGroupName('');
-                    this.referenceTagsList([]);
-                    this.tagsList(this.getTagsList());
-                    this.loadAvailableTags();
-                } catch (ex) {
-                    console.log(ex);
-                } finally {
-                    this.isLoading(false);
-                }
+                setTimeout(async () => {
+                    try {
+                        this.isLoading(true);
+                        this.assignedTagsList(this.getTagsList());
+                        await this.loadAvailableTags();
+                        this.isLoading(false);
+                    } catch (ex) {
+                        console.log(ex);
+                    }
+                }, 0);
             });
         }
 
         async loadAvailableTags() {
             const res = await this.loadAvailableTagsFn();
-            this.availableTagsList(res.filter(t => {
-                if (t.groups && t.groups.length > 0) {
-                    return this.tagsList().filter(t1 => t1.id === t.id).length === 0;
-                }
-                return false;
-            }));
-            this.availableTagGroupsList(res.filter(t => !t.groups || t.groups.length === 0));
-            this.groupsForCustomTags(this.availableTagGroupsList().filter(tg => tg.allowCustom));
-            this.referenceTagGroupsList(this.availableTagGroupsList().filter(tg => tg.description));
+            this.allTagsList(res.filter(t => t.groups && t.groups.length > 0));          // tags without main groups
+            this.tagGroupsList(res.filter(t => !t.groups || t.groups.length === 0)       // main tag groups
+                .sort((t1, t2) => t1.id - t2.id));
+            this.groupsForCustomTags(this.tagGroupsList().filter(tg => tg.allowCustom));
         }
 
         async assignTag(tag) {
@@ -187,18 +174,18 @@ define([
                 const nonMultiSelectedTagGroups = tag.groups.filter(tg => !tg.multiSelection);
                 if (nonMultiSelectedTagGroups.length > 0) {
                     nonMultiSelectedTagGroups.forEach(ntg => {
-                        this.tagsList().filter(t => t.groups.filter(tg => tg.id === ntg.id).length > 0)
+                        this.assignedTagsList().filter(t => t.groups.filter(tg => tg.id === ntg.id).length > 0)
                             .forEach(t => {
                                 if (t.permissionProtected && !this.checkUnassignPermissionFn(t)) {
                                     allowAssign = false;
-                                    alert(ko.i18nformat('components.tags.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name}));
+                                    alert(ko.i18nformat('components.tags.cannotUnassignProtectedTagWarning', 'Cannot unassign protected tag: <%=tagName%>', {tagName: t.name})());
                                     return;
                                 }
                                 if (!confirm(ko.i18nformat('components.tags.reassignConfirm', 'The maximum number of assigned tags in the tag group "<%=tagGroup%>" is <%=maxNumber%>. The tag "<%=tagName%>" will be unassigned. Proceed?', {tagGroup: ntg.name, maxNumber: 1, tagName: t.name})())) {
                                     allowAssign = false;
                                     return;
                                 }
-                                this.unassignTag(t)
+                                this.unassignTag(t);
                             });
                     });
                 }
@@ -208,8 +195,11 @@ define([
                 }
 
                 await this.assignTagFn(tag);
-                this.tagsList.unshift(tag);
-                this.availableTagsList.remove(t => t.id === tag.id);
+                tag.assigned = true;
+                this.assignedTagsList.unshift(tag);
+                if (tag.groups.filter(tg => tg.id === this.currentTagGroup().id).length > 0) {
+                    this.tagsInGroupList.valueHasMutated();
+                }
             } catch (ex) {
                 console.log(ex);
             }
@@ -218,8 +208,13 @@ define([
         async unassignTag(tag) {
             try {
                 await this.unassignTagFn(tag);
-                this.tagsList.remove(t => t.id === tag.id);
-                this.availableTagsList.unshift(tag);
+                this.assignedTagsList.remove(t => t.id === tag.id);
+                ko.utils.arrayForEach(this.tagsInGroupList(), (t) => {
+                    if (t.id === tag.id) {
+                        t.assigned = false;
+                    }
+                });
+                this.tagsInGroupList.valueHasMutated();
             } catch (ex) {
                 console.log(ex);
             }
@@ -241,25 +236,32 @@ define([
                 const savedTagRes = await this.createNewTagFn(newTag);
                 const savedTag = savedTagRes.data;
                 await this.assignTag(savedTag);
+                this.allTagsList().unshift(savedTag);
+                if (this.newCustomTagGroup() === this.currentTagGroup().id) {
+                    this.tagsInGroupList().unshift(savedTag);
+                    this.sortByAssigned(this.tagsInGroupList);
+                    this.tagsInGroupList.valueHasMutated();
+                }
                 this.newCustomTagName('');
             } catch (ex) {
                 console.log(ex);
             }
         }
 
-        selectTab(key) {
-            this.selectedTab(key);
-        }
-
         exists(tagName) {
-            return this.availableTagsList().find(t => t.name === tagName) || this.tagsList().find(t => t.name === tagName);
+            return this.allTagsList().find(t => t.name === tagName);
         }
 
         showIncludedTagsTable(tagGroup) {
-            const tags = this.availableTagsList().filter(t => t.groups.filter(tg => tg.id === tagGroup.id).length > 0)
-                .concat(this.tagsList().filter(t => t.groups.filter(tg => tg.id === tagGroup.id).length > 0));
-            this.referenceTagsList(tags);
-            this.referenceTagsGroupName(tagGroup.name);
+            const tags = this.allTagsList().filter(t => t.groups.filter(tg => tg.id === tagGroup.id).length > 0);
+            tags.forEach(t => t.assigned = this.assignedTagsList().filter(at => at.id === t.id).length > 0);
+            this.sortByAssigned(tags);
+            this.tagsInGroupList(tags);
+            this.currentTagGroup(tagGroup);
+        }
+
+        sortByAssigned(list) {
+            list.sort((t1, t2) => t1.assigned === t2.assigned ? 0 : t1.assigned ? -1 : 1);
         }
     }
 
