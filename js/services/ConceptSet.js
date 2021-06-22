@@ -20,7 +20,13 @@ define(function (require) {
 			.then(({ data }) => data)
 			.catch((err) => {
 				console.log((err.data && err.data.payload) ? err.data.payload : err);
-				alert((err.data && err.data.payload && err.data.payload.message) ? err.data.payload.message : 'Error occurred during resolving expression!');
+				let message = err.data && err.data.payload && err.data.payload.message
+					? err.data.payload.message
+					: ko.i18n('components.conceptSet.expressionResolveError', 'Error occurred during resolving expression!')();
+				if (err.status === 403) {
+					message += ' - ' + ko.i18n('components.conceptSet.forbiddenError', 'You are not authorized to view the concept set expression.')();
+				}
+				alert(message);
 				self.isLoading(false);
 			});
 	}
