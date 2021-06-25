@@ -43,7 +43,7 @@ define([
             this.checkAssignPermissionFn = params.checkAssignPermissionFn;
             this.checkUnassignPermissionFn = params.checkUnassignPermissionFn;
 
-            this.tableOptions = commonUtils.getTableOptions('ONLY_5');
+            this.tableOptions = commonUtils.getTableOptions('XS');
 
             this.tagGroupsColumns = [
                 {
@@ -92,11 +92,14 @@ define([
                 {
                     title: ko.i18n('columns.created', 'Created'),
                     width: '120px',
-                    render: datatableUtils.getDateFieldFormatter('createdDate'),
+                    render: (s, p, d) => {
+                        const dateTime = datatableUtils.getDateFieldFormatter('createdDate')(s, p, d);
+                        return `<span class="cell-tag-created" data-bind="title: '${dateTime}'">${dateTime}</span>`;
+                    },
                 },
                 {
                     title: ko.i18n('columns.author', 'Author'),
-                    width: '202px',
+                    width: '100px',
                     render: (s, p, d) => {
                         const author = datatableUtils.getCreatedByFormatter('System')(s, p, d);
                         return `<span class="cell-tag-author" data-bind="title: '${author}'">${author}</span>`;
@@ -104,11 +107,16 @@ define([
                 },
                 {
                     title: ko.i18n('columns.description', 'Description'),
-                    width: '195px',
+                    width: '225px',
                     render: (s, p, d) => {
                         const desc = d.description || '-';
                         return `<span class="cell-tag-description" data-bind="title: '${desc}'">${desc}</span>`;
                     }
+                },
+                {
+                    title: ko.i18n('columns.usageCount', 'Usage count'),
+                    width: '90px',
+                    data: 'count'
                 },
                 {
                     title: '',
