@@ -294,7 +294,7 @@ define([
                 cohortIds: cohorts,
                 analysisIds: analyses,
                 domainIds: domains,
-                thresholdValuePct: this.thresholdValuePct() / 100,
+                thresholdValuePct: this.newThresholdValuePct() / 100,
                 showEmptyResults: !!this.showEmptyResults(),
             };
 
