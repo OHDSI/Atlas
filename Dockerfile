@@ -1,5 +1,5 @@
 # Build the source
-FROM node:12-alpine as builder
+FROM node:14-alpine as builder
 
 WORKDIR /code
 
@@ -26,7 +26,7 @@ RUN find . -type f "(" \
       | xargs -0 -n 1 gzip -kf
 
 # Production Nginx image
-FROM nginxinc/nginx-unprivileged:1.19-alpine
+FROM nginxinc/nginx-unprivileged:1.20-alpine
 
 LABEL org.opencontainers.image.title="OHDSI-Atlas"
 LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
