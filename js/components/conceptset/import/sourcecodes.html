@@ -1,9 +1,27 @@
 <div>
     <div class="heading"><span data-bind="text: ko.i18n('components.conceptSet.enterSourceCodes', 'Enter Source Codes')"></span> (<a class="linkish" data-bind="click: function() { sourcecodes(''); }, text: ko.i18n('components.conceptSet.clickToClear', 'click to clear')"></a>)</div>
     <textarea class="form-control" rows="5" data-bind="textInput: sourcecodes"></textarea>
-    <concept-add-box params="{
-        isActive: canAddConcepts,
-        onSubmit: doImport,
-      }"></concept-add-box>
+    <div class="clear"></div>
+    <button data-bind="click: loadConcepts" class="btn btn-sm btn-primary">Search concepts</button>
+    <div class="clear"></div>
+
+    <loading data-bind="css: classes('loading-panel'), visible: isSearching()" params="status: ko.i18n('components.conceptSet.searchingConcepts', 'Searching concepts...')"></loading>
+
+    <div data-bind="hidden: loadedConcepts().length == 0">
+        <faceted-datatable params="{
+            columns: searchColumns,
+            options: searchOptions,
+            reference: loadedConcepts,
+            rowCallback: commonUtils.contextSensitiveLinkColor,
+            pageLength: tableOptions.pageLength,
+            lengthMenu: tableOptions.lengthMenu,
+            language: ko.i18n('datatable.language')
+        }"></faceted-datatable>
+
+        <concept-add-box params="{
+            isActive: canAddConcepts,
+            onSubmit: doImport,
+        }"></concept-add-box>
+    </div>
     <div class="clear"></div>
 </div>
