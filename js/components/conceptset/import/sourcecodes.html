@@ -7,7 +7,12 @@
 
     <loading data-bind="css: classes('loading-panel'), visible: isSearching()" params="status: ko.i18n('components.conceptSet.searchingConcepts', 'Searching concepts...')"></loading>
 
-    <div data-bind="hidden: loadedConcepts().length == 0">
+    <div data-bind="hidden: loadedConcepts().length === 0">
+
+        <div class="not-found-codes" data-bind="visible: notFoundCodes().length > 0">
+            <b>Not found:</b> <span data-bind="text: notFoundCodes().join(', ')"></span>
+        </div>
+
         <faceted-datatable params="{
             columns: searchColumns,
             options: searchOptions,

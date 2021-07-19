@@ -7,6 +7,7 @@ define([
 	'utils/Clipboard',
 	'utils/CommonUtils',
 	'services/VocabularyProvider',
+	'less!./sourcecodes.less',
 ], function(
 	ko,
 	view,
@@ -24,6 +25,7 @@ define([
 			this.isSearching = ko.observable(false);
 			this.sourcecodes = ko.observable("");
 			this.loadedConcepts = ko.observableArray();
+			this.notFoundCodes = ko.observableArray();
 			this.appendConcepts = params.appendConcepts;
 			this.canAddConcepts = ko.pureComputed(() => this.loadedConcepts().filter(c => c.isSelected()).length > 0 && params.canEdit());
 			this.commonUtils = commonUtils;
@@ -36,6 +38,12 @@ define([
 					return '<span data-bind="click: function(d) { d.isSelected(!d.isSelected()) } ,css: { selected: isSelected} " class="fa fa-check"></span>';
 				},
 				orderable: false,
+				searchable: false,
+				renderSelectAll: true,
+				selectAll: (data, selected) => {
+					const conceptIds = data.map(c => c.CONCEPT_ID);
+					ko.utils.arrayForEach(this.loadedConcepts(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
+				}
 			},{
 				title: ko.i18n('columns.id', 'Id'),
 				data: 'CONCEPT_ID'
@@ -116,10 +124,12 @@ define([
 		async loadConcepts() {
 			this.isSearching(true);
 			try {
-				const {data} = await vocabularyApi.getConceptsByCode(this.sourcecodes().match(/[0-9a-zA-Z\.-]+/g));
+				const codes = this.sourcecodes().match(/[0-9a-zA-Z\.-]+/g);
+				const {data} = await vocabularyApi.getConceptsByCode(codes);
 				await vocabularyApi.loadDensity(data);
 				data.forEach(c => c.isSelected = ko.observable(false));
 				this.loadedConcepts(data);
+				this.notFoundCodes(codes.filter(code => data.filter(c => c.CONCEPT_CODE === code).length === 0));
 			} finally {
 				this.isSearching(false);
 			}
