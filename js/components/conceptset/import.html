@@ -10,11 +10,16 @@
 		showModal: $component.showImportConceptSetModal,
 		title: ko.i18n('components.atlasCohortEditor.importConceptSet', 'Import Concept Set From Repository...'),
 		data: {
+		    isImportTypeOverwrite: $component.isImportTypeOverwrite,
 			onRespositoryConceptSetSelected: $component.onConceptSetRepositoryImport,
 			tableOptions: $component.tableOptions,
 		}
 	"
 >
+    <input type="checkbox" data-bind="checked: isImportTypeOverwrite" id="chCsOverwrite">
+    <label for="chCsOverwrite" class="overwrite-checkbox-label" data-bind="text: ko.i18n('components.conceptSet.import.repository.overwriteCheckboxLabel', 'Overwrite concept set items (append if not checked)')">
+        Overwrite concept set items (append if not checked)
+    </label>
     <concept-set-browser params="
 			onRespositoryConceptSetSelected: onRespositoryConceptSetSelected,
 			buttonActionEnabled: false,

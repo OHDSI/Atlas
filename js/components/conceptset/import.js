@@ -12,6 +12,7 @@ define([
 	'./import/identifiers',
 	'./import/sourcecodes',
 	'./import/conceptset',
+	'less!./import.less',
 ],function(
 	ko,
 	view,
@@ -36,6 +37,7 @@ define([
 			this.currentConceptSet = this.conceptSetStore.current;
 			this.canEdit = params.canEdit;
 			this.showImportConceptSetModal = ko.observable();
+			this.isImportTypeOverwrite = ko.observable(true);
 			this.selectedTabKey = ko.observable('concept-identifiers');
 			this.tableOptions = commonUtils.getTableOptions('M');
 			this.tabs = [
@@ -80,10 +82,12 @@ define([
 		async onConceptSetRepositoryImport(newConceptSet) {
 			this.showImportConceptSetModal(false);
 			this.importing(true);
-			if (this.currentConceptSet().expression.items().length == 0 || this.confirmAction(constants.importTypes.OVERWRITE)) {
-				const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id)
-				this.currentConceptSet().name(newConceptSet.name);
-				this.currentConceptSet().expression.items([]);
+			let importType = this.isImportTypeOverwrite() ? constants.importTypes.OVERWRITE : constants.importTypes.APPEND;
+			if (this.currentConceptSet().expression.items().length === 0 || this.confirmAction(importType)) {
+				const expression = await vocabularyApi.getConceptSetExpression(newConceptSet.id);
+				if (importType === constants.importTypes.OVERWRITE) {
+					this.currentConceptSet().expression.items([]);
+				}
 				this.importConceptSetExpression(expression, {type: constants.importTypes.APPEND}); // indicating 'append' because we handled the overwrite already.	
 			}
 			this.importing(false);
