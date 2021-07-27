@@ -40,7 +40,7 @@ define([
 
         getDefaultColumns(analysis) {
             return [
-                this.getСovNameColumn(),
+                this.getCovNameColumn(analysis),
                 this.getExploreColumn(),
                 {
                     title: ko.i18n('columns.conceptId', 'Concept ID'),
@@ -63,14 +63,18 @@ define([
             ];
 		}
 
-        getСovNameColumn() {
-            return {
+        getCovNameColumn(analysis) {
+            let covNameColumn = {
                 title: ko.i18n('columns.covariate', 'Covariate'),
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
                 render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
                 xssSafe:false,
             };
+            if (analysis && analysis.rawAnalysisName === 'DemographicsAgeGroup') {
+                covNameColumn.type = 'range';
+            }
+            return covNameColumn;
         }
 
         getExploreColumn() {
