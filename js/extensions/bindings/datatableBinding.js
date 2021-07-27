@@ -68,6 +68,14 @@ define([
         return abxX < absY ? -1 : abxX>absY ? 1 : 0;
 	}
 
+	function sortRange(x, y) {
+		const xt = x.trim();
+		const yt = y.trim();
+		const firstNumberX = parseInt(xt.substr(0, xt.indexOf(' ')));
+		const firstNumberY = parseInt(yt.substr(0, yt.indexOf(' ')));
+		return firstNumberX < firstNumberY ? -1 : firstNumberX > firstNumberY ? 1 : 0;
+	}
+
 	function mapColumns(element, binding, xssOptions) {
 
 		const columns = ko.unwrap(binding.options.columns);
@@ -115,6 +123,14 @@ define([
             jQuery.fn.dataTableExt.oSort["numberAbs-asc"] = function(x, y) {
                 return sortAbs(x, y);
 						}
+
+			jQuery.fn.dataTableExt.oSort["range-desc"] = function(x, y) {
+				return -1 * sortRange(x, y);
+			};
+
+			jQuery.fn.dataTableExt.oSort["range-asc"] = function(x, y) {
+				return sortRange(x, y);
+			}
 
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			// If the binding is an object with an options field,
