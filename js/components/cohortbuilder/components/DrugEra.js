@@ -1,115 +1,120 @@
-define(['knockout', '../options', '../utils', '../InputTypes/Range', '../CriteriaGroup', 'text!./DrugEraTemplate.html'], function (ko, options, utils, Range, CriteriaGroup, template) {
+define([
+  "knockout",
+  "../options",
+  "../utils",
+  "../InputTypes/Range",
+  "../CriteriaGroup",
+  "text!./DrugEraTemplate.html",
+  "../const",
+], function (ko, options, utils, Range, CriteriaGroup, template, constants) {
+  function DrugEraViewModel(params) {
+    var self = this;
+    self.expression = ko.utils.unwrapObservable(params.expression);
+    self.Criteria = params.criteria.DrugEra;
+    self.options = options;
+    self.addActions = [
+      {
+        ...constants.drugAttributes.addFirstDiagnosis,
+        selected: false,
+        action: function () {
+          if (self.Criteria.First() == null) self.Criteria.First(true);
+        },
+      },
+      {
+        ...constants.drugAttributes.addAgeAtStart,
+        selected: false,
+        action: function () {
+          if (self.Criteria.AgeAtStart() == null)
+            self.Criteria.AgeAtStart(new Range());
+        },
+      },
+      {
+        ...constants.drugAttributes.addAgeAtEnd,
+        selected: false,
+        action: function () {
+          if (self.Criteria.AgeAtEnd() == null)
+            self.Criteria.AgeAtEnd(new Range());
+        },
+      },
+      {
+        ...constants.drugAttributes.addGender,
+        selected: false,
+        action: function () {
+          if (self.Criteria.Gender() == null)
+            self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.drugAttributes.addStartDate,
+        selected: false,
+        action: function () {
+          if (self.Criteria.EraStartDate() == null)
+            self.Criteria.EraStartDate(
+              new Range({
+                Op: "lt",
+              })
+            );
+        },
+      },
+      {
+        ...constants.drugAttributes.addEndDate,
+        selected: false,
+        action: function () {
+          if (self.Criteria.EraEndDate() == null)
+            self.Criteria.EraEndDate(
+              new Range({
+                Op: "lt",
+              })
+            );
+        },
+      },
+      {
+        ...constants.drugAttributes.addLength,
+        selected: false,
+        action: function () {
+          if (self.Criteria.EraLength() == null)
+            self.Criteria.EraLength(new Range());
+        },
+      },
+      {
+        ...constants.drugAttributes.addConditonCount,
+        selected: false,
+        action: function () {
+          if (self.Criteria.OccurrenceCount() == null)
+            self.Criteria.OccurrenceCount(new Range());
+        },
+      },
+      {
+        ...constants.drugAttributes.addNested,
+        selected: false,
+        action: function () {
+          if (self.Criteria.CorrelatedCriteria() == null)
+            self.Criteria.CorrelatedCriteria(
+              new CriteriaGroup(null, self.expression.ConceptSets)
+            );
+        },
+      },
+    ];
 
-	function DrugEraViewModel(params) {
+    self.removeCriterion = function (propertyName) {
+      self.Criteria[propertyName](null);
+    };
+    self.indexMessage = ko.i18nformat(
+      'components.conditionDrug.indexDataText',
+      'The index date refers to the drug era of <%= conceptSetName %>.',
+      {
+        conceptSetName: utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionDrug.anyDrug', 'Any Drug')
+        )
+      }
+    );
+  }
 
-		var self = this;
-		self.expression = ko.utils.unwrapObservable(params.expression);
-		self.Criteria = params.criteria.DrugEra;
-		self.options = options;
-		self.formatOption = function (d) {
-			return '<div class="optionText">' + d.text + '</div>' +
-				'<div class="optionDescription">' + d.description + '</div>';
-		};
-		self.addActions = [{
-				text: "Add First Exposure Criteria",
-				selected: false,
-				description: "Limit Drug Eras to first exposure in history.",
-				action: function () {
-					if (self.Criteria.First() == null)
-						self.Criteria.First(true);
-				}
-			},
-			{
-				text: "Add Age at Era Start Criteria",
-				selected: false,
-				description: "Filter Drug Eras by age at era start.",
-				action: function () {
-					if (self.Criteria.AgeAtStart() == null)
-						self.Criteria.AgeAtStart(new Range());
-				}
-			},
-			{
-				text: "Add Age at Era End Criteria",
-				selected: false,
-				description: "Filter Drug Eras by age at era end.",
-				action: function () {
-					if (self.Criteria.AgeAtEnd() == null)
-						self.Criteria.AgeAtEnd(new Range());
-				}
-			},
-			{
-				text: "Add Gender Criteria",
-				selected: false,
-				description: "Filter Drug Eras based on Gender.",
-				action: function () {
-					if (self.Criteria.Gender() == null)
-						self.Criteria.Gender(ko.observableArray());
-				}
-			},
-			{
-				text: "Add Era Start Date Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Era Start Date.",
-				action: function () {
-					if (self.Criteria.EraStartDate() == null)
-						self.Criteria.EraStartDate(new Range({
-							Op: "lt"
-						}));
-				}
-			},
-			{
-				text: "Add Era End Date Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Era End Date.",
-				action: function () {
-					if (self.Criteria.EraEndDate() == null)
-						self.Criteria.EraEndDate(new Range({
-							Op: "lt"
-						}));
-				}
-			},
-			{
-				text: "Add Era Length Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Era duration.",
-				action: function () {
-					if (self.Criteria.EraLength() == null)
-						self.Criteria.EraLength(new Range());
-				}
-			},
-			{
-				text: "Add Era Exposure Count Criteria",
-				selected: false,
-				description: "Filter Drug Eras by the Exposure Count.",
-				action: function () {
-					if (self.Criteria.OccurrenceCount() == null)
-						self.Criteria.OccurrenceCount(new Range());
-				}
-			},
-			{
-				text: "Add Nested Criteria...",
-				selected: false,
-				description: "Apply criteria using the drug era as the index event.",
-				action: function () {
-					if (self.Criteria.CorrelatedCriteria() == null)
-						self.Criteria.CorrelatedCriteria(new CriteriaGroup(null, self.expression.ConceptSets));
-				}
-			}
-		];
-
-		self.removeCriterion = function (propertyName) {
-			self.Criteria[propertyName](null);
-		}
-		
-		self.indexMessage = ko.pureComputed(() => {
-			var conceptSetName = utils.getConceptSetName(self.Criteria.CodesetId, self.expression.ConceptSets, 'Any Drug');
-			return `The index date refers to the drug era of ${conceptSetName}.`;
-		});		
-	}
-
-	// return compoonent definition
-	return {
-		viewModel: DrugEraViewModel,
-		template: template
-	};
+  // return compoonent definition
+  return {
+    viewModel: DrugEraViewModel,
+    template: template,
+  };
 });

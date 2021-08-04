@@ -58,6 +58,7 @@ define(function(require, exports) {
         }
     });
 
+    var reloginRequired = ko.observable(false);
     var subject = ko.observable();
     var permissions = ko.observable();
     var fullName = ko.observable();
@@ -509,6 +510,7 @@ define(function(require, exports) {
 
         token: token,
         authClient: authClient,
+        reloginRequired: reloginRequired,
         subject: subject,
         fullName,
         tokenExpirationDate: tokenExpirationDate,

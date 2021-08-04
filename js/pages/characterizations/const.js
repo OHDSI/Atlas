@@ -2,7 +2,11 @@ define(
     (require, exports) => {
 
         const consts = require('const');
-        const pageTitle = 'Characterizations';
+        const ko = require('knockout');
+        const pageTitle = ko.computed({
+          read: ko.i18n('navigation.characterizations', 'Characterizations'),
+          write: (value) => false,
+        });
 
         const characterizationsTab = 0;
         const featureAnalysesTab = 1;
@@ -10,14 +14,14 @@ define(
         const gridTabs = [
             {
                 link: '#/cc/characterizations',
-                tabLabel: 'Characterizations',
-                newEntityLabel: 'Characterization',
+                tabLabel: ko.i18n('cc.tabs.characterizations.title', 'Characterizations'),
+                newEntityLabel: ko.i18n('cc.tabs.characterizations.newLabel', 'Characterization'),
                 value: characterizationsTab,
             },
             {
                 link: '#/cc/feature-analyses',
-                tabLabel: 'Feature analyses',
-                newEntityLabel: 'Feature analysis',
+                tabLabel: ko.i18n('cc.tabs.featureAnalyses.title', 'Feature analyses'),
+                newEntityLabel: ko.i18n('cc.tabs.featureAnalyses.newLabel', 'Feature analysis'),
                 value: featureAnalysesTab,
             },
         ];

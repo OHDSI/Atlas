@@ -2,8 +2,8 @@
 
     <div class="paddedWrapper">
         <ul class="nav nav-pills">
-            <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a>Import</a></li>
-            <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a>Export</a></li>
+            <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'import' }, click: function() {$component.expressionMode('import') };"><a data-bind="text: ko.i18n('common.import', 'Import')"></a></li>
+            <li role="presentation" data-bind="css: {active: $component.expressionMode() == 'export' }, click: function() {$component.expressionMode('export') };"><a data-bind="text: ko.i18n('common.export', 'Export')"></a></li>
         </ul>
 
 
@@ -15,8 +15,8 @@
             <!-- /ko -->
             <!-- ko if: fixableValidationErrors() -->
             <div class="alert alert-danger" role="alert">
-                Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.
-                <a href="#" class="alert-link" data-bind="click: () => $component.fixJsonErrors()">Fix JSON</a>
+                <span data-bind="text: ko.i18n('configuration.rolesImport.alertDanger', 'Some of permissions and users in the list are not available on this instance of Atlas. These items will be filtered before importing.')"></span>
+                <a href="#" class="alert-link" data-bind="click: () => $component.fixJsonErrors(), text: ko.i18n('configuration.rolesImport.fixJson', 'Fix JSON')"></a>
             </div>
             <!-- /ko -->
 
@@ -25,8 +25,8 @@
             <!-- /ko -->
             <!-- ko if: fixableValidationWarnings() -->
             <div class="alert alert-warning" role="alert">
-                Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.
-                <a href="#" class="alert-link" data-bind="click: () => $component.fixJsonWarnings()">Remove the permissions</a>
+                <span data-bind="text: ko.i18n('configuration.rolesImport.alertWarning', 'Some of permissions in the list contain specific entity IDs which are not guaranteed to match between source and target Atlas instances.')"></span>
+                <a href="#" class="alert-link" data-bind="click: () => $component.fixJsonWarnings(), text: ko.i18n('configuration.rolesImport.removeThePermissions', 'Remove the permissions')"></a>
             </div>
             <!-- /ko -->
 

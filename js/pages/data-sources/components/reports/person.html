@@ -2,58 +2,50 @@
 <heading-title params="name: title"></heading-title>
 <div class="col-xs-12">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Year of Birth
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.yearOfBirth', 'Year of Birth')"></div>
 		<div class="panel-body">
 			<histogram params="data: yearHistogramData, format: chartFormats.yearHistogram"></histogram>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
-			The number of people in this cohort shown with respect to their year of birth.
+			<span data-bind="text: ko.i18n('dataSources.personReport.yearOfBirthFooter', 'The number of people in this cohort shown with respect to their year of birth.')"></span>
 		</div>
 	</div>
 </div>
 
 <div class="col-xs-4">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Gender
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.gender', 'Gender')"></div>
 		<div class="panel-body">
 			<donut params="data: genderData"></donut>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
-			The number of people in this cohort stratified by gender.
+			<span data-bind="text: ko.i18n('dataSources.personReport.genderFooter', 'The number of people in this cohort stratified by gender.')"></span>
 		</div>
 	</div>
 </div>
 <div class="col-xs-4">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Race
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.race', 'Race')"></div>
 		<div class="panel-body">
 			<donut params="data: raceData"></donut>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
-			The number of people in this cohort stratified by race.
+			<span data-bind="text: ko.i18n('dataSources.personReport.raceFooter', 'The number of people in this cohort stratified by race.')"></span>
 		</div>
 	</div>
 </div>
 <div class="col-xs-4">
 	<div class="panel panel-primary">
-		<div class="panel-heading">
-			Ethnicity
-		</div>
+		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.ethnicity', 'Ethnicity')"></div>
 		<div class="panel-body">
 			<donut params="data: ethnicityData"></donut>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: sourceName"></div>
-			The number of people in this cohort stratified by ethnicity.
+			<span data-bind="text: ko.i18n('dataSources.personReport.ethnicityFooter', 'The number of people in this cohort stratified by ethnicity.')"></span>
 		</div>
 	</div>
 </div>

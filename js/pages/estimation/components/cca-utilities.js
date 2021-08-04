@@ -35,7 +35,7 @@ define([
 			super(params);
 
 			this.utilityPillMode = ko.observable('download');
-			this.defaultLoadingMessage = "Loading...";
+			this.defaultLoadingMessage = ko.i18n('common.loadingWithDots', 'Loading...')();
 			this.constants = constants;
 			this.options = constants.options;
 			this.cohortMethodAnalysisList = params.estimationAnalysis().estimationAnalysisSettings.analysisSpecification.cohortMethodAnalysisList;

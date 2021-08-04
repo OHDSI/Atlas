@@ -23,7 +23,7 @@ define(
     });
 
     return {
-      title: 'Concept Sets',
+      title: ko.i18n('navigation.conceptsets', 'Concept Sets'),
       buildRoutes,
       navUrl,
       icon: 'shopping-cart',

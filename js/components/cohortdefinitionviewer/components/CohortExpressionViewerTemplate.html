@@ -1,5 +1,7 @@
-<div class="heading">Initial Event Cohort</div>
-People having any of the following:
+<div class="heading">
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.initialEventCohort', 'Initial Event Cohort')"></span>
+</div>
+<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_1', 'People having any of the following:')"></span>
 <br>
 
 <ul>
@@ -12,27 +14,50 @@ People having any of the following:
 	<!-- /ko -->
 </ul>
 <div>
-	<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> with continuous observation of at least
-	<span class="numericField" data-bind="text: PriorDays.numeric()" /> days prior and <span class="numericField" data-bind="text: PostDays.numeric()" /> days after event index date,
+	<span data-bind="with: expression().PrimaryCriteria().ObservationWindow"> 
+		<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_2', 'with continuous observation of at least')"></span>
+	<span class="numericField" data-bind="text: PriorDays.numeric()" /> 
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_3', 'days prior and ')"></span>
+	
+	<span class="numericField" data-bind="text: PostDays.numeric()" /> 
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_4', 'days after event index date,')"></span>
+	
 </span>
-	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> and limit initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b>
+	<span data-bind="with: expression().PrimaryCriteria().PrimaryCriteriaLimit"> 
+		<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_5', 'and limit initial events to: ')"></span>
+		
+		<b><span data-bind="text: $component.getLimitTypeText(Type())"></span> 
+			<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_6', 'per person.')"></span>
+		</b>
 	</span>
 </div>
 <br/>
 
 <div style="width:60%" data-bind="with: expression">
 	<div data-bind="if: AdditionalCriteria">
-		<div>For people matching the Primary Events, include:</div>
+		<div>
+			<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_7', 'For people matching the Primary Events, include:')"></span>
+			
+		</div>
 		<criteria-group-viewer params="{expression: $data, group: AdditionalCriteria}"></criteria-group-viewer>
-		<div data-bind="with: QualifiedLimit">Limit cohort of initial events to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+		<div data-bind="with: QualifiedLimit">
+			<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_8', 'Limit cohort of initial events to:')"></span>
+			 
+			<b><span data-bind="text: $component.getLimitTypeText(Type())"></span> 
+				<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_6', 'per person.')"></span>
+			</b></div>
 	</div>
 </div>
 
 <div class="inclusionRules" data-bind="with: expression">
 	<!-- ko if: InclusionRules && InclusionRules().length > 0 -->
-	<div class="heading">Inclusion Rules</div>
+	<div class="heading">
+		<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_9', 'Inclusion Rules')"></span>
+		
+	</div>
 	<div data-bind="foreach: InclusionRules">
-		<div data-bind="text: 'Inclusion Criteria #' + ($index()+1) + ': ' + name()"></div>
+		<!-- <div data-bind="text: 'Inclusion Criteria #' + ($index()+1) + ': ' + name()"></div> -->
+		<div data-bind="text: ko.i18nformat('components.cohortExpressionViewer.cohortExpressionViewerText_15', 'Inclusion Criteria #(<%=index%>): <%=name%>', {index: $index()+1, name: name()})"></div>
 		<!-- ko if: (description() || '').length > 0 -->
 		<div class="description" data-bind="text: description()"></div>
 		<!-- /ko -->
@@ -41,13 +66,22 @@ People having any of the following:
 	<!-- /ko -->
 </div>
 
-<div data-bind="with: expression().ExpressionLimit">Limit qualifying cohort to: <b><span data-bind="text: $component.getLimitTypeText(Type())"></span> per person.</b></div>
+<div data-bind="with: expression().ExpressionLimit">
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_10', 'Limit qualifying cohort to:')"></span>
+	 
+	<b><span data-bind="text: $component.getLimitTypeText(Type())"></span> 
+		<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_6', 'per person.')"></span>
+	</b></div>
 
 <end-strategy-viewer params="strategy: expression().EndStrategy, conceptSets: $component.expression().ConceptSets"></end-strategy-viewer>
 
 <!-- ko if: expression().CensoringCriteria().length > 0 -->
-<div class="heading">Censoring Events:</div>
-Exit Cohort based on the following:
+<div class="heading">
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_11', 'Censoring Events:')"></span>
+	
+</div>
+<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_12', 'Exit Cohort based on the following:')"></span>
+
 <br>
 
 <ul>
@@ -61,7 +95,13 @@ Exit Cohort based on the following:
 </ul>
 <!-- /ko -->
 
-<div class="heading">Cohort Collapse Strategy:</div>
+<div class="heading">
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_13', 'Cohort Collapse Strategy:')"></span>
+	
+</div>
 <span data-bind="with: expression().CollapseSettings">
-	Collapse cohort by era with a gap size of <span class="numericField" data-bind="text: EraPad" /> days.
+	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_14', 'Collapse cohort by era with a gap size of ')"></span>
+	
+	<span class="numericField" data-bind="text: EraPad" /> 
+	<span data-bind="text: ko.i18n('common.days', 'days')"></span>
 </span>

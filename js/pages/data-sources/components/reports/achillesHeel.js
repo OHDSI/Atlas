@@ -20,13 +20,13 @@ define([
 			super(params);
 			this.columns = [
 				{
-					title: 'Message Type',
+					title: ko.i18n('dataSources.achillesHeelReport.messageType', 'Message Type'),
 					data: 'type',
 					visible: true,
 					width: 200,
 				},
 				{
-					title: 'Message',
+					title: ko.i18n('dataSources.achillesHeelReport.message', 'Message'),
 					data: 'content',
 					visible: true,
 				},

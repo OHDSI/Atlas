@@ -8,36 +8,36 @@ define([
 		config,
 		renderers) => {
 
+	  const maxEntityNameLength = 100;
 		const minChartHeight = 300;
 		const treemapGradient = ["#c7eaff", "#6E92A8", "#1F425A"];
 		const defaultDeciles = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", "80-89", "90-99"];
 		const timeAtRiskCohortDate = [{
-			name: "cohort start date",
+			name: ko.i18n('ple.spec.options.cohortStartDate', 'cohort start date'),
 			id: false,
 		  }, {
-			name: "cohort end date",
+			name: ko.i18n('ple.spec.options.cohortEndDate', 'cohort end date'),
 			id: true
 		}];
 
-
 		const relatedSourcecodesOptions = {
 			Facets: [{
-				'caption': 'Vocabulary',
+				'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 				'binding': function (o) {
 					return o.VOCABULARY_ID;
 				}
 			}, {
-				'caption': 'Invalid Reason',
+				'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
 				'binding': function (o) {
 					return o.INVALID_REASON_CAPTION;
 				}
 			}, {
-				'caption': 'Class',
+				'caption': ko.i18n('facets.caption.class', 'Class'),
 				'binding': function (o) {
 					return o.CONCEPT_CLASS_ID;
 				}
 			}, {
-				'caption': 'Domain',
+				'caption': ko.i18n('facets.caption.domain', 'Domain'),
 				'binding': function (o) {
 					return o.DOMAIN_ID;
 				}
@@ -47,17 +47,17 @@ define([
 		const getLinkedFeAParametersColumns = (context) => {
 			return [
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'name',
 					className: context.classes('col-param-name'),
 				},
 				{
-					title: 'Value',
+					title: ko.i18n('columns.value', 'Value'),
 					data: 'value',
 					className: context.classes('col-param-value'),
 				},
 				... context.isEditPermitted() ? [{
-					title: 'Actions',
+					title: ko.i18n('columns.actions', 'Actions'),
 					render: context.getRemoveCell('removeParam', 'name'),
 					className: context.classes('col-param-remove'),
 				}] : []
@@ -67,22 +67,22 @@ define([
 		const getLinkedFeatureAnalysisColumns = (context) => {
 			return [
 				{
-					title: 'ID',
+					title: ko.i18n('columns.id', 'ID'),
 					data: 'id',
 					className: context.classes('col-feature-id'),
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					data: 'name',
 					className: context.classes('col-feature-name'),
 				},
 				{
-					title: 'Description',
+					title: ko.i18n('columns.description', 'Description'),
 					data: 'description',
 					className: context.classes('col-feature-descr'),
 				},
 				... context.isEditPermitted() ? [{
-					title: 'Actions',
+					title: ko.i18n('columns.actions', 'Actions'),
 					render: context.getRemoveCell('removeFeature'),
 					className: context.classes('col-feature-remove'),
 				}] : []
@@ -92,7 +92,7 @@ define([
 		const getLinkedCohortColumns = (context, nameCol) => {
 			return [
 				{
-					title: 'ID',
+					title: ko.i18n('columns.id', 'ID'),
 					data: 'id',
 					className: context.classes('col-cohort-id'),
 				},
@@ -109,25 +109,27 @@ define([
 					}] : []
 			];
 		};
-				
-		const getRelatedSourcecodesColumns = (sharedState, context) => [
+
+		const getRelatedSourcecodesColumns = (sharedState, context, selectAllFn) => [
 			{
 				title: '',
 				orderable: false,
 				searchable: false,
 				className: 'text-center',
 				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+				renderSelectAll: context.canEditCurrentConceptSet(),
+				selectAll: selectAllFn
 			},
 			{
-				title: 'Id',
+				title: ko.i18n('columns.id', 'Id'),
 				data: 'CONCEPT_ID'
 			},
 			{
-				title: 'Code',
+				title: ko.i18n('columns.code', 'Code'),
 				data: 'CONCEPT_CODE'
 			},
 			{
-				title: 'Name',
+				title: ko.i18n('columns.name', 'Name'),
 				data: 'CONCEPT_NAME',
 				render: function (s, p, d) {
 					var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
@@ -135,22 +137,22 @@ define([
 				}
 			},
 			{
-				title: 'Class',
+				title: ko.i18n('columns.class', 'Class'),
 				data: 'CONCEPT_CLASS_ID'
 			},
 			{
-				title: 'Standard Concept Caption',
+				title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 				data: 'STANDARD_CONCEPT_CAPTION',
 				visible: false
 			},
 			{
-				title: 'Domain',
+				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'DOMAIN_ID'
 			},
 			{
-				title: 'Vocabulary',
+				title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 				data: 'VOCABULARY_ID'
-			}, 
+			},
 		];
 
 		const apiPaths = {
@@ -196,14 +198,14 @@ define([
 		}
 
 		const newEntityNames = {
-			characterization: 'New Characterization',
-			featureAnalysis: 'New Feature Analysis',
-			cohortDefinition: "New Cohort Definition",
-			incidenceRate: "New Incidence Rate Analysis",
-			pathway: 'New Cohort Pathway',
-			ple: 'New Population Level Estimation Analysis',
-			conceptSet: 'New Concept Set',
-			plp: 'New Patient Level Prediction Analysis',
+			characterization: ko.i18n('const.newEntityNames.characterization', 'New Characterization'),
+			featureAnalysis: ko.i18n('const.newEntityNames.featureAnalysis', 'New Feature Analysis'),
+			cohortDefinition: ko.i18n('const.newEntityNames.cohortDefinition', 'New Cohort Definition'),
+			incidenceRate: ko.i18n('const.newEntityNames.incidenceRate', 'New Incidence Rate Analysis'),
+			pathway: ko.i18n('const.newEntityNames.pathway', 'New Cohort Pathway'),
+			ple: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis'),
+			conceptSet: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
+			plp: ko.i18n('const.newEntityNames.plp', 'New Patient Level Prediction Analysis'),
 		};
 
 		const pluginTypes = {
@@ -254,7 +256,7 @@ define([
 			conceptSetChanged: 'conceptSetChanged',
 		};
 
-	
+
 		const jobTypes = {
 			USER_JOB: {
 				title: 'userJob',
@@ -267,16 +269,17 @@ define([
 		};
 
 		const disabledReasons = {
-			DIRTY: 'Save changes before generate',
-			ACCESS_DENIED: 'Access denied',
-			INVALID_TAR: 'Invalid TAR',
-			INVALID_DESIGN: 'Design is not valid',
-			ENGINE_NOT_AVAILABLE: 'Execution engine is not available',
-			EMPTY_COHORTS: 'No cohorts found',
-			EMPTY_INITIAL_EVENT: 'Initial event is not set',
+			DIRTY: ko.i18n('const.disabledReason.dirty', 'Save changes before generate'),
+			ACCESS_DENIED: ko.i18n('const.disabledReason.accessDenied', 'Access denied'),
+			INVALID_TAR: ko.i18n('const.disabledReason.invalidTar', 'Invalid TAR'),
+			INVALID_DESIGN: ko.i18n('const.disabledReason.invalidDesign', 'Design is not valid'),
+			ENGINE_NOT_AVAILABLE: ko.i18n('const.disabledReason.engineNotAvalable', 'Execution engine is not available'),
+			EMPTY_COHORTS: ko.i18n('const.disabledReason.emptyCohorts', 'No cohorts found'),
+			EMPTY_INITIAL_EVENT: ko.i18n('const.disabledReason.emptyInitionEvent', 'Initial event is not set')
 		};
 
 		return {
+			maxEntityNameLength,
 			minChartHeight,
 			treemapGradient,
 			defaultDeciles,

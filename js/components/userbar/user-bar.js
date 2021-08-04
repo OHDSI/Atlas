@@ -55,7 +55,7 @@ define([
 			this.selectedTabKey = ko.observable();
 			if (this.appConfig.userAuthenticationEnabled) {
 				this.tabs.push({
-					title: 'My jobs',
+					title: ko.i18n('notifications.tabs.myJobs', 'My jobs'),
 					key: constants.jobTypes.USER_JOB.title,
 					componentName: 'user-bar-jobs',
 					componentParams: this.userJobParams,
@@ -68,7 +68,7 @@ define([
 				this.allJobParams.jobNameClick = this.jobNameClick.bind(this);
 			}
 			this.tabs.push({
-				title: 'All jobs',
+				title: ko.i18n('notifications.tabs.allJobs', 'All jobs'),
 				key: constants.jobTypes.ALL_JOB.title,
 				componentName: 'user-bar-jobs',
 				componentParams: this.allJobParams,
@@ -84,6 +84,8 @@ define([
 			})
 			this.lastViewedTime=null;
 			this.permissionCheckWarningShown = false;
+			this.availableLocales = state.availableLocales;
+			this.locale = state.locale;
 			this.shouldUpdateJobStatus = true;
 			this.jobListing.subscribe(() => {
 				if (this.shouldUpdateJobStatus) {

@@ -3,11 +3,11 @@
             options: {
 							dom: 'Clfiprt',
 							colVis: {
-								buttonText: 'Change Columns',
+								buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
 								align: 'right',
 								overlayFade: 0,
-								showAll: 'Show All Columns',
-								restore: 'Reset Columns'
+								showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+								restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
 							},
 							rowCallback: $component.commonUtils.contextSensitiveLinkColor,
 							lengthMenu: $component.tableOptions.lengthMenu,
@@ -16,6 +16,7 @@
 							deferRender: true,
 							autoWidth: false,
 							order: [[3, 'desc']],
+							language: ko.i18n('datatable.language'),
 							columns: columns,
            }
 				}">

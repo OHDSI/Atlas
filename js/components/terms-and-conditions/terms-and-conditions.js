@@ -1,5 +1,6 @@
 define([
   'knockout',
+  'atlas-state',
 	'text!./terms-and-conditions.html',
   'components/Component',
   'utils/AutoBind',
@@ -12,6 +13,7 @@ define([
   'components/modal'
 ], function (
   ko,
+  state,
 	view,
   Component,
   AutoBind,
@@ -19,11 +21,15 @@ define([
   momentApi,
   authApi,
   router,
-  appConfig,
+  appConfig
 ) {
 	class TermsAndConditions extends AutoBind(Component) {
 		constructor(params) {
       super(params);
+
+      this.availableLocales = state.availableLocales;
+      this.locale = state.locale;
+
       this.isModalShown = ko.pureComputed({
         read: () => {
           return appConfig.enableTermsAndConditions && !this.isAccepted();
@@ -32,14 +38,28 @@ define([
           return false;
         }
       });
-      this.title = appConfig.termsAndConditions.header;
-      this.description = appConfig.termsAndConditions.description;
-      this.content = appConfig.termsAndConditions.content;
+
+      this.title = ko.i18n('licenseAgreement.title', 'License Agreement');
+      this.description = ko.i18n('licenseAgreement.description', 'In order to use the SNOMED International SNOMED CT Browser and HemOnc, please accept the following license agreement:');
+      this.content = ko.observable();
+      this.adaptContentToLocaleChange(ko.unwrap(state.locale));
+
+      state.locale.subscribe(this.adaptContentToLocaleChange);
+
       this.isAccepted = ko.observable(true);
 
       router.currentView.subscribe(() => {
         this.isAccepted(this.checkAcceptance());
       });
+    }
+
+    adaptContentToLocaleChange(locale) {
+        const availableLocales = state.availableLocales();
+        if (availableLocales.length > 1) {
+            this.content(appConfig.termsAndConditions.contents[locale] || appConfig.termsAndConditions.contents.en);
+        } else {
+            this.content(appConfig.termsAndConditions.contents.en);
+        }
     }
 
     checkAcceptance() {
@@ -57,7 +77,7 @@ define([
     }
 
     reject() {
-      alert('Without accepting this terms & conditions you can\'t use Atlas');
+      alert(ko.i18n('licenseAgreement.rejectWarning', 'Without accepting this terms & conditions you can\'t use Atlas')());
     }
 	}
 

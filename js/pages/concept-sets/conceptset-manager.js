@@ -31,15 +31,16 @@ define([
 	'components/tabs',
 	'components/modal',
 	'./components/tabs/conceptset-expression',
-  'components/conceptset/included',
+	'components/conceptset/included',
 	'components/conceptset/included-sourcecodes',
-  'components/conceptset/import',
-  'components/conceptset/export',	
+	'components/conceptset/import',
+	'components/conceptset/export',
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
 	'components/authorship',
 	'components/name-validation',
+	'components/ac-access-denied',
 ], function (
 	ko,
 	view,
@@ -74,8 +75,7 @@ define([
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
-			this.defaultName = globalConstants.newEntityNames.conceptSet;
-			this.conceptSetName = ko.observable(this.defaultName);
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
@@ -121,13 +121,14 @@ define([
 				return authApi.isPermittedCreateConceptset();
 			});
 			this.hasAccess = authApi.isPermittedReadConceptsets;
+			this.hasPrioritySourceAccess = ko.observable(true);
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.conceptSetCaption = ko.computed(() => {
 				if (this.currentConceptSet()) {
 					if (this.currentConceptSet().id === 0) {
-						return this.defaultName;
+						return globalConstants.newEntityNames.conceptSet();
 					} else {
-						return `Concept Set #${this.currentConceptSet().id}`;
+						return ko.i18nformat('cs.manager.caption', 'Concept Set #<%=id%>', {id: this.currentConceptSet().id})();
 					}
 				}
 			});
@@ -174,18 +175,18 @@ define([
 			const tableOptions = commonUtils.getTableOptions('L');
 			this.tabs = [
 				{
-					title: 'Concept Set Expression',
+					title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
 					key: ViewMode.EXPRESSION,
 					componentName: 'conceptset-expression',
 					componentParams: {
 						...params,
 						tableOptions,
-						canEditCurrentConceptSet: this.canEdit, 
+						canEditCurrentConceptSet: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
 					},
 				},
 				{
-					title: 'Included Concepts',
+					title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
 					key: ViewMode.INCLUDED,
 					componentName: 'conceptset-list-included',
 					componentParams: {
@@ -200,7 +201,7 @@ define([
 					hasBadge: true,
 				},
 				{
-					title: 'Included Source Codes',
+					title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Included Source Codes'),
 					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
 					componentParams: {
@@ -212,7 +213,7 @@ define([
 						activeConceptSet: ko.observable(this.conceptSetStore),
 				},
 				{
-					title: 'Explore Evidence',
+					title: ko.i18n('cs.manager.tabs.exploreEvidence', 'Explore Evidence'),
 					key: ViewMode.EXPLORE,
 					componentName: 'explore-evidence',
 					componentParams: {
@@ -221,16 +222,16 @@ define([
 					},
 				},
 				{
-					title: 'Export',
+					title: ko.i18n('cs.manager.tabs.export', 'Export'),
 					key: ViewMode.EXPORT,
 					componentName: 'conceptset-list-export',
 					componentParams: {...params, canEdit: this.canEdit, conceptSetStore: this.conceptSetStore}
 				},
 				{
-					title: 'Import',
+					title: ko.i18n('cs.manager.tabs.import', 'Import'),
 					key: ViewMode.IMPORT,
 					componentName: 'conceptset-list-import',
-					componentParams: { 
+					componentParams: {
 						...params,
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
@@ -239,7 +240,7 @@ define([
 					},
 				},
 				{
-					title: 'Compare',
+					title: ko.i18n('cs.manager.tabs.compare', 'Compare'),
 					key: ViewMode.COMPARE,
 					componentName: 'conceptset-compare',
 					componentParams: {
@@ -261,6 +262,7 @@ define([
 				entityTypeGetter: () => entityType.CONCEPT_SET,
 				entityIdGetter: () => this.currentConceptSet() && this.currentConceptSet().id,
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
+					&& this.currentConceptSet().createdBy.login
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
@@ -279,7 +281,7 @@ define([
 			}));
 
 			// initially resolve the concept set
-			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));			
+			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -324,6 +326,7 @@ define([
 				return;
 			}
 			try {
+				this.hasPrioritySourceAccess(true);
 				const conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
 				const expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
@@ -331,7 +334,9 @@ define([
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
 				this.conceptSetStore.isEditable(this.canEdit());
 			} catch(err) {
-				console.error(err);
+				if (err.status === 403) {
+					this.hasPrioritySourceAccess(false);
+				}
 			}
 			this.loading(false);
 		}
@@ -356,7 +361,7 @@ define([
 			try{
 				const results = await conceptSetService.exists(conceptSet.name(), conceptSet.id);
 				if (results > 0) {
-					this.raiseConceptSetNameProblem('A concept set with this name already exists. Please choose a different name.', nameElementId);
+					this.raiseConceptSetNameProblem(ko.i18n('cs.manager.csAlreadyExistsMessage', 'A concept set with this name already exists. Please choose a different name.')(), nameElementId);
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
@@ -365,7 +370,7 @@ define([
 					commonUtils.routeTo('/conceptset/' + savedConceptSet.data.id + '/expression');
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save a concept set.');
+				alert(ko.i18n('cs.manager.csSaveErrorMessage', 'An error occurred while attempting to save a concept set.')());
 			} finally {
 				this.loading(false);
 				this.isSaving(false);
@@ -378,7 +383,8 @@ define([
 		}
 
 		closeConceptSet() {
-			if (this.currentConceptSetDirtyFlag().isDirty() && !confirm("Your concept set changes are not saved. Would you like to continue?")) {
+			if (this.currentConceptSetDirtyFlag().isDirty() &&
+					!confirm(ko.unwrap(ko.i18n('cs.manager.csNotSavedConfirmMessage','Your concept set changes are not saved. Would you like to continue?')))) {
 				return;
 			} else {
 				this.conceptSetStore.clear();
@@ -417,7 +423,7 @@ define([
 			const optimizationResults = await vocabularyAPI.optimizeConceptSet(conceptSetItems)
 
 			var optimizedConcepts = (optimizationResults.optimizedConceptSet.items || []).map(item => new ConceptSetItem(item));
-			
+
 			var removedConcepts = optimizationResults.removedConceptSet.items || [];
 
 			this.optimalConceptSet(optimizedConcepts);
@@ -429,7 +435,7 @@ define([
 		}
 
 		delete() {
-			if (!confirm("Delete concept set? Warning: deletion can not be undone!"))
+			if (!confirm(ko.unwrap(ko.i18n('cs.manager.csDeleteConfirmMessage','Delete concept set? Warning: deletion can not be undone!'))))
 				return;
 
 			this.isDeleting(true);

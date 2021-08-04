@@ -1,16 +1,23 @@
 <script type='template' id='terms-and-conditions-template'>
   <div data-bind="css: classes()">
+    <!-- ko if: availableLocales().length > 1 -->
+    <select data-bind="css: classes('locale'), foreach: availableLocales, value: locale">
+      <option data-bind="value: $data.code, text: $data.name"></option>
+    </select>
+    <!-- /ko -->
     <div data-bind="css: classes('description'), html: description"></div>
     <div data-bind="css: classes('content'), html: content"></div>
     <div data-bind="css: classes('controls')">
       <button type="button" data-bind="
         css: classes({ element: 'btn', extra: 'btn btn-danger' }),
         click: reject,
-      ">Reject</button>
+        text: ko.i18n('licenseAgreement.reject', 'Reject')
+      "></button>
       <button type="button" data-bind="
         css: classes({ element: 'btn', extra: 'btn btn-success' }),
         click: accept,
-      ">Accept</button>
+        text: ko.i18n('licenseAgreement.accept', 'Accept')
+      "></button>
     </div>
   </div>
 </script>

@@ -19,8 +19,7 @@ define([
 			this.sourceName = ko.observable(this.context.currentSource().sourceName);
 			this.title = ko.computed(() => {
 				const title = this.context.currentReport() ?
-					`${this.context.currentSource() ? (this.context.currentSource().sourceName) : ''} ${this.context.currentReport().name} Report` :
-					'';
+					`${this.context.currentSource() ? (this.context.currentSource().sourceName) : ''} ${this.context.currentReport().name()}` + ko.i18n('dataSources.reports.titleTail', ' Report')() : '';
 				return title;
 			});
 			this.sourceKey = ko.computed(() => this.context.currentSource() ? this.context.currentSource().sourceKey : null);
@@ -49,7 +48,7 @@ define([
 			response.catch((error) => {
 					this.context.hasError(true);
 					if (error.status === 403) {
-						this.context.errorMessage('You have no permissions to see this report');
+						this.context.errorMessage(ko.i18n('dataSources.noPermission', 'You have no permissions to see this report'));
 					}
 					console.error(error);
 				})

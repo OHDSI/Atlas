@@ -34,7 +34,7 @@ define([
 		get maxDepthOptions() {
 			return constants.maxDepthOptions;
 		}
-		
+
 	}
 
 	return commonUtils.build('pathway-design', PathwayEditor, view);

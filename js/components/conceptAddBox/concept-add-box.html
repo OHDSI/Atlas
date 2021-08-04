@@ -2,7 +2,7 @@
   <!-- ko if: canSelectSource -->
     <!-- ko if: hasActiveConceptSets() -->
     <div class="concept-set-dropdown-container">
-      <span class="text">Select Concept Set: </span>
+      <span class="text" data-bind="text: ko.i18n('components.conceptAddBox.selectConceptSet', 'Select Concept Set')"></span>
       <div class="btn-group" data-bind="dropup">
         <button
           class="btn btn-primary dropdown-toggle"
@@ -33,23 +33,20 @@
     <div class="option" data-bind="{ css: { disabled: isDisabled() } }">
       <span
           data-bind="click: () =>  $component.toggleSelectionOption('isExcluded'), css: { selected: selectionOptions().isExcluded() }"
-          class="fa fa-check"
-        ></span>
-        Exclude
+          class="fa fa-check"></span>
+      <span data-bind="text: ko.i18n('components.conceptAddBox.exclude', 'Exclude')"></span>
     </div>
     <div class="option" data-bind="{ css: { disabled: isDisabled() } }">
       <span
           data-bind="click: () =>  $component.toggleSelectionOption('includeDescendants'), css: { selected: selectionOptions().includeDescendants() }"
-          class="fa fa-check"
-        ></span>
-        Descendants
+          class="fa fa-check"></span>
+      <span data-bind="text: ko.i18n('components.conceptAddBox.descendants', 'Descendants')"></span>
     </div>
     <div class="option" data-bind="{ css: { disabled: isDisabled() } }">
       <span
           data-bind="click: () =>  $component.toggleSelectionOption('includeMapped'), css: { selected: selectionOptions().includeMapped() }"
-          class="fa fa-check"
-        ></span>
-        Mapped
+          class="fa fa-check"></span>
+      <span data-bind="text: ko.i18n('components.conceptAddBox.mapped', 'Mapped')"></span>
     </div>
   </div>
   <span data-bind="tooltip: buttonTooltipText">
@@ -58,5 +55,5 @@
       data-bind="click: handleSubmit, css: { disabled: !canAddConcepts() || isDisabled() }, text: buttonText"
     ></button>
   </span>
-  <span data-bind="css: { active: isSuccessMessageVisible(), inactive: !isSuccessMessageVisible() }" class="alert alert-success add-tooltip" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Added To Concept Set!</strong></span>
+  <span data-bind="css: { active: isSuccessMessageVisible(), inactive: !isSuccessMessageVisible() }" class="alert alert-success add-tooltip" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong data-bind="text: ko.i18n('components.conceptAddBox.addedToConceptSet', 'Added To Concept Set!')"></strong></span>
 </div>

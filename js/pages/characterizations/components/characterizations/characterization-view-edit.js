@@ -66,7 +66,7 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.defaultName = constants.newEntityNames.characterization;
+            this.defaultName = ko.unwrap(constants.newEntityNames.characterization);
             this.isAuthenticated = ko.pureComputed(() => {
                 return authApi.isAuthenticated();
             });
@@ -134,7 +134,7 @@ define([
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
                     } else {
-                        return `Characterization #${this.characterizationId()}`;
+                        return ko.i18nformat('cc.viewEdit.caption', 'Characterization #<%=id%>', {id: this.characterizationId()})();
                     }
                 }
             });
@@ -224,7 +224,7 @@ define([
             if (!force && this.design() && (this.design().id || 0) === id) {
                 return;
             }
-            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', 'Your changes are not saved. Would you like to continue?')))) {
                 return;
             }
             if (id < 1) {
@@ -300,7 +300,7 @@ define([
         }
 
         closeCharacterization() {
-            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', "Your changes are not saved. Would you like to continue?")))) {
                 return;
             }
             this.design(null);

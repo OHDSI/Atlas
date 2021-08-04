@@ -3,19 +3,19 @@ define(
   (ko, _, exports) => {
     const periods = [
       {
-        label: 'Weekly',
+        label: ko.i18n('options.ww', 'Weekly'),
         value: 'ww',
       },
       {
-        label: 'Monthly',
+        label: ko.i18n('options.mm', 'Monthly'),
         value: 'mm',
       },
       {
-        label: 'Quarterly',
+        label: ko.i18n('options.qq', 'Quarterly'),
         value: 'qq',
       },
       {
-        label: 'Yearly',
+        label: ko.i18n('options.yy', 'Yearly'),
         value: 'yy',
       },
     ];
@@ -49,7 +49,7 @@ define(
 
 		const getPeriodTypeFilter = (chosenPeriods) => ({
 			type: 'select',
-			label: 'Period type',
+			label: ko.i18n('options.periodType', 'Period type'),
 			name: 'periodType',
 			options: ko.observableArray(periods.filter(p => chosenPeriods.includes(p.value))),
 			selectedValue: ko.observable(_.first(chosenPeriods)),
@@ -68,11 +68,11 @@ define(
 
     const rollups = [
       {
-        label: 'Visits',
+        label: ko.i18n('options.rollupUtilizationVisit', 'Visits'),
         value: 'rollupUtilizationVisit',
       },
       {
-        label: 'Drugs',
+        label: ko.i18n('options.rollupUtilizationDrug', 'Drugs'),
         value: 'rollupUtilizationDrug',
       },
     ];

@@ -23,19 +23,19 @@ define([
 			this.options = {
 				Facets: [
 					{
-						'caption': 'Created',
+						'caption': ko.i18n('facets.caption.created', 'Created'),
 						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
 					},
 					{
-						'caption': 'Updated',
+						'caption': ko.i18n('facets.caption.updated', 'Updated'),
 						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
 					},
 					{
-						'caption': 'Author',
+						'caption': ko.i18n('facets.caption.author', 'Author'),
 						'binding': datatableUtils.getFacetForCreatedBy,
 					},
 					{
-						'caption': 'Designs',
+						'caption': ko.i18n('facets.caption.designs', 'Designs'),
 						'binding': datatableUtils.getFacetForDesign,
 					},
 				]
@@ -43,26 +43,26 @@ define([
 
 			this.columns = [
 				{
-					title: 'Id',
+					title: ko.i18n('columns.id', 'Id'),
 					data: 'id'
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['name'],
 						linkish: true,
 					})),
 				},
 				{
-					title: 'Created',
+					title: ko.i18n('columns.created', 'Created'),
 					render: datatableUtils.getDateFieldFormatter('createdDate'),
 				},
 				{
-					title: 'Updated',
+					title: ko.i18n('columns.updated', 'Updated'),
 					render: datatableUtils.getDateFieldFormatter('modifiedDate'),
 				},
 				{
-					title: 'Author',
+					title: ko.i18n('columns.author', 'Author'),
 					render: datatableUtils.getCreatedByFormatter(),
 				}
 			];

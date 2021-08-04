@@ -21,7 +21,7 @@ define(
     });
 
     return {
-      title: 'Cohort Definitions',
+      title: ko.i18n('navigation.cohortdefinitions', 'Cohort Definitions'),
       buildRoutes,
       navUrl,
       icon: 'users',

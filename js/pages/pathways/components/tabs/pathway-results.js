@@ -38,10 +38,10 @@ define([
 	const percentFormat = d3.format(".1%");
 	const numberFormat = d3.format(",");
 	const pills = [
-		{ name: "Visualization", key: "viz"},
-		{ name: "Tabular", key: "table"}
+		{ name: ko.i18n('pathways.manager.executions.results.visualization', 'Visualization'), key: "viz"},
+		{ name: ko.i18n('pathways.manager.executions.results.tabular', 'Tabular'), key: "table"}
 	];
-	
+
 
 	class PathwayResults extends AutoBind(Component) {
 
@@ -62,11 +62,12 @@ define([
 			this.pathwaysObserver = ko.pureComputed(() => this.prepareResultData(this.results(), this.filterList()));
 
 			this.executionId.subscribe(id => id && this.loadData());
-			
+			this.title = ko.computed(() => ko.unwrap(ko.i18n('pathways.manager.executions.results.title', 'Pathway Report for')) + ' ' + (this.results() && this.results().sourceName));
+
 			this.pills = pills;
 			this.MODE_VISUALIZATION = pills[0].key;
 			this.MODE_TABULAR = pills[1].key;
-			
+
 			this.mode = ko.observable(pills[0].key);  // default to first pill
 
 			this.loadData();
@@ -163,7 +164,7 @@ define([
 			return [
 				{
 					type: 'multiselect',
-					label: 'Cohorts',
+					label: ko.i18n('pathways.manager.executions.results.filters.cohorts', 'Cohorts'),
 					name: 'cohorts',
 					options: ko.observable(cohorts),
 					selectedValues: ko.observable(cohorts.map(c => c.value)),
