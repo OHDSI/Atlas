@@ -9,6 +9,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
       self.cohortId = cohortId;
       self.sourceKey = sourceKey;
       self.sampleName = sampleName;
+      self.nav = annotationView.navigation();
       self.rawToForm = function(rawResults) {
         if (!rawResults) {
           console.log('empty annotation results');
@@ -115,7 +116,8 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
             if (sampleName.indexOf(' ') >=0) {
               sampleName  = sampleName.split(" ").join('_');
             }
-            window.location = `#/profiles/${sourceKey}/${ko.toJS(annotationView).navigation.nextSubjectId}/${cohortId}/${sampleName}`;
+            //window.location = `#/profiles/${sourceKey}/${ko.toJS(annotationView).navigation.nextSubjectId}/${cohortId}/${sampleName}`;
+            self.nav.nextLink();
           });
       }
     }
