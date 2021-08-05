@@ -330,7 +330,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.annotationSetCols = [
 				{
-					title: 'Annotation Set ID',
+					title: 'ID',
 					data: 'id'
 				},
 				{

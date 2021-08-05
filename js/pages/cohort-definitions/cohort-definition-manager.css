@@ -109,8 +109,13 @@
     padding: 9px 3px;
 }
 
+.validation-sub-header {
+    padding-left: 10px;
+}
+
 .annotation-link-status {
     margin: 5pt;
     vertical-align: middle;
     padding-left: 10px;
 }
+

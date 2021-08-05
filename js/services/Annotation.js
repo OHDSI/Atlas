@@ -16,6 +16,26 @@ define(function (require, exports) {
   
       return response;
     };
+
+    const getStudySets = function(cohort) {
+        const cohortId = cohort || 0;
+
+        const response = httpService.doGet(`${config.webAPIRoot}annotations/getsets?cohortId=${cohortId}`).then(({ data }) => data);
+        response.catch((er) => {
+            console.error('Can\'t find study sets');
+        });
+
+        return response;
+    };
+
+    const getSuperTable = function(qSetId, sampleId) {
+        const response = httpService.doGet(`${config.webAPIRoot}annotations/results/completeResults?questionSetId=${qSetId}&cohortSampleId=${sampleId}`).then(({ data }) => data);
+        response.catch((er) => {
+            console.error('Can\'t find super table');
+        });
+
+        return response;
+    };
   
     const getAnnotationByCohortIdbySubjectIdBySetId = function(set, cohort, subject, sourceKey) {
       const data = {
@@ -62,6 +82,8 @@ define(function (require, exports) {
   
     return {
         getAnnotationSets,
+        getStudySets,
+        getSuperTable,
         getAnnotationByCohortIdbySubjectIdBySetId,
         getAnnotationNavigation,
         createOrUpdateAnnotation,

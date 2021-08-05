@@ -24,11 +24,18 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.validationAnnotationSets = ko.observableArray([]);
         self.rawAnnotationSets = ko.observableArray([]);
 
+        self.annotationStudySets = ko.observableArray([]);
+        self.annotationStudiesLoading = ko.observable(false);
+
+        self.studyResultsModalShown = ko.observable(false);
+        self.studyResultsLoading = ko.observable(false);
+        self.studySetResults = ko.observableArray([]);
+
         self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
 
         self.validationAnnotationSetCols = [
             {
-                title: 'Annotation Set ID',
+                title: 'ID',
                 data: 'id'
             },
             {
@@ -45,6 +52,79 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 render: function() {
                     return `<button class="btn btn-danger btn-sm annotation-set-delete-btn" ><i class="fa fa-trash"></i> Delete</button>`;
                 }
+            }
+        ];
+
+        self.annotationStudySetCols = [
+            {
+                title: 'Set ID',
+                data: 'questionSetId'
+            },
+            {
+                title: 'Set Name',
+                data: 'questionSetName'
+            },
+            {
+                title: 'Sample ID',
+                data: 'cohortSampleId'
+            },
+            {
+                title: 'Sample Name',
+                data: 'cohortSampleName'
+            },
+            {
+                title: 'Actions',
+                sortable: false,
+                render: function() {
+                    return `<button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-table"></i> View Results</button>`;
+                }
+            }
+
+        ];
+        self.studySetResultCols = [
+            {
+                title: 'Cohort ID',
+                data: 'cohortId'
+            },
+            {
+                title: 'Cohort Name',
+                data: 'cohortName'
+            },
+            {
+                title: 'Source',
+                data: 'dataSourceId'
+            },
+            {
+                title: 'Sample ID',
+                data: 'cohortSampleId'
+            },
+            {
+                title: 'Sample Name',
+                data: 'cohortSampleName'
+            },
+            {
+                title: 'Set ID',
+                data: 'questionSetId'
+            },
+            {
+                title: 'Set Name',
+                data: 'questionSetName'
+            },
+            {
+                title: 'Patient',
+                data: 'patientId'
+            },
+            {
+                title: 'Question',
+                data: 'questionText'
+            },
+            {
+                title: 'Answer',
+                data: 'value'
+            },
+            {
+                title: 'Case Status',
+                data: 'caseStatus'
             }
         ];
 
@@ -70,9 +150,33 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                         self.questionSet.showSelectedQset();
                         self.valTabMode(SELECTED_QUESTION_SET_VIEW);
                         // if you don't do this, ko complains.
-                    }, 750);
+                    }, 250);
                 } else if (e.target.className === 'btn btn-danger btn-sm annotation-set-delete-btn') {
                     console.log('delete it');
+                }
+            }
+
+        };
+
+        self.onAnnotationStudyListClick = function(d, e) {
+            var questionSetId = d.questionSetId;    
+            var cohortSampleId = d.cohortSampleId;
+            self.studyResultsLoading(true);
+            self.studyResultsModalShown(true);
+
+            if (e.target.className === "btn btn-success btn-sm annotation-set-view-btn") {
+                var superTable = annotationService.getSuperTable(questionSetId, cohortSampleId)
+                    .catch(() => {
+                        console.error('Error when loading super table results, please try again later');
+                    });
+                if (superTable !== undefined) {
+                    superTable.then(res => {
+                        var filtered = res.filter(r => (r.cohortSampleId === cohortSampleId && r.questionSetId === questionSetId));
+                        self.studySetResults(filtered);
+
+                    }).finally(() => {
+                        self.studyResultsLoading(false);
+                    });
                 }
             }
 
@@ -101,9 +205,26 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
 
         };
 
+        self.loadStudySets = function() {
+
+            self.annotationStudiesLoading(true);
+            var studySet = annotationService.getStudySets(self.cohortId)
+                .catch(() => {
+                    console.error('Error when refreshing study sets, please try again later');
+                });
+            if (studySet !== undefined) {
+                studySet.then(res => {
+                    self.annotationStudySets(res);
+                }).finally(() => {
+                    self.annotationStudiesLoading(false);
+                });
+            }
+        };
+
         self.valTabMode.subscribe(function (mode) {
             if (mode === DEFAULT_VALIDATION_VIEW) {
                 self.loadAnnotationSets();
+                self.loadStudySets();
             }
         });
 
@@ -215,6 +336,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
 
 
         self.loadAnnotationSets();
+        self.loadStudySets();
     }
     ValidationTool.prototype.constructor = ValidationTool;
     return ValidationTool;

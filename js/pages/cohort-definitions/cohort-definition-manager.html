@@ -399,7 +399,30 @@
 										<button class="btn btn-primary " data-bind="visible: $parent.valTabMode() == 'show_qsets' && !$parent.validationAnnotationSetsLoading(), click: $parent.addQuestionSet">Create New Question Set</button>
 									</div>
 									<div data-bind="visible: $parent.valTabMode() == 'show_qsets'">
+										<atlas-modal params="{
+												showModal: $parent.studyResultsModalShown,
+												title: 'View Study Results',
+												data: {
+													studyResultsLoading: $parent.studyResultsLoading,
+													studySetResults: $parent.studySetResults,
+													studySetResultCols: $parent.studySetResultCols
+
+												}
+											}">
+											<div>
+												<loading data-bind="visible: studyResultsLoading()"></loading>
+												<faceted-datatable data-bind="visible: !studyResultsLoading()"
+																   params="{
+																		reference: studySetResults,
+																		columns: studySetResultCols,
+																		order: [[0,'asc']]
+																	}"
+												/>
+
+											</div>
+										</atlas-modal>
 										<div>
+											<h4 class="validation-sub-header">Question Sets</h4>
 											<div>
 												<loading data-bind="visible: $parent.validationAnnotationSetsLoading()"></loading>
 												<faceted-datatable data-bind="visible: !$parent.validationAnnotationSetsLoading()"
@@ -408,6 +431,21 @@
 																		columns: $parent.validationAnnotationSetCols,
 																		order: [[0,'asc']],
 																		rowClick: $parent.onValidationAnnotationListClick,
+																	}"
+												/>
+											</div>
+										</div>
+										<div>
+											<br>
+											<h4 class="validation-sub-header">Annotation Studies</h4>
+											<div>
+												<loading data-bind="visible: $parent.annotationStudiesLoading()"></loading>
+												<faceted-datatable data-bind="visible: !$parent.annotationStudiesLoading()"
+																   params="{
+																		reference: $parent.annotationStudySets,
+																		columns: $parent.annotationStudySetCols,
+																		order: [[0,'asc']],
+																		rowClick: $parent.onAnnotationStudyListClick,
 																	}"
 												/>
 											</div>
@@ -713,6 +751,7 @@
 
 			</div>
 		</atlas-modal>
+
 		<atlas-modal params="{
 			showModal: showSampleCreatingModal,
 			title: 'Create new sample',
