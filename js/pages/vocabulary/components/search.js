@@ -103,6 +103,12 @@ define([
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),
 					orderable: false,
+					searchable: false,
+					renderSelectAll: true,
+					selectAll: (data, selected) => {
+						const conceptIds = data.map(c => c.CONCEPT_ID);
+						ko.utils.arrayForEach(this.data(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
+					}
 				},{
 					title: ko.i18n('columns.id', 'Id'),
 					data: 'CONCEPT_ID'

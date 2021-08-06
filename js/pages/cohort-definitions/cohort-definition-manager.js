@@ -648,6 +648,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentJob = ko.observable();
 			this.reportingSourceStatusAvailable = ko.observable(false);
 			this.reportingSourceStatusLoading = ko.observable(false);
+			this.isGenerated = ko.observable(false);
 			this.reportOptionCaption = ko.pureComputed(() => {
 				return this.reportingSourceStatusLoading()
 					? ko.i18n('common.loading', 'Loading Reports...')()
@@ -863,12 +864,21 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
 			try {
 				const { data } = await jobService.getByName(testName, "cohortAnalysisJob");
-				data.jobParameters ? this.currentJob({
-					...data,
-					name: data.jobParameters.jobName,
-					startDate: data.startDate ? momentApi.formatDateTimeUTC(data.startDate) : '',
-					duration: data.startDate ? momentApi.formatDuration((data.endDate || Date.now()) - data.startDate): ''
-				}) : this.currentJob(null);
+				if (data.jobParameters) {
+					this.isGenerated(true);
+					this.currentJob({
+						...data,
+						name: data.jobParameters.jobName,
+						startDate: data.startDate ? momentApi.formatDateTimeUTC(data.startDate) : '',
+						duration: data.startDate ? momentApi.formatDuration((data.endDate || Date.now()) - data.startDate): ''
+					});
+				} else {
+					this.currentJob(null);
+					if (this.isGenerated()) {
+						this.reportingSourceStatusAvailable(false);
+					}
+					this.isGenerated(false);
+				}
 			} catch (e) {
 				console.error(e)
 			}
@@ -1633,7 +1643,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showSampleCreatingModal(false);
 			} catch(error) {
 				console.error(error);
-				alert('Error when creating sample, please try again later');
+				alert((error && error.data && error.data.payload && error.data.payload.message) ? 
+				error.data.payload.message : 'Error when creating sample, please try again later');
 			} finally {
 				this.newSampleCreatingLoader(false);
 			}

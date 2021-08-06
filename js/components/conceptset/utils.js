@@ -11,13 +11,15 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
     return convertedItems;
   }
 
-	const getIncludedConceptsColumns = (sharedState, context, commonUtils, conceptSetService, conceptSetUtils) => [
+	const getIncludedConceptsColumns = (context, commonUtils, selectAllFn) => [
 		{
 			title: '',
 			orderable: false,
 			searchable: false,
 			className: 'text-center',
 			render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+			renderSelectAll: context.canEditCurrentConceptSet(),
+			selectAll: selectAllFn
 		},
 		{
 			title: ko.i18n('columns.id', 'Id'),

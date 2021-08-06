@@ -54,7 +54,12 @@ define([
     }
 
     adaptContentToLocaleChange(locale) {
-		  this.content(appConfig.termsAndConditions.contents[locale] || appConfig.termsAndConditions.contents.en); // EN is default
+        const availableLocales = state.availableLocales();
+        if (availableLocales.length > 1) {
+            this.content(appConfig.termsAndConditions.contents[locale] || appConfig.termsAndConditions.contents.en);
+        } else {
+            this.content(appConfig.termsAndConditions.contents.en);
+        }
     }
 
     checkAcceptance() {
