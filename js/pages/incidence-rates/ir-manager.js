@@ -244,7 +244,6 @@ define([
 					this.tags(this.selectedAnalysis().tags());
 					if (!isDirty) {
 						this.dirtyFlag().reset();
-						this.warningsCheckOnInit(false);
 						this.warningParams.valueHasMutated();
 					}
 				},
@@ -255,7 +254,6 @@ define([
 					this.tags(this.selectedAnalysis().tags());
 					if (!isDirty) {
 						this.dirtyFlag().reset();
-						this.warningsCheckOnInit(false);
 						this.warningParams.valueHasMutated();
 					}
 				}
@@ -566,7 +564,6 @@ define([
 				this.refreshDefs();
 				this.activeTab(this.tabs.DEFINITION);
 				this.close();
-				this.warningsCheckOnInit(false);
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
 				alert('An error occurred while attempting to import an incidence rate.');
