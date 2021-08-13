@@ -1,7 +1,6 @@
 define([
 	'knockout',
 	'atlas-state',
-	'appConfig',
 	'text!./search.html',
 	'services/AuthAPI',
 	'components/conceptset/utils',
@@ -24,7 +23,6 @@ define([
 ], function (
 	ko,
 	sharedState,
-	config,
 	view,
 	authApi,
 	conceptSetUtils,
@@ -100,41 +98,7 @@ define([
 					'csvHtml5',
 					'pdfHtml5'
 				];
-				this.columnHeadersWithIcons = [
-					{
-						id: 'rc',
-						elementId: 'columnRC',
-						title: ko.i18n('columns.rc', 'RC'),
-						tooltip: ko.i18n('columns.rcTooltip', 'Record Count'),
-						icon: 'fa-database'
-					},
-					{
-						id: 'drc',
-						elementId: 'columnDRC',
-						title: ko.i18n('columns.drc', 'DRC'),
-						tooltip: ko.i18n('columns.drcTooltip', 'Descendant Record Count'),
-						icon: 'fa-database'
-					},
-					{
-						id: 'pc',
-						elementId: 'columnPC',
-						title: ko.i18n('columns.pc', 'PC'),
-						tooltip: ko.i18n('columns.pcTooltip', 'Person Count'),
-						icon: 'fa-user'
-					},
-					{
-						id: 'dpc',
-						elementId: 'columnDPC',
-						title: ko.i18n('columns.dpc', 'DPC'),
-						tooltip: ko.i18n('columns.dpcTooltip', 'Descendant Person Count'),
-						icon: 'fa-user'
-					}
-				];
 				this.tableOptions = commonUtils.getTableOptions('L');
-				this.renderColumnTitle = (id) => {
-					const c = this.columnHeadersWithIcons.find((c) => c.id === id);
-					return `<div style="white-space: nowrap" title="${c.tooltip()}"><i id="${c.elementId}" class="fa ${c.icon}"></i> ${c.title()}</div>`
-				};
 				this.searchColumns = [{
 					title: '',
 					render: (s, p, d) => this.renderCheckbox('isSelected'),
@@ -163,23 +127,13 @@ define([
 					data: 'STANDARD_CONCEPT_CAPTION',
 					visible: false
 				}, {
-					title: this.renderColumnTitle('rc'),
+					title: ko.i18n('columns.rc', 'RC'),
 					data: 'RECORD_COUNT',
 					className: 'numeric'
 				}, {
-					title: this.renderColumnTitle('drc'),
+					title: ko.i18n('columns.drc', 'DRC'),
 					data: 'DESCENDANT_RECORD_COUNT',
 					className: 'numeric'
-				}, {
-					title: this.renderColumnTitle('pc'),
-					data: 'PERSON_COUNT',
-					className: 'numeric',
-					visible: config.enablePersonCount
-				}, {
-					title: this.renderColumnTitle('dpc'),
-					data: 'DESCENDANT_PERSON_COUNT',
-					className: 'numeric',
-					visible: config.enablePersonCount
 				}, {
 					title: ko.i18n('columns.domain', 'Domain'),
 					data: 'DOMAIN_ID'
@@ -226,39 +180,6 @@ define([
 						}
 					}]
 				};
-
-                if (config.enablePersonCount) {
-                    this.searchOptions.Facets.push({
-                        'caption': ko.i18n('facets.caption.hasPersonCount', 'Has Person Count'),
-                        'binding': function (o) {
-                            return parseInt(o.PERSON_COUNT) > 0;
-                        }
-                    }, {
-                        'caption': ko.i18n('facets.caption.hasDescendantPersonCount', 'Has Descendant Person Count'),
-                        'binding': function (o) {
-                            return parseInt(o.DESCENDANT_PERSON_COUNT) > 0;
-                        }
-                    });
-                }
-
-                this.currentResultSource = ko.observable();
-                this.resultSources = ko.computed(() => {
-                    const resultSources = [];
-                    sharedState.sources().forEach((source) => {
-                        if (source.hasResults && authApi.isPermittedAccessSource(source.sourceKey)) {
-                            resultSources.push(source);
-                            if (source.resultsUrl === sharedState.resultsUrl()) {
-                                this.currentResultSource(source);
-                            }
-                        }
-                    })
-
-                    return resultSources;
-                });
-                this.recordCountsRefreshing = ko.observable(false);
-                this.recordCountClass = ko.pureComputed(() => {
-                    return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
-                });
 
 				this.isAuthenticated = authApi.isAuthenticated;
 				this.hasAccess = ko.computed(() => PermissionService.isPermittedSearch());
@@ -336,7 +257,6 @@ define([
 					return true;
 				}
 			}
-
 			executeSearch() {
 				if (!this.currentSearch() && !this.showAdvanced()) {
 					this.data([]);
@@ -421,7 +341,7 @@ define([
 					throw { message: 'No results found', results };
 				}
 
-				const promise = vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
+				const promise = vocabularyProvider.loadDensity(results);
 				promise.then(() => {
 					this.data(this.normalizeSearchResults(results));
 				});
@@ -464,34 +384,6 @@ define([
 
 			noResultsFoundMessage() {
 				return ko.i18n('search.noResultsFoundFor', 'No results found for')() + ' \"' + this.currentSearch() + '\"';
-			}
-
-            async refreshRecordCounts(obj, event) {
-                if (!event.originalEvent) {
-					return;
-				}
-
-				this.recordCountsRefreshing(true);
-				this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, true));
-				const results = this.data();
-				await vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
-				this.data(results);
-				this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, false));
-				this.recordCountsRefreshing(false);
-            }
-
-            toggleCountColumnHeaderSpin(column, enable) {
-				if (enable) {
-					$('#' + column.elementId)
-						.removeClass(column.icon)
-						.addClass("fa-circle-o-notch")
-						.addClass("fa-spin");
-				} else {
-					$('#' + column.elementId)
-						.addClass(column.icon)
-						.removeClass("fa-circle-o-notch")
-						.removeClass("fa-spin");
-				}
 			}
 		}
 

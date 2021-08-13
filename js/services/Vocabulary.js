@@ -38,25 +38,22 @@ define(function (require, exports) {
 		return domainsPromise;
 	}
 
-	function loadDensity(results, sourceKey) {
+	function loadDensity(results) {
 		var densityPromise = $.Deferred();
 
 		if (results.length == 0) {
 			densityPromise.resolve();
 			return densityPromise;
 		}
-
 		var searchResultIdentifiers = [];
+		var resultsIndex = [];
 		for (c = 0; c < results.length; c++) {
 			results[c].RECORD_COUNT = 0;
 			results[c].DESCENDANT_RECORD_COUNT = 0;
-			results[c].PERSON_COUNT = 0;
-			results[c].DESCENDANT_PERSON_COUNT = 0;
 			searchResultIdentifiers.push(results[c].CONCEPT_ID);
+			resultsIndex.push(c);
 		}
-		return sourceKey ?
-			CDMResultAPI.getConceptRecordCount(sourceKey, searchResultIdentifiers, results, false) :
-			CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false);
+		return CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false);
 	}
 
 	function search(searchString, options) {
