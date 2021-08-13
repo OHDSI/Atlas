@@ -56,7 +56,12 @@ define(function(require, exports) {
     }
 
     getHeaders(requestUrl) {
-      return this.isSecureUrl(requestUrl) ? super.getHeaders() : {};
+      if (this.isSecureUrl(requestUrl)) {
+        const headers = super.getHeaders();
+        headers['Action-Location'] = location;
+        return headers;
+      }
+      return {};
     }
 
     sendRequest(method, path, payload) {

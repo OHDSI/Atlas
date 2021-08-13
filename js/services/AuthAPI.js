@@ -53,6 +53,7 @@ define(function(require, exports) {
         beforeSend: function(xhr, settings) {
             if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
                 xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+                xhr.setRequestHeader('Action-Location', location);
             }
         }
     });
