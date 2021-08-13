@@ -717,6 +717,12 @@ define(["knockout"], function (ko) {
       descriptionVisit: 'const.eventsList.addProviderSpecialty.desc_visit',
       defaultDescriptionVisit: 'Filter Visit Occurrences based on provider specialty.',
     },
+    addConditionStatus: {
+      titleOccurrence: 'const.eventsList.addConditionStatus.title_occurrence',
+      defaultTitleOccurrence: 'Add Condition Status',
+      descriptionOccurrence: 'const.eventsList.addConditionStatus.desc_occurrence',
+      defaultDescriptionOccurrence: 'Filter Condition Occurrences based on condition status.',
+    },
     addPlaceService: {
       titleVisit: 'const.eventsList.addPlaceService.title_visit',
       defaultTitleVisit: 'Add Place of Service Criteria',
@@ -1041,6 +1047,7 @@ define(["knockout"], function (ko) {
     'addFirstDiagnosis',
     'addAge',
     'addGender',
+    'addConditionStatus',
     'addStartDate',
     'addEndDate',
     'addType',

@@ -14,6 +14,7 @@ define(
           xhr.open(method, url, true);
           xhr.setRequestHeader("Authorization", authApi.getAuthorizationHeader());
           xhr.setRequestHeader("Content-type", "application/json");
+          xhr.setRequestHeader("Action-Location", location);
           xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
               resolve();

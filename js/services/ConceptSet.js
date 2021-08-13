@@ -16,7 +16,19 @@ define(function (require) {
 
 	function loadConceptSetExpression(conceptSetId) {
 		const sourceKey = sharedState.sourceKeyOfVocabUrl();
-		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression' + (sourceKey ? `/${sourceKey}`: '')).then(({ data }) => data);
+		return httpService.doGet(config.api.url + 'conceptset/' + conceptSetId + '/expression' + (sourceKey ? `/${sourceKey}`: ''))
+			.then(({ data }) => data)
+			.catch((err) => {
+				console.log((err.data && err.data.payload) ? err.data.payload : err);
+				let message = err.data && err.data.payload && err.data.payload.message
+					? err.data.payload.message
+					: ko.i18n('components.conceptSet.expressionResolveError', 'Error occurred during resolving expression!')();
+				if (err.status === 403) {
+					message += ' - ' + ko.i18n('components.conceptSet.forbiddenError', 'You are not authorized to view the concept set expression.')();
+				}
+				alert(message);
+				self.isLoading(false);
+			});
 	}
 
 	function lookupIdentifiers(identifiers) {

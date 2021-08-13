@@ -124,12 +124,14 @@ define(function () {
 
    appConfig.commonDataTableOptions = {
      pageLength: {
+       ONLY_5: 5,
        XS: 5,
        S: 10,
        M: 25,
        L: 50,
      },
      lengthMenu: {
+       ONLY_5: [[5], ['5']],
        XS: [
          [5, 10],
          ['5', '10'],
@@ -148,8 +150,6 @@ define(function () {
        ],
      }
    };
-
-   appConfig.enablePersonCount = true;
 
 	return appConfig;
 });

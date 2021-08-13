@@ -100,6 +100,7 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             extractTagGroups(list).forEach(tg => {
                 columns.push({
                     title: tg.name,
+                    width: '100px', // default width
                     visible: !!tg.showGroup,
                     render: (s, p, d) => {
                         const tags = d.tags && d.tags.length > 0

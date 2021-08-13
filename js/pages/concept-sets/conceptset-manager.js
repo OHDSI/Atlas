@@ -309,6 +309,14 @@ define([
 					hasBadge: true,
 					preload: true,
 				},
+				{
+					title: ko.i18n('cs.manager.tabs.messages', 'Messages'),
+					key: ViewMode.MESSAGES,
+					componentName: 'warnings',
+					componentParams: this.warningParams,
+					hasBadge: true,
+					preload: true,
+				},
 			];
 			this.selectedTab = ko.observable(0);
 

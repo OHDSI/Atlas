@@ -294,7 +294,7 @@ define([
                 cohortIds: cohorts,
                 analysisIds: analyses,
                 domainIds: domains,
-                thresholdValuePct: this.thresholdValuePct() / 100,
+                thresholdValuePct: this.newThresholdValuePct() / 100,
                 showEmptyResults: !!this.showEmptyResults(),
             };
 
@@ -318,6 +318,7 @@ define([
                             analysisId: r.analysisId,
                             domainId: this.design() && this.design().featureAnalyses && !r.isSummary ?
 															(this.design().featureAnalyses.find(fa => fa.id === r.id) || { })[ 'domain' ] : null,
+                            rawAnalysisName: r.analysisName,
                             analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             cohorts: r.cohorts,
                             domainIds: r.domainIds,
@@ -338,7 +339,7 @@ define([
 
         getAnalysisName(rawName, { faType, statType }) {
 
-            return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.thresholdValuePct()}%)` : '');
+            return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.newThresholdValuePct()}%)` : '');
         }
 
         async exportAllCSV() {
@@ -408,7 +409,7 @@ define([
             );
 
             const analyses = lodash.uniqBy(
-                data.filter(a => a.analysisId).map(a => ({label: a.analysisName, value: a.analysisId})),
+                data.filter(a => a.analysisId).map(a => ({label: a.rawAnalysisName, value: a.analysisId})),
                 "value"
             );
 
