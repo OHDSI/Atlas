@@ -77,7 +77,7 @@ define([
 				this.personId = ko.observable(router.routerParams().personId);
 
 				this.sampleName = this.url.toString().split("/");
-				this.sampleName = this.sampleName[this.sampleName.length-1].split('_').join(' ')
+				this.sampleName = this.sampleName[this.sampleName.length-1].split('_').join(' ');
 
 				this.personRecords = ko.observableArray();
 

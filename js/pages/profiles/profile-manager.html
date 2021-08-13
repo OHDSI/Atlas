@@ -151,22 +151,19 @@
 													<a class="btn btn-default" data-bind="click: nextLink, attr: {disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Next</span>'" role="button"></a>
 												</div>
 											</div>
-											<div class="annotation-progress">
-												<div class="progress">
-													<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" data-bind="style: { width: completionPercent() + '%' }"></div>
-												</div>
-												<div class="progress-word">
-<!--													<div data-bind="if: navigationLoaded">-->
-<!--														<span>Annotations Complete:&nbsp;</span>-->
-<!--														<span data-bind="text: numAnnotations"></span>-->
-<!--														<span>/</span>-->
-<!--														<span data-bind="text: numProfileSamples"></span>-->
-<!--													</div>-->
-													<div data-bind="ifnot: navigationLoaded">
-														Loading progress...
-													</div>
-												</div>
-											</div>
+<!--											<div class="annotation-progress">-->
+<!--												<div class="progress ">-->
+<!--&lt;!&ndash;													<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" data-bind="style: { width: completionPercent() + '%' }"></div>&ndash;&gt;-->
+<!--												</div>-->
+<!--												<div class="progress-word">-->
+<!--&lt;!&ndash;													<div data-bind="if: navigationLoaded">&ndash;&gt;-->
+<!--&lt;!&ndash;														<span>Annotations Complete:&nbsp;</span>&ndash;&gt;-->
+<!--&lt;!&ndash;														<span data-bind="text: numAnnotations"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;														<span>/</span>&ndash;&gt;-->
+<!--&lt;!&ndash;														<span data-bind="text: numProfileSamples"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;													</div>&ndash;&gt;-->
+<!--												</div>-->
+<!--											</div>-->
 										</div>
 										<div data-bind="with: content">
 											<div data-bind="if: annotationLoaded">
@@ -204,7 +201,7 @@
 															</li>
 														</ol>
 													</div>
-													<button type="button" class="btn btn-primary btn-block" data-bind="click: createOrUpdate, text: annotationId() ? 'Save' : 'Submit'"></button>
+													<button type="button" class="btn btn-primary btn-block" data-bind="enable: !annotationSaving(), click: createOrUpdate, text: annotationId() ? 'Save' : 'Submit'"></button>
 													<div  class="back-link">
 														<u><a data-bind="attr: {href: '#/cohortdefinition/' + $component.cohortDefinitionId() + '/validate'}" target="_self">Back to cohort</a></u>
 													</div>

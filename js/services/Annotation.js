@@ -36,6 +36,15 @@ define(function (require, exports) {
 
         return response;
     };
+
+    const getStudyResults = function(annotationId) {
+        const response = httpService.doGet(`${config.webAPIRoot}annotations/results/${annotationId}`).then(({ data }) => data);
+        response.catch((er) => {
+            console.error('Can\'t find study results');
+        });
+
+        return response;
+    };
   
     const getAnnotationByCohortIdbySubjectIdBySetId = function(set, cohort, subject, sourceKey) {
       const data = {
@@ -43,13 +52,34 @@ define(function (require, exports) {
         subjectId: subject || 0,
         setId: set || 0
       };
-  
+
+
       const response = httpService.doGet(`${config.webAPIRoot}annotations`, data).then(({ data }) => data[0]);
       response.catch((er) => {
-        console.error('Can\'t find annotations');
+            console.error('Can\'t find annotations');
       });
+
   
       return response;
+    };
+
+    const getAnnotationBySampleIdbySubjectIdBySetId = function(set, sample, subject, sourceKey) {
+        const data = {
+            sampleId: sample || 0,
+            subjectId: subject || 0,
+            setId: set || 0
+        };
+
+
+        // http://localhost:8080/WebAPI/annotations?setId=10&cohortSampleId=3&subjectId=296
+        const response = httpService.doGet(`${config.webAPIRoot}annotations?setId=${data.setId}&cohortSampleId=${data.sampleId}&subjectId=${data.subjectId}`)
+            .then(({ data }) => data[0]);
+        response.catch((er) => {
+            console.error('Can\'t find annotations');
+        });
+
+
+        return response;
     };
   
     const getAnnotationNavigation = function(sampleName, cohort, subject, source) {
@@ -84,7 +114,9 @@ define(function (require, exports) {
         getAnnotationSets,
         getStudySets,
         getSuperTable,
+        getStudyResults,
         getAnnotationByCohortIdbySubjectIdBySetId,
+        getAnnotationBySampleIdbySubjectIdBySetId,
         getAnnotationNavigation,
         createOrUpdateAnnotation,
         linkAnnotationToSamples

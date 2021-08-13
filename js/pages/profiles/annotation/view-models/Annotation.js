@@ -10,6 +10,8 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
       self.sourceKey = sourceKey;
       self.sampleName = sampleName;
       self.nav = annotationView.navigation();
+      self.annotationSaving = ko.observable(false);
+
       self.rawToForm = function(rawResults) {
         if (!rawResults) {
           console.log('empty annotation results');
@@ -83,6 +85,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
       }, {});
   
       self.createOrUpdate = function(annotation) {
+        self.annotationSaving(true);
         const errors = Object.keys(annotation.results).reduce((accumulator, key) => {
           const result = annotation.results[key];
           if (!result.validate(result.value()) && result.required()) {
@@ -95,6 +98,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
         }, { count: 0 });
   
         if (errors.count > 0) {
+          self.annotationSaving(false);
           return;
         }
   
@@ -113,9 +117,10 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
         annotationService.createOrUpdateAnnotation(payload)
           .then((annotation) => {
             this.annotationId(annotation.id);
-            if (sampleName.indexOf(' ') >=0) {
+              if (sampleName.indexOf(' ') >=0) {
               sampleName  = sampleName.split(" ").join('_');
             }
+            self.annotationSaving(false );
             //window.location = `#/profiles/${sourceKey}/${ko.toJS(annotationView).navigation.nextSubjectId}/${cohortId}/${sampleName}`;
             self.nav.nextLink();
           });

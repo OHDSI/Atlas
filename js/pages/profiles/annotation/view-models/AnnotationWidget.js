@@ -17,7 +17,7 @@ define(['knockout', './AnnotationView', './SettingsView', 'services/Annotation']
         };
 
         self.initialize = function (cohortId, personId, sourceKey, sampleName, settingsView) {
-            annotationService.getAnnotationSets(cohortId, sourceKey)//TODO include source key in this lookup as well
+            annotationService.getAnnotationSets(cohortId, sourceKey)
                 .then((sets) => {
                     if (sets.length === 0 || !sets) {
                         self.isVisible(false);

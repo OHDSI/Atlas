@@ -8,6 +8,8 @@ define(['knockout', './Question'], function (ko, Question) {
       self.questions = ko.observableArray();
   
       self.id(set.id);
+
+      set.questions.sort((a, b) => a.id - b.id);
   
       for (var i = 0; i < set.questions.length; i ++) {
         var question = new Question(set.questions[i]);
