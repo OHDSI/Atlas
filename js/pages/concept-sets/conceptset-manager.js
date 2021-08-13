@@ -10,6 +10,7 @@ define([
 	'components/conceptset/utils',
 	'services/Vocabulary',
 	'services/Permission',
+	'services/Tags',
 	'components/security/access/const',
 	'conceptsetbuilder/InputTypes/ConceptSet',
 	'conceptsetbuilder/InputTypes/ConceptSetItem',
@@ -38,6 +39,7 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
+	'components/tags/tags',
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',
@@ -53,6 +55,7 @@ define([
 	utils,
 	vocabularyAPI,
 	GlobalPermissionService,
+	TagsService,
 	{ entityType },
 	ConceptSet,
 	ConceptSetItem,
@@ -173,6 +176,20 @@ define([
 			});
 			this.optimizeTableOptions = commonUtils.getTableOptions('M');
 			const tableOptions = commonUtils.getTableOptions('L');
+
+			this.isDiagnosticsRunning = ko.observable(false);
+			this.criticalCount = ko.observable(0);
+			this.warningParams = ko.observable({
+				current: this.currentConceptSet,
+				warningsTotal: ko.observable(0),
+				warningCount: ko.observable(0),
+				infoCount: ko.observable(0),
+				criticalCount: this.criticalCount,
+				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
+				isDiagnosticsRunning: this.isDiagnosticsRunning,
+				onDiagnoseCallback: this.diagnose.bind(this),
+			});
+
 			this.tabs = [
 				{
 					title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
@@ -249,6 +266,14 @@ define([
 						saveConceptSetShow: this.saveConceptSetShow,
 					},
 				},
+				{
+					title: ko.i18n('cs.manager.tabs.messages', 'Messages'),
+					key: ViewMode.MESSAGES,
+					componentName: 'warnings',
+					componentParams: this.warningParams,
+					hasBadge: true,
+					preload: true,
+				},
 			];
 			this.selectedTab = ko.observable(0);
 
@@ -263,6 +288,31 @@ define([
 				entityIdGetter: () => this.currentConceptSet() && this.currentConceptSet().id,
 				createdByUsernameGetter: () => this.currentConceptSet() && this.currentConceptSet().createdBy
 					&& this.currentConceptSet().createdBy.login
+			});
+
+			this.tags = ko.observableArray();
+			TagsService.decorateComponent(this, {
+				assetTypeGetter: () => TagsService.ASSET_TYPE.CONCEPT_SET,
+				assetGetter: () => this.currentConceptSet(),
+				addTagToAsset: (tag) => {
+					const isDirty = this.currentConceptSetDirtyFlag().isDirty();
+					this.currentConceptSet().tags.push(tag);
+					this.tags(this.currentConceptSet().tags);
+					if (!isDirty) {
+						this.currentConceptSetDirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				},
+				removeTagFromAsset: (tag) => {
+					const isDirty = this.currentConceptSetDirtyFlag().isDirty();
+					this.currentConceptSet().tags = this.currentConceptSet().tags
+						.filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0);
+					this.tags(this.currentConceptSet().tags);
+					if (!isDirty) {
+						this.currentConceptSetDirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				}
 			});
 
 			this.conceptSetStore.isEditable(this.canEdit());
@@ -333,6 +383,7 @@ define([
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
 				this.conceptSetStore.isEditable(this.canEdit());
+				this.tags(this.currentConceptSet().tags);
 			} catch(err) {
 				if (err.status === 403) {
 					this.hasPrioritySourceAccess(false);
@@ -506,6 +557,11 @@ define([
 						modifiedBy: lodash.get(this.currentConceptSet(), 'modifiedBy.name'),
 						modifiedDate,
 				}
+		}
+		diagnose() {
+			if (this.currentConceptSet()) {
+				return conceptSetService.runDiagnostics(this.currentConceptSet());
+			}
 		}
 
 	}

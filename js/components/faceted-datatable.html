@@ -9,7 +9,7 @@
 					<div class="facetName"><i class="fa fa-filter"></i><span data-bind="text:caption"></span></div>
 					<div class="facetScrollBox" data-bind="foreach:$data.facetItems">
 						<div class="facetMemberName" data-bind="click: function(data, event) { $component.updateFilters($data, event);}, css : {selected: selected}">
-							<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text:ko.unwrap(key) + ' (' + value + ')'"></span>
+							<span data-bind="attr: {id: $parentContext.$index() + '-' + $index()}, text: ko.unwrap(key) + ' (' + value + ')'"></span>
 						</div>
 					</div>
 				</div>

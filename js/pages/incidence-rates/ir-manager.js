@@ -16,6 +16,7 @@ define([
 	'services/JobPollService',
 	'./PermissionService',
 	'services/Permission',
+	'services/Tags',
 	'components/security/access/const',
 	'pages/Page',
 	'utils/AutoBind',
@@ -36,6 +37,7 @@ define([
 	'utilities/export',
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
+	'components/tags/tags',
 	'components/name-validation',
 	'less!./ir-manager.less',
 	'components/authorship',
@@ -57,6 +59,7 @@ define([
 	JobPollService,
 	{ isPermittedExportSQL },
 	GlobalPermissionService,
+	TagsService,
 	{ entityType },
 	Page,
 	AutoBind,
@@ -231,6 +234,31 @@ define([
 					&& this.selectedAnalysis().createdBy().login
 			});
 
+			this.tags = ko.observableArray();
+			TagsService.decorateComponent(this, {
+				assetTypeGetter: () => TagsService.ASSET_TYPE.INCIDENCE_RATE,
+				assetGetter: () => this.selectedAnalysis(),
+				addTagToAsset: (tag) => {
+					const isDirty = this.dirtyFlag().isDirty();
+					this.selectedAnalysis().tags.push(tag);
+					this.tags(this.selectedAnalysis().tags());
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				},
+				removeTagFromAsset: (tag) => {
+					const isDirty = this.dirtyFlag().isDirty();
+					this.selectedAnalysis().tags(this.selectedAnalysis().tags()
+						.filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0));
+					this.tags(this.selectedAnalysis().tags());
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				}
+			});
+
 			// startup actions
 			this.init();
 		}
@@ -346,6 +374,7 @@ define([
 			IRAnalysisService.getAnalysis(this.selectedAnalysisId()).then((analysis) => {
 				this.selectedAnalysis(new IRAnalysisDefinition(analysis));
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
+				this.tags(analysis.tags);
 				this.loading(false);
 				this.startPolling();
 			});
@@ -535,7 +564,6 @@ define([
 				this.refreshDefs();
 				this.activeTab(this.tabs.DEFINITION);
 				this.close();
-				this.warningParams().checkOnInit = false;
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
 				alert('An error occurred while attempting to import an incidence rate.');

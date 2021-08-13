@@ -3,6 +3,7 @@ define([
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
     'services/Permission',
+    'services/Tags',
     'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
@@ -29,6 +30,7 @@ define([
     'components/heading',
     'components/authorship',
     'components/security/access/configure-access-modal',
+    'components/tags/tags',
     'components/checks/warnings',
     'components/name-validation',
 ], function (
@@ -36,6 +38,7 @@ define([
     CharacterizationService,
     PermissionService,
     GlobalPermissionService,
+    TagsService,
     { entityType },
     CriteriaGroup,
     ConceptSet,
@@ -151,6 +154,28 @@ define([
                 entityTypeGetter: () => entityType.COHORT_CHARACTERIZATION,
                 entityIdGetter: () => this.characterizationId(),
                 createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
+            });
+
+            TagsService.decorateComponent(this, {
+                assetTypeGetter: () => TagsService.ASSET_TYPE.COHORT_CHARACTERIZATION,
+                assetGetter: () => this.design(),
+                addTagToAsset: (tag) => {
+                    const isDirty = this.designDirtyFlag().isDirty();
+                    this.design().tags.push(tag);
+                    if (!isDirty) {
+                        this.designDirtyFlag().reset();
+                        this.warningParams.valueHasMutated();
+                    }
+                },
+                removeTagFromAsset: (tag) => {
+                    const isDirty = this.designDirtyFlag().isDirty();
+                    this.design().tags(this.design().tags()
+                        .filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0));
+                    if (!isDirty) {
+                        this.designDirtyFlag().reset();
+                        this.warningParams.valueHasMutated();
+                    }
+                }
             });
         }
 

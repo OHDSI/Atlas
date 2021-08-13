@@ -36,7 +36,7 @@ define([
             this.isGetCCListPermitted = PermissionService.isPermittedGetCCList;
             this.isCreatePermitted = PermissionService.isPermittedCreateCC;
 
-            this.gridColumns = [
+            this.gridColumns = ko.observableArray([
                 {
                     title: ko.i18n('columns.id', 'Id'),
                     data: 'id'
@@ -66,7 +66,7 @@ define([
                     render: datatableUtils.getCreatedByFormatter(),
                 },
 
-            ];
+            ]);
             this.gridOptions = {
                 Facets: [
                     {
@@ -97,6 +97,8 @@ define([
                 .loadCharacterizationList()
                 .then(res => {
                     datatableUtils.coalesceField(res.content, 'modifiedDate', 'createdDate');
+                    datatableUtils.addTagGroupsToFacets(res.content, this.gridOptions.Facets);
+                    datatableUtils.addTagGroupsToColumns(res.content, this.gridColumns);
                     this.data(res.content);
                     this.loading(false);
                 });

@@ -1,0 +1,80 @@
+<atlas-modal params="showModal: $component.isModalShown, title: ko.i18n('components.tags.title', 'Assign Tags'),
+         data: {
+            classes: classes,
+            isLoading: isLoading,
+            allTagsList: allTagsList,
+            tagGroupsList: tagGroupsList,
+            currentTagGroup: currentTagGroup,
+            tagsInGroupList: tagsInGroupList,
+            tagGroupsColumns: tagGroupsColumns,
+            tagsInGroupColumns: tagsInGroupColumns,
+            assignTag: assignTag,
+            unassignTag: unassignTag,
+            showCreateCustomTag: showCreateCustomTag,
+            newCustomTagName: newCustomTagName,
+            newCustomTagGroup: newCustomTagGroup,
+            groupsForCustomTags: groupsForCustomTags,
+            createNewCustomTag: createNewCustomTag,
+            tableOptions: tableOptions,
+         }">
+
+    <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('components.tags.loadingTags', 'Loading tags list...')"></loading>
+
+    <div data-bind="css: classes(), if: !isLoading()">
+
+        <label data-bind="css: classes('tag-groups-label'), text: ko.i18n('components.tags.tagGroups', 'Tag groups:')"></label>
+        <table data-bind="
+            css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+            dataTable:{
+                data: tagGroupsList,
+                options: {
+                    order: [],
+                    columns: tagGroupsColumns,
+                    pageLength: tableOptions.pageLength,
+                    lengthMenu: tableOptions.lengthMenu,
+                    language: ko.i18n('datatable.language')
+                },
+            }
+        "/>
+
+        <div data-bind="if: tagsInGroupList().length > 0">
+            <label data-bind="css: classes('tag-list-label')">
+                <b data-bind="text: ko.i18n('components.tags.tagGroup', 'Tag group:')"></b> <span data-bind="text: currentTagGroup().name"></span>
+            </label>
+
+            <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: tagsInGroupList,
+                    options: {
+                        order: [],
+                        columns: tagsInGroupColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            "/>
+        </div>
+
+        <div data-bind="if: groupsForCustomTags().length > 0">
+            <label data-bind="click: () => showCreateCustomTag(!showCreateCustomTag()), css: classes('new-tag-label')">
+                <span data-bind="text: ko.i18n('components.tags.assignExistingTag', 'Create custom tag')"></span>
+                <i data-bind="attr: { class: showCreateCustomTag() ? 'fa fa-angle-down' : 'fa fa-angle-right' }"></i>
+            </label>
+            <div class="input-group" data-bind="if: showCreateCustomTag()">
+                <input
+                        class="form-control"
+                        data-bind="placeholder: ko.i18n('components.tags.tagNamePlaceholder', 'Tag name'), textInput: newCustomTagName">
+                <span class="input-group-btn">
+                    <select class="form-control groups-dropdown" data-bind="options: groupsForCustomTags, optionsText: 'name', optionsValue: 'id', value: newCustomTagGroup" />
+                </span>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" data-bind="click: createNewCustomTag, attr: { disabled: !(newCustomTagName() && newCustomTagName().length) }, text: ko.i18n('components.tags.createAndAssign', 'Create and assign')"></button>
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+</atlas-modal>

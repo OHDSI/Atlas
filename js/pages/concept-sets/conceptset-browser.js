@@ -9,6 +9,7 @@ define([
 	'components/tabs',
 	'./components/conceptsets-list',
 	'./components/conceptsets-export',
+	'less!./conceptset-browser.less',
 ], function (
 	ko,
 	view,

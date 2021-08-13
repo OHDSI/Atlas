@@ -1,12 +1,10 @@
 <div class="flexed">
 	<heading-title params="name: ko.i18n('cohortDefinitions.title', 'Cohort Definitions'), icon: 'users', theme: 'dark'"></heading-title>
 	<div data-bind="if:$component.canReadCohorts, css: `${canReadCohorts() ? 'flexed' : ''}`">
-		<div class="paddedWrapper flexed">
-			<div class="row">
-				<div class="col-sm-offset-10 col-sm-1" data-bind="attr: {title: $component.newCohortButtonCaption()}">
-					<div class="btn btn-sm btn-primary" 
-					`		 data-bind="text: ko.i18n('cohortDefinitions.newDefinition', 'New Cohort'), click:$component.newDefinition, css: {disabled: currentCohortDefinition() != undefined || !$component.canCreateCohort()}"></div>
-				</div>
+		<div data-bind="css: classes('grid')">
+			<div data-bind="css: classes('toolbar'), attr: {title: $component.newCohortButtonCaption()}">
+				<div class="btn btn-sm btn-primary"
+					 data-bind="text: ko.i18n('cohortDefinitions.newDefinition', 'New Cohort'), click:$component.newDefinition, css: {disabled: currentCohortDefinition() != undefined || !$component.canCreateCohort()}"></div>
 			</div>
 			<cohort-definition-browser params="{
 				onSelect: data => cohortDefinitionId(data.id),

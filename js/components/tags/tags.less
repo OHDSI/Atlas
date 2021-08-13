@@ -1,0 +1,74 @@
+.tags-modal {
+
+  .bold {
+    font-weight: bold;
+  }
+
+  &__tag-groups-label, &__tag-list-label, &__new-tag-label {
+    font-size: 1.4rem;
+  }
+  &__tag-list-label, &__new-tag-label {
+    margin-top: 1.3rem;
+  }
+  &__new-tag-label {
+    color: #0070dd;
+    cursor: pointer;
+  }
+  &__new-tag-label:hover {
+    color: #23527c;
+  }
+
+  .cell-tag-name {
+    width: 100px;
+  }
+  .cell-group-description {
+    width: 460px;
+  }
+  .cell-tag-created {
+    width: 120px;
+  }
+  .cell-tag-author {
+    width: 100px;
+  }
+  .cell-tag-description {
+    width: 200px;
+  }
+  .cell-tag-type {
+    width: 80px;
+  }
+  .cell-tag-name,
+  .cell-group-description,
+  .cell-tag-description,
+  .cell-tag-type,
+  .cell-tag-created,
+  .cell-tag-author,
+  .cell-tag-action {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .groups-dropdown {
+    padding: 7px;
+    margin-left: -1px;
+    width: fit-content;
+    width: -moz-fit-content;
+  }
+
+  &__action-link {
+    cursor: pointer;
+  }
+
+  .dataTable {
+    width: 100% !important;
+  }
+
+  .dataTable th, .dataTable td {
+    padding: 6px;
+  }
+}
+
+.ui-autocomplete {
+  z-index: 10000;
+}

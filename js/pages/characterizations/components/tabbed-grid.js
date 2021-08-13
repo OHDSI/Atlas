@@ -44,7 +44,7 @@ define([
             return ko.i18n('datatable.language');
         }
 
-		}
+	}
 
     return commonUtils.build('characterizations-tabbed-grid', CharacterizationsTabbedGrid, view);
 });

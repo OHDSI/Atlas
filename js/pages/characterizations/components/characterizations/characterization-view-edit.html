@@ -3,7 +3,7 @@
 
 <!-- ko if:design -->
 <div data-bind="css: classes()">
-    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark'"></heading-title>
+    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark', tags: design().tags"></heading-title>
     <!-- ko if: !!design() && !!design().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
@@ -14,6 +14,7 @@
                 <button type="button" class="btn btn-success" data-bind="click: save, css: {disabled:!isSavePermitted() || isProcessing() }, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
                 <button type="button" class="btn btn-primary" data-bind="click: closeCharacterization, css: {disabled: isProcessing() }, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity() -->
+                <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: isEditPermitted(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
                 <button type="button" class="btn btn-primary" data-bind="click: copyCc, css: {disabled: !canCopy() || isProcessing() }, title: , title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
                 <button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
@@ -80,3 +81,14 @@
 	revokeAccessFn: $component.revokeAccess,
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
+
+<tags-modal params="
+	isModalShown: $component.isTagsModalShown,
+	tagsList: $component.tagsList,
+	assignTagFn: $component.assignTag,
+	unassignTagFn: $component.unassignTag,
+	createNewTagFn: $component.createNewTag,
+	loadAvailableTagsFn: $component.loadAvailableTags,
+	checkAssignPermissionFn: $component.checkAssignPermission,
+	checkUnassignPermissionFn: $component.checkUnassignPermission
+"></tags-modal>

@@ -49,7 +49,7 @@ define([
 				]
 			};
 
-			this.columns = [
+			this.columns = ko.observableArray([
 				...this.columns,
 				{
 					title: ko.i18n('columns.id', 'Id'),
@@ -74,15 +74,17 @@ define([
 					title: ko.i18n('columns.author', 'Author'),
 					className: 'author-column',
 					render: datatableUtils.getCreatedByFormatter(),
-				},
-			];
+				}
+			]);
 		}
 
 		async loadData() {
 			try {
 				this.isLoading(true);
 				const data = await CohortDefinitionService.getCohortDefinitionList();
-				datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate')
+				datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
+				datatableUtils.addTagGroupsToFacets(data, this.options.Facets);
+				datatableUtils.addTagGroupsToColumns(data, this.columns);
 				this.data(data.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
 			} catch (err) {
 				console.error(err);

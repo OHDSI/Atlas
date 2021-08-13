@@ -32,26 +32,29 @@ define([
 			this.tableOptions = commonUtils.getTableOptions('L');
 			this.canList = PermissionService.isPermittedList;
 			this.canCreate = PermissionService.isPermittedCreate;
-		}
 
-		onRouterParamsChanged() {
-			this.canList() && this.loadData();
-		}
+			this.gridOptions = {
+				Facets: [
+					{
+						'caption': ko.i18n('facets.caption.created', 'Created'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
+					},
+					{
+						'caption': ko.i18n('facets.caption.updated', 'Updated'),
+						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
+					},
+					{
+						'caption': ko.i18n('facets.caption.author', 'Author'),
+						'binding': datatableUtils.getFacetForCreatedBy,
+					},
+					{
+						'caption': ko.i18n('facets.caption.designs', 'Designs'),
+						'binding': datatableUtils.getFacetForDesign,
+					},
+				]
+			};
 
-		async loadData() {
-			this.loading(true);
-			const analysisList = await PathwayService.list();
-			datatableUtils.coalesceField(analysisList.content, 'modifiedDate', 'createdDate');
-			this.analysisList(analysisList.content);
-			this.loading(false);
-		}
-
-		newAnalysis() {
-			commonUtils.routeTo(commonUtils.getPathwaysUrl(0, 'design'));
-		}
-
-		get gridColumns() {
-			return ko.computed(() => [
+			this.gridColumns = ko.observableArray([
 				{
 					title: ko.i18n('columns.id', 'Id'),
 					data: 'id'
@@ -77,33 +80,28 @@ define([
 				},
 				{
 					title: ko.i18n('columns.author', 'Author'),
-                    render: datatableUtils.getCreatedByFormatter(),
+					render: datatableUtils.getCreatedByFormatter(),
 					className: this.classes('tbl-col', 'author'),
 				}
 			]);
 		}
 
-		get gridOptions() {
-			return ko.observable({
-				Facets: [
-					{
-						'caption': ko.i18n('facets.caption.created', 'Created'),
-						'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
-					},
-					{
-						'caption': ko.i18n('facets.caption.updated', 'Updated'),
-						'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
-					},
-					{
-						'caption': ko.i18n('facets.caption.author', 'Author'),
-						'binding': datatableUtils.getFacetForCreatedBy,
-					},
-					{
-						'caption': ko.i18n('facets.caption.designs', 'Designs'),
-						'binding': datatableUtils.getFacetForDesign,
-					},
-				]
-			});
+		onRouterParamsChanged() {
+			this.canList() && this.loadData();
+		}
+
+		async loadData() {
+			this.loading(true);
+			const analysisList = await PathwayService.list();
+			datatableUtils.coalesceField(analysisList.content, 'modifiedDate', 'createdDate');
+			datatableUtils.addTagGroupsToFacets(analysisList.content, this.gridOptions.Facets);
+			datatableUtils.addTagGroupsToColumns(analysisList.content, this.gridColumns);
+			this.analysisList(analysisList.content);
+			this.loading(false);
+		}
+
+		newAnalysis() {
+			commonUtils.routeTo(commonUtils.getPathwaysUrl(0, 'design'));
 		}
 	}
 

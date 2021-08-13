@@ -40,16 +40,16 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             }
         };
 
-        const getCreatedByLogin = d =>
+        const getCreatedByLogin = (d, emptyFieldSubstitute = 'anonymous') =>
             d.hasOwnProperty('createdBy') && !!d.createdBy
                 ? typeof d.createdBy === 'string'
                     ? d.createdBy
                     : typeof d.createdBy === 'object' && !!d.createdBy.login
                     ? d.createdBy.login
-                    : 'anonymous'
-                : 'anonymous';
+                    : emptyFieldSubstitute
+                : emptyFieldSubstitute;
 
-        const getCreatedByFormatter = () => (s, p, d) => getCreatedByLogin(d);
+        const getCreatedByFormatter = (emptyFieldSubstitute) => (s, p, d) => getCreatedByLogin(d, emptyFieldSubstitute);
 
         const getFacetForCreatedBy = getCreatedByLogin;
 
@@ -63,6 +63,56 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
         const renderCountColumn = (value) => value ? value : '...';
 
         const coalesceField = (list, field1, field2) => list.forEach(e => e[field1] = e[field1] || e[field2]);
+
+        const idComparator = (a, b) => a.id - b.id;
+
+        const extractTagGroups = (assetsList) => {
+            const tagGroups = [];
+            assetsList.forEach(e => {
+                if (e.tags) {
+                    const tagGroupsForElement = e.tags.filter(t => !t.groups || t.groups.length === 0);
+                    tagGroupsForElement.forEach(tg => tagGroups.push(tg));
+                }
+            });
+            return tagGroups
+                .filter((tg, index, self) => self.findIndex(t => t.id === tg.id) === index)
+                .sort(idComparator);
+        };
+
+        const addTagGroupsToFacets = (list, facets) => {
+            extractTagGroups(list).sort().reverse().forEach(tg => {
+                facets.unshift({
+                    caption: tg.name,
+                    binding: (o) => {
+                        let tags = o.tags && o.tags.length > 0
+                            ? o.tags
+                                .filter(t => t.groups && t.groups.length > 0 && t.groups.filter(otg => otg.id === tg.id).length > 0)
+                                .map(t => t.name)
+                            : [];
+                        return tags.length > 0 ? tags : ['Untagged'];
+                    },
+                    isArray: true
+                });
+            });
+        };
+
+        const addTagGroupsToColumns = (list, columns) => {
+            extractTagGroups(list).forEach(tg => {
+                columns.push({
+                    title: tg.name,
+                    width: '100px', // default width
+                    visible: !!tg.showGroup,
+                    render: (s, p, d) => {
+                        const tags = d.tags && d.tags.length > 0
+                            ? d.tags
+                                .filter(t => t.groups && t.groups.length > 0 && t.groups.filter(otg => otg.id === tg.id).length > 0)
+                                .map(t => t.name)
+                            : [];
+                        return tags.join(', ');
+                    }
+                });
+            });
+        };
 
         const renderExecutionStatus = () => (s, p, d) => {
             const { executionStatuses } = consts;
@@ -130,6 +180,8 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             renderCountColumn,
             getFacetForDomain,
             coalesceField,
+            addTagGroupsToFacets,
+            addTagGroupsToColumns,
             renderExecutionStatus,
             renderExecutionDuration,
             renderExecutionResultsView,
