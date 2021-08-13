@@ -109,7 +109,7 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
           subjectId: subjectId,
           cohortId: cohortId,
           setId: set.id,
-          sampleName: sampleName,
+          cohortSampleId: sampleName,
           results: [
             ...self.formToRaw(results, set.questions)
           ]
