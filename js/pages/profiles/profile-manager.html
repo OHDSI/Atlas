@@ -145,10 +145,10 @@
 										<div data-bind="with: navigation">
 											<div class="btn-group btn-group-justified annotation-next-prev" disable role="group">
 												<div class="btn-group" role="group">
-													<a class="btn btn-default" data-bind="click: prevLink, attr: {disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Prev</span>'" role="button"></a>
+													<a class="btn btn-default btn-prf-annotation-prev" data-bind="click: prevLink, attr: { href: '#/profiles/' + sourceKey() + '/' + prevSubjectId() + '/' + cohortId() + '/' + sampleId(), disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Prev</span>'" role="button"></a>
 												</div>
 												<div class="btn-group" role="group">
-													<a class="btn btn-default" data-bind="click: nextLink, attr: {disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Next</span>'" role="button"></a>
+													<a class="btn btn-default btn-prf-annotation-next" data-bind="click: nextLink, attr: {href: '#/profiles/' + sourceKey() + '/' + nextSubjectId() + '/' + cohortId() + '/' + sampleId(), disabled: !navigationLoaded() }, html: !navigationLoaded() ? 'Loading': '<span>Next</span>'" role="button"></a>
 												</div>
 											</div>
 <!--											<div class="annotation-progress">-->

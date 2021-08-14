@@ -21,7 +21,7 @@ define(['knockout', './Annotation', 'services/Annotation'], function (ko, Annota
                             });
                     } else {
                         self.annotation = new Annotation(set, personId, cohortId, sourceKey, [], null, annotationView, sampleName);
-                        self.annotationLoaded(false);
+                        self.annotationLoaded(true);
                     }
                 });
         };

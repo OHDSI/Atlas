@@ -120,9 +120,11 @@ define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, S
               if (sampleName.indexOf(' ') >=0) {
               sampleName  = sampleName.split(" ").join('_');
             }
-            self.annotationSaving(false );
+            self.annotationSaving(false);
             //window.location = `#/profiles/${sourceKey}/${ko.toJS(annotationView).navigation.nextSubjectId}/${cohortId}/${sampleName}`;
             self.nav.nextLink();
+          }).catch((error) => {
+            self.annotationSaving(false);
           });
       }
     }

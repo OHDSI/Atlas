@@ -81,6 +81,34 @@ define(function (require, exports) {
 
         return response;
     };
+
+    const getSetsBySampleId = function(sampleId) {
+        // http://localhost:8080/WebAPI/annotations?cohortSampleId=6
+        return httpService.doGet(`${config.webAPIRoot}annotations?cohortSampleId=${sampleId}`)
+            .then((resp) => {
+                const sets = new Set();
+                resp.data.forEach((x, i) => {
+                    sets.add(x.questionSetId);
+                });
+                return Array.from(sets);
+            })
+            .catch(er => {
+                console.error("unable to load sets");
+                console.log(er);
+                });
+    };
+
+    const getAnnotationsBySampleIdSetId = function(sampleId, setId) {
+        // http://localhost:8080/WebAPI/annotations?cohortSampleId=6
+        return httpService.doGet(`${config.webAPIRoot}annotations?cohortSampleId=${sampleId}&setId=${setId}`)
+            .then((res) => {
+                return res.data;
+            })
+            .catch(er => {
+                console.error("unable to load sets");
+                console.log(er);
+            });
+    };
   
     const getAnnotationNavigation = function(sampleName, cohort, subject, source) {
       const data = {
@@ -112,6 +140,8 @@ define(function (require, exports) {
   
     return {
         getAnnotationSets,
+        getSetsBySampleId,
+        getAnnotationsBySampleIdSetId,
         getStudySets,
         getSuperTable,
         getStudyResults,
