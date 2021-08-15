@@ -231,6 +231,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.addQuestionSet = function() {
             // self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
             self.valTabMode(NEW_QUESTION_SET_VIEW);
+            self.questionSet.initialize();
         };
 
 

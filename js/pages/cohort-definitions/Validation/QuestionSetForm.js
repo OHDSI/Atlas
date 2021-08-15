@@ -3,7 +3,7 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
         var self = this;
         self.questions = ko.observableArray([]);
         self.questionSetName = ko.observable();
-        self.questionTypes = ko.observableArray(['Checkbox', 'Radio Button', 'Text']);
+        self.questionTypes = ko.observableArray(['Text', 'Radio Button', 'Checkbox']);
         self.bools = ko.observableArray(['true', 'false']);
         self.errorMessage = ko.observable();
 
@@ -32,11 +32,25 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
             self.removeAnswer = function(item) {
                 self.answers.remove(item);
             };
+
+            self.questionTypeChanged = function(obj, evt) {
+                if (obj !== 'Text') {
+                    if (self.answers().length === 0) {
+                        self.addAnswer();
+                    }
+                }
+            };
         }
 
         self.addQuestion = function() {
             self.questions.push(new Question());
         };
+
+        self.initialize = function() {
+            self.addQuestion();
+        };
+
+
         self.removeQuestion = function(item) {
             self.questions.remove(item);
         };

@@ -22,6 +22,10 @@ define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, V
             return self.questionSetForm.createQuestionSet(sn);
         };
 
+        self.initialize = function() {
+            self.questionSetForm.initialize();
+        };
+
 
         self.showSelectedQset = function() {
             for (var i = 0; i < self.setQuestions.length; i++) {
