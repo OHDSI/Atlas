@@ -374,7 +374,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.validationTool = ko.pureComputed(() => {
                 if (this.currentCohortDefinition()) {
                 	console.log('init validation tool');
-                    return new ValidationTool(this.currentCohortDefinition().id(), this.currentCohortDefinition().name());
+                    return new ValidationTool(this.currentCohortDefinition().id(), this.currentCohortDefinition().name(),
+						this.sourceAnalysesStatus, this.reportSourceKey(), this.sampleSourceKey());
                 }
             });
 

@@ -1,5 +1,5 @@
 define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet', 'utils/CsvUtils'], function (ko, ValidationService, annotationService, QuestionSet, CsvUtils) {
-    function ValidationTool(id, cohortName) {
+    function ValidationTool(id, cohortName, sourceStatus, reportSource, sampleSource) {
         var self = this;
         var DEFAULT_VALIDATION_VIEW = 'show_qsets';
         var NEW_QUESTION_SET_VIEW = 'new_qset';
@@ -12,7 +12,18 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.showCreateValidationSet = ko.observable(false);
         self.errorMessage = ko.observable('');
 
-        self.sampleSourceKey = ko.observable();
+        if (!sampleSource) {
+            let k = Object.keys(sourceStatus);
+            if (k.length === 1) {
+                sampleSource = k[0];
+            }
+        }
+
+        if (!sampleSource && reportSource) {
+            sampleSource = reportSource;
+        }
+
+        self.sampleSourceKey = ko.observable(sampleSource);
         self.sampleSize = ko.observable();
         self.sampleName = ko.observable();
         self.samples = ko.observableArray([]);
@@ -50,7 +61,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 title: 'Actions',
                 sortable: false,
                 render: function() {
-                    return `<button class="btn btn-danger btn-sm annotation-set-delete-btn" ><i class="fa fa-trash"></i> Delete</button>`;
+                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button class="btn btn-danger btn-sm annotation-set-delete-btn" disabled><i class="fa fa-trash"></i> Delete</button>`;
                 }
             }
         ];
@@ -76,7 +87,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 title: 'Actions',
                 sortable: false,
                 render: function() {
-                    return `<button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-table"></i> View Results</button>`;
+                    return `<button class="btn btn-primary btn-sm annotation-study-launch-btn" ><i class="fa fa-arrow-circle-right"></i> Launch Study</button> <button class="btn btn-success btn-sm annotation-study-view-btn" ><i class="fa fa-table"></i> View Results</button>`;
                 }
             }
 
@@ -143,16 +154,18 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
             const items = self.filterSet();
             if (items !== undefined && items.length > 0) {
                 var result = items[0];
-                if (e.target.className === 'btn btn-primary btn-sm annotation-set-view-btn') {
+                if (e.target.className === 'btn btn-success btn-sm annotation-set-view-btn') {
                     // id, cohortName, qSetId, qSetName, qSetQuestions, mode
                     // self.questionSet = new QuestionSet(id, cohortName, result.id, result.name, result.questions, 'VIEW');
                     setTimeout(() => {
-                        self.questionSet.showSelectedQset();
+                                self.questionSet.showSelectedQset();
                         self.valTabMode(SELECTED_QUESTION_SET_VIEW);
                         // if you don't do this, ko complains.
                     }, 250);
                 } else if (e.target.className === 'btn btn-danger btn-sm annotation-set-delete-btn') {
                     console.log('delete it');
+                } else if (e.target.className === 'btn btn-primary btn-sm annotation-set-samples-btn') {
+                    console.log('show samples from question sets');
                 }
             }
 
@@ -161,23 +174,46 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.onAnnotationStudyListClick = function(d, e) {
             var questionSetId = d.questionSetId;    
             var cohortSampleId = d.cohortSampleId;
-            self.studyResultsLoading(true);
-            self.studyResultsModalShown(true);
 
-            if (e.target.className === "btn btn-success btn-sm annotation-set-view-btn") {
+
+            if (e.target.className === "btn btn-success btn-sm annotation-study-view-btn") {
+                self.studyResultsLoading(true);
+                self.studyResultsModalShown(true);
                 var superTable = annotationService.getSuperTable(questionSetId, cohortSampleId)
                     .catch(() => {
                         console.error('Error when loading super table results, please try again later');
                     });
                 if (superTable !== undefined) {
                     superTable.then(res => {
-                        var filtered = res.filter(r => (r.cohortSampleId === cohortSampleId && r.questionSetId === questionSetId));
-                        self.studySetResults(filtered);
+                        //var filtered = res.filter(r => (r.cohortSampleId === cohortSampleId && r.questionSetId === questionSetId));
+                        var mapped = res.map((r) => {
+                            r['dataSourceId'] =  r['dataSourceKey'];
+                            r['cohortSampleId'] = cohortSampleId;
+                            r['questionSetId'] = questionSetId;
+                            return r;
+                        });
+                        self.studySetResults(mapped);
 
                     }).finally(() => {
                         self.studyResultsLoading(false);
                     });
                 }
+            } else if (e.target.className === "btn btn-primary btn-sm annotation-study-launch-btn") {
+                annotationService.getAnnotationsBySampleIdSetId(cohortSampleId, questionSetId)
+                    .then((items) => {
+                        if (items.length > 0) {
+                            let item = items[0];
+                            let source = self.sampleSourceKey();
+                            if (!source) {
+                                alert('Please select a source from the Samples tab');
+                            } else {
+
+                                window.open(`#/profiles/${source}/${item.subjectId}/${self.cohortId}/${cohortSampleId}`);
+                            }
+
+                        }
+                    });
+
             }
 
         };
