@@ -533,11 +533,11 @@
 																</div>
 																<div class="col-sm-2">
 																	<label>Case Question</label>
-																	<select class="form-control" data-bind="options: $parent.bools(), value: caseQuestion"></select>
+																	<select class="form-control" data-bind="options: $parent.caseBools(), value: caseQuestion"></select>
 																</div>
 																<div class="col-sm-2" style="margin-top: 23px;">
 <!--																	<button class="btn btn-success btn-sm" data-bind="click: addAnswer, disable: type() == 'Text' || type() == undefined"><i class="fa fa-plus"></i></button>-->
-																	<button class="btn btn-success btn-sm" data-bind="click: $parent.addQuestion"><i class="fa fa-plus"></i></button>
+																	<button class="btn btn-success btn-sm" title="Add Question" data-bind="click: $parent.addQuestion"><i class="fa fa-plus"></i></button>
 																	<button class="btn btn-danger btn-sm" title="Delete Question" data-bind="click: $parent.removeQuestion"><i class="fa fa-trash-o"></i></button>
 																</div>
 															</div>
@@ -548,7 +548,7 @@
 																			<input class="form-control" type="text" data-bind="value: text" placeholder="Answer Text">
 																		</div>
 																		<div class="col-sm-1" style="margin-top: 4px;">
-																			<button class="btn btn-success btn-sm" data-bind="click: $parent.addAnswer, disable: $parent.type() == 'Text' || $parent.type() == undefined"><i class="fa fa-plus"></i></button>
+																			<button class="btn btn-success btn-sm" title="Add Answer" data-bind="click: $parent.addAnswer, disable: $parent.type() == 'Text' || $parent.type() == undefined"><i class="fa fa-plus"></i></button>
 																			<button class="btn btn-danger btn-sm" title="Delete Answer" data-bind="click: $parent.removeAnswer"><i class="fa fa-trash-o"></i></button>
 
 																			<!--																			<u><a data-bind="click: $parent.removeAnswer" style="color: red;">remove</a></u>-->

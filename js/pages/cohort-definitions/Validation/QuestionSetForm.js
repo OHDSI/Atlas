@@ -5,6 +5,7 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
         self.questionSetName = ko.observable();
         self.questionTypes = ko.observableArray(['Text', 'Radio Button', 'Checkbox']);
         self.bools = ko.observableArray(['true', 'false']);
+        self.caseBools = ko.observableArray(['false', 'true']);
         self.errorMessage = ko.observable();
 
 
