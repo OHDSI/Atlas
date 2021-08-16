@@ -62,7 +62,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 title: 'Actions',
                 sortable: false,
                 render: function() {
-                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button disabled="true" class="btn btn-danger btn-sm annotation-set-delete-btn"><i class="fa fa-trash"></i> Delete</button>`;
+                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button disabled="true" class="disabled btn btn-danger btn-sm annotation-set-delete-btn"><i class="fa fa-trash"></i> Delete</button>`;
                 }
             }
         ];
