@@ -205,6 +205,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
             const sampleId = d['id'];
             const sourceKey = self.sampleSourceKey();
             const cohortDefinitionId = self.cohortId;
+            const setId = self.clickedSet();
             if (e.target.className === "btn btn-success btn-sm sample-study-launch-btn") {
                 self.isSampleLinking(true);
                 const btn = e.target;
@@ -213,12 +214,12 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 btn.disabled = true;
                 annotationService.getSetsBySampleId(sampleId)
                     .then((items) => {
-                        return items.includes(d['id']);
+                        return items.includes(setId);
                     })
                     .then((linked) => {
                         if (linked) {
                             status.textContent = "Launching study...";
-                            annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
+                            annotationService.getAnnotationsBySampleIdSetId(sampleId, setId)
                                 .then((items) => {
                                     if (items.length > 0) {
                                         window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
@@ -247,13 +248,13 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                                 'sampleId': sampleId,
                                 'cohortDefinitionId': cohortDefinitionId,
                                 'sourceKey': sourceKey,
-                                'annotationSetId': d.id
+                                'annotationSetId': setId
                             })
                                 .then(res => {
                                     status.textContent = "Launching Study...";
                                     console.log('posted annotation sample link');
                                     console.log(res);
-                                    annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
+                                    annotationService.getAnnotationsBySampleIdSetId(sampleId, setId )
                                         .then((items) => {
                                             if (items.length > 0) {
                                                 window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
