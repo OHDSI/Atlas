@@ -1,4 +1,5 @@
-define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet', 'utils/CsvUtils'], function (ko, ValidationService, annotationService, QuestionSet, CsvUtils) {
+define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet', 'utils/CsvUtils', 'services/Sample'],
+    function (ko, ValidationService, annotationService, QuestionSet, CsvUtils, sampleService) {
     function ValidationTool(id, cohortName, sourceStatus, reportSource, sampleSource) {
         var self = this;
         var DEFAULT_VALIDATION_VIEW = 'show_qsets';
@@ -44,6 +45,11 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.selectResult = ko.observable();
 
         self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
+
+        self.annotationSampleLoading = ko.observable(false);
+        self.annotationSampleLinkShown = ko.observable(false);
+        self.isSampleLinking = ko.observable(false);
+        self.sampleSets = ko.observableArray([]);
 
         self.validationAnnotationSetCols = [
             {
@@ -140,6 +146,28 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
             }
         ];
 
+        self.sampleCols = [
+            {
+                title: 'ID',
+                data: 'id'
+            },
+            {
+                title: 'Sample Name',
+                data: 'name'
+            },
+            {
+                title: 'Sample Size',
+                data: 'size',
+            },
+            {
+                title: 'Actions',
+                sortable: false,
+                render: function() {
+                    return `<button class="btn btn-success btn-sm sample-study-launch-btn" ><i class="fa fa-arrow-circle-right"></i> Launch Study</button><span class="sample-status">`;
+                }
+            }
+        ];
+
         self.filterSet = ko.computed(function() {
             if(!self.clickedSet()) {
                 return undefined;
@@ -150,6 +178,119 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
             }
         });
 
+        self.getSampleList = function(cohortDefinitionId, sourceKey) {
+            this.annotationSampleLoading(true);
+            this.annotationSampleLinkShown(true);
+            sampleService.getSampleList({cohortDefinitionId, sourceKey})
+                .then(res => {
+                    if(res.generationStatus !== "COMPLETE") {
+                        alert('Cohort should be generated before creating samples');
+                        return;
+                    }
+                    const sampleListData = res.samples;
+                    this.sampleSets(sampleListData);
+                })
+                .catch(error=>{
+                    console.error(error);
+                    alert('Error when fetching sample list, please try again later');
+                })
+                .finally(() => {
+                    this.annotationSampleLoading(false);
+                });
+        };
+
+
+
+        self.onSampleRowClick = function(d, e) {
+            const sampleId = d['id'];
+            const sourceKey = self.sampleSourceKey();
+            const cohortDefinitionId = self.cohortId;
+            if (e.target.className === "btn btn-success btn-sm sample-study-launch-btn") {
+                self.isSampleLinking(true);
+                const btn = e.target;
+                const status = btn.nextSibling;
+                status.textContent = "Retrieving study information...";
+                btn.disabled = true;
+                annotationService.getSetsBySampleId(sampleId)
+                    .then((items) => {
+                        return items.includes(d['id']);
+                    })
+                    .then((linked) => {
+                        if (linked) {
+                            status.textContent = "Launching study...";
+                            annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
+                                .then((items) => {
+                                    if (items.length > 0) {
+                                        window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
+                                        location.reload();
+                                    } else {
+                                        console.error(error);
+                                        status.textContent = "Error launching study!";
+                                        btn.disabled = false;
+                                        alert('Error launching sample to annotations. Please try again later.');
+                                    }
+                                })
+                                .catch(error=>{
+                                    console.error(error);
+                                    status.textContent = "Error launching study!";
+                                    btn.disabled = false;
+                                    alert('Error launching sample to annotations. Please try again later.');
+                                })
+                                .finally(() => {
+                                    self.isSampleLinking(false);
+                                    self.annotationSampleLinkShown(false);
+                                })
+                        }
+                        else {
+                            status.textContent = "Creating study...";
+                            annotationService.linkAnnotationToSamples({
+                                'sampleId': sampleId,
+                                'cohortDefinitionId': cohortDefinitionId,
+                                'sourceKey': sourceKey,
+                                'annotationSetId': d.id
+                            })
+                                .then(res => {
+                                    status.textContent = "Launching Study...";
+                                    console.log('posted annotation sample link');
+                                    console.log(res);
+                                    annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
+                                        .then((items) => {
+                                            if (items.length > 0) {
+                                                window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
+                                                location.reload();
+                                            } else {
+                                                console.error(error);
+                                                status.textContent = "Error launching study!";
+                                                btn.disabled = false;
+                                                alert('Error launching sample to annotations. Please try again later.');
+                                            }
+                                        })
+                                        .catch(error=>{
+                                            console.error(error);
+                                            status.textContent = "Error launching study!";
+                                            btn.disabled = false;
+                                            alert('Error launching sample to annotations. Please try again later.');
+                                        })
+                                        .finally(() => {
+                                            self.isSampleLinking(false);
+                                            self.annotationSampleLinkShown(false);
+                                        })
+                                })
+                                .catch(error=>{
+                                    console.error(error);
+                                    status.textContent = "Error creating study!";
+                                    btn.disabled = false;
+                                    alert('Error linking sample to annotations. Please try again later.');
+                                })
+                                .finally(() => {
+                                    self.isSampleLinking(false);
+                                    self.annotationSampleLinkShown(false);
+                                });
+                        }
+                    });
+            }
+        };
+
         self.onValidationAnnotationListClick = function(d, e) {
             self.clickedSet(d.id);
             const items = self.filterSet();
@@ -159,9 +300,9 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 if (e.target.className === 'btn btn-success btn-sm annotation-set-view-btn') {
                     self.valTabMode(SELECTED_QUESTION_SET_VIEW);
                 } else if (e.target.className === 'btn btn-danger btn-sm annotation-set-delete-btn') {
-                    console.log('delete it');
+                    console.log('delete not yet implemented');
                 } else if (e.target.className === 'btn btn-primary btn-sm annotation-set-samples-btn') {
-                    console.log('show samples from question sets');
+                    self.getSampleList(self.cohortId, self.sampleSourceKey());
                 }
             }
 

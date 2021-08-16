@@ -364,6 +364,30 @@
 			</div>
 			<div role="tabpanel " data-bind="css: { active: tabMode()=='validate' }" class="tab-pane ">
 				<div data-bind="with: validationTool">
+					<atlas-modal params="{
+									showModal: annotationSampleLinkShown,
+									title: 'Create Study',
+									data: {
+										annotationSampleLoading: annotationSampleLoading,
+										sampleSets: sampleSets,
+										sampleCols: sampleCols,
+										onSampleRowClick: onSampleRowClick,
+										isSampleLinking: isSampleLinking
+									}
+								}">
+												<div>
+													<loading data-bind="visible: annotationSampleLoading()"></loading>
+													<faceted-datatable data-bind="visible: !annotationSampleLoading()"
+																	   params="{
+													reference: sampleSets,
+													columns: sampleCols,
+													order: [[0,'asc']],
+													rowClick: onSampleRowClick,
+												}"
+													/>
+
+												</div>
+					</atlas-modal>
 					<div role="tabpanel" data-bind="css: {active: $component.tabMode()=='validate'}">
 						<div class="tab-content">
 							<div>
