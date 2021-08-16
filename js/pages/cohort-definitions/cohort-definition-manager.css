@@ -119,3 +119,10 @@
     padding-left: 10px;
 }
 
+.annotation-view-bullet {
+    list-style-type: none;
+}
+
+.annotation-view-header {
+    padding-left: 15px;
+}

@@ -153,6 +153,8 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
 
 
         };
+
+        self.initialize();
     }
     QuestionSetForm.prototype.constructor = QuestionSetForm;
     return QuestionSetForm;

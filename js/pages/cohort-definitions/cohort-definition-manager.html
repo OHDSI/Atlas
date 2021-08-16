@@ -364,33 +364,7 @@
 			</div>
 			<div role="tabpanel " data-bind="css: { active: tabMode()=='validate' }" class="tab-pane ">
 				<div data-bind="with: validationTool">
-<!--					<div class="paddedWrapper">-->
-<!--						<div class="panel panel-primary">-->
-<!--							<div class="panel-heading">-->
-<!--								Select Source-->
-<!--							</div>-->
-<!--							<div class="panel-body">-->
-<!--								<div class="row">-->
-<!--									<div class="col-sm-3">-->
-<!--										<select class="form-control" data-bind="css : { invalid: sampleSourceKey()==undefined }, options: $component.cdmSources(), optionsValue:'sourceKey', optionsText:'sourceName', value: sampleSourceKey, optionsCaption:'Select a Source'"></select>-->
-<!--									</div>-->
-<!--								</div>-->
-<!--							</div>-->
-<!--						</div>-->
-<!--					</div>-->
 					<div role="tabpanel" data-bind="css: {active: $component.tabMode()=='validate'}">
-<!--						<div data-bind="with: questionSet">-->
-<!--							<ul class="nav nav-pills">-->
-<!--								<li role="presentation" data-bind="css: { active: $parent.valTabMode() == 'qset' }, click: function() {$parent.valTabMode('qset'); }">-->
-<!--									<a>Question Sets</a>-->
-<!--								</li>-->
-<!--								<li role="presentation" data-bind="css: { active: $parent.valTabMode() == 'validate' }, visible: qset().length > 0, click: function() {$parent.valTabMode('validate'); $parent.getSamples()}">-->
-<!--									<a>Validate</a>-->
-<!--								</li>-->
-<!--							</ul>-->
-<!--						</div>-->
-
-
 						<div class="tab-content">
 							<div>
 								<div data-bind="with: questionSet">
@@ -455,33 +429,32 @@
 										<div class="validation-section">
 											<button class="btn btn-primary btn-sm" style="margin-left:16px" data-bind="click: goBack($parent)"><i class="fa fa-arrow-left"></i> Back</button>
 										</div>
-										<div class="panel-body">
-											<div class="row" data-bind="with: qset, visible: qset !== undefined">
-												<h5 data-bind="text: text"></h5>
-												<div class="row">
-													<div class='col-3'>
-														<h6>Question Info</h6>
-														<ul>
-															<li data-bind="text: type"></li>
-															<li data-bind="text: req"></li>
-															<li data-bind="text: caseQ"></li>
-														</ul>
-														
+										<div>
+											<h4 class="annotation-view-header" data-bind="text:qsetName"></h4>
+											<ul class="annotation-view-bullet" data-bind="foreach: { data: questionItems, as: 'item' }">
+												<li class="row" >
+													<h5 data-bind="text: item.text"></h5>
+													<div class="row">
+														<div class='col-3'>
+															<h6>Question Info</h6>
+															<ul>
+																<li data-bind="text: item.type"></li>
+																<li data-bind="text: item.req"></li>
+																<li data-bind="text: item.caseQ"></li>
+																</ul>
+
+														</div>
+														<div class='col-3'>
+															<h6>Answer Options</h6>
+															<ul data-bind="foreach: {data: item.answers, as: 'answer'}">
+																<li data-bind="text: answer"></li>
+															</ul>
+														</div>
+
 													</div>
-													<div class='col-3'>
-														<h6>Answer Options</h6>
-														<ul data-bind="foreach: {data: answers, as: 'answer'}">
-															<li data-bind="text: answer"></li>
-														</ul>
-													</div>
-													
-												</div>
-				
-											</div>
-											
-											<!-- <div class="row">
-												<button class="btn btn-success btn-sm" data-bind="visible: $parent.sampleSourceKey() != undefined && qset().length != 0, click: function() {createQsetRedirect()}">Create New Question Set</button>
-											</div>									 -->
+
+												</li>
+											</ul>
 										</div>
 									</div>
 
@@ -502,10 +475,6 @@
 
 												</div>
 												<div class="row">
-
-<!--													<div class="col-sm-2"  style="margin-top: 2px;">-->
-<!--														<button class="btn btn-success btn-sm" data-bind="click: addQuestion"><i class="fa fa-plus"></i> Add Question</button>-->
-<!--													</div>-->
 													<div class="col-sm-12" style="margin-top: 7px;">
 														<span data-bind="text: errorMessage()" style="color: red;"></span>
 													</div>
@@ -570,85 +539,7 @@
 								</div>
 
 							</div>
-<!--							<div role="tabpanel" data-bind="css:{active: valTabMode()=='validate'}" class="tab-pane">-->
-<!--								<br>-->
-<!--								<div class="row mt-5">-->
-<!--									&lt;!&ndash; <button class="btn btn-success btn-sm" data-bind="disable: sampleSourceKey() == undefined , click: toggleCreateValSet">Create Validation Set</button> &ndash;&gt;-->
-<!--								</div>-->
-<!--								<div class="panel panel-primary">-->
-
-<!--									<div class="panel-heading">-->
-<!--										Create New Validation Sample-->
-<!--									</div>-->
-<!--									<div class="panel-body">-->
-<!--										<div class="row">-->
-<!--											<div class="col-sm-3">-->
-<!--												<input class="form-control" type="text" data-bind="value: sampleName, disable: sampleSourceKey() == undefined" placeholder="Name">-->
-<!--											</div>-->
-<!--											<div class="col-sm-3">-->
-<!--													<input class="form-control" type="number" data-bind="value: sampleSize, disable: sampleSourceKey() == undefined" placeholder="Sample Size">-->
-<!--											</div>-->
-<!--											<div class="col-sm-3">-->
-<!--													<button class="btn btn-success btn-sm" data-bind="disable: sampleSize() == undefined || sampleName == undefined, click: newValSample">Create Sample</button>-->
-<!--											</div>-->
-<!--											<div class="col-sm-3">-->
-<!--												<span data-bind="text: errorMessage" style="color: red"></span>-->
-<!--											</div>-->
-<!--										</div>-->
-<!--									</div>-->
-<!--								</div>-->
-
-<!--								<div class="panel panel-primary" data-bind="visible: sampleSourceKey()!=undefined">-->
-<!--									<div class="panel-heading">-->
-<!--										Validation Set-->
-<!--									</div>-->
-<!--									<div class="panel-body">-->
-
-<!--										<table class="table">-->
-<!--											<th>Annotation Study Name</th>-->
-<!--											<th>Num Patients</th>-->
-<!--											<th>Annotated</th>-->
-<!--											<th>Validate</th>-->
-<!--											<th>View</th>-->
-<!--											<th>Export</th>-->
-<!--											<th>Submit Metadata</th>-->
-<!--											<tbody data-bind="foreach: samples">-->
-<!--												<tr>-->
-<!--													<td data-bind="text: name"></td>-->
-<!--													<td data-bind="text: size"></td>-->
-<!--													<td data-bind="text: annotated"></td>-->
-<!--													<td><a type="button" class="btn btn-success btn-sm" data-bind="attr: {href: $data.url}">Validate</a></td>-->
-<!--													<td><a type="button" class="btn btn-success btn-sm" data-bind="click: function() {$parent.fixSamples($index)}">View</a></td>-->
-<!--													<td><a type="button" class="btn btn-success btn-sm" data-bind="click: function() {$parent.exportAnnotations($data.name)}">Export</a></td>-->
-<!--													<td><a type="button" class="btn btn-success btn-sm">Submit Metadata</a></td>-->
-<!--												</tr>-->
-<!--											</tbody>-->
-<!--										</table>-->
-<!--									</div>-->
-<!--								</div>-->
-
-<!--								<div class="panel panel-primary" data-bind="visible: display_sample().length > 0 && sampleSourceKey()!=undefined">-->
-<!--									<div class="panel-heading">-->
-<!--										Selected Set-->
-<!--									</div>-->
-<!--									<div class="panel-body">-->
-
-<!--										<table class="table">-->
-<!--											<th>Profile Number</th>-->
-<!--											<th>Annotated</th>-->
-<!--											<th>Validate</th>-->
-<!--											<tbody data-bind="foreach: display_sample">-->
-<!--												<tr>-->
-<!--													<td data-bind="text: id"></td>-->
-<!--													<td data-bind="text: ann"></td>-->
-<!--													<td><a type="button" class="btn btn-success btn-sm" data-bind="attr: {href: $data.url}">Validate</a></td>-->
-<!--												</tr>-->
-<!--											</tbody>-->
-<!--										</table>-->
-<!--									</div>-->
-<!--								</div>-->
-<!--							</div>-->
-						</div> 
+						</div>
 					</div>
 				</div>
 			</div>

@@ -41,6 +41,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
         self.studyResultsModalShown = ko.observable(false);
         self.studyResultsLoading = ko.observable(false);
         self.studySetResults = ko.observableArray([]);
+        self.selectResult = ko.observable();
 
         self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
 
@@ -61,7 +62,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 title: 'Actions',
                 sortable: false,
                 render: function() {
-                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button class="btn btn-danger btn-sm annotation-set-delete-btn" disabled><i class="fa fa-trash"></i> Delete</button>`;
+                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button disabled="true" class="btn btn-danger btn-sm annotation-set-delete-btn"><i class="fa fa-trash"></i> Delete</button>`;
                 }
             }
         ];
@@ -154,14 +155,9 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
             const items = self.filterSet();
             if (items !== undefined && items.length > 0) {
                 var result = items[0];
+                self.selectResult(result);
                 if (e.target.className === 'btn btn-success btn-sm annotation-set-view-btn') {
-                    // id, cohortName, qSetId, qSetName, qSetQuestions, mode
-                    // self.questionSet = new QuestionSet(id, cohortName, result.id, result.name, result.questions, 'VIEW');
-                    setTimeout(() => {
-                                self.questionSet.showSelectedQset();
-                        self.valTabMode(SELECTED_QUESTION_SET_VIEW);
-                        // if you don't do this, ko complains.
-                    }, 250);
+                    self.valTabMode(SELECTED_QUESTION_SET_VIEW);
                 } else if (e.target.className === 'btn btn-danger btn-sm annotation-set-delete-btn') {
                     console.log('delete it');
                 } else if (e.target.className === 'btn btn-primary btn-sm annotation-set-samples-btn') {
@@ -261,13 +257,17 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
             if (mode === DEFAULT_VALIDATION_VIEW) {
                 self.loadAnnotationSets();
                 self.loadStudySets();
+            } else if (mode === SELECTED_QUESTION_SET_VIEW) {
+                let result = self.selectResult();
+                self.questionSet.resetValues(id, cohortName, result.id, result.name, result.questions, 'VIEW');
+
             }
         });
 
         self.addQuestionSet = function() {
-            // self.questionSet = new QuestionSet(id, cohortName, null, null, [], 'NEW');
+            self.questionSet.resetValues(id, cohortName, null, null, [], 'NEW');
+            // self.questionSet.initialize();
             self.valTabMode(NEW_QUESTION_SET_VIEW);
-            self.questionSet.initialize();
         };
 
 
