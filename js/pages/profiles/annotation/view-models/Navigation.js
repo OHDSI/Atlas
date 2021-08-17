@@ -1,6 +1,6 @@
 define(['knockout', './Navigation', 'services/Annotation'], function (ko, Navigation, annotationService) {
 
-    function Navigation(sampleName, cohortId, personId, sourceKey) {
+    function Navigation(sampleName, cohortId, personId, sourceKey, questionSetId) {
         var self = this;
         self.prevSubjectId = ko.observable();
         self.nextSubjectId = ko.observable();
@@ -12,17 +12,18 @@ define(['knockout', './Navigation', 'services/Annotation'], function (ko, Naviga
         self.sourceKey = ko.observable(sourceKey);
         self.cohortId = ko.observable(cohortId);
         self.personId = ko.observable(personId);
+        self.questionSetId = ko.observable(questionSetId);
 
         this.prevLink = function() {
 
-            window.location = `#/profiles/${sourceKey}/${self.prevSubjectId()}/${cohortId}/${sampleName}`;
+            window.location = `#/profiles/${sourceKey}/${self.prevSubjectId()}/${cohortId}/${sampleName}/${questionSetId}`;
             location.reload();
         };
         this.nextLink = function() {
             if (sampleName.indexOf(' ') >= 0) {
                 sampleName= sampleName.split(" ").join('_');
             }
-            window.location = `#/profiles/${sourceKey}/${self.nextSubjectId()}/${cohortId}/${sampleName}`;
+            window.location = `#/profiles/${sourceKey}/${self.nextSubjectId()}/${cohortId}/${sampleName}/${questionSetId}`;
             location.reload();
         };
 

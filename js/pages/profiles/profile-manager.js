@@ -76,8 +76,8 @@ define([
 				this.sourceKey = ko.observable(router.routerParams().sourceKey);
 				this.personId = ko.observable(router.routerParams().personId);
 
-				this.sampleName = this.url.toString().split("/");
-				this.sampleName = this.sampleName[this.sampleName.length-1].split('_').join(' ');
+				this.sampleName = ko.observable(router.routerParams().cohortSampleId);
+				this.questionSetId = ko.observable(router.routerParams().questionSetId);
 
 				this.personRecords = ko.observableArray();
 
@@ -347,12 +347,12 @@ define([
 				}
 				// BEGIN ANNOTATION
 				if (this.cohortDefinitionId()) {
-					this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName);
+					this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName(), this.questionSetId());
 				}
 
 				this.isAnnotationToggleVisible =  ko.computed(() => {
 					if (!this.annotationWidget) {
-						this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName);
+						this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName(), this.questionSetId());
 					}
 
 					if (this.annotationWidget) {

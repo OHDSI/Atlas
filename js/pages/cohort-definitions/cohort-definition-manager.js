@@ -1797,7 +1797,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 							annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
 								.then((items) => {
 									if (items.length > 0) {
-										window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
+										window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}/${d.id}`;
 										location.reload();
 									} else {
 										console.error(error);
@@ -1832,7 +1832,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 									annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
 										.then((items) => {
 											if (items.length > 0) {
-												window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
+												window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}/${d.id}`;
 												location.reload();
 											} else {
 												console.error(error);

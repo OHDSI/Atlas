@@ -1,9 +1,9 @@
 define(['knockout'], function (ko) {
 
-    function SetSelect(sets, annotationView, cohortId, personId, sourceKey, sampleName) {
+    function SetSelect(sets, annotationView, cohortId, personId, sourceKey, sampleName, questionSetId) {
       var self = this;
       self.currentSet = ko.observable({});
-      self.currentSetId = ko.observable();
+      self.currentSetId = ko.observable(questionSetId);
       self.currentSet.subscribe((set) => {
         self.currentSetId(set.id);
         localStorage.setItem('currentSetId', set.id);
@@ -14,16 +14,25 @@ define(['knockout'], function (ko) {
   
   
       self.initialize = function(sets) {
-        const currentSetIdFromLocalStorage = localStorage.getItem('currentSetId');
-        if (currentSetIdFromLocalStorage) {
-          const foundCurrentSet = ko.utils.arrayFirst(sets(), function(set) {
-            return set.id == currentSetIdFromLocalStorage;
-          })
-          foundCurrentSet ? self.currentSet(foundCurrentSet) : self.currentSet(sets()[0]);
+
+        let currentSetId = localStorage.getItem('currentSetId');
+        if (questionSetId) {
+          currentSetId = questionSetId;
+        }
+
+        if (currentSetId && currentSetId.length) {
+            const foundSet = sets().filter((val) => {
+                return val.id === parseInt(currentSetId);
+            });
+            if (foundSet.length > 0) {
+                self.currentSet(foundSet[0]);
+            } else {
+                self.currentSet(sets()[0]);
+            }
         } else {
           self.currentSet(sets()[0]);
         }
-      }
+      };
   
       self.initialize(self.sets);
     }

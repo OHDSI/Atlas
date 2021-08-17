@@ -222,7 +222,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                             annotationService.getAnnotationsBySampleIdSetId(sampleId, setId)
                                 .then((items) => {
                                     if (items.length > 0) {
-                                        window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
+                                        window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}/${setId}`;
                                         location.reload();
                                     } else {
                                         console.error(error);
@@ -257,7 +257,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                                     annotationService.getAnnotationsBySampleIdSetId(sampleId, setId )
                                         .then((items) => {
                                             if (items.length > 0) {
-                                                window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}`;
+                                                window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}/${setId}`;
                                                 location.reload();
                                             } else {
                                                 console.error(error);
@@ -346,7 +346,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                                 alert('Please select a source from the Samples tab');
                             } else {
 
-                                window.open(`#/profiles/${source}/${item.subjectId}/${self.cohortId}/${cohortSampleId}`);
+                                window.open(`#/profiles/${source}/${item.subjectId}/${self.cohortId}/${cohortSampleId}/${questionSetId}`);
                             }
 
                         }

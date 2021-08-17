@@ -4,7 +4,7 @@ define(['knockout'], function (ko) {
       var self = this;
       self.questionId = ko.observable();
   
-      if (result.type == 'MULTI_SELECT') {
+      if (result.type === 'MULTI_SELECT') {
         self.value = ko.observableArray();
         self.value(result.value ? result.value : []);
       } else {
@@ -19,7 +19,7 @@ define(['knockout'], function (ko) {
   
       self.validate = function(value) {
         return ((value && !Array.isArray(value)) || (Array.isArray(value) && value.length > 0)) ? true : false;
-      }
+      };
   
       self.required = ko.observable(result.required);
       self.valid = ko.observable(true);

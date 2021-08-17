@@ -1,6 +1,6 @@
 define(['knockout', './Set', './Result', 'services/Annotation'], function (ko, Set, Result, annotationService) {
 
-    function Annotation(set, subjectId, cohortId, sourceKey, rawResults, annotationId, annotationView, sampleName) {
+    function Annotation(set, subjectId, cohortId, sourceKey, rawResults, annotationId, annotationView, sampleName, questionSetId) {
       var self = this;
       self.set = new Set(set);
       self.setId = set.id;
