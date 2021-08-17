@@ -1,5 +1,5 @@
 # Build the source
-FROM node:12-alpine as builder
+FROM node:14-alpine as builder
 
 WORKDIR /code
 
@@ -26,7 +26,7 @@ RUN find . -type f "(" \
       | xargs -0 -n 1 gzip -kf
 
 # Production Nginx image
-FROM nginxinc/nginx-unprivileged:1.19-alpine
+FROM nginxinc/nginx-unprivileged:1.20-alpine
 
 LABEL org.opencontainers.image.title="OHDSI-Atlas"
 LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
@@ -37,7 +37,8 @@ LABEL org.opencontainers.image.vendor="OHDSI"
 LABEL org.opencontainers.image.source="https://github.com/OHDSI/Atlas"
 
 # URL where WebAPI can be queried by the client
-ENV WEBAPI_URL=http://localhost:8080/WebAPI/
+ENV WEBAPI_URL=http://localhost:8080/WebAPI/ \
+  CONFIG_PATH=/etc/atlas/config-local.js
 
 # Configure webserver
 COPY ./docker/optimization.conf /etc/nginx/conf.d/optimization.conf
