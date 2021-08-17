@@ -137,8 +137,12 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 data: 'questionText'
             },
             {
-                title: 'Answer',
-                data: 'value'
+                title: 'Answer Value',
+                data: 'answerValue'
+            },
+            {
+                title: 'Answer Text',
+                data: 'answerText'
             },
             {
                 title: 'Case Status',
