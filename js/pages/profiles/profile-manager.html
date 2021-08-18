@@ -195,7 +195,7 @@
 																</div>
 																<div class="answers answer-numeric" data-bind="if: type() == 'NUMERIC'">
 																	<div data-bind="foreach: answers">
-																		<input type="numeric" data-bind="textInput: $parents[2].results['question_'+$parent.id()].value"/>
+																		<input type="number" data-bind="textInput: $parents[2].results['question_'+$parent.id()].value"/>
 																	</div>
 																</div>
 																<div class="answers answer-date" data-bind="if: type() == 'DATE'">
