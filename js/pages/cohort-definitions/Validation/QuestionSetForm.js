@@ -3,8 +3,8 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
         var self = this;
         self.questions = ko.observableArray([]);
         self.questionSetName = ko.observable();
-        self.questionTypes = ko.observableArray(['Text', 'Radio Button', 'Checkbox']);
-        self.bools = ko.observableArray(['true', 'false']);
+        self.questionTypes = ko.observableArray(['Text', 'Radio Button', 'Checkbox','Numeric','Date']);
+        self.bools = ko.observableArray(['false', 'true']);
         self.caseBools = ko.observableArray(['false', 'true']);
         self.errorMessage = ko.observable();
 
@@ -26,7 +26,7 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
             self.answers = ko.observableArray([]);
 
             self.addAnswer = function() {
-                if (self.type() !== 'Text' && self.type() !== undefined) {
+                if ((self.type() !== 'Text' && self.type() !== 'Numeric' && self.type() !== 'Date') && self.type() !== undefined) {
                     self.answers.push(new Answer());
                 }
             };
@@ -35,7 +35,7 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
             };
 
             self.questionTypeChanged = function(obj, evt) {
-                if (obj !== 'Text') {
+                if (obj !== 'Text' && obj !== 'Numeric' && obj !== 'Date') {
                     if (self.answers().length === 0) {
                         self.addAnswer();
                     }
@@ -92,9 +92,10 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
                         self.errorMessage('Please do not leave any question field blank or unselected.');
                         break;
                     }
-                
+
+                const multipleAnswerType = (currentQuestionType !== 'Text' && currentQuestionType !== 'Numeric' && currentQuestionType !== 'Date');
                 //enforce that all have answers unless text
-                if (numAnswers === 0 && currentQuestionType !== 'Text') {
+                if (numAnswers === 0 && multipleAnswerType) {
                     self.errorMessage('Checkbox and radio button questions must have answers');
                     break;
                 }
@@ -103,7 +104,7 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
                 for (j=0; j< self.questions()[i].answers().length; j++) {
                     currentAnswer = self.questions()[i].answers()[j];
                     if (currentAnswer.text() == null && // || currentAnswer.helpText() == null) && 
-                        currentQuestionType !== 'Text') {
+                        multipleAnswerType) {
                         self.errorMessage('Please do not leave answers blank.');
                         break;
                     }
@@ -129,6 +130,14 @@ define(['knockout', 'services/Validation'], function (ko, ValidationService) {
                     self.questions()[i].answers.push(new Answer());
                     self.questions()[i].answers()[0].text = '';
                     self.questions()[i].type = 'TEXTAREA';
+                } else if (self.questions()[i].type() === 'Numeric') {
+                    self.questions()[i].answers.push(new Answer());
+                    self.questions()[i].answers()[0].text = '';
+                    self.questions()[i].type = 'NUMERIC';
+                } else if (self.questions()[i].type() === 'Date') {
+                    self.questions()[i].answers.push(new Answer());
+                    self.questions()[i].answers()[0].text = '';
+                    self.questions()[i].type = 'DATE';
                 } else if (self.questions()[i].type() === "Checkbox") {
                     self.questions()[i].type = 'MULTI_SELECT';
                     for (j=0; j< self.questions()[i].answers().length; j++) {
