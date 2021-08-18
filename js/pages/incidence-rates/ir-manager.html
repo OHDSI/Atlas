@@ -13,16 +13,20 @@
 			<div class="input-group ir-header">
 				<input type="text" class="form-control ir-name" data-bind="textInput: selectedAnalysis().name, css: { emptyInput: !isNameFilled() }, enable: isEditable, placeholder: ko.i18n('const.newEntityNames.incidenceRate', 'New Incidence Rate Analysis')"/>
 				<div class="input-group-btn" role="group">
-					<button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}, title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+					<button class="btn btn-success" data-bind="click: save, enable: canSave() && !isProcessing(), css: {disabled:!canSave() || isProcessing()}, title: previewVersion() ? ko.i18n('common.saveAsCurrentVersion', 'Save as current version') : ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
+					<button class="btn btn-primary"
+							data-bind="visible: previewVersion(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">
+						<i class="fa fa-undo"></i>
+					</button>
 					<button class="btn btn-primary" title="Close" data-bind="click: closeAndShowList, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
 					<!-- ko if: selectedAnalysis().id() != null -->
-					<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: isEditable(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
-					<button class="btn btn-primary" data-bind="click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
-					<button class="btn btn-primary" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
+					<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: isEditable() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
+					<button class="btn btn-primary" data-bind="visible: !previewVersion(), click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+					<button class="btn btn-primary" data-bind="visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
 						<i class="fa fa-lock"></i>
 					</button>
 					<!-- ko ifnot: isRunning -->
-					<button class="btn btn-danger" data-bind="click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable() || isProcessing() }, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
+					<button class="btn btn-danger" data-bind="visible: !previewVersion(), click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable() || isProcessing() }, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
 					<!-- /ko -->
 					<!-- /ko -->
 				</div>
@@ -45,13 +49,16 @@
 				<a data-bind="text: ko.i18n('ir.tabs.conceptSets', 'Concept Sets')"></a>
 			</li>
 
-			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.GENERATION }, click: function() { $component.selectTab(tabs.GENERATION) };">
+			<li role="presentation" data-bind="visible: !previewVersion(), css: { active: $component.activeTab() == tabs.GENERATION }, click: function() { $component.selectTab(tabs.GENERATION) };">
 				<a data-bind="text: ko.i18n('ir.tabs.generation', 'Generation')"></a>
 			</li>
 
-            <li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
+            <li role="presentation" data-bind="visible: !previewVersion(), css: { active: $component.activeTab() == tabs.UTILITIES }, click: function() { $component.selectTab(tabs.UTILITIES) };">
 				<a data-bind="text: ko.i18n('ir.tabs.utilities', 'Utilities')"></a>
             </li>
+			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.VERSIONS }, click: () => { $component.selectTab(tabs.VERSIONS); }">
+				<a data-bind="text: ko.i18n('ir.tabs.versions', 'Versions')"></a>
+			</li>
 			<li role="presentation" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }, click: function(){ $component.selectTab(tabs.WARNINGS); } ">
 				<a>
 					<span data-bind="text: ko.i18n('ir.tabs.messages', 'Messages')"></span>
@@ -130,6 +137,11 @@
 						 	exportSqlService: $component.exportSql"></export-sql>
 					</div>
                 </div>
+			</div>
+			<div role="tabpanel" data-bind="css: { active: $component.activeTab() === tabs.VERSIONS }" class="tab-pane">
+				<div class="paddedWrapper">
+					<div data-bind="component: { name: 'versions', params: $component.versionsParams }"></div>
+				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.WARNINGS }" class="tab-pane">
 				<div class="paddedWrapper">

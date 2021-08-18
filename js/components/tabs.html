@@ -7,6 +7,7 @@
 						element: 'header-title',
 						modifiers: ($component.selectedTab() == $index() ? 'selected' : null)
 					}),
+					hidden: $component.isTabHidden($data),
 					click: () => $component.selectTab($index(), $data)"
 				>
 					<div data-bind="text: $data.title"></div>

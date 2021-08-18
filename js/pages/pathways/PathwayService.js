@@ -98,6 +98,28 @@ define([
             .doPost(`${servicePath}/check`, design)
             .then(res => res.data);
 	}
+
+	function getVersions(id) {
+		return httpService.doGet(`${servicePath}/${id}/version/`)
+			.then(res => res.data);
+	}
+
+	function getVersion(id, versionNumber) {
+		return httpService.doGet(`${servicePath}/${id}/version/${versionNumber}`)
+			.then(res => res.data);
+	}
+
+	function copyVersion(id, versionNumber) {
+		return httpService.doPut(`${servicePath}/${id}/version/${versionNumber}/createAsset`)
+			.then(res => res.data);
+	}
+
+	function updateVersion(version) {
+		return httpService.doPut(`${servicePath}/${version.assetId}/version/${version.version}`, {
+			comment: version.comment,
+			archived: version.archived
+		}).then(res => res.data);
+	}
 	
 	return {
 		list,
@@ -116,5 +138,9 @@ define([
 		importPathwayDesign,
 		exists,
         runDiagnostics,
+		getVersions,
+		getVersion,
+		updateVersion,
+		copyVersion
 	};
 });

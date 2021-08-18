@@ -9,6 +9,12 @@ define(
             router.setCurrentView('ir-browser');
           });
         }),
+        '/iranalysis/:analysisId:/version/:version:': new AuthorizedRoute((analysisId, version) =>  {
+          require(['./ir-manager'], () => {
+            atlasState.IRAnalysis.selectedId(+analysisId);
+            router.setCurrentView('ir-manager', { analysisId, activeTab: 'definition', version });
+          });
+        }),
         '/iranalysis/:analysisId:/?((\w|.)*)': new AuthorizedRoute((analysisId, path) => {
           analysisId = parseInt(analysisId);
           path = path.split("/");

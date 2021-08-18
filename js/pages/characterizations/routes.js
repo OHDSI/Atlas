@@ -34,9 +34,17 @@ define(
 						router.setCurrentView('characterizations-list');
 					});
 				}),
+				'cc/characterizations/:id:/version/:version:': new AuthorizedRoute((id, version) => {
+					router.setCurrentView('characterization-view-edit', {
+						characterizationId: id,
+						section: 'design',
+						version: version
+					});
+				}),
 				'cc/characterizations/:id:': characterizationViewEdit,
 				'cc/characterizations/:id:/:section:': characterizationViewEdit,
 				'cc/characterizations/:id:/:section:/:subId:': characterizationViewEdit, // for executions
+
 				'cc/feature-analyses': new AuthorizedRoute(() => {
 					require(['./components/feature-analyses/feature-analyses-list'], function () {
 						router.setCurrentView('feature-analyses-list');

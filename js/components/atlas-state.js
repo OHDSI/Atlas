@@ -48,6 +48,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
 		selectedSourceId: ko.observable(null),
+		previewVersion: ko.observable(null),
 	}
 	state.IRAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.IRAnalysis.current()));
 
@@ -55,6 +56,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.CohortCharacterization = {
 		current: ko.observable(null),
 		selectedId: ko.observable(null),
+		previewVersion: ko.observable(null),
 	};
 	state.CohortCharacterization.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortCharacterization.current()));
 
@@ -72,7 +74,8 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	// Pathways State
 	state.CohortPathways = {
 		current: ko.observable(null),
-		selectedId: ko.observable(null)
+		selectedId: ko.observable(null),
+		previewVersion: ko.observable(null)
 	};
 	state.CohortPathways.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortPathways.current()));
 
@@ -115,6 +118,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.includedConceptsMap = ko.observable({});
 	state.includedSourcecodes = ko.observableArray();
 	state.currentConceptSetMode = ko.observable('details');
+	state.currentConceptSetPreviewVersion = ko.observable();
 	state.includedHash = ko.observable();
 
 	state.currentConceptIdentifierList = ko.observable();
@@ -127,6 +131,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		mode: ko.observable('definition'),
 		sourceInfo: ko.observableArray(),
 		lastUpdatedId: ko.observable(),
+		previewVersion: ko.observable()
 	};
 	state.CohortDefinition.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag({header: state.CohortDefinition.current}));
 	state.CohortDefinition.current.subscribe(newValue => {

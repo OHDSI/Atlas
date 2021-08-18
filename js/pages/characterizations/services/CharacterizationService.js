@@ -114,6 +114,28 @@ define([
             .then(res => res.data);
 	}
 
+    function getVersions(id) {
+        return httpService.doGet(`${config.webAPIRoot}cohort-characterization/${id}/version/`)
+            .then(res => res.data);
+    }
+
+    function getVersion(id, versionNumber) {
+        return httpService.doGet(`${config.webAPIRoot}cohort-characterization/${id}/version/${versionNumber}`)
+            .then(res => res.data);
+    }
+
+    function copyVersion(id, versionNumber) {
+        return httpService.doPut(`${config.webAPIRoot}cohort-characterization/${id}/version/${versionNumber}/createAsset`)
+            .then(res => res.data);
+    }
+
+    function updateVersion(version) {
+        return httpService.doPut(`${config.webAPIRoot}cohort-characterization/${version.assetId}/version/${version.version}`, {
+            comment: version.comment,
+            archived: version.archived
+        }).then(res => res.data);
+    }
+
     return {
         loadCharacterizationList,
         importCharacterization,
@@ -134,5 +156,9 @@ define([
         exists,
         exportConceptSets,
         runDiagnostics,
+        getVersions,
+        getVersion,
+        updateVersion,
+        copyVersion
     };
 });
