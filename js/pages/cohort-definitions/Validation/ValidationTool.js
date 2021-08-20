@@ -145,7 +145,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 data: 'answerText'
             },
             {
-                title: 'Case Status',
+                title: 'Case Question',
                 data: 'caseStatus'
             }
         ];
