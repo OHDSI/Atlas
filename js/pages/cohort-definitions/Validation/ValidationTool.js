@@ -318,7 +318,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                         })
                         .catch((err) => {
                             console.log(err);
-                            alert('Unable to delete Question Set.');
+                            alert('Unable to delete Question Set because it is in use by a Study.');
                         })
                 } else if (e.target.className === 'btn btn-primary btn-sm annotation-set-samples-btn') {
                     self.getSampleList(self.cohortId, self.sampleSourceKey());
