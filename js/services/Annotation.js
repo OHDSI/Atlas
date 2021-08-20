@@ -3,6 +3,11 @@ define(function (require, exports) {
     const httpService = require('services/http');
     const config = require('appConfig');
     const authApi = require('services/AuthAPI');
+
+    const deleteQuestionSet = function (questionSetId) {
+
+        return httpService.doGet(`${config.webAPIRoot}annotations/deleteSet/${questionSetId}`);
+    };
   
     const getAnnotationSets = function(cohort) {
       const data = {
@@ -158,6 +163,7 @@ define(function (require, exports) {
 
   
     return {
+        deleteQuestionSet,
         getAnnotationSets,
         getSetsBySampleId,
         getSamplesBySetId,

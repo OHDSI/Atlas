@@ -68,7 +68,7 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 title: 'Actions',
                 sortable: false,
                 render: function() {
-                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button disabled="true" class="disabled btn btn-danger btn-sm annotation-set-delete-btn"><i class="fa fa-trash"></i> Delete</button>`;
+                    return `<button class="btn btn-primary btn-sm annotation-set-samples-btn" ><i class="fa fa-table"></i> Create Study</button> <button class="btn btn-success btn-sm annotation-set-view-btn" ><i class="fa fa-info"></i> View Set Detail</button> <button disabled="true" class=" btn btn-danger btn-sm annotation-set-delete-btn"><i class="fa fa-trash"></i> Delete</button>`;
                 }
             }
         ];
@@ -305,7 +305,21 @@ define(['knockout', 'services/Validation', 'services/Annotation', './QuestionSet
                 if (e.target.className === 'btn btn-success btn-sm annotation-set-view-btn') {
                     self.valTabMode(SELECTED_QUESTION_SET_VIEW);
                 } else if (e.target.className === 'btn btn-danger btn-sm annotation-set-delete-btn') {
-                    console.log('delete not yet implemented');
+
+                    annotationService.deleteQuestionSet(d.id)
+                        .then(res => { return res.data; })
+                        .then(res => {
+                            console.log(res);
+                            if (res && res.statusCodeValue !== 200) {
+                                alert(res.body);
+                            } else {
+                                self.loadAnnotationSets();
+                            }
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            alert('Unable to delete Question Set.');
+                        })
                 } else if (e.target.className === 'btn btn-primary btn-sm annotation-set-samples-btn') {
                     self.getSampleList(self.cohortId, self.sampleSourceKey());
                 }
