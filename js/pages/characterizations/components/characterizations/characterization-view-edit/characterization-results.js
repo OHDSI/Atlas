@@ -107,6 +107,8 @@ define([
             this.resultsCountFiltered = ko.observable();
             this.downloading = ko.observableArray();
             this.tableOptions = commonUtils.getTableOptions('M');
+            this.datatableLanguage = ko.i18n('datatable.language');
+
             this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));
             this.loadData();
         }
@@ -125,13 +127,13 @@ define([
             const buttons = [];
 
             buttons.push({
-                text: 'Export',
+                text: ko.i18n('common.export', 'Export')(),
                 action: ()  => this.exportCSV(analysis, false)
             });
 
             if (analysis.cohorts.length === 2) {
                 buttons.push({
-                    text: 'Export comparison',
+                    text: ko.i18n('cc.viewEdit.results.table.buttons.exportComparison', 'Export comparison')(),
                     action: () => this.exportCSV(analysis, true),
                 });
             }
@@ -160,7 +162,8 @@ define([
         }
 
         resultCountText() {
-            return `Viewing most prevalent ${this.resultsCountFiltered()} of total ${this.totalResultsCount()} records`;
+            const values = { resultsCountFiltered: this.resultsCountFiltered(), totalResultsCount: this.totalResultsCount() };
+            return ko.i18nformat('cc.viewEdit.results.threshold.text', 'Viewing most prevalent <%=resultsCountFiltered%> of total <%=totalResultsCount%> records', values);
         }
 
         showExecutionDesign() {
@@ -177,7 +180,7 @@ define([
         exploreByFeature({covariateName, analysisId, covariateId, cohorts, ...o}, index) {
           const {cohortId, cohortName} = cohorts[index];
           this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
-          this.explorePrevalenceTitle('Exploring ' + covariateName);
+          this.explorePrevalenceTitle(ko.i18n('cc.viewEdit.results.exploring', 'Exploring')() + ' ' + covariateName);
           this.isExplorePrevalenceShown(true);
         }
 
@@ -291,7 +294,7 @@ define([
                 cohortIds: cohorts,
                 analysisIds: analyses,
                 domainIds: domains,
-                thresholdValuePct: this.thresholdValuePct() / 100,
+                thresholdValuePct: this.newThresholdValuePct() / 100,
                 showEmptyResults: !!this.showEmptyResults(),
             };
 
@@ -315,6 +318,7 @@ define([
                             analysisId: r.analysisId,
                             domainId: this.design() && this.design().featureAnalyses && !r.isSummary ?
 															(this.design().featureAnalyses.find(fa => fa.id === r.id) || { })[ 'domain' ] : null,
+                            rawAnalysisName: r.analysisName,
                             analysisName: this.getAnalysisName(r.analysisName, { faType: r.faType, statType: r.resultType }),
                             cohorts: r.cohorts,
                             domainIds: r.domainIds,
@@ -335,7 +339,7 @@ define([
 
         getAnalysisName(rawName, { faType, statType }) {
 
-            return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.thresholdValuePct()}%)` : '');
+            return rawName + ((faType === 'PRESET' && statType.toLowerCase() === TYPE_PREVALENCE) ? ` (prevalence > ${this.newThresholdValuePct()}%)` : '');
         }
 
         async exportAllCSV() {
@@ -405,28 +409,28 @@ define([
             );
 
             const analyses = lodash.uniqBy(
-                data.filter(a => a.analysisId).map(a => ({label: a.analysisName, value: a.analysisId})),
+                data.filter(a => a.analysisId).map(a => ({label: a.rawAnalysisName, value: a.analysisId})),
                 "value"
             );
 
             return [
                 {
                     type: 'multiselect',
-                    label: 'Cohorts',
+                    label: ko.i18n('cc.viewEdit.results.filters.cohorts', 'Cohorts'),
                     name: 'cohorts',
                     options: ko.observable(cohorts),
                     selectedValues: ko.observable(cohorts.map(c => c.value)),
                 },
                 {
                     type: 'multiselect',
-                    label: 'Analyses',
+                    label: ko.i18n('cc.viewEdit.results.filters.analyses', 'Analyses'),
                     name: 'analyses',
                     options: ko.observable(analyses),
                     selectedValues: ko.observable(analyses.map(c => c.value)),
                 },
                 {
                     type: 'multiselect',
-                    label: 'Domains',
+                    label: ko.i18n('cc.viewEdit.results.filters.domains', 'Domains'),
                     name: 'domains',
                     options: ko.observable(domains),
                     selectedValues: ko.observable(domains.map(c => c.value)),
@@ -466,8 +470,8 @@ define([
 
         tooltipBuilder(d) {
             return `
-                <div>Series: ${d.seriesName}</div>
-                <div>Covariate: ${d.covariateName}</div>
+                <div>${ko.i18n('cc.viewEdit.results.series', 'Series')()}: ${d.seriesName}</div>
+                <div>${ko.i18n('cc.viewEdit.results.covariate', 'Covariate')()}: ${d.covariateName}</div>
                 <div>X: ${d3.format('.2f')(d.xValue)}%</div>
                 <div>Y: ${d3.format('.2f')(d.yValue)}%</div>
             `;

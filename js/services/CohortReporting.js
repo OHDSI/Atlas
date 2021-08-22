@@ -123,7 +123,7 @@ define(function (require, exports) {
       analyses: [3000, 3001]
     },
     healthcareUtilPersonAndExposureBaseline: {
-      name: "Persons and Exposure during baseline period",
+      name: ko.i18n('options.reporting.personsAndExposureDuringBaselinePeriod', 'Persons and Exposure during baseline period'),
       reportKey: "Persons and Exposure during baseline period",
       analyses: [4000],
       helpContent: `
@@ -134,7 +134,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilPersonAndExposureCohort: {
-      name: "Persons and Exposure during cohort period",
+      name: ko.i18n('options.reporting.personsAndExposureDuringCohortPeriod', 'Persons and Exposure during cohort period'),
       reportKey: "Persons and Exposure during cohort period",
       analyses: [4006],
       helpContent: `
@@ -145,7 +145,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilVisitRecordsBaseline: {
-      name: "Visits during baseline period",
+      name: ko.i18n('options.reporting.visitsDuringBaselinePeriod', 'Visits during baseline period'),
       reportKey: "Visits during baseline period",
       analyses: [4000, 4001, 4002, 4005, ...ifCosts([4020])],
       helpContent: `
@@ -162,7 +162,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilVisitDatesBaseline: {
-      name: "Visit-dates during baseline period",
+      name: ko.i18n('options.reporting.visitDatesDuringBaselinePeriod', 'Visit-dates during baseline period'),
       reportKey: "Visit-dates during baseline period",
       analyses: [4000, 4001, 4003, 4005, ...ifCosts([4020])],
       helpContent: `
@@ -179,7 +179,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilCareSiteDatesBaseline: {
-      name: "Care-site-visit-dates during baseline period",
+      name: ko.i18n('options.reporting.careSiteVisitDatesDuringBaselinePeriod', 'Care-site-visit-dates during baseline period'),
       reportKey: "Care-site-visit-dates during baseline period",
       analyses: [4000, 4001, 4004, 4005, ...ifCosts([4020])],
       helpContent: `
@@ -196,7 +196,7 @@ define(function (require, exports) {
       `
     },
     healthcareUtilVisitRecordsCohort: {
-      name: "Visits during cohort period",
+      name: ko.i18n('options.reporting.visitsDuringCohortPeriod', 'Visits during cohort period'),
       reportKey: "Visits during cohort period",
       analyses: [4006, 4007, 4008, 4011, ...ifCosts([4021])],
       helpContent: `
@@ -213,7 +213,7 @@ define(function (require, exports) {
       `
     },
     healthcareUtilVisitDatesCohort: {
-      name: "Visit-dates during cohort period",
+      name: ko.i18n('options.reporting.visitDatesDuringCohortPeriod', 'Visit-dates during cohort period'),
       reportKey: "Visit-dates during cohort period",
       analyses: [4006, 4007, 4009, 4011, ...ifCosts([4021])],
       helpContent: `
@@ -230,7 +230,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilCareSiteDatesCohort: {
-      name: "Care-site-visit-dates during cohort period",
+      name: ko.i18n('options.reporting.careSiteVisitDatesDuringCohortPeriod', 'Care-site-visit-dates during cohort period'),
       reportKey: "Care-site-visit-dates during cohort period",
       analyses: [4006, 4007, 4010, 4011, ...ifCosts([4021])],
       helpContent: `
@@ -247,7 +247,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilDrugBaseline: {
-      name: "Drug Utilization during baseline period",
+      name: ko.i18n('options.reporting.drugUtilizationDuringBaselinePeriod', 'Drug Utilization during baseline period'),
       reportKey: "Drug Utilization during baseline period",
       analyses: [4000, 4012, 4013, 4014, 4015, ...ifCosts([4022])],
       helpContent: `
@@ -262,7 +262,7 @@ define(function (require, exports) {
       `,
     },
     healthcareUtilDrugCohort: {
-      name: "Drug Utilization during cohort period",
+      name: ko.i18n('options.reporting.drugUtilizationDuringCohortPeriod', 'Drug Utilization during cohort period'),
       reportKey: "Drug Utilization during cohort period",
       analyses: [4006, 4016, 4017, 4018, 4019, ...ifCosts([4023])],
       helpContent: `

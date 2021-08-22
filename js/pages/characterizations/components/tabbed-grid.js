@@ -39,7 +39,12 @@ define([
             this.createNewLabel = constants.gridTabs.filter(t => t.value === params.activeTab).newEntityLabel;
             this.tableOptions = commonUtils.getTableOptions('L');
         }
-    }
+
+        get datatableLanguage() {
+            return ko.i18n('datatable.language');
+        }
+
+	}
 
     return commonUtils.build('characterizations-tabbed-grid', CharacterizationsTabbedGrid, view);
 });

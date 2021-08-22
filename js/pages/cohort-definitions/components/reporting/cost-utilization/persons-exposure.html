@@ -10,9 +10,15 @@
             <table data-bind="css: classes({ element: 'summary-table', extra: ['table', 'table-bordered', 'table-hover'] })">
                 <thead data-bind="css: classes('summary-table-head')">
                     <tr>
-                        <th data-bind="css: classes('summary-table-cell')">Person Count</th>
-                        <th data-bind="css: classes('summary-table-cell')">Total Exposure in Years</th>
-                        <th data-bind="css: classes('summary-table-cell')">Average Exposure Years per 1,000 persons</th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.personExposureText_1', 'Person Count')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.personExposureText_2', 'Total Exposure in Years')"></span>
+                        </th>
+                        <th data-bind="css: classes('summary-table-cell')">
+                            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.personExposureText_3', 'Average Exposure Years per 1,000 persons')"></span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,7 +31,7 @@
             </table>
         </div>
         <div data-bind="if: $component.dataList().length <= 0">
-            Detailed statistics are not available
+            <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.personExposureText_4', 'Detailed statistics are not available')"></span>
         </div>
         <div data-bind="if: $component.dataList().length > 0">
             <ul class="nav nav-tabs">
@@ -35,7 +41,9 @@
                 </li>
                 <!-- /ko -->
                 <li data-bind="css: classes('save-csv-tab'), click: $component.saveAsCsv">
-                    <a data-bind="css: classes('save-csv-link')">Save as CSV</a>
+                    <a data-bind="css: classes('save-csv-link')">
+                        <span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.saveAsCSV', 'Save as CSV')"></span>
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -46,7 +54,7 @@
                             data: $component.personsChartData,
                             xLabel: '',
                             xFormat: $component.formatDate,
-                            yLabel: 'Persons',
+                            yLabel: ko.i18n('cohortDefinitions.costUtilization.saveAsCSV', 'Persons'),
                             yFormat: $component.formatRounded,
                             tickFormat: $component.dateTickFormat,
                             height: 250,
@@ -61,7 +69,7 @@
                             data: $component.totalExposureChartData,
                             xLabel: '',
                             xFormat: $component.formatDate,
-                            yLabel: 'Total Exposure in years',
+                            yLabel: ko.i18n('cohortDefinitions.costUtilization.totalExposure', 'Total Exposure in years'),
                             yFormat: $component.formatRounded,
                             tickFormat: $component.dateTickFormat,
                             height: 250,
@@ -74,9 +82,9 @@
                         <line-chart data-bind="css: $component.classes('chart')"
                                     params="{lineChart: {
                             data: $component.avgExposurePerPersonChartData,
-                            xLabel: 'Period start',
+                            xLabel: ko.i18n('cohortDefinitions.costUtilization.periodStart', 'Period start'),
                             xFormat: $component.formatDate,
-                            yLabel: 'Exposure/p 1k/year',
+                            yLabel: ko.i18n('cohortDefinitions.costUtilization.exposure1kYear', 'Exposure/p 1k/year'),
                             yFormat: $component.formatRounded,
                             tickFormat: $component.dateTickFormat,
                             height: 250,

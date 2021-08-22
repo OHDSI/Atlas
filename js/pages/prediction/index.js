@@ -25,7 +25,7 @@ define(
     });
   
     return {
-      title: 'Prediction',
+      title: ko.i18n('navigation.prediction', 'Prediction'),
       buildRoutes,
       navUrl: navUrl,
       icon: 'heartbeat',

@@ -105,6 +105,28 @@ define(
             });
           });
         }),
+
+        '/cohortdefinition/:cohortDefinitionId/version/:version': new AuthorizedRoute(
+            (cohortDefinitionId, version) => {
+              require([
+                  'components/cohortbuilder/CohortDefinition',
+                  'components/atlas.cohort-editor',
+                  './cohort-definitions',
+                  './cohort-definition-manager',
+                  'components/cohort-definition-browser',
+                  'conceptset-editor',
+                  'components/conceptset/concept-modal',
+              ], function() {
+                router.setCurrentView('cohort-definition-manager', {
+                  cohortDefinitionId,
+                  version,
+                  mode: 'definition',
+                })
+                sharedState.CohortDefinition.mode('definition')
+              })
+            }
+        ),
+
         '/cohortdefinition/:cohortDefinitionId:/?((\w|.)*)': new AuthorizedRoute((cohortDefinitionId, path = 'definition') => {
           require([
            'components/cohortbuilder/CohortDefinition',

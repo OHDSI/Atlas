@@ -23,21 +23,21 @@ define([
 			this.options = {
 				Facets: feConst.FeatureAnalysisFacets,
 			};
-			
+
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
-			
+
 			this.columns = [
 				...this.columns,
 				{
-					title: 'ID',
+					title: ko.i18n('columns.id', 'ID'),
 					data: 'id'
 				},
 				{
-					title: 'Name',
+					title: ko.i18n('columns.name', 'Name'),
 					render: datatableUtils.getLinkFormatter(d => ({label: d['name']})),
 				},
 				{
-					title: 'Description',
+					title: ko.i18n('columns.description', 'Description'),
 					data: 'description'
 				}
 			];

@@ -1,17 +1,17 @@
 <div data-bind="css: classes()">
   <loading data-bind="visible: isInProgress, css: classes('loader')"></loading>
-  <b>Instructions:</b>
-  Select the concept sets for export by selecting each row in the grid. When done, use the 'Export Concept Sets' button which will start the download in a new window.
+  <b data-bind="text: ko.i18n('cs.browser.exportInstructions', 'Instructions:')"></b>
+  <span data-bind="text: ko.i18n('cs.browser.exportInstructionsText', 'Select the concept sets for export by selecting each row in the grid. When done, use the \'Export Concept Sets\' button which will start the download in a new window.')"></span>
   <hr/>
   <concept-set-browser params="
     criteriaContext: criteriaContext,
     onRespositoryConceptSetSelected: exportOnConceptSetSelected,
     onActionComplete: onExportAction,
-    buttonActionText: 'Export Concept Sets',
+    buttonActionText: ko.i18n('cs.browser.exportConceptSetsButton', 'Export Concept Sets'),
     repositoryConceptSetTableId: 'exportConceptSetTable',
     pageLength: tableOptions.pageLength,
     lengthMenu: tableOptions.lengthMenu,
   "></concept-set-browser>
   <hr/>
-  <b><span data-bind="text: exportRowCount()"></span></b> concept sets selected for export.
+  <span data-bind="html: ko.i18nformat('cs.browser.exportConceptSetsNumber', '<b><%=num%></b> concept sets selected for export.', {num: exportRowCount()})"></span>
 </div>

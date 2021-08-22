@@ -21,10 +21,10 @@ define(['knockout', 'text!./NumericRangeTemplate.html'], function (ko, component
 			name: '>='
 		}, {
 			id: 'bt',
-			name: 'between'
+			name: ko.i18n('options.between', 'between')
 		}, {
 			id: '!bt',
-			name: 'not Between'
+			name: ko.i18n('options.notBetween', 'not between')
 		}];
 
 		self.rangeOpName = ko.pureComputed(function() {

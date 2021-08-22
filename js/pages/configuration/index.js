@@ -18,7 +18,7 @@ define(
     });
 
     return {
-      title: 'Configuration',
+      title: ko.i18n('navigation.configuration', 'Configuration'),
       buildRoutes,
       navUrl,
       icon: 'cogs',

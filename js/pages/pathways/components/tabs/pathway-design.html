@@ -1,10 +1,10 @@
 <div data-bind="css: classes()">
-	<p data-bind="css: classes('descr')">
-		<b>Cohort Pathway</b> is defined as the process of generating an aggregated sequence of transitions between the Event Cohorts among those people in the Target Cohorts.
+	<p data-bind="css: classes('descr'), html: ko.i18n('pathways.manager.design.description', '<b>Cohort Pathway</b> is defined as the process of generating an aggregated sequence of transitions between the Event Cohorts among those people in the Target Cohorts.')">
+
 	</p>
 	<div data-bind="css: classes('linked-entities')">
-		<linked-cohort-list params="title: 'Target Cohorts',
-			descr: 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.',
+		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.targetCohorts.title', 'Target Cohorts'),
+			descr: ko.i18n('pathways.manager.design.targetCohorts.description', 'Each of the Target Cohorts will be analyized for the pathways through the event cohorts.'),
 			canEditName: true,
 			data: design().targetCohorts,
 			multiChoice: true,
@@ -14,8 +14,8 @@
 		</linked-cohort-list>
 	</div>
 	<div data-bind="css: classes('linked-entities')">
-		<linked-cohort-list params="title: 'Event Cohorts',
-			descr: 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.',
+		<linked-cohort-list params="title: ko.i18n('pathways.manager.design.eventCohorts.title', 'Event Cohorts'),
+			descr: ko.i18n('pathways.manager.design.eventCohorts.description', 'Each Event Cohort defines the step in a pathway that may occur for a person in the Target Cohort.'),
 			canEditName: true,
 			data: design().eventCohorts,
 			multiChoice: true,
@@ -25,12 +25,12 @@
 	</div>
 
 	<div data-bind="css: classes('analysis-settings-block')">
-		<h2 data-bind="css: classes('title')">Analysis Settings</h2>
-		<p data-bind="css: classes('descr')">The following set of parameters will be used when performing the pathway analysis.</p>
+		<h2 data-bind="css: classes('title'), text: ko.i18n('pathways.manager.design.analysisSettings.title', 'Analysis Settings')"></h2>
+		<p data-bind="css: classes('descr'), text: ko.i18n('pathways.manager.design.analysisSettings.description', 'The following set of parameters will be used when performing the pathway analysis.')"></p>
 		<div data-bind="css: classes('settings')">
 			<table>
 				<tr data-bind="css: classes('setting-line')">
-						<td data-bind="css: classes('setting-title')">Collapse Days:</td>
+						<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.combinationWindow.title', 'Collapse Days:')"></td>
 						<td>
 							<input
 									class="form-control"
@@ -41,10 +41,10 @@
 										ko_autocomplete: { value: design().combinationWindow, source: combinationWindowOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 							/>
 						</td>
-						<td data-bind="css: classes('setting-description')">Any dates found within the specified collapse days will be reassigned the earliest date.  Collapsing dates reduces pathway variation, leading to a reduction in 'noise' in the result.</td>
+						<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.combinationWindow.description', 'Any dates found within the specified collapse days will be reassigned the earliest date.  Collapsing dates reduces pathway variation, leading to a reduction in \'noise\' in the result.')"></td>
 				</tr>
 				<tr data-bind="css: classes('setting-line')">
-					<td data-bind="css: classes('setting-title')">Minimum cell count:</td>
+					<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.minimumCellCount.title', 'Minimum cell count:')"></td>
 					<td>
 						<input
 								class="form-control"
@@ -55,10 +55,10 @@
 										ko_autocomplete: { value: design().minCellCount, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 						/>
 					</td>
-					<td data-bind="css: classes('setting-description')">Minimum number of subjects in the target cohort for a given event in order to be counted in the pathway.</td>
+					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.minimumCellCount.description', 'Minimum number of subjects in the target cohort for a given event in order to be counted in the pathway.')"></td>
 				</tr>
 				<tr data-bind="css: classes('setting-line')">
-					<td data-bind="css: classes('setting-title')">Maximum path length:</td>
+					<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.maximumPathLength.title', 'Maximum path length:')"></td>
 					<td>
 						<input
 								class="form-control"
@@ -69,10 +69,10 @@
 										ko_autocomplete: { value: design().maxDepth, source: minCellCountOptions, minLength: 0, maxShowItems: 10, scroll: true }, enable:isEditPermitted()"
 						/>
 					</td>
-					<td data-bind="css: classes('setting-description')">Maximum number of steps in a given pathway to be included in the sunburst plot.</td>
+					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.maximumPathLength.description', 'Maximum number of steps in a given pathway to be included in the sunburst plot.')"></td>
 				</tr>
 				<tr data-bind="css: classes('setting-line')">
-					<td data-bind="css: classes('setting-title')">Allow repeats:</td>
+					<td data-bind="css: classes('setting-title'), text: ko.i18n('pathways.manager.design.analysisSettings.allowRepeats.title', 'Allow repeats:')"></td>
 					<td>
 						<select
 								class="form-control"
@@ -82,7 +82,7 @@
 										options: [false, true],
 										enable:isEditPermitted()"></select>
 					</td>
-					<td data-bind="css: classes('setting-description')">Allow cohort events/combos to appear multiple times in the same pathway.</td>
+					<td data-bind="css: classes('setting-description'), text: ko.i18n('pathways.manager.design.analysisSettings.allowRepeats.description', 'Allow cohort events/combos to appear multiple times in the same pathway.')"></td>
 				</tr>
 			</table>
 		</div>

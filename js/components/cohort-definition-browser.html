@@ -4,7 +4,7 @@
         autoWidth: false,
         reference:data,
         columns: columns,
-        options:options,
+        options: options,
         buttons: buttons,
         dom: tableDom,
         rowClick: !multiChoice ? rowClick : null,
@@ -13,17 +13,17 @@
         dtApi: dtApi,
         pageLength: pageLength,
         lengthMenu: lengthMenu,
+        language: ko.i18n('datatable.language')
     ">
     </faceted-datatable>
     <div class="import-modal-footer btn-toolbar" data-bind="visible: multiChoice">
             <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-primary" type="button" data-bind="click: $component.import, enable: $component.importEnabled">Import</button>
+                <button class="btn btn-sm btn-primary" type="button" data-bind="click: $component.import, enable: $component.importEnabled, text: ko.i18n('common.import', 'Import')"></button>
             </div>
             <div class="btn-group" role="group">
-                <button class="btn btn-sm btn-danger" type="button" data-bind="click: $component.cancel">Cancel</button>
+                <button class="btn btn-sm btn-danger" type="button" data-bind="click: $component.cancel, text: ko.i18n('common.cancel', 'Cancel')"></button>
             </div>
         </div>
-
 </div>
 
-<loading data-bind="visible: isLoading()" params="status: 'Retrieving cohort definitions...'"></loading>
+<loading data-bind="visible: isLoading()" params="status: ko.i18n('cohortDefinitions.cohortDefinitionManager.retrievingCohortDefinitions', 'retrieving cohort definitions')"></loading>

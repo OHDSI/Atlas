@@ -13,7 +13,7 @@
         <textarea id="exitMessage" data-bind="css: classes('exit-message'), text: exitMessage()"></textarea>
     </div>
     <div>
-        <button data-bind="attr: {id: buttonId}, css: classes({extra: 'btn btn-sm btn-primary'}), click: copyExitMessageToClipboard" data-clipboard-target="#exitMessage"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy To Clipboard</button>
-        <span data-bind="attr: {id: noticeId}, css: classes({extra: 'alert alert-success'})" style="display:none" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong>Copied To Clipboard!</strong></span>
+        <button data-bind="attr: {id: buttonId}, css: classes({extra: 'btn btn-sm btn-primary'}), click: copyExitMessageToClipboard" data-clipboard-target="#exitMessage"><i class="fa fa-clipboard" aria-hidden="true"></i> <span data-bind="text: ko.i18n('common.copyToClipboard', 'Copy To Clipboard')"></span></button>
+        <span data-bind="attr: {id: noticeId}, css: classes({extra: 'alert alert-success'})" style="display:none" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong data-bind="text: ko.i18n('common.copiedToClipboard', 'Copied To Clipboard!')"></strong></span>
     </div>
 </atlas-modal>

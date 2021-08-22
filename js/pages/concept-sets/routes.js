@@ -19,6 +19,15 @@ define(
       return {
         '/conceptset/:conceptSetId': detailsRoute,
         '/conceptset/:conceptSetId/:mode': detailsRoute,
+        '/conceptset/:conceptSetId/version/:version': new AuthorizedRoute((conceptSetId, version) => {
+          require(['./conceptset-manager'], function () {
+            router.setCurrentView('conceptset-manager', {
+                conceptSetId: conceptSetId && parseInt(conceptSetId),
+                version: version,
+                mode: 'conceptset-expression'
+            });
+          });
+        }),
         '/conceptsets': new AuthorizedRoute(() => {
           require(['./conceptset-browser'], function () {
             router.setCurrentView('conceptset-browser');

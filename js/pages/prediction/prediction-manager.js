@@ -72,8 +72,12 @@ define([
 			this.selectTab = this.selectTab.bind(this);
 			this.selectedTabKey = ko.observable(router.routerParams().section);
 
-			this.isAuthenticated = authAPI.isAuthenticated;
-			this.hasAccess = authAPI.isPermittedReadPlps;
+			this.isAuthenticated = ko.pureComputed(() => {
+				return authAPI.isAuthenticated();
+			});
+			this.isViewPermitted = ko.pureComputed(() => {
+				return authAPI.isPermittedReadPlps();
+			});
 
 			this.options = constants.options;
 			this.config = config;
@@ -97,7 +101,7 @@ define([
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
-			this.defaultName = globalConstants.newEntityNames.plp;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.plp);
 			this.canEdit = ko.pureComputed(() => parseInt(this.selectedAnalysisId()) ? PermissionService.isPermittedUpdate(this.selectedAnalysisId()) : PermissionService.isPermittedCreate());
 
 			this.canDelete = ko.pureComputed(() => {
@@ -112,9 +116,9 @@ define([
 			this.predictionCaption = ko.computed(() => {
 				if (this.patientLevelPredictionAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
-						return 'New Patient Level Prediction';
+						return ko.unwrap(ko.i18n('predictions.newItem', 'New Patient Level Prediction'));
 					} else {
-						return `Patient Level Prediction #${this.selectedAnalysisId()}`;
+						return ko.unwrap(ko.i18nformat('predictions.itemId', 'Patient Level Prediction #<%=id%>', {id: this.selectedAnalysisId()}));
 					}
 				}
 			});
@@ -150,10 +154,10 @@ define([
 				&& this.criticalCount() <= 0);
 
 			const generationDisableReason = ko.computed(() => {
-				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
-				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
-				if (!config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
-				return globalConstants.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConstants.disabledReasons.DIRTY);
+				if (this.criticalCount() > 0) return ko.unwrap(globalConstants.disabledReasons.INVALID_DESIGN);
+				if (!config.api.isExecutionEngineAvailable()) return ko.unwrap(globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE);
+				return ko.unwrap(globalConstants.disabledReasons.ACCESS_DENIED);
 			});
 			this.componentParams = ko.observable({
 				analysisId: this.selectedAnalysisId,
@@ -238,7 +242,7 @@ define([
 		}
 
 		close () {
-			if (this.dirtyFlag().isDirty() && !confirm("Patient level prediction changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('predictions.confirmChanges', 'Patient level prediction changes are not saved. Would you like to continue?')))) {
 				return;
 			}
 			this.loading(true);
@@ -269,7 +273,7 @@ define([
 		}
 
 		async delete() {
-			if (!confirm("Delete patient level prediction specification? Warning: deletion can not be undone!"))
+			if (!confirm(ko.unwrap(ko.i18n('predictions.confirmDelete', 'Delete patient level prediction specification? Warning: deletion can not be undone!'))))
 				return;
 
 			this.isDeleting(true);
@@ -307,7 +311,7 @@ define([
 			try{
 				const results = await PredictionService.exists(this.patientLevelPredictionAnalysis().name(), this.patientLevelPredictionAnalysis().id() == undefined ? 0 : this.patientLevelPredictionAnalysis().id());
 				if (results > 0) {
-					alert('A prediction analysis with this name already exists. Please choose a different name.');
+					alert(ko.unwrap(ko.i18n('predictions.confirmSave', 'A prediction analysis with this name already exists. Please choose a different name.')));
 				} else {
 					this.fullAnalysisList.removeAll();
 					const payload = this.prepForSave();
@@ -316,7 +320,7 @@ define([
 					document.location = constants.paths.analysis(this.patientLevelPredictionAnalysis().id());
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save a prediction analysis.');
+				alert(ko.unwrap(ko.i18n('predictions.confirmCatchSave', 'An error occurred while attempting to save a prediction analysis.')));
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -396,7 +400,7 @@ define([
 			PredictionService.getPrediction(this.selectedAnalysisId()).then((analysis) => {
 				this.loadAnalysisFromServer(analysis);
 				this.loading(false);
-			});
+			}).catch(() => this.loading(false));
 		}
 
 		resetDirtyFlag() {

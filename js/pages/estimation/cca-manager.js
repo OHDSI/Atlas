@@ -9,6 +9,7 @@ define([
 	'const',
 	'atlas-state',
 	'pages/Router',
+	'services/AuthAPI',
 	'./PermissionService',
 	'services/Permission',
 	'components/security/access/const',
@@ -44,6 +45,7 @@ define([
 	globalConstants,
 	sharedState,
 	router,
+	authApi,
 	PermissionService,
 	GlobalPermissionService,
 	{ entityType },
@@ -64,13 +66,16 @@ define([
 			sharedState.estimationAnalysis.analysisPath = constants.paths.ccaAnalysisDash;
 
 			this.selectTab = this.selectTab.bind(this);
-			this.defaultLoadingMessage = "Loading...";
+			this.defaultLoadingMessage = ko.i18n('common.loadingWithDots', 'Loading...');
 			this.estimationType = 'ComparativeCohortAnalysis';
 			this.cohortMethodAnalysisList = null;
 			this.defaultCovariateSettings = ko.observable();
 			this.options = constants.options;
 			this.config = config;
 			this.loading = ko.observable(true);
+			this.isAuthenticated = ko.pureComputed(() => {
+				return authApi.isAuthenticated();
+			});
 			this.estimationAnalysis = sharedState.estimationAnalysis.current;
 			this.selectedAnalysisId = sharedState.estimationAnalysis.selectedId;
 			this.dirtyFlag = sharedState.estimationAnalysis.dirtyFlag;
@@ -85,8 +90,8 @@ define([
 			this.isSaving = ko.observable(false);
 			this.isCopying = ko.observable(false);
 			this.isDeleting = ko.observable(false);
-			this.defaultName = globalConstants.newEntityNames.ple;
-			this.executionTabTitle = config.useExecutionEngine ? "Executions" : "";
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.ple);
+			this.executionTabTitle = config.useExecutionEngine ? ko.i18n('ple.tabs.executions', 'Executions') : "";
 			this.isProcessing = ko.computed(() => {
 				return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
@@ -105,6 +110,10 @@ define([
 			});
 			this.isNameCorrect = ko.computed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
+			});
+
+			this.isViewPermitted = ko.pureComputed(() => {
+				return PermissionService.isPermittedLoad(this.selectedAnalysisId());
 			});
 
 			this.canDelete = ko.pureComputed(() => {
@@ -132,10 +141,10 @@ define([
 				&& this.criticalCount() <= 0);
 
 			const generationDisableReason = ko.computed(() => {
-				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
-				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
-				if (!config.api.isExecutionEngineAvailable()) return globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE;
-				return globalConstants.disabledReasons.ACCESS_DENIED;
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConstants.disabledReasons.DIRTY);
+				if (this.criticalCount() > 0) return ko.unwrap(globalConstants.disabledReasons.INVALID_DESIGN);
+				if (!config.api.isExecutionEngineAvailable()) return ko.unwrap(globalConstants.disabledReasons.ENGINE_NOT_AVAILABLE);
+				return ko.unwrap(globalConstants.disabledReasons.ACCESS_DENIED);
 			});
 
 			this.componentParams = ko.observable({
@@ -173,9 +182,11 @@ define([
 			this.populationCaption = ko.computed(() => {
 				if (this.estimationAnalysis()) {
 					if (this.selectedAnalysisId() === '0') {
-						return 'New Population Level Effect Estimation - Comparative Cohort Analysis';
+						return ko.i18n('const.newEntityNames.ple', 'New Population Level Effect Estimation')() + ' - ' +
+							ko.i18n('ple.caption', 'Comparative Cohort Analysis')();
 					} else {
-						return `Population Level Effect Estimation - Comparative Cohort Analysis #${this.selectedAnalysisId()}`;
+						return ko.i18n('ple.title', 'Population Level Effect Estimation')() + ' - ' +
+							ko.i18nformat('ple.captionNumber', 'Comparative Cohort Analysis #<%=id%>', {id: this.selectedAnalysisId()})();
 					}
 				}
 			});
@@ -209,7 +220,7 @@ define([
 		}
 
 		async delete() {
-			if (!confirm("Delete estimation specification? Warning: deletion can not be undone!"))
+			if (!confirm(ko.i18n('ple.deleteConfirmation', 'Delete estimation specification? Warning: deletion can not be undone!')()))
 				return;
 
 			this.isDeleting(true);
@@ -235,7 +246,7 @@ define([
 			try{
 				const results = await EstimationService.exists(this.estimationAnalysis().name(), this.estimationAnalysis().id() == undefined ? 0 : this.estimationAnalysis().id());
 				if (results > 0) {
-					alert('An estimation analysis with this name already exists. Please choose a different name.');
+					alert(ko.i18n('ple.analysisExistsAlert', 'An estimation analysis with this name already exists. Please choose a different name.')());
 				} else {
 					this.fullAnalysisList.removeAll();
 					const payload = this.prepForSave();
@@ -244,7 +255,7 @@ define([
 					commonUtils.routeTo(constants.paths.ccaAnalysis(this.estimationAnalysis().id()));
 				}
 			} catch (e) {
-				alert('An error occurred while attempting to save an estimation analysis.');
+				alert(ko.i18n('ple.analysisSaveErrorAlert', 'An error occurred while attempting to save an estimation analysis.')());
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
@@ -339,7 +350,7 @@ define([
 		}
 
 		close() {
-			if (this.dirtyFlag().isDirty() && !confirm("Estimation Analysis changes are not saved. Would you like to continue?")) {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('ple.changesNotSavedConfirmation', 'Estimation Analysis changes are not saved. Would you like to continue?')())) {
 				return;
 			}
 			this.loading(true);
@@ -498,7 +509,7 @@ define([
 
 		newAnalysis() {
 			this.loading(true);
-			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: 'New Population Level Estimation Analysis'}, this.estimationType, this.defaultCovariateSettings()));
+			this.estimationAnalysis(new EstimationAnalysis({id: 0, name: this.defaultName}, this.estimationType, this.defaultCovariateSettings()));
 			return new Promise(async (resolve, reject) => {
 				this.setCohortMethodAnalysisList();
 				this.resetDirtyFlag();
@@ -520,7 +531,7 @@ define([
 					this.setCohortMethodAnalysisList();
 					this.loading(false);
 				}
-			});
+			}).catch(() => this.loading(false));
 		}
 
 		onRouterParamsChanged({ id, section, sourceId }) {

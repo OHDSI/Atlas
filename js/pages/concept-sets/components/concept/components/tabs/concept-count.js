@@ -49,7 +49,7 @@ define([
 							});
 						}
 					}).catch(err => {
-						const failedMsg = 'Failed to load data';
+						const failedMsg = ko.i18n('cs.manager.concept.tabs.recordCounts.failedToLoadData', 'Failed to load data');
 						sourceData.push({
 							sourceName,
 							recordCount: failedMsg,

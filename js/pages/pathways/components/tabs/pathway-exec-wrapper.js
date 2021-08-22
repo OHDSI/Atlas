@@ -32,9 +32,9 @@ define([
                 && this.criticalCount() <= 0);       
                 
             const generationDisableReason = ko.computed(() => {
-                if (this.dirtyFlag().isDirty()) return consts.disabledReasons.DIRTY;
-                if (this.criticalCount() > 0) return consts.disabledReasons.INVALID_DESIGN;
-                return consts.disabledReasons.ACCESS_DENIED;
+                if (this.dirtyFlag().isDirty()) return ko.unwrap(consts.disabledReasons.DIRTY);
+                if (this.criticalCount() > 0) return ko.unwrap(consts.disabledReasons.INVALID_DESIGN);
+                return ko.unwrap(consts.disabledReasons.ACCESS_DENIED);
             });
             this.componentParams = {
                 tableColumns: ['Date', 'Design', 'Status', 'Duration', 'Results'],

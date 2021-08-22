@@ -36,13 +36,13 @@ define([
             this.isGetCCListPermitted = PermissionService.isPermittedGetCCList;
             this.isCreatePermitted = PermissionService.isPermittedCreateCC;
 
-            this.gridColumns = [
+            this.gridColumns = ko.observableArray([
                 {
-                    title: 'Id',
+                    title: ko.i18n('columns.id', 'Id'),
                     data: 'id'
                 },
                 {
-                    title: 'Name',
+                    title: ko.i18n('columns.name', 'Name'),
                     data: 'name',
                     className: this.classes('tbl-col', 'name'),
                     render: datatableUtils.getLinkFormatter(d => ({
@@ -51,38 +51,38 @@ define([
                     })),
                 },
                 {
-                    title: 'Created',
+                    title: ko.i18n('columns.created', 'Created'),
                     className: this.classes('tbl-col', 'created'),
                     render: datatableUtils.getDateFieldFormatter(),
                 },
                 {
-                    title: 'Updated',
+                    title: ko.i18n('columns.updated', 'Updated'),
                     className: this.classes('tbl-col', 'updated'),
                     render: datatableUtils.getDateFieldFormatter('modifiedDate'),
                 },
                 {
-                    title: 'Author',
+                    title: ko.i18n('columns.author', 'Author'),
                     className: this.classes('tbl-col', 'author'),
                     render: datatableUtils.getCreatedByFormatter(),
                 },
 
-            ];
+            ]);
             this.gridOptions = {
                 Facets: [
                     {
-                        'caption': 'Created',
+                        'caption': ko.i18n('facets.caption.created', 'Created'),
                         'binding': (o) => datatableUtils.getFacetForDate(o.createdDate)
                     },
                     {
-                        'caption': 'Updated',
+                        'caption': ko.i18n('facets.caption.updated', 'Updated'),
                         'binding': (o) => datatableUtils.getFacetForDate(o.modifiedDate)
                     },
                     {
-                        'caption': 'Author',
+                        'caption': ko.i18n('facets.caption.author', 'Author'),
                         'binding': datatableUtils.getFacetForCreatedBy,
                     },
                     {
-                        'caption': 'Designs',
+                        'caption': ko.i18n('facets.caption.designs', 'Designs'),
                         'binding': datatableUtils.getFacetForDesign,
                     },
                 ]
@@ -97,6 +97,8 @@ define([
                 .loadCharacterizationList()
                 .then(res => {
                     datatableUtils.coalesceField(res.content, 'modifiedDate', 'createdDate');
+                    datatableUtils.addTagGroupsToFacets(res.content, this.gridOptions.Facets);
+                    datatableUtils.addTagGroupsToColumns(res.content, this.gridColumns);
                     this.data(res.content);
                     this.loading(false);
                 });

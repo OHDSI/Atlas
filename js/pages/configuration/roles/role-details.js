@@ -61,7 +61,7 @@ define([
 
             this.isNewRole = ko.pureComputed(() => this.roleId() === 0);
 
-            this.roleCaption = ko.computed(() => this.isNewRole() ? 'New Role' : 'Role #' + this.roleId());
+            this.roleCaption = ko.computed(() => this.isNewRole() ? ko.i18n('const.newEntityNames.role', 'New Role')() : ko.i18nformat('configuration.roles.roleTitle', 'Role #<%=id%>', {id: this.roleId()}));
 
             this.isAuthenticated = authApi.isAuthenticated;
             this.canReadRoles = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedReadRoles());
@@ -110,6 +110,7 @@ define([
 
             this.componentParams.userItems = this.userItems;
             this.componentParams.permissionItems = this.permissionItems;
+            this.componentParams.exportJson = this.exportJson;
             this.componentParams.permissions = this.permissions;
             this.componentParams.save = this.save;
 
@@ -173,6 +174,18 @@ define([
         getUsersList() {
             return this.userItems()
                 .filter(user => user.isRoleUser());
+        }
+
+        exportJson() {
+            return {
+                role: this.roleName(),
+                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
+                users: this.getUsersList().map(u => ({ id: u.login })),
+            };
+        }
+
+        export() {
+            fileService.saveAsJson(this.exportJson());
         }
 
         close() {

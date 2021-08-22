@@ -1,4 +1,4 @@
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Cohort Characterization list...'"></loading>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('cc.loading', 'Loading Cohort Characterization list...')"></loading>
 
 <div data-bind="visible: !$component.loading()">
     <characterizations-tabbed-grid params="{

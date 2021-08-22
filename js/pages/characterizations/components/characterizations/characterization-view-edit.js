@@ -3,6 +3,7 @@ define([
     'pages/characterizations/services/CharacterizationService',
     'pages/characterizations/services/PermissionService',
     'services/Permission',
+    'services/Tags',
     'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
     'conceptsetbuilder/InputTypes/ConceptSet',
@@ -15,6 +16,7 @@ define([
     'pages/Page',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'utils/ExceptionUtils',
     'assets/ohdsi.util',
     'const',
     'lodash',
@@ -29,13 +31,16 @@ define([
     'components/heading',
     'components/authorship',
     'components/security/access/configure-access-modal',
+    'components/tags/tags',
     'components/checks/warnings',
     'components/name-validation',
+    'components/versions/versions'
 ], function (
     ko,
     CharacterizationService,
     PermissionService,
     GlobalPermissionService,
+    TagsService,
     { entityType },
     CriteriaGroup,
     ConceptSet,
@@ -48,6 +53,7 @@ define([
     Page,
     AutoBind,
     commonUtils,
+    exceptionUtils,
     ohdsiUtil,
     constants,
     lodash
@@ -56,6 +62,7 @@ define([
         constructor(params) {
             super(params);
             this.design = sharedState.CohortCharacterization.current;
+            this.previewVersion = sharedState.CohortCharacterization.previewVersion;
             this.characterizationId = sharedState.CohortCharacterization.selectedId;
             this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().characterization);
             this.conceptSets = ko.computed(() => this.design() && this.design().strataConceptSets)            
@@ -66,7 +73,10 @@ define([
 
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
-            this.defaultName = constants.newEntityNames.characterization;
+            this.defaultName = ko.unwrap(constants.newEntityNames.characterization);
+            this.isAuthenticated = ko.pureComputed(() => {
+                return authApi.isAuthenticated();
+            });
             this.isNameFilled = ko.computed(() => {
                 return this.design() && this.design().name() && this.design().name().trim();
             });
@@ -82,6 +92,7 @@ define([
             this.isNameCorrect = ko.computed(() => {
                 return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
             });
+            this.isViewPermitted = this.isViewPermittedResolver();
             this.isEditPermitted = this.isEditPermittedResolver();
             this.isSavePermitted = this.isSavePermittedResolver();
             this.isDeletePermitted = this.isDeletePermittedResolver();
@@ -129,8 +140,10 @@ define([
                 if (this.design()) {
                     if (this.characterizationId() === 0) {
                         return this.defaultName;
+                    } else if (this.previewVersion()) {
+                        return ko.i18nformat('cc.viewEdit.captionPreview', 'Characterization #<%=id%> - Version <%=number%> Preview', {id: this.characterizationId(), number: this.previewVersion().version})();
                     } else {
-                        return `Characterization #${this.characterizationId()}`;
+                        return ko.i18nformat('cc.viewEdit.caption', 'Characterization #<%=id%>', {id: this.characterizationId()})();
                     }
                 }
             });
@@ -139,7 +152,7 @@ define([
 
             sharedState.CohortCharacterization.onCohortDefinitionChanged = onCohortDefinitionChanged || sharedState.CohortDefinition.lastUpdatedId.subscribe(updatedCohortId => {
                 if (this.design() && updatedCohortId && this.design().cohorts && this.design().cohorts().filter(c => c.id === updatedCohortId).length > 0) {
-                    this.loadDesignData(this.characterizationId(), true);
+                    this.loadDesignData(this.characterizationId(), null, true);
                 }
             });
 
@@ -148,12 +161,61 @@ define([
                 entityIdGetter: () => this.characterizationId(),
                 createdByUsernameGetter: () => this.design() && lodash.get(this.design(), 'createdBy.login')
             });
+
+            TagsService.decorateComponent(this, {
+                assetTypeGetter: () => TagsService.ASSET_TYPE.COHORT_CHARACTERIZATION,
+                assetGetter: () => this.design(),
+                addTagToAsset: (tag) => {
+                    const isDirty = this.designDirtyFlag().isDirty();
+                    this.design().tags.push(tag);
+                    if (!isDirty) {
+                        this.designDirtyFlag().reset();
+                        this.warningParams.valueHasMutated();
+                    }
+                },
+                removeTagFromAsset: (tag) => {
+                    const isDirty = this.designDirtyFlag().isDirty();
+                    this.design().tags(this.design().tags()
+                        .filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0));
+                    if (!isDirty) {
+                        this.designDirtyFlag().reset();
+                        this.warningParams.valueHasMutated();
+                    }
+                }
+            });
+
+            this.versionsParams = ko.observable({
+                versionPreviewUrl: (versionNumber) => `/cc/characterizations/${this.design().id}/version/${versionNumber}`,
+                currentVersion: () => this.design(),
+                previewVersion: () => this.previewVersion(),
+                getList: () => this.design().id ? CharacterizationService.getVersions(this.design().id) :[],
+                updateVersion: (version) => CharacterizationService.updateVersion(version),
+                copyVersion: async (version) => {
+                    this.isCopying(true);
+                    try {
+                        const result = await CharacterizationService.copyVersion(this.design().id, version.version);
+                        this.previewVersion(null);
+                        commonUtils.routeTo(`/cc/characterizations/${result.id}`);
+                    } catch (ex) {
+                        alert(exceptionUtils.extractServerMessage(ex));
+                    } finally {
+                        this.isCopying(false);
+                    }
+                },
+                isAssetDirty: () => this.designDirtyFlag().isDirty(),
+                canAddComments: () => this.isEditPermitted()
+            });
         }
 
-        onRouterParamsChanged({ characterizationId, section, executionId, sourceId }) {
+        onRouterParamsChanged(params, newParams) {
+            const { characterizationId, section, executionId, sourceId, version } = Object.assign({}, params, newParams);
+            if (version === 'current') {
+                this.previewVersion(null);
+            }
+
             if (characterizationId !== undefined) {
                 this.characterizationId(parseInt(characterizationId));
-                this.loadDesignData(this.characterizationId() || 0);
+                this.loadDesignData(this.characterizationId() || 0, version);
             }
 
             if (section !== undefined) {
@@ -168,6 +230,19 @@ define([
             }
         }
 
+        backToCurrentVersion() {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
+                return;
+            }
+            commonUtils.routeTo(`/cc/characterizations/${this.design().id}/version/current`);
+        }
+
+        isViewPermittedResolver() {
+            return ko.pureComputed(
+                () => PermissionService.isPermittedGetCC(this.characterizationId())
+            );
+        }
+
         isEditPermittedResolver() {
             return ko.pureComputed(
                 () => (this.characterizationId() ? PermissionService.isPermittedUpdateCC(this.characterizationId()) : PermissionService.isPermittedCreateCC())
@@ -175,7 +250,7 @@ define([
         }
 
         isSavePermittedResolver() {
-            return ko.computed(() => this.isEditPermitted() && this.designDirtyFlag().isDirty() && this.isNameCorrect() && !this.areStratasNamesEmpty() && this.duplicatedStrataNames().length === 0);
+            return ko.computed(() => this.isEditPermitted() && (this.designDirtyFlag().isDirty() || this.previewVersion()) && this.isNameCorrect() && !this.areStratasNamesEmpty() && this.duplicatedStrataNames().length === 0);
         }
 
         isDeletePermittedResolver() {
@@ -210,20 +285,30 @@ define([
             }
         }
 
-        async loadDesignData(id, force = false) {
-            if (!force && this.design() && (this.design().id || 0) === id) {
-                return;
-            }
-            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+        async loadDesignData(id, version, force = false) {
+            if (!force && this.design() && (this.design().id || 0) === id && !version) {
                 return;
             }
             if (id < 1) {
                 this.setupDesign(new CharacterizationAnalysis());
             } else {
-                this.loading(true);
-                const res = await CharacterizationService.loadCharacterizationDesign(id);
-                this.setupDesign(new CharacterizationAnalysis(res));
-                this.loading(false);
+                try {
+                    this.loading(true);
+                    let design;
+                    if (version && version !== 'current') {
+                        const designVersion = await CharacterizationService.getVersion(id, version);
+                        design = designVersion.entityDTO;
+                        this.previewVersion(designVersion.versionDTO);
+                    } else {
+                        design = await CharacterizationService.loadCharacterizationDesign(id);
+                    }
+                    this.setupDesign(new CharacterizationAnalysis(design));
+                    this.versionsParams.valueHasMutated();
+                } catch (ex) {
+                    alert(exceptionUtils.extractServerMessage(ex));
+                } finally {
+                    this.loading(false);
+                }
             }
         }
 
@@ -232,6 +317,9 @@ define([
         }
 
         async save() {
+            if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
+                return;
+            }
             this.isSaving(true);
             const ccId = this.componentParams().characterizationId();
 
@@ -253,6 +341,8 @@ define([
                         const updatedCharacterization = await CharacterizationService.updateCharacterization(ccId, this.design());
                         this.setupDesign(new CharacterizationAnalysis(updatedCharacterization));
                     }
+                    this.previewVersion(null);
+                    this.versionsParams.valueHasMutated();
                 }
             } catch (e) {
                 alert('An error occurred while attempting to save a characterization.');
@@ -267,6 +357,7 @@ define([
             CharacterizationService.copyCharacterization(this.characterizationId())
                 .then(res => {
                     this.setupDesign(new CharacterizationAnalysis(res));
+                    this.versionsParams.valueHasMutated();
                     this.isCopying(false);
                     commonUtils.routeTo(`cc/characterizations/${res.id}`);
                 });
@@ -287,28 +378,47 @@ define([
         }
 
         closeCharacterization() {
-            if (this.designDirtyFlag().isDirty() && !confirm("Your changes are not saved. Would you like to continue?")) {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', "Your changes are not saved. Would you like to continue?")))) {
                 return;
             }
             this.design(null);
             this.designDirtyFlag().reset();
             this.conceptSetStore.clear();
+            this.previewVersion(null);
             commonUtils.routeTo('/cc/characterizations');
         }
 
         async afterImportSuccess(res) {
             this.design(null);
+            this.previewVersion(null);
             this.designDirtyFlag().reset();
             commonUtils.routeTo('/cc/characterizations/' + res.id);
 		};
 
         getAuthorship() {
-            const createdDate = commonUtils.formatDateForAuthorship(this.design().createdDate);
-            const modifiedDate = commonUtils.formatDateForAuthorship(this.design().modifiedDate);
+            const design = this.design();
+
+            let createdText, createdBy, createdDate, modifiedBy, modifiedDate;
+
+            if (this.previewVersion()) {
+                createdText = ko.i18n('components.authorship.versionCreated', 'version created');
+                createdBy = this.previewVersion().createdBy.name;
+                createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
+                modifiedBy = null;
+                modifiedDate = null;
+            } else {
+                createdText = ko.i18n('components.authorship.created', 'created');
+                createdBy = lodash.get(design, 'createdBy.name');
+                createdDate = commonUtils.formatDateForAuthorship(design.createdDate);
+                modifiedBy = lodash.get(design, 'modifiedBy.name');
+                modifiedDate = commonUtils.formatDateForAuthorship(design.modifiedDate);
+            }
+
             return {
-                createdBy: lodash.get(this.design(), 'createdBy.name'),
+                createdText: createdText,
+                createdBy: createdBy,
                 createdDate: createdDate,
-                modifiedBy: lodash.get(this.design(), 'modifiedBy.name'),
+                modifiedBy: modifiedBy,
                 modifiedDate: modifiedDate,
             }
         }

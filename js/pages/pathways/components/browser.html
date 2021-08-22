@@ -1,25 +1,23 @@
-<heading-title params="name: 'Cohort Pathways', icon: 'sitemap', theme: 'dark'"></heading-title>
+<heading-title params="name: ko.i18n('pathways.title', 'Cohort Pathways'), icon: 'sitemap', theme: 'dark'"></heading-title>
 
-<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: 'Loading Pathway Analysis list...'"></loading>
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('pathways.loading', 'Loading Pathway Analysis list...')"></loading>
 
 <div data-bind="css: classes('grid'), if: $component.canList(), visible: !$component.loading()">
 	<div data-bind="css: classes('toolbar')">
 		<button
 				type="button"
-				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis"
-		>
-			New Pathway Analysis
-		</button>
+				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newAnalysis, text: ko.i18n('const.newEntityNames.pathway', 'New Pathway Analysis')"
+		></button>
 	</div>
 	<div data-bind="css: classes('list')">
 		<faceted-datatable params="{
-				buttons: [],
 				order: [[3, 'desc']],
 				columns: $component.gridColumns,
 				options: $component.gridOptions,
 				reference: $component.analysisList,
 				pageLength: $component.tableOptions.pageLength,
 				lengthMenu: $component.tableOptions.lengthMenu,
+				language: ko.i18n('datatable.language')
 		}"></faceted-datatable>
 	</div>
 </div>

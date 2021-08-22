@@ -194,10 +194,10 @@ define(function (require, exports) {
 	 function exportConceptSets(id) {
 		return fileService.loadZip(`${config.webAPIRoot}ir/${id}/export/conceptset`);
 	}
- 
+
 	function runDiagnostics(design) {
 		var designCopy = JSON.parse(ko.toJSON(design));
-		
+
 		if (typeof designCopy.expression != 'string') {
 			designCopy.expression = JSON.stringify(designCopy.expression);
 		}
@@ -206,8 +206,29 @@ define(function (require, exports) {
 			.doPost(`${config.webAPIRoot}ir/check`, designCopy)
 			.then(res => res.data);
 	}
-	 
-	
+
+	function getVersions(id) {
+		return httpService.doGet(`${config.webAPIRoot}ir/${id}/version/`)
+			.then(res => res.data);
+	}
+
+	function getVersion(id, versionNumber) {
+		return httpService.doGet(`${config.webAPIRoot}ir/${id}/version/${versionNumber}`)
+			.then(res => res.data);
+	}
+
+	function copyVersion(id, versionNumber) {
+		return httpService.doPut(`${config.webAPIRoot}ir/${id}/version/${versionNumber}/createAsset`)
+			.then(res => res.data);
+	}
+
+	function updateVersion(version) {
+		return httpService.doPut(`${config.webAPIRoot}ir/${version.assetId}/version/${version.version}`, {
+			comment: version.comment,
+			archived: version.archived
+		}).then(res => res.data);
+	}
+
 	var api = {
 		getAnalysisList: getAnalysisList,
 		getAnalysis: getAnalysis,
@@ -226,6 +247,10 @@ define(function (require, exports) {
 		exportSql,
 		exportConceptSets,
 		runDiagnostics,
+		getVersions,
+		getVersion,
+		updateVersion,
+		copyVersion
 	};
 
 	return api;

@@ -2,16 +2,17 @@
 	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
 
 	<!-- ko if: hasInfoAccess() -->
-	<loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: 'Loading Related Concepts...'"></loading>
+	<loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('cs.manager.concept.tabs.relatedConcepts.loading', 'Loading Related Concepts...')"></loading>
 
 	<div data-bind="visible:!isLoading()">
-		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, deferRender: true, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor }"></faceted-datatable>
+		<faceted-datatable params="{orderColumn: 7, columns: relatedConceptsColumns, options: relatedConceptsOptions, deferRender: true, reference: relatedConcepts, rowCallback: commonUtils.contextSensitiveLinkColor, language: ko.i18n('datatable.language') }"></faceted-datatable>
 		<concept-legend></concept-legend>
 		<div class="clear"></div>
 		<div class="row">
 			<div class="col-lg-12">
 				<concept-add-box params="{
 					canSelectSource: true,
+					isActive: () => $component.relatedConcepts().filter(c => c.isSelected()).length > 0,
 					onSubmit: (options, source) => $component.addConcepts(options, source)($component.relatedConcepts),
 				}"></concept-add-box>
 			</div>

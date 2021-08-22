@@ -1,6 +1,7 @@
 define(function(require, exports) {
   const ko = require('knockout');
   const config = require('appConfig');
+  const sharedState = require('atlas-state');
   const { Api:OHDSIApi, STATUS } = require('ohdsi-api');
   const JSON_RESPONSE_TYPE = 'application/json';
   const TEXT_RESPONSE_TYPE = 'text/plain';
@@ -8,6 +9,11 @@ define(function(require, exports) {
 
     class Api extends OHDSIApi {
 
+      get headers() {
+        return {
+          'User-Language': ko.unwrap(sharedState.locale),
+        };
+      }
     handleUnexpectedError() {
       console.error('Oooops!.. Something went wrong :(');
     }
@@ -50,7 +56,12 @@ define(function(require, exports) {
     }
 
     getHeaders(requestUrl) {
-      return this.isSecureUrl(requestUrl) ? super.getHeaders() : {};
+      if (this.isSecureUrl(requestUrl)) {
+        const headers = super.getHeaders();
+        headers['Action-Location'] = location;
+        return headers;
+      }
+      return {};
     }
 
     sendRequest(method, path, payload) {
@@ -80,6 +91,7 @@ define(function(require, exports) {
     get headers() {
       return {
         'Accept': TEXT_RESPONSE_TYPE,
+        'User-Language': ko.unwrap(sharedState.locale),
       };
     }
 

@@ -37,7 +37,8 @@ define([
 			super(params);
 			this.config = config;
 			this.refresh = ko.observable(true);
-			this.cohortCaption = ko.observable('Click Here to Choose a Cohort');
+			this.cohortCaption = ko.observable(
+				ko.unwrap(ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_71', 'Click Here to Choose a Cohort')));
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
 			this.reference = ko.observableArray();
 			this.dataCompleteReference = ko.observableArray();
@@ -128,7 +129,7 @@ define([
 			this.buttons = ['colvis', 'copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5'];
 			this.heelOptions = {
 				Facets: [{
-					'caption': 'Error Msg',
+					'caption': ko.i18n('facets.caption.errorMsg', 'Error Msg'),
 					'binding': d => {
 						if (d.attributeName < 10) {
 							return 'Person'
@@ -2187,16 +2188,16 @@ define([
 						});
 						break; // Entropy report
 
-					case this.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name:
-					case this.visualizationPacks.healthcareUtilPersonAndExposureCohort.name:
-					case this.visualizationPacks.healthcareUtilVisitRecordsBaseline.name:
-					case this.visualizationPacks.healthcareUtilVisitDatesBaseline.name:
-					case this.visualizationPacks.healthcareUtilCareSiteDatesBaseline.name:
-					case this.visualizationPacks.healthcareUtilVisitRecordsCohort.name:
-					case this.visualizationPacks.healthcareUtilVisitDatesCohort.name:
-					case this.visualizationPacks.healthcareUtilCareSiteDatesCohort.name:
-					case this.visualizationPacks.healthcareUtilDrugBaseline.name:
-					case this.visualizationPacks.healthcareUtilDrugCohort.name:
+					case ko.unwrap(this.visualizationPacks.healthcareUtilPersonAndExposureBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilPersonAndExposureCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitRecordsBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitDatesBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilCareSiteDatesBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitRecordsCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilVisitDatesCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilCareSiteDatesCohort.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilDrugBaseline.name):
+					case ko.unwrap(this.visualizationPacks.healthcareUtilDrugCohort.name):
 						this.currentReport(this.reportReportName());
 						this.loadingReport(false);
 						break;

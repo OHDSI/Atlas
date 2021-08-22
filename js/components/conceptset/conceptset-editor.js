@@ -28,17 +28,18 @@ define([
 			this.canEditCurrentConceptSet = params.canEditCurrentConceptSet;
 			this.commonUtils = commonUtils;
 			this.columns = [
-				{ orderable: false, render: () => renderers.renderCheckbox('isSelected', this.canEditCurrentConceptSet()) },
-				{ data: 'concept.CONCEPT_ID'},
-				{ data: 'concept.CONCEPT_CODE'},
-				{ render: commonUtils.renderBoundLink},
-				{ data: 'concept.DOMAIN_ID' },
-				{ data: 'concept.STANDARD_CONCEPT', visible:false },
-				{ data: 'concept.STANDARD_CONCEPT_CAPTION' },
-				{ orderable:false,render: () => this.renderCheckbox('isExcluded') },
-				{ class:'text-center', orderable:false, searchable:false, render: () => this.renderCheckbox('includeDescendants') },
-				{ class:'text-center', orderable:false, searchable:false, render: () => this.renderCheckbox('includeMapped') }];
-			
+				{ title: '', orderable: false, render: () => renderers.renderCheckbox('isSelected', this.canEditCurrentConceptSet()) },
+				{ title: ko.i18n('columns.conceptId', 'Concept Id'), data: 'concept.CONCEPT_ID'},
+				{ title: ko.i18n('columns.conceptCode', 'Concept Code'), data: 'concept.CONCEPT_CODE'},
+				{ title: ko.i18n('columns.conceptName', 'Concept Name'), render: commonUtils.renderBoundLink},
+				{ title: ko.i18n('columns.domain', 'Domain'), data: 'concept.DOMAIN_ID' },
+				{ title: ko.i18n('columns.standardConceptCode', 'Standard Concept Code'), data: 'concept.STANDARD_CONCEPT', visible:false },
+				{ title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'), data: 'concept.STANDARD_CONCEPT_CAPTION' },
+				{ title: ko.i18n('columns.exclude', 'Exclude'), class: 'text-center', orderable: false, render: () => this.renderCheckbox('isExcluded') },
+				{ title: ko.i18n('columns.descendants', 'Descendants'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeDescendants') },
+				{ title: ko.i18n('columns.mapped', 'Mapped'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeMapped') }
+			];
+
 			// header state
 			this.conceptsForRemovalLength = ko.pureComputed(() => this.conceptSetItems().filter(row => row.isSelected()).length);
 			this.areAllItemsCheckedForRemoval = ko.pureComputed(() => this.conceptsForRemovalLength() === this.conceptSetItems().length);
@@ -53,7 +54,6 @@ define([
       });
 
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
-			console.log( params.tableOptions)
 		}
 
 		renderCheckbox(field) {
@@ -76,7 +76,7 @@ define([
         const areAllItemsCheckedForRemoval = this.areAllItemsCheckedForRemoval();
         this.conceptSetItems().forEach(item => item.isSelected(!areAllItemsCheckedForRemoval));
 		}
-		
+
     selectAllConceptSetItems(key, areAllSelected) {
       if (!this.canEditCurrentConceptSet()) {
         return;

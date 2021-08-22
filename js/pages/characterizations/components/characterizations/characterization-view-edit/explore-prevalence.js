@@ -28,9 +28,22 @@ define([
 		constructor(params) {
 			super(params);
 			this.tableColumns = [
-				{ title: 'Relationship type', render: this.renderRelationship, class: this.classes('col-type'), },
-				{ title: 'Distance', data: 'distance', class: this.classes('col-distance'), },
-				{ title: 'Concept name', data: 'covariateName', class: this.classes('col-concept'), render: (d, t, { covariateName, faType }) =>  pageUtils.extractMeaningfulCovName(covariateName, faType) },
+				{
+					title: ko.i18n('columns.relationshipType', 'Relationship type'),
+					render: this.renderRelationship,
+					class: this.classes('col-type'),
+				},
+				{
+					title: ko.i18n('columns.distance', 'Distance'),
+					data: 'distance',
+					class: this.classes('col-distance'),
+				},
+				{
+					title: ko.i18n('columns.conceptName', 'Concept name'),
+					data: 'covariateName',
+					class: this.classes('col-concept'),
+					render: (d, t, { covariateName, faType }) =>  pageUtils.extractMeaningfulCovName(covariateName, faType)
+				},
 			];
 			this.data = ko.observableArray();
 			this.loading = ko.observable();
@@ -39,8 +52,8 @@ define([
 			this.cohortName = this.explore.cohortName;
 			this.exploring = ko.observable();
 			this.relations = ko.computed(() => this.prepareTabularData(this.data()));
-			this.exploringTitle = ko.pureComputed(() => this.exploring() ? 'Exploring concept hierarchy for: ' + this.exploring() : null );
 			this.tableOptions = commonUtils.getTableOptions('M');
+			this.exploringTitle = ko.pureComputed(() => this.exploring() ? ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.exploringConceptHierarchyFor', 'Exploring concept hierarchy for: ')() + ' ' + this.exploring() : null );
 			this.loadData(this.explore);
 		}
 
@@ -53,7 +66,7 @@ define([
 
 		getCountColumn(strata) {
 			return {
-				title: 'Count',
+				title: ko.i18n('columns.count', 'Count'),
 				class: this.classes('col-count'),
 				render: (s, p, d) => numeral(d.count[strata] || 0).format(),
 			};
@@ -61,7 +74,7 @@ define([
 
 		getPctColumn(strata, idx) {
 			return {
-				title: 'Pct',
+				title: ko.i18n('columns.pct', 'Pct'),
 				class: this.classes('col-pct'),
 				render: (s, p, d) => utils.formatPct(d.pct[strata] || 0),
 			};
@@ -83,7 +96,7 @@ define([
 					};
 				}
 				if (stratas[st.strataId] === undefined) {
-					stratas[st.strataId] = st.strataName || 'All stratas';
+					stratas[st.strataId] = st.strataName || ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.allStrata', 'All strata')();
 				}
 				const stat = stats[st.covariateId];
 				stat.count[st.strataId] = st.count;
@@ -116,7 +129,7 @@ define([
 			const buttons = [];
 
 			buttons.push({
-				text: 'Export',
+				text: ko.i18n('common.export', 'Export')(),
 				action: () => this.exportTable()
 			});
 
@@ -152,11 +165,15 @@ define([
 			const rel = this.getRelationshipTypeFromDistance(distance);
 			const cls = this.classes({element: 'explore', modifiers: distance === 0 ? 'disabled' : '' });
 			const binding = distance !== 0 ? 'click: () => $component.exploreByFeature({...$data, cohortId: $component.cohortId})' : '';
-			return "<a class='"+ cls + "' data-bind='" + binding + "'>Explore</a> " + rel;
+			return "<a class='"+ cls + "' data-bind='" + binding + "'><span data-bind=\"text: ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.explore', 'Explore')\"></span></a> " + rel;
 		}
 
 		getRelationshipTypeFromDistance(distance) {
-			return distance > 0 ? 'Ancestor' : distance < 0 ? 'Descendant' : 'Selected';
+			return distance > 0 ?
+				ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.ancestor', 'Ancestor')() :
+				distance < 0 ?
+					ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.descendant', 'Descendant')() :
+			    ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.selected', 'Selected')();
 		}
 
 	}

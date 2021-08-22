@@ -53,10 +53,12 @@ define(function(require, exports) {
         beforeSend: function(xhr, settings) {
             if (!authProviders[settings.url] && settings.url.startsWith(config.api.url)) {
                 xhr.setRequestHeader('Authorization', getAuthorizationHeader());
+                xhr.setRequestHeader('Action-Location', location);
             }
         }
     });
 
+    var reloginRequired = ko.observable(false);
     var subject = ko.observable();
     var permissions = ko.observable();
     var fullName = ko.observable();
@@ -508,6 +510,7 @@ define(function(require, exports) {
 
         token: token,
         authClient: authClient,
+        reloginRequired: reloginRequired,
         subject: subject,
         fullName,
         tokenExpirationDate: tokenExpirationDate,

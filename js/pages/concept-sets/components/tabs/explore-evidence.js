@@ -27,8 +27,8 @@ define([
       this.saveConceptSetFn = params.saveConceptSet;
     }
 
-    saveConceptSet(txtElem, conceptSet, selectedConcepts) {
-      return this.saveConceptSetFn(txtElem, conceptSet, selectedConcepts);
+    saveConceptSet(conceptSet, txtElem) {
+      return this.saveConceptSetFn(conceptSet, txtElem);
     }
 
 	}

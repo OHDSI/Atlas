@@ -5,6 +5,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/MomentAPI',
 	'services/ConceptSet',
 	'services/Permission',
+	'services/Tags',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
@@ -55,10 +56,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
 	'components/security/access/configure-access-modal',
+	'components/tags/tags',
 	'components/authorship',
 	'utilities/sql',
 	'components/conceptset/conceptset-list',
-	'components/name-validation'
+	'components/name-validation',
+	'components/versions/versions'
 ], function (
 	$,
 	ko,
@@ -69,6 +72,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	momentApi,
 	conceptSetService,
 	PermissionService,
+	TagsService,
 	conceptSetUitls,
 	datatableUtils,
 	CohortExpression,
@@ -194,7 +198,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	class CohortDefinitionManager extends AutoBind(Clipboard(Page)) {
 		constructor(params) {
 			super(params);
+
 			const self = this;
+			this.previewVersion = sharedState.CohortDefinition.previewVersion;
 			this.pollTimeoutId = null;
 			this.authApi = authApi;
 			this.config = config;
@@ -218,7 +224,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isExitMessageShown = ko.observable();
 			this.exitMessage = ko.observable();
 			this.service = cohortDefinitionService;
-			this.defaultName = globalConstants.newEntityNames.cohortDefinition;
+			this.defaultName = ko.unwrap(globalConstants.newEntityNames.cohortDefinition);
 			this.isReportGenerating = ko.observable(false);
 
 			// sample states
@@ -243,7 +249,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isAgeRange =ko.pureComputed(() => ['between','notBetween'].includes(this.sampleAgeType()));
 			this.firstAgeError = ko.pureComputed(() => this.firstAge() != null && this.firstAge() < 0);
 			this.isAgeRangeError = ko.pureComputed(() => this.isAgeRange() // age range selected
-						&& !(this.firstAge() == null && this.secondAge() == null) // one is non-null 
+						&& !(this.firstAge() == null && this.secondAge() == null) // one is non-null
 						&& (this.firstAge() == null || this.secondAge() == null || this.firstAge() < 0 || this.secondAge() < 0 || this.firstAge() == this.secondAge())); //  has invalid value
 
 			//sampleSourceKey changes => get list of samples
@@ -275,35 +281,35 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			//sample list
 			this.sampleListCols = [
 				{
-					title: 'Sample Id',
+					title: ko.i18n('columns.sampleId', 'Sample Id'),
 					data:'sampleId',
 					visible: false,
 				},
-				{
-				  title: 'Sample',
-							render: datatableUtils.getLinkFormatter(d => ({
-								label: d['sampleName'],
-								linkish: true,
-							})),
+        {
+          title: ko.i18n('columns.sampleName', 'Sample name'),
+					render: datatableUtils.getLinkFormatter(d => ({
+						label: d['sampleName'],
+						linkish: true,
+					})),
+        },
+        {
+          title: ko.i18n('columns.numberOfPatients', 'Number of patients'),
+          data: 'patientCounts',
+        },
+        {
+          title: ko.i18n('columns.selectionCriteria', 'Selection criteria'),
+          data: 'selectionCriteria',
+        },
+        {
+          title: ko.i18n('columns.author', 'Author'),
+          data: 'createdBy',
 				},
 				{
-				  title: 'Number of patients',
-				  data: 'patientCounts',
-				},
-				{
-				  title: 'Selection criteria',
-				  data: 'selectionCriteria',
-				},
-				{
-				  title: 'Created by',
-				  data: 'createdBy',
-				},
-				{
-					title: 'Created on',
+					title: ko.i18n('columns.created', 'Created'),
 					data: 'createdOn'
 				},
 				{
-					title: 'Actions',
+					title: ko.i18n('columns.action', 'Action'),
 					sortable: false,
 					render: function() {
 						return `<i class="sample-list fa fa-trash" aria-hidden="true"></i> <i class="sample-list fa fa-refresh" aria-hidden="true"></i> <i title="Validate with Annotation" class="sample-list fa fa-check-square" aria-hidden="true"></i>`
@@ -314,19 +320,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			// Sample data table
 			this.sampleCols =  [
-        		{
-					title: 'Person ID',
+        {
+					title: ko.i18n('columns.personId', 'Person ID'),
 					render: datatableUtils.getLinkFormatter(d => ({
 						label: d['personId'],
 						linkish: true,
 					})),
 				},
 				{
-					title: 'Gender',
+					title: ko.i18n('columns.gender', 'Gender'),
 					data: 'gender',
 				},
 				{
-					title: 'Age at index',
+					title: ko.i18n('columns.ageAtIndex', 'Age at index'),
 					data: 'ageIndex',
 				}
 			];
@@ -336,10 +342,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					title: 'ID',
 					data: 'id'
 				},
-				{
-					title: 'Name',
-					data: 'name'
-				},
+					{
+						title: 'Name',
+						data: 'name'
+					},
 				{
 					title: '# Questions',
 					data: 'q_num'
@@ -383,8 +389,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (this.currentCohortDefinition()) {
 					if (this.currentCohortDefinition().id() === 0 || this.currentCohortDefinition().id() === null) {
 						return this.defaultName;
+					} else if (this.previewVersion()) {
+						return ko.i18nformat('cohortDefinitions.cohortCaptionPreview', 'Cohort #<%=id%> - Version <%=number%> Preview', {id: this.currentCohortDefinition().id(), number: this.previewVersion().version})();
 					} else {
-						return 'Cohort #' + this.currentCohortDefinition().id();
+						return ko.i18nformat('cohortDefinitions.cohortCaption', 'Cohort #<%=id%>', {id: this.currentCohortDefinition().id()})();
 					}
 				}
 			});
@@ -446,11 +454,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				if (!this.isAuthenticated()) {
 					return false;
 				}
-				if (this.isNew()) {
+				if (this.currentCohortDefinition() && this.isNew()) {
 					return this.authApi.isPermittedCreateCohort();
 				}
 
-				return this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id());
+				return this.authApi.isPermittedReadCohorts() ||
+					(this.currentCohortDefinition() && this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id()));
 			});
 
 			this.hasAccessToGenerate = (sourceKey) => {
@@ -463,7 +472,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.hasAccessToReadCohortReport = (sourceKey) => {
 				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.currentCohortDefinition().id(), sourceKey);
 			}
-			if (!this.hasAccess()) return;
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;
 
@@ -496,7 +504,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			}));
 			this.canSave = ko.pureComputed(()=> {
-				return this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect();
+				return (this.canEdit() && this.previewVersion()) || (this.dirtyFlag().isDirty() && !this.isRunning() && this.canEdit() && this.isNameCorrect());
 			});
 
 			this.disableConceptSetExport = ko.pureComputed(() => {
@@ -506,10 +514,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.disableConceptSetExportMessage = ko.pureComputed(() => {
 				if (this.currentCohortDefinition() && this.currentCohortDefinition().expression().ConceptSets().length === 0) {
-					return "No concept sets to export.";
+					return ko.i18n('cohortDefinitions.noConceptSets', 'No concept sets to export');
 				}
 				if (this.dirtyFlag().isDirty()) {
-					return "You must save the definition before you can export.";
+					return ko.i18n('cohortDefinitions.saveDefinitionBefore', 'You must save the definition before you can export');
 				}
 			});
 
@@ -528,11 +536,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			});
 
 			this.generateDisabledReason = ko.pureComputed(() => {
-				if (this.criticalCount() > 0) return globalConstants.disabledReasons.INVALID_DESIGN;
+				if (this.criticalCount() > 0) return ko.unwrap(globalConstants.disabledReasons.INVALID_DESIGN);
 				const hasInitialEvent = this.currentCohortDefinition() && this.currentCohortDefinition().expression().PrimaryCriteria().CriteriaList().length > 0;
-				if (!hasInitialEvent) return globalConstants.disabledReasons.EMPTY_INITIAL_EVENT;
-				if (this.dirtyFlag().isDirty()) return globalConstants.disabledReasons.DIRTY;
-
+				if (!hasInitialEvent) return ko.unwrap(globalConstants.disabledReasons.EMPTY_INITIAL_EVENT);
+				if (this.dirtyFlag().isDirty()) return ko.unwrap(globalConstants.disabledReasons.DIRTY);
 				return null;
 			});
 
@@ -580,43 +587,43 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.includedConceptsOptions = {
 				Facets: [
 					{
-					'caption': 'Vocabulary',
+					'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 						'binding': (o) => {
 							return o.VOCABULARY_ID;
 						}
 					},
 					{
-						'caption': 'Class',
+						'caption': ko.i18n('facets.caption.class', 'Class'),
 							'binding': (o) => {
 							return o.CONCEPT_CLASS_ID;
 						}
 					},
 					{
-						'caption': 'Domain',
+						'caption': ko.i18n('facets.caption.domain', 'Domain'),
 							'binding': (o) => {
 								return o.DOMAIN_ID;
 							}
 					},
 					{
-						'caption': 'Standard Concept',
+						'caption': ko.i18n('facets.caption.standardConcept', 'Standard Concept'),
 							'binding': (o) => {
 								return o.STANDARD_CONCEPT_CAPTION;
 							}
 					},
 					{
-						'caption': 'Invalid Reason',
+						'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
 							'binding': (o) => {
 								return o.INVALID_REASON_CAPTION;
 							}
 					},
 					{
-						'caption': 'Has Records',
+						'caption': ko.i18n('facets.caption.hasRecords', 'Has Records'),
 							'binding': (o) => {
 								return parseInt(o.RECORD_COUNT) > 0;
 							}
 					},
 					{
-						'caption': 'Has Descendant Records',
+						'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
 							'binding': (o) => {
 								return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 							}
@@ -699,8 +706,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentJob = ko.observable();
 			this.reportingSourceStatusAvailable = ko.observable(false);
 			this.reportingSourceStatusLoading = ko.observable(false);
+			this.isGenerated = ko.observable(false);
 			this.reportOptionCaption = ko.pureComputed(() => {
-				return this.reportingSourceStatusLoading() ? "Loading Reports..." : "Select a Report";
+				return this.reportingSourceStatusLoading()
+					? ko.i18n('common.loading', 'Loading Reports...')()
+					: ko.i18n('cohortDefinitions.cohortDefinitionManager.selectReport', 'Select a Report')();
 			});
 			this.reportingSourceStatus = ko.observable();
 			this.reportingAvailableReports = ko.observableArray();
@@ -740,7 +750,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 							cohortReportingService.getCompletedHeraclesHeelAnalyses(sourceInfo, this.currentCohortDefinition().id()).done(heelResults => {
 							if (heelResults.length > 0) {
-								reports.push({name: "Heracles Heel", reportKey: "Heracles Heel", analyses: []});
+								reports.push({name: ko.i18n('cohortDefinitions.cohortDefinitionManager.heraclesHeel', 'Heracles Heel'), reportKey: "Heracles Heel", analyses: []});
 							}
 								this.reportingAvailableReports(reports);
 								this.generateReportsEnabled(false);
@@ -817,7 +827,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.utilReportOptions = {
 				reports : {
-					title: 'Reports',
+					title: ko.i18n('options.reports', 'Reports'),
 					options: reports,
                     selectedOptions: ko.observableArray([
                         reportPacks.healthcareUtilPersonAndExposureCohort.analyses,
@@ -825,12 +835,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
                     ]),
 				},
 				periods: {
-					title: 'Periods',
+					title: ko.i18n('options.periods', 'Periods'),
 					options: costUtilConst.periods,
 					selectedOptions: ko.observableArray([]),
 				},
 				rollups: {
-					title: 'Rollups',
+					title: ko.i18n('options.rollups', 'Rollups'),
                     options: costUtilConst.rollups,
                     selectedOptions: ko.observableArray([]),
 				}
@@ -857,16 +867,67 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				const cd = this.currentCohortDefinition();
 				source && this.startPolling(cd, source);
 			}));
-			
+
 			this.reportsManagerComponentParams = {
 				reportSourceKey: this.reportSourceKey,
 
 			}
+
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),
 				createdByUsernameGetter: () => this.currentCohortDefinition() && this.currentCohortDefinition().createdBy()
 					&& this.currentCohortDefinition().createdBy().login
+			});
+
+			TagsService.decorateComponent(this, {
+				assetTypeGetter: () => TagsService.ASSET_TYPE.COHORT_DEFINITION,
+				assetGetter: () => this.currentCohortDefinition(),
+				addTagToAsset: (tag) => {
+					const isDirty = this.dirtyFlag().isDirty();
+					this.currentCohortDefinition().tags.push(tag);
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				},
+				removeTagFromAsset: (tag) => {
+					const tags = this.currentCohortDefinition().tags,
+						isDirty = this.dirtyFlag().isDirty();
+					tags(tags().filter(t => t.id !== tag.id && tag.groups.filter(tg => tg.id === t.id).length === 0));
+					if (!isDirty) {
+						this.dirtyFlag().reset();
+						this.warningParams.valueHasMutated();
+					}
+				}
+			});
+
+			this.versionsParams = ko.observable({
+				versionPreviewUrl: (versionNumber) => `/cohortdefinition/${this.currentCohortDefinition().id()}/version/${versionNumber}`,
+				currentVersion: () => {
+					return {
+						...this.currentCohortDefinition(),
+						createdBy: this.currentCohortDefinition().createdBy(),
+						createdDate: this.currentCohortDefinition().createdDate(),
+						modifiedBy: this.currentCohortDefinition().modifiedBy(),
+						modifiedDate: this.currentCohortDefinition().modifiedDate(),
+					}
+				},
+				previewVersion: () => this.previewVersion(),
+				getList: () => cohortDefinitionService.getVersions(this.currentCohortDefinition().id()),
+				updateVersion: (version) => cohortDefinitionService.updateVersion(version),
+				copyVersion: async (version) => {
+					this.isCopying(true);
+					try {
+						const result = await cohortDefinitionService.copyVersion(this.currentCohortDefinition().id(), version.version);
+						this.previewVersion(null);
+						commonUtils.routeTo(constants.paths.details(result.id));
+					} finally {
+						this.isCopying(false);
+					}
+				},
+				isAssetDirty: () => this.dirtyFlag().isDirty(),
+				canAddComments: () => this.canEdit()
 			});
 
 			this.pollForInfoPeriodically();
@@ -889,19 +950,28 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			const testName = "HERACLES_COHORT_" + cd.id() + "_" + source;
 			try {
 				const { data } = await jobService.getByName(testName, "cohortAnalysisJob");
-				data.jobParameters ? this.currentJob({
-					...data,
-					name: data.jobParameters.jobName,
-					startDate: data.startDate ? momentApi.formatDateTimeUTC(data.startDate) : '',
-					duration: data.startDate ? momentApi.formatDuration((data.endDate || Date.now()) - data.startDate): ''
-				}) : this.currentJob(null);
+				if (data.jobParameters) {
+					this.isGenerated(true);
+					this.currentJob({
+						...data,
+						name: data.jobParameters.jobName,
+						startDate: data.startDate ? momentApi.formatDateTimeUTC(data.startDate) : '',
+						duration: data.startDate ? momentApi.formatDuration((data.endDate || Date.now()) - data.startDate): ''
+					});
+				} else {
+					this.currentJob(null);
+					if (this.isGenerated()) {
+						this.reportingSourceStatusAvailable(false);
+					}
+					this.isGenerated(false);
+				}
 			} catch (e) {
 				console.error(e)
 			}
 		}
 
 		delete () {
-			if (!confirm("Delete cohort definition? Warning: deletion can not be undone!"))
+			if (!confirm(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.delete', 'Delete cohort definition? Warning: deletion can not be undone!')()))
 				return;
 
 			this.isDeleting(true);
@@ -916,8 +986,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}, (error) => {
 					console.log("Error: " + error);
 					if(error.status == 409) {
-							alert("Cohort definition cannot be deleted because it is referenced in some analysis");
-													this.isDeleting(false);
+						alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.deleteConflict', 'Cohort definition cannot be deleted because it is referenced in some analysis.')());
+						this.isDeleting(false);
 					} else {
 							authApi.handleAccessDenied(error);
 					}
@@ -925,7 +995,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		async save () {
-			this.sampleSourceKey(null)
+			if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
+				return;
+			}
+
+			this.sampleSourceKey(null);
 			this.isSaving(true);
 
 			let cohortDefinitionName = this.currentCohortDefinition().name();
@@ -935,49 +1009,52 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			// in the database. Also pass the id so we can make sure that the
 			// current Cohort Definition is excluded in this check.
 
-			try {
-				const results = await cohortDefinitionService.exists(this.currentCohortDefinition().name(), this.currentCohortDefinition().id());
-				if (results > 0) {
-					alert('A cohort definition with this name already exists. Please choose a different name.');
+				try {
+					const results = await cohortDefinitionService.exists(this.currentCohortDefinition().name(), this.currentCohortDefinition().id());
+					if (results > 0) {
+						alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.saveAlert', 'A cohort definition with this name already exists. Please choose a different name.')());
+					} else {
+						this.conceptSetStore.clear();
+
+						// If we are saving a new cohort definition (id === 0) then clear
+						// the id field before saving
+						if (this.currentCohortDefinition().id() === "0") {
+							this.currentCohortDefinition().id(undefined);
+						}
+						var definition = ko.toJS(this.currentCohortDefinition());
+						// reset view after save
+						const savedDefinition = await cohortDefinitionService.saveCohortDefinition(definition);
+						definition = new CohortDefinition(savedDefinition);
+						const redirectWhenComplete = definition.id() != this.currentCohortDefinition().id();
+						this.currentCohortDefinition(definition);
+						this.previewVersion(null);
+						this.versionsParams.valueHasMutated();
+						if (redirectWhenComplete) {
+							commonUtils.routeTo(constants.paths.details(definition.id()));
+						}
+					}
+					sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
+				} catch (e) {
+					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.saveError', 'An error occurred while attempting to save a cohort definition.')());
+				} finally {
+					this.isSaving(false);
+				}
+			}
+
+			close () {
+				if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('cohortDefinitions.cohortDefinitionManager.confirms.close', 'Your cohort changes are not saved. Would you like to continue?')())) {
+					return;
 				} else {
 					this.conceptSetStore.clear();
-
-					// If we are saving a new cohort definition (id === 0) then clear
-					// the id field before saving
-					if (this.currentCohortDefinition().id() === "0") {
-						this.currentCohortDefinition().id(undefined);
-					}
-					var definition = ko.toJS(this.currentCohortDefinition());
-					// reset view after save
-					const savedDefinition = await cohortDefinitionService.saveCohortDefinition(definition);
-					definition = new CohortDefinition(savedDefinition);
-					const redirectWhenComplete = definition.id() != this.currentCohortDefinition().id();
-					this.currentCohortDefinition(definition);
-					if (redirectWhenComplete) {
-						commonUtils.routeTo(constants.paths.details(definition.id()));
-					}
+					this.currentCohortDefinition(null);
+					this.previewVersion(null);
+					this.dirtyFlag().reset();
+					this.reportCohortDefinitionId(null);
+					this.reportReportName(null);
+					this.reportSourceKey(null);
+					commonUtils.routeTo('/cohortdefinitions');
 				}
-				sharedState.CohortDefinition.lastUpdatedId(this.currentCohortDefinition().id());
-			} catch (e) {
-				alert('An error occurred while attempting to save a cohort definition.');
-			} finally {
-				this.isSaving(false);
 			}
-		}
-
-		close () {
-			if (this.dirtyFlag().isDirty() && !confirm("Your cohort changes are not saved. Would you like to continue?")) {
-				return;
-			} else {
-				this.conceptSetStore.clear();
-				this.currentCohortDefinition(null);
-				this.dirtyFlag().reset();
-				this.reportCohortDefinitionId(null);
-				this.reportReportName(null);
-				this.reportSourceKey(null);
-				commonUtils.routeTo('/cohortdefinitions');
-			}
-		}
 
 		async copy () {
 			this.isCopying(true);
@@ -1095,7 +1172,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		diagnose() {
 			if (this.currentCohortDefinition()) {
-				return cohortDefinitionService.runDiagnostics(this.currentCohortDefinition().expression());
+				return cohortDefinitionService.runDiagnostics(this.currentCohortDefinition());
 			}
 		}
 
@@ -1129,9 +1206,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		onRouterParamsChanged(params) {
-			let { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey, sampleId } = params;
+			let { cohortDefinitionId, conceptSetId, selectedSourceId, mode = 'definition', sourceKey, sampleId, version } = params;
 			this.cohortDefinitionIdOnRoute(cohortDefinitionId)
-			// cohortDefinitionId can be undefined in case of following links fron notifications
+			// cohortDefinitionId can be undefined in case of following links from notifications
 			// when another tab of the same cohort definition is selected
 			if (!cohortDefinitionId && this.currentCohortDefinition()) {
 				cohortDefinitionId = this.currentCohortDefinition().id();
@@ -1144,6 +1221,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.selectedSampleId(sampleId)
 				this.fetchSampleData({sampleId, sourceKey, cohortDefinitionId})
 			}
+			if (version === 'current') {
+				this.previewVersion(null);
+				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
+			} else if (version) {
+				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey, version);
+			}
 			if (!this.checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey)) {
 				this.prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey);
 			} else if (selectedSourceId) {
@@ -1155,6 +1238,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			} else {
 				this.selectedReportSource(null);
 			}
+		}
+
+		backToCurrentVersion() {
+			if (this.dirtyFlag().isDirty() && !confirm(ko.i18n('common.unsavedWarning', 'Unsaved changes will be lost. Proceed?')())) {
+				return;
+			}
+			commonUtils.routeTo(`/cohortdefinition/${this.currentCohortDefinition().id()}/version/current`);
 		}
 
 		expandSelectedSection(item) {
@@ -1248,11 +1338,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 		}
 
-
-		async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey) {
+		async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey, versionNumber) {
 			this.isLoading(true);
 			if(parseInt(cohortDefinitionId) === 0) {
 				this.setNewCohortDefinition();
+			} else if (versionNumber) {
+				const cohortDefinition = await cohortDefinitionService.getVersion(cohortDefinitionId, versionNumber);
+				this.currentCohortDefinition(new CohortDefinition(cohortDefinition));
+				this.previewVersion(cohortDefinition.versionDef);
+				const generationInfo = await cohortDefinitionService.getInfo(cohortDefinitionId);
+				this.currentCohortDefinitionInfo(generationInfo);
 			} else {
 				await this.loadExistingCohortDefinition(cohortDefinitionId);
 			}
@@ -1298,7 +1393,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.conceptSetStore.isEditable(this.canEdit());
 			commonUtils.routeTo(`/cohortdefinition/${this.currentCohortDefinition().id()}/conceptsets/`);
 		}
-	
+
 		reload () {
 			if (this.modifiedJSON.length > 0) {
 				var updatedExpression = JSON.parse(this.modifiedJSON);
@@ -1326,28 +1421,31 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			return commonUtils.routeTo('/cohortdefinition/' + this.currentCohortDefinition().id() + '/' + key);
 		}
 
-		getStatusMessage (info) {
-			if (info.status() === "COMPLETE" && !info.isValid())
-				return !info.isCanceled() ? "FAILED" : "CANCELED";
-			else
-				// replace 'COMPLETE' with 'COMPLETED' to match other complete statuses
-				return info.status() === 'COMPLETE' ? 'COMPLETED' : info.status();
-		}
-
-		getStatusTemplate(item) {
-			return item.status === 'FAILED' ? 'failed-status-tmpl' : 'success-status-tmpl';
-		}
-
-		showExitMessage(sourceKey) {
-			const info = this.cohortDefinitionSourceInfo().find(i => i.sourceKey === sourceKey) || { failMessage: 'Failed without any message' };
-			this.exitMessage(info.failMessage);
-			this.isExitMessageShown(true);
-		}
-
-		async generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
-			if (!confirm(`This will run ${descr} and may take about ${duration}. Are you sure?`)) {
-				return;
+			getStatusMessage (info) {
+				if (info.status() === "COMPLETE" && !info.isValid())
+					return !info.isCanceled() ? "FAILED" : "CANCELED";
+				else
+					return info.status() === 'COMPLETE' ? 'COMPLETED' : info.status();
 			}
+
+			getStatusMessageTranslated (status) {
+				return datatableUtils.getExecutionStatus()(status);
+			}
+
+			getStatusTemplate(item) {
+				return item.status === 'FAILED' ? 'failed-status-tmpl' : 'success-status-tmpl';
+			}
+
+			showExitMessage(sourceKey) {
+				const info = this.cohortDefinitionSourceInfo().find(i => i.sourceKey === sourceKey) || { failMessage: ko.i18n('cohortDefinitions.cohortDefinitionManager.failedWithoutAnyMessage', 'Failed without any message')() };
+				this.exitMessage(info.failMessage);
+				this.isExitMessageShown(true);
+			}
+
+			async generateAnalyses ({ descr, duration, analysisIdentifiers, runHeraclesHeel, periods, rollupUtilizationVisit, rollupUtilizationDrug }) {
+				if (!confirm(ko.i18nformat('cohortDefinitions.cohortDefinitionManager.confirms.generateAnalyses', 'This will run <%=descr%> and may take about <%=duration%>. Are you sure?', {descr: descr, duration: duration})())) {
+					return;
+				}
 
 			this.generateReportsEnabled(false);
 			analysisIdentifiers = _.uniq(analysisIdentifiers);
@@ -1397,47 +1495,47 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isReportGenerating(false);
 		}
 
-		generateQuickAnalysis () {
-			this.generateAnalyses({
-				descr: 'minimal analyses set to provide a quick overview of the cohort',
-				duration: '10 minutes',
-				analysisIdentifiers: cohortReportingService.getQuickAnalysisIdentifiers(),
-				runHeraclesHeel: false
-			});
-		}
+			generateQuickAnalysis () {
+				this.generateAnalyses({
+					descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.descr', 'minimal analyses set to provide a quick overview of the cohort')(),
+					duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateQuickAnalysis.duration', '10 minutes')(),
+					analysisIdentifiers: cohortReportingService.getQuickAnalysisIdentifiers(),
+					runHeraclesHeel: false
+				});
+			}
 
 		selectHealthcareAnalyses () {
 			this.showUtilizationToRunModal(true);
 		}
 
-		generateHealthcareAnalyses () {
-			const analysisIds = this.utilReportOptions.reports.selectedOptions().reduce((acc, ids) => [...acc, ...ids], []);
-			this.generateAnalyses({
-				descr: 'the Cost and Utilization analyses',
-				duration: '10-45 minutes',
-				analysisIdentifiers: analysisIds,
-				runHeraclesHeel: false,
-				periods: this.utilReportOptions.periods.selectedOptions(),
-				...this.utilReportOptions.rollups.selectedOptions().reduce((acc, current) => { acc[current] = true; return acc }, {}),
-			});
+			generateHealthcareAnalyses () {
+				const analysisIds = this.utilReportOptions.reports.selectedOptions().reduce((acc, ids) => [...acc, ...ids], []);
+				this.generateAnalyses({
+					descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.descr', 'the Cost and Utilization analyses')(),
+					duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateHealthcareAnalyses.duration', '10-45 minutes')(),
+					analysisIdentifiers: analysisIds,
+					runHeraclesHeel: false,
+					periods: this.utilReportOptions.periods.selectedOptions(),
+					...this.utilReportOptions.rollups.selectedOptions().reduce((acc, current) => { acc[current] = true; return acc }, {}),
+				});
 
 			this.showUtilizationToRunModal(false);
 		};
 
-		generateAllAnalyses () {
-			this.generateAnalyses({
-				descr: 'all analyses',
-				duration: '60-90 minutes',
-				analysisIdentifiers: cohortReportingService.getAnalysisIdentifiers(),
-				runHeraclesHeel: true
-			});
-		};
+			generateAllAnalyses () {
+				this.generateAnalyses({
+					descr: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.descr', 'all analyses')(),
+					duration: ko.i18n('cohortDefinitions.cohortDefinitionManager.generateAllAnalyses.duration', '60-90 minutes')(),
+					analysisIdentifiers: cohortReportingService.getAnalysisIdentifiers(),
+					runHeraclesHeel: true
+				});
+			};
 
 	// track subscriptions
 		trackSub(sub) {
 			this.subscriptions.push(sub);
 		}
-	
+
 	// dispose subscriptions / cleanup computed observables (non-pureComputeds)
 		dispose () {
 			super.dispose();
@@ -1493,43 +1591,43 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.copyToClipboard('#btnCopyIncludedConceptIdentifierListClipboard', '#copyIncludedConceptIdentifierListMessage');
 		}
 
-		copyTextViewToClipboard() {
-				let columns = [
-			{
-					title: 'Concept Id',
-					data: 'CONCEPT_ID'
-			},
-			{
-					title: 'Concept Name',
-					data: 'CONCEPT_NAME'
-			},
-			{
-					title: 'Domain',
-					data: 'DOMAIN_ID'
-			},
-			{
-					title: 'Vocabulary',
-					data: 'VOCABULARY_ID'
-			}
-				];
-				let setsText = '';
-				this.sortedConceptSets().forEach((set) => {
-			setsText += '\n' + set.name() + '\n';
-			columns.forEach((c) => {
-					setsText += c.title + '\t';
-			});
-			setsText += 'Excluded\tDescendants\tMapped' + '\n';
-			set.expression.items().forEach((item) => {
-					columns.forEach((c) => {
-							setsText += item.concept[c.data] + '\t';
-					});
-					setsText += (item.isExcluded() ? 'YES' : 'NO') + '\t';
-					setsText += (item.includeDescendants() ? 'YES' : 'NO') + '\t';
-					setsText += (item.includeMapped() ? 'YES' : 'NO') + '\n';
-			});
+			copyTextViewToClipboard() {
+			    let columns = [
+				{
+				    title: ko.i18n('columns.conceptId', 'Concept Id'),
+				    data: 'CONCEPT_ID'
+				},
+				{
+				    title: ko.i18n('columns.conceptName', 'Concept Name'),
+				    data: 'CONCEPT_NAME'
+				},
+				{
+				    title: ko.i18n('columns.domain', 'Domain'),
+				    data: 'DOMAIN_ID'
+				},
+				{
+				    title: ko.i18n('columns.vocabulary', 'Vocabulary'),
+				    data: 'VOCABULARY_ID'
+				}
+			    ];
+			    let setsText = '';
+			    this.sortedConceptSets().forEach((set) => {
+				setsText += '\n' + set.name() + '\n';
+				columns.forEach((c) => {
+				    setsText += c.title + '\t';
 				});
-				this.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage', setsText);
-		}
+				setsText += 'Excluded\tDescendants\tMapped' + '\n';
+				set.expression.items().forEach((item) => {
+				    columns.forEach((c) => {
+				        setsText += item.concept[c.data] + '\t';
+				    });
+				    setsText += (item.isExcluded() ? 'YES' : 'NO') + '\t';
+				    setsText += (item.includeDescendants() ? 'YES' : 'NO') + '\t';
+				    setsText += (item.includeMapped() ? 'YES' : 'NO') + '\n';
+				});
+			    });
+			    this.copyToClipboard('#btnCopyTextViewClipboard', '#copyTextViewMessage', setsText);
+			}
 
 		copyCohortExpressionJSONToClipboard () {
 			this.copyToClipboard('#btnCopyExpressionJSONClipboard', '#copyCohortExpressionJSONMessage');
@@ -1555,12 +1653,28 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		getAuthorship() {
 			const cohortDef = this.currentCohortDefinition();
-			const createdDate = commonUtils.formatDateForAuthorship(cohortDef.createdDate);
-			const modifiedDate = commonUtils.formatDateForAuthorship(cohortDef.modifiedDate);
+
+			let createdText, createdBy, createdDate, modifiedBy, modifiedDate;
+
+			if (this.previewVersion()) {
+				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
+				createdBy = this.previewVersion().createdBy.name;
+				createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
+				modifiedBy = null;
+				modifiedDate = null;
+			} else {
+				createdText = ko.i18n('components.authorship.created', 'created');
+				createdBy = cohortDef.createdBy() ? cohortDef.createdBy().name : '';
+				createdDate = commonUtils.formatDateForAuthorship(cohortDef.createdDate);
+				modifiedBy = cohortDef.modifiedBy() ? cohortDef.modifiedBy().name : '';
+				modifiedDate = commonUtils.formatDateForAuthorship(cohortDef.modifiedDate);
+			}
+
 			return {
-				createdBy: cohortDef.createdBy() ? cohortDef.createdBy().name : '',
+				createdText: createdText,
+				createdBy: createdBy,
 				createdDate: createdDate,
-				modifiedBy: cohortDef.modifiedBy() ? cohortDef.modifiedBy().name : '',
+				modifiedBy: modifiedBy,
 				modifiedDate: modifiedDate,
 			}
 		}
@@ -1605,7 +1719,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		async createNewSample() {
-			
+
 			if (!this.isSampleFormValid()) { // do nothing
 				return;
 			}
@@ -1656,7 +1770,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.showSampleCreatingModal(false);
 			} catch(error) {
 				console.error(error);
-				alert('Error when creating sample, please try again later');
+				alert((error && error.data && error.data.payload && error.data.payload.message) ?
+				error.data.payload.message : 'Error when creating sample, please try again later');
 			} finally {
 				this.newSampleCreatingLoader(false);
 			}
@@ -1664,6 +1779,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		getSampleList(cohortId) {
 			this.isLoadingSampleData(true);
+			this.selectedSampleId(null);
 			const cohortDefinitionId= cohortId || this.currentCohortDefinition().id();
 			// if (cohortDefinitionId==0) return
 			const sourceKey=this.sampleSourceKey();
@@ -1671,7 +1787,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			.then(res => {
 				if(res.generationStatus!="COMPLETE") {
 					this.sampleSourceKey(null);
-					alert('Cohort should be generated before creating samples');
+					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.cohortShouldBeGenerated', 'Cohort should be generated before creating samples')());
 					return;
 				}
 				const sampleListData = mapSampleListData(res.samples);
@@ -1679,7 +1795,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			})
 			.catch(error=>{
 				console.error(error);
-				alert('Error when fetching sample list, please try again later');
+				alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorFetchingList', 'Error when fetching sample list, please try again later')());
 			})
 			.finally(() => {
 				this.isLoadingSampleData(false)
@@ -1707,7 +1823,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 					}
 				})
 				.catch(() => {
-					alert('Error when deleting sample, please try again later');
+					alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorDeleting', 'Error when deleting sample, please try again later')());
 				})
 			} else if (e.target.className == 'sample-list fa fa-refresh') {
 				this.sampleDataLoading(true);
@@ -1748,7 +1864,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			})
 			.catch(error => {
 				console.error(error);
-				alert('Error when fetching sample data, please try again later');
+				alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorFetchingData', 'Error when fetching sample data, please try again later')());
 			})
 			.finally(() => {
 				this.sampleDataLoading(false);
@@ -1765,7 +1881,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		refreshSample({sampleId, sourceKey, cohortDefinitionId}) {
 			return sampleService.refreshSample({cohortDefinitionId, sourceKey, sampleId})
 			.catch(() => {
-				alert('Error when refreshing sample, please try again later');
+				alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.samples.errorRefreshing', 'Error when refreshing sample, please try again later')());
 			})
 		}
 

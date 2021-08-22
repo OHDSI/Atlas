@@ -72,9 +72,7 @@ define([
 					{ data: 'id', title: 'Id', width: '25px'},
 					this.getDataboundColumn('name', 'Title', '100%')
 				],
-				language: {
-					search: 'Filter Concept Sets:'
-				},
+				language: ko.i18n('datatable.language'),
 				select: {
 					style: 'single',
 					info: false,
@@ -94,32 +92,32 @@ define([
 			};
 			this.tabs = [
 				{
-					title: 'Concept Set Expression',
+					title: ko.i18n('components.conceptSet.conceptSetExpression', 'Concept Set Expression'),
 					key: ViewMode.EXPRESSION,
 					componentName: 'conceptset-list-expression',
 					componentParams: {...tabParams, onClose: this.closeConceptSet, onDelete: this.deleteConceptSet, loading: this.loading}
 				},
 				{
-					title: 'Included Concepts',
+					title: ko.i18n('components.conceptSet.includedConcepts', 'Included Concepts'),
 					key: ViewMode.INCLUDED,
 					componentName: 'conceptset-list-included',
 					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingIncluded() || this.loading()))},
 					hasBadge: true,
 				},
 				{
-					title: 'Included Source Codes',
+					title: ko.i18n('components.conceptSet.includedSourceCodes', 'Included Source Codes'),
 					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
 					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingSourceCodes() || this.loading()))}
 				},
 				{
-					title: 'Export',
+					title: ko.i18n('common.export', 'Export'),
 					key: ViewMode.EXPORT,
 					componentName: 'conceptset-list-export',
 					componentParams: tabParams,
 				},
 				{
-					title: 'Import',
+					title: ko.i18n('common.import', 'Import'),
 					key: ViewMode.IMPORT,
 					componentName: 'conceptset-list-import',
 					componentParams: tabParams,
@@ -133,11 +131,13 @@ define([
 			
 			// watch for any change to expression items (observer has a delay)
 			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
+				// when the conceptSetStore changes (either through a new concept set being selected or changes to concept set options), the concept set resolves and the view is refreshed.
+				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)
 				try {
 					await this.conceptSetStore.resolveConceptSetExpression();
 					await this.conceptSetStore.refresh(this.selectedTabKey());
 				} catch (err) {
-					if (err != RESOLVE_OUT_OF_ORDER)
+					if (err == RESOLVE_OUT_OF_ORDER)
 						console.info(err);
 					else
 						throw(err);
@@ -245,7 +245,7 @@ define([
 		}
 
 		deleteConceptSet() {
-			if (this.currentConceptSet() && confirm(`Do you want to delete ${this.currentConceptSet().name()}?`)) {
+			if (this.currentConceptSet() && confirm(ko.i18nformat('components.conceptSet.deleteConfirm', 'Do you want to delete <%=name%>?', {name: this.currentConceptSet().name()})())) {
 				this.conceptSets(this.conceptSets().filter(item => item.id !== this.currentConceptSet().id));
 				this.closeConceptSet();
 			}

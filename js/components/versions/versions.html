@@ -1,0 +1,27 @@
+<loading data-bind="visible: isLoading()" params="status: ko.i18n('components.versions.loading', 'Loading versions...')"></loading>
+<div data-bind="visible: !isLoading()">
+		<div data-bind="css: classes()">
+				<faceted-datatable params="{
+						order: [2, 'desc'],
+						columns: columns,
+						options: options,
+						reference: data,
+						pageLength: tableOptions.pageLength,
+						lengthMenu: tableOptions.lengthMenu,
+						language: ko.i18n('datatable.language')
+				}"></faceted-datatable>
+		</div>
+</div>
+
+<atlas-modal params="showModal: $component.isCommentModalShown, title: ko.i18n('components.versions.editComment', 'Edit comment'),
+         data: {
+         	editVersion: editVersion,
+         	comment: comment,
+         	submit: submitComment
+         }">
+	<textarea class="form-control textarea-comment"
+			  data-bind="placeholder: ko.i18n('components.versions.commentPlaceholder', 'Comment'), textInput: comment"></textarea>
+	<button class="btn btn-primary btn-submit-comment" type="button"
+			data-bind="css: {disabled: comment() === (editVersion() && editVersion().comment) }, click: submit, text: ko.i18n('common.save', 'Save')"></button>
+
+</atlas-modal>

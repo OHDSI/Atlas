@@ -1,29 +1,49 @@
 <!-- ko with: Criteria -->
-a condition era of <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 'Any Condition'}"></conceptset-reference>
+<span data-bind="text: ko.i18n('components.conditionEra.criteriaText_1', 'a condition era of')"></span>
+<conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionEra.anyConditionButton', 'Any Condition')}"></conceptset-reference>
 <ul>
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
-	<li>for the first time in the person's history</li>
+	<li>
+		<span
+						data-bind="text: ko.i18n('components.conditionEra.attributeText_1', 'for the first time in the person\'s history')"></span>
+	</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(EraStartDate) != null -->
-	<li>era start is <date-range-viewer params="Range: EraStartDate"></date-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_2', 'era start is:')"></span>
+		<date-range-viewer params="Range: EraStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(EraEndDate) != null -->
-	<li>era end is <date-range-viewer params="Range: EraEndDate"></date-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_3', 'era end is:')"></span>
+		<date-range-viewer params="Range: EraEndDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(OccurrenceCount) != null -->
-	<li>with occurrence count <numeric-range-viewer params="Range: OccurrenceCount"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_4', 'with occurrence count')"></span>
+		<numeric-range-viewer params="Range: OccurrenceCount"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(EraLength) != null -->
-	<li>with era length <numeric-range-viewer params="Range: EraLength"></numeric-range-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_5', 'with era length')"></span>
+		<numeric-range-viewer params="Range: EraLength"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtStart) != null -->
-	<li>with age in years at era start <numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
+	<li>
+		<span
+						data-bind="text: ko.i18n('components.conditionEra.attributeText_6', 'with age in years at era start')"></span>
+		<numeric-range-viewer params="Range: AgeAtStart"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AgeAtEnd) != null -->
-	<li>with age in years at era end <numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
+	<li>
+		<span
+						data-bind="text: ko.i18n('components.conditionEra.attributeText_7', 'with age in years at era end')"></span>
+		<numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Gender) != null -->
-	<li>gender is any of: <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
+	<li>
+		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_8', 'with a gender of:')"></span>
+		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	

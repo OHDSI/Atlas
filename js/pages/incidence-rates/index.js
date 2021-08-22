@@ -20,7 +20,7 @@ define((require, exports) => {
 
 
 	return {
-		title: 'Incidence Rates',
+		title: ko.i18n('navigation.incidencerate', 'Incidence Rates'),
 		buildRoutes,
 		icon: 'bolt',
 		statusCss,

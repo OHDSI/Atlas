@@ -1,5 +1,5 @@
 <div data-bind="css: classes()">
-    <heading-title params="name: 'User Import Job', icon: 'users', theme: 'dark'"></heading-title>
+    <heading-title params="name: ko.i18n('configuration.userImport.userImportJob', 'User Import Job'), icon: 'users', theme: 'dark'"></heading-title>
 
     <div data-bind="css: classes({ extra: 'asset-heading' })">
         <div data-bind="css: classes({ element: 'button-panel', extra: 'input-group' })">
@@ -18,19 +18,19 @@
 		    selectTab: $component.selectTab,
 		    tabs: [
 		        {
-		            title: 'Scheduler',
+		            title: ko.i18n('configuration.userImport.tabs.scheduler', 'Scheduler'),
 		            key: 'scheduler',
 		            componentName: 'job-scheduler',
 		            componentParams: $component.componentParams,
 		        },
 		        {
-		            title: 'Role Mapping',
+		            title: ko.i18n('configuration.userImport.tabs.roleMapping', 'Role Mapping'),
 		            key: 'mapping',
 		            componentName: 'role-group-mapping',
 		            componentParams: $component.componentParams,
 		        },
 		        {
-		            title: 'Job History',
+		            title: ko.i18n('configuration.userImport.tabs.jobHistory', 'Job History'),
 		            key: 'job-history',
 		            componentName: 'user-import-job-history',
 		            componentParams: $component.componentParams,

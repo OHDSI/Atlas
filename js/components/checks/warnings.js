@@ -35,13 +35,13 @@ function (
 			this.isInitialLoading = ko.observable(true);
 			this.isDiagnosticsRunning = params.isDiagnosticsRunning || ko.observable(false);
 			this.warningsColumns = [
-				{ data: 'severity', title: 'Severity', width: '100px', render: utils.renderSeverity, },
-				{ data: 'message', title: 'Message', width: '100%', render: utils.renderMessage, }
+				{ data: 'severity', title: ko.i18n('columns.severity', 'Severity'), width: '100px', render: utils.renderSeverity, },
+				{ data: 'message', title: ko.i18n('columns.message', 'Message'), width: '100%', render: utils.renderMessage, }
 			];
 			this.warningsOptions = {
 				Facets: [{
-					caption: 'Severity',
-					binding: o => o.severity,
+					'caption': ko.i18n('facets.caption.severity', 'Severity'),
+					'binding': o => o.severity,
 					defaultFacets: [
 						consts.WARNING,
 						consts.CRITICAL,
@@ -55,7 +55,7 @@ function (
 			];
 			if (!params.checkChangesOnly) {
 				// Entities use different methods of initialization
-				if (params.checkOnInit) {
+				if (ko.unwrap(params.checkOnInit)) {
 					this.subscriptions.push(this.current.subscribe(() => this.runDiagnostics()));
 				} else {
 					this.runDiagnostics();
@@ -90,7 +90,7 @@ function (
 					this.isDiagnosticsRunning(false);
 					this.isInitialLoading() && this.isInitialLoading(false);
 				}, 300); // To prevent badge loader blinking on fast requests
-				
+
 			}
 		}
 	}

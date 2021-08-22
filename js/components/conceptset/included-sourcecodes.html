@@ -1,4 +1,4 @@
-<loading params="status: 'Loading Included Source Codes'" data-bind="visible: loading()"></loading>
+<loading params="status: ko.i18n('components.conceptSet.loadingIncludedSourcecodes', 'Loading Included Sourcecodes')" data-bind="visible: loading()"></loading>
 <div data-bind="hidden: loading">
     <faceted-datatable params="{
         columns: $component.relatedSourcecodesColumns,
@@ -6,6 +6,7 @@
         reference: $component.includedSourcecodes,
         pageLength: tableOptions.pageLength,
         lengthMenu: tableOptions.lengthMenu,
+        language: ko.i18n('datatable.language')
     }"></faceted-datatable>
     <concept-add-box params="{
         isActive: canAddConcepts,
