@@ -1,7 +1,7 @@
 define(['knockout', './Content', './Navigation', './SetSelect'], function (ko, Content, Navigation, SetSelect) {
 
     function AnnotationView(sets, cohortId, personId, sourceKey, sampleName, questionSetId) {
-        var self = this;
+        const self = this;
         self.content = ko.observable();
         self.navigation = ko.observable();
 

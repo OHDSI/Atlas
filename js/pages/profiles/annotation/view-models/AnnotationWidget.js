@@ -1,8 +1,8 @@
 define(['knockout', './AnnotationView', './SettingsView', 'services/Annotation'], function (ko, AnnotationView, SettingsView, annotationService) {
 
     function AnnotationWidget(cohortId, personId, sourceKey, sampleName, questionSetId) {
-        var self = this;
-        var cachedOption = localStorage.getItem('annotationToggleState');
+        const self = this;
+        let cachedOption = localStorage.getItem('annotationToggleState');
         if (cachedOption === undefined) {
             cachedOption = 'open';
         }

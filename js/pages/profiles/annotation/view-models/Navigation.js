@@ -1,7 +1,7 @@
 define(['knockout', './Navigation', 'services/Annotation'], function (ko, Navigation, annotationService) {
 
     function Navigation(sampleName, cohortId, personId, sourceKey, questionSetId) {
-        var self = this;
+        const self = this;
         self.prevSubjectId = ko.observable();
         self.nextSubjectId = ko.observable();
         self.nextUnannotatedSubjectId = ko.observable();
@@ -14,33 +14,30 @@ define(['knockout', './Navigation', 'services/Annotation'], function (ko, Naviga
         self.personId = ko.observable(personId);
         self.questionSetId = ko.observable(questionSetId);
 
-        this.prevLink = function() {
-
+        this.prevLink = function () {
             window.location = `#/profiles/${sourceKey}/${self.prevSubjectId()}/${cohortId}/${sampleName}/${questionSetId}`;
             location.reload();
         };
-        this.nextLink = function() {
+        this.nextLink = function () {
             if (sampleName.indexOf(' ') >= 0) {
-                sampleName= sampleName.split(" ").join('_');
+                sampleName = sampleName.split(" ").join('_');
             }
             window.location = `#/profiles/${sourceKey}/${self.nextSubjectId()}/${cohortId}/${sampleName}/${questionSetId}`;
             location.reload();
         };
 
 
-        this.completionPercent = ko.computed(function() {
-            return Math.ceil((self.numAnnotations()/self.numProfileSamples())*100);
+        this.completionPercent = ko.computed(function () {
+            return Math.ceil((self.numAnnotations() / self.numProfileSamples()) * 100);
         });
 
-        self.initialize = function(sampleName, cohortId, personId, sourceKey) {
+        self.initialize = function (sampleName, cohortId, personId, sourceKey) {
             annotationService.getAnnotationNavigation(sampleName, cohortId, personId, sourceKey)
                 .then((navigation) => {
                     if (sampleName.indexOf(' ') >= 0) {
-                        sampleName= sampleName.split(" ").join('_');
+                        sampleName = sampleName.split(" ").join('_');
                     }
                     self.sampleId(sampleName);
-
-                    // const { prevSubjectId, nextSubjectId, nextUnannotatedSubjectId, numProfileSamples, numAnnotations } = navigation;
                     const samples = navigation.elements;
 
                     let val = -1;
@@ -79,7 +76,7 @@ define(['knockout', './Navigation', 'services/Annotation'], function (ko, Naviga
                 });
         };
 
-        self.initialize(sampleName, cohortId, personId, sourceKey)
+        self.initialize(sampleName, cohortId, personId, sourceKey);
     }
 
     Navigation.prototype.constructor = Navigation;

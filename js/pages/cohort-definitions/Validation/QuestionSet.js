@@ -1,6 +1,6 @@
 define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, ValidationService, QuestionSetForm) {
     function QuestionSet(id, cohortName, qSetId, qSetName, qSetQuestions, mode) {
-        var self = this;
+        const self = this;
         self.qsetName = ko.observable(qSetName);
         self.setId = ko.observable(qSetId);
         self.setQuestions = ko.observableArray(qSetQuestions);
@@ -9,7 +9,7 @@ define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, V
 
         self.questionSetForm = new QuestionSetForm(id, cohortName);
 
-        self.goBack = function(parent) {
+        self.goBack = function (parent) {
             setTimeout(() => {
                 parent.valTabMode(parent.default_view);
                 // if you don't do this, ko complains.
@@ -18,7 +18,7 @@ define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, V
 
         };
 
-        self.resetValues = function(id, cohortName, qSetId, qSetName, qSetQuestions, mode) {
+        self.resetValues = function (id, cohortName, qSetId, qSetName, qSetQuestions, mode) {
             self.qsetName(qSetName);
             self.setId(qSetId);
             self.setQuestions(qSetQuestions);
@@ -30,25 +30,25 @@ define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, V
             return self.questionSetForm.createQuestionSet(sn);
         };
 
-        self.initialize = function() {
+        self.initialize = function () {
             self.questionSetForm.initialize();
         };
 
 
-        self.showSelectedQset = function() {
+        self.showSelectedQset = function () {
             self.questionItems([]);
-            for (var i = 0; i < self.setQuestions().length; i++) {
-                var qs = {};
-                var qsAnswers = [];
-                var cq = self.setQuestions()[i];
-                var qnum = "Question " + (i + 1) + ': ';
+            for (let i = 0; i < self.setQuestions().length; i++) {
+                let qs = {};
+                let qsAnswers = [];
+                let cq = self.setQuestions()[i];
+                let qnum = "Question " + (i + 1) + ': ';
 
                 if (cq !== undefined) {
                     qs['text'] = qnum + cq.text;
                     qs['type'] = 'Question Type: ' + cq.type;
                     qs['caseQ'] = 'Case Question: ' + cq.caseQuestion;
                     qs['req'] = 'Required: ' + cq.required;
-                    for (var j = 0; j < cq.answers.length; j++) {
+                    for (let j = 0; j < cq.answers.length; j++) {
                         if (cq.type !== 'TEXTAREA') {
                             qsAnswers.push(cq.answers[j].text);
                         } else {
@@ -68,7 +68,8 @@ define(['knockout', 'services/Validation', './QuestionSetForm'], function (ko, V
 
 
     }
+
     QuestionSet.prototype.constructor = QuestionSet;
     return QuestionSet;
-    
+
 });
