@@ -229,7 +229,7 @@ define([
 				changeFlag: ko.pureComputed(() => this.dirtyFlag().isChanged()),
 				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
-				checkOnInit: this.warningsCheckOnInit,
+				checkOnInit: !this.selectedAnalysis(),
 			});
 
 			this.isDesignCorrect = ko.pureComputed(() => this.criticalCount() === 0);
@@ -251,7 +251,6 @@ define([
 					this.tags(this.selectedAnalysis().tags());
 					if (!isDirty) {
 						this.dirtyFlag().reset();
-						this.warningsCheckOnInit(false);
 						this.warningParams.valueHasMutated();
 					}
 				},
@@ -262,7 +261,6 @@ define([
 					this.tags(this.selectedAnalysis().tags());
 					if (!isDirty) {
 						this.dirtyFlag().reset();
-						this.warningsCheckOnInit(false);
 						this.warningParams.valueHasMutated();
 					}
 				}
@@ -429,6 +427,7 @@ define([
 				this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 				this.tags(analysis.tags);
 				this.versionsParams.valueHasMutated();
+				this.loading(false);
 				this.startPolling();
 			} catch (ex) {
 				alert(exceptionUtils.extractServerMessage(ex));
@@ -551,6 +550,7 @@ define([
 					alert(ko.i18n('ir.nameConflict', 'An incidence rate with this name already exists. Please choose a different name.')());
 				} else {
 					const savedIR = await IRAnalysisService.saveAnalysis(this.selectedAnalysis());
+					this.selectedAnalysisId(savedIR.id);
 					this.selectedAnalysis(new IRAnalysisDefinition(savedIR));
 					this.dirtyFlag(new ohdsiUtil.dirtyFlag(this.selectedAnalysis()));
 					this.previewVersion(null);
@@ -634,7 +634,6 @@ define([
 				this.refreshDefs();
 				this.activeTab(this.tabs.DEFINITION);
 				this.close();
-				this.warningsCheckOnInit(false);
 				commonUtils.routeTo(constants.apiPaths.analysis(res.id));
 			} catch (e) {
 				alert('An error occurred while attempting to import an incidence rate.');

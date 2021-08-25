@@ -259,8 +259,10 @@ define([
         }
         executionGroup.status(this.executionStatuses.PENDING);
         const data = await this.ExecutionService.generate(this.analysisId(), sourceKey);
-        JobDetailsService.createJob(data);
-        this.loadData({ silently: true });
+        if (data) {
+          JobDetailsService.createJob(data);
+          this.loadData({silently: true});
+        }
       } catch(err) {
         console.error(err);
         this.setExecutionGroupStatus(executionGroup);

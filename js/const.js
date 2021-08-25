@@ -110,13 +110,15 @@ define([
 			];
 		};
 
-		const getRelatedSourcecodesColumns = (sharedState, context) => [
+		const getRelatedSourcecodesColumns = (sharedState, context, selectAllFn) => [
 			{
 				title: '',
 				orderable: false,
 				searchable: false,
 				className: 'text-center',
 				render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+				renderSelectAll: context.canEditCurrentConceptSet(),
+				selectAll: selectAllFn
 			},
 			{
 				title: ko.i18n('columns.id', 'Id'),

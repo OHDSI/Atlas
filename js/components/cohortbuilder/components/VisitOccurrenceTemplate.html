@@ -118,7 +118,7 @@
 							data-bind="text: ko.i18n('components.conditionVisit.conditionSpecimeText_9', 'with a Provider Specialty of:')"></span>
 
 						<concept-list
-							params="PickerParams: { DefaultDomain: 'Provider Specialty', DefaultQuery: ''}, ConceptList: ProviderSpecialty()">
+							params="PickerParams: { DefaultDomain: 'Provider', DefaultQuery: ''}, ConceptList: ProviderSpecialty()">
 						</concept-list>
 					</div>
 				</td>
@@ -135,7 +135,7 @@
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: PlaceOfServiceLocation() !== null, visible: PlaceOfServiceLocation() !== null">
+			<tr data-bind="if: PlaceOfServiceLocation() != null, visible: PlaceOfServiceLocation() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceLocation') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
@@ -147,7 +147,7 @@
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: PlaceOfServiceDistance() !== null, visible: PlaceOfServiceDistance() !== null">
+			<tr data-bind="if: PlaceOfServiceDistance() != null, visible: PlaceOfServiceDistance() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceDistance') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>

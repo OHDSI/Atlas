@@ -379,6 +379,15 @@ define([
         },
       },
       {
+        ...constants.censoringEventList.addSpecimen,
+        selected: false,
+        action: function () {
+          self.expression().CensoringCriteria.push({
+            Specimen: new criteriaTypes.Specimen(null, self.expression().ConceptSets)
+          });
+        }
+      },
+      {
         ...constants.censoringEventList.addVisit,
         selected: false,
         action: function () {

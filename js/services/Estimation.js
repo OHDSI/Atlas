@@ -58,7 +58,12 @@ define(function (require, exports) {
 	function generate(id, source) {
 		return httpService.doPost(config.webAPIRoot + estimationEndpoint + id + '/generation/' + source)
 			.then(res => res.data)
-			.catch(error => authApi.handleAccessDenied(error));
+			.catch(error => {
+				authApi.handleAccessDenied(error);
+				if (error.status == 400) {
+					alert((error && error.data && error.data.payload && error.data.payload.message) ? error.data.payload.message : 'Error occurred during analysis generion');
+				}
+			});
 	}
 
 	function listExecutions(id) {
