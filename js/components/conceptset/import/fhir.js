@@ -8,7 +8,7 @@ define([
 	'utils/CommonUtils',
 	'services/VocabularyProvider',
 	'services/http',
-	'atlas-state',
+	'appConfig',
 ], function(
 	ko,
 	view,
@@ -19,13 +19,13 @@ define([
 	commonUtils,
 	vocabularyApi,
 	httpService,
-	sharedState,
+	config
 ){
 
 	class FhirImport extends AutoBind(ImportComponent(Component)) {
 		constructor(params) {
 			super(params);
-			this.fhirServer = ko.observable("https://r4.ontoserver.csiro.au/fhir");
+			this.fhirServer = ko.observable(config.fhirTerminologyUrl);
 			this.valueSet = ko.observable("");
 			this.appendConcepts = params.appendConcepts;
 			this.canAddConcepts = ko.pureComputed(() =>
@@ -40,7 +40,7 @@ define([
 			const expandUrl = `${this.fhirServer()}/ValueSet/$expand`,
 					expandParams = {
 						url: this.valueSet()
-					}, result = await httpService.doGet(expandUrl, expandParams),
+					}, result = await httpService.fhirService.doGet(expandUrl, expandParams),
 					codes = result.data.expansion.contains.map(c => c.code),
 					{data} = await vocabularyApi.getConceptsByCode(codes);
 			this.appendConcepts(data, options);
