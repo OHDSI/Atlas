@@ -405,6 +405,7 @@ define([
 
 		async loadAnalysis(version) {
 			if (this.selectedAnalysis() && (this.selectedAnalysis().id() === this.selectedAnalysisId()) && !version) {
+				this.startPolling();
 				return;
 			}
 
@@ -461,11 +462,13 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = JobPollService.add({
-				callback: silently => this.pollForInfo({ silently }),
-				interval: 10000,
-				isSilentAfterFirstCall: true,
-			});
+			if (!this.pollId) {
+				this.pollId = JobPollService.add({
+					callback: silently => this.pollForInfo({ silently }),
+					interval: 10000,
+					isSilentAfterFirstCall: true,
+				});
+			}
 		}
 
 		handleConceptSetImport(item) {
