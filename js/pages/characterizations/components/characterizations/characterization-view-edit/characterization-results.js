@@ -392,27 +392,16 @@ define([
         }
 
         getFilterList(data) {
-            const cohorts = lodash.uniqBy(
-                lodash.flatten(
-                    lodash.flatten(
-                       data.map(a => a.cohorts.map(c => ({label: c.cohortName, value: parseInt(c.cohortId)})))
-                    )
-                ),
-                'value'
-            );
-
+            const cohorts = this.design().cohorts.map(c => ({label: c.name, value: parseInt(c.id)}));
             const domains = lodash.uniqBy(
-                lodash.flatten(
-                    data.map(a => a.domainIds.map(d => ({label: this.findDomainById(d).name, value: d})))
-                ),
+                this.design().featureAnalyses.map(fa => ({label: this.findDomainById(fa.domain).name, value: fa.domain})),
                 "value"
             );
-
             const analyses = lodash.uniqBy(
-                data.filter(a => a.analysisId).map(a => ({label: a.rawAnalysisName, value: a.analysisId})),
+                this.design().featureAnalyses.map(fa => ({label: fa.name, value: fa.id})),
                 "value"
-            );
-
+            );                    
+            
             return [
                 {
                     type: 'multiselect',
