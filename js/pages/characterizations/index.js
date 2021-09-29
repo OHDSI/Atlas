@@ -28,7 +28,7 @@ define(
     return {
       title: ko.i18n('navigation.characterizations', constants.pageTitle()),
       buildRoutes,
-      icon: 'line-chart',
+      icon: 'chart-line',
       statusCss,
 			navUrl,
     };

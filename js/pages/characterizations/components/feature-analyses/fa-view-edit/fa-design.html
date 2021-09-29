@@ -114,7 +114,7 @@
                         <button
                                 type="button"
                                 data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeCriteria($index())"
-                        ><i class="fa fa-trash-o"></i></button>
+                        ><i class="fa fa-trash-alt"></i></button>
                     </div>
                     <!-- Aggregate -->
                     <div data-bind="if: $parent.data().statType() === 'DISTRIBUTION' && $data.criteriaType !== 'DemographicCriteria'">
@@ -140,7 +140,7 @@
                         <span data-bind="text: ko.i18n('cc.fa.copySqlToClipboard', 'Copy Analysis SQL Template To Clipboard')"></span>
                     </button>&nbsp;&nbsp;
                     <span id="copyAnalysisSQLTemplateMessage" style="display:none" class="alert alert-success" role="alert">
-                            <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                            <i class="fa fa-check-square" aria-hidden="true"></i>
                             <strong data-bind="text: ko.i18n('cc.fa.copiedToClipboard', 'Copied To Clipboard!')"></strong>
                         </span>
                     <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>

@@ -38,7 +38,7 @@
                     <input type="text" data-bind="css: $component.classes({element: 'strata-name', extra: 'form-control' + (($data.name() == '' || $component.isStrataDuplicated($data.name())) ? ' emptyInput' : '')}),
                                  textInput: $data.name, event: {'keyup': $component.checkStrataNames}, attr: {placeholder: ko.i18n('cc.viewEdit.design.subgroups.namePlaceholder', 'Strata name')}">
                     <button type="button" data-bind="css: $component.classes({ element: 'strata-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeStrata($index())"
-                    ><i class="fa fa-trash-o"></i></button>
+                    ><i class="fa fa-trash-alt"></i></button>
                 </div>
                 <div data-bind="visible: $data.name() === '', css: { 'empty-name-error': !$data.name() }">
                     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>

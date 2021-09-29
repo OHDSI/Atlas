@@ -874,7 +874,7 @@ input.btn.btn-default:disabled {
   /* border: solid 1px #ddd; */
 }
 
-.reportHeading .fa-area-chart {
+.reportHeading .fa-chart-area {
   font-size: 2em;
   margin-right: 5px;
 }

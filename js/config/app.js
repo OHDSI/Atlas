@@ -22,37 +22,37 @@ define(function () {
       "name": "Windows",
       "url": "user/login/windows",
       "ajax": true,
-      "icon": "fa fa-windows"
+      "icon": "fab fa-windows"
     },
     {
       "name": "Kerberos",
       "url": "user/login/kerberos",
       "ajax": true,
-      "icon": "fa fa-windows"
+      "icon": "fab fa-windows"
     },
     {
       "name": "OpenID",
       "url": "user/login/openid",
       "ajax": false,
-      "icon": "fa fa-openid"
+      "icon": "fab fa-openid"
     },
     {
       "name": "Google",
       "url": "user/oauth/google",
       "ajax": false,
-      "icon": "fa fa-google"
+      "icon": "fab fa-google"
     },
     {
       "name": "Facebook",
       "url": "user/oauth/facebook",
       "ajax": false,
-      "icon": "fa fa-facebook"
+      "icon": "fab fa-facebook-f"
     },
     {
       "name": "Github",
       "url": "user/oauth/github",
       "ajax": false,
-      "icon": "fa fa-github"
+      "icon": "fab fa-github"
     },
     {
       "name": "DB",
@@ -72,7 +72,7 @@ define(function () {
       "name": "SAML",
       "url": "user/login/saml",
       "ajax": false,
-      "icon": "fa fa-openid"
+      "icon": "fab fa-openid"
     },
     {
       "name": "Active Directory LDAP",

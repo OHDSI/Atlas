@@ -3,7 +3,7 @@
     <div><span data-bind="text: ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.cohort', 'Cohort:')"></span> <span data-bind="text: cohortName"></span></div>
     <div data-bind="visible: exploring() && !loading()">
         <div data-bind="css: classes('exploring-pane')">
-            <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-close'})"></i>
+            <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-times'})"></i>
             <span data-bind="text: exploringTitle, css: classes('exploring-title')"></span>
         </div>
     </div>
