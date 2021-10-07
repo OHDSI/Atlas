@@ -206,6 +206,7 @@ define([
 			ple: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis'),
 			conceptSet: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
 			plp: ko.i18n('const.newEntityNames.plp', 'New Patient Level Prediction Analysis'),
+			reusable: ko.i18n('const.newEntityNames.reusable', 'New Reusable'),
 		};
 
 		const pluginTypes = {
