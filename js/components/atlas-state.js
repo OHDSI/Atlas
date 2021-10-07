@@ -157,5 +157,12 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 
 	state.activeConceptSet = ko.observable();
 
+	state.Reusable = {
+		current: ko.observable(null),
+		selectedId: ko.observable(null),
+		previewVersion: ko.observable(null)
+	};
+	state.Reusable.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.Reusable.current()));
+
 	return state;
 });
