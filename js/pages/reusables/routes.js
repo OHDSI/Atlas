@@ -17,7 +17,7 @@ define((require) => {
 		const reusablesManagerVersion = new AuthorizedRoute((id, version) => {
 			require(['./components/manager'], function () {
 				router.setCurrentView('reusables-manager', {
-					designsId: id,
+					designId: id,
 					section: 'design',
 					version: version
 				});
