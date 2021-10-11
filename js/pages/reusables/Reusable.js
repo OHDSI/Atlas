@@ -8,7 +8,8 @@ define(function (require) {
 			let data = d || {};
 			Object.assign(this, data);
 			this.name = ko.observable(data.name || ko.unwrap(constants.newEntityNames.reusable));
-			this.data = "123";
+			this.data = ko.observable(data.data || "");
+			this.description = ko.observable(data.description || null);
 			this.tags = ko.observableArray(data.tags);
 		}
 
