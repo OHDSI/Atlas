@@ -3,5 +3,18 @@
 
 	<div class="divtext" data-bind="contentEditable: design().description, contenteditableSwitch: isEditPermitted(), placeholder: ko.i18n('reusables.manager.design.descriptionPlaceholder', 'Enter description here')"></div>
 
-	<div data-bind="css:classes('bottom-padding')"></div>
+	<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
+		<criteria-group params="{ expression: { ConceptSets: design().conceptSets }, group: criteriaGroup }"></criteria-group>
+	</div>
+
+	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header" data-bind="text: ko.i18n('components.conceptSetBuilder.selectConceptSet', 'Select Concept Set...')"></div>
+				<div class="paddedWrapper">
+					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: design().conceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

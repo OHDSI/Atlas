@@ -1,7 +1,9 @@
 define([
-    'services/http',
+	'knockout',
+	'services/http',
     'appConfig',
 ], function (
+	ko,
 	httpService,
 	config,
 ) {
@@ -20,6 +22,10 @@ define([
 	}
 
 	function create(design) {
+		design.data = ko.toJSON({
+			conceptSets: design.conceptSets(),
+			expression: design.expression
+		});
 		return request = httpService.doPost(servicePath, design).then(res => res.data);
 	}
 
@@ -28,6 +34,10 @@ define([
 	}
 
 	function save(id, design) {
+		design.data = ko.toJSON({
+			conceptSets: design.conceptSets(),
+			expression: design.expression
+		});
 		return httpService.doPut(`${servicePath}/${id}`, design).then(res => res.data);
 	}
 
