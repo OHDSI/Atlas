@@ -244,6 +244,7 @@ define([
 						this.previewVersion(null);
 					}
 					this.setupDesign(new Reusable(reusable));
+					this.componentParams.valueHasMutated();
 					this.versionsParams.valueHasMutated();
 				} catch (ex) {
 					alert(exceptionUtils.extractServerMessage(ex));
