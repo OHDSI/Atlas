@@ -21,6 +21,7 @@ define([
 	'less!./manager.less',
 	'components/tabs',
 	'./tabs/reusable-design',
+	'./tabs/reusable-concept-sets',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
 	'components/tags/tags',
@@ -89,7 +90,7 @@ define([
 			this.selectedTabKey = ko.observable("design");
 
 			this.componentParams = ko.observable({
-				design: this.design,
+				design: this.previewVersion() ? this.previewVersion : this.design,
 				designId: this.designId,
 				dirtyFlag: this.dirtyFlag,
 				isEditPermitted: this.canEdit,
@@ -271,7 +272,7 @@ define([
 						this.dirtyFlag().reset();
 						commonUtils.routeTo(reusableConstants.getPageUrl(newReusable.id, 'design'));
 					} else {
-						const updatedReusable = await ReusablesService.save(this.design().id, this.design());
+						const updatedReusable = await ReusablesService.save(this.designId(), this.design());
 						this.setupDesign(new Reusable(updatedReusable));
 					}
 					this.previewVersion(null);
