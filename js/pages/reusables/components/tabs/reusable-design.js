@@ -33,6 +33,14 @@ define([
 			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().reusables);
 			this.criteriaGroup = ko.observable(this.design().expression);
 
+			//this.csAndParams = this.design
+/*			this.parametersList = {
+				newParameterAction: this.showParameterCreateModal,
+				columns: globalConstants.getLinkedFeAParametersColumns(this),
+				data: ko.pureComputed(() => params.design() && params.design().parameters() || [])
+			};
+			this.isParameterCreateModalShown = ko.observable(false);*/
+
 			this.handleConceptSetImport = (item) => {
 				this.criteriaContext(item);
 				this.showConceptSetBrowser(true);
@@ -61,6 +69,14 @@ define([
 
 				this.criteriaContext(null);
 			}
+		}
+
+		showParameterCreateModal() {
+			this.isParameterCreateModalShown(true);
+		}
+
+		addParameter() {
+
 		}
 	}
 
