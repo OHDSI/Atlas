@@ -9,6 +9,10 @@ define([
 ) {
 	const servicePath = config.webAPIRoot + 'reusable';
 
+	const PARAMETER_TYPE = {
+		CONCEPT_SET: 'Concept Set',
+	};
+
 	function list() {
 		return httpService
 			.doGet(servicePath + '?size=10000')
@@ -23,6 +27,7 @@ define([
 
 	function create(design) {
 		design.data = ko.toJSON({
+			parameters: design.parameters(),
 			conceptSets: design.conceptSets(),
 			expression: design.expression
 		});
@@ -35,6 +40,7 @@ define([
 
 	function save(id, design) {
 		design.data = ko.toJSON({
+			parameters: design.parameters(),
 			conceptSets: design.conceptSets(),
 			expression: design.expression
 		});
@@ -74,6 +80,7 @@ define([
 	}
 	
 	return {
+		PARAMETER_TYPE,
 		list,
 		create,
 		exists,
