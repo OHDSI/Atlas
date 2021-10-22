@@ -24,7 +24,7 @@
 	</div>
 
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.expression.title', 'Design')"></h2>
-	<div data-bind="css: {'strata-disabled': !isEditPermitted()}, eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
+	<div data-bind="css: {'edit-disabled': !isEditPermitted()}, eventListener: [{event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, {event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
 		<criteria-group params="{ expression: { ConceptSets: csAndParams }, group: criteriaGroup }"></criteria-group>
 	</div>
 

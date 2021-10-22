@@ -5,7 +5,6 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'components/conceptset/ConceptSetStore',
-    '../../ReusablesService',
     'components/conceptset/conceptset-list'
 ],function(
     ko,

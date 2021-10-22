@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'services/http',
+	'./http',
     'appConfig',
 ], function (
 	ko,

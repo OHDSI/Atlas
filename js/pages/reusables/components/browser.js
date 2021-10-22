@@ -3,7 +3,7 @@ define([
 	'text!./browser.html',
 	'../const',
 	'appConfig',
-	'../ReusablesService',
+	'services/ReusablesService',
 	'../PermissionService',
 	'pages/Page',
 	'utils/CommonUtils',
@@ -26,7 +26,7 @@ define([
 			super(params);
 			this.loading = ko.observable(false);
 			this.config = config;
-			this.analysisList = ko.observableArray();
+			this.reusablesList = ko.observableArray();
 			this.tableOptions = commonUtils.getTableOptions('L');
 			this.canList = PermissionService.isPermittedList;
 			this.canCreate = PermissionService.isPermittedCreate;
@@ -94,7 +94,7 @@ define([
 			datatableUtils.coalesceField(reusablesList.content, 'modifiedDate', 'createdDate');
 			datatableUtils.addTagGroupsToFacets(reusablesList.content, this.gridOptions.Facets);
 			datatableUtils.addTagGroupsToColumns(reusablesList.content, this.gridColumns);
-			this.analysisList(reusablesList.content);
+			this.reusablesList(reusablesList.content);
 			this.loading(false);
 		}
 

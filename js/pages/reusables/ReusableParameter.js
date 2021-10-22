@@ -1,7 +1,7 @@
 define(function (require) {
 
     var ko = require('knockout');
-    var ReusablesService = require('./ReusablesService');
+    var ReusablesService = require('services/ReusablesService');
     var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
 
     class ReusableParameter {
