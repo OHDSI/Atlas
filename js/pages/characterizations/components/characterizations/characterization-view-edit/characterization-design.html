@@ -17,7 +17,7 @@
             isEditPermitted: $component.isEditPermitted
         "></linked-entity-list>
     </div>
-    <div data-bind="css: {'linked-entities':true, 'strata-disabled': !$component.isEditPermitted()}, eventListener: [
+    <div data-bind="css: {'linked-entities':true, 'edit-disabled': !$component.isEditPermitted()}, eventListener: [
                                 { event: 'click', selector: '.conceptset_import', callback:$component.handleConceptSetImport},
                                 { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
                             ]">

@@ -4,9 +4,8 @@ define([
     'utils/AutoBind',
     'components/Component',
     'utils/CommonUtils',
-    '../../ReusablesService',
+    'services/ReusablesService',
     '../../ReusableParameter',
-    'conceptsetbuilder/InputTypes/ConceptSet',
     'components/conceptset/ConceptSetStore',
     'components/conceptset/utils',
     'less!./reusable-design.less',
@@ -16,9 +15,8 @@ define([
     AutoBind,
     Component,
     commonUtils,
-    ReusableService,
+    ReusablesService,
     ReusableParameter,
-    ConceptSet,
     ConceptSetStore,
     conceptSetUtils,
 ) {
@@ -41,7 +39,7 @@ define([
                     return [];
                 }
                 return ko.unwrap(this.design().conceptSets).concat(this.design().parameters()
-                    .filter(p => p.type === ReusableService.PARAMETER_TYPE.CONCEPT_SET)
+                    .filter(p => p.type === ReusablesService.PARAMETER_TYPE.CONCEPT_SET)
                     .map(p => p.data))
             });
             this.parametersTableOptions = params.tableOptions || commonUtils.getTableOptions('S');
