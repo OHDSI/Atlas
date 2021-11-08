@@ -16,13 +16,13 @@ define([
 			this.chartFormats = {};
 
 			this.context = params.context;
-			this.sourceName = ko.observable(this.context.currentSource().sourceName);
+			this.source = this.context.currentSource;
 			this.title = ko.computed(() => {
 				const title = this.context.currentReport() ?
-					`${this.context.currentSource() ? (this.context.currentSource().sourceName) : ''} ${this.context.currentReport().name()}` + ko.i18n('dataSources.reports.titleTail', ' Report')() : '';
+					`${this.source() ? (this.source().sourceName) : ''} ${this.context.currentReport().name()}` + ko.i18n('dataSources.reports.titleTail', ' Report')() : '';
 				return title;
 			});
-			this.sourceKey = ko.computed(() => this.context.currentSource() ? this.context.currentSource().sourceKey : null);
+			this.sourceKey = ko.computed(() => this.source() ? this.source().sourceKey : null);
 			this.path = this.context.currentReport().path;
 			this.conceptId = null;
 			this.subscriptions.push(this.sourceKey.subscribe(newSource => {
