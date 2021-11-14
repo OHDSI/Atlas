@@ -1910,10 +1910,14 @@ i.fa.pending {
 }
 
 .criteriaSection .fa.fa-times {
-  color: red;
-  font-size: 1.7em;
-  margin-right: 2px;
   cursor: pointer;
+  content: url(/images/cohortbuilder/remove-x-mark.svg);  /* https://iconmonstr.com/x-mark-6-svg/ */
+  height: 45%;
+  padding-left: 3px;
+}
+
+.criteriaSection .fa.fa-times:hover {
+  filter: invert(50%);
 }
 
 .cohort-definition-panel ul.nav.nav-tabs {
