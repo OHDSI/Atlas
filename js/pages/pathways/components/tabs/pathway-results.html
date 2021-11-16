@@ -77,11 +77,13 @@
 										filename: `${targetCohortName}_sunburst.png`,
 										minHeight: 300,
 										format: {
-										tipClass: $component.classes('d3-tip'),
-										split: $component.splitPathway,
-										colors: $parent.colors,
-										tooltip: $component.tooltipBuilder,
-										onclick: $component.pathClickHandler($data)}"></sunburst>
+											tipClass: $component.classes('d3-tip'),
+											split: $component.splitPathway,
+											colors: $parent.colors,
+											tooltip: $component.tooltipBuilder,
+											onclick: $component.pathClickHandler($data),
+											minRadians: 0.0
+										}"></sunburst>
 						<div class="info-wrapper">
 						</div>
 					</div>

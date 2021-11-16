@@ -6,7 +6,7 @@ define(function (require, exports) {
 
     const deleteQuestionSet = function (questionSetId) {
 
-        return httpService.doGet(`${config.webAPIRoot}annotations/deleteSet/${questionSetId}`);
+        return httpService.doGet(`${config.webAPIRoot}annotation/deleteSet/${questionSetId}`);
     };
 
     const getAnnotationSets = function (cohort) {
@@ -14,7 +14,7 @@ define(function (require, exports) {
             cohortId: cohort || 0,
         };
 
-        const response = httpService.doGet(`${config.webAPIRoot}annotations/sets`, data).then(({data}) => data);
+        const response = httpService.doGet(`${config.webAPIRoot}annotation/sets`, data).then(({data}) => data);
         response.catch((er) => {
             console.error('Can\'t find annotation sets');
         });
@@ -25,7 +25,7 @@ define(function (require, exports) {
     const getStudySets = function (cohort) {
         const cohortId = cohort || 0;
 
-        const response = httpService.doGet(`${config.webAPIRoot}annotations/getsets?cohortId=${cohortId}`).then(({data}) => data);
+        const response = httpService.doGet(`${config.webAPIRoot}annotation/getsets?cohortId=${cohortId}`).then(({data}) => data);
         response.catch((er) => {
             console.error('Can\'t find study sets');
         });
@@ -34,7 +34,7 @@ define(function (require, exports) {
     };
 
     const getSuperTable = function (qSetId, sampleId) {
-        const response = httpService.doGet(`${config.webAPIRoot}annotations/results/completeResults?questionSetId=${qSetId}&cohortSampleId=${sampleId}`).then(({data}) => data);
+        const response = httpService.doGet(`${config.webAPIRoot}annotation/results/completeResults?questionSetId=${qSetId}&cohortSampleId=${sampleId}`).then(({data}) => data);
         response.catch((er) => {
             console.error('Can\'t find super table');
         });
@@ -43,7 +43,7 @@ define(function (require, exports) {
     };
 
     const getStudyResults = function (annotationId) {
-        const response = httpService.doGet(`${config.webAPIRoot}annotations/results/${annotationId}`).then(({data}) => data);
+        const response = httpService.doGet(`${config.webAPIRoot}annotation/results/${annotationId}`).then(({data}) => data);
         response.catch((er) => {
             console.error('Can\'t find study results');
         });
@@ -59,7 +59,7 @@ define(function (require, exports) {
         };
 
 
-        const response = httpService.doGet(`${config.webAPIRoot}annotations`, data).then(({data}) => data[0]);
+        const response = httpService.doGet(`${config.webAPIRoot}annotation`, data).then(({data}) => data[0]);
         response.catch((er) => {
             console.error('Can\'t find annotations');
         });
@@ -75,7 +75,7 @@ define(function (require, exports) {
             setId: set || 0
         };
 
-        const response = httpService.doGet(`${config.webAPIRoot}annotations?setId=${data.setId}&cohortSampleId=${data.sampleId}&subjectId=${data.subjectId}`)
+        const response = httpService.doGet(`${config.webAPIRoot}annotation?setId=${data.setId}&cohortSampleId=${data.sampleId}&subjectId=${data.subjectId}`)
             .then(({data}) => data[0]);
         response.catch((er) => {
             console.error('Can\'t find annotations');
@@ -86,7 +86,7 @@ define(function (require, exports) {
     };
 
     const getSamplesBySetId = function (setId) {
-        return httpService.doGet(`${config.webAPIRoot}annotations?setId=${setId}`)
+        return httpService.doGet(`${config.webAPIRoot}annotation?setId=${setId}`)
             .then((resp) => {
                 const samples = new Set();
                 resp.data.forEach((x, i) => {
@@ -100,7 +100,7 @@ define(function (require, exports) {
     };
 
     const getSetsBySampleId = function (sampleId) {
-        return httpService.doGet(`${config.webAPIRoot}annotations?cohortSampleId=${sampleId}`)
+        return httpService.doGet(`${config.webAPIRoot}annotation?cohortSampleId=${sampleId}`)
             .then((resp) => {
                 const sets = new Set();
                 resp.data.forEach((x, i) => {
@@ -114,7 +114,7 @@ define(function (require, exports) {
     };
 
     const getAnnotationsBySampleIdSetId = function (sampleId, setId) {
-        return httpService.doGet(`${config.webAPIRoot}annotations?cohortSampleId=${sampleId}&setId=${setId}`)
+        return httpService.doGet(`${config.webAPIRoot}annotation?cohortSampleId=${sampleId}&setId=${setId}`)
             .then((res) => {
                 return res.data;
             })
@@ -139,11 +139,11 @@ define(function (require, exports) {
     };
 
     const createOrUpdateAnnotation = function (data) {
-        return httpService.doPost(`${config.webAPIRoot}annotations`, data).then(({annotation}) => data);
+        return httpService.doPost(`${config.webAPIRoot}annotation`, data).then(({annotation}) => data);
     };
 
     const linkAnnotationToSamples = function (data) {
-        const response = httpService.doPost(`${config.webAPIRoot}annotations/sample`, data).then(({link}) => data);
+        const response = httpService.doPost(`${config.webAPIRoot}annotation/sample`, data).then(({link}) => data);
         response.catch((er) => {
             console.error('Unable to link annotation to sample');
         });
