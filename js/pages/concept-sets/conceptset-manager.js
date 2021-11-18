@@ -616,7 +616,7 @@ define([
 
 			if (this.previewVersion()) {
 				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
-				createdBy = this.previewVersion().createdBy.name;
+				createdBy = lodash.get(this.previewVersion(), 'createdBy.name');
 				createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
 				modifiedBy = null;
 				modifiedDate = null;
@@ -626,6 +626,14 @@ define([
 				createdDate = commonUtils.formatDateForAuthorship(conceptSet.createdDate);
 				modifiedBy = lodash.get(conceptSet, 'modifiedBy.name');
 				modifiedDate = commonUtils.formatDateForAuthorship(conceptSet.modifiedDate);
+			}
+
+			if (!createdBy) {
+				createdBy = ko.i18n('common.anonymous', 'anonymous');
+			}
+
+			if (modifiedDate && !modifiedBy) {
+				modifiedBy = ko.i18n('common.anonymous', 'anonymous');
 			}
 
 			return {
