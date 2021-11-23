@@ -151,5 +151,7 @@ define(function () {
      }
    };
 
+   appConfig.enablePersonCount = true;
+
 	return appConfig;
 });

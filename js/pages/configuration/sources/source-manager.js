@@ -157,6 +157,7 @@ define([
         { id: 'pdw', name: ko.i18n('configuration.viewEdit.dialect.options.pdw', 'Microsoft PDW') },
         { id: 'netezza', name: ko.i18n('configuration.viewEdit.dialect.options.netezza', 'IBM Netezza') },
         { id: 'hive', name: ko.i18n('configuration.viewEdit.dialect.options.hive', 'Hive LLAP')},
+        { id: 'spark', name: ko.i18n('configuration.viewEdit.dialect.options.spark', 'Spark')},
       ];
 
       this.sourceCaption = ko.computed(() => {
