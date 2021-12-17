@@ -8,7 +8,7 @@ define(['knockout'], function(ko){
 
   const WarningSeverityIcon = {
     INFO: 'fa-info',
-    WARNING: 'fa-warning',
+    WARNING: 'fa-exclamation-triangle',
     CRITICAL: 'fa-times-circle',
   };
 
