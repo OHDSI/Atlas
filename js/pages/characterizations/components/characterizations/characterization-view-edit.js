@@ -364,7 +364,7 @@ define([
         }
 
         deleteCc() {
-            if (confirm('Are you sure?')) {
+            if (confirm(ko.unwrap(ko.i18n('cc.viewEdit.deleteConfirmation', 'Delete cohort characterization? Warning: deletion can not be undone!')))) {
                 this.isDeleting(true);
                 this.loading(true);
                 CharacterizationService
@@ -378,7 +378,7 @@ define([
         }
 
         closeCharacterization() {
-            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', "Your changes are not saved. Would you like to continue?")))) {
+            if (this.designDirtyFlag().isDirty() && !confirm(ko.unwrap(ko.i18n('cc.modals.confirmChanges', 'Your changes are not saved. Would you like to continue?')))) {
                 return;
             }
             this.design(null);
