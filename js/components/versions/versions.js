@@ -64,7 +64,7 @@ function (
 
 						d.editComment = () => this.editComment(d);
 						return comment ?
-							`${comment} <a data-bind="css: '${this.classes('action-link')}', click: editComment"><i class="fa fa-pencil"></i></a>` :
+							`${comment} <a data-bind="css: '${this.classes('action-link')}', click: editComment"><i class="fa fa-pencil-alt"></i></a>` :
 							`<a data-bind="css: '${this.classes('action-link')}', click: editComment, text: ko.i18n('components.versions.addComment', 'Add comment')"></a>`;
 					}
 				},
