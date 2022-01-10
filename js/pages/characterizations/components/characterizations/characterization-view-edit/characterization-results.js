@@ -81,10 +81,12 @@ define([
 
             this.design = ko.observable({});
             this.executionId = params.executionId;
+            this.loadedExecutionId = null;
             this.data = ko.observable([]);
             this.domains = ko.observableArray();
             this.filterList = ko.observableArray([]);
             this.selectedItems = ko.pureComputed(() => filterUtils.getSelectedFilterValues(this.filterList()));
+            this.selectedItems.subscribe(this.updateData);
             this.analysisList = ko.observableArray([]);
             this.canExportAll = ko.pureComputed(() => this.data().analyses && this.data().analyses.length > 0);
 
@@ -226,59 +228,45 @@ define([
             }
         }
 
-        loadData() {
+        async loadData() {
             this.loading(true);
 
-            let {cohorts, analyses, domains} = filterUtils.getSelectedFilterValues(this.filterList());
-            let params = {
-                cohortIds: cohorts,
-                analysisIds: analyses,
-                domainIds: domains,
-                thresholdValuePct: this.thresholdValuePct() / 100,
-                showEmptyResults: !!this.showEmptyResults(),
+            let sourceList,
+                domains,
+                design,
+                execution,
+                totalCount;
+            
+            [ 
+                sourceList,
+                domains,
+                design,
+                execution,
+                totalCount
+            ] = await Promise.all([
+                    SourceService.loadSourceList(),
+                    FeatureAnalysisService.loadFeatureAnalysisDomains(),
+                    CharacterizationService.loadExportDesignByGeneration(this.executionId()),
+                    CharacterizationService.loadCharacterizationExecution(this.executionId()),
+                    CharacterizationService.loadCharacterizationResultsCount(this.executionId()),
+            ])
+            this.design(design);
+            this.domains(domains);
+            this.totalResultsCount(totalCount);
+            this.newThresholdValuePct(this.thresholdValuePct());
+
+            const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
+
+            const result = {
+                sourceId: source.sourceId,
+                sourceKey: source.sourceKey,
+                sourceName: source.sourceName,
+                date: execution.endTime,
+                designHash: execution.hashCode,
             };
 
-            Promise.all([
-                SourceService.loadSourceList(),
-                FeatureAnalysisService.loadFeatureAnalysisDomains(),
-                CharacterizationService.loadExportDesignByGeneration(this.executionId()),
-                CharacterizationService.loadCharacterizationExecution(this.executionId()),
-                CharacterizationService.loadCharacterizationResults(this.executionId(), params),
-                CharacterizationService.loadCharacterizationResultsCount(this.executionId()),
-            ]).then(([
-                 sourceList,
-                 domains,
-                 design,
-                 execution,
-                 generationResults,
-                 totalCount,
-            ]) => {
-                this.design(design);
-                this.domains(domains);
-                this.totalResultsCount(totalCount);
-                this.thresholdValuePct(generationResults.prevalenceThreshold * 100);
-                this.newThresholdValuePct(this.thresholdValuePct());
-                this.showEmptyResults(generationResults.showEmptyResults);
-                this.resultsCountFiltered(generationResults.count);
-
-                const source = sourceList.find(s => s.sourceKey === execution.sourceKey);
-
-                const result = {
-                    sourceId: source.sourceId,
-                    sourceKey: source.sourceKey,
-                    sourceName: source.sourceName,
-                    date: execution.endTime,
-                    designHash: execution.hashCode,
-                };
-                
-                this.data(result);
-
-                this.getData(generationResults.reports);
-                this.loading(false);
-
-                this.filterList(this.getFilterList(this.data().analyses));
-                this.selectedItems.subscribe(this.updateData);
-            });
+            this.data(result);
+            this.filterList(this.getFilterList());
         }
 
         toggleEmptyResults() {
@@ -289,7 +277,7 @@ define([
         updateData() {
             this.loading(true);
 
-            let {cohorts, analyses, domains} = filterUtils.getSelectedFilterValues(this.filterList());
+            let {cohorts, analyses, domains} = this.selectedItems();
             let params = {
                 cohortIds: cohorts,
                 analysisIds: analyses,
@@ -303,6 +291,8 @@ define([
             ]).then(([
                 generationResults
             ]) => {
+                this.thresholdValuePct(generationResults.prevalenceThreshold * 100);
+                this.showEmptyResults(generationResults.showEmptyResults);
                 this.resultsCountFiltered(generationResults.count);
                 this.getData(generationResults.reports);
                 this.loading(false);
@@ -391,7 +381,7 @@ define([
             return domain || {name: 'Unknown'};
         }
 
-        getFilterList(data) {
+        getFilterList() {
             const cohorts = this.design().cohorts.map(c => ({label: c.name, value: parseInt(c.id)}));
             const domains = lodash.uniqBy(
                 this.design().featureAnalyses.map(fa => ({label: this.findDomainById(fa.domain).name, value: fa.domain})),
@@ -408,7 +398,7 @@ define([
                     label: ko.i18n('cc.viewEdit.results.filters.cohorts', 'Cohorts'),
                     name: 'cohorts',
                     options: ko.observable(cohorts),
-                    selectedValues: ko.observable(cohorts.map(c => c.value)),
+                    selectedValues: ko.observable(cohorts.length > 0 ? [cohorts.map(c => c.value).find(i => true)]:[]), // select first cohort
                 },
                 {
                     type: 'multiselect',
