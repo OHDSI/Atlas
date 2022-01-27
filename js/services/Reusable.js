@@ -15,7 +15,7 @@ define(function (require) {
             this.name = ko.observable(data.name || ko.unwrap(constants.newEntityNames.reusable));
             this.description = ko.observable(data.description || null);
             this.data = data.data ? JSON.parse(data.data) : {};
-            this.type = ko.observable(this.data.type);
+            this.type = ko.observable(this.data.type || 'CRITERIA_GROUP');
             this.parameters = ko.observableArray(this.data.parameters && this.data.parameters.map((p) => new ReusableParameter(p)));
             this.conceptSets = ko.observableArray(this.data.conceptSets && this.data.conceptSets.map((d) => new ConceptSet(d)));
 

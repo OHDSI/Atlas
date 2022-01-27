@@ -140,7 +140,7 @@ define([
             let list = reusables.content;
             list.forEach(r => {
                 let data = r.data ? JSON.parse(r.data) : {};
-                r.type = data.type;
+                r.type = data.type || 'CRITERIA_GROUP';
             })
             this.reusablesList(list.filter(r => r.type === this.reusableType));
         }
