@@ -6,7 +6,7 @@
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.reusableType.title', 'Reusable Type')"></h2>
 	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description1', '<b>Initial Event</b> and <b>Censoring Event</b> reusables are...')"></p>
 	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description2', '<b>Criteria Group</b> reusables are...')"></p>
-	<select class="form-control" data-bind="css : { invalid:  reusableType() == undefined }, options: reusableTypes, optionsText: 'value', value: reusableType, optionsCaption: ko.i18n('reusable.manager.design.reusableType.selectType', 'Select a Reusable Type')"></select>
+	<select class="form-control" data-bind="css : { 'edit-disabled': !isEditPermitted()}, options: reusableTypes, optionsText: 'value', value: reusableType"></select>
 
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.parametersList.title', 'Parameters')"></h2>
 	<button data-bind="visible: isEditPermitted, css: classes({extra: 'btn btn-sm btn-primary'}), click: createNewParameter, text: ko.i18n('reusable.manager.design.parametersList.newParameter', 'New parameter')"></button>
