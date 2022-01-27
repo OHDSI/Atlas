@@ -33,6 +33,7 @@ define([
         constructor(params) {
             super(params);
             this.isModalShown = params.isModalShown;
+            this.reusableType = params.type;
             this.parentExpression = params.parentExpression;
             this.callback = params.callback;
             this.isLoading = ko.observable(false);
@@ -135,7 +136,13 @@ define([
             datatableUtils.coalesceField(reusables.content, 'modifiedDate', 'createdDate');
             datatableUtils.addTagGroupsToFacets(reusables.content, this.reusablesTable.gridOptions.Facets);
             datatableUtils.addTagGroupsToColumns(reusables.content, this.reusablesTable.gridColumns);
-            this.reusablesList(reusables.content);
+
+            let list = reusables.content;
+            list.forEach(r => {
+                let data = r.data ? JSON.parse(r.data) : {};
+                r.type = data.type;
+            })
+            this.reusablesList(list.filter(r => r.type === this.reusableType));
         }
 
         selectReusable(reusable) {
@@ -171,7 +178,6 @@ define([
         submit() {
             this.isModalShown(false);
 
-            let reusableExpression = this.selectedReusable().expression;
             let parentExpression = ko.unwrap(this.parentExpression);
 
             let maxCsId = parentExpression.ConceptSets().length > 0
@@ -200,22 +206,38 @@ define([
                 }
             });
 
-            this.replaceParametersWithConceptSets(reusableExpression.CriteriaList(), csIdMap);
-            this.callback(reusableExpression, this.selectedReusable().conceptSets());
+            let reusableExpression;
+            switch (this.reusableType) {
+                case 'INITIAL_EVENT':
+                    reusableExpression = this.selectedReusable().initialEventExpression;
+                    this.replaceParametersWithConceptSets(reusableExpression.CriteriaList(), csIdMap);
+                    this.callback(reusableExpression, this.selectedReusable().conceptSets());
+                    break;
+                case 'CENSORING_EVENT':
+                    reusableExpression = this.selectedReusable().censoringEventExpression;
+                    this.replaceParametersWithConceptSets(reusableExpression(), csIdMap);
+                    this.callback(reusableExpression, this.selectedReusable().conceptSets());
+                    break;
+                case 'CRITERIA_GROUP':
+                    reusableExpression = this.selectedReusable().criteriaGroupExpression;
+                    this.replaceParametersWithConceptSets(reusableExpression.CriteriaList(), csIdMap, true);
+                    this.callback(reusableExpression, this.selectedReusable().conceptSets());
+                    break;
+            }
         }
 
-        replaceParametersWithConceptSets(criteriaList, csIdMap) {
+        replaceParametersWithConceptSets(criteriaList, csIdMap, isGroup) {
             let replacer = (criteria, name) => {
                 if (criteria.hasOwnProperty(name)) {
                     criteria[name].CodesetId(csIdMap[criteria[name].CodesetId()]);
                     if (criteria[name].CorrelatedCriteria()) {
-                        this.replaceParametersWithConceptSets(criteria[name].CorrelatedCriteria().CriteriaList(), csIdMap);
+                        this.replaceParametersWithConceptSets(criteria[name].CorrelatedCriteria().CriteriaList(), csIdMap, true);
                     }
                 }
             };
 
             ko.utils.arrayForEach(criteriaList, c => {
-                let criteria = c.Criteria;
+                let criteria = isGroup ? c.Criteria : c;
                 replacer(criteria, 'ConditionOccurrence');
                 replacer(criteria, 'ConditionEra');
                 replacer(criteria, 'DrugExposure');

@@ -281,6 +281,7 @@ define([
 				}
 			} catch (e) {
 				alert(ko.unwrap(ko.i18n('reusables.manager.messages.saveFailed', 'An error occurred while attempting to save a reusable.')));
+				console.error(e);
 			} finally {
 				this.isSaving(false);
 				this.loading(false);
