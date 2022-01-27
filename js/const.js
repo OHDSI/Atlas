@@ -279,6 +279,12 @@ define([
 			EMPTY_INITIAL_EVENT: ko.i18n('const.disabledReason.emptyInitionEvent', 'Initial event is not set')
 		};
 
+		const reusableTypes = {
+			INITIAL_EVENT: ko.i18n('const.reusableTypes.initialEvent', 'Initial Event'),
+			CENSORING_EVENT: ko.i18n('const.reusableTypes.censoringEvent', 'Censoring Event'),
+			CRITERIA_GROUP: ko.i18n('const.reusableTypes.censoringEvent', 'Criteria Group')
+		};
+
 		return {
 			maxEntityNameLength,
 			minChartHeight,
@@ -299,8 +305,9 @@ define([
 			executionResultModes,
 			sqlDialects,
 			eventTypes,
-			disabledReasons,
 			jobTypes,
+			disabledReasons,
+			reusableTypes,
     };
   }
 );

@@ -954,6 +954,10 @@ define(["knockout"], function (ko) {
       defaultTitle: 'From Reusable',
       descriptionGroup: 'const.eventsList.fromReusable.desc_group',
       defaultDescriptionGroup: 'Add a group from list of reusables',
+      descriptionInitial: 'const.eventsList.fromReusable.desc_initial',
+      defaultDescriptionInitial: 'Add criteria from list of reusables',
+      descriptionCensoring: 'const.eventsList.fromReusable.desc_censoring',
+      defaultDescriptionCensoring: 'Exit cohort from list of reusables',
     },
     addDemographic: {
       title: 'const.eventsList.addDemographic.title',
@@ -1002,7 +1006,8 @@ define(["knockout"], function (ko) {
     'addPayerPlanPeriod',
     'addProcedureOccurrence',
     'addSpecimen',
-    'addVisit'
+    'addVisit',
+    'fromReusable',
   ];
   const censoringEventList = [
     'addConditionEra',
@@ -1017,7 +1022,8 @@ define(["knockout"], function (ko) {
     'addPayerPlanPeriod',
     'addProcedureOccurrence',
     'addSpecimen',
-    'addVisit'
+    'addVisit',
+    'fromReusable',
   ];
   const groupAttributesList = [
     'addDemographic',

@@ -8,6 +8,7 @@ define([
     '../../ReusableParameter',
     'components/conceptset/ConceptSetStore',
     'components/conceptset/utils',
+    'const',
     'less!./reusable-design.less',
 ], function (
     ko,
@@ -19,6 +20,7 @@ define([
     ReusableParameter,
     ConceptSetStore,
     conceptSetUtils,
+    constants
 ) {
     class ReusableEditor extends AutoBind(Component){
         constructor(params) {
@@ -27,12 +29,18 @@ define([
             this.design = params.design;
             this.designId = params.designId;
             this.isEditPermitted = params.isEditPermitted;
-            this.canEditName = params.isEditPermitted();
+            this.reusableTypes = Object.keys(constants.reusableTypes).map(key => {return {name: key, value: constants.reusableTypes[key]}});
+            this.reusableType = ko.observable(this.reusableTypes.find(t => t.name === this.design().type()));
+            this.reusableType.subscribe(() => {
+                this.design().type(this.reusableType() && this.reusableType().name);
+            });
 
             this.showConceptSetBrowser = ko.observable(false);
             this.criteriaContext = ko.observable();
             this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().reusables);
-            this.criteriaGroup = ko.observable(this.design().expression);
+            this.criteriaGroupExpression = ko.observable(this.design().criteriaGroupExpression);
+            this.initialEventExpression = ko.observable(this.design().initialEventExpression);
+            this.censoringEventExpression = this.design().censoringEventExpression;
 
             this.csAndParams = ko.pureComputed(() => {
                 if (!this.design() || !this.design().conceptSets || !this.design().parameters) {

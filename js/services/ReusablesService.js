@@ -27,9 +27,12 @@ define([
 
 	function create(design) {
 		design.data = ko.toJSON({
+			type: design.type(),
 			parameters: design.parameters(),
 			conceptSets: design.conceptSets(),
-			expression: design.expression
+			criteriaGroupExpression: design.criteriaGroupExpression,
+			initialEventExpression: design.initialEventExpression,
+			censoringEventExpression: design.censoringEventExpression,
 		});
 		return request = httpService.doPost(servicePath, design).then(res => res.data);
 	}
@@ -40,9 +43,12 @@ define([
 
 	function save(id, design) {
 		design.data = ko.toJSON({
+			type: design.type(),
 			parameters: design.parameters(),
 			conceptSets: design.conceptSets(),
-			expression: design.expression
+			criteriaGroupExpression: design.criteriaGroupExpression,
+			initialEventExpression: design.initialEventExpression,
+			censoringEventExpression: design.censoringEventExpression,
 		});
 		return httpService.doPut(`${servicePath}/${id}`, design).then(res => res.data);
 	}

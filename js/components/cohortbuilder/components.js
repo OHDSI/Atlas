@@ -4,6 +4,12 @@ define(function (require, exports) {
 	
 	var expressionEditor = require('./components/CohortExpressionEditor');
 	ko.components.register('cohort-expression-editor', expressionEditor);
+
+	var initialCriteriaEditor = require('./components/InitialCriteriaEditor');
+	ko.components.register('initial-criteria-editor', initialCriteriaEditor);
+
+	var censoringCriteriaEditor = require('./components/CensoringCriteriaEditor');
+	ko.components.register('censoring-criteria-editor', censoringCriteriaEditor);
 	
 	var inclusionEditor = require('./components/InclusionRuleEditor');
 	ko.components.register('inclusion-rule-editor', inclusionEditor);
