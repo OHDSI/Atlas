@@ -3,7 +3,7 @@ define(function(require, exports) {
   const config = require('appConfig');
   const sharedState = require('atlas-state');
   const { Api:OHDSIApi, STATUS } = require('ohdsi-api');
-  const JSON_RESPONSE_TYPE = 'application/json';
+  const FHIR_JSON_RESPONSE_TYPE = 'application/fhir+json';
   const TEXT_RESPONSE_TYPE = 'text/plain';
   const EventBus = require('services/EventBus');
 
@@ -100,6 +100,18 @@ define(function(require, exports) {
     }
   }
 
+  class FhirApi extends Api {
+    getHeaders(requestUrl) {
+      return {
+        'Accept': FHIR_JSON_RESPONSE_TYPE,
+      };
+    }
+
+    parseResponse(json) {
+      return JSON.parse(json);
+    }
+  }
+
   const singletonApi = new Api();
   singletonApi.setAuthTokenHeader('Authorization');
   
@@ -108,7 +120,10 @@ define(function(require, exports) {
   plainTextService.setUnauthorizedHandler(() => singletonApi.handleUnauthorized());
   plainTextService.setUserTokenGetter(() => singletonApi.getUserToken());
 
+  const fhirService = new FhirApi();
+
   singletonApi.plainTextService = plainTextService;
+  singletonApi.fhirService = fhirService;
 
   return singletonApi;
 });

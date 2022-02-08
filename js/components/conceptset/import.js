@@ -12,6 +12,7 @@ define([
 	'./import/identifiers',
 	'./import/sourcecodes',
 	'./import/conceptset',
+	'./import/fhir',
 ],function(
 	ko,
 	view,
@@ -60,6 +61,12 @@ define([
 				{
 					title: ko.i18n('components.conceptSet.repository', 'Repository'),
 					key: 'repository',
+				},
+				{
+					title: ko.i18n('components.conceptSet.fhir', 'FHIR'),
+					key: 'fhir',
+					componentName: 'conceptset-list-import-fhir',
+					componentParams: {...params, appendConcepts: this.appendConcepts}
 				}
 			];
 		}

@@ -151,5 +151,7 @@ define(function () {
      }
    };
 
+   appConfig.fhirTerminologyUrl = "https://r4.ontoserver.csiro.au/fhir";
+
 	return appConfig;
 });

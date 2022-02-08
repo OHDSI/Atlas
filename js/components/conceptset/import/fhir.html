@@ -1,0 +1,18 @@
+<div>
+    <div class="heading">
+        <span data-bind="text: ko.i18n('components.conceptSet.fhirHeading', 'Import a value set from a FHIR terminology server')"></span>
+    </div>
+    <label>
+        <span data-bind="text: ko.i18n('components.conceptSet.fhirServer', 'FHIR server URL')"></span>
+        <input class="form-control" type="text" name="fhirServer" data-bind="textInput: fhirServer"/>
+    </label>
+    <label>
+        <span data-bind="text: ko.i18n('components.conceptSet.valueSet', 'Value set URI')"></span>
+        <input class="form-control" type="text" name="valueSet" data-bind="textInput: valueSet"/>
+    </label>
+    <concept-add-box params="{
+        isActive: canAddConcepts,
+        onSubmit: doImport,
+      }"></concept-add-box>
+    <div class="clear"></div>
+</div>
