@@ -36,8 +36,8 @@ define([
 
 		getData() {
 			const url = constants.apiPaths.report({
-				sourceKey: this.sourceKey(),
-				path: this.path,
+				sourceKey: this.context.routerParams.sourceKey,
+				path: this.context.routerParams.reportName,
 				conceptId: this.conceptId,
 			});
 			this.context.loadingReport(true);

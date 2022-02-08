@@ -357,8 +357,7 @@ define([
         action: function () {
           self
             .expression()
-            .PrimaryCriteria()
-            .CriteriaList.push({
+            .CensoringCriteria.push({
               PayerPlanPeriod: new criteriaTypes.PayerPlanPeriod(
                 null,
                 self.expression().ConceptSets
@@ -392,9 +391,9 @@ define([
         selected: false,
         action: function () {
           self.expression().CensoringCriteria.push({
-            Specimen: new criteriaTypes.Specimen(
-              null,
-              self.expression().ConceptSets
+            VisitOccurrence: new criteriaTypes.VisitOccurrence(
+                null,
+                self.expression().ConceptSets
             ),
           });
         },

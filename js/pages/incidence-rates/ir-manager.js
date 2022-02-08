@@ -405,6 +405,7 @@ define([
 
 		async loadAnalysis(version) {
 			if (this.selectedAnalysis() && (this.selectedAnalysis().id() === this.selectedAnalysisId()) && !version) {
+				this.startPolling();
 				return;
 			}
 
@@ -461,11 +462,13 @@ define([
 		}
 
 		startPolling() {
-			this.pollId = JobPollService.add({
-				callback: silently => this.pollForInfo({ silently }),
-				interval: 10000,
-				isSilentAfterFirstCall: true,
-			});
+			if (!this.pollId) {
+				this.pollId = JobPollService.add({
+					callback: silently => this.pollForInfo({ silently }),
+					interval: 10000,
+					isSilentAfterFirstCall: true,
+				});
+			}
 		}
 
 		handleConceptSetImport(item) {
@@ -690,15 +693,15 @@ define([
 
 			if (this.previewVersion()) {
 				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
-				createdBy = this.previewVersion().createdBy.name;
+				createdBy = this.previewVersion().createdBy ? this.previewVersion().createdBy.name : ko.i18n('common.anonymous', 'anonymous');
 				createdDate = commonUtils.formatDateForAuthorship(this.previewVersion().createdDate);
 				modifiedBy = null;
 				modifiedDate = null;
 			} else {
 				createdText = ko.i18n('components.authorship.created', 'created');
-				createdBy = analysis.createdBy() ? analysis.createdBy().name : '';
+				createdBy = analysis.createdBy() ? analysis.createdBy().name : ko.i18n('common.anonymous', 'anonymous');
 				createdDate = commonUtils.formatDateForAuthorship(analysis.createdDate);
-				modifiedBy = analysis.modifiedBy() ? analysis.modifiedBy().name : '';
+				modifiedBy = analysis.modifiedBy() ? analysis.modifiedBy().name : ko.i18n('common.anonymous', 'anonymous');
 				modifiedDate = commonUtils.formatDateForAuthorship(analysis.modifiedDate);
 			}
 
