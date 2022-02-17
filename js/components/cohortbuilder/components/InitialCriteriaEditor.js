@@ -22,6 +22,7 @@ define([
         var self = this;
 
         self.expression = params.expression;
+        self.buttonText = params.buttonText || ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event');
 
         self.primaryCriteriaOptions = [
             {

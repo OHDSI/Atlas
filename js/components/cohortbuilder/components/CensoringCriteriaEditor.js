@@ -243,7 +243,7 @@ define([
             if (conceptSets.length > 0) {
                 unwrappedExpression.ConceptSets(unwrappedExpression.ConceptSets().concat(conceptSets));
             }
-            ko.utils.arrayForEach(expression(), c => {
+            ko.utils.arrayForEach(expression.CriteriaList(), c => {
                 unwrappedExpression.CensoringCriteria.push(c);
             });
         };

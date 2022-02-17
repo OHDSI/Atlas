@@ -38,9 +38,6 @@
             <div data-bind="visible: selectedReusable().type() === 'INITIAL_EVENT'">
                 <initial-criteria-editor params="{ expression: { PrimaryCriteria: selectedReusable().initialEventExpression, ConceptSets: selectedReusable().csAndParams }}"></initial-criteria-editor>
             </div>
-            <div data-bind="visible: selectedReusable().type() === 'CENSORING_EVENT'">
-                <censoring-criteria-editor params="{ expression: { CensoringCriteria: selectedReusable().censoringEventExpression, ConceptSets: selectedReusable().csAndParams }}"></censoring-criteria-editor>
-            </div>
             <div data-bind="visible: selectedReusable().type() === 'CRITERIA_GROUP'">
                 <criteria-group params="{ expression: { ConceptSets:  selectedReusable().csAndParams }, group: selectedReusable().criteriaGroupExpression }"></criteria-group>
             </div>

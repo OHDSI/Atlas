@@ -4,7 +4,7 @@
 	<div class="divtext" data-bind="contentEditable: design().description, contenteditableSwitch: isEditPermitted(), placeholder: ko.i18n('reusables.manager.design.descriptionPlaceholder', 'Enter description here')"></div>
 
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.reusableType.title', 'Reusable Type')"></h2>
-	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description1', '<b>Initial Event</b> and <b>Censoring Event</b> reusables are...')"></p>
+	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description1', '<b>Initial/Censoring Event</b> reusables are...')"></p>
 	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description2', '<b>Criteria Group</b> reusables are...')"></p>
 	<select class="form-control" data-bind="css : { 'edit-disabled': !isEditPermitted()}, options: reusableTypes, optionsText: 'value', value: reusableType"></select>
 
@@ -31,10 +31,7 @@
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.expression.title', 'Design')"></h2>
 	<div data-bind="css: {'edit-disabled': !isEditPermitted()}, eventListener: [{event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, {event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
 		<div data-bind="visible: design().type() === 'INITIAL_EVENT'">
-			<initial-criteria-editor params="{ expression: { PrimaryCriteria: initialEventExpression, ConceptSets: csAndParams }}"></initial-criteria-editor>
-		</div>
-		<div data-bind="visible: design().type() === 'CENSORING_EVENT'">
-			<censoring-criteria-editor params="{ expression: { CensoringCriteria: censoringEventExpression, ConceptSets: csAndParams }}"></censoring-criteria-editor>
+			<initial-criteria-editor params="{ expression: { PrimaryCriteria: initialEventExpression, ConceptSets: csAndParams }, buttonText: ko.i18n('components.cohortExpressionEditor.addInitialOrCensoringEvent', 'Add Initial/Censoring Event')}"></initial-criteria-editor>
 		</div>
 		<div data-bind="visible: design().type() === 'CRITERIA_GROUP'">
 			<criteria-group params="{ expression: { ConceptSets: csAndParams }, group: criteriaGroupExpression }"></criteria-group>

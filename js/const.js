@@ -280,8 +280,7 @@ define([
 		};
 
 		const reusableTypes = {
-			INITIAL_EVENT: ko.i18n('const.reusableTypes.initialEvent', 'Initial Event'),
-			CENSORING_EVENT: ko.i18n('const.reusableTypes.censoringEvent', 'Censoring Event'),
+			INITIAL_EVENT: ko.i18n('const.reusableTypes.initialEvent', 'Initial/Censoring Event'),
 			CRITERIA_GROUP: ko.i18n('const.reusableTypes.censoringEvent', 'Criteria Group')
 		};
 
