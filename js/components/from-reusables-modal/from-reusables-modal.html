@@ -1,0 +1,65 @@
+<atlas-modal params="showModal: $component.isModalShown, title: ko.i18n('components.reusablesModal.title', 'Insert from Reusable'),
+         data: {
+            classes: classes,
+            isLoading: isLoading,
+            reusablesTable: reusablesTable,
+            reusablesList: reusablesList,
+            selectedReusable: selectedReusable,
+            showCsBrowser: showCsBrowser,
+            backToList: backToList,
+            submit: submit
+         }">
+
+    <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('components.reusablesModal.loadingReusables', 'Loading reusables list...')"></loading>
+
+    <div data-bind="css: classes('reusables-table'), if: !isLoading() && !selectedReusable()">
+        <faceted-datatable params="{
+				order: [[3, 'desc']],
+				columns: reusablesTable.gridColumns,
+				options: reusablesTable.gridOptions,
+				reference: reusablesList,
+				pageLength: reusablesTable.tableOptions.pageLength,
+				lengthMenu: reusablesTable.tableOptions.lengthMenu,
+				language: ko.i18n('datatable.language')
+		}"></faceted-datatable>
+    </div>
+
+    <div data-bind="css: classes('selected-reusable'), if: !isLoading() && selectedReusable()">
+        <h2 class="selected-reusable-name" data-bind="text: selectedReusable().name"></h2>
+        <!-- ko foreach: selectedReusable().parameters -->
+        <div class="selected-reusable-parameter" data-bind="eventListener: [{event: 'click', selector: '.conceptset_import', callback: $data.importCs}, {event: 'click', selector: '.conceptset_edit', callback: $data.importCs}]">
+            <span data-bind="text: $data.name"></span>
+            <conceptset-selector
+                    params="conceptSetId: $data.csId, conceptSets: $data.csArray, defaultText:ko.i18n('components.conditionOccurrence.anyCondition', 'Any Condition')">
+            </conceptset-selector>
+        </div>
+        <!-- /ko -->
+        <div data-bind="css: {'edit-disabled': true}">
+            <div data-bind="visible: selectedReusable().type() === 'INITIAL_EVENT'">
+                <initial-criteria-editor params="{ expression: { PrimaryCriteria: selectedReusable().initialEventExpression, ConceptSets: selectedReusable().csAndParams }}"></initial-criteria-editor>
+            </div>
+            <div data-bind="visible: selectedReusable().type() === 'CRITERIA_GROUP'">
+                <criteria-group params="{ expression: { ConceptSets:  selectedReusable().csAndParams }, group: selectedReusable().criteriaGroupExpression }"></criteria-group>
+            </div>
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primary" type="button" data-bind="click: backToList">Back to list</button>
+            <button class="btn btn-primary" type="button" data-bind="click: submit">Confirm</button>
+        </div>
+    </div>
+</atlas-modal>
+
+<div data-bind="modal: showCsBrowser" class="modal fade cs-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" data-bind="text: ko.i18n('components.conceptSetBuilder.selectConceptSet', 'Select Concept Set...')"></div>
+            <div class="paddedWrapper">
+                <concept-set-browser params="
+                        repositoryConceptSetTableId: generateCsTableId(),
+                        criteriaContext: criteriaContext,
+                        cohortConceptSets: ko.observableArray(),
+                        onRespositoryConceptSetSelected: onRepositoryCsSelected"></concept-set-browser>
+            </div>
+        </div>
+    </div>
+</div>

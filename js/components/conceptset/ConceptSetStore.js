@@ -258,7 +258,7 @@ define([
 			return ConceptSetStore.getStore(constants.ConceptSetSources.characterization);
 		}
 		
-		static featureAnalysis() {
+		static incidenceRates() {
 			return ConceptSetStore.getStore(constants.ConceptSetSources.incidenceRates);
 		}	
 	}

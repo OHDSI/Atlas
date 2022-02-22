@@ -1,0 +1,60 @@
+<div class="criteriaHeading">
+    <table>
+        <colgroup>
+            <col />
+            <col />
+        </colgroup>
+        <tbody>
+        <tr>
+            <td
+                    data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortExitText_4', 'Exit Cohort based on the following criteria:')">
+            </td>
+            <td>
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-plus"></i>
+                        <span
+                                data-bind="text: ko.i18n('components.cohortExpressionEditor.addCensoringEvent', 'Add Censoring Event')"></span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" data-bind="foreach:$component.censorCriteriaOptions">
+                        <li>
+                            <a data-bind="click:action" href="#">
+                                <div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+                                <div class="optionDescription"
+                                     data-bind="text: ko.i18n($data.description, $data.defaultDescription)"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<table class="criteria">
+    <colgroup>
+        <col span="1" class="rule" />
+        <col span="1" class="delete" />
+    </colgroup>
+    <tbody
+            data-bind="sortable: {data: ko.unwrap(expression).CensoringCriteria, connectClass : 'censoringCriteria', options: {cancel: ':input, button, [contenteditable]'}}">
+    <tr>
+        <td>
+            <div class="criteria-content">
+                <div data-bind='component: {
+											name: $component.getCriteriaIndexComponent($data),
+											params: {expression: ko.unwrap($component.expression), criteria: $data}
+										}'></div>
+            </div>
+        </td>
+        <td style="vertical-align: top;">
+            <button class="btn btn-sm btn-danger"
+                    data-bind="text: ko.i18n('components.cohortExpressionEditor.deleteCriteria', 'Delete Criteria'), click: function (data, event) { $component.removeCensoringCriteria(data) }"></button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<from-reusables-modal params="{isModalShown: $component.showReusablesModal, type: 'INITIAL_EVENT', parentExpression: $component.expression, callback: $component.insertFromReusable}"></from-reusables-modal>

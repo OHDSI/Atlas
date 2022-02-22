@@ -1,4 +1,4 @@
-.strata-disabled {
+.edit-disabled {
   pointer-events: none;
 
   .btn.btn-primary {
@@ -6,7 +6,12 @@
     background-color: #265a88;
     color: #999;
   }
-  .btn.btn-danger {
-    opacity: 0.65;
+
+  .btn.btn-danger, .btn-group, .fa-times {
+    display: none;
+  }
+
+  conceptset-selector .btn-group {
+    display: inline-block;
   }
 }

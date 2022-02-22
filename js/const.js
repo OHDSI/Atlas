@@ -206,6 +206,7 @@ define([
 			ple: ko.i18n('const.newEntityNames.ple', 'New Population Level Estimation Analysis'),
 			conceptSet: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set'),
 			plp: ko.i18n('const.newEntityNames.plp', 'New Patient Level Prediction Analysis'),
+			reusable: ko.i18n('const.newEntityNames.reusable', 'New Reusable'),
 		};
 
 		const pluginTypes = {
@@ -282,6 +283,11 @@ define([
 			EMPTY_INITIAL_EVENT: ko.i18n('const.disabledReason.emptyInitionEvent', 'Initial event is not set')
 		};
 
+		const reusableTypes = {
+			INITIAL_EVENT: ko.i18n('const.reusableTypes.initialEvent', 'Initial/Censoring Event'),
+			CRITERIA_GROUP: ko.i18n('const.reusableTypes.censoringEvent', 'Criteria Group')
+		};
+
 		return {
 			maxEntityNameLength,
 			minChartHeight,
@@ -302,8 +308,9 @@ define([
 			executionResultModes,
 			sqlDialects,
 			eventTypes,
-			disabledReasons,
 			jobTypes,
+			disabledReasons,
+			reusableTypes,
     };
   }
 );

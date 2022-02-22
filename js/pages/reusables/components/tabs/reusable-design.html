@@ -1,0 +1,56 @@
+<div data-bind="css: classes()">
+	<p data-bind="css: classes('descr'), html: ko.i18n('reusable.manager.design.description', '<b>Reusable</b> is a ...')"></p>
+
+	<div class="divtext" data-bind="contentEditable: design().description, contenteditableSwitch: isEditPermitted(), placeholder: ko.i18n('reusables.manager.design.descriptionPlaceholder', 'Enter description here')"></div>
+
+	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.reusableType.title', 'Reusable Type')"></h2>
+	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description1', '<b>Initial/Censoring Event</b> reusables are...')"></p>
+	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description2', '<b>Criteria Group</b> reusables are...')"></p>
+	<select class="form-control" data-bind="css : { 'edit-disabled': !isEditPermitted()}, options: reusableTypes, optionsText: 'value', value: reusableType"></select>
+
+	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.parametersList.title', 'Parameters')"></h2>
+	<button data-bind="visible: isEditPermitted, css: classes({extra: 'btn btn-sm btn-primary'}), click: createNewParameter, text: ko.i18n('reusable.manager.design.parametersList.newParameter', 'New parameter')"></button>
+	<div data-bind="css: classes('no-parameters'), visible: design().parameters().length === 0">
+		<span data-bind="text: ko.i18n('reusable.manager.design.parametersList.noParameters', 'No parameters defined')"></span>
+	</div>
+	<div data-bind="visible: design().parameters().length > 0">
+		<table data-bind="
+			css: classes({ element: 'table', extra: ['table', 'table-bordered', 'table-hover'] }),
+			dataTable:{
+				data: design().parameters,
+				options: {
+					columns: parametersTableColumns,
+					pageLength: parametersTableOptions.pageLength,
+					lengthMenu: parametersTableOptions.lengthMenu,
+					language: ko.i18n('datatable.language')
+				}
+			}
+		"></table>
+	</div>
+
+	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.expression.title', 'Design')"></h2>
+	<div data-bind="css: {'edit-disabled': !isEditPermitted()}, eventListener: [{event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, {event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
+		<div data-bind="visible: design().type() === 'INITIAL_EVENT'">
+			<initial-criteria-editor params="{ expression: { PrimaryCriteria: initialEventExpression, ConceptSets: csAndParams }, buttonText: ko.i18n('components.cohortExpressionEditor.addInitialOrCensoringEvent', 'Add Initial/Censoring Event')}"></initial-criteria-editor>
+		</div>
+		<div data-bind="visible: design().type() === 'CRITERIA_GROUP'">
+			<criteria-group params="{ expression: { ConceptSets: csAndParams }, group: criteriaGroupExpression }"></criteria-group>
+		</div>
+		<div data-bind="visible: !design().type()">
+			<span data-bind="text: ko.i18n('reusable.manager.design.expression.typeNotSelected', 'Please select a reusable type')"></span>
+		</div>
+	</div>
+
+	<div data-bind="css:classes('bottom-padding')"></div>
+
+	<div data-bind="modal: showConceptSetBrowser" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header" data-bind="text: ko.i18n('components.conceptSetBuilder.selectConceptSet', 'Select Concept Set...')"></div>
+				<div class="paddedWrapper">
+					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: design().conceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,25 @@
+<heading-title params="name: ko.i18n('reusables.title', 'Reusables'), icon: 'recycle', theme: 'dark'"></heading-title>
+
+<loading data-bind="css: classes('loading-panel'), visible: $component.loading()" params="status: ko.i18n('reusables.loading', 'Loading Reusables...')"></loading>
+
+<div data-bind="css: classes('grid'), if: $component.canList(), visible: !$component.loading()">
+	<div data-bind="css: classes('toolbar')">
+		<button
+				type="button"
+				data-bind="css: classes({ element: 'create-btn', extra: ['btn btn-sm btn-primary', !$component.canCreate() ? 'disabled' : ''] }), click:$component.newReusable, text: ko.i18n('const.newEntityNames.reusable', 'New Reusable')"
+		></button>
+	</div>
+	<div data-bind="css: classes('list')">
+		<faceted-datatable params="{
+				order: [[3, 'desc']],
+				columns: $component.gridColumns,
+				options: $component.gridOptions,
+				reference: $component.reusablesList,
+				pageLength: $component.tableOptions.pageLength,
+				lengthMenu: $component.tableOptions.lengthMenu,
+				language: ko.i18n('datatable.language')
+		}"></faceted-datatable>
+	</div>
+</div>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canList"></access-denied>

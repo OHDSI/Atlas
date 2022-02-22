@@ -12,7 +12,8 @@ define(function (require) {
         PATHWAY_ANALYSIS: 'pathway-analysis',
         INCIDENCE_RATE: 'ir',
         ESTIMATION: 'ple',
-        PREDICTION: 'plp'
+        PREDICTION: 'plp',
+        REUSABLE: 'reusable'
     };
 
     async function loadTagsSuggestions(namePart) {

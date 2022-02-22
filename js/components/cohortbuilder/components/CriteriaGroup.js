@@ -9,6 +9,7 @@ define([
 		'../const',
 		'text!./CriteriaGroupTemplate.html',
 		'components/DropDownMenu',
+		'components/from-reusables-modal/from-reusables-modal',
 		'less!./CriteriaGroup.less'],
 	function (ko, criteriaTypes, CriteriaGroup, Window, AdditionalCriteria, options, utils, constants, template) {
 
@@ -32,17 +33,17 @@ define([
 		self.getCriteriaComponent = utils.getCriteriaComponent;
 
 		self.addActions = [
-      {
-        ...constants.groupAttributes.addDemographic,
-        selected: false,
-        action: function () {
+			{
+				...constants.groupAttributes.addDemographic,
+				selected: false,
+				action: function () {
 					self.group().DemographicCriteriaList.push(new criteriaTypes.DemographicCriteria());
 				}
-      },
-      {
-        ...constants.groupAttributes.addConditionEra,
-        selected: false,
-        action: function () {
+			},
+			{
+				...constants.groupAttributes.addConditionEra,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -52,9 +53,9 @@ define([
 				},
 			},
 			{
-        ...constants.groupAttributes.addConditionOccurrence,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addConditionOccurrence,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -64,9 +65,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addDeath,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addDeath,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -76,9 +77,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addDeviceExposure,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addDeviceExposure,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -88,9 +89,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addDoseEra,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addDoseEra,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -100,9 +101,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addDrugEra,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addDrugEra,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -112,9 +113,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addDrugExposure,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addDrugExposure,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -124,9 +125,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addLocationRegion,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addLocationRegion,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -137,9 +138,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addMeasurement,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addMeasurement,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -149,9 +150,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addObservation,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addObservation,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -161,9 +162,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addObservationPeriod,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addObservationPeriod,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -173,9 +174,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addPayerPlanPeriod,
-        selected: false,
-        action: function() {
+				...constants.groupAttributes.addPayerPlanPeriod,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -185,9 +186,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addProcedureOccurrence,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addProcedureOccurrence,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -197,9 +198,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addSpecimen,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addSpecimen,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -209,9 +210,9 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addVisit,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addVisit,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().CriteriaList.push(new AdditionalCriteria({
 						Criteria: {
@@ -221,14 +222,21 @@ define([
 				}
 			},
 			{
-        ...constants.groupAttributes.addGroup,
-        selected: false,
-        action: function () {
+				...constants.groupAttributes.addGroup,
+				selected: false,
+				action: function () {
 					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
 					self.group().Groups.push(new CriteriaGroup(null, unwrappedExpression.ConceptSets));
 				}
-      },
-    ];
+			},
+			{
+				...constants.groupAttributes.fromReusable,
+				selected: false,
+				action: function () {
+					self.showReusablesModal(true);
+				}
+			},
+		];
 
 		self.removeCriteria = function (observableList, data) {
 			observableList.remove(data);
@@ -276,7 +284,25 @@ define([
 			}
 			return distinctOptions;
 		}
-	
+
+		self.showReusablesModal = ko.observable(false);
+		self.insertFromReusable = (expression, conceptSets) => {
+			if (conceptSets.length > 0) {
+				const unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+				unwrappedExpression.ConceptSets(unwrappedExpression.ConceptSets().concat(conceptSets));
+			}
+
+			self.group().Type(expression.Type());
+			ko.utils.arrayForEach(expression.CriteriaList(), c => {
+				self.group().CriteriaList.push(c);
+			});
+			ko.utils.arrayForEach(expression.DemographicCriteriaList(), c => {
+				self.group().DemographicCriteriaList.push(c);
+			});
+			ko.utils.arrayForEach(expression.Groups(), g => {
+				self.group().Groups.push(g);
+			});
+		};
 	}
 
 	// return compoonent definition

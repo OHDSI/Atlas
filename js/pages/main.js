@@ -11,6 +11,7 @@ define(
 		const pathways = require('./pathways/index');
 		const estimation = require('./estimation/index');
 		const prediction = require('./prediction/index');
+		const reusables = require('./reusables/index');
 		const jobs = require('./jobs/index');
 		const configuration = require('./configuration/index');
 		const feedback = require('./feedback/index');
@@ -28,6 +29,7 @@ define(
 			profiles,
 			estimation,
 			prediction,
+			reusables,
 			jobs,
 			configuration,
 			feedback,

@@ -949,6 +949,16 @@ define(["knockout"], function (ko) {
       descriptionGroup: 'const.eventsList.addGroup.desc_group',
       defaultDescriptionGroup: 'Add a group to combine criteria using and/or relationships.',
     },
+    fromReusable: {
+      title: 'const.eventsList.fromReusable.title',
+      defaultTitle: 'From Reusable',
+      descriptionGroup: 'const.eventsList.fromReusable.desc_group',
+      defaultDescriptionGroup: 'Add a group from list of reusables',
+      descriptionInitial: 'const.eventsList.fromReusable.desc_initial',
+      defaultDescriptionInitial: 'Add criteria from list of reusables',
+      descriptionCensoring: 'const.eventsList.fromReusable.desc_censoring',
+      defaultDescriptionCensoring: 'Exit cohort from list of reusables',
+    },
     addDemographic: {
       title: 'const.eventsList.addDemographic.title',
       defaultTitle: 'Add Demographic',
@@ -996,7 +1006,8 @@ define(["knockout"], function (ko) {
     'addPayerPlanPeriod',
     'addProcedureOccurrence',
     'addSpecimen',
-    'addVisit'
+    'addVisit',
+    'fromReusable',
   ];
   const censoringEventList = [
     'addConditionEra',
@@ -1011,7 +1022,8 @@ define(["knockout"], function (ko) {
     'addPayerPlanPeriod',
     'addProcedureOccurrence',
     'addSpecimen',
-    'addVisit'
+    'addVisit',
+    'fromReusable',
   ];
   const groupAttributesList = [
     'addDemographic',
@@ -1031,6 +1043,7 @@ define(["knockout"], function (ko) {
     'addSpecimen',
     'addVisit',
     'addGroup',
+    'fromReusable',
   ];
   const eraAttributesList = [
     'addFirstDiagnosis',
