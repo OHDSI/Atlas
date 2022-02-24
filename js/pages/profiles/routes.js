@@ -10,6 +10,8 @@ define(
             params.sourceKey = (path[0] || null);
             params.personId = (path[1] || null);
             params.cohortDefinitionId = (path[2] || null);
+            params.cohortSampleId = (path[3] || null);
+            params.questionSetId = (path[4] || null);
 
             router.setCurrentView('profile-manager', params);
           });

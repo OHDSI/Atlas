@@ -87,4 +87,46 @@
     color: #265a88;
     cursor: pointer;
 }
-  
+
+.sample-list.fa-check-square {
+    color: #009688;
+    cursor: pointer;
+}
+
+.validation-section {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 12px;
+}
+
+.validation-label {
+    font-size: 16px;
+}
+
+.validation-row {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 9px 3px;
+}
+
+.validation-sub-header {
+    padding-left: 10px;
+}
+
+.annotation-link-status {
+    margin: 5pt;
+    vertical-align: middle;
+    padding-left: 10px;
+}
+
+.annotation-view-bullet {
+    list-style-type: none;
+}
+
+.annotation-view-header {
+    padding-left: 15px;
+}
+
+.sample-status {
+    padding: 10px;
+}

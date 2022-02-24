@@ -18,6 +18,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'clipboard',
 	'd3',
 	'services/Sample',
+	'services/Annotation',
 	'services/Jobs',
 	'services/job/jobDetail',
 	'services/JobDetailsService',
@@ -26,8 +27,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utils/AutoBind',
 	'utils/Clipboard',
 	'utils/CommonUtils',
+	'utils/CsvUtils',
 	'pages/cohort-definitions/const',
 	'services/AuthAPI',
+	'./Validation/ValidationTool',
 	'services/Poll',
 	'services/JobPollService',
 	'services/file',
@@ -82,6 +85,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	clipboard,
 	d3,
 	sampleService,
+	annotationService,
 	jobService,
 	jobDetail,
 	jobDetailsService,
@@ -90,8 +94,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	AutoBind,
 	Clipboard,
 	commonUtils,
+	CsvUtils,
 	costUtilConst,
 	authApi,
+	ValidationTool,
 	{PollService},
 	JobPollService,
 	FileService,
@@ -193,8 +199,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		constructor(params) {
 			super(params);
 
+			const self = this;
 			this.previewVersion = sharedState.CohortDefinition.previewVersion;
-
 			this.pollTimeoutId = null;
 			this.authApi = authApi;
 			this.config = config;
@@ -238,7 +244,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isFeMaleSample=ko.observable(false);
 			this.isOtherGenderSample=ko.observable(false);
 			//error state
-			this.sampleNameError=ko.pureComputed(() => this.sampleName().trim() == "");
+			this.sampleNameError=ko.pureComputed(() => this.sampleName().trim() ===	 "");
 			this.patientCountError=ko.pureComputed(() => !(this.patientCount() > 0)); // this works because null == 0
 			this.isAgeRange =ko.pureComputed(() => ['between','notBetween'].includes(this.sampleAgeType()));
 			this.firstAgeError = ko.pureComputed(() => this.firstAge() != null && this.firstAge() < 0);
@@ -256,6 +262,21 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}));
 
 			//validation input value
+
+			this.selectedSampleId = ko.observable('');
+			this.selectedSampleName = ko.observable('');
+			this.sampleDataLoading = ko.observable(false);
+			this.sampleData =ko.observableArray([]);
+			this.sampleList = ko.observableArray();
+
+			// validation samples
+
+			this.annotationSets = ko.observableArray([]);
+			this.annotationLinkShown = ko.observable(false);
+			this.annotationSetsLoading = ko.observable(false);
+			this.isAnnotationSetLinking = ko.observable(false);
+			this.isAnnotationSetLoading = ko.observable(false);
+			this.annotationSampleId = ko.observable('');
 
 			//sample list
 			this.sampleListCols = [
@@ -290,10 +311,12 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				{
 					title: ko.i18n('columns.action', 'Action'),
 					sortable: false,
-					render: function() {return `<i class="sample-list fa fa-trash" aria-hidden="true"></i> <i class="sample-list fa fa-refresh" aria-hidden="true"></i>`}
+					render: function() {
+						return `<i class="sample-list fa fa-trash" aria-hidden="true"></i> <i class="sample-list fa fa-refresh" aria-hidden="true"></i> <i title="Validate with Annotation" class="sample-list fa fa-check-square" aria-hidden="true"></i>`
+					}
 				}
-			]
-			this.sampleList = ko.observableArray()
+			];
+
 
 			// Sample data table
 			this.sampleCols =  [
@@ -314,17 +337,37 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 			];
 
-			this.selectedSampleId = ko.observable('');
-			this.selectedSampleName = ko.observable('');
-			this.sampleDataLoading = ko.observable(false);
-			this.sampleData =ko.observableArray([]);
+			this.annotationSetCols = [
+				{
+					title: 'ID',
+					data: 'id'
+				},
+					{
+						title: 'Name',
+						data: 'name'
+					},
+				{
+					title: '# Questions',
+					data: 'q_num'
+				},
+				{
+					title: 'Actions',
+					sortable: false,
+					data: 'id',
+					render: (d) => {
+						return `<button class="btn btn-primary btn-sm annotation-link-btn" title="View annotation set">Launch Study</button><span class="annotation-link-status"></span>`;
+
+
+					}
+				}
+			];
+
+			// end validation samples
 
 			this.isCohortGenerated = ko.pureComputed(() => {
-				const sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey == this.sampleSourceKey());
-				if (sourceInfo&&this.getStatusMessage(sourceInfo) == 'COMPLETE') {
-					return true;
-				}
-				return false;
+				const sourceInfo = this.cohortDefinitionSourceInfo().find(d => d.sourceKey === this.sampleSourceKey());
+				return !!(sourceInfo && this.getStatusMessage(sourceInfo) === 'COMPLETE');
+
 			});
 
 			//end of sample states
@@ -332,6 +375,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.cdmSources = ko.pureComputed(() => {
 				return sharedState.sources().filter((source) => commonUtils.hasCDM(source) && authApi.hasSourceAccess(source.sourceKey));
 			});
+
+
+			this.validationTool = ko.pureComputed(() => {
+                if (this.currentCohortDefinition()) {
+                	console.log('init validation tool');
+                    return new ValidationTool(this.currentCohortDefinition().id(), this.currentCohortDefinition().name(),
+						this.sourceAnalysesStatus, this.reportSourceKey(), this.sampleSourceKey());
+                }
+            });
 
 			this.cohortDefinitionCaption = ko.pureComputed(() => {
 				if (this.currentCohortDefinition()) {
@@ -372,7 +424,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 
 				if (this.currentCohortDefinition() && (this.currentCohortDefinition()
-						.id() != 0)) {
+						.id() !== 0)) {
 					return authApi.isPermittedUpdateCohort(this.currentCohortDefinition()
 						.id()) || !config.userAuthenticationEnabled;
 				} else {
@@ -1782,13 +1834,27 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				.finally(() => {
 					this.sampleDataLoading(false);
 				});
+			} else if (e.target.className === 'sample-list fa fa-check-square') {
+				this.annotationLinkShown(true);
+				this.annotationSetsLoading(true);
+				this.annotationSampleId(sampleId);
+
+				this.loadAnnotationSets(cohortDefinitionId)
+					.then(res => {
+						this.showAnnotationDataTable(res);
+					})
+					.finally(() => {
+						this.annotationSetsLoading(false);
+					});
+
+
 			} else {
 				this.fetchSampleData({sampleId, sourceKey, cohortDefinitionId});
 			}
 		}
 
 		fetchSampleData({sampleId, sourceKey, cohortDefinitionId}) {
-			this.sampleDataLoading(true)
+			this.sampleDataLoading(true);
 			sampleService.getSample({ cohortDefinitionId, sourceKey, sampleId })
 			.then(res=>{
 				this.selectedSampleId(sampleId);
@@ -1805,6 +1871,13 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			})
 		}
 
+		loadAnnotationSets(cohortDefinitionId) {
+			return annotationService.getAnnotationSets(cohortDefinitionId)
+				.catch(() => {
+					alert('Error when refreshing annotation sets, please try again later');
+				})
+		}
+
 		refreshSample({sampleId, sourceKey, cohortDefinitionId}) {
 			return sampleService.refreshSample({cohortDefinitionId, sourceKey, sampleId})
 			.catch(() => {
@@ -1819,6 +1892,100 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			window.open(`#/profiles/${sourceKey}/${d.personId}/${cohortDefinitionId}/${sampleId}`);
 		}
 
+		onAnnotationListClick(d, e) {
+			const sampleId = this.annotationSampleId();
+			const cohortDefinitionId= this.currentCohortDefinition().id();
+			const sourceKey=this.sampleSourceKey();
+
+			if (e.target.className === 'btn btn-primary btn-sm annotation-link-btn') {
+				this.isAnnotationSetLinking(true);
+				const btn = e.target;
+				const status = btn.nextSibling;
+				status.textContent = "Retrieving study information...";
+				btn.disabled = true;
+				annotationService.getSetsBySampleId(sampleId)
+					.then((items) => {
+						return items.includes(d['id']);
+					})
+					.then((linked) => {
+						if (linked) {
+							status.textContent = "Launching study...";
+							annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
+								.then((items) => {
+									if (items.length > 0) {
+										window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}/${d.id}`;
+										location.reload();
+									} else {
+										console.error(error);
+										status.textContent = "Error launching study!";
+										btn.disabled = false;
+										alert('Error launching sample to annotations. Please try again later.');
+									}
+								})
+								.catch(error=>{
+									console.error(error);
+									status.textContent = "Error launching study!";
+									btn.disabled = false;
+									alert('Error launching sample to annotations. Please try again later.');
+								})
+								.finally(() => {
+									this.isAnnotationSetLinking(false);
+									this.annotationLinkShown(false);
+								})
+						}
+						else {
+							status.textContent = "Creating study...";
+							annotationService.linkAnnotationToSamples({
+								'sampleId': sampleId,
+								'cohortDefinitionId': cohortDefinitionId,
+								'sourceKey': sourceKey,
+								'annotationSetId': d.id
+							})
+								.then(res => {
+									status.textContent = "Launching Study...";
+									console.log('posted annotation sample link');
+									console.log(res);
+									annotationService.getAnnotationsBySampleIdSetId(sampleId, d.id)
+										.then((items) => {
+											if (items.length > 0) {
+												window.location = `#/profiles/${sourceKey}/${items[0].subjectId}/${cohortDefinitionId}/${sampleId}/${d.id}`;
+												location.reload();
+											} else {
+												console.error(error);
+												status.textContent = "Error launching study!";
+												btn.disabled = false;
+												alert('Error launching sample to annotations. Please try again later.');
+											}
+										})
+										.catch(error=>{
+											console.error(error);
+											status.textContent = "Error launching study!";
+											btn.disabled = false;
+											alert('Error launching sample to annotations. Please try again later.');
+										})
+										.finally(() => {
+											this.isAnnotationSetLinking(false);
+											this.annotationLinkShown(false);
+										})
+								})
+								.catch(error=>{
+									console.error(error);
+									status.textContent = "Error creating study!";
+									btn.disabled = false;
+									alert('Error linking sample to annotations. Please try again later.');
+								})
+								.finally(() => {
+									this.isAnnotationSetLinking(false);
+									this.annotationLinkShown(false);
+								});
+						}
+					});
+
+
+
+			}
+		}
+
 		showSampleDataTable(sample) {
 			const transformedSampleData = sample.map(el => ({
 				personId: el.personId,
@@ -1827,6 +1994,15 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}));
 
 			this.sampleData(transformedSampleData);
+		}
+
+		showAnnotationDataTable(annotationSet) {
+			const transformAnnotationSets = annotationSet.map(el => ({
+				id: el.id,
+				q_num: el.questions.length,
+				name: el.name
+			}));
+			this.annotationSets(transformAnnotationSets)
 		}
 	}
 

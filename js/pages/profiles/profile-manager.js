@@ -21,11 +21,13 @@ define([
 		'lodash',
 		'crossfilter',
 		'assets/ohdsi.util',
+		'./annotation/view-models/AnnotationWidget',
 		'd3-tip',
 		'databindings',
 		'faceted-datatable',
 		'extensions/bindings/profileChart',
 		'less!./profile-manager.less',
+		'less!./annotation/annotation.less',
 		'components/heading',
 	'components/ac-access-denied'
 	],
@@ -51,6 +53,7 @@ define([
 		_,
 		crossfilter,
 		util,
+		AnnotationWidget
 	) {
 
 		var reduceToRecs = [ // crossfilter group reduce functions where group val
@@ -63,6 +66,7 @@ define([
 		class ProfileManager extends AutoBind(Page) {
 			constructor(params) {
 				super(params);
+				this.url = window.location
 				this.sharedState = sharedState;
 				this.aspectRatio = ko.observable();
 				this.config = config;
@@ -71,6 +75,10 @@ define([
 
 				this.sourceKey = ko.observable(router.routerParams().sourceKey);
 				this.personId = ko.observable(router.routerParams().personId);
+
+				this.sampleName = ko.observable(router.routerParams().cohortSampleId);
+				this.questionSetId = ko.observable(router.routerParams().questionSetId);
+
 				this.personRecords = ko.observableArray();
 
 				this.cohortDefinitionId = ko.observable(router.routerParams().cohortDefinitionId);
@@ -337,6 +345,22 @@ define([
 				if (this.personId()) {
 					this.loadPerson();
 				}
+				// BEGIN ANNOTATION
+				if (this.cohortDefinitionId()) {
+					this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName(), this.questionSetId());
+				}
+
+				this.isAnnotationToggleVisible =  ko.computed(() => {
+					if (!this.annotationWidget) {
+						this.annotationWidget = new AnnotationWidget(this.cohortDefinitionId(), this.personId(), this.sourceKey(), this.sampleName(), this.questionSetId());
+					}
+
+					if (this.annotationWidget) {
+						return this.annotationWidget.isVisible() && this.annotationWidget.annotationToggleState() === 'open';
+					}
+					return false;
+				});
+				// END ANNOTATION
 
 				this.plugins = pluginRegistry.findByType(globalConstants.pluginTypes.PROFILE_WIDGET);
 			}
