@@ -20,7 +20,7 @@
                 <button class="btn btn-primary" data-bind="visible: isOwner, enable: !isProcessing(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
-                <button class="btn btn-danger" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
+                <button class="btn btn-danger" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
                 <!-- /ko -->
             </div>
         </div>

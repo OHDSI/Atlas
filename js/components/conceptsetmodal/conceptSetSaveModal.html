@@ -6,7 +6,7 @@
         data: $component
     }">
     <div class="concept-set-dialog modal-body">
-        <span class="help-block" data-bind="hidden: isNameUnique"><i class="fa fa-warning"></i> <span data-bind="text: ko.i18n('components.conceptSetSaveModal.conceptSetAlreadyExists', 'Concept Set already exists')"></span></span>
+        <span class="help-block" data-bind="hidden: isNameUnique"><i class="fa fa-exclamation-triangle"></i> <span data-bind="text: ko.i18n('components.conceptSetSaveModal.conceptSetAlreadyExists', 'Concept Set already exists')"></span></span>
         <div class="concept-set-form">
             <label data-bind="text: ko.i18n('components.conceptSetSaveModal.conceptSetNameLabel', 'Concept Set Name:')"></label>
             <input type="text" data-bind="textInput: conceptSetName, placeholder: ko.i18n('components.conceptSetSaveModal.conceptSetNamePlaceholder', 'Concept Set Name')" />

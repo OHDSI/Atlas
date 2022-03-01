@@ -1,6 +1,6 @@
 <!-- ko if:$component.showSelectionArea -->
 <div class="wrapperTitle">
-	<span data-bind="if:!$component.loadingReport()"><i class="fa fa-area-chart"></i></span>
+	<span data-bind="if:!$component.loadingReport()"><i class="fa fa-chart-area"></i></span>
 	<span data-bind="if:$component.loadingReport()"><i class="fa fa-circle-o-notch fa-spin"></i></span> 
 	<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_1', 'Cohort Reporting')"></span>
 </div>
@@ -52,7 +52,7 @@
 
 <div id="reportDataCompleteness" data-bind="if: $component.currentReport() == 'Data Completeness' && !$component.loadingReport()">
 	<div class="pad-10 report">
-		<div class="reportHeading"><i class="fa fa-area-chart"></i> 
+		<div class="reportHeading"><i class="fa fa-chart-area"></i>
 			<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_3', 'Data Completeness')"></span>
 			(<span data-bind="text:$component.reportSourceKey()"></span>)</div>
 		<faceted-datatable params="{columns: $component.dataCompletColumns, reference:$component.dataCompleteReference, options:$component.dataCompleteOptions, rowClick:$component.dataCompleteRowClick }"></faceted-datatable>

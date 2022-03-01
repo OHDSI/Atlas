@@ -16,7 +16,7 @@
                     <button type="button" class="btn btn-primary" data-bind="click:$component.copy, css: { disabled: !canCreate()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
                     <button type="button" class="btn btn-primary" data-bind="click:$component.close, title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                     <button type="button" class="btn btn-primary" data-bind="click: $component.export, title: ko.i18n('common.export', 'Export')"><i class="fa fa-download"></i></button>
-                    <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-o"></i></button>
+                    <button type="button" class="btn btn-danger" data-bind="click: $component.delete, css: { disabled: !canDelete()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
                 </div>
             </div>
             <div data-bind="visible: !$component.roleName()" class="empty-name-error">

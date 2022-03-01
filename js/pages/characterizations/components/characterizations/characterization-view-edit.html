@@ -3,7 +3,7 @@
 
 <!-- ko if: !!design() && !loading() -->
 <div data-bind="css: classes()">
-    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'shopping-cart', theme: 'dark', tags: design().tags"></heading-title>
+    <heading-title params="name: characterizationCaption(), description: isEditPermitted() ? '' : ko.i18n('common.readOnly', '(Read only)'), icon: 'chart-line', theme: 'dark', tags: design().tags"></heading-title>
     <!-- ko if: !!design() && !!design().id -->
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
@@ -23,7 +23,7 @@
                 <button class="btn btn-primary" data-bind="visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
-                <button type="button" class="btn btn-danger"  data-bind="visible: !previewVersion(), click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-danger"  data-bind="visible: !previewVersion(), click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-alt"></i></button>
                 <!-- /ko -->
             </div>
         </div>
