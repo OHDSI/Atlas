@@ -106,7 +106,7 @@ define([
 
         createNewParameter() {
             let newParamId = 1;
-            this.design().parameters().map(p => p.id).sort().some(id => {
+            this.design().parameters().map(p => p.id).sort((a, b) => a - b).some(id => {
                 if (id !== newParamId) {
                     return true;
                 } else {
