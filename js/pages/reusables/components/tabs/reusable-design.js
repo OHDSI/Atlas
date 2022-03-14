@@ -22,7 +22,7 @@ define([
     conceptSetUtils,
     constants
 ) {
-    class ReusableEditor extends AutoBind(Component){
+    class ReusableEditor extends AutoBind(Component) {
         constructor(params) {
             super();
             this.params = params;
@@ -42,14 +42,15 @@ define([
             this.initialEventExpression = ko.observable(this.design().initialEventExpression);
             this.censoringEventExpression = this.design().censoringEventExpression;
 
-            this.csAndParams = ko.pureComputed(() => {
-                if (!this.design() || !this.design().conceptSets || !this.design().parameters) {
-                    return [];
-                }
-                return ko.unwrap(this.design().conceptSets).concat(this.design().parameters()
+            this.csAndParams = ko.observableArray(
+                ko.unwrap(this.design().conceptSets).concat(this.design().parameters()
                     .filter(p => p.type === ReusablesService.PARAMETER_TYPE.CONCEPT_SET)
                     .map(p => p.data))
+            );
+            this.csAndParams.subscribe((newArray) => {
+                this.design().conceptSets(newArray.filter(cs => cs.id >= 0));
             });
+
             this.parametersTableOptions = params.tableOptions || commonUtils.getTableOptions('S');
             this.parametersTableColumns = [
                 {
@@ -113,9 +114,11 @@ define([
                 }
             });
 
-            this.design().parameters.push(new ReusableParameter({
+            let reusableParameter = new ReusableParameter({
                 id: newParamId,
-            }));
+            });
+            this.design().parameters.push(reusableParameter);
+            this.csAndParams.push(reusableParameter.data);
         }
 
         removeParameter(p) {
