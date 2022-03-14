@@ -44,6 +44,8 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
             d.hasOwnProperty('createdBy') && !!d.createdBy
                 ? typeof d.createdBy === 'string'
                     ? d.createdBy
+                    : typeof d.createdBy === 'object' && !!d.createdBy.name
+                    ? d.createdBy.name
                     : typeof d.createdBy === 'object' && !!d.createdBy.login
                     ? d.createdBy.login
                     : emptyFieldSubstitute
