@@ -4,8 +4,9 @@
 	<div class="divtext" data-bind="contentEditable: design().description, contenteditableSwitch: isEditPermitted, placeholder: ko.i18n('reusables.manager.design.descriptionPlaceholder', 'Enter description here')"></div>
 
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.reusableType.title', 'Reusable Type')"></h2>
-	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description1', '<b>Initial/Censoring Event</b> reusables are...')"></p>
-	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description2', '<b>Criteria Group</b> reusables are...')"></p>
+	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description1', '<b>Initial/Censoring Event</b> reusables are only applicable to cohort Initial/Censoring Events.')"></p>
+	<p data-bind="css: classes('types-descr'), html: ko.i18n('reusable.manager.design.reusableType.description2', '<b>Criteria Group</b> reusables are applicable to any <b>subgroup</b> of criteria including Characterization subgroups, Feature Analysis criteria and Incidence Rates stratify criteria.')"></p>
+	<p data-bind="css: classes('warning')"><i class="fa fa-exclamation-triangle"></i> <b data-bind="text: ko.i18n('common.warning', 'Attention:')"></b> <span data-bind="text: ko.i18n('reusable.manager.design.warningText', 'You can switch (and save) between both types in one reusable but only one type can be active at one time (the one you save Reusable with).')"></span></div>
 	<select class="form-control" data-bind="css : { 'edit-disabled': !isEditPermitted()}, options: reusableTypes, optionsText: 'value', value: reusableType"></select>
 
 	<h2 data-bind="css: classes('section-title'), text: ko.i18n('reusable.manager.design.parametersList.title', 'Parameters')"></h2>
