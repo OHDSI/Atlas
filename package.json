@@ -86,10 +86,10 @@
     "moment": "^2.22.2",
     "numeral": "^2.0.6",
     "ouanalyse-datatables.net-buttons-html5": "^1.5.3",
-    "prismjs": "^1.15.0",
+    "prismjs": "^1.27.0",
     "qs": "^6.5.2",
     "querystring": "^0.2.0",
-    "urijs": "^1.19.1",
+    "urijs": "^1.19.10",
     "xss": "^1.0.3"
   }
 }
