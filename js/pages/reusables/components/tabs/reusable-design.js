@@ -43,12 +43,19 @@ define([
             this.censoringEventExpression = this.design().censoringEventExpression;
 
             this.csAndParams = ko.observableArray(
-                ko.unwrap(this.design().conceptSets).concat(this.design().parameters()
-                    .filter(p => p.type === ReusablesService.PARAMETER_TYPE.CONCEPT_SET)
-                    .map(p => p.data))
+                ko.unwrap(this.design().conceptSets).concat(this.getParameters())
             );
             this.csAndParams.subscribe((newArray) => {
-                this.design().conceptSets(newArray.filter(cs => cs.id >= 0));
+                let newConceptSets = newArray.filter(cs => cs.id >= 0);
+                if (newConceptSets.length !== this.design().conceptSets().length) {
+                    this.design().conceptSets(newConceptSets);
+                }
+            });
+            this.design().conceptSets.subscribe((newArray) => {
+                let oldConceptSets = this.csAndParams().filter(item => item.id >= 0);
+                if (oldConceptSets.length !== newArray.length) {
+                    this.csAndParams(newArray.concat(this.getParameters()));
+                }
             });
 
             this.parametersTableOptions = params.tableOptions || commonUtils.getTableOptions('S');
@@ -121,8 +128,15 @@ define([
             this.csAndParams.push(reusableParameter.data);
         }
 
+        getParameters() {
+            return this.design().parameters()
+                .filter(p => p.type === ReusablesService.PARAMETER_TYPE.CONCEPT_SET)
+                .map(p => p.data);
+        }
+
         removeParameter(p) {
             this.design().parameters.remove(p);
+            this.csAndParams(this.csAndParams().filter(item => item.id !== -p.id));
         }
     }
 
