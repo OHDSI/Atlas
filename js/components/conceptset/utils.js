@@ -162,7 +162,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 				const tooltip = d.ANCESTORS.map(d => commonUtils.escapeTooltip(d.CONCEPT_NAME)).join('<br/>');
 				return `<a data-bind="click: d => $parents[1].showAncestorsModal(d.CONCEPT_ID), tooltip: '${tooltip}'">${d.ANCESTORS.length}</a>`
 			} else {
-				return `<i class="fa fa-circle-o-notch fa-spin"></i>`;
+				return `<i class="fa fa-circle-notch fa-spin"></i>`;
 			}
 		};
 	}

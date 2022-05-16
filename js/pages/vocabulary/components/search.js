@@ -257,7 +257,7 @@ define([
                 });
                 this.recordCountsRefreshing = ko.observable(false);
                 this.recordCountClass = ko.pureComputed(() => {
-                    return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+                    return this.recordCountsRefreshing() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-database fa-lg";
                 });
 
 				this.isAuthenticated = authApi.isAuthenticated;
@@ -484,12 +484,12 @@ define([
 				if (enable) {
 					$('#' + column.elementId)
 						.removeClass(column.icon)
-						.addClass("fa-circle-o-notch")
+						.addClass("fa-circle-notch")
 						.addClass("fa-spin");
 				} else {
 					$('#' + column.elementId)
 						.addClass(column.icon)
-						.removeClass("fa-circle-o-notch")
+						.removeClass("fa-circle-notch")
 						.removeClass("fa-spin");
 				}
 			}
