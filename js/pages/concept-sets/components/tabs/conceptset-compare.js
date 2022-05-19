@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'text!./conceptset-compare.html',
+    'services/AuthAPI',
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -14,6 +15,7 @@ define([
 ], function (
 	ko,
 	view,
+    authApi,
 	Component,
   AutoBind,
   commonUtils,
@@ -217,9 +219,9 @@ define([
       this.resultSources = ko.computed(() => {
         const resultSources = [];
         sharedState.sources().forEach((source) => {
-          if (source.hasResults) {
+          if (source.hasResults && authApi.isPermittedAccessSource(source.sourceKey)) {
             resultSources.push(source);
-            if (source.resultsUrl == sharedState.resultsUrl()) {
+            if (source.resultsUrl === sharedState.resultsUrl()) {
               this.currentResultSource(source);
             }
           }
