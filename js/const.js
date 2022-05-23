@@ -255,6 +255,10 @@ define([
 				title: "Spark",
 				dialect: "spark",
 			},
+			SYNAPSE: {
+				title: "Azure Synapse",
+				dialect: "synapse",
+			},
 		};
 
 		const eventTypes = {

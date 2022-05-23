@@ -166,11 +166,17 @@ define([
 		}
 
 		parseAgeData(rawAgeData) {
-			this.ageData(this.parseBoxplotData(rawAgeData).data);
+			const parsedData = this.parseBoxplotData(rawAgeData);
+			if (parsedData != null) {
+				this.ageData(parsedData.data);
+			}
 		}
 
 		parseLengthOfEra(rawLengthOfEra) {
-			this.lengthOfEra(this.parseBoxplotData(rawLengthOfEra).data);
+			const parsedData = this.parseBoxplotData(rawLengthOfEra);
+			if (parsedData != null) {
+				this.lengthOfEra(parsedData.data);
+			}
 		}
 
 		parsePrevalenceByMonth(rawPrevalenceByMonth) {
