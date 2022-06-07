@@ -1,6 +1,7 @@
 define([
 	'knockout',
 	'text!./conceptset-compare.html',
+    'services/AuthAPI',
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
@@ -14,6 +15,7 @@ define([
 ], function (
 	ko,
 	view,
+    authApi,
 	Component,
   AutoBind,
   commonUtils,
@@ -107,7 +109,7 @@ define([
       });
       this.compareLoading = ko.observable(false);
       this.compareLoadingClass = ko.pureComputed(() => {
-        return this.compareLoading() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
+        return this.compareLoading() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-question-circle fa-lg"
       });
       this.compareNewConceptSetName = ko.observable(this.currentConceptSet().name() + ko.i18n('cs.browser.compare.saveFromComparisonNameTail', ' - From Comparison')());
       this.compareResultsColumns = [{
@@ -217,9 +219,9 @@ define([
       this.resultSources = ko.computed(() => {
         const resultSources = [];
         sharedState.sources().forEach((source) => {
-          if (source.hasResults) {
+          if (source.hasResults && authApi.isPermittedAccessSource(source.sourceKey)) {
             resultSources.push(source);
-            if (source.resultsUrl == sharedState.resultsUrl()) {
+            if (source.resultsUrl === sharedState.resultsUrl()) {
               this.currentResultSource(source);
             }
           }
@@ -229,7 +231,7 @@ define([
       });
       this.recordCountsRefreshing = ko.observable(false);
       this.recordCountClass = ko.pureComputed(() => {
-        return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+        return this.recordCountsRefreshing() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-database fa-lg";
       });
       this.conceptSetLoading = ko.observable(false);
     }
@@ -342,11 +344,11 @@ define([
 				this.recordCountsRefreshing(true);
 				$("#dtConeptManagerRC")
 					.removeClass("fa-database")
-					.addClass("fa-circle-o-notch")
+					.addClass("fa-circle-notch")
 					.addClass("fa-spin");
 				$("#dtConeptManagerDRC")
 					.removeClass("fa-database")
-					.addClass("fa-circle-o-notch")
+					.addClass("fa-circle-notch")
 					.addClass("fa-spin");
 				var compareResults = this.compareResults();
 				var conceptIds = $.map(compareResults, function (o, n) {
@@ -358,11 +360,11 @@ define([
             this.recordCountsRefreshing(false);
 						$("#dtConeptManagerRC")
 							.addClass("fa-database")
-							.removeClass("fa-circle-o-notch")
+							.removeClass("fa-circle-notch")
 							.removeClass("fa-spin");
 						$("#dtConeptManagerDRC")
 							.addClass("fa-database")
-							.removeClass("fa-circle-o-notch")
+							.removeClass("fa-circle-notch")
 							.removeClass("fa-spin");
 					});
 			}

@@ -176,13 +176,13 @@ define([
 
 							} else { // more the data - slower the all-selection/deselection. add spinner
 								e.target.classList.remove('fa-check');
-								e.target.classList.add('fa-circle-o-notch', 'fa-spin');
+								e.target.classList.add('fa-circle-notch', 'fa-spin');
 								setTimeout(() => {
 									e.target.classList.toggle('selected');
 									c.selectAll($(element).DataTable().rows( { filter : 'applied'} ).data(),
 										e.target.classList.contains('selected'));
 									e.target.classList.add('fa-check');
-									e.target.classList.remove('fa-circle-o-notch', 'fa-spin');
+									e.target.classList.remove('fa-circle-notch', 'fa-spin');
 								}, 50);
 							}
 						});

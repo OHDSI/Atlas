@@ -20,7 +20,6 @@ define([
 	'./components/reports/measurement',
 	'./components/reports/observation',
 	'./components/reports/death',
-	'./components/reports/achillesHeel',
 	'./components/reports/observation-period',
 	'less!./data-sources.less'
 ], function (
@@ -101,11 +100,6 @@ define([
 					name: ko.i18n('dataSources.reports.death', 'Death'),
 					path: "death",
 					component: "report-death",
-				},
-				{
-					name: ko.i18n('dataSources.reports.achillesHeel', 'Achilles Heel'),
-					path: "achillesheel",
-					component: "report-achilles-heel",
 				}
 			];
 

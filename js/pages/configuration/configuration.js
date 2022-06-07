@@ -251,7 +251,7 @@ define([
           break;
         case sourceApi.buttonCheckState.checking:
           buttonClass = 'btn-warning';
-          iconClass = 'fa-circle-o-notch fa-spin';
+          iconClass = 'fa-circle-notch fa-spin';
           break;
       }
       return {
