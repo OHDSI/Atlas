@@ -202,8 +202,7 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.PREDICTION,
 				entityIdGetter: () => this.selectedAnalysisId(),
-				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().createdBy
-					&& this.patientLevelPredictionAnalysis().createdBy.login
+				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.login')
 			});
 		}
 
