@@ -202,7 +202,8 @@ define([
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.PREDICTION,
 				entityIdGetter: () => this.selectedAnalysisId(),
-				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy')
+				createdByUsernameGetter: () => this.patientLevelPredictionAnalysis() && this.patientLevelPredictionAnalysis().createdBy
+					&& this.patientLevelPredictionAnalysis().createdBy.login
 			});
 		}
 
@@ -414,12 +415,9 @@ define([
 		}
 
 		loadParsedAnalysisFromServer(header, specification) {
-			const { createdBy, modifiedBy, ...props } = header;
 			this.patientLevelPredictionAnalysis(new PatientLevelPredictionAnalysis({
 				...specification,
-				...props,
-				createdBy: createdBy ? createdBy.name : null,
-				modifiedBy: modifiedBy ? modifiedBy.name : null
+				...header,
 			}));
 			this.packageName(header.packageName);
 			this.setUserInterfaceDependencies();
@@ -480,9 +478,9 @@ define([
 			const createdDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().createdDate);
 			const modifiedDate = commonUtils.formatDateForAuthorship(this.patientLevelPredictionAnalysis().modifiedDate);
 			return {
-					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy'),
+					createdBy: lodash.get(this.patientLevelPredictionAnalysis(), 'createdBy.name'),
 					createdDate,
-					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'modifiedBy'),
+					modifiedBy: lodash.get(this.patientLevelPredictionAnalysis(), 'modifiedBy.name'),
 					modifiedDate,
 			}
 		}
