@@ -12,6 +12,7 @@ define(
 		const estimation = require('./estimation/index');
 		const prediction = require('./prediction/index');
 		const reusables = require('./reusables/index');
+		const tagging = require('./tagging/index');
 		const jobs = require('./jobs/index');
 		const configuration = require('./configuration/index');
 		const feedback = require('./feedback/index');
@@ -30,6 +31,7 @@ define(
 			estimation,
 			prediction,
 			reusables,
+			tagging,
 			jobs,
 			configuration,
 			feedback,
