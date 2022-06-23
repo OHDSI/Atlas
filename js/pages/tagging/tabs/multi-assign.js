@@ -16,12 +16,8 @@ define([
         constructor(params) {
             super();
             this.params = params;
-
             this.actionType = ko.observable('assign');
-        }
-
-        selectActionType(actionType) {
-            this.actionType(actionType);
+            this.showTagsComponent = ko.observable(false);
         }
     }
 

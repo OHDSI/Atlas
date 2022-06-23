@@ -39,7 +39,7 @@ define([
 	'./components/tabs/explore-evidence',
 	'./components/tabs/conceptset-compare',
 	'components/security/access/configure-access-modal',
-	'components/tags/tags',
+	'components/tags/modal/tags-modal',
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',

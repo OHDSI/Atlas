@@ -1,20 +1,24 @@
 <div data-bind="css: classes('container')">
 
-    <div data-bind="css: classes('radio')">
-        <label for="assignRadio" data-bind="click: () => selectActionType('assign')">
+    <div data-bind="css: classes('section', 'radio')">
+        <label for="assignRadio">
             <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign" data-bind="checked: actionType"> Assign tags
         </label>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <label for="removeRadio" data-bind="click: () => selectActionType('unassign')">
+        <label for="removeRadio">
             <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign" data-bind="checked: actionType"> Unassign tags
         </label>
     </div>
 
-    <div data-bind="css: classes('tags')">
-        <i class="fas fa-chevron-right"></i> Select tags
+    <div data-bind="css: classes('section', 'tags')">
+        <div data-bind="click: () => showTagsComponent(!showTagsComponent())"><i class="fas fa-chevron-right"></i> Select tags</div>
+        <div data-bind="css: classes('tags-to-handle')"></div>
+        <div data-bind="css: classes('tags-component'), visible: showTagsComponent">
+            vmj
+        </div>
     </div>
 
-    <div data-bind="css: classes('entities')">
+    <div data-bind="css: classes('section', 'entities')">
         <i class="fas fa-chevron-right"></i> Select assets
     </div>
 
