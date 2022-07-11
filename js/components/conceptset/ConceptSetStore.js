@@ -7,6 +7,7 @@ define([
 	'./utils',
 	'services/Vocabulary',
 	'jszip',
+	'services/MomentAPI',
 ], function (
 	ko,
 	AutoBind,
@@ -16,6 +17,7 @@ define([
 	utils,
 	vocabularyService,
 	JSZip,
+	momentApi,
 ) {
 
 	const { ViewMode } = constants;
@@ -190,7 +192,9 @@ define([
 					"Concept Name": c.CONCEPT_NAME,
 					"Domain": c.DOMAIN_ID, 
 					"Vocabulary": c.VOCABULARY_ID, 
-					"Standard Concept": c.STANDARD_CONCEPT
+					"Standard Concept": c.STANDARD_CONCEPT,
+					"Valid Start Date": momentApi.formatDateTimeWithFormat(c.VALID_START_DATE, momentApi.ISO_DATE_FORMAT),
+					"Valid End Date": momentApi.formatDateTimeWithFormat(c.VALID_END_DATE, momentApi.ISO_DATE_FORMAT),
 				};
 			}
 			
