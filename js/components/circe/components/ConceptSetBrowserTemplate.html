@@ -6,9 +6,9 @@
         <!-- /ko -->
 
         <div data-bind="visible: !loading() && !isProcessing()">
-            <div class="conceptset-browser-panel">
+            <div class="conceptset-browser-panel" data-bind="visible: buttonActionEnabled">
                 <div class="btn btn-sm btn-primary new-concept-set"
-                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText, visible: buttonActionEnabled"></div>
+                     data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></div>
             </div>
             <faceted-datatable params="
                 dataTableId: repositoryConceptSetTableId,

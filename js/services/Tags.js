@@ -42,6 +42,14 @@ define(function (require) {
         return httpService.doDelete(config.webAPIRoot + `${assetType}/${assetId}/protectedtag/${tagId}`);
     }
 
+    function multiAssign(data) {
+        return httpService.doPost(config.webAPIRoot + `tag/multiAssign`, data);
+    }
+
+    function multiUnassign(data) {
+        return httpService.doPost(config.webAPIRoot + `tag/multiUnassign`, data);
+    }
+
     function createNewTag(tag) {
         return httpService.doPost(config.webAPIRoot + `tag/`, tag);
     }
@@ -126,5 +134,7 @@ define(function (require) {
         unassignTag,
         loadTagsSuggestions,
         decorateComponent,
+        multiAssign,
+        multiUnassign
     };
 });

@@ -1,16 +1,15 @@
 .multi-assign {
   &__container {
-    display: table;
   }
 
   &__section {
-    margin-bottom: 20px;
-    padding: 5px 10px 1px;
-    border-radius: 8px;
-    border: 1px solid lightgray;
+    margin-bottom: 25px;
 
     &--radio {
       margin-top: 15px;
+      padding: 5px 10px 1px;
+      border-radius: 8px;
+      border: 1px solid lightgray;
 
       label {
         position: relative;
@@ -27,14 +26,32 @@
 
     &--tags {
       font-size: 14px;
+
+      table {
+        width: 100% !important;
+      }
     }
 
     &--entities {
-      font-size: 14px;
+    }
+  }
+
+  &__tags-to-handle {
+    margin: 11px 0 10px;
+
+    .tag {
+      margin: 0;
+    }
+    .tag + .tag {
+      margin-left: 11px;
     }
   }
 
   &__button {
+  }
+
+  &__action-link {
+    cursor: pointer;
   }
 
 }
