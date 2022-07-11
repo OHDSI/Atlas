@@ -35,7 +35,13 @@ define([
             this.actionType = ko.observable('assign');
             this.availableTags = ko.observableArray();
             this.tags = ko.observableArray();
+
             this.selectedAssetTabKey = ko.observable('concept-sets');
+            this.selectedConceptSets = ko.observableArray();
+            this.selectedCohorts = ko.observableArray();
+            this.selectedCharacterizations = ko.observableArray();
+            this.selectedIncidenceRates = ko.observableArray();
+            this.selectedPathways = ko.observableArray();
 
             TagsService.decorateComponent(this, {});
             this.getTags();
@@ -96,6 +102,47 @@ define([
                     data: 'count'
                 }
             ];
+
+            this.assetTabs = ko.observableArray([
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Concept Sets'),
+                    key: 'concept-sets',
+                    componentName: 'concept-set-browser',
+                    componentParams: {
+                        buttonActionEnabled: false,
+                        onRespositoryConceptSetSelected: conceptSet => this.conceptSetSelected(conceptSet)
+                    }
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Cohorts'),
+                    key: 'cohorts',
+                    componentName: 'cohort-definition-browser',
+                    componentParams: {
+                        onSelect: cohort => this.cohortSelected(cohort)
+                    }
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Characterizations'),
+                    key: 'characterizations',
+                    componentName: 'characterizations-list'
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Incidence Rates'),
+                    key: 'ir',
+                    componentName: 'cohort-definition-browser',
+                    componentParams: {
+                        onSelect: cohort => this.cohortSelected(cohort)
+                    }
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Cohort Pathways'),
+                    key: 'pathways',
+                    componentName: 'cohort-definition-browser',
+                    componentParams: {
+                        onSelect: cohort => this.cohortSelected(cohort)
+                    }
+                },
+            ]);
         }
 
         isAssignPermitted = () => authApi.isPermittedTagsGroupAssign() || !config.userAuthenticationEnabled;
@@ -123,27 +170,37 @@ define([
         }
 
         conceptSetSelected(conceptSet) {
+            this.selectedConceptSets.push(conceptSet);
+        }
 
+        unselectConceptSet(conceptSet) {
+            this.selectedConceptSets.remove(cs => cs.id === conceptSet.id);
         }
 
         cohortSelected(cohort) {
+            this.selectedCohorts.push(cohort);
+        }
 
+        unselectCohort(cohort) {
+            this.selectedCohorts.remove(c => c.id === cohort.id);
         }
 
         doAssign() {
             TagsService.multiAssign(this.collectData());
+            this.assetTabs.valueHasMutated();
         }
 
         doUnassign() {
             TagsService.multiUnassign(this.collectData());
+            this.assetTabs.valueHasMutated();
         }
 
         collectData() {
             return {
                 tags: this.tags().map(t => t.id),
                 assets: {
-                    conceptSets: [],
-                    cohorts: [],
+                    conceptSets: this.selectedConceptSets().map(cs => cs.id),
+                    cohorts: this.selectedCohorts().map(c => c.id),
                     characterizations: [],
                     incidenceRates: [],
                     pathways: [],
