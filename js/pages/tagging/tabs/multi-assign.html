@@ -1,33 +1,89 @@
-<div data-bind="css: classes('container')">
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasPageAccess"></access-denied>
+
+<div data-bind="if: hasPageAccess(), css: classes('container')">
 
     <div data-bind="css: classes('section', 'radio')">
-        <label for="assignRadio">
-            <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign" data-bind="checked: actionType"> Assign tags
+        <label for="assignRadio" data-bind="css: {disabled: !isAssignPermitted()}">
+            <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign"
+                   data-bind="checked: actionType, disable: !isAssignPermitted()"> Assign tags
         </label>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <label for="removeRadio">
-            <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign" data-bind="checked: actionType"> Unassign tags
+        <label for="removeRadio" data-bind="css: {disabled: !isUnassignPermitted()}">
+            <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign"
+                   data-bind="checked: actionType, disable: !isUnassignPermitted()"> Unassign tags
         </label>
     </div>
 
     <div data-bind="css: classes('section', 'tags')">
-        <div data-bind="click: () => showTagsComponent(!showTagsComponent())"><i class="fas fa-chevron-right"></i> Select tags</div>
-        <div data-bind="css: classes('tags-to-handle')"></div>
-        <div data-bind="css: classes('tags-component'), visible: showTagsComponent">
-            vmj
+        <h4>Select tags</h4>
+        <div data-bind="css: classes('tags-to-handle')">
+            Selected tags: <tags-badges-list params="{tags: tags, removable: true, removeFunc: unselectTag}"></tags-badges-list>
+        </div>
+        <div data-bind="css: classes('tags-component')">
+            <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: availableTags,
+                    options: {
+                        order: [],
+                        columns: tagsColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            "/>
         </div>
     </div>
 
     <div data-bind="css: classes('section', 'entities')">
-        <i class="fas fa-chevron-right"></i> Select assets
+        <h4>Select assets</h4>
+        <tabs params="
+            selectedTabKey: $component.selectedAssetTabKey,
+            selectTab: $component.selectAssetTab,
+            tabs: [
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Concept Sets'),
+                    key: 'concept-sets',
+                    componentName: 'concept-set-browser',
+                    componentParams: {
+                        buttonActionEnabled: false,
+                        onRespositoryConceptSetSelected: conceptSet => conceptSetSelected(conceptSet)
+                    }
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Cohorts'),
+                    key: 'cohorts',
+                    componentName: 'cohort-definition-browser',
+                    componentParams: {
+                        onSelect: cohort => cohortSelected(cohort)
+                    }
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Characterizations'),
+                    key: 'characterizations',
+                    componentName: 'characterizations-list'
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Incidence Rates'),
+                    key: 'ir',
+                    componentName: 'conceptsets-list'
+                },
+                {
+                    title: ko.i18n('tagging.tabs.multiAssign', 'Cohort Pathways'),
+                    key: 'pathways',
+                    componentName: 'conceptsets-list'
+                },
+            ]">
+        </tabs>
     </div>
 
     <div data-bind="css: classes('button')">
         <!-- ko if: actionType() == 'assign' -->
-        <button type="button" class="btn btn-primary">Assign tags</button>
+        <button type="button" class="btn btn-primary" data-bind="click: doAssign, disable: !isAssignPermitted() || tags().length === 0">Assign tags</button>
         <!-- /ko -->
         <!-- ko if: actionType() == 'unassign' -->
-        <button type="button" class="btn btn-danger">Unassign tags</button>
+        <button type="button" class="btn btn-danger" data-bind="click: doUnassign, disable: !isUnassignPermitted() || tags().length === 0">Unassign tags</button>
         <!-- /ko -->
     </div>
 </div>
