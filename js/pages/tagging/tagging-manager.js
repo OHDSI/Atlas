@@ -31,7 +31,7 @@ define([
 		}
 
 		selectTab(index, { key }) {
-			commonUtils.routeTo(`/tagging/${key}`);
+			//commonUtils.routeTo(`/tagging/${key}`);
 		}
 	}
 
