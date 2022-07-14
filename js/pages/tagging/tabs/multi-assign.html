@@ -17,7 +17,7 @@
     <div data-bind="css: classes('section', 'tags')">
         <h4>Select tags</h4>
         <div data-bind="css: classes('tags-to-handle')">
-            Selected tags: <span data-bind="if: tags().length === 0">none</span>
+            <b>Selected tags:</b> <span data-bind="if: tags().length === 0">none</span>
             <tags-badges-list params="{tags: tags, removable: true, removeFunc: unselectTag}"></tags-badges-list>
         </div>
         <div data-bind="css: classes('tags-component')">
@@ -40,33 +40,51 @@
     <div data-bind="css: classes('section', 'entities')">
         <h4>Select assets</h4>
         <div data-bind="css: classes('assets-to-handle')">
-            Selected assets: <span data-bind="if: selectedConceptSets().length === 0 && selectedCohorts().length === 0">none</span>
-            <span data-bind="foreach: selectedConceptSets()">
-		        <span data-bind="text: name"></span>
-		        <span data-bind="click: () => $component.unselectConceptSet($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
-            </span>
-            <span data-bind="foreach: selectedCohorts()">
-		        <span data-bind="text: name"></span>
-		        <span data-bind="click: () => $component.unselectCohort($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
-            </span>
+            <div data-bind="if: selectedConceptSets().length === 0 && selectedCohorts().length === 0"><b>Selected assets:</b> none</div>
+            <div data-bind="if: selectedConceptSets().length > 0"><b>Concept Sets:</b>
+                <span data-bind="foreach: selectedConceptSets()">
+		            <span data-bind="text: name"></span>
+		            <span data-bind="click: () => $component.unselectConceptSet($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
+                </span>
+            </div>
+            <div data-bind="if: selectedCohorts().length > 0"><b>Cohorts:</b>
+                <span data-bind="foreach: selectedCohorts()">
+		            <span data-bind="text: name"></span>
+		            <span data-bind="click: () => $component.unselectCohort($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
+                </span>
+            </div>
+            <div data-bind="if: selectedCharacterizations().length > 0"><b>Characterizations:</b>
+                <span data-bind="foreach: selectedCharacterizations()">
+		            <span data-bind="text: name"></span>
+		            <span data-bind="click: () => $component.unselectCharacterization($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
+                </span>
+            </div>
+            <div data-bind="if: selectedIncidenceRates().length > 0"><b>Incidence Rates:</b>
+                <span data-bind="foreach: selectedIncidenceRates()">
+		            <span data-bind="text: name"></span>
+		            <span data-bind="click: () => $component.unselectIncidenceRate($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
+                </span>
+            </div>
+            <div data-bind="if: selectedPathways().length > 0"><b>Cohort Pathways:</b>
+                <span data-bind="foreach: selectedPathways()">
+		            <span data-bind="text: name"></span>
+		            <span data-bind="click: () => $component.unselectPathway($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
+                </span>
+            </div>
         </div>
         <span></span>
-        <tabs params="
-            selectedTabKey: selectedAssetTabKey,
-            selectTab: selectAssetTab,
-            tabs: assetTabs">
-        </tabs>
+        <div data-bind="component: { name: 'tabs', params: assetTabsParams }"></div>
     </div>
 
     <div data-bind="css: classes('button')">
         <!-- ko if: actionType() == 'assign' -->
         <button type="button" class="btn btn-primary"
-                data-bind="click: doAssign, disable: !isAssignPermitted() || tags().length === 0">Assign tags
+                data-bind="click: doAssign, disable: !isAssignPermitted() || !hasEnoughSelectedData()">Assign tags
         </button>
         <!-- /ko -->
         <!-- ko if: actionType() == 'unassign' -->
         <button type="button" class="btn btn-danger"
-                data-bind="click: doUnassign, disable: !isUnassignPermitted() || tags().length === 0">Unassign tags
+                data-bind="click: doUnassign, disable: !isUnassignPermitted() || !hasEnoughSelectedData()">Unassign tags
         </button>
         <!-- /ko -->
     </div>
