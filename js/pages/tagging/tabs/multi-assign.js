@@ -103,50 +103,57 @@ define([
                 }
             ];
 
-            this.assetTabs = ko.observableArray([
-                {
-                    title: ko.i18n('tagging.tabs.multiAssign', 'Concept Sets'),
-                    key: 'concept-sets',
-                    componentName: 'concept-set-browser',
-                    componentParams: {
-                        buttonActionEnabled: false,
-                        onRespositoryConceptSetSelected: conceptSet => this.conceptSetSelected(conceptSet)
-                    }
-                },
-                {
-                    title: ko.i18n('tagging.tabs.multiAssign', 'Cohorts'),
-                    key: 'cohorts',
-                    componentName: 'cohort-definition-browser',
-                    componentParams: {
-                        onSelect: cohort => this.cohortSelected(cohort)
-                    }
-                },
-                {
-                    title: ko.i18n('tagging.tabs.multiAssign', 'Characterizations'),
-                    key: 'characterizations',
-                    componentName: 'characterizations-list'
-                },
-                {
-                    title: ko.i18n('tagging.tabs.multiAssign', 'Incidence Rates'),
-                    key: 'ir',
-                    componentName: 'cohort-definition-browser',
-                    componentParams: {
-                        onSelect: cohort => this.cohortSelected(cohort)
-                    }
-                },
-                {
-                    title: ko.i18n('tagging.tabs.multiAssign', 'Cohort Pathways'),
-                    key: 'pathways',
-                    componentName: 'cohort-definition-browser',
-                    componentParams: {
-                        onSelect: cohort => this.cohortSelected(cohort)
-                    }
-                },
-            ]);
+            this.assetTabsParams = ko.observable({
+                selectedTabKey: this.selectedAssetTabKey,
+                selectTab: this.selectAssetTab,
+                tabs: [
+                    {
+                        title: ko.i18n('tagging.tabs.multiAssign', 'Concept Sets'),
+                        key: 'concept-sets',
+                        componentName: 'concept-set-browser',
+                        componentParams: {
+                            buttonActionEnabled: false,
+                            onRespositoryConceptSetSelected: conceptSet => this.conceptSetSelected(conceptSet)
+                        }
+                    },
+                    {
+                        title: ko.i18n('tagging.tabs.multiAssign', 'Cohorts'),
+                        key: 'cohorts',
+                        componentName: 'cohort-definition-browser',
+                        componentParams: {
+                            onSelect: cohort => this.cohortSelected(cohort)
+                        }
+                    },
+                    {
+                        title: ko.i18n('tagging.tabs.multiAssign', 'Characterizations'),
+                        key: 'characterizations',
+                        componentName: 'characterizations-list'
+                    },
+                    {
+                        title: ko.i18n('tagging.tabs.multiAssign', 'Incidence Rates'),
+                        key: 'ir',
+                        componentName: 'cohort-definition-browser',
+                        componentParams: {
+                            onSelect: cohort => this.cohortSelected(cohort)
+                        }
+                    },
+                    {
+                        title: ko.i18n('tagging.tabs.multiAssign', 'Cohort Pathways'),
+                        key: 'pathways',
+                        componentName: 'cohort-definition-browser',
+                        componentParams: {
+                            onSelect: cohort => this.cohortSelected(cohort)
+                        }
+                    },
+                ]
+            });
         }
 
         isAssignPermitted = () => authApi.isPermittedTagsGroupAssign() || !config.userAuthenticationEnabled;
         isUnassignPermitted = () => authApi.isPermittedTagsGroupUnassign() || !config.userAuthenticationEnabled;
+        hasEnoughSelectedData = () => this.tags().length > 0 &&
+            (this.selectedConceptSets().length > 0 || this.selectedCohorts().length > 0 || this.selectedCharacterizations().length > 0 ||
+                this.selectedIncidenceRates().length > 0 || this.selectedPathways().length > 0);
 
         async getTags() {
             const res = await this.loadAvailableTags();
@@ -170,7 +177,7 @@ define([
         }
 
         conceptSetSelected(conceptSet) {
-            this.selectedConceptSets.push(conceptSet);
+            this.checkAndAdd(this.selectedConceptSets, conceptSet);
         }
 
         unselectConceptSet(conceptSet) {
@@ -178,21 +185,47 @@ define([
         }
 
         cohortSelected(cohort) {
-            this.selectedCohorts.push(cohort);
+            this.checkAndAdd(this.selectedCohorts, cohort);
         }
 
         unselectCohort(cohort) {
             this.selectedCohorts.remove(c => c.id === cohort.id);
         }
 
+        characterizationSelected(characterization) {
+            this.checkAndAdd(this.selectedCharacterizations, characterization);
+        }
+
+        unselectCharacterization(characterization) {
+            this.selectedCharacterizations.remove(c => c.id === characterization.id);
+        }
+
+        incidenceRateSelected(ir) {
+            this.checkAndAdd(this.selectedIncidenceRates, ir);
+        }
+
+        unselectIncidenceRate(ir) {
+            this.selectedIncidenceRates.remove(i => i.id === ir.id);
+        }
+
+        pathwaySelected(pathway) {
+            this.checkAndAdd(this.selectedPathways, pathway);
+        }
+
+        unselectPathway(pathway) {
+            this.selectedPathways.remove(p => p.id === pathway.id);
+        }
+
         doAssign() {
             TagsService.multiAssign(this.collectData());
-            this.assetTabs.valueHasMutated();
+            this.assetTabsParams.valueHasMutated();
+            this.clear();
         }
 
         doUnassign() {
             TagsService.multiUnassign(this.collectData());
-            this.assetTabs.valueHasMutated();
+            this.assetTabsParams.valueHasMutated();
+            this.clear();
         }
 
         collectData() {
@@ -201,11 +234,26 @@ define([
                 assets: {
                     conceptSets: this.selectedConceptSets().map(cs => cs.id),
                     cohorts: this.selectedCohorts().map(c => c.id),
-                    characterizations: [],
-                    incidenceRates: [],
-                    pathways: [],
+                    characterizations: this.selectedCharacterizations().map(c => c.id),
+                    incidenceRates: this.selectedIncidenceRates().map(ir => ir.id),
+                    pathways: this.selectedPathways().map(p => p.id),
                 }
             };
+        }
+
+        checkAndAdd(arr, asset) {
+            if (arr.indexOf(asset) < 0) {
+                arr.push(asset);
+            }
+        }
+
+        clear() {
+            this.tags([]);
+            this.selectedConceptSets([]);
+            this.selectedCohorts([]);
+            this.selectedCharacterizations([]);
+            this.selectedIncidenceRates([]);
+            this.selectedPathways([]);
         }
     }
 
