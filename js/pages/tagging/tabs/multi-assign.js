@@ -8,7 +8,9 @@ define([
     'services/AuthAPI',
     'utils/DatatableUtils',
     'services/Tags',
-    'pages/characterizations/components/characterizations/characterizations-list',
+    'components/entityBrowsers/characterization-browser',
+    'components/entityBrowsers/incidence-rate-browser',
+    'components/entityBrowsers/cohort-pathway-browser',
     'less!./multi-assign.less',
 ], function (
     ko,
@@ -127,22 +129,25 @@ define([
                     {
                         title: ko.i18n('tagging.tabs.multiAssign', 'Characterizations'),
                         key: 'characterizations',
-                        componentName: 'characterizations-list'
+                        componentName: 'characterization-browser',
+                        componentParams: {
+                            onSelect: characterization => this.characterizationSelected(characterization)
+                        }
                     },
                     {
                         title: ko.i18n('tagging.tabs.multiAssign', 'Incidence Rates'),
                         key: 'ir',
-                        componentName: 'cohort-definition-browser',
+                        componentName: 'incidence-rate-browser',
                         componentParams: {
-                            onSelect: cohort => this.cohortSelected(cohort)
+                            onSelect: ir => this.incidenceRateSelected(ir)
                         }
                     },
                     {
                         title: ko.i18n('tagging.tabs.multiAssign', 'Cohort Pathways'),
                         key: 'pathways',
-                        componentName: 'cohort-definition-browser',
+                        componentName: 'cohort-pathway-browser',
                         componentParams: {
-                            onSelect: cohort => this.cohortSelected(cohort)
+                            onSelect: pathway => this.pathwaySelected(pathway)
                         }
                     },
                 ]

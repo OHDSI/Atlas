@@ -40,7 +40,9 @@
     <div data-bind="css: classes('section', 'entities')">
         <h4>Select assets</h4>
         <div data-bind="css: classes('assets-to-handle')">
-            <div data-bind="if: selectedConceptSets().length === 0 && selectedCohorts().length === 0"><b>Selected assets:</b> none</div>
+            <div data-bind="if: selectedConceptSets().length === 0 && selectedCohorts().length === 0 &&
+                    selectedCharacterizations().length === 0 && selectedIncidenceRates().length === 0 &&
+                    selectedPathways().length === 0"><b>Selected assets:</b> none</div>
             <div data-bind="if: selectedConceptSets().length > 0"><b>Concept Sets:</b>
                 <span data-bind="foreach: selectedConceptSets()">
 		            <span data-bind="text: name"></span>
