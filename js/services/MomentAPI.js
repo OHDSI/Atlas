@@ -39,6 +39,9 @@ define(function (require, exports) {
   }
 
   function formatDateTimeWithFormat(timestamp, outFormat) {
+    if (timestamp === undefined || timestamp === null) {
+      return EMPTY_DATE;
+    }
     var m = moment(timestamp);
     return m.isValid() ? m.format(outFormat) : EMPTY_DATE;
   }

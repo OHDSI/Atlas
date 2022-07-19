@@ -3,6 +3,7 @@ define([
 	'text!./conceptset-expression.html',
 	'components/Component',
 	'utils/AutoBind',
+  'services/MomentAPI',
   'utils/CommonUtils',
   'utils/Renderers',
   'components/conceptset/utils',
@@ -13,6 +14,7 @@ define([
 	view,
 	Component,
   AutoBind,
+  MomentApi,
   commonUtils,
   renderers,
   conceptSetUtils,
@@ -67,6 +69,14 @@ define([
         },
         {
           data: 'concept.STANDARD_CONCEPT_CAPTION',
+        },
+        {
+          render: (s, type, d) => type === "sort" ? +d.concept['VALID_START_DATE'] :
+              MomentApi.formatDateTimeWithFormat(d.concept['VALID_START_DATE'], MomentApi.DATE_FORMAT),
+        },
+        {
+          render: (s, type, d) => type === "sort" ? +d.concept['VALID_END_DATE'] :
+              MomentApi.formatDateTimeWithFormat(d.concept['VALID_END_DATE'], MomentApi.DATE_FORMAT),
         },
         {
           class: 'text-center',
