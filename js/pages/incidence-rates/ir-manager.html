@@ -69,7 +69,7 @@
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
 				<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
-					<ir-analysis-editor params="analysis: selectedAnalysis().expression, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
+					<ir-analysis-editor params="analysis: selectedAnalysis().expression,description: selectedAnalysis().description, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.CONCEPT_SETS }" class="tab-pane">
