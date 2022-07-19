@@ -26,7 +26,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.options = options;
-			
+			this.analysisDescription = params.description;
 			this.analysis = params.analysis;
 			this.analysisCohorts = params.analysisCohorts;
 			this.loading = ko.observable(false);
