@@ -6,7 +6,6 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'utils/Renderers',
-	'services/MomentAPI',
 	'services/ConceptSet',
 	'databindings',
 	'bootstrap',
@@ -20,7 +19,6 @@ define([
 	AutoBind,
 	commonUtils,
 	renderers,
-	MomentApi,
 	conceptSetService,
 ) {
 	class ConceptSetEditor extends AutoBind(Component) {
@@ -37,16 +35,6 @@ define([
 				{ title: ko.i18n('columns.domain', 'Domain'), data: 'concept.DOMAIN_ID' },
 				{ title: ko.i18n('columns.standardConceptCode', 'Standard Concept Code'), data: 'concept.STANDARD_CONCEPT', visible:false },
 				{ title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'), data: 'concept.STANDARD_CONCEPT_CAPTION' },
-				{
-					title: ko.i18n('columns.validStartDate', 'Valid Start Date'),
-					render: (s, type, d) => type === "sort" ? +d.concept['VALID_START_DATE'] :
-						MomentApi.formatDateTimeWithFormat(d.concept['VALID_START_DATE'], MomentApi.DATE_FORMAT),
-				},
-				{
-					title: ko.i18n('columns.validEndDate', 'Valid End Date'),
-					render: (s, type, d) => type === "sort" ? +d.concept['VALID_END_DATE'] :
-						MomentApi.formatDateTimeWithFormat(d.concept['VALID_END_DATE'], MomentApi.DATE_FORMAT),
-				},
 				{ title: ko.i18n('columns.exclude', 'Exclude'), class: 'text-center', orderable: false, render: () => this.renderCheckbox('isExcluded') },
 				{ title: ko.i18n('columns.descendants', 'Descendants'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeDescendants') },
 				{ title: ko.i18n('columns.mapped', 'Mapped'), class: 'text-center', orderable: false, searchable: false, render: () => this.renderCheckbox('includeMapped') }
