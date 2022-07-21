@@ -6,6 +6,7 @@ define([
 	'components/entity-browser',
 	'utils/CommonUtils',
 	'services/CohortDefinition',
+	'services/AuthAPI',
 	'utils/DatatableUtils',
 	'faceted-datatable',
 ], function (
@@ -16,6 +17,7 @@ define([
 	EntityBrowser,
 	commonUtils,
 	CohortDefinitionService,
+	authApi,
 	datatableUtils,
 ) {
 
@@ -23,6 +25,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.showModal = params.showModal;
+			this.myDesignsOnly = params.myDesignsOnly || false;
 			this.data = ko.observableArray();
 			const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
 			this.pageLength = params.pageLength || pageLength;
@@ -82,10 +85,13 @@ define([
 			try {
 				this.isLoading(true);
 				const data = await CohortDefinitionService.getCohortDefinitionList();
-				datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
-				datatableUtils.addTagGroupsToFacets(data, this.options.Facets);
-				datatableUtils.addTagGroupsToColumns(data, this.columns);
-				this.data(data.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
+				const cohortList = this.myDesignsOnly
+					? data.filter(c => c.hasWriteAccess || (c.createdBy && authApi.subject() === c.createdBy.login))
+					: data;
+				datatableUtils.coalesceField(cohortList, 'modifiedDate', 'createdDate');
+				datatableUtils.addTagGroupsToFacets(cohortList, this.options.Facets);
+				datatableUtils.addTagGroupsToColumns(cohortList, this.columns);
+				this.data(cohortList.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
 			} catch (err) {
 				console.error(err);
 			} finally {

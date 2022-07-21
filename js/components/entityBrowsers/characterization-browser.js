@@ -4,6 +4,7 @@ define([
     'appConfig',
     'atlas-state',
     'components/entity-browser',
+    'services/AuthAPI',
     'utils/CommonUtils',
     'pages/characterizations/services/CharacterizationService',
     'utils/DatatableUtils',
@@ -14,6 +15,7 @@ define([
     config,
     sharedState,
     EntityBrowser,
+    authApi,
     commonUtils,
     CharacterizationService,
     datatableUtils,
@@ -23,6 +25,7 @@ define([
         constructor(params) {
             super(params);
             this.showModal = params.showModal;
+            this.myDesignsOnly = params.myDesignsOnly || false;
             this.data = ko.observableArray();
             const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
             this.pageLength = params.pageLength || pageLength;
@@ -83,10 +86,13 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
-                    datatableUtils.coalesceField(res.content, 'modifiedDate', 'createdDate');
-                    datatableUtils.addTagGroupsToFacets(res.content, this.options.Facets);
-                    datatableUtils.addTagGroupsToColumns(res.content, this.columns);
-                    this.data(res.content);
+                    const analysisList = this.myDesignsOnly
+                        ? res.content.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
+                        : res.content;
+                    datatableUtils.coalesceField(analysisList, 'modifiedDate', 'createdDate');
+                    datatableUtils.addTagGroupsToFacets(analysisList, this.options.Facets);
+                    datatableUtils.addTagGroupsToColumns(analysisList, this.columns);
+                    this.data(analysisList);
                     this.isLoading(false);
                 });
         }

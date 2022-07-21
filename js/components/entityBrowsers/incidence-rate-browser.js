@@ -4,6 +4,7 @@ define([
     'appConfig',
     'atlas-state',
     'components/entity-browser',
+    'services/AuthAPI',
     'utils/CommonUtils',
     'services/IRAnalysis',
     'utils/DatatableUtils',
@@ -14,6 +15,7 @@ define([
     config,
     sharedState,
     EntityBrowser,
+    authApi,
     commonUtils,
     IRAnalysisService,
     datatableUtils,
@@ -23,6 +25,7 @@ define([
         constructor(params) {
             super(params);
             this.showModal = params.showModal;
+            this.myDesignsOnly = params.myDesignsOnly || false;
             this.data = ko.observableArray();
             const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
             this.pageLength = params.pageLength || pageLength;
@@ -83,10 +86,13 @@ define([
             IRAnalysisService
                 .getAnalysisList()
                 .then(({ data }) => {
-                    datatableUtils.coalesceField(data, 'modifiedDate', 'createdDate');
-                    datatableUtils.addTagGroupsToFacets(data, this.options.Facets);
-                    datatableUtils.addTagGroupsToColumns(data, this.columns)
-                    this.data(data);
+                    const analysisList = this.myDesignsOnly
+                        ? data.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
+                        : data;
+                    datatableUtils.coalesceField(analysisList, 'modifiedDate', 'createdDate');
+                    datatableUtils.addTagGroupsToFacets(analysisList, this.options.Facets);
+                    datatableUtils.addTagGroupsToColumns(analysisList, this.columns)
+                    this.data(analysisList);
                     this.isLoading(false);
                 });
         }

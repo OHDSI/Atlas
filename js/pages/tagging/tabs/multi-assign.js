@@ -29,11 +29,6 @@ define([
             this.params = params;
 
             this.isAuthenticated = authApi.isAuthenticated;
-            this.hasPageAccess = ko.pureComputed(() => {
-                return (config.userAuthenticationEnabled && this.isAuthenticated() &&
-                    (authApi.isPermittedTagsGroupAssign() || authApi.isPermittedTagsGroupUnassign())) ||
-                    !config.userAuthenticationEnabled;
-            });
             this.actionType = ko.observable('assign');
             this.availableTags = ko.observableArray();
             this.tags = ko.observableArray();
@@ -115,6 +110,7 @@ define([
                         componentName: 'concept-set-browser',
                         componentParams: {
                             buttonActionEnabled: false,
+                            myDesignsOnly: true,
                             onRespositoryConceptSetSelected: conceptSet => this.conceptSetSelected(conceptSet)
                         }
                     },
@@ -123,6 +119,7 @@ define([
                         key: 'cohorts',
                         componentName: 'cohort-definition-browser',
                         componentParams: {
+                            myDesignsOnly: true,
                             onSelect: cohort => this.cohortSelected(cohort)
                         }
                     },
@@ -131,6 +128,7 @@ define([
                         key: 'characterizations',
                         componentName: 'characterization-browser',
                         componentParams: {
+                            myDesignsOnly: true,
                             onSelect: characterization => this.characterizationSelected(characterization)
                         }
                     },
@@ -139,6 +137,7 @@ define([
                         key: 'ir',
                         componentName: 'incidence-rate-browser',
                         componentParams: {
+                            myDesignsOnly: true,
                             onSelect: ir => this.incidenceRateSelected(ir)
                         }
                     },
@@ -147,6 +146,7 @@ define([
                         key: 'pathways',
                         componentName: 'cohort-pathway-browser',
                         componentParams: {
+                            myDesignsOnly: true,
                             onSelect: pathway => this.pathwaySelected(pathway)
                         }
                     },
@@ -154,8 +154,6 @@ define([
             });
         }
 
-        isAssignPermitted = () => authApi.isPermittedTagsGroupAssign() || !config.userAuthenticationEnabled;
-        isUnassignPermitted = () => authApi.isPermittedTagsGroupUnassign() || !config.userAuthenticationEnabled;
         hasEnoughSelectedData = () => this.tags().length > 0 &&
             (this.selectedConceptSets().length > 0 || this.selectedCohorts().length > 0 || this.selectedCharacterizations().length > 0 ||
                 this.selectedIncidenceRates().length > 0 || this.selectedPathways().length > 0);
@@ -221,14 +219,14 @@ define([
             this.selectedPathways.remove(p => p.id === pathway.id);
         }
 
-        doAssign() {
-            TagsService.multiAssign(this.collectData());
+        async doAssign() {
+            await TagsService.multiAssign(this.collectData());
             this.assetTabsParams.valueHasMutated();
             this.clear();
         }
 
-        doUnassign() {
-            TagsService.multiUnassign(this.collectData());
+        async doUnassign() {
+            await TagsService.multiUnassign(this.collectData());
             this.assetTabsParams.valueHasMutated();
             this.clear();
         }
