@@ -11,6 +11,7 @@ define([
     'components/entityBrowsers/characterization-browser',
     'components/entityBrowsers/incidence-rate-browser',
     'components/entityBrowsers/cohort-pathway-browser',
+    'components/entityBrowsers/reusable-browser',
     'less!./multi-assign.less',
 ], function (
     ko,
@@ -39,6 +40,7 @@ define([
             this.selectedCharacterizations = ko.observableArray();
             this.selectedIncidenceRates = ko.observableArray();
             this.selectedPathways = ko.observableArray();
+            this.selectedReusables = ko.observableArray();
 
             TagsService.decorateComponent(this, {});
             this.getTags();
@@ -105,7 +107,7 @@ define([
                 selectTab: this.selectAssetTab,
                 tabs: [
                     {
-                        title: ko.i18n('tagging.tabs.multiAssign', 'Concept Sets'),
+                        title: ko.i18n('tagging.multiAssign.tabs.conceptsets', 'Concept Sets'),
                         key: 'concept-sets',
                         componentName: 'concept-set-browser',
                         componentParams: {
@@ -115,7 +117,7 @@ define([
                         }
                     },
                     {
-                        title: ko.i18n('tagging.tabs.multiAssign', 'Cohorts'),
+                        title: ko.i18n('tagging.multiAssign.tabs.cohorts', 'Cohorts'),
                         key: 'cohorts',
                         componentName: 'cohort-definition-browser',
                         componentParams: {
@@ -124,7 +126,7 @@ define([
                         }
                     },
                     {
-                        title: ko.i18n('tagging.tabs.multiAssign', 'Characterizations'),
+                        title: ko.i18n('tagging.multiAssign.tabs.characterizations', 'Characterizations'),
                         key: 'characterizations',
                         componentName: 'characterization-browser',
                         componentParams: {
@@ -133,7 +135,7 @@ define([
                         }
                     },
                     {
-                        title: ko.i18n('tagging.tabs.multiAssign', 'Incidence Rates'),
+                        title: ko.i18n('tagging.multiAssign.tabs.incidenceRates', 'Incidence Rates'),
                         key: 'ir',
                         componentName: 'incidence-rate-browser',
                         componentParams: {
@@ -142,12 +144,21 @@ define([
                         }
                     },
                     {
-                        title: ko.i18n('tagging.tabs.multiAssign', 'Cohort Pathways'),
+                        title: ko.i18n('tagging.multiAssign.tabs.cohortPathways', 'Cohort Pathways'),
                         key: 'pathways',
                         componentName: 'cohort-pathway-browser',
                         componentParams: {
                             myDesignsOnly: true,
                             onSelect: pathway => this.pathwaySelected(pathway)
+                        }
+                    },
+                    {
+                        title: ko.i18n('tagging.multiAssign.tabs.reusables', 'Reusables'),
+                        key: 'reusables',
+                        componentName: 'reusable-browser',
+                        componentParams: {
+                            myDesignsOnly: true,
+                            onSelect: reusable => this.reusableSelected(reusable)
                         }
                     },
                 ]
@@ -156,7 +167,7 @@ define([
 
         hasEnoughSelectedData = () => this.tags().length > 0 &&
             (this.selectedConceptSets().length > 0 || this.selectedCohorts().length > 0 || this.selectedCharacterizations().length > 0 ||
-                this.selectedIncidenceRates().length > 0 || this.selectedPathways().length > 0);
+                this.selectedIncidenceRates().length > 0 || this.selectedPathways().length > 0 || this.selectedReusables().length > 0);
 
         async getTags() {
             const res = await this.loadAvailableTags();
@@ -219,6 +230,14 @@ define([
             this.selectedPathways.remove(p => p.id === pathway.id);
         }
 
+        reusableSelected(reusable) {
+            this.checkAndAdd(this.selectedReusables, reusable);
+        }
+
+        unselectReusable(reusable) {
+            this.selectedReusables.remove(r => r.id === reusable.id);
+        }
+
         async doAssign() {
             await TagsService.multiAssign(this.collectData());
             this.assetTabsParams.valueHasMutated();
@@ -240,6 +259,7 @@ define([
                     characterizations: this.selectedCharacterizations().map(c => c.id),
                     incidenceRates: this.selectedIncidenceRates().map(ir => ir.id),
                     pathways: this.selectedPathways().map(p => p.id),
+                    reusables: this.selectedReusables().map(p => p.id),
                 }
             };
         }
@@ -257,6 +277,7 @@ define([
             this.selectedCharacterizations([]);
             this.selectedIncidenceRates([]);
             this.selectedPathways([]);
+            this.selectedReusables([]);
         }
     }
 
