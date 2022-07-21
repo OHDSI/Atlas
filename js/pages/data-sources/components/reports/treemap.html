@@ -42,17 +42,26 @@
 	</div>
 </div>
 <atlas-modal params="{
-		showModal: context.loadingReportDrilldown,
+		showModal: context.showLoadingDrilldownModal,
+		data: {
+			loadingDone: context.loadingDrilldownDone,
+			closeAndScroll: context.closeModalAndScrollToDrilldown
+		}
 		iconClass: 'fa fa-chart-area',
 		title: ko.i18n('dataSources.loadingDrilldownReport', 'Loading Drilldown Report'),
-		backdropClosable: false,
+		backdropClosable: true,
 		fade: ko.observable(false)
 }">
+	<!-- ko if: !loadingDone() -->
 	<loading params="status: ko.i18n('dataSources.loadingDrilldownReport', 'Loading Drilldown Report')"></loading>
+	<!-- /ko -->
+	<!-- ko if: loadingDone() -->
+	<a class="drilldown-report-link" data-bind="click: $component.data.closeAndScroll, text: ko.i18n('dataSources.closeAndScrollToReport', 'Loading done. Scroll down to report.')"></a>
+	<!-- /ko -->
 </atlas-modal>
 <!-- ko if: currentConcept() -->
 <report-treemap-drilldown params="
-	context: context, 
+	context: context,
 	currentReport: currentReport, 
 	currentConcept: currentConcept, 
 	byFrequency: byFrequency, 

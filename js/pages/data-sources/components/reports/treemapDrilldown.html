@@ -1,9 +1,9 @@
-<!-- ko ifnot: context.loadingReportDrilldown() -->
+<!-- ko if: context.loadingDrilldownDone() -->
 <!-- ko if: isError -->
 <empty-state params="message: ko.i18n('dataSources.drilldown.noData', 'No data')"></empty-state>
 <!-- /ko -->
 
-<div data-bind="visible: !isError()">
+<div data-bind="visible: !isError()" id="drilldownReport">
 	<!-- ko if: currentConcept() -->
 	<heading-title params="name: ` ${currentConcept().name} ${ko.i18n('dataSources.drilldown.drilldownReport', 'Drilldown Report')()}`"></heading-title>
 	<!-- /ko -->
