@@ -70,8 +70,17 @@
   &__asset {
     display: inline-block;
     background-color: lightgrey;
-    padding: 0 5px;
+    padding: 0 5px 0 0;
     border-radius: 2px 2px;
+
+    & > span:first-child {
+      background-color: darkgray;
+      padding: 0 5px;
+    }
+
+    & > span:last-child {
+      cursor: pointer;
+    }
   }
 
   &__asset + &__asset {

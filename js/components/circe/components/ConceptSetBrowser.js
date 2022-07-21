@@ -99,10 +99,13 @@ define([
 
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
-					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
-					datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
-					datatableUtils.addTagGroupsToColumns(results, self.columns);
-					self.repositoryConceptSets(results);
+					const csList = params.myDesignsOnly
+						? results.filter(cs => cs.hasWriteAccess || (cs.createdBy && authApi.subject() === cs.createdBy.login))
+						: results;
+					datatableUtils.coalesceField(csList, 'modifiedDate', 'createdDate');
+					datatableUtils.addTagGroupsToFacets(csList, self.options.Facets);
+					datatableUtils.addTagGroupsToColumns(csList, self.columns);
+					self.repositoryConceptSets(csList);
 					self.loading(false);
 				})
 				.fail(function (err) {

@@ -1,16 +1,14 @@
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasPageAccess"></access-denied>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isAuthenticated"></access-denied>
 
-<div data-bind="if: hasPageAccess(), css: classes('container')">
+<div data-bind="css: classes('container')">
 
     <div data-bind="css: classes('section', 'radio')">
-        <label for="assignRadio" data-bind="css: {disabled: !isAssignPermitted()}">
-            <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign"
-                   data-bind="checked: actionType, disable: !isAssignPermitted()"> Assign tags
+        <label for="assignRadio">
+            <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign" data-bind="checked: actionType"> Assign tags
         </label>
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <label for="removeRadio" data-bind="css: {disabled: !isUnassignPermitted()}">
-            <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign"
-                   data-bind="checked: actionType, disable: !isUnassignPermitted()"> Unassign tags
+        <label for="removeRadio">
+            <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign" data-bind="checked: actionType"> Unassign tags
         </label>
     </div>
 
@@ -47,7 +45,8 @@
             <div data-bind="if: selectedConceptSets().length > 0"><b>Concept Sets:</b>
                 <div data-bind="foreach: selectedConceptSets(), css: classes('assets')">
                     <div data-bind="css: $component.classes('asset')">
-		                <span data-bind="text: '(' + id + ') ' + name"></span>
+                        <span data-bind="text: id" title="id"></span>
+                        <span data-bind="text: name"></span>
 		                <span data-bind="click: () => $component.unselectConceptSet($data)"><i class="fa fa-times"></i></span>
                     </div>
                 </div>
@@ -55,7 +54,8 @@
             <div data-bind="if: selectedCohorts().length > 0"><b>Cohorts:</b>
                 <div data-bind="foreach: selectedCohorts(), css: classes('assets')">
                     <div data-bind="css: $component.classes('asset')">
-		                <span data-bind="text: '(' + id + ') ' + name"></span>
+                        <span data-bind="text: id" title="id"></span>
+                        <span data-bind="text: name"></span>
 		                <span data-bind="click: () => $component.unselectCohort($data)"><i class="fa fa-times"></i></span>
                     </div>
                 </div>
@@ -63,7 +63,8 @@
             <div data-bind="if: selectedCharacterizations().length > 0"><b>Characterizations:</b>
                 <div data-bind="foreach: selectedCharacterizations(), css: classes('assets')">
                     <div data-bind="css: $component.classes('asset')">
-		                <span data-bind="text: '(' + id + ') ' + name"></span>
+		                <span data-bind="text: id" title="id"></span>
+                        <span data-bind="text: name"></span>
 		                <span data-bind="click: () => $component.unselectCharacterization($data)"><i class="fa fa-times"></i></span>
                     </div>
                 </div>
@@ -71,7 +72,8 @@
             <div data-bind="if: selectedIncidenceRates().length > 0"><b>Incidence Rates:</b>
                 <div data-bind="foreach: selectedIncidenceRates(), css: classes('assets')">
                     <div data-bind="css: $component.classes('asset')">
-                        <span data-bind="text: '(' + id + ') ' + name"></span>
+                        <span data-bind="text: id" title="id"></span>
+                        <span data-bind="text: name"></span>
 		                <span data-bind="click: () => $component.unselectIncidenceRate($data)"><i class="fa fa-times"></i></span>&nbsp;&nbsp;
                     </div>
                 </div>
@@ -79,7 +81,8 @@
             <div data-bind="if: selectedPathways().length > 0"><b>Cohort Pathways:</b>
                 <div data-bind="foreach: selectedPathways(), css: classes('assets')">
                     <div data-bind="css: $component.classes('asset')">
-		                <span data-bind="text: '(' + id + ') ' + name"></span>
+                        <span data-bind="text: id" title="id"></span>
+                        <span data-bind="text: name"></span>
 		                <span data-bind="click: () => $component.unselectPathway($data)"><i class="fa fa-times"></i></span>
                     </div>
                 </div>
@@ -92,12 +95,12 @@
     <div data-bind="css: classes('button')">
         <!-- ko if: actionType() == 'assign' -->
         <button type="button" class="btn btn-primary"
-                data-bind="click: doAssign, disable: !isAssignPermitted() || !hasEnoughSelectedData()">Assign tags
+                data-bind="click: doAssign, disable: !hasEnoughSelectedData()">Assign tags
         </button>
         <!-- /ko -->
         <!-- ko if: actionType() == 'unassign' -->
         <button type="button" class="btn btn-danger"
-                data-bind="click: doUnassign, disable: !isUnassignPermitted() || !hasEnoughSelectedData()">Unassign tags
+                data-bind="click: doUnassign, disable: !hasEnoughSelectedData()">Unassign tags
         </button>
         <!-- /ko -->
     </div>

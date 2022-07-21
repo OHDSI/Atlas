@@ -4,6 +4,7 @@ define([
     'appConfig',
     'atlas-state',
     'components/entity-browser',
+    'services/AuthAPI',
     'utils/CommonUtils',
     'pages/pathways/PathwayService',
     'utils/DatatableUtils',
@@ -14,6 +15,7 @@ define([
     config,
     sharedState,
     EntityBrowser,
+    authApi,
     commonUtils,
     PathwayService,
     datatableUtils,
@@ -24,6 +26,7 @@ define([
             super(params);
             this.showModal = params.showModal;
             this.data = ko.observableArray();
+            this.myDesignsOnly = params.myDesignsOnly || false;
             const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
             this.pageLength = params.pageLength || pageLength;
             this.lengthMenu = params.lengthMenu || lengthMenu;
@@ -80,11 +83,14 @@ define([
 
         async loadData() {
             this.isLoading(true);
-            const analysisList = await PathwayService.list();
-            datatableUtils.coalesceField(analysisList.content, 'modifiedDate', 'createdDate');
-            datatableUtils.addTagGroupsToFacets(analysisList.content, this.options.Facets);
-            datatableUtils.addTagGroupsToColumns(analysisList.content, this.columns);
-            this.data(analysisList.content);
+            const analysisListResp = await PathwayService.list();
+            const analysisList = this.myDesignsOnly
+                ? analysisListResp.content.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
+                : analysisListResp.content;
+            datatableUtils.coalesceField(analysisList, 'modifiedDate', 'createdDate');
+            datatableUtils.addTagGroupsToFacets(analysisList, this.options.Facets);
+            datatableUtils.addTagGroupsToColumns(analysisList, this.columns);
+            this.data(analysisList);
             this.isLoading(false);
         }
 
