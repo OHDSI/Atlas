@@ -111,9 +111,14 @@ define([
 			this.loadingReport = ko.observable(false);
 			this.hasError = ko.observable(false);
 			this.errorMessage = ko.observable();
-			this.loadingReportDrilldown = ko.observable(false);
+			this.showLoadingDrilldownModal = ko.observable(false);
+			this.loadingDrilldownDone = ko.observable(false);
+			this.closeModalAndScrollToDrilldown = () => {
+				this.showLoadingDrilldownModal(false);
+				document.getElementById('drilldownReport').scrollIntoView();
+			};
 			this.isReportLoading = ko.pureComputed(function () {
-				return this.loadingReport() && !this.hasError() && !this.loadingReportDrilldown();
+				return this.loadingReport() && !this.hasError() && !this.showLoadingDrilldownModal();
 			}, this);
 
 			this.isAuthenticated = authApi.isAuthenticated;
