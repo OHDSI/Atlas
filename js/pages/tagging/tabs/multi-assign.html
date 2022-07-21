@@ -40,7 +40,7 @@
         <div data-bind="css: classes('assets-to-handle')">
             <div data-bind="if: selectedConceptSets().length === 0 && selectedCohorts().length === 0 &&
                     selectedCharacterizations().length === 0 && selectedIncidenceRates().length === 0 &&
-                    selectedPathways().length === 0"><b data-bind="css: classes('assets')">Selected assets:</b> none
+                    selectedPathways().length === 0 && selectedReusables().length === 0"><b data-bind="css: classes('assets')">Selected assets:</b> none
             </div>
             <div data-bind="if: selectedConceptSets().length > 0"><b>Concept Sets:</b>
                 <div data-bind="foreach: selectedConceptSets(), css: classes('assets')">
@@ -84,6 +84,15 @@
                         <span data-bind="text: id" title="id"></span>
                         <span data-bind="text: name"></span>
 		                <span data-bind="click: () => $component.unselectPathway($data)"><i class="fa fa-times"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div data-bind="if: selectedReusables().length > 0"><b>Reusables:</b>
+                <div data-bind="foreach: selectedReusables(), css: classes('assets')">
+                    <div data-bind="css: $component.classes('asset')">
+                        <span data-bind="text: id" title="id"></span>
+                        <span data-bind="text: name"></span>
+		                <span data-bind="click: () => $component.unselectReusable($data)"><i class="fa fa-times"></i></span>
                     </div>
                 </div>
             </div>
