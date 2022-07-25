@@ -17,6 +17,7 @@ define([
 	'./persons-exposure',
 	'./visit-util',
 	'./drug-util',
+	'less!./report-manager.less'
 	],
 	function (
 		ko,
@@ -3460,6 +3461,16 @@ define([
 					}
 				}),
 			);
+		}
+
+		export(data, el) {
+			const svg = el.target.closest(".chartContainer").querySelector('svg');
+			ChartUtils.downloadSvgAsPng(svg, this.filename || "untitled.png");
+		}
+
+		exportSvg(data, el) {
+			const svg = el.target.closest(".chartContainer").querySelector('svg');
+			ChartUtils.downloadSvg(svg, this.filename || "untitled.svg");
 		}
 
 		dispose() {
