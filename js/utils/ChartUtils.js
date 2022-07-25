@@ -1,5 +1,5 @@
 define(
-  ['d3', 'lodash', 'html2canvas', 'file-saver'],
+  ['d3', 'lodash', 'html2canvas', 'file-saver', 'svgsaver'],
   function (d3, _, html2canvas) {
     // TODO: move into Visualizations repo
     class ChartUtils {      
@@ -91,6 +91,12 @@ define(
             saveAs(dataBlob, filename);
           });
         });
+      }
+
+      static downloadSvg(container,name) {
+        var SvgSaver = require('svgsaver');
+        var svgsaver = new SvgSaver();
+        svgsaver.asSvg(container, name);
       }
 			
 			static mapConceptData(data) {
