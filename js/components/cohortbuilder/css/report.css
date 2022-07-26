@@ -76,3 +76,26 @@ span.toggleView {
 span.toggleView:hover {
 	text-decoration: underline;
 }
+
+.visualization_container {
+	 position: relative;
+ }
+
+.export-button {
+	 display:none;
+	 position:absolute;
+	 top:42px;
+	 right:32px;
+ }
+
+.exportSvg-button {
+	 display:none;
+	 position:absolute;
+	 top:42px;
+	 right:0px;
+ }
+
+.visualization_container:hover > .export-button,
+.visualization_container:hover > .exportSvg-button {
+	 display:block;
+ }
