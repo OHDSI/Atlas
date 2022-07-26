@@ -6,6 +6,7 @@ define([
 	'd3',
 	'components/Component',
 	'utils/CommonUtils',
+	'utils/ChartUtils',
 	'databindings',
 	'databindings/irTreemapLegend',
 	'css!components/cohortbuilder/css/report.css'
@@ -16,7 +17,8 @@ define([
 	IRAnalysisService,
 	d3,
 	Component,
-	commonUtils
+	commonUtils,
+	ChartUtils
 ) {
 	
 	function bitCounter(bits) {
@@ -140,6 +142,18 @@ define([
 			} else {
 				return false;
 			}
+		}
+
+		export(data, el) {
+			const svg = el.target.closest(".visualization_container").querySelectorAll('svg');
+			const combineSvg = ChartUtils.combineSvgWithLegend(svg);
+			ChartUtils.downloadSvgAsPng(combineSvg, this.filename || "untitled.png");
+		}
+
+		exportSvg(data, el) {
+			const svg = el.target.closest(".visualization_container").querySelectorAll('svg');
+			const combineSvg = ChartUtils.combineSvgWithLegend(svg);
+			ChartUtils.downloadSvg(combineSvg, this.filename || "untitled.svg");
 		}
 	}
 	

@@ -327,7 +327,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
-						<div id="condition_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="condition_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
@@ -401,7 +403,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="drugs-by-index-treemap-panel">
-						<div id="drugindex_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="drugindex_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
@@ -607,7 +611,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="conditionera-treemap-panel">
-						<div id="conditionera_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="conditionera_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
@@ -716,7 +722,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="procedure-treemap-panel">
-						<div id="procedureindex_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="procedureindex_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
@@ -789,7 +797,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
-						<div id="condition_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="condition_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
@@ -903,12 +913,14 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="drugera-treemap-panel">
-						<div id="drugera_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="drugera_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
-					</div>	
+						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
 						<table id="drugera_table" class="stripe compact hover dataTable no-footer">
@@ -1013,7 +1025,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div class="tab-pane" id="drug_treemap_panel">
-						<div id="drug_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="drug_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">
@@ -1162,7 +1176,9 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div class="tab-pane" role="tabpanel" id="procedure-treemap-panel">
-						<div id="procedure_treemap_container">
+						<div class="report-manager__chartContainer chartContainer" id="procedure_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
 							<div class="treemap_zoomtarget"></div>
 						</div>
 						<div class="treemap_legend">

@@ -53,6 +53,8 @@
 																								 { event: 'mouseover', selector: '.cell rect', callback: handleCellOver},
 																								 { event: 'mouseout', selector: '.cell rect', callback: describeClear}]">
 				<div style="height: 35px; text-align: center; line-height: 1.3em; font-size: 12px; color: #222;" class="rect_summary" data-bind="html: rectSummary"></div>
+				<button class="export-button" title="PNG" data-bind="click: $component.export">PNG</button>
+				<button class="exportSvg-button" title="SVG" data-bind="click: $component.exportSvg">SVG</button>
 				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="treemap: { data: report().treemapData, options: $component.treemapOptions() }"></div>
 				<div data-bind="irTreemapLegend: {data: colorPicker, calculateRate: $component.calculateRate}"></div>
 				<div style="text-align: right"><span data-bind="text: rateCaption"></span></div>
