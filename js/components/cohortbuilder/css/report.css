@@ -33,8 +33,13 @@ table.inclusionRules tr td {
 div.inclusionRuleType .header {
 	font-size: 12px;
 	font-weight: bold;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+div.inclusionRuleType .rule-checkbox {
+	vertical-align: top;
+	text-align: left;
+	padding: 1px 0;
 }
 
 div.inclusionRuleType th {
@@ -45,6 +50,15 @@ div.inclusionRuleType th {
 div.inclusionRuleType td {
 	padding-left: 5px;
 	padding-right: 5px;
+	text-align: right;
+}
+
+div.inclusionRuleType table tr.rules-summary {
+	border-top: solid 1px #CCC;
+
+}
+div.inclusionRuleType table td.rules-summary-title {
+	font-weight: bold;
 	text-align: right;
 }
 
@@ -59,6 +73,10 @@ rect.selected {
 
 .inclusionRuleFail {
 	color: #f44;
+}
+
+.inclusionRuleNotSelected {
+	color: darkgray;
 }
 
 div.attritionbar {
