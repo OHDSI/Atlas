@@ -2,8 +2,9 @@
 	<tr>
 		<td style="vertical-align: top; padding-right: 25px;">
 			<div class="inclusionRuleType">
-				<table style="border-collapse: collapse; width:100%; max-width:750px; margin-left: auto">
+				<table>
 					<thead>
+						<th class="rule-checkbox" data-bind="click: headerCheckboxClicked"><i class="fa fa-check" data-bind="css: {selected: report().inclusionRuleStats.length === checkedRulesIds().length}"></i></th>
 						<th style="width: 15px;"></th>
 						<th class="header">
 							<span data-bind="text: ko.i18n('components.feasibilityIntersectReport.inclusionRule', 'Inclusion Rule')"></span>
@@ -17,7 +18,8 @@
 						</th>
 					</thead>
 					<tbody data-bind="foreach: report().inclusionRuleStats">
-						<tr data-bind="css: {inclusionRulePass: ($parent.pass.indexOf($data) != -1), inclusionRuleFail: ($parent.fail.indexOf($data) != -1)}">
+						<tr data-bind="css: {inclusionRulePass: ($parent.pass.indexOf($data) != -1), inclusionRuleFail: ($parent.fail.indexOf($data) != -1), inclusionRuleNotSelected: !$parent.isRuleChecked(id)}">
+							<td class="rule-checkbox"><i class="fa fa-check" data-bind="css: {selected: $parent.isRuleChecked(id)}, click: () => $parent.checkRule(id)"></i></td>
 							<td style="vertical-align: top;"><span data-bind="text: ($index()+1) + '.'"></span>
 							</td>
 							<td style="text-align: left"><span data-bind="text:name"></span>
@@ -30,6 +32,16 @@
 							</td>
 						</tr>
 					</tbody>
+					<tfoot>
+						<tr class="rules-summary">
+							<td></td>
+							<td></td>
+							<td class="rules-summary-title">Summary</td>
+							<td>???</td>
+							<td>???</td>
+							<td>???</td>
+						</tr>
+					</tfoot>
 				</table>
 			</div>
 		</td>

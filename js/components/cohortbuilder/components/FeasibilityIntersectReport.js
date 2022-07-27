@@ -10,9 +10,9 @@ define(['knockout',
 	template) {
 
 	function bitCounter(bits) {
-		counted = 0;
-		for (b = 0; b < bits.length; b++) {
-			if (bits[b] == '1') {
+		let counted = 0;
+		for (let b = 0; b < bits.length; b++) {
+			if (bits[b] === '1') {
 				counted++;
 			}
 		}
@@ -27,6 +27,8 @@ define(['knockout',
 		self.pass = ko.observableArray();
 		self.fail = ko.observableArray();
 
+		self.checkedRulesIds = ko.observableArray(self.report().inclusionRuleStats.map(r => r.id));
+
 		self.describeClear = function () {
 			self.rectSummary(null);
 			self.pass.removeAll();
@@ -40,8 +42,8 @@ define(['knockout',
 			var passed = [];
 			var failed = [];
 
-			for (b = 0; b < bits.length; b++) {
-				if (bits[b] == '1') {
+			for (let b = 0; b < bits.length; b++) {
+				if (bits[b] === '1') {
 					passed.push(self.report().inclusionRuleStats[b]);
 					pass_count++;
 				} else {
@@ -66,6 +68,26 @@ define(['knockout',
 				self.describe(treemapDatum.name, treemapDatum.size);
 			} else {
 				return false;
+			}
+		}
+
+		self.headerCheckboxClicked = () => {
+			if (self.checkedRulesIds().length === self.report().inclusionRuleStats.length) {
+				self.checkedRulesIds.removeAll();
+			} else {
+				self.checkedRulesIds(self.report().inclusionRuleStats.map(r => r.id));
+			}
+		}
+
+		self.isRuleChecked = (id) => {
+			return self.checkedRulesIds.indexOf(id) > -1;
+		}
+
+		self.checkRule = (id) => {
+			if (self.isRuleChecked(id)) {
+				self.checkedRulesIds.remove(id);
+			} else {
+				self.checkedRulesIds.push(id);
 			}
 		}
 	}
