@@ -481,9 +481,9 @@ define(function(require, exports) {
 
     const isPermittedRunAs = () => isPermitted('user:runas:post');
 
-    const isPermittedViewDataSourceReport = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:get`);
+    const isPermittedViewDataSourceReport = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:get`) || isPermitted(`cdmresults:*:*:get`);
 
-    const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`);
+    const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`) || isPermitted(`cdmresults:*:*:*:get`);
 
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
         !!tokenHeader && token(tokenHeader);
