@@ -9,24 +9,18 @@ define(['knockout',
 	$,
 	template) {
 
-	function bitCounter(bits) {
-		let counted = 0;
-		for (let b = 0; b < bits.length; b++) {
-			if (bits[b] === '1') {
-				counted++;
-			}
-		}
-		return counted;
-	}
-
 	function FeasibilityIntersectReport(params) {
-		var self = this;
+		const self = this;
 
 		self.report = params.report;
+		self.reportType = params.reportType;
 		self.rectSummary = ko.observable();
 		self.pass = ko.observableArray();
 		self.fail = ko.observableArray();
+		self.populationTreemapData = ko.observable({ data: self.report().treemapData });
 
+		self.rulesAllOrAny = ko.observable('any');
+		self.rulesAllOrAny.subscribe(() => self.grayRectsInTreemap());
 		self.checkedRulesIds = ko.observableArray(self.report().inclusionRuleStats.map(r => r.id));
 
 		self.describeClear = function () {
@@ -36,11 +30,10 @@ define(['knockout',
 		}
 
 		self.describe = function (bits, size) {
-			var matched = bitCounter(bits);
-			var pass_count = 0;
-			var fail_count = 0;
-			var passed = [];
-			var failed = [];
+			let pass_count = 0,
+				fail_count = 0,
+				passed = [],
+				failed = [];
 
 			for (let b = 0; b < bits.length; b++) {
 				if (bits[b] === '1') {
@@ -52,14 +45,15 @@ define(['knockout',
 				}
 			}
 
-			var percentage = 0;
+			let percentage = 0;
 			if (self.report().summary.baseCount > 0) {
 				percentage = (size / self.report().summary.baseCount * 100);
 			}
 			self.pass(passed);
 			self.fail(failed);
-			// self.rectSummary(size + ' people (' + percentage.toFixed(2) + '%), ' + pass_count + ' criteria passed, ' + fail_count + ' criteria failed.');
-			self.rectSummary(ko.i18nformat('components.feasibilityIntersectReport.rectSummary', '<%=size%> people (<%=percentage%>%), <%=passCount%> criteria passed, <%=failCount%> criteria failed.', {size: size, percentage: percentage.toFixed(2), passCount: pass_count, failCount: fail_count  })());
+			self.rectSummary(ko.i18nformat('components.feasibilityIntersectReport.rectSummary',
+				'<%=size%> people (<%=percentage%>%), <%=passCount%> criteria passed, <%=failCount%> criteria failed.',
+				{size: size, percentage: percentage.toFixed(2), passCount: pass_count, failCount: fail_count })());
 		}
 
 		self.handleCellOver = function (data, context, event) {
@@ -77,6 +71,7 @@ define(['knockout',
 			} else {
 				self.checkedRulesIds(self.report().inclusionRuleStats.map(r => r.id));
 			}
+			self.grayRectsInTreemap();
 		}
 
 		self.isRuleChecked = (id) => {
@@ -89,7 +84,50 @@ define(['knockout',
 			} else {
 				self.checkedRulesIds.push(id);
 			}
+			self.grayRectsInTreemap();
 		}
+
+		self.grayRectsInTreemap = () => {
+			self.populationTreemapData.valueHasMutated(); // rerender treemap
+
+			setTimeout(() => {
+				const checkRulesAll = (rectId, checkForFail) => {
+					const checkedRulesIds = self.checkedRulesIds();
+					if (checkedRulesIds.length === 0) {
+						return false;
+					}
+					for (let i = 0; i < checkedRulesIds.length; i++)  {
+						if (rectId[checkedRulesIds[i]] !== (checkForFail ? '0' : '1')) {
+							return false;
+						}
+					}
+					return true;
+				};
+
+				const checkRulesAny = (rectId, checkForFail) => {
+					let checkPassed = false;
+					ko.utils.arrayForEach(self.checkedRulesIds(), (id) => {
+						if (rectId[id] === (checkForFail ? '0' : '1')) {
+							checkPassed = true;
+						}
+					});
+					return checkPassed;
+				};
+
+				const rects = $('#treemap' + self.reportType).find('rect');
+				ko.utils.arrayForEach(rects, (rect) => {
+					if (self.rulesAllOrAny() === 'any' && checkRulesAny(rect.id) ||
+						self.rulesAllOrAny() === 'all' && checkRulesAll(rect.id) ||
+						self.rulesAllOrAny() === 'anyFail' && checkRulesAny(rect.id, true) ||
+						self.rulesAllOrAny() === 'allFail' && checkRulesAll(rect.id, true)) {
+						return;
+					}
+					rect.setAttribute('style', 'fill: #CCC');
+				});
+			}, 0);
+		};
+
+		self.grayRectsInTreemap();
 	}
 
 	var component = {

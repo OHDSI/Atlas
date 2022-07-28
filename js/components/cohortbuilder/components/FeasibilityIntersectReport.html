@@ -2,6 +2,22 @@
 	<tr>
 		<td style="vertical-align: top; padding-right: 25px;">
 			<div class="inclusionRuleType">
+				<div class="radio-all-any">
+					<div class="radio-all-any-header">Treemap coloring and statistics calculation for selected rules</div>
+                    <label data-bind="attr: {for: 'rules-all' + reportType}">
+                        <input id="rules-all" type="radio" value="all" data-bind="attr: {id: 'rules-all' + reportType}, checked: rulesAllOrAny"> All selected criteria passed
+                    </label>
+                    <label data-bind="attr: {for: 'rules-any' + reportType}">
+                        <input id="rules-any" type="radio" value="any" data-bind="attr: {id: 'rules-any' + reportType}, checked: rulesAllOrAny"> Any of selected criteria passed
+                    </label>
+                    <label data-bind="attr: {for: 'rules-all-fail' + reportType}">
+                        <input id="rules-all-fail" type="radio" value="allFail" data-bind="attr: {id: 'rules-all-fail' + reportType}, checked: rulesAllOrAny"> All selected criteria failed
+                    </label>
+                    <label data-bind="attr: {for: 'rules-any-fail' + reportType}">
+                        <input id="rules-any-fail" type="radio" value="anyFail" data-bind="attr: {id: 'rules-any-fail' + reportType}, checked: rulesAllOrAny"> Any of selected criteria failed
+                    </label>
+			    </div>
+
 				<table>
 					<thead>
 						<th class="rule-checkbox" data-bind="click: headerCheckboxClicked"><i class="fa fa-check" data-bind="css: {selected: report().inclusionRuleStats.length === checkedRulesIds().length}"></i></th>
@@ -20,7 +36,7 @@
 					<tbody data-bind="foreach: report().inclusionRuleStats">
 						<tr data-bind="css: {inclusionRulePass: ($parent.pass.indexOf($data) != -1), inclusionRuleFail: ($parent.fail.indexOf($data) != -1), inclusionRuleNotSelected: !$parent.isRuleChecked(id)}">
 							<td class="rule-checkbox"><i class="fa fa-check" data-bind="css: {selected: $parent.isRuleChecked(id)}, click: () => $parent.checkRule(id)"></i></td>
-							<td style="vertical-align: top;"><span data-bind="text: ($index()+1) + '.'"></span>
+							<td><span data-bind="text: ($index()+1) + '.'"></span>
 							</td>
 							<td style="text-align: left"><span data-bind="text:name"></span>
 							</td>
@@ -53,7 +69,7 @@
 																								 { event: 'mouseover', selector: '.cell rect', callback: handleCellOver},
 																								 { event: 'mouseout', selector: '.cell rect', callback: describeClear}]">
 				<div style="height: 25px; text-align: center; line-height: 25px; font-size: 12px; color: #222;" class="rect_summary" data-bind="text: rectSummary"></div>
-				<div id="treemap" style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="populationTreemap: { data: report().treemapData }"></div>
+				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="attr: {id: 'treemap' + reportType}, populationTreemap: populationTreemapData"></div>
 			</div>
 		</td>
 	</tr>
