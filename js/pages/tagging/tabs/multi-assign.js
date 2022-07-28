@@ -165,9 +165,11 @@ define([
             });
         }
 
-        hasEnoughSelectedData = () => this.tags().length > 0 &&
-            (this.selectedConceptSets().length > 0 || this.selectedCohorts().length > 0 || this.selectedCharacterizations().length > 0 ||
+        hasEnoughSelectedData() {
+            return this.tags().length > 0 &&
+                (this.selectedConceptSets().length > 0 || this.selectedCohorts().length > 0 || this.selectedCharacterizations().length > 0 ||
                 this.selectedIncidenceRates().length > 0 || this.selectedPathways().length > 0 || this.selectedReusables().length > 0);
+        }
 
         async getTags() {
             const res = await this.loadAvailableTags();
