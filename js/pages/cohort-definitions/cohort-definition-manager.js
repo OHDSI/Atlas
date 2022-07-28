@@ -971,6 +971,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 						}
 						var definition = ko.toJS(this.currentCohortDefinition());
 						// reset view after save
+						console.log(definition)
 						const savedDefinition = await cohortDefinitionService.saveCohortDefinition(definition);
 						definition = new CohortDefinition(savedDefinition);
 						const redirectWhenComplete = definition.id() != this.currentCohortDefinition().id();

@@ -9,6 +9,7 @@ define(function (require, exports) {
 	var ProcedureOccurrence = require("./CriteriaTypes/ProcedureOccurrence");
 	var Specimen = require("./CriteriaTypes/Specimen");
 	var VisitOccurrence = require("./CriteriaTypes/VisitOccurrence");
+	var VisitDetail = require("./CriteriaTypes/VisitDetail");
 	var DeviceExposure = require("./CriteriaTypes/DeviceExposure");
 	var Measurement = require("./CriteriaTypes/Measurement");
 	var ObservationPeriod = require("./CriteriaTypes/ObservationPeriod");	
@@ -56,7 +57,11 @@ define(function (require, exports) {
 		} else if (data.hasOwnProperty("VisitOccurrence")) {
 			return {
 				VisitOccurrence: new exports.VisitOccurrence(data.VisitOccurrence, conceptSets)
-			};	
+			};
+		} else if (data.hasOwnProperty("VisitDetail")) {
+			return {
+				VisitDetail: new exports.VisitDetail(data.VisitDetail, conceptSets)
+			};
 		} else if (data.hasOwnProperty("DeviceExposure")) {
 			return {
 				DeviceExposure: new exports.DeviceExposure(data.DeviceExposure, conceptSets)
@@ -97,6 +102,7 @@ define(function (require, exports) {
 	exports.Specimen = Specimen;	
 	exports.ProcedureOccurrence = ProcedureOccurrence;
 	exports.VisitOccurrence = VisitOccurrence;
+	exports.VisitDetail = VisitDetail;
 	exports.DeviceExposure = DeviceExposure;
 	exports.Measurement = Measurement;
 	exports.ObservationPeriod = ObservationPeriod;

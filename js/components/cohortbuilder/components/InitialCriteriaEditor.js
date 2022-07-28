@@ -23,7 +23,7 @@ define([
 
         self.expression = params.expression;
         self.buttonText = params.buttonText || ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event');
-
+        console.log(constants.initialEventList)
         self.primaryCriteriaOptions = [
             {
                 ...constants.initialEventList.addConditionEra,
@@ -236,6 +236,21 @@ define([
                 },
             },
             {
+                ...constants.initialEventList.addVisitDetail,
+                selected: false,
+                action: function () {
+                    var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+                    unwrappedExpression
+                        .PrimaryCriteria()
+                        .CriteriaList.push({
+                        VisitDetail: new criteriaTypes.VisitDetail(
+                            null,
+                            unwrappedExpression.ConceptSets
+                        ),
+                    });
+                },
+            },
+            {
                 ...constants.initialEventList.fromReusable,
                 selected: false,
                 action: function () {
@@ -265,6 +280,8 @@ define([
                 return "observation-criteria";
             else if (data.hasOwnProperty("VisitOccurrence"))
                 return "visit-occurrence-criteria";
+            else if (data.hasOwnProperty("VisitDetail"))
+                return "visit-detail-criteria";
             else if (data.hasOwnProperty("DeviceExposure"))
                 return "device-exposure-criteria";
             else if (data.hasOwnProperty("Measurement"))
