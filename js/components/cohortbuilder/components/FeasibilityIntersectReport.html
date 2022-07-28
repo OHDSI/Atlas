@@ -53,9 +53,9 @@
 							<td></td>
 							<td></td>
 							<td class="rules-summary-title">Summary</td>
-							<td>???</td>
-							<td>???</td>
-							<td>???</td>
+							<td data-bind="text: summaryValue().toLocaleString()"></td>
+							<td data-bind="text: summaryPercent().toFixed(2) + '%'"></td>
+							<td data-bind="text: summaryPercentToGain"></td>
 						</tr>
 					</tfoot>
 				</table>

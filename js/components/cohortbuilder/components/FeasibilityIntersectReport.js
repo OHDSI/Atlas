@@ -18,10 +18,15 @@ define(['knockout',
 		self.pass = ko.observableArray();
 		self.fail = ko.observableArray();
 		self.populationTreemapData = ko.observable({ data: self.report().treemapData });
+		//self.parsedTreemapData = JSON.parse(self.report().treemapData);
 
 		self.rulesAllOrAny = ko.observable('any');
 		self.rulesAllOrAny.subscribe(() => self.grayRectsInTreemap());
 		self.checkedRulesIds = ko.observableArray(self.report().inclusionRuleStats.map(r => r.id));
+
+		self.summaryValue = ko.observable(0);
+		self.summaryPercent = ko.observable(0);
+		self.summaryPercentToGain = ko.observable();
 
 		self.describeClear = function () {
 			self.rectSummary(null);
@@ -114,12 +119,23 @@ define(['knockout',
 					return checkPassed;
 				};
 
+				self.summaryValue(0);
+				self.summaryPercent(0);
 				const rects = $('#treemap' + self.reportType).find('rect');
 				ko.utils.arrayForEach(rects, (rect) => {
 					if (self.rulesAllOrAny() === 'any' && checkRulesAny(rect.id) ||
 						self.rulesAllOrAny() === 'all' && checkRulesAll(rect.id) ||
 						self.rulesAllOrAny() === 'anyFail' && checkRulesAny(rect.id, true) ||
 						self.rulesAllOrAny() === 'allFail' && checkRulesAll(rect.id, true)) {
+
+						self.summaryValue(self.summaryValue() + rect.__data__.value);
+
+						let percent = 0;
+						if (self.report().summary.baseCount > 0) {
+							percent = (rect.__data__.value / self.report().summary.baseCount * 100);
+							self.summaryPercent(self.summaryPercent() + percent);
+						}
+
 						return;
 					}
 					rect.setAttribute('style', 'fill: #CCC');
