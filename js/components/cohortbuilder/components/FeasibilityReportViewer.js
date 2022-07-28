@@ -9,6 +9,7 @@ define([
   function FeasibilityReportViewer(params) {
     var self = this;
     self.report = params.report;
+    self.reportType = params.reportType;
     self.reportCaption = params.reportCaption;
     self.selectedView = ko.observable("intersect");
 

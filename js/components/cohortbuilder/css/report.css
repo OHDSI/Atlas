@@ -61,7 +61,33 @@ div.inclusionRuleType table td.rules-summary-title {
 	font-weight: bold;
 	text-align: right;
 }
-
+.radio-all-any-header {
+	position: absolute;
+	padding: 0 5px;
+	top: -11px;
+	left: 10px;
+	background-color: white;
+	font-size: 12px;
+}
+.radio-all-any {
+	position: relative;
+	margin: 15px 0 20px;
+	padding: 10px 10px 5px;
+	border-radius: 8px;
+	border: 1px solid lightgray;
+	font-size: 16px;
+}
+.radio-all-any label {
+	position: relative;
+	font-size: 14px;
+	margin: 0 20px 5px 20px;
+	cursor: pointer;
+}
+.radio-all-any input {
+	position: absolute;
+	top: 3px;
+	left: -20px;
+}
 rect.selected {
 	stroke: #555;
 	stroke-width: 3px;
