@@ -5,7 +5,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		data = data || {};
 
 		Criteria.call(this, data, conceptSets);
-		console.log(data)
 		// set up subscription to update CodesetId and VisitSourceConcept if the item is removed from conceptSets
 		conceptSets.subscribe(function (changes) {
 			changes.forEach(function(change) {
