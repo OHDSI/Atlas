@@ -6,6 +6,7 @@
     margin-bottom: 25px;
 
     &--radio {
+      display: inline-block;
       margin-top: 15px;
       padding: 5px 10px 1px;
       border-radius: 8px;
@@ -21,6 +22,9 @@
         position: absolute;
         top: 3px;
         left: -20px;
+      }
+      .btn {
+        margin: 3px 0 8px 12px;
       }
     }
 
@@ -40,17 +44,23 @@
     }
   }
 
+  &__selector-block {
+    margin-top: 10px;
+  }
+
   &__tags-to-handle {
     margin: 11px 0 10px;
 
     .tag {
-      margin: 0;
-    }
-    .tag + .tag {
-      margin-left: 11px;
-    }
-    b {
-      color: #555;
+      font-size: 13px;
+      display: inline-block;
+      position: relative;
+      background-color: #bdbdbd;
+      color: black;
+      border-radius: 2px 2px;
+      padding-right: 4px;
+      margin: 3px 0 0 5px;
+      cursor: default;
     }
   }
 
@@ -67,35 +77,12 @@
     margin-bottom: 2px;
   }
 
-  &__asset {
-    display: inline-block;
-    background-color: lightgrey;
-    padding: 0 5px 0 0;
-    border-radius: 2px 2px;
-    border: 1px solid #333;
-    font-size: 12px;
-
-    & > span:first-child {
-      display: inline-block;
-      background-color: #333;
-      padding: 0 5px;
-      color: #ddd;
-    }
-
-    & > span:last-child {
-      cursor: pointer;
-      color: red;
-    }
-  }
-
-  &__asset + &__asset {
-    margin-left: 3px;
-  }
-
-  &__button {
-  }
-
   &__action-link {
+    cursor: pointer;
+  }
+
+  .remove-link {
+    color: red;
     cursor: pointer;
   }
 }

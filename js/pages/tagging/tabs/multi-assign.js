@@ -32,26 +32,23 @@ define([
             this.isAuthenticated = authApi.isAuthenticated;
             this.actionType = ko.observable('assign');
             this.availableTags = ko.observableArray();
-            this.tags = ko.observableArray();
+            this.selectedTags = ko.observableArray();
+            this.availableTagsShown = ko.observable(false);
 
+            this.assetsTabsShown = ko.observable(false);
             this.selectedAssetTabKey = ko.observable('concept-sets');
-            this.selectedConceptSets = ko.observableArray();
-            this.selectedCohorts = ko.observableArray();
-            this.selectedCharacterizations = ko.observableArray();
-            this.selectedIncidenceRates = ko.observableArray();
-            this.selectedPathways = ko.observableArray();
-            this.selectedReusables = ko.observableArray();
+            this.selectedAssets = ko.observableArray();
 
             TagsService.decorateComponent(this, {});
             this.getTags();
             this.tableOptions = commonUtils.getTableOptions('XS');
-            this.tagsColumns = [
+            this.availableTagsColumns = [
                 {
                     title: ko.i18n('columns.action', 'Action'),
                     width: '80px',
                     sortable: false,
                     render: (s, p, d) => {
-                        if (this.tags.indexOf(d) < 0) {
+                        if (this.selectedTags.indexOf(d) < 0) {
                             d.selectTag = () => this.selectTag(d);
                             return `<a data-bind="css: '${this.classes('action-link')}', click: selectTag, text: ko.i18n('common.select', 'Select')"></a>`
                         }
@@ -99,6 +96,105 @@ define([
                     title: ko.i18n('columns.usageCount', 'Usage count'),
                     width: '90px',
                     data: 'count'
+                }
+            ];
+            this.selectedTagsColumns = [
+                {
+                    title: ko.i18n('columns.group', 'Group'),
+                    width: '100px',
+                    render: (s, p, d) => {
+                        return `<span class="cell-tag-name" data-bind="title: '${d.groups[0].name}'">${d.groups[0].name}</span>`;
+                    }
+                },
+                {
+                    title: ko.i18n('columns.name', 'Name'),
+                    width: '100px',
+                    render: (s, p, d) => {
+                        return `<span class="tag" data-bind="attr: { style: 'background-color: ${d.color || d.groups[0].color || '#cecece'}'}">
+                                    <i class="${d.icon || d.groups[0].icon || 'fa fa-tag'}"></i>
+                                    <span title="${d.name}">${d.name.length > 22 ? d.name.substring(0, 20) + '...' : d.name}</span>
+                                </span>`;
+                    }
+                },
+                {
+                    title: ko.i18n('columns.created', 'Created'),
+                    width: '120px',
+                    render: (s, p, d) => {
+                        const dateTime = datatableUtils.getDateFieldFormatter('createdDate')(s, p, d);
+                        return `<span class="cell-tag-created" data-bind="title: '${dateTime}'">${dateTime}</span>`;
+                    },
+                },
+                {
+                    title: ko.i18n('columns.author', 'Author'),
+                    width: '100px',
+                    render: (s, p, d) => {
+                        const author = datatableUtils.getCreatedByFormatter('System')(s, p, d);
+                        return `<span class="cell-tag-author" data-bind="title: '${author}'">${author}</span>`;
+                    },
+                },
+                {
+                    title: ko.i18n('columns.description', 'Description'),
+                    width: '225px',
+                    render: (s, p, d) => {
+                        const desc = d.description || '-';
+                        return `<span class="cell-tag-description" data-bind="title: '${desc}'">${desc}</span>`;
+                    }
+                },
+                {
+                    title: ko.i18n('columns.usageCount', 'Usage count'),
+                    width: '90px',
+                    data: 'count'
+                },
+                {
+                    title: '',
+                    width: '80px',
+                    sortable: false,
+                    render: (s, p, d) => {
+                            d.unselectTag = () => this.unselectTag(d);
+                            return `<a data-bind="click: unselectTag" class="remove-link"><i class="fa fa-times"></i></a>`;
+                    }
+                }
+            ];
+
+            this.selectedAssetsColumns = [
+                {
+                    title: ko.i18n('columns.type', 'Type'),
+                    data: 'type'
+                },
+                {
+                    title: ko.i18n('columns.id', 'Id'),
+                    className: 'id-column',
+                    data: 'id'
+                },
+                {
+                    title: ko.i18n('columns.name', 'Name'),
+                    data: 'name',
+                },
+                {
+                    title: ko.i18n('columns.created', 'Created'),
+                    className: 'date-column',
+                    render: datatableUtils.getDateFieldFormatter('createdDate'),
+                },
+                {
+                    title: ko.i18n('columns.updated', 'Updated'),
+                    className: 'date-column',
+                    render: datatableUtils.getDateFieldFormatter('modifiedDate'),
+                },
+                {
+                    title: ko.i18n('columns.author', 'Author'),
+                    className: 'author-column',
+                    render: datatableUtils.getCreatedByFormatter(),
+                },
+                {
+                    title: '',
+                    width: '80px',
+                    sortable: false,
+                    render: (s, p, d) => {
+                        d.unselectAsset = () => {
+                            this.selectedAssets.remove(cs => cs.id === d.id && cs.type === d.type);
+                        };
+                        return `<a data-bind="click: unselectAsset" class="remove-link"><i class="fa fa-times"></i></a>`;
+                    }
                 }
             ];
 
@@ -166,9 +262,7 @@ define([
         }
 
         hasEnoughSelectedData() {
-            return this.tags().length > 0 &&
-                (this.selectedConceptSets().length > 0 || this.selectedCohorts().length > 0 || this.selectedCharacterizations().length > 0 ||
-                this.selectedIncidenceRates().length > 0 || this.selectedPathways().length > 0 || this.selectedReusables().length > 0);
+            return this.selectedTags().length > 0 && this.selectedAssets().length > 0;
         }
 
         async getTags() {
@@ -177,14 +271,14 @@ define([
         }
 
         selectTag(tag) {
-            if (this.tags.indexOf(tag) < 0) {
-                this.tags.push(tag);
+            if (this.selectedTags.indexOf(tag) < 0) {
+                this.selectedTags.push(tag);
                 this.availableTags.valueHasMutated();
             }
         }
 
         unselectTag(tag) {
-            this.tags.remove(t => t.id === tag.id);
+            this.selectedTags.remove(t => t.id === tag.id);
             this.availableTags.valueHasMutated();
         }
 
@@ -193,51 +287,27 @@ define([
         }
 
         conceptSetSelected(conceptSet) {
-            this.checkAndAdd(this.selectedConceptSets, conceptSet);
-        }
-
-        unselectConceptSet(conceptSet) {
-            this.selectedConceptSets.remove(cs => cs.id === conceptSet.id);
+            this.checkAndAdd(this.selectedAssets, conceptSet, 'Concept Set');
         }
 
         cohortSelected(cohort) {
-            this.checkAndAdd(this.selectedCohorts, cohort);
-        }
-
-        unselectCohort(cohort) {
-            this.selectedCohorts.remove(c => c.id === cohort.id);
+            this.checkAndAdd(this.selectedAssets, cohort, 'Cohort');
         }
 
         characterizationSelected(characterization) {
-            this.checkAndAdd(this.selectedCharacterizations, characterization);
-        }
-
-        unselectCharacterization(characterization) {
-            this.selectedCharacterizations.remove(c => c.id === characterization.id);
+            this.checkAndAdd(this.selectedAssets, characterization, 'Characterization');
         }
 
         incidenceRateSelected(ir) {
-            this.checkAndAdd(this.selectedIncidenceRates, ir);
-        }
-
-        unselectIncidenceRate(ir) {
-            this.selectedIncidenceRates.remove(i => i.id === ir.id);
+            this.checkAndAdd(this.selectedAssets, ir, 'Incidence Rate');
         }
 
         pathwaySelected(pathway) {
-            this.checkAndAdd(this.selectedPathways, pathway);
-        }
-
-        unselectPathway(pathway) {
-            this.selectedPathways.remove(p => p.id === pathway.id);
+            this.checkAndAdd(this.selectedAssets, pathway, 'Pathway');
         }
 
         reusableSelected(reusable) {
-            this.checkAndAdd(this.selectedReusables, reusable);
-        }
-
-        unselectReusable(reusable) {
-            this.selectedReusables.remove(r => r.id === reusable.id);
+            this.checkAndAdd(this.selectedAssets, reusable, 'Reusable');
         }
 
         async doAssign() {
@@ -254,32 +324,28 @@ define([
 
         collectData() {
             return {
-                tags: this.tags().map(t => t.id),
+                tags: this.selectedTags().map(t => t.id),
                 assets: {
-                    conceptSets: this.selectedConceptSets().map(cs => cs.id),
-                    cohorts: this.selectedCohorts().map(c => c.id),
-                    characterizations: this.selectedCharacterizations().map(c => c.id),
-                    incidenceRates: this.selectedIncidenceRates().map(ir => ir.id),
-                    pathways: this.selectedPathways().map(p => p.id),
-                    reusables: this.selectedReusables().map(p => p.id),
+                    conceptSets: this.selectedAssets().filter(a => a.type === 'Concept Set').map(cs => cs.id),
+                    cohorts: this.selectedAssets().filter(a => a.type === 'Cohort').map(c => c.id),
+                    characterizations: this.selectedAssets().filter(a => a.type === 'Characterization').map(c => c.id),
+                    incidenceRates: this.selectedAssets().filter(a => a.type === 'Incidence Rate').map(ir => ir.id),
+                    pathways: this.selectedAssets().filter(a => a.type === 'Pathway').map(p => p.id),
+                    reusables: this.selectedAssets().filter(a => a.type === 'Reusable').map(p => p.id),
                 }
             };
         }
 
-        checkAndAdd(arr, asset) {
+        checkAndAdd(arr, asset, type) {
             if (arr.indexOf(asset) < 0) {
+                asset.type = type;
                 arr.push(asset);
             }
         }
 
         clear() {
-            this.tags([]);
-            this.selectedConceptSets([]);
-            this.selectedCohorts([]);
-            this.selectedCharacterizations([]);
-            this.selectedIncidenceRates([]);
-            this.selectedPathways([]);
-            this.selectedReusables([]);
+            this.selectedTags([]);
+            this.selectedAssets([]);
         }
     }
 
