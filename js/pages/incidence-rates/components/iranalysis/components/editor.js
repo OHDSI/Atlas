@@ -8,7 +8,7 @@ define([
 	'utils/AutoBind',	
 	'utils/CommonUtils',
 	'conceptsetbuilder/components',
-	'components/cohort-definition-browser',				
+	'components/entityBrowsers/cohort-definition-browser',
 	'databindings',
 	'components/cohortbuilder/components',
 	'less!./editor.less',

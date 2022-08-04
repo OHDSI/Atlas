@@ -26,6 +26,7 @@
                 css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
                 dataTable:{
                     data: availableTags,
+                    onRowClick: selectTag,
                     options: {
                         order: [],
                         columns: availableTagsColumns,

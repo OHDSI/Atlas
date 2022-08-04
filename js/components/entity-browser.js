@@ -1,16 +1,17 @@
 define([
     'knockout',
-    'text!./cohort-definition-browser.html',
     'components/Component',
     'utils/Renderers',
     'utils/CommonUtils',
     'faceted-datatable',
-], function(ko, view, Component, renderers, commonUtils) {
+], function(ko, Component, renderers, commonUtils) {
     class EntityBrowser extends Component {
         constructor(params) {
             super(params);
             this.onSelect = params.onSelect;
             this.multiChoice = params.multiChoice || false;
+            this.showCheckboxes = params.showCheckboxes || false;
+            this.renderLink = params.renderLink === undefined ? true : params.renderLink;
             this.showModal = params.showModal;
             this.scrollY = this.multiChoice ? (params.scrollY !== undefined ? params.scrollY : '50vh') : params.scrollY;
             this.scrollCollapse = params.scrollCollapse || false;
@@ -40,11 +41,11 @@ define([
                   ]
                 : null;
 
-            this.columns = !!this.multiChoice
+            this.columns = !!this.multiChoice || this.showCheckboxes
                 ? [
                     {
                         data: 'selected',
-                        class: this.classes({extra: 'text-center'}),
+                        width: '20px',
                         render: () => renderers.renderCheckbox('selected'),
                         searchable: false,
                         orderable: false,

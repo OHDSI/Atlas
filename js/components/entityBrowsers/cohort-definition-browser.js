@@ -61,7 +61,9 @@ define([
 				},
 				{
 					title: ko.i18n('columns.name', 'Name'),
-					render: datatableUtils.getLinkFormatter(d => ({ label: d['name'], linkish: !this.multiChoice })),
+					render: this.renderLink ?
+						datatableUtils.getLinkFormatter(d => ({ label: d['name'], linkish: !this.multiChoice })) :
+						(s,p,d) => `${d.name}`
 				},
 				{
 					title: ko.i18n('columns.created', 'Created'),
