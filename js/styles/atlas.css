@@ -102,6 +102,10 @@ body {
   font-weight: bold;
 }
 
+.heading b {
+  color: #333;
+}
+
 .subheading {
   font-size: 12px;
   color: #000;

@@ -19,12 +19,12 @@ define([
 
 			this.tabs = [
 				{
-					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson', 'By Person'),
+					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson', 'By 1 Event Per Person'),
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_PERSON },
 				},
 				{
-					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byEvents', 'By Events'),
+					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byEvents', 'By All Events'),
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_EVENT },
 				}

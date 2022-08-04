@@ -2,20 +2,11 @@
 	<tr>
 		<td style="vertical-align: top; padding-right: 25px;">
 			<div class="inclusionRuleType">
-				<div class="radio-all-any">
-					<div class="radio-all-any-header">Treemap coloring and statistics calculation for selected rules</div>
-                    <label data-bind="attr: {for: 'rules-all' + reportType}">
-                        <input type="radio" value="all" data-bind="attr: {id: 'rules-all' + reportType}, checked: rulesAllOrAny"> All selected criteria passed
-                    </label>
-                    <label data-bind="attr: {for: 'rules-any' + reportType}">
-                        <input type="radio" value="any" data-bind="attr: {id: 'rules-any' + reportType}, checked: rulesAllOrAny"> Any of selected criteria passed
-                    </label>
-                    <label data-bind="attr: {for: 'rules-all-fail' + reportType}">
-                        <input type="radio" value="allFail" data-bind="attr: {id: 'rules-all-fail' + reportType}, checked: rulesAllOrAny"> All selected criteria failed
-                    </label>
-                    <label data-bind="attr: {for: 'rules-any-fail' + reportType}">
-                        <input type="radio" value="anyFail" data-bind="attr: {id: 'rules-any-fail' + reportType}, checked: rulesAllOrAny"> Any of selected criteria failed
-                    </label>
+				<div class="all-any-selector">
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.having', 'Having')"></span>
+					<select data-bind="options: allAnyOptions, optionsText: 'name', optionsValue: 'id', value: allAnyOption"></select>
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.ofSelectedCriteria', 'of selected criteria')"></span>
+					<select data-bind="options: passedFailedOptions, optionsText: 'name', optionsValue: 'id', value: passedFailedOption"></select>
 			    </div>
 
 				<table>
@@ -48,17 +39,14 @@
 							</td>
 						</tr>
 					</tbody>
-					<tfoot>
-						<tr class="rules-summary">
-							<td></td>
-							<td></td>
-							<td class="rules-summary-title">Summary</td>
-							<td data-bind="text: summaryValue().toLocaleString()"></td>
-							<td data-bind="text: summaryPercent().toFixed(2) + '%'"></td>
-							<td data-bind="text: summaryPercentToGain"></td>
-						</tr>
-					</tfoot>
 				</table>
+
+				<div class="rules-summary">
+					<b data-bind="text: ko.i18n('cohortDefinitions.cohortreports.summary', 'Summary:')"></b>
+					<span data-bind="text: ko.i18nformat('cohortDefinitions.cohortreports.summaryText',
+							'<%=events%> events (<%=percentage%>%)',
+							{events: summaryValue().toLocaleString(), percentage: summaryPercent().toFixed(2)})"></span>
+				</div>
 			</div>
 		</td>
 		<td style="padding-left: 25px; vertical-align: top; width: 400px; border-left: solid 1px #eee;">
