@@ -339,6 +339,8 @@ define([
 				.then((data) => {
 					this.parseData(data);
 					this.context.loadingDrilldownDone(true);
+					this.context.showLoadingDrilldownModal(false);
+					setTimeout(() => document.getElementById('drilldownReport').scrollIntoView(), 0);
 				})
 				.catch((er) => {
 					this.isError(true);
