@@ -4,10 +4,13 @@ define([
     'utils/AutoBind',
     'components/Component',
     'utils/CommonUtils',
+    'utils/Renderers',
     'appConfig',
     'services/AuthAPI',
     'utils/DatatableUtils',
     'services/Tags',
+    'components/entityBrowsers/concept-set-entity-browser',
+    'components/entityBrowsers/cohort-definition-browser',
     'components/entityBrowsers/characterization-browser',
     'components/entityBrowsers/incidence-rate-browser',
     'components/entityBrowsers/cohort-pathway-browser',
@@ -19,6 +22,7 @@ define([
     AutoBind,
     Component,
     commonUtils,
+    renderers,
     config,
     authApi,
     datatableUtils,
@@ -44,15 +48,10 @@ define([
             this.tableOptions = commonUtils.getTableOptions('XS');
             this.availableTagsColumns = [
                 {
-                    title: ko.i18n('columns.action', 'Action'),
-                    width: '80px',
+                    title: ' ',
+                    width: '20px',
                     sortable: false,
-                    render: (s, p, d) => {
-                        if (this.selectedTags.indexOf(d) < 0) {
-                            d.selectTag = () => this.selectTag(d);
-                            return `<a data-bind="css: '${this.classes('action-link')}', click: selectTag, text: ko.i18n('common.select', 'Select')"></a>`
-                        }
-                    }
+                    render: () => renderers.renderCheckbox('selected'),
                 },
                 {
                     title: ko.i18n('columns.group', 'Group'),
@@ -191,8 +190,11 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         d.unselectAsset = () => {
-                            this.selectedAssets.remove(cs => cs.id === d.id && cs.type === d.type);
-                        };
+                            this.unselectAsset(d);
+                            if (d.selected) {
+                                d.selected(false);
+                            }
+                        }
                         return `<a data-bind="click: unselectAsset" class="remove-link"><i class="fa fa-times"></i></a>`;
                     }
                 }
@@ -205,11 +207,13 @@ define([
                     {
                         title: ko.i18n('tagging.multiAssign.tabs.conceptsets', 'Concept Sets'),
                         key: 'concept-sets',
-                        componentName: 'concept-set-browser',
+                        componentName: 'concept-set-entity-browser',
                         componentParams: {
                             buttonActionEnabled: false,
                             myDesignsOnly: true,
-                            onRespositoryConceptSetSelected: conceptSet => this.conceptSetSelected(conceptSet)
+                            showCheckboxes: true,
+                            renderLink: false,
+                            onSelect: conceptSet => conceptSet.selected() ? this.conceptSetSelected(conceptSet) : this.unselectAsset(conceptSet)
                         }
                     },
                     {
@@ -218,7 +222,9 @@ define([
                         componentName: 'cohort-definition-browser',
                         componentParams: {
                             myDesignsOnly: true,
-                            onSelect: cohort => this.cohortSelected(cohort)
+                            showCheckboxes: true,
+                            renderLink: false,
+                            onSelect: cohort => cohort.selected() ? this.cohortSelected(cohort) : this.unselectAsset(cohort)
                         }
                     },
                     {
@@ -227,7 +233,9 @@ define([
                         componentName: 'characterization-browser',
                         componentParams: {
                             myDesignsOnly: true,
-                            onSelect: characterization => this.characterizationSelected(characterization)
+                            showCheckboxes: true,
+                            renderLink: false,
+                            onSelect: characterization => characterization.selected() ? this.characterizationSelected(characterization) : this.unselectAsset(characterization)
                         }
                     },
                     {
@@ -236,7 +244,9 @@ define([
                         componentName: 'incidence-rate-browser',
                         componentParams: {
                             myDesignsOnly: true,
-                            onSelect: ir => this.incidenceRateSelected(ir)
+                            showCheckboxes: true,
+                            renderLink: false,
+                            onSelect: ir => ir.selected() ? this.incidenceRateSelected(ir) : this.unselectAsset(ir)
                         }
                     },
                     {
@@ -245,7 +255,9 @@ define([
                         componentName: 'cohort-pathway-browser',
                         componentParams: {
                             myDesignsOnly: true,
-                            onSelect: pathway => this.pathwaySelected(pathway)
+                            showCheckboxes: true,
+                            renderLink: false,
+                            onSelect: pathway => pathway.selected() ? this.pathwaySelected(pathway) : this.unselectAsset(pathway)
                         }
                     },
                     {
@@ -254,7 +266,9 @@ define([
                         componentName: 'reusable-browser',
                         componentParams: {
                             myDesignsOnly: true,
-                            onSelect: reusable => this.reusableSelected(reusable)
+                            showCheckboxes: true,
+                            renderLink: false,
+                            onSelect: reusable => reusable.selected() ? this.reusableSelected(reusable) : this.unselectAsset(reusable)
                         }
                     },
                 ]
@@ -267,17 +281,21 @@ define([
 
         async getTags() {
             const res = await this.loadAvailableTags();
-            this.availableTags(res.filter(t => t.groups && t.groups.length > 0));
+            this.availableTags(res.filter(t => t.groups && t.groups.length > 0).map(tag => ({ selected: ko.observable(false), ...tag })));
         }
 
         selectTag(tag) {
             if (this.selectedTags.indexOf(tag) < 0) {
+                tag.selected(true);
                 this.selectedTags.push(tag);
                 this.availableTags.valueHasMutated();
+            } else {
+                this.unselectTag(tag);
             }
         }
 
         unselectTag(tag) {
+            tag.selected(false);
             this.selectedTags.remove(t => t.id === tag.id);
             this.availableTags.valueHasMutated();
         }
@@ -308,6 +326,10 @@ define([
 
         reusableSelected(reusable) {
             this.checkAndAdd(this.selectedAssets, reusable, 'Reusable');
+        }
+
+        unselectAsset(asset) {
+            this.selectedAssets.remove(cs => cs.id === asset.id && cs.type === asset.type);
         }
 
         async doAssign() {
@@ -346,6 +368,8 @@ define([
         clear() {
             this.selectedTags([]);
             this.selectedAssets([]);
+            ko.utils.arrayForEach(this.availableTags(), (tag) => tag.selected(false));
+            this.availableTags.valueHasMutated();
         }
     }
 

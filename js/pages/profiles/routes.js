@@ -4,7 +4,7 @@ define(
     function routes(router) {
       return {
         '/profiles/?((\w|.)*)': new AuthorizedRoute((path) => {
-          require(['./profile-manager', 'components/cohort-definition-browser'], function () {
+          require(['./profile-manager', 'components/entityBrowsers/cohort-definition-browser'], function () {
             path = path.split("/");
             const params = {};
             params.sourceKey = (path[0] || null);

@@ -5,7 +5,7 @@ define([
 	'utils/CommonUtils',
 	'services/analysis/Cohort',
 	'services/analysis/ConceptSet',
-	'components/cohort-definition-browser',
+	'components/entityBrowsers/cohort-definition-browser',
 	'components/cohort/linked-cohort-list',
 	'circe',
 ], function (

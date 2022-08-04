@@ -1,12 +1,14 @@
 define([
     'knockout',
-    'text!./reusable-browser.html',
+    'text!./concept-set-entity-browser.html',
     'appConfig',
     'atlas-state',
+    'appConfig',
     'components/entity-browser',
     'services/AuthAPI',
-    'services/ReusablesService',
+    'services/VocabularyProvider',
     'utils/CommonUtils',
+    'pages/characterizations/services/CharacterizationService',
     'utils/DatatableUtils',
     'faceted-datatable',
 ], function (
@@ -14,14 +16,16 @@ define([
     view,
     config,
     sharedState,
+    appConfig,
     EntityBrowser,
     authApi,
-    ReusablesService,
+    VocabularyProvider,
     commonUtils,
+    CharacterizationService,
     datatableUtils,
 ) {
 
-    class ReusableBrowser extends EntityBrowser {
+    class ConceptSetEntityBrowser extends EntityBrowser {
         constructor(params) {
             super(params);
             this.showModal = params.showModal;
@@ -85,18 +89,21 @@ define([
 
         async loadData() {
             this.isLoading(true);
-            const reusablesList = await ReusablesService.list();
-            const reusables = this.myDesignsOnly
-                ? reusablesList.content.filter(r => r.hasWriteAccess || (r.createdBy && authApi.subject() === r.createdBy.login))
-                : reusablesList.content;
-            datatableUtils.coalesceField(reusables, 'modifiedDate', 'createdDate');
-            datatableUtils.addTagGroupsToFacets(reusables, this.options.Facets);
-            datatableUtils.addTagGroupsToColumns(reusables, this.columns);
-            this.data(reusables.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
-            this.isLoading(false);
+
+            VocabularyProvider.getConceptSetList(appConfig.api.url)
+                .done((results) => {
+                    const list = this.myDesignsOnly
+                        ? results.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
+                        : results;
+                    datatableUtils.coalesceField(list, 'modifiedDate', 'createdDate');
+                    datatableUtils.addTagGroupsToFacets(list, this.options.Facets);
+                    datatableUtils.addTagGroupsToColumns(list, this.columns);
+                    this.data(list.map(item => ({ selected: ko.observable(this.selectedDataIds.includes(item.id)), ...item })));
+                    this.isLoading(false);
+                });
         }
 
     }
 
-    return commonUtils.build('reusable-browser', ReusableBrowser, view);
+    return commonUtils.build('concept-set-entity-browser', ConceptSetEntityBrowser, view);
 });
