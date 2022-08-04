@@ -18,15 +18,39 @@ define(['knockout',
 		self.pass = ko.observableArray();
 		self.fail = ko.observableArray();
 		self.populationTreemapData = ko.observable({ data: self.report().treemapData });
-		//self.parsedTreemapData = JSON.parse(self.report().treemapData);
 
-		self.rulesAllOrAny = ko.observable('any');
-		self.rulesAllOrAny.subscribe(() => self.grayRectsInTreemap());
+		self.allAnyOptions = [
+			{
+				id: 'ALL',
+				name: ko.i18n('common.all', 'all')
+			},
+			{
+				id: 'ANY',
+				name: ko.i18n('common.any', 'any')
+			}
+		];
+		self.allAnyOption = ko.observable('ANY');
+		self.allAnyOption.subscribe(() => {
+			self.grayRectsInTreemap()
+		});
+
+		self.passedFailedOptions = [
+			{
+				id: 'PASSED',
+				name: ko.i18n('cohortDefinitions.cohortreports.passed', 'passed')
+			},
+			{
+				id: 'FAILED',
+				name: ko.i18n('cohortDefinitions.cohortreports.failed', 'failed')
+			}
+		];
+		self.passedFailedOption = ko.observable('PASSED');
+		self.passedFailedOption.subscribe(() => self.grayRectsInTreemap());
+
 		self.checkedRulesIds = ko.observableArray(self.report().inclusionRuleStats.map(r => r.id));
 
 		self.summaryValue = ko.observable(0);
 		self.summaryPercent = ko.observable(0);
-		self.summaryPercentToGain = ko.observable();
 
 		self.describeClear = function () {
 			self.rectSummary(null);
@@ -123,10 +147,10 @@ define(['knockout',
 				self.summaryPercent(0);
 				const rects = $('#treemap' + self.reportType).find('rect');
 				ko.utils.arrayForEach(rects, (rect) => {
-					if (self.rulesAllOrAny() === 'any' && checkRulesAny(rect.id) ||
-						self.rulesAllOrAny() === 'all' && checkRulesAll(rect.id) ||
-						self.rulesAllOrAny() === 'anyFail' && checkRulesAny(rect.id, true) ||
-						self.rulesAllOrAny() === 'allFail' && checkRulesAll(rect.id, true)) {
+					if (self.allAnyOption() === 'ANY' && self.passedFailedOption() === 'PASSED' && checkRulesAny(rect.id) ||
+						self.allAnyOption() === 'ALL' && self.passedFailedOption() === 'PASSED' && checkRulesAll(rect.id) ||
+						self.allAnyOption() === 'ANY' && self.passedFailedOption() === 'FAILED' && checkRulesAny(rect.id, true) ||
+						self.allAnyOption() === 'ALL' && self.passedFailedOption() === 'FAILED' && checkRulesAll(rect.id, true)) {
 
 						self.summaryValue(self.summaryValue() + rect.__data__.value);
 
