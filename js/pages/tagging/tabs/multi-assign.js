@@ -37,9 +37,9 @@ define([
             this.actionType = ko.observable('assign');
             this.availableTags = ko.observableArray();
             this.selectedTags = ko.observableArray();
-            this.availableTagsShown = ko.observable(false);
+            this.showTagsModal = ko.observable(false);
 
-            this.assetsTabsShown = ko.observable(false);
+            this.showAssetsTabsModal = ko.observable(false);
             this.selectedAssetTabKey = ko.observable('concept-sets');
             this.selectedAssets = ko.observableArray();
 
@@ -273,6 +273,9 @@ define([
                     },
                 ]
             });
+
+            this.actionResultSuccess = ko.observable(true);
+            this.actionResultText = ko.observable();
         }
 
         hasEnoughSelectedData() {
@@ -333,15 +336,33 @@ define([
         }
 
         async doAssign() {
-            await TagsService.multiAssign(this.collectData());
-            this.assetTabsParams.valueHasMutated();
-            this.clear();
+            try {
+                await TagsService.multiAssign(this.collectData());
+                this.actionResultSuccess(true);
+                this.actionResultText(ko.i18n('common.success', 'Success!')());
+                this.assetTabsParams.valueHasMutated();
+                this.clear();
+
+                setTimeout(() => this.actionResultText(''), 3000);
+            } catch {
+                this.actionResultSuccess(false);
+                this.actionResultText(ko.i18n('common.error', 'Error!')());
+            }
         }
 
         async doUnassign() {
-            await TagsService.multiUnassign(this.collectData());
-            this.assetTabsParams.valueHasMutated();
-            this.clear();
+            try {
+                await TagsService.multiUnassign(this.collectData());
+                this.actionResultSuccess(true);
+                this.actionResultText(ko.i18n('common.success', 'Success!')());
+                this.assetTabsParams.valueHasMutated();
+                this.clear();
+
+                setTimeout(() => this.actionResultText(''), 3000);
+            } catch {
+                this.actionResultSuccess(false);
+                this.actionResultText(ko.i18n('common.error', 'Error!')());
+            }
         }
 
         collectData() {

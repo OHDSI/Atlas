@@ -3,7 +3,13 @@
 <div data-bind="css: classes('container')">
 
     <div data-bind="css: classes('section', 'tags')">
-        <h4>Selected tags</h4>
+        <h4 data-bind="text: ko.i18n('tagging.multiAssign.selectedTags', 'Selected Tags')"></h4>
+
+        <button type="button" class="btn btn-primary"
+                data-bind="css: classes('selector-button'),
+                        click: () => showTagsModal(!showTagsModal()),
+                        text: ko.i18n('tagging.multiAssign.chooseTags', 'Choose tags')"></button>
+
         <div data-bind="css: classes('tags-component')">
             <table data-bind="
                 css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
@@ -19,29 +25,16 @@
                 }
             "/>
         </div>
-        <button type="button" class="btn btn-primary"
-                data-bind="click: () => availableTagsShown(!availableTagsShown()), text: availableTagsShown() ? 'Hide tags' : 'Choose tags'"></button>
-        <div data-bind="visible: availableTagsShown, css: classes('selector-block')">
-            <table data-bind="
-                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
-                dataTable:{
-                    data: availableTags,
-                    onRowClick: selectTag,
-                    options: {
-                        order: [],
-                        columns: availableTagsColumns,
-                        pageLength: tableOptions.pageLength,
-                        lengthMenu: tableOptions.lengthMenu,
-                        language: ko.i18n('datatable.language')
-                    },
-                }
-            "/>
-        </div>
-
     </div>
 
     <div data-bind="css: classes('section', 'entities')">
-        <h4>Selected assets</h4>
+        <h4 data-bind="text: ko.i18n('tagging.multiAssign.selectedAssets', 'Selected Assets')"></h4>
+
+        <button type="button" class="btn btn-primary"
+                data-bind="css: classes('selector-button'),
+                        click: () => showAssetsTabsModal(!showAssetsTabsModal()),
+                        text: ko.i18n('tagging.multiAssign.selectedAssets', 'Choose assets')"></button>
+
         <div data-bind="css: classes('assets-to-handle')">
             <table data-bind="
                 css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
@@ -57,34 +50,70 @@
                 }
             "/>
         </div>
-
-        <button type="button" class="btn btn-primary"
-                data-bind="click: () => assetsTabsShown(!assetsTabsShown()), text: assetsTabsShown() ? 'Hide assets' : 'Choose assets'"></button>
-
-        <div data-bind="component: { name: 'tabs', params: assetTabsParams }, visible: assetsTabsShown, css: classes('selector-block')"></div>
     </div>
 
     <div data-bind="css: classes('button')">
         <div data-bind="css: classes('section', 'radio')">
             <label for="assignRadio">
-                <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign" data-bind="checked: actionType"> Assign tags
+                <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign"data-bind="checked: actionType">
+                <span data-bind="text: ko.i18n('tagging.multiAssign.assignTags', 'Assign tags')"></span>
             </label>
             &nbsp;&nbsp;&nbsp;&nbsp;
             <label for="removeRadio">
-                <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign" data-bind="checked: actionType"> Unassign tags
+                <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign" data-bind="checked: actionType">
+                <span data-bind="text: ko.i18n('tagging.multiAssign.unassignTags', 'Unassign tags')"></span>
             </label>
             <!-- ko if: actionType() == 'assign' -->
             <button type="button" class="btn btn-primary"
-                    data-bind="click: doAssign, disable: !hasEnoughSelectedData()">Assign tags
+                    data-bind="click: doAssign, disable: !hasEnoughSelectedData(), text: ko.i18n('tagging.multiAssign.assignTags', 'Assign tags')">
             </button>
             <!-- /ko -->
             <!-- ko if: actionType() == 'unassign' -->
             <button type="button" class="btn btn-danger"
-                    data-bind="click: doUnassign, disable: !hasEnoughSelectedData()">Unassign tags
+                    data-bind="click: doUnassign, disable: !hasEnoughSelectedData(), text: ko.i18n('tagging.multiAssign.unassignTags', 'Unassign tags')">
             </button>
             <!-- /ko -->
         </div>
+        <div data-bind="css: classes(actionResultSuccess ? 'action-results success' : 'action-results error'), text: actionResultText"></div>
     </div>
-
-
 </div>
+
+<atlas-modal params="
+        showModal: showTagsModal,
+        title: ko.i18n('tagging.multiAssign.chooseTags', 'Choose Tags...'),
+        data: {
+            classes: classes,
+            selectTag: selectTag,
+            availableTags: availableTags,
+            availableTagsColumns: availableTagsColumns,
+            showModal: showTagsModal,
+            tableOptions: tableOptions,
+        }
+    ">
+    <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: availableTags,
+                    onRowClick: selectTag,
+                    options: {
+                        order: [],
+                        columns: availableTagsColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            " style="width: 100%"/>
+</atlas-modal>
+
+<atlas-modal params="
+        showModal: showAssetsTabsModal,
+        title: ko.i18n('tagging.multiAssign.chooseAssets', 'Choose Assets...'),
+        data: {
+            assetTabsParams: assetTabsParams,
+            showModal: showAssetsTabsModal
+        }
+    " class="assets-selector">
+    <div data-bind="component: { name: 'tabs', params: assetTabsParams }"></div>
+</atlas-modal>
+
