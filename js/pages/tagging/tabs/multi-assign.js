@@ -339,14 +339,14 @@ define([
             try {
                 await TagsService.multiAssign(this.collectData());
                 this.actionResultSuccess(true);
-                this.actionResultText(ko.i18n('common.success', 'Success!')());
+                this.actionResultText(ko.i18n('tagging.multiAssign.success', 'Success!')());
                 this.assetTabsParams.valueHasMutated();
                 this.clear();
 
                 setTimeout(() => this.actionResultText(''), 3000);
             } catch {
                 this.actionResultSuccess(false);
-                this.actionResultText(ko.i18n('common.error', 'Error!')());
+                this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
             }
         }
 
@@ -354,14 +354,14 @@ define([
             try {
                 await TagsService.multiUnassign(this.collectData());
                 this.actionResultSuccess(true);
-                this.actionResultText(ko.i18n('common.success', 'Success!')());
+                this.actionResultText(ko.i18n('tagging.multiAssign.success', 'Success!')());
                 this.assetTabsParams.valueHasMutated();
                 this.clear();
 
                 setTimeout(() => this.actionResultText(''), 3000);
             } catch {
                 this.actionResultSuccess(false);
-                this.actionResultText(ko.i18n('common.error', 'Error!')());
+                this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
             }
         }
 
