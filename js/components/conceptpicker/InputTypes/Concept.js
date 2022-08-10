@@ -1,4 +1,4 @@
-define(['knockout', 'services/MomentApi'], function (ko, momentApi) {
+define(['knockout', 'services/MomentAPI'], function (ko, momentApi) {
 
 	function Concept(data) {
 		var self = this;
