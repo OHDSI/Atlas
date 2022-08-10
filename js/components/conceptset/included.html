@@ -1,5 +1,6 @@
 <loading params="status: ko.i18n('components.conceptSet.loadingIncludedConcepts', 'Loading Included Concepts')" data-bind="visible: loading"></loading>
 <div data-bind="hidden: loading">
+    <datasource-select params="{conceptSetStore: $component.conceptSetStore}"/>
     <faceted-datatable params="{
       orderColumn:7,
       columns: $component.includedConceptsColumns,
@@ -10,14 +11,14 @@
       pageLength: tableOptions.pageLength,
       lengthMenu: tableOptions.lengthMenu,
       language: ko.i18n('datatable.language')
-    }"></faceted-datatable>
+    }"/>
     <concept-add-box params="{
         isActive: canAddConcepts,
         onSubmit: addConcepts
-      }"></concept-add-box>
+      }"/>
+    <conceptset-concept-modal params="{
+      isShown: $component.ancestorsModalIsShown,
+      conceptSetList: $component.ancestors,
+      title: ko.i18n('components.conceptSet.commonAncestors', 'Common Ancestors')
+    }"></conceptset-concept-modal>
 </div>
-<conceptset-concept-modal params="{
-  isShown: $component.ancestorsModalIsShown,
-  conceptSetList: $component.ancestors,
-  title: ko.i18n('components.conceptSet.commonAncestors', 'Common Ancestors')
-}"></conceptset-concept-modal>
