@@ -9,6 +9,7 @@ define([
 	'services/ConceptSet',
 	'./utils',	
 	'components/conceptAddBox/concept-add-box',
+	'components/dataSourceSelect'
 ], function(
 	ko,
 	view,
