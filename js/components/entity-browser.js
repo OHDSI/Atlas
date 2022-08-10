@@ -16,7 +16,7 @@ define([
             this.scrollY = this.multiChoice ? (params.scrollY !== undefined ? params.scrollY : '50vh') : params.scrollY;
             this.scrollCollapse = params.scrollCollapse || false;
             this.selectedDataIds =
-                this.multiChoice && params.selectedData
+                (this.showCheckboxes || this.multiChoice) && params.selectedData
                     ? (params.selectedData() || []).map(({ id }) => id)
                     : [];
             this.data = ko.observableArray([]);

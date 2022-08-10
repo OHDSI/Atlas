@@ -28,6 +28,42 @@ define([
     datatableUtils,
     TagsService
 ) {
+
+    const ASSETS = {
+        CONCEPT_SET: {
+            id: 'CONCEPT_SET',
+            name: ko.i18n('common.conceptSet', 'Concept Set')
+        },
+        COHORT: {
+            id: 'COHORT',
+            name: ko.i18n('common.cohort', 'Cohort')
+        },
+        CHARACTERIZATION: {
+            id: 'CHARACTERIZATION',
+            name: ko.i18n('common.characterization', 'Characterization')
+        },
+        INCIDENCE_RATE: {
+            id: 'INCIDENCE_RATE',
+            name: ko.i18n('common.incidenceRate', 'Incidence Rate')
+        },
+        PATHWAY: {
+            id: 'PATHWAY',
+            name: ko.i18n('common.pathway', 'Pathway Analysis')
+        },
+        PLE: {
+            id: 'PLE',
+            name: ko.i18n('common.ple', 'Population Level Effect Estimation')
+        },
+        PLP: {
+            id: 'PLP',
+            name: ko.i18n('common.plp', 'Patient Level Prediction')
+        },
+        REUSABLE: {
+            id: 'REUSABLE',
+            name: ko.i18n('common.reusable', 'Reusable')
+        }
+    };
+
     class TagsMultiAssign extends AutoBind(Component) {
         constructor(params) {
             super();
@@ -158,7 +194,10 @@ define([
             this.selectedAssetsColumns = [
                 {
                     title: ko.i18n('columns.type', 'Type'),
-                    data: 'type'
+                    render: (s,p,d) => {
+                        d.renderTypeName = ASSETS[d.type].name;
+                        return `<span data-bind="text: renderTypeName"></span>`
+                    }
                 },
                 {
                     title: ko.i18n('columns.id', 'Id'),
@@ -213,7 +252,10 @@ define([
                             myDesignsOnly: true,
                             showCheckboxes: true,
                             renderLink: false,
-                            onSelect: conceptSet => conceptSet.selected() ? this.conceptSetSelected(conceptSet) : this.unselectAsset(conceptSet)
+                            selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.CONCEPT_SET.id),
+                            onSelect: conceptSet => conceptSet.selected()
+                                ? this.assetSelected(conceptSet, ASSETS.CONCEPT_SET.id)
+                                : this.unselectAsset(conceptSet, ASSETS.CONCEPT_SET.id)
                         }
                     },
                     {
@@ -224,7 +266,10 @@ define([
                             myDesignsOnly: true,
                             showCheckboxes: true,
                             renderLink: false,
-                            onSelect: cohort => cohort.selected() ? this.cohortSelected(cohort) : this.unselectAsset(cohort)
+                            selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.COHORT.id),
+                            onSelect: cohort => cohort.selected()
+                                ? this.assetSelected(cohort, ASSETS.COHORT.id)
+                                : this.unselectAsset(cohort, ASSETS.COHORT.id)
                         }
                     },
                     {
@@ -235,7 +280,10 @@ define([
                             myDesignsOnly: true,
                             showCheckboxes: true,
                             renderLink: false,
-                            onSelect: characterization => characterization.selected() ? this.characterizationSelected(characterization) : this.unselectAsset(characterization)
+                            selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.CHARACTERIZATION.id),
+                            onSelect: characterization => characterization.selected()
+                                ? this.assetSelected(characterization, ASSETS.CHARACTERIZATION.id)
+                                : this.unselectAsset(characterization, ASSETS.CHARACTERIZATION.id)
                         }
                     },
                     {
@@ -246,7 +294,10 @@ define([
                             myDesignsOnly: true,
                             showCheckboxes: true,
                             renderLink: false,
-                            onSelect: ir => ir.selected() ? this.incidenceRateSelected(ir) : this.unselectAsset(ir)
+                            selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.INCIDENCE_RATE.id),
+                            onSelect: ir => ir.selected()
+                                ? this.assetSelected(ir, ASSETS.INCIDENCE_RATE.id)
+                                : this.unselectAsset(ir, ASSETS.INCIDENCE_RATE.id)
                         }
                     },
                     {
@@ -257,7 +308,10 @@ define([
                             myDesignsOnly: true,
                             showCheckboxes: true,
                             renderLink: false,
-                            onSelect: pathway => pathway.selected() ? this.pathwaySelected(pathway) : this.unselectAsset(pathway)
+                            selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.PATHWAY.id),
+                            onSelect: pathway => pathway.selected()
+                                ? this.assetSelected(pathway, ASSETS.PATHWAY.id)
+                                : this.unselectAsset(pathway, ASSETS.PATHWAY.id)
                         }
                     },
                     {
@@ -268,7 +322,10 @@ define([
                             myDesignsOnly: true,
                             showCheckboxes: true,
                             renderLink: false,
-                            onSelect: reusable => reusable.selected() ? this.reusableSelected(reusable) : this.unselectAsset(reusable)
+                            selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.REUSABLE.id),
+                            onSelect: reusable => reusable.selected()
+                                ? this.assetSelected(reusable, ASSETS.REUSABLE.id)
+                                : this.unselectAsset(reusable, ASSETS.REUSABLE.id)
                         }
                     },
                 ]
@@ -291,7 +348,6 @@ define([
             if (this.selectedTags.indexOf(tag) < 0) {
                 tag.selected(true);
                 this.selectedTags.push(tag);
-                this.availableTags.valueHasMutated();
             } else {
                 this.unselectTag(tag);
             }
@@ -300,39 +356,21 @@ define([
         unselectTag(tag) {
             tag.selected(false);
             this.selectedTags.remove(t => t.id === tag.id);
-            this.availableTags.valueHasMutated();
         }
 
         selectAssetTab(index, { key }) {
             this.selectedAssetTabKey(key);
         }
 
-        conceptSetSelected(conceptSet) {
-            this.checkAndAdd(this.selectedAssets, conceptSet, 'Concept Set');
+        assetSelected(asset, type) {
+            if (this.selectedAssets.indexOf(asset) < 0) {
+                asset.type = type;
+                this.selectedAssets.push(asset);
+            }
         }
 
-        cohortSelected(cohort) {
-            this.checkAndAdd(this.selectedAssets, cohort, 'Cohort');
-        }
-
-        characterizationSelected(characterization) {
-            this.checkAndAdd(this.selectedAssets, characterization, 'Characterization');
-        }
-
-        incidenceRateSelected(ir) {
-            this.checkAndAdd(this.selectedAssets, ir, 'Incidence Rate');
-        }
-
-        pathwaySelected(pathway) {
-            this.checkAndAdd(this.selectedAssets, pathway, 'Pathway');
-        }
-
-        reusableSelected(reusable) {
-            this.checkAndAdd(this.selectedAssets, reusable, 'Reusable');
-        }
-
-        unselectAsset(asset) {
-            this.selectedAssets.remove(cs => cs.id === asset.id && cs.type === asset.type);
+        unselectAsset(asset, type) {
+            this.selectedAssets.remove(cs => cs.id === asset.id && cs.type === type);
         }
 
         async doAssign() {
@@ -369,21 +407,14 @@ define([
             return {
                 tags: this.selectedTags().map(t => t.id),
                 assets: {
-                    conceptSets: this.selectedAssets().filter(a => a.type === 'Concept Set').map(cs => cs.id),
-                    cohorts: this.selectedAssets().filter(a => a.type === 'Cohort').map(c => c.id),
-                    characterizations: this.selectedAssets().filter(a => a.type === 'Characterization').map(c => c.id),
-                    incidenceRates: this.selectedAssets().filter(a => a.type === 'Incidence Rate').map(ir => ir.id),
-                    pathways: this.selectedAssets().filter(a => a.type === 'Pathway').map(p => p.id),
-                    reusables: this.selectedAssets().filter(a => a.type === 'Reusable').map(p => p.id),
+                    conceptSets: this.selectedAssets().filter(a => a.type === ASSETS.CONCEPT_SET.id).map(cs => cs.id),
+                    cohorts: this.selectedAssets().filter(a => a.type === ASSETS.COHORT.id).map(c => c.id),
+                    characterizations: this.selectedAssets().filter(a => a.type === ASSETS.CHARACTERIZATION.id).map(c => c.id),
+                    incidenceRates: this.selectedAssets().filter(a => a.type === ASSETS.INCIDENCE_RATE.id).map(ir => ir.id),
+                    pathways: this.selectedAssets().filter(a => a.type === ASSETS.PATHWAY.id).map(p => p.id),
+                    reusables: this.selectedAssets().filter(a => a.type === ASSETS.REUSABLE.id).map(p => p.id),
                 }
             };
-        }
-
-        checkAndAdd(arr, asset, type) {
-            if (arr.indexOf(asset) < 0) {
-                asset.type = type;
-                arr.push(asset);
-            }
         }
 
         clear() {
