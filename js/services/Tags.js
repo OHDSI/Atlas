@@ -62,6 +62,11 @@ define(function (require) {
         return authService.isPermitted(`${assetType}:${assetId}:protectedtag:${tagId}:delete`);
     }
 
+    async function getAssignmentPermissions() {
+        const res = await httpService.doGet(config.webAPIRoot + `tag/assignmentPermissions`);
+        return res.data;
+    }
+
     function decorateComponent(component, { assetTypeGetter, assetGetter, addTagToAsset, removeTagFromAsset }) {
 
         component.isTagsModalShown = ko.observable(false);
@@ -134,6 +139,7 @@ define(function (require) {
         unassignTag,
         loadTagsSuggestions,
         decorateComponent,
+        getAssignmentPermissions,
         multiAssign,
         multiUnassign
     };

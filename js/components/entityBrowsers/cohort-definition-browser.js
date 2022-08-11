@@ -87,7 +87,7 @@ define([
 			try {
 				this.isLoading(true);
 				const data = await CohortDefinitionService.getCohortDefinitionList();
-				const cohortList = this.myDesignsOnly
+				const cohortList = ko.unwrap(this.myDesignsOnly)
 					? data.filter(c => c.hasWriteAccess || (c.createdBy && authApi.subject() === c.createdBy.login))
 					: data;
 				datatableUtils.coalesceField(cohortList, 'modifiedDate', 'createdDate');

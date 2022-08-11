@@ -88,7 +88,7 @@ define([
             IRAnalysisService
                 .getAnalysisList()
                 .then(({ data }) => {
-                    const analysisList = this.myDesignsOnly
+                    const analysisList = ko.unwrap(this.myDesignsOnly)
                         ? data.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
                         : data;
                     datatableUtils.coalesceField(analysisList, 'modifiedDate', 'createdDate');

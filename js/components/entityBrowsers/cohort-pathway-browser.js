@@ -86,7 +86,7 @@ define([
         async loadData() {
             this.isLoading(true);
             const analysisListResp = await PathwayService.list();
-            const analysisList = this.myDesignsOnly
+            const analysisList = ko.unwrap(this.myDesignsOnly)
                 ? analysisListResp.content.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
                 : analysisListResp.content;
             datatableUtils.coalesceField(analysisList, 'modifiedDate', 'createdDate');

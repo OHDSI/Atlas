@@ -70,6 +70,7 @@ define([
             this.params = params;
 
             this.isAuthenticated = authApi.isAuthenticated;
+            this.myDesignsOnly = ko.observable(true);
             this.actionType = ko.observable('assign');
             this.availableTags = ko.observableArray();
             this.selectedTags = ko.observableArray();
@@ -249,7 +250,7 @@ define([
                         componentName: 'concept-set-entity-browser',
                         componentParams: {
                             buttonActionEnabled: false,
-                            myDesignsOnly: true,
+                            myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.CONCEPT_SET.id),
@@ -263,7 +264,7 @@ define([
                         key: 'cohorts',
                         componentName: 'cohort-definition-browser',
                         componentParams: {
-                            myDesignsOnly: true,
+                            myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.COHORT.id),
@@ -277,7 +278,7 @@ define([
                         key: 'characterizations',
                         componentName: 'characterization-browser',
                         componentParams: {
-                            myDesignsOnly: true,
+                            myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.CHARACTERIZATION.id),
@@ -291,7 +292,7 @@ define([
                         key: 'ir',
                         componentName: 'incidence-rate-browser',
                         componentParams: {
-                            myDesignsOnly: true,
+                            myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.INCIDENCE_RATE.id),
@@ -305,7 +306,7 @@ define([
                         key: 'pathways',
                         componentName: 'cohort-pathway-browser',
                         componentParams: {
-                            myDesignsOnly: true,
+                            myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.PATHWAY.id),
@@ -319,7 +320,7 @@ define([
                         key: 'reusables',
                         componentName: 'reusable-browser',
                         componentParams: {
-                            myDesignsOnly: true,
+                            myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.REUSABLE.id),
@@ -333,6 +334,11 @@ define([
 
             this.actionResultSuccess = ko.observable(true);
             this.actionResultText = ko.observable();
+
+            TagsService.getAssignmentPermissions().then((data) => {
+                this.myDesignsOnly(!data.anyAssetMultiAssignPermitted);
+                this.assetTabsParams.valueHasMutated();
+            });
         }
 
         hasEnoughSelectedData() {
@@ -382,9 +388,13 @@ define([
                 this.clear();
 
                 setTimeout(() => this.actionResultText(''), 3000);
-            } catch {
+            } catch(e) {
                 this.actionResultSuccess(false);
-                this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
+                if (e.status === 403) {
+                    this.actionResultText(ko.i18n('tagging.multiAssign.forbiddenError', 'Forbidden!')());
+                } else {
+                    this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
+                }
             }
         }
 
@@ -397,9 +407,13 @@ define([
                 this.clear();
 
                 setTimeout(() => this.actionResultText(''), 3000);
-            } catch {
+            } catch(e) {
                 this.actionResultSuccess(false);
-                this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
+                if (e.status === 403) {
+                    this.actionResultText(ko.i18n('tagging.multiAssign.forbiddenError', 'Forbidden!')());
+                } else {
+                    this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
+                }
             }
         }
 

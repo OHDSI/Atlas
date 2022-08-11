@@ -88,7 +88,7 @@ define([
             CharacterizationService
                 .loadCharacterizationList()
                 .then(res => {
-                    const analysisList = this.myDesignsOnly
+                    const analysisList = ko.unwrap(this.myDesignsOnly)
                         ? res.content.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
                         : res.content;
                     datatableUtils.coalesceField(analysisList, 'modifiedDate', 'createdDate');
