@@ -98,10 +98,20 @@ define([
                     }
                 },
                 {
+                    title: ko.i18n('tagging.multiAssign.allowMultiple', 'Allow multiple'),
+                    width: '60px',
+                    render: (s, p, d) => {
+                        return d.groups[0].multiSelection ? 'Yes' : 'No';
+                    }
+                },
+                {
                     title: ko.i18n('columns.name', 'Name'),
                     width: '100px',
                     render: (s, p, d) => {
-                        return `<span class="cell-tag-name" data-bind="title: '${d.name}'">${d.name}</span>`;
+                        return `<span class="tag" data-bind="attr: { style: 'background-color: ${d.color || d.groups[0].color || '#cecece'}'}">
+                                    <i class="${d.icon || d.groups[0].icon || 'fa fa-tag'}"></i>
+                                    <span title="${d.name}">${d.name.length > 22 ? d.name.substring(0, 20) + '...' : d.name}</span>
+                                </span>`;
                     }
                 },
                 {
@@ -230,7 +240,7 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         d.unselectAsset = () => {
-                            this.unselectAsset(d);
+                            this.unselectAsset(d, d.type);
                             if (d.selected) {
                                 d.selected(false);
                             }
@@ -352,6 +362,14 @@ define([
 
         selectTag(tag) {
             if (this.selectedTags.indexOf(tag) < 0) {
+                if (!tag.groups[0].multiSelection) {
+                    this.selectedTags.remove(t => {
+                        if (t.groups[0].id === tag.groups[0].id) {
+                            t.selected(false);
+                            return true;
+                        }
+                    });
+                }
                 tag.selected(true);
                 this.selectedTags.push(tag);
             } else {
@@ -376,7 +394,7 @@ define([
         }
 
         unselectAsset(asset, type) {
-            this.selectedAssets.remove(cs => cs.id === asset.id && cs.type === type);
+            this.selectedAssets.remove(a => a.id === asset.id && a.type === type);
         }
 
         async doAssign() {
