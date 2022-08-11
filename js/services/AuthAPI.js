@@ -485,10 +485,6 @@ define(function(require, exports) {
 
     const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`);
 
-    const isPermittedTagsGroupAssign = () => isPermitted('tag:multiAssign:post');
-
-    const isPermittedTagsGroupUnassign = () => isPermitted('tag:multiUnassign:post');
-
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
         !!tokenHeader && token(tokenHeader);
         !!permissionsStr && permissions(permissionsStr.split('|'));
@@ -603,9 +599,6 @@ define(function(require, exports) {
         isPermittedClearServerCache,
         isPermittedViewDataSourceReport,
         isPermittedViewDataSourceReportDetails,
-
-        isPermittedTagsGroupAssign,
-        isPermittedTagsGroupUnassign,
 
         loadUserInfo,
         TOKEN_HEADER,

@@ -92,7 +92,7 @@ define([
 
             VocabularyProvider.getConceptSetList(appConfig.api.url)
                 .done((results) => {
-                    const list = this.myDesignsOnly
+                    const list = ko.unwrap(this.myDesignsOnly)
                         ? results.filter(a => a.hasWriteAccess || (a.createdBy && authApi.subject() === a.createdBy.login))
                         : results;
                     datatableUtils.coalesceField(list, 'modifiedDate', 'createdDate');

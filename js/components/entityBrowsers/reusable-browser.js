@@ -86,7 +86,7 @@ define([
         async loadData() {
             this.isLoading(true);
             const reusablesList = await ReusablesService.list();
-            const reusables = this.myDesignsOnly
+            const reusables = ko.unwrap(this.myDesignsOnly)
                 ? reusablesList.content.filter(r => r.hasWriteAccess || (r.createdBy && authApi.subject() === r.createdBy.login))
                 : reusablesList.content;
             datatableUtils.coalesceField(reusables, 'modifiedDate', 'createdDate');
