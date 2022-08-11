@@ -70,11 +70,15 @@ define([
 			
 			// the included source codes (from loadSourceCodes)
 			this.includedSourcecodes = ko.observableArray([]);
+
+			// the recommended concepts (from loadRecommended)
+			this.recommendedConcepts = ko.observableArray([]);
 	
 			// loading state of individual aspects of the concept set store
 			this.resolvingConceptSetExpression = ko.observable(false);
 			this.loadingSourceCodes = ko.observable(false);
 			this.loadingIncluded = ko.observable(false);
+			this.loadingRecommended = ko.observable(false);
 			
 			// metadata about this store
 			this.source = props.source || "unnamed";
@@ -92,13 +96,14 @@ define([
 			this.current(null);
 			this.includedConcepts(null);
 			this.includedSourcecodes(null);
+			this.recommendedConcepts(null);
 			this.conceptSetInclusionIdentifiers(null);
 		}
     
     clearIncluded() {
-      ['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
+      ['includedConcepts', 'includedSourcecodes', 'recommendedConcepts', 'conceptSetInclusionIdentifiers']
 				.forEach(key => this[key](null));	
-			['loadingIncluded', 'loadingSourceCodes']
+			['loadingIncluded', 'loadingSourceCodes', 'loadingRecommended']
 				.forEach(key => this[key](true));
     }
     
@@ -131,6 +136,8 @@ define([
         case ViewMode.SOURCECODES:
           this.includedSourcecodes() == null && await this.loadSourceCodes();
           break;
+				case ViewMode.RECOMMEND:
+					this.recommendedConcepts() == null && await this.loadRecommended();
       }
     }
 		
@@ -150,7 +157,6 @@ define([
           ANCESTORS: null,
           isSelected: ko.observable(false)
         })));
-        //await utils.loadAndApplyAncestors(this.includedConcepts(),this);
       } catch (err) {
         console.error(err);
       } finally {
@@ -176,6 +182,27 @@ define([
 				console.error(err);
 			} finally {
 				this.loadingSourceCodes(false);
+			}
+		}
+
+		async loadRecommended() {
+			this.loadingRecommended(true);
+			this.includedConcepts() == null && await this.loadIncluded();
+			let concepts = this.includedConcepts();
+			const identifiers = concepts.map(c => c.CONCEPT_ID);
+			try {
+				const data = await vocabularyService.getRecommendedConceptsById(identifiers);
+        await vocabularyService.loadDensity(data);
+				const normalizedData = data.map(item => ({
+					...item, 
+					isSelected: ko.observable(false),
+				}))
+				this.recommendedConcepts(normalizedData);
+				return data;
+			} catch (err) {
+				console.error(err);
+			} finally {
+				this.loadingRecommended(false);
 			}
 		}
 

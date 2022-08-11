@@ -7,7 +7,6 @@ define([
 	'components/Component',
 	'utils/AutoBind',	
 	'utils/CommonUtils',
-	'conceptsetbuilder/components',
 	'components/cohort-definition-browser',				
 	'databindings',
 	'components/cohortbuilder/components',

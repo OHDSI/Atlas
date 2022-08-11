@@ -9,7 +9,7 @@ define([
 	'services/AuthAPI',
 	'services/ConceptSet',
 	'atlas-state',
-	'conceptsetbuilder/InputTypes/ConceptSetItem',
+	'./InputTypes/ConceptSetItem',
 	'conceptset-editor',
 	'conceptset-modal',
 	'less!./expression.less',

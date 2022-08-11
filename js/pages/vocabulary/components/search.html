@@ -46,7 +46,8 @@
 				placeholder: ko.i18n('search.placeholder', 'Type your search here'),
 				disable: loading()" />
 			<div class="input-group-btn">
-				<button class="pull-right btn btn-primary" type="submit" data-bind="title: ko.i18n('search.buttonTitle', 'Search'), disable: loading()"><i class="fa fa-search"></i></button>
+				<button class="btn btn-primary" type="submit" data-bind="title: ko.i18n('search.buttonTitle', 'Search'), disable: loading()"><i class="fa fa-search"></i></button>
+				<button class="btn btn-success" type="button" data-bind="title: ko.i18n('search.recommendButtonTitle', 'Recommend'), disable: loading(), click: recommendClick"><i class="fa fa-shopping-cart"></i></button>
 			</div>
 		</div>
 	</form>

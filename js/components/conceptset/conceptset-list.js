@@ -8,7 +8,7 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'./utils',
-	'conceptsetbuilder/InputTypes/ConceptSet',
+	'./InputTypes/ConceptSet',
 	'./const',
 	'utils/ExceptionUtils',
 	'const',
