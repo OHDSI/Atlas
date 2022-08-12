@@ -102,6 +102,8 @@ define([
                                             t.selected(false);
                                         }
                                     });
+                                } else {
+                                    this.tagsMessage('');
                                 }
                                 d.selected(true);
                             } else {
@@ -397,6 +399,7 @@ define([
             ko.utils.arrayForEach(this.availableTags(), t => {
                 t.selected(this.selectedTags.indexOf(t) > -1);
             });
+            this.tagsMessage('');
             this.showTagsModal(true);
         }
 
