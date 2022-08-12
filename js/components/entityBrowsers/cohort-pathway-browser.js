@@ -1,6 +1,6 @@
 define([
     'knockout',
-    'text!./characterization-browser.html',
+    'text!./cohort-pathway-browser.html',
     'appConfig',
     'atlas-state',
     'components/entity-browser',
