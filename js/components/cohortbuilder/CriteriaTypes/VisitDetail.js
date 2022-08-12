@@ -11,7 +11,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 					if (change.status === 'deleted') {
 						if (ko.utils.unwrapObservable(self.CodesetId) == change.value.id)
 							self.CodesetId(null);
-						if (ko.utils.unwrapObservable(self.VisitSourceConcept()) == change.value.id)
+						if (ko.utils.unwrapObservable(self.VisitDetailSourceConcept()) == change.value.id)
 							self.VisitSourceConcept()(null);
 					}
 			});
@@ -22,14 +22,14 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		// Verbatim fields
 		self.CodesetId = ko.observable(data.CodesetId);
 
-		self.OccurrenceStartDate = ko.observable(data.OccurrenceStartDate && new Range(data.OccurrenceStartDate));
-		self.OccurrenceEndDate = ko.observable(data.OccurrenceEndDate && new Range(data.OccurrenceEndDate));
-		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
+		self.VisitDetailStartDate = ko.observable(data.VisitDetailStartDate && new Range(data.VisitDetailStartDate));
+		self.VisitDetailEndDate = ko.observable(data.VisitDetailEndDate && new Range(data.VisitDetailEndDate));
+		self.VisitDetailType = ko.observable(data.VisitDetailType && ko.observableArray(data.VisitDetailType.map(function (d) {
 			return new Concept(d);
 		})));
-		self.VisitTypeExclude = ko.observable(data.VisitTypeExclude || null);				
-		self.VisitSourceConcept = ko.observable(data.VisitSourceConcept != null ? ko.observable(data.VisitSourceConcept) : null);
-		self.VisitLength = ko.observable(data.VisitLength && new Range(data.VisitLength));
+		self.VisitTypeExclude = ko.observable(data.VisitTypeExclude || null);
+		self.VisitDetailSourceConcept = ko.observable(data.VisitDetailSourceConcept != null ? ko.observable(data.VisitDetailSourceConcept) : null);
+		self.VisitDetailLength = ko.observable(data.VisitDetailLength && new Range(data.VisitDetailLength));
 
 		// Derived Fields
 		self.First = ko.observable(data.First || null);
@@ -55,6 +55,12 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 
 		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation != null ? ko.observable(data.PlaceOfServiceLocation) : null);
 		self.PlaceOfServiceDistance = ko.observable(data.PlaceOfServiceDistance && new Range(data.PlaceOfServiceDistance));
+		self.DischargedToConcept = ko.observable(data.DischargedToConcept && ko.observableArray(data.DischargedToConcept.map(function (d) {
+			return new Concept(d);
+		})));
+		self.AdmittedFromConcept = ko.observable(data.AdmittedFromConcept && ko.observableArray(data.AdmittedFromConcept.map(function (d) {
+			return new Concept(d);
+		})));
 	}
 
 	VisitDetail.prototype = new Criteria();

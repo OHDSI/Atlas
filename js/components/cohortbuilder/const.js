@@ -252,9 +252,9 @@ define(["knockout"], function (ko) {
       descriptionVisit: 'const.eventsList.addFirstDiagnosis.desc_visit',
       defaultDescriptionVisit: 'Limit Visit Occurrences to the first visit.',
       titleVisitdetail: 'const.eventsList.addFirstDiagnosis.title_visitDetails',
-      defaultTitleVisitdetail: 'Add First Visit Criteria',
+      defaultTitleVisitdetail: 'Add First Visit detail Criteria',
       descriptionVisitdetail: 'const.eventsList.addFirstDiagnosis.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Limit Visit Occurrences to the first visit.',
+      defaultDescriptionVisitdetail: 'Limit Visit Details to the first visit.',
     },
     addAge: {
       titleOccurrence: 'const.eventsList.addAge.title_occurrence',
@@ -1055,7 +1055,19 @@ define(["knockout"], function (ko) {
       defaultTitle: 'Add Location Region',
       descriptionGroup: 'const.eventsList.addLocationRegion.desc_group',
       defaultDescriptionGroup: 'Find patients within geographical area.',
-    }
+    },
+    addAdmittedFromConcept: {
+      titleVisitdetail: 'const.eventsList.addAdmittedFromConcept.title_visitDetails',
+      defaultTitleVisitdetail: 'Add Admitted From Source Criteria',
+      descriptionVisitdetail: 'const.eventsList.addAdmittedFromConcept.desc_visitDetails',
+      defaultDescriptionVisitdetail: 'Filter the patient was admitted from source',
+    },
+    addDischargedToConcept: {
+      titleVisitdetail: 'const.eventsList.addDischargedToConcept.title_visitDetails',
+      defaultTitleVisitdetail: 'Add Discharged To Source Criteria',
+      descriptionVisitdetail: 'const.eventsList.addDischargedToConcept.desc_visitDetails',
+      defaultDescriptionVisitdetail: 'Filter the patient was discharged to source after a visit',
+    },
   }
 
   function setCriteria(criteria) {
@@ -1343,6 +1355,8 @@ define(["knockout"], function (ko) {
     'addPlaceService',
     'addPlaceServiceLocation',
     'addPlaceServiceDistance',
+    'addAdmittedFromConcept',
+    'addDischargedToConcept',
     'addNested',
   ];
   const demographicAttributesList = [
