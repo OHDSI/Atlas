@@ -86,6 +86,8 @@ define([
 				.extend({ rateLimit: { timeout: 500, method: "notifyWhenChangesStop" } });
 
 			this.isEditable = ko.observable(false);
+
+			this.currentConseptSetTab = ko.observable('');
 		}
 
 		clear() {
@@ -122,6 +124,7 @@ define([
     }
     
     async refresh(mode) {
+	  this.currentConseptSetTab(mode);
       if (this.resolvingConceptSetExpression() || this.conceptSetInclusionIdentifiers() == null) // do nothing
 				return false;
       switch (mode) {
@@ -166,6 +169,7 @@ define([
 			const identifiers = concepts.map(c => c.CONCEPT_ID);
 			try {
 				const data = await vocabularyService.getMappedConceptsById(identifiers);
+				await vocabularyService.loadDensity(data);
 				const normalizedData = data.map(item => ({
 					...item, 
 					isSelected: ko.observable(false),
