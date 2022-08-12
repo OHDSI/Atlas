@@ -140,6 +140,7 @@ define(function (require) {
         loadTagsSuggestions,
         decorateComponent,
         getAssignmentPermissions,
+        loadAvailableTags,
         multiAssign,
         multiUnassign
     };
