@@ -7,6 +7,7 @@ define([
     'atlas-state',
     'services/AuthAPI',
     'services/Vocabulary',
+    'components/conceptset/const'
 ], function (
     ko,
     view,
@@ -16,6 +17,7 @@ define([
     sharedState,
     authApi,
     vocabularyProvider,
+    constants
 ) {
 
     class DataSourceSelect extends AutoBind(Component){
@@ -23,6 +25,8 @@ define([
             super(params);
             this.conceptSetStore = params.conceptSetStore;
             this.includedConcepts = this.conceptSetStore.includedConcepts;
+            this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
+            this.currentConseptSetTab = this.conceptSetStore.currentConseptSetTab;
             this.commonUtils = commonUtils;
             this.loading = params.loading;
             this.currentResultSource = ko.observable();
@@ -36,7 +40,6 @@ define([
                         }
                     }
                 })
-
                 return resultSources;
             });
 
@@ -53,10 +56,21 @@ define([
             }
             this.recordCountsRefreshing(true);
             // this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, true));
-            const results = this.includedConcepts();
-            await vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
-            this.includedConcepts(results);
-            // this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, false));
+            const currentResultSource = this.resultSources().find(source => source.sourceId == event.target.value)
+            this.currentResultSource(...currentResultSource)
+            const { ViewMode } = constants;
+            switch (this.currentConseptSetTab()) {
+                case ViewMode.INCLUDED:
+                    const resultsIncludedConcepts = this.includedConcepts();
+                    await vocabularyProvider.loadDensity(resultsIncludedConcepts, this.currentResultSource().sourceKey);
+                    this.includedConcepts(resultsIncludedConcepts);
+                    break;
+                case ViewMode.SOURCECODES:
+                    const resultsIncludedSourcecodes = this.includedSourcecodes();
+                    await vocabularyProvider.loadDensity(resultsIncludedSourcecodes, this.currentResultSource().sourceKey);
+                    this.includedSourcecodes(resultsIncludedSourcecodes);
+                    break;
+            }
             this.recordCountsRefreshing(false);
         }
     }

@@ -5,8 +5,8 @@
     <select data-bind="
           options: resultSources,
           optionsText: 'sourceName',
-          optionsValue: 'sourceKey',
-          value: currentResultSource().sourceKey,
+          optionsValue: 'sourceId',
+          value: currentResultSource(),
           event: { change: refreshRecordCounts }
         "></select>
 
