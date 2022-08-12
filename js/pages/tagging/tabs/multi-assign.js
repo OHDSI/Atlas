@@ -489,6 +489,7 @@ define([
         clear() {
             this.selectedTags([]);
             this.selectedAssets([]);
+            this.selectedAssetsBuffer([]);
             ko.utils.arrayForEach(this.availableTags(), (tag) => tag.selected(false));
             this.availableTags.valueHasMutated();
         }
