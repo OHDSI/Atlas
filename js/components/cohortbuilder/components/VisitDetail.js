@@ -47,8 +47,8 @@ define([
         ...constants.visitDetailAttributes.addStartDate,
         selected: false,
         action: function () {
-          if (self.Criteria.OccurrenceStartDate() == null)
-            self.Criteria.OccurrenceStartDate(
+          if (self.Criteria.VisitDetailStartDate() == null)
+            self.Criteria.VisitDetailStartDate(
               new Range({
                 Op: "lt",
               })
@@ -59,8 +59,8 @@ define([
         ...constants.visitDetailAttributes.addEndDate,
         selected: false,
         action: function () {
-          if (self.Criteria.OccurrenceEndDate() == null)
-            self.Criteria.OccurrenceEndDate(
+          if (self.Criteria.VisitDetailEndDate() == null)
+            self.Criteria.VisitDetailEndDate(
               new Range({
                 Op: "lt",
               })
@@ -71,24 +71,24 @@ define([
         ...constants.visitDetailAttributes.addType,
         selected: false,
         action: function () {
-          if (self.Criteria.VisitType() == null)
-            self.Criteria.VisitType(ko.observableArray());
+          if (self.Criteria.VisitDetailType() == null)
+            self.Criteria.VisitDetailType(ko.observableArray());
         },
       },
       {
         ...constants.visitDetailAttributes.addLength,
         selected: false,
         action: function () {
-          if (self.Criteria.VisitLength() == null)
-            self.Criteria.VisitLength(new Range());
+          if (self.Criteria.VisitDetailLength() == null)
+            self.Criteria.VisitDetailLength(new Range());
         },
       },
       {
         ...constants.visitDetailAttributes.addSourceConcept,
         selected: false,
         action: function () {
-          if (self.Criteria.VisitSourceConcept() == null)
-            self.Criteria.VisitSourceConcept(ko.observable());
+          if (self.Criteria.VisitDetailSourceConcept() == null)
+            self.Criteria.VisitDetailSourceConcept(ko.observable());
         },
       },
       {
@@ -114,6 +114,22 @@ define([
           if (self.Criteria.PlaceOfServiceLocation() === null) {
             self.Criteria.PlaceOfServiceLocation(ko.observable());
           }
+        },
+      },
+      {
+        ...constants.visitDetailAttributes.addAdmittedFromConcept,
+        selected: false,
+        action: function () {
+          if (self.Criteria.AdmittedFromConcept() == null)
+            self.Criteria.AdmittedFromConcept(ko.observableArray());
+        },
+      },
+      {
+        ...constants.visitDetailAttributes.addDischargedToConcept,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DischargedToConcept() == null)
+            self.Criteria.DischargedToConcept(ko.observableArray());
         },
       },
       {
