@@ -78,17 +78,38 @@ define([
 
             this.showAssetsTabsModal = ko.observable(false);
             this.selectedAssetTabKey = ko.observable('concept-sets');
+            this.selectedAssetsBuffer = ko.observableArray();
             this.selectedAssets = ko.observableArray();
 
-            TagsService.decorateComponent(this, {});
-            this.getTags();
-            this.tableOptions = commonUtils.getTableOptions('XS');
+            this.tableOptions = commonUtils.getTableOptions('S');
+            this.tagsMessage = ko.observable();
             this.availableTagsColumns = [
                 {
-                    title: ' ',
+                    title: '',
                     width: '20px',
                     sortable: false,
-                    render: () => renderers.renderCheckbox('selected'),
+                    render: (s, p, d) => {
+                        d.select = () => {
+                            if (!d.selected()) {
+                                if (!d.groups[0].multiSelection) {
+                                    ko.utils.arrayForEach(this.availableTags(), t => {
+                                        if (t.groups[0].id === d.groups[0].id) {
+                                            if (t.selected()) {
+                                                this.tagsMessage(ko.i18nformat('tagging.multiAssign.messageGroupNotMultiple',
+                                                    'Group \'<%=group%>\' does not allow multiple tags. Tag \'<%=replacedName%>\' replaced with tag \'<%=replacedWithName%>\'',
+                                                    {group: t.groups[0].name, replacedName: t.name, replacedWithName: d.name})());
+                                            }
+                                            t.selected(false);
+                                        }
+                                    });
+                                }
+                                d.selected(true);
+                            } else {
+                                d.selected(false);
+                            }
+                        };
+                        return `<span data-bind="click: select, css: { selected: selected }" class="fa fa-check"></span>`;
+                    },
                 },
                 {
                     title: ko.i18n('columns.group', 'Group'),
@@ -101,7 +122,7 @@ define([
                     title: ko.i18n('tagging.multiAssign.allowMultiple', 'Allow multiple'),
                     width: '60px',
                     render: (s, p, d) => {
-                        return d.groups[0].multiSelection ? 'Yes' : 'No';
+                        return d.groups[0].multiSelection ? ko.i18n('common.yes', 'Yes')() : ko.i18n('common.no', 'No')();
                     }
                 },
                 {
@@ -263,10 +284,11 @@ define([
                             myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
+                            scrollY: '50vh',
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.CONCEPT_SET.id),
                             onSelect: conceptSet => conceptSet.selected()
                                 ? this.assetSelected(conceptSet, ASSETS.CONCEPT_SET.id)
-                                : this.unselectAsset(conceptSet, ASSETS.CONCEPT_SET.id)
+                                : this.selectedAssetsBuffer.remove(a => a.type === ASSETS.CONCEPT_SET.id && a.id === conceptSet.id)
                         }
                     },
                     {
@@ -277,10 +299,11 @@ define([
                             myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
+                            scrollY: '50vh',
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.COHORT.id),
                             onSelect: cohort => cohort.selected()
                                 ? this.assetSelected(cohort, ASSETS.COHORT.id)
-                                : this.unselectAsset(cohort, ASSETS.COHORT.id)
+                                : this.selectedAssetsBuffer.remove(a => a.type === ASSETS.COHORT.id && a.id === cohort.id)
                         }
                     },
                     {
@@ -291,10 +314,11 @@ define([
                             myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
+                            scrollY: '50vh',
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.CHARACTERIZATION.id),
                             onSelect: characterization => characterization.selected()
                                 ? this.assetSelected(characterization, ASSETS.CHARACTERIZATION.id)
-                                : this.unselectAsset(characterization, ASSETS.CHARACTERIZATION.id)
+                                : this.selectedAssetsBuffer.remove(a => a.type === ASSETS.CHARACTERIZATION.id && a.id === characterization.id)
                         }
                     },
                     {
@@ -305,10 +329,11 @@ define([
                             myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
+                            scrollY: '50vh',
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.INCIDENCE_RATE.id),
                             onSelect: ir => ir.selected()
                                 ? this.assetSelected(ir, ASSETS.INCIDENCE_RATE.id)
-                                : this.unselectAsset(ir, ASSETS.INCIDENCE_RATE.id)
+                                : this.selectedAssetsBuffer.remove(a => a.type === ASSETS.INCIDENCE_RATE.id && a.id === ir.id)
                         }
                     },
                     {
@@ -319,10 +344,11 @@ define([
                             myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
+                            scrollY: '50vh',
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.PATHWAY.id),
                             onSelect: pathway => pathway.selected()
                                 ? this.assetSelected(pathway, ASSETS.PATHWAY.id)
-                                : this.unselectAsset(pathway, ASSETS.PATHWAY.id)
+                                : this.selectedAssetsBuffer.remove(a => a.type === ASSETS.PATHWAY.id && a.id === pathway.id)
                         }
                     },
                     {
@@ -333,10 +359,11 @@ define([
                             myDesignsOnly: this.myDesignsOnly,
                             showCheckboxes: true,
                             renderLink: false,
+                            scrollY: '50vh',
                             selectedData: () => this.selectedAssets().filter(a => a.type === ASSETS.REUSABLE.id),
                             onSelect: reusable => reusable.selected()
                                 ? this.assetSelected(reusable, ASSETS.REUSABLE.id)
-                                : this.unselectAsset(reusable, ASSETS.REUSABLE.id)
+                                : this.selectedAssetsBuffer.remove(a => a.type === ASSETS.REUSABLE.id && a.id === reusable.id)
                         }
                     },
                 ]
@@ -347,6 +374,7 @@ define([
 
             TagsService.getAssignmentPermissions().then((data) => {
                 this.myDesignsOnly(!data.anyAssetMultiAssignPermitted);
+                this.getTags(!data.canAssignProtectedTags && !data.canUnassignProtectedTags);
                 this.assetTabsParams.valueHasMutated();
             });
         }
@@ -355,26 +383,21 @@ define([
             return this.selectedTags().length > 0 && this.selectedAssets().length > 0;
         }
 
-        async getTags() {
-            const res = await this.loadAvailableTags();
-            this.availableTags(res.filter(t => t.groups && t.groups.length > 0).map(tag => ({ selected: ko.observable(false), ...tag })));
+        async getTags(filterProtectedTags) {
+            const res = await TagsService.loadAvailableTags();
+            this.availableTags(res.filter(t => {
+                if (!t.groups || t.groups.length === 0) { // filter groups and tags without group
+                    return false;
+                }
+                return filterProtectedTags ? !t.permissionProtected : true;
+            }).map(tag => ({ selected: ko.observable(false), ...tag })));
         }
 
-        selectTag(tag) {
-            if (this.selectedTags.indexOf(tag) < 0) {
-                if (!tag.groups[0].multiSelection) {
-                    this.selectedTags.remove(t => {
-                        if (t.groups[0].id === tag.groups[0].id) {
-                            t.selected(false);
-                            return true;
-                        }
-                    });
-                }
-                tag.selected(true);
-                this.selectedTags.push(tag);
-            } else {
-                this.unselectTag(tag);
-            }
+        openTagsModal() {
+            ko.utils.arrayForEach(this.availableTags(), t => {
+                t.selected(this.selectedTags.indexOf(t) > -1);
+            });
+            this.showTagsModal(true);
         }
 
         unselectTag(tag) {
@@ -382,15 +405,26 @@ define([
             this.selectedTags.remove(t => t.id === tag.id);
         }
 
+        applyTagsSelection() {
+            this.selectedTags(this.availableTags().filter(t => t.selected()));
+            this.showTagsModal(false);
+            this.tagsMessage('');
+        }
+
         selectAssetTab(index, { key }) {
             this.selectedAssetTabKey(key);
         }
 
         assetSelected(asset, type) {
-            if (this.selectedAssets.indexOf(asset) < 0) {
+            if (this.selectedAssetsBuffer.indexOf(asset) < 0) {
                 asset.type = type;
-                this.selectedAssets.push(asset);
+                this.selectedAssetsBuffer.push(asset);
             }
+        }
+
+        applyAssetsSelection() {
+            this.selectedAssets(this.selectedAssetsBuffer());
+            this.showAssetsTabsModal(false);
         }
 
         unselectAsset(asset, type) {
