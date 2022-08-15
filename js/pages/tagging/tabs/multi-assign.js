@@ -446,7 +446,8 @@ define([
             } catch(e) {
                 this.actionResultSuccess(false);
                 if (e.status === 403) {
-                    this.actionResultText(ko.i18n('tagging.multiAssign.forbiddenError', 'Forbidden!')());
+                    this.actionResultText(e.data.payload.localizedMessage ||
+                        e.data.payload.undeclaredThrowable.targetException.localizedMessage);
                 } else {
                     this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
                 }
@@ -465,7 +466,8 @@ define([
             } catch(e) {
                 this.actionResultSuccess(false);
                 if (e.status === 403) {
-                    this.actionResultText(ko.i18n('tagging.multiAssign.forbiddenError', 'Forbidden!')());
+                    this.actionResultText(e.data.payload.localizedMessage ||
+                        e.data.payload.undeclaredThrowable.targetException.localizedMessage);
                 } else {
                     this.actionResultText(ko.i18n('tagging.multiAssign.error', 'Error!')());
                 }
