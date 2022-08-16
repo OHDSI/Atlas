@@ -3465,12 +3465,16 @@ define([
 
 		export(data, el) {
 			const svg = el.target.closest(".chartContainer").querySelector('svg');
-			ChartUtils.downloadSvgAsPng(svg, this.filename || "untitled.png");
+			const chartName = el.target.closest(".chartContainer").querySelector(".evidenceVisualization").getAttribute('id');
+			const fileName = chartName ? `${this.reportReportName()}_${chartName}` : `${this.reportReportName()}`;
+			ChartUtils.downloadSvgAsPng(svg, fileName || "untitled.png");
 		}
 
 		exportSvg(data, el) {
 			const svg = el.target.closest(".chartContainer").querySelector('svg');
-			ChartUtils.downloadSvg(svg, this.filename || "untitled.svg");
+			const chartName = el.target.closest(".chartContainer").querySelector(".evidenceVisualization").getAttribute('id');
+			const fileName = chartName ? `${this.reportReportName()}_${chartName}.svg` : `${this.reportReportName()}.svg`;
+			ChartUtils.downloadSvg(svg, fileName || "untitled.svg");
 		}
 
 		dispose() {
