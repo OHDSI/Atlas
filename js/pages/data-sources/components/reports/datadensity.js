@@ -22,6 +22,7 @@ define([
 		constructor(params) {
 			super(params);
 
+			this.name = 'DataDensity';
 			this.totalLineData = ko.observable();
 			this.recordsperpersonLineData = ko.observable();
 			this.conceptsPerPersonData = ko.observable();

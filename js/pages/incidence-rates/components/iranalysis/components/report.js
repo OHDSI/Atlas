@@ -53,7 +53,7 @@ define([
 				options.colorPicker = this.colorPicker();
 				return options;
 			});
-			
+			this.name = 'ir-report';
 			// behaviors
 			
 			this.treeIRExtent = ko.pureComputed(() => {
@@ -147,13 +147,13 @@ define([
 		export(data, el) {
 			const svg = el.target.closest(".visualization_container").querySelectorAll('svg');
 			const combineSvg = ChartUtils.combineSvgWithLegend(svg);
-			ChartUtils.downloadSvgAsPng(combineSvg, this.filename || "untitled.png");
+			ChartUtils.downloadSvgAsPng(combineSvg, this.name || "untitled.png");
 		}
 
 		exportSvg(data, el) {
 			const svg = el.target.closest(".visualization_container").querySelectorAll('svg');
 			const combineSvg = ChartUtils.combineSvgWithLegend(svg);
-			ChartUtils.downloadSvg(combineSvg, this.filename || "untitled.svg");
+			ChartUtils.downloadSvg(combineSvg, `${this.name}.svg` || "untitled.svg");
 		}
 	}
 	

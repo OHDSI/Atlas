@@ -26,6 +26,7 @@ define([
 		constructor(params) {
 			super(params);
 
+			this.name = 'Death';
 			this.prevalenceByGenderAgeYearData = ko.observable();
 			this.byMonthSeriesLineData = ko.observable();
 			this.prevalenceByTypeDonutData = ko.observable();

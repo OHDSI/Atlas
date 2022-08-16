@@ -24,12 +24,11 @@ define([
 	class Person extends Report {
 		constructor(params) {
 			super(params);
-
+			this.name = 'Person';
 			this.yearHistogramData = ko.observable();
 			this.genderData = ko.observable();
 			this.raceData = ko.observable();
 			this.ethnicityData = ko.observable();
-
 			this.chartFormats = {
 				yearHistogram: {
 					xFormat: d3.format('d'),

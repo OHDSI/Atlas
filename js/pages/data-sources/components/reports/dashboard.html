@@ -20,7 +20,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.populationByGender', 'Population by Gender')"></div>
 		<div class="panel-body">
-			<donut params="data: genderConceptData"></donut>
+			<donut params="data: genderConceptData, reportName: name, chartName: 'Population by Gender'"></donut>
 		</div>
 	</div>
 </div>
@@ -29,7 +29,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.ageAtFirstObservation', 'Age at First Observation')"></div>
 		<div class="panel-body">
-			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
+			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation, reportName: name, chartName: 'Age at First Observation'"></histogram>
 		</div>
 	</div>
 </div>
@@ -38,7 +38,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.cumulativeObservation', 'Cumulative Observation')"></div>
 		<div class="panel-body">
-			<atlasline class="evidenceVisualization" params="data: observationLineData, format: chartFormats.observationLine"></atlasline>
+			<atlasline class="evidenceVisualization" params="data: observationLineData, format: chartFormats.observationLine, reportName: name, chartName: 'Cumulative Observation'"></atlasline>
 		</div>
 	</div>
 </div>
@@ -47,7 +47,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.dashboardReport.personsWithContinuousObservationByMonth', 'Persons With Continuous Observation By Month')"></div>
 		<div class="panel-body">
-			<atlasline class="evidenceVisualization" params="data: byMonthSeriesData, format: chartFormats.byMonthSeries"></atlasline>
+			<atlasline class="evidenceVisualization" params="data: byMonthSeriesData, format: chartFormats.byMonthSeries, reportName: name, chartName: 'Persons With Continuous Observation By Month'"></atlasline>
 		</div>
 	</div>
 </div>

@@ -35,7 +35,7 @@ define([
 			this.ageAtFirstObservationData = ko.observable();
 			this.observationLineData = ko.observable();
 			this.byMonthSeriesData = ko.observable();
-
+            this.name = 'Dashboard';
 			this.chartFormats = {
 				ageAtFirstObservation: {
 					xFormat: d3.format('d'),
