@@ -702,7 +702,7 @@ define(["knockout"], function (ko) {
       descriptionVisit: 'const.eventsList.addType.desc_visit',
       defaultDescriptionVisit: 'Filter Condition Occurrences  by the Condition Type.',
       titleVisitdetail: 'const.eventsList.addType.title_visitDetails',
-      defaultTitleVisitdetail: 'Add Visit Type Criteria',
+      defaultTitleVisitdetail: 'Add Visit Detail Type Criteria',
       descriptionVisitdetail: 'const.eventsList.addType.desc_visitDetails',
       defaultDescriptionVisitdetail: 'Filter Visit Details  by the Visit Type.',
     },
