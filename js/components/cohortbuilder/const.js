@@ -470,7 +470,7 @@ define(["knockout"], function (ko) {
       titleVisitdetail: 'const.eventsList.addStartDate.title_visitDetails',
       defaultTitleVisitdetail: 'Add Start Date Criteria',
       descriptionVisitdetail: 'const.eventsList.addStartDate.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Filter Visit Details by the Condition Start Date.',
+      defaultDescriptionVisitdetail: 'Filter Visit details by the Condition Start Date.',
       titleDemographic: 'const.eventsList.addStartDate.title_demographic',
       defaultTitleDemographic: 'Add Start Date Criteria',
       descriptionDemographic: 'const.eventsList.addStartDate.desc_demographic',
@@ -516,7 +516,7 @@ define(["knockout"], function (ko) {
       titleVisitdetail: 'const.eventsList.addEndDate.title_visitDetails',
       defaultTitleVisitdetail: 'Add End Date Criteria',
       descriptionVisitdetail: 'const.eventsList.addEndDate.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Filter Visit Details  by the Condition End Date.',
+      defaultDescriptionVisitdetail: 'Filter Visit details  by the Condition End Date.',
       titleDemographic: 'const.eventsList.addEndDate.title_demographic',
       defaultTitleDemographic: 'Add Event End Date Criteria',
       descriptionDemographic: 'const.eventsList.addEndDate.desc_demographic',
@@ -702,9 +702,9 @@ define(["knockout"], function (ko) {
       descriptionVisit: 'const.eventsList.addType.desc_visit',
       defaultDescriptionVisit: 'Filter Condition Occurrences  by the Condition Type.',
       titleVisitdetail: 'const.eventsList.addType.title_visitDetails',
-      defaultTitleVisitdetail: 'Add Visit Detail Type Criteria',
+      defaultTitleVisitdetail: 'Add Visit details Type Criteria',
       descriptionVisitdetail: 'const.eventsList.addType.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Filter Visit Details  by the Visit Type.',
+      defaultDescriptionVisitdetail: 'Filter Visit details  by the Visit Type.',
     },
     addUserDefined: {
       titleObservationperiod: 'const.eventsList.addUserDefined.title_observationperiod',
@@ -754,7 +754,7 @@ define(["knockout"], function (ko) {
       titleVisitdetail: 'const.eventsList.addSourceConcept.title_visitDetails',
       defaultTitleVisitdetail: 'Add Visit details Source Concept Criteria',
       descriptionVisitdetail: 'const.eventsList.addSourceConcept.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Filter Visit Details by the Visit details  Source Concept.',
+      defaultDescriptionVisitdetail: 'Filter Visit details by the Visit details  Source Concept.',
     },
     addProviderSpecialty: {
       titleOccurrence: 'const.eventsList.addProviderSpecialty.title_occurrence',
@@ -1058,15 +1058,15 @@ define(["knockout"], function (ko) {
     },
     addAdmittedFromConcept: {
       titleVisitdetail: 'const.eventsList.addAdmittedFromConcept.title_visitDetails',
-      defaultTitleVisitdetail: 'Add Admitted From Source Criteria',
+      defaultTitleVisitdetail: 'Add Admitted From Concept Criteria',
       descriptionVisitdetail: 'const.eventsList.addAdmittedFromConcept.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Filter the patient was admitted from source',
+      defaultDescriptionVisitdetail: 'Filter the patient was admitted from concept.',
     },
     addDischargedToConcept: {
       titleVisitdetail: 'const.eventsList.addDischargedToConcept.title_visitDetails',
-      defaultTitleVisitdetail: 'Add Discharged To Source Criteria',
+      defaultTitleVisitdetail: 'Add Discharged To Concept Criteria',
       descriptionVisitdetail: 'const.eventsList.addDischargedToConcept.desc_visitDetails',
-      defaultDescriptionVisitdetail: 'Filter the patient was discharged to source after a visit',
+      defaultDescriptionVisitdetail: 'Filter the patient was discharged to concept after a visit.',
     },
   }
 

@@ -1509,6 +1509,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return "observation-criteria-viewer";
 			else if (data.hasOwnProperty("VisitOccurrence"))
 				return "visit-occurrence-criteria-viewer";
+			else if (data.hasOwnProperty("VisitDetail"))
+				return "visit-detail-criteria-viewer";
 			else if (data.hasOwnProperty("DeviceExposure"))
 				return "device-exposure-criteria-viewer";
 			else if (data.hasOwnProperty("Measurement"))
