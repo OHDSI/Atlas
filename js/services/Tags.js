@@ -139,8 +139,8 @@ define(function (require) {
         unassignTag,
         loadTagsSuggestions,
         decorateComponent,
-        getAssignmentPermissions,
         loadAvailableTags,
+        getAssignmentPermissions,
         multiAssign,
         multiUnassign
     };

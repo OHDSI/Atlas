@@ -74,6 +74,7 @@ define([
       });
 
       this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canManageTags = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedTagsManagement());
       this.canClearServerCache = ko.pureComputed(() => {
         return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
       });

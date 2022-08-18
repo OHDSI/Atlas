@@ -125,6 +125,11 @@
 							<span data-bind="text:ko.i18n('configuration.buttons.importUsers', 'Import Users from LDAP/AD')"></span>
 						</a>
 					</div>
+					<div class="configuration__padded" data-bind="if: !config.userAuthenticationEnabled || $component.canManageTags">
+						<a href="#/tag-management" class="btn btn-sm btn-primary">
+							<span data-bind="text:ko.i18n('configuration.buttons.tagManagement', 'Tag Management')"></span>
+						</a>
+					</div>
 					<div class="configuration__padded" data-bind="if: $component.canClearServerCache">
 						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearServerCache">
 							<span data-bind="text:ko.i18n('configuration.buttons.clearServerCache', 'Clear Server Cache')"></span>

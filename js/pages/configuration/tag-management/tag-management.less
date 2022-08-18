@@ -1,0 +1,47 @@
+.tag-management {
+
+  &__container {
+    padding: 10px;
+    margin-top: 5px;
+  }
+
+  &__tags-container {
+    margin-top: 25px;
+  }
+
+  &__create-button {
+    margin: 5px 0 10px;
+    font-size: 12px;
+  }
+
+  a {
+    cursor: pointer;
+  }
+}
+
+.tag {
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  position: relative;
+  background-color: #bdbdbd;
+  color: black;
+  border-radius: 2px 2px;
+  padding: 1px 4px 0 3px;
+}
+
+.modal-footer {
+  display: table;
+  width: 100%;
+  padding: 0;
+  border: 0;
+
+  .modal-buttons {
+    display: table-cell;
+    text-align: right;
+
+    button + button {
+      margin-left: 10px;
+    }
+  }
+}

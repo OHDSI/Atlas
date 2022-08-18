@@ -1,0 +1,94 @@
+<heading-title params="name: 'Tag Management', icon: 'database', theme: 'dark'"></heading-title>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<div data-bind="if: hasAccess, css: classes('container')">
+
+    <h4 data-bind="text: ko.i18n('configuration.tagManagement.tagGroups', 'Tag Groups')"></h4>
+
+    <button type="button" class="btn btn-primary"
+            data-bind="css: classes('create-button'),
+                        text: ko.i18n('configuration.tagManagement.createGroup', 'Create Group')"></button>
+
+    <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: tagGroups,
+                    options: {
+                        order: [0, 'asc'],
+                        columns: tagGroupColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            " style="width: 100%"/>
+
+    <div data-bind="if: showTagsForGroup, css: classes('tags-container')">
+
+        <h4 data-bind="text: ko.i18nformat('configuration.tagManagement.tagsInGroup', 'Tags in Group \'<%=group%>\'', {group: showTagsForGroup().name})"></h4>
+
+        <button type="button" class="btn btn-primary"
+                data-bind="css: classes('create-button'),
+                            text: ko.i18n('configuration.tagManagement.createTag', 'Create Tag')"></button>
+
+        <table data-bind="
+                    css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                    dataTable:{
+                        data: tags,
+                        options: {
+                            order: [0, 'asc'],
+                            columns: tagColumns,
+                            pageLength: tableOptions.pageLength,
+                            lengthMenu: tableOptions.lengthMenu,
+                            language: ko.i18n('datatable.language')
+                        },
+                    }
+                " style="width: 100%"/>
+
+    </div>
+
+</div>
+
+<atlas-modal params="
+        showModal: showTagGroupModal,
+        title: ko.i18n('configuration.tagManagement.editTagGroup', 'Edit Tag Group'),
+        backdropClosable: false,
+        data: {
+            tagGroup: currentTagGroup,
+            showModal: showTagGroupModal
+        }
+    ">
+    Name: <span data-bind="text: tagGroup().name"></span><br>
+    Description: <span data-bind="text: tagGroup().description"></span><br>
+    Color: <span data-bind="attr: { style: 'background-color: ' + (tagGroup().color || '#cecece')}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+    Icon: <i data-bind="attr: {class: tagGroup().icon || 'fa fa-tag'}"></i><br>
+    Tag from the group is mandatory: <span data-bind="text: tagGroup().mandatory"></span><br>
+    Show Tag Group column in assets table: <span data-bind="text: tagGroup().showGroup"></span><br>
+    Allow multiple tags from the group in a single asset: <span data-bind="text: tagGroup().multiSelection"></span><br>
+    Allow custom tags creation: <span data-bind="text: tagGroup().allowCustom"></span><br>
+
+    <div class="modal-footer with-padding">
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
+        </div>
+    </div>
+</atlas-modal>
+
+<atlas-modal params="
+        showModal: showTagModal,
+        title: ko.i18n('configuration.tagManagement.editTag', 'Edit Tag'),
+        backdropClosable: false,
+        data: {
+            tag: currentTag,
+            showModal: showTagModal
+        }
+    ">
+    Name: <span data-bind="text: tag().name"></span>
+    <div class="modal-footer with-padding">
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
+        </div>
+    </div>
+</atlas-modal>
