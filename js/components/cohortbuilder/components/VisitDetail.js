@@ -39,8 +39,8 @@ define([
         ...constants.visitDetailAttributes.addGender,
         selected: false,
         action: function () {
-          if (self.Criteria.Gender() == null)
-            self.Criteria.Gender(ko.observableArray());
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(ko.observable());
         },
       },
       {
@@ -71,8 +71,8 @@ define([
         ...constants.visitDetailAttributes.addType,
         selected: false,
         action: function () {
-          if (self.Criteria.VisitDetailType() == null)
-            self.Criteria.VisitDetailType(ko.observableArray());
+          if (self.Criteria.VisitDetailTypeCS() == null)
+            self.Criteria.VisitDetailTypeCS(ko.observable());
         },
       },
       {
@@ -95,16 +95,16 @@ define([
         ...constants.visitDetailAttributes.addProviderSpecialty,
         selected: false,
         action: function () {
-          if (self.Criteria.ProviderSpecialty() == null)
-            self.Criteria.ProviderSpecialty(ko.observableArray());
+          if (self.Criteria.ProviderSpecialtyCS() == null)
+            self.Criteria.ProviderSpecialtyCS(ko.observable());
         },
       },
       {
         ...constants.visitDetailAttributes.addPlaceService,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfService() == null)
-            self.Criteria.PlaceOfService(ko.observableArray());
+          if (self.Criteria.PlaceOfServiceCS() == null)
+            self.Criteria.PlaceOfServiceCS(ko.observable());
         },
       },
       {
@@ -121,7 +121,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.AdmittedFromConcept() == null)
-            self.Criteria.AdmittedFromConcept(ko.observableArray());
+            self.Criteria.AdmittedFromConcept(ko.observable());
         },
       },
       {
@@ -129,7 +129,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.DischargedToConcept() == null)
-            self.Criteria.DischargedToConcept(ko.observableArray());
+            self.Criteria.DischargedToConcept(ko.observable());
         },
       },
       {
