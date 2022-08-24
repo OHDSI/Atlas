@@ -192,13 +192,16 @@ define([
 			const identifiers = concepts.map(c => c.CONCEPT_ID);
 			try {
 				const data = await vocabularyService.getRecommendedConceptsById(identifiers);
-        await vocabularyService.loadDensity(data);
-				const normalizedData = data.map(item => ({
+				const includedSet = new Set(this.conceptSetInclusionIdentifiers());
+				const excludedSet = new Set(this.current().expression.items().filter(i => i.isExcluded()).map(i=>i.CONCEPT_ID));
+				const filtered = data.filter(f => !(includedSet.has(f.CONCEPT_ID) || excludedSet.has(f.CONCEPT_ID)));
+        await vocabularyService.loadDensity(filtered);
+				const normalizedData = filtered.map(item => ({
 					...item, 
 					isSelected: ko.observable(false),
 				}))
 				this.recommendedConcepts(normalizedData);
-				return data;
+				return filtered;
 			} catch (err) {
 				console.error(err);
 			} finally {
