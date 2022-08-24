@@ -193,7 +193,7 @@ define([
 			try {
 				const data = await vocabularyService.getRecommendedConceptsById(identifiers);
 				const includedSet = new Set(this.conceptSetInclusionIdentifiers());
-				const excludedSet = new Set(this.current().expression.items().filter(i => i.isExcluded()).map(i=>i.CONCEPT_ID));
+				const excludedSet = new Set(this.current().expression.items().filter(i => i.isExcluded()).map(i=>i.concept.CONCEPT_ID));
 				const filtered = data.filter(f => !(includedSet.has(f.CONCEPT_ID) || excludedSet.has(f.CONCEPT_ID)));
         await vocabularyService.loadDensity(filtered);
 				const normalizedData = filtered.map(item => ({
