@@ -90,6 +90,7 @@ const settingsObject = {
 			'd3-color': 'd3',
 			'd3-interpolate': 'd3',
 			'd3-selection': 'd3',
+			'd3-transition': 'd3',
 			'd3-collection': 'd3',
 			'services/VocabularyProvider': 'services/Vocabulary'
 		}
@@ -142,7 +143,8 @@ const settingsObject = {
 		"ajv": "../node_modules/ajv/dist/ajv.bundle",
 		"hash-it": "../node_modules/hash-it/dist/hash-it.min",
 		"leaflet": "../node_modules/leaflet/dist/leaflet",
-		"html2canvas": "../node_modules/html2canvas/dist/html2canvas.min"
+		"html2canvas": "../node_modules/html2canvas/dist/html2canvas.min",
+		"venn": "../node_modules/venn.js/venn"
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",
