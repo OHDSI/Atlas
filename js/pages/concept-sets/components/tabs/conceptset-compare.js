@@ -13,6 +13,8 @@ define([
   'components/conceptset/ConceptSetStore',
   'components/conceptset/InputTypes/ConceptSet',
   'components/modal',
+  'components/charts/venn',
+  'less!./conceptset-compare.less'
 ], function (
 	ko,
 	view,
@@ -58,6 +60,8 @@ define([
         }
       });
       this.compareResults = ko.observable();
+      this.compareResultsSame = ko.observable();
+
       this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
         return (
@@ -246,6 +250,7 @@ define([
         return this.recordCountsRefreshing() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-database fa-lg";
       });
       this.conceptSetLoading = ko.observable(false);
+      this.showDiagram = ko.observable(false);
     }
 
     chooseCS1() {
@@ -292,10 +297,12 @@ define([
 					const conceptIds = compareResults.map((o, n) => {
 						return o.conceptId;
 					});
+                    const sameConcepts = compareResults.find(concept => concept.conceptIn1And2 === 0);
 					cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
 						.then((rowcounts) => {
 							//this.compareResults(null);
 							this.compareResults(compareResults);
+                            this.compareResultsSame(sameConcepts);
 							this.comparisonTargets(compareTargets); // Stash the currently selected concept sets so we can use this to determine when to show/hide results
 							this.compareLoading(false);
 						});
@@ -381,6 +388,10 @@ define([
 					});
 			}
 		}
+
+    toggleShowDiagram() {
+        this.showDiagram(!this.showDiagram())
+    }
 	}
 
 	return commonUtils.build('conceptset-compare', ConceptsetCompare, view);
