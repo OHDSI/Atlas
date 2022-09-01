@@ -57,14 +57,14 @@ define([
                     title: ko.i18n('columns.description', 'Description'),
                     width: '465px',
                     render: (s, p, d) => {
-                        return `<span class="cell-group-description" data-bind="title: '${d.description}'">${d.description}</span>`;
+                        return `<span class="cell-group-description" data-bind="title: '${d.description || '-'}'">${d.description || '-'}</span>`;
                     }
                 },
                 {
                     title: ko.i18n('columns.type', 'Type'),
                     width: '80px',
                     render: (s, p, d) => {
-                        d.typeText = d.type === 'CUSTOM'
+                        d.typeText = d.allowCustom
                             ? ko.i18n('components.tags.typeCustom', 'Free-form')
                             : ko.i18n('components.tags.typeSystem', 'System');
                         return `<span class="cell-tag-type" data-bind="text: typeText, title: typeText"></span>`;

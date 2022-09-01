@@ -54,6 +54,18 @@ define(function (require) {
         return httpService.doPost(config.webAPIRoot + `tag/`, tag);
     }
 
+    function getTag(id) {
+        return httpService.doGet(config.webAPIRoot + `tag/${id}`);
+    }
+
+    function updateTag(tag) {
+        return httpService.doPut(config.webAPIRoot + `tag/${tag.id}`, tag);
+    }
+
+    function deleteTag(tag) {
+        return httpService.doDelete(config.webAPIRoot + `tag/${tag.id}`);
+    }
+
     function checkPermissionForAssignProtectedTag(assetType, assetId) {
         return authService.isPermitted(`${assetType}:${assetId}:protectedtag:post`);
     }
@@ -142,6 +154,10 @@ define(function (require) {
         getAssignmentPermissions,
         loadAvailableTags,
         multiAssign,
-        multiUnassign
+        multiUnassign,
+        createNewTag,
+        getTag,
+        updateTag,
+        deleteTag
     };
 });

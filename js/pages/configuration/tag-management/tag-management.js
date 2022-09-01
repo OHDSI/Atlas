@@ -22,9 +22,11 @@ define([
     datatableUtils,
     config,
     authApi,
-    TagsService,
-    sharedState
+    TagsService
 ) {
+    const DEFAULT_TAG_COLOR = '#cecece';
+    const DEFAULT_TAG_ICON = 'fa fa-tag';
+
     class TagManagement extends AutoBind(Page) {
         constructor(params) {
             super(params);
@@ -41,6 +43,7 @@ define([
             });
 
             this.allTags = ko.observableArray();
+
             this.tagGroups = ko.observableArray();
             this.showTagsForGroup = ko.observable();
             this.showTagsForGroup.subscribe((group) => {
@@ -52,7 +55,10 @@ define([
             });
             this.showTagGroupModal = ko.observable(false);
             this.currentTagGroup = ko.observable();
+
             this.tags = ko.observableArray();
+            this.showTagModal = ko.observable(false);
+            this.currentTag = ko.observable();
 
             this.tagGroupColumns = [
                 {
@@ -131,7 +137,7 @@ define([
                     width: '100px',
                     sortable: false,
                     render: (s, p, d) => {
-                        if (this.showTagsForGroup() === d) {
+                        if (this.showTagsForGroup() && this.showTagsForGroup().id === d.id) {
                             d.resetCurrentGroup = () => this.showTagsForGroup(null);
                             return `<a data-bind="click: resetCurrentGroup, text: ko.i18n('columns.hideTags', 'Hide tags')"></a>`;
                         } else {
@@ -146,10 +152,24 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         d.editTagGroup = () => {
-                            this.currentTagGroup(d);
+                            this.currentTagGroup({
+                                ...d,
+                                name: ko.observable(d.name),
+                                color: ko.observable(d.color),
+                                icon: ko.observable(d.icon),
+                            });
                             this.showTagGroupModal(true);
-                        }
+                        };
                         return `<a data-bind="click: editTagGroup, text: ko.i18n('columns.edit', 'Edit')"></a>`;
+                    }
+                },
+                {
+                    title: '',
+                    width: '100px',
+                    sortable: false,
+                    render: (s, p, d) => {
+                        d.deleteTag = () => this.deleteTag(d);
+                        return `<a data-bind="click: deleteTag, text: ko.i18n('columns.remove', 'Remove')"></a>`;
                     }
                 }
             ];
@@ -207,22 +227,136 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         d.editTag = () => {
-                            this.currentTag(d);
+                            this.currentTag({
+                                ...d,
+                                name: ko.observable(d.name),
+                                color: ko.observable(d.color),
+                                icon: ko.observable(d.icon),
+                            });
                             this.showTagModal(true);
-                        }
+                        };
                         return `<a data-bind="click: editTag, text: ko.i18n('columns.edit', 'Edit')"></a>`;
+                    }
+                },
+                {
+                    title: '',
+                    width: '100px',
+                    sortable: false,
+                    render: (s, p, d) => {
+                        d.deleteTag = () => this.deleteTag(d);
+                        return `<a data-bind="click: deleteTag, text: ko.i18n('columns.remove', 'Remove')"></a>`;
                     }
                 }
             ];
-
-            this.showTagModal = ko.observable(false);
-            this.currentTag = ko.observable();
         }
 
         async onPageCreated() {
             const res = await TagsService.loadAvailableTags();
             this.allTags(res);
             this.tagGroups(res.filter(t => !t.groups || t.groups.length === 0));
+        }
+
+        createGroup() {
+            this.currentTagGroup({
+                groups: [],
+                name: ko.observable(''),
+                color: ko.observable(DEFAULT_TAG_COLOR),
+                icon: ko.observable(DEFAULT_TAG_ICON),
+            });
+            this.showTagGroupModal(true);
+        }
+
+        createTag() {
+            this.currentTag({
+                name: ko.observable(''),
+                color: ko.observable(),
+                icon: ko.observable(),
+                groups: [this.showTagsForGroup()],
+                count: 0
+            });
+            this.showTagModal(true);
+        }
+
+        async saveTag(tagToSave) {
+            try {
+                let tag = ko.toJS(tagToSave);
+
+                if (tag.id !== undefined) {
+                    let updatedTag = await TagsService.updateTag(tag);
+                    let oldTag = ko.utils.arrayFirst(this.allTags(), t => t.id === tag.id);
+                    this.allTags.replace(oldTag, updatedTag.data);
+                } else {
+                    let newTag = await TagsService.createNewTag(tag);
+                    this.allTags.push(newTag.data);
+                }
+
+                if (tag.groups.length === 0) {
+                    this.tagGroups(this.allTags().filter(t => !t.groups || t.groups.length === 0));
+
+                    // replace tagGroup in tags
+                    ko.utils.arrayFirst(this.allTags(), t => {
+                        if (t.groups.length > 0 && t.groups[0].id === tag.id) {
+                            t.groups[0] = tag;
+                        }
+                    });
+                    // rerender tags table
+                    if (this.showTagsForGroup() && this.showTagsForGroup().id === tag.id) {
+                        this.showTagsForGroup(tag);
+                    }
+
+                    this.closeGroup();
+                } else {
+                    this.tags(this.allTags().filter(t => t.groups && t.groups.length > 0 && t.groups[0].id === tag.groups[0].id));
+                    this.closeTag();
+                }
+            } catch(e) {
+                console.log(e);
+                alert("Error! Check the console.")
+            }
+        }
+
+        async deleteTag(tag) {
+            try {
+                // check if group is empty
+                let empty = true;
+                ko.utils.arrayFirst(this.allTags(), t => {
+                    if (t.groups.length > 0 && t.groups[0].id === tag.id) {
+                        empty = false;
+                    }
+                });
+                if (!empty) {
+                    alert('Cannot delete tag group: the group contains tags');
+                    return;
+                }
+
+                if (!confirm('Are you sure?')) {
+                    return;
+                }
+                await TagsService.deleteTag(tag);
+                this.allTags.remove(tag);
+                if (tag.groups.length > 0) {   // tag
+                    this.tags(this.allTags().filter(t => t.groups && t.groups.length > 0 && t.groups[0].id === tag.groups[0].id));
+                } else {                       // group
+                    this.tagGroups(this.allTags().filter(t => !t.groups || t.groups.length === 0));
+                }
+            } catch(e) {
+                console.log(e);
+                alert("Error! Check the console.")
+            }
+        }
+
+        closeGroup() {
+            this.showTagGroupModal(false);
+            setTimeout(() => {
+                this.currentTagGroup({});
+            }, 0);
+        }
+
+        closeTag() {
+            this.showTagModal(false);
+            setTimeout(() => {
+                this.currentTag({});
+            }, 0);
         }
     }
 
