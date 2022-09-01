@@ -68,44 +68,46 @@ define([
                 },
                 {
                     title: ko.i18n('configuration.tagManagement.color', 'Color'),
-                    width: '60px',
+                    width: '38px',
+                    sortable: false,
                     render: (s, p, d) => {
-                        return `<span data-bind="attr: { style: 'background-color: ${d.color || '#cecece'}'}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+                        return `<span class="center-span" data-bind="attr: { style: 'background-color: ${d.color || '#cecece'}'}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
                     }
                 },
                 {
                     title: ko.i18n('configuration.tagManagement.icon', 'Icon'),
-                    width: '60px',
+                    width: '30px',
+                    sortable: false,
                     render: (s, p, d) => {
-                        return `<i class="${d.icon || 'fa fa-tag'}"></i>`;
+                        return `<span class="center-span"><i class="${d.icon || 'fa fa-tag'}"></i></span>`;
                     }
                 },
                 {
                     title: ko.i18n('configuration.tagManagement.mandatory', 'Mandatory'),
-                    width: '60px',
+                    width: '40px',
                     render: (s, p, d) => {
-                        return d.mandatory ? ko.i18n('common.yes', 'Yes')() : ko.i18n('common.no', 'No')();
+                        return d.mandatory ? `<span class="center-span" data-bind="attr: { title: ko.i18n('configuration.tagManagement.mandatoryCheckbox', 'Tag from the group is mandatory for an asset')}"><i class="fa fa-check"></i></span>` : '';
                     }
                 },
                 {
-                    title: ko.i18n('configuration.tagManagement.showInAssetsBrowser', 'Show Column'),
-                    width: '60px',
+                    title: ko.i18n('configuration.tagManagement.showInAssetsBrowser', 'Show&nbsp;Column'),
+                    width: '40px',
                     render: (s, p, d) => {
-                        return d.showGroup ? ko.i18n('common.yes', 'Yes')() : ko.i18n('common.no', 'No')();
+                        return d.showGroup ? `<span class="center-span" data-bind="attr: { title: ko.i18n('configuration.tagManagement.showGroupCheckbox', 'Show Tag Group column in assets table')}"><i class='fa fa-check'></i></span>` : '';
                     }
                 },
                 {
                     title: ko.i18n('configuration.tagManagement.allowMultiple', 'Multiple'),
-                    width: '60px',
+                    width: '40px',
                     render: (s, p, d) => {
-                        return d.multiSelection ? ko.i18n('common.yes', 'Yes')() : ko.i18n('common.no', 'No')();
+                        return d.multiSelection ? `<span class="center-span" data-bind="attr: { title: ko.i18n('configuration.tagManagement.multiSelectionCheckbox', 'Allow multiple tags from the group in a single asset')}"><i class='fa fa-check'></i></span>` : '';
                     }
                 },
                 {
-                    title: ko.i18n('configuration.tagManagement.allowCustom', 'Custom'),
-                    width: '60px',
+                    title: ko.i18n('configuration.tagManagement.allowCustom', 'Free&#8209;form'),
+                    width: '40px',
                     render: (s, p, d) => {
-                        return d.allowCustom ? ko.i18n('common.yes', 'Yes')() : ko.i18n('common.no', 'No')();
+                        return d.allowCustom ? `<span class="center-span" data-bind="attr: { title: ko.i18n('configuration.tagManagement.allowCustomCheckbox', 'Allow custom tags creation in this group')}"><i class='fa fa-check'></i></span>` : '';
                     }
                 },
                 {
@@ -187,9 +189,9 @@ define([
                 },
                 {
                     title: ko.i18n('configuration.tagManagement.protected', 'Protected'),
-                    width: '60px',
+                    width: '30px',
                     render: (s, p, d) => {
-                        return d.permissionProtected ? `${ko.i18n('common.yes', 'Yes')()}` : '';
+                        return d.permissionProtected ? `<span class="center-span"><i class='fa fa-check'></i></span>` : '';
                     }
                 },
                 {
