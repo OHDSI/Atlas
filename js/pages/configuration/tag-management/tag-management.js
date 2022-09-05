@@ -340,6 +340,7 @@ define([
                     this.tags(this.allTags().filter(t => t.groups && t.groups.length > 0 && t.groups[0].id === tag.groups[0].id));
                 } else {                       // group
                     this.tagGroups(this.allTags().filter(t => !t.groups || t.groups.length === 0));
+                    this.showTagsForGroup(null);
                 }
             } catch(e) {
                 console.log(e);
