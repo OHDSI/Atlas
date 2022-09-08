@@ -44,6 +44,15 @@ define([
 			this.currentSearch = ko.observable('');
 			this.commonUtils = commonUtils;
 			this.loading = ko.observable(false);
+			this.recommending = ko.observable(false);
+			this.searching = ko.pureComputed(() => this.loading() || this.recommending())
+			this.isRecommendDisabled = ko.pureComputed(() => sharedState.RepositoryConceptSet.current() || this.searching());
+			this.recommendButtonTooltip = ko.pureComputed(() => {
+				if (sharedState.RepositoryConceptSet.current()) {
+					return ko.i18n('search.recommend.conceptsetopen', 'A Concept Set is already open')()
+				}
+				else return null;
+			});
 			this.domainsLoading = ko.observable(true);
 			this.vocabulariesLoading = ko.observable(true);
 			this.canSearch = ko.observable(true);
@@ -89,6 +98,9 @@ define([
 				}
 				if (this.loading()) {
 					entities.push(ko.i18n('search.loadingMessage.searchResults', 'search results')());
+				}
+				if (this.recommending()) {
+					entities.push(ko.i18n('search.loadingMessage.recommending', 'recommended concept into new concept set')());
 				}
 				return ko.i18n('search.loadingMessage.loading', 'Loading')() +
 						` ${entities.join(', ')}`;
@@ -295,7 +307,6 @@ define([
 		}
 
 		recommendClick() {
-			const redirectUrl = '#/conceptset/0/recommend';
 			if (this.currentSearch().trim().length > 3 || this.currentSearch().split(" ") > 1) 
 			{
 				this.executeRecommend();
@@ -402,13 +413,24 @@ define([
 				"IS_LEXICAL":true
 			};
 
-			const recommendedConcepts = await vocabularyProvider.search(searchParams);
-			await vocabularyProvider.loadDensity(recommendedConcepts, this.currentResultSource().sourceKey,(v)=>parseInt(v,10)); // formatting values as ints
-			recommendedConcepts.sort((a,b) => b.DESCENDANT_RECORD_COUNT - a.DESCENDANT_RECORD_COUNT); // sort descending order by DRC
-			const conceptSetStore = ConceptSetStore.repository();
-			const items = commonUtils.buildConceptSetItems([recommendedConcepts[0]], {includeDescendants: true});
-			conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
-			document.location = '#/conceptset/0/recommend';
+			try {
+				this.recommending(true);
+				this.searchExecuted(false);
+				const recommendedConcepts = await vocabularyProvider.search(searchParams);
+				if (recommendedConcepts.length == 0) {
+					this.data([]); // indicate no results
+					this.searchExecuted(true); // signals 'no results found' message
+					return;
+				}
+				await vocabularyProvider.loadDensity(recommendedConcepts, this.currentResultSource().sourceKey,(v)=>parseInt(v,10)); // formatting values as ints
+				recommendedConcepts.sort((a,b) => b.DESCENDANT_RECORD_COUNT - a.DESCENDANT_RECORD_COUNT); // sort descending order by DRC
+				const conceptSetStore = ConceptSetStore.repository();
+				const items = commonUtils.buildConceptSetItems([recommendedConcepts[0]], {includeDescendants: true});
+				conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+				document.location = '#/conceptset/0/recommend';
+			} finally {
+				this.recommending(false);
+			}
 		}
 
 		getCheckBoxState(conceptId, key) {
