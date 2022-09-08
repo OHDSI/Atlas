@@ -4,13 +4,16 @@ define([
 	'components/Component',
 	'utils/AutoBind',
 	'utils/CommonUtils',
+	'utils/HighLightUtils',
 	'services/CohortDefinition',
+	'prism',
 ], function (
 	ko,
 	view,
 	Component,
 	AutoBind,
 	commonUtils,
+	highlightJS,
 	cohortService,
 ) {
 
@@ -23,7 +26,7 @@ define([
 			const { sql, templateSql, dialect, clipboardTarget } = params;
 			this.dialect = dialect;
 			this.loading = ko.observable();
-			this.sqlText = sql || ko.observable();
+			this.sqlText = highlightJS(sql,'sql') || ko.observable();
 			this.templateSql = templateSql || ko.observable();
 			this.templateSql() && this.translateSql();
 			this.clipboardTarget = clipboardTarget;
@@ -40,7 +43,7 @@ define([
 				this.loading(true);
 				try {
 					const result = await cohortService.translateSql(this.templateSql(), this.dialect);
-					this.sqlText(result.data && result.data.targetSQL);
+					this.sqlText(result.data && highlightJS(result.data.targetSQL, 'sql'));
 				} finally {
 					this.loading(false);
 				}
