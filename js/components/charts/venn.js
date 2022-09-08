@@ -22,6 +22,7 @@ define([
             this.firstConceptSet = params.firstConceptSet();
             this.secondConceptSet = params.secondConceptSet();
             this.data = params.data();
+            console.log(params)
             this.conceptInBothConceptSets = [];
             this.conceptInFirstConceptSetOnly = [];
             this.conceptInSecondConceptSetOnly = [];
@@ -38,12 +39,12 @@ define([
                     }
                 });
                 const conceptSets = [
-                    {sets: [this.firstConceptSet], size: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInFirstConceptSetOnly},
-                    {sets: [this.secondConceptSet], size:this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInSecondConceptSetOnly},
+                    {sets: ['1'], size: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, name: this.firstConceptSet },
+                    {sets: ['2'], size:this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length, name: this.secondConceptSet},
                 ];
                 if (this.conceptInBothConceptSets.length > 0) {
                     conceptSets.push({
-                        sets: [this.firstConceptSet, this.secondConceptSet],
+                        sets: ['1','2'],
                         size: this.conceptInBothConceptSets.length,
                         label: `${this.conceptInBothConceptSets.length} common concept${this.conceptInBothConceptSets.length === 1 ? '' : 's'}`,
                         tooltipText: this.conceptInBothConceptSets
@@ -53,14 +54,14 @@ define([
             });
 
             var chart = venn.VennDiagram();
-            chart.wrap(false)
-                .width(640)
-                .height(640);
+            chart.wrap(false);
 
-            const showText = ['hidden', 'hidden', 'visible'];
+            // const showText = ['visible', 'visible', 'visible'];
+            //     .style('visibility', function(d,i) { return showText[i]; })
+            const textY = [0,0,30];
             const colors = ['#1f77b4','#17becf'];
             var div = d3.select("#venn").datum(this.sets()).call(chart);
-            div.selectAll("text").style("font-size", '14px').style('visibility', function(d,i) { return showText[i]; });
+            div.selectAll("text").attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); }).style("font-size", '12px').style("fill", function(d,i) { return colors[i]; });
 
             div.selectAll("path")
                 .style("stroke-opacity", 0)
@@ -71,38 +72,6 @@ define([
             var tooltip = d3.select("body").append("div")
                 .attr("class", "venntooltip");
 
-            // add a legend
-            var svg = d3.select("#legend").style('width', '100%');
-
-            // legend
-            // Add one dot in the legend for each name.
-            var keys = [this.sets()[0].sets[0], this.sets()[1].sets[0]];
-            var colorColor = d3.scaleOrdinal()
-                .domain(keys)
-                .range(colors);
-
-            svg.selectAll("mydots")
-                .data(keys)
-                .enter()
-                .append("circle")
-                .attr("cx", 10)
-                .attr("cy", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
-                .attr("r", 7)
-                .style("fill", function(d){ return colorColor(d)})
-
-            // Add one dot in the legend for each name.
-            svg.selectAll("mylabels")
-                .data(keys)
-                .enter()
-                .append('text')
-                .attr("x", 30)
-                .attr("y", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
-                .style("fill", function(d){ return colorColor(d)})
-                .text(function(d){ return d})
-                .attr("text-anchor", "left")
-                .style("alignment-baseline", "middle")
-                .style("font-size", "18px")
-
             // add listeners to all the groups to display tooltip on mouseover
             div.selectAll("g")
                 .on("mouseover", function(d, i) {
@@ -110,9 +79,10 @@ define([
                     venn.sortAreas(div, d);
                     tooltip.transition().duration(400).style("opacity", 0.9).style("visibility", 'visible');
                     const html = d.tooltipText.map(concept => `<div>- ${concept}</div>`);
-                    const title = `<div class="title">${d.label ? 'Common concepts' : `${d.sets[0]} concepts`}</div>`;
-                    const amount = `<div class="title">Amount: ${d.size}</div>`;
-                    const textHtml = `${title}${amount}${html.join('')}`;
+                    const title = `<div class="title">${d.label ? 'Common concepts' : `${d.name} concept set`}</div>`;
+                    const amount =  d.label ? `<div class="title">The amount: ${d.size}</div>` : `<div class="title">The total amount of concepts: ${d.size}</div>`;
+                    const concepts = d.label ? `<div></div>` : `<div class="title">The concepts are  only in this concept set: ${d.amountOnly}</div>`;
+                    const textHtml = `${title}${amount}${concepts}${html.join('')}`;
                     tooltip.html(textHtml);
                     var selection = d3.select(this).transition("tooltip").duration(400);
                     selection.select("text").style("font-size", '16px');
@@ -136,6 +106,37 @@ define([
                         .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
                         .style("stroke-opacity", 0);
                 });
+
+            // // add a legend
+            // var svg = d3.select("#legend").style('width', '100%');
+            // // legend
+            // // Add one dot in the legend for each name.
+            // var keys = [this.sets()[0].sets[0], this.sets()[1].sets[0]];
+            // var colorColor = d3.scaleOrdinal()
+            //     .domain(keys)
+            //     .range(colors);
+            //
+            // svg.selectAll("mydots")
+            //     .data(keys)
+            //     .enter()
+            //     .append("circle")
+            //     .attr("cx", 10)
+            //     .attr("cy", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .attr("r", 7)
+            //     .style("fill", function(d){ return colorColor(d)})
+            //
+            // // Add one dot in the legend for each name.
+            // svg.selectAll("mylabels")
+            //     .data(keys)
+            //     .enter()
+            //     .append('text')
+            //     .attr("x", 30)
+            //     .attr("y", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
+            //     .style("fill", function(d){ return colorColor(d)})
+            //     .text(function(d){ return d})
+            //     .attr("text-anchor", "left")
+            //     .style("alignment-baseline", "middle")
+            //     .style("font-size", "18px")
         }
 
     }
