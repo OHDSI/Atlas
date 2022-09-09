@@ -64,10 +64,10 @@
     ">
     <span class="help-block" data-bind="text: ko.i18n('configuration.tagManagement.mandatoryFields', '* Mandatory fields')"></span>
 
-    <div class="form-group" data-bind="css: {'has-error': tagGroup().name().trim().length === 0, 'has-success': tagGroup().name().trim().length > 0}">
+    <div class="form-group" data-bind="css: {'has-error': tagGroup().name().trim() === '', 'has-success': tagGroup().name().trim().length > 0}">
         <label for="tagGroupName" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagGroupName', '* Tag group name')"></label>
         <input required data-bind="textInput: tagGroup().name, placeholder: ko.i18n('configuration.tagManagement.tagGroupNamePlaceholder', 'Enter tag group name')" type="text" id="tagGroupName" class="form-control">
-        <span class="help-block" data-bind="visible: tagGroup().name().trim().length === 0, text: ko.i18n('configuration.tagManagement.tagGroupNameEmpty', 'Tag group name cannot be empty')"></span>
+        <span class="help-block" data-bind="visible: tagGroup().name().trim() === '', text: ko.i18n('configuration.tagManagement.tagGroupNameEmpty', 'Tag group name cannot be empty')"></span>
     </div>
     <div class="form-group">
         <label for="tagGroupDescription" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagGroupDescription', 'Tag group description')"></label>
@@ -117,7 +117,7 @@
     </div>
     <div class="modal-footer with-padding">
         <div class="modal-buttons">
-            <button type="button" class="btn btn-primary" data-bind="click: () => saveTag(tagGroup), text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
+            <button type="button" class="btn btn-primary" data-bind="disable: tagGroup().name().trim() === '', click: () => saveTag(tagGroup), text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
             <button type="button" class="btn btn-danger" data-bind="click: closeGroup, text: ko.i18n('common.cancel', 'Cancel')"></button>
         </div>
     </div>
@@ -147,11 +147,11 @@
     </div>
     <div class="form-group row">
         <div class="col-md-3">
-            <label for="tagColor" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagColor', 'Override tag group color')"></label>
+            <label for="tagColor" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.overrideTagColor', 'Override tag group color')"></label>
             <input data-bind="textInput: tag().color, placeholder: ko.i18n('configuration.tagManagement.tagColorPlaceholder', 'Enter color in #xxxxxx format')" type="text" id="tagColor" class="form-control">
         </div>
         <div class="col-md-3">
-            <label for="tagIcon" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagIcon', 'Override tag group icon')"></label>
+            <label for="tagIcon" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.overrideTagIcon', 'Override tag group icon')"></label>
             <input data-bind="textInput: tag().icon, placeholder: ko.i18n('configuration.tagManagement.tagIconPlaceholder', 'Enter tag icon as font-awesome class')" type="text" id="tagIcon" class="form-control">
         </div>
         <div class="col-md-3">
@@ -174,7 +174,7 @@
     </div>
     <div class="modal-footer with-padding">
         <div class="modal-buttons">
-            <button type="button" class="btn btn-primary" data-bind="click: () => saveTag(tag), text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
+            <button type="button" class="btn btn-primary" data-bind="disable: tag().name().trim() === '', click: () => saveTag(tag), text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
             <button type="button" class="btn btn-danger" data-bind="click: closeTag, text: ko.i18n('common.cancel', 'Cancel')"></button>
         </div>
     </div>
