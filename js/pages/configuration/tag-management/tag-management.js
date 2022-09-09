@@ -141,10 +141,10 @@ define([
                     render: (s, p, d) => {
                         if (this.showTagsForGroup() && this.showTagsForGroup().id === d.id) {
                             d.resetCurrentGroup = () => this.showTagsForGroup(null);
-                            return `<a data-bind="click: resetCurrentGroup, text: ko.i18n('columns.hideTags', 'Hide tags')"></a>`;
+                            return `<a data-bind="click: resetCurrentGroup, text: ko.i18n('configuration.tagManagement.hideTags', 'Hide tags')"></a>`;
                         } else {
                             d.setShowTagsForGroup = () => this.showTagsForGroup(d);
-                            return `<a data-bind="click: setShowTagsForGroup, text: ko.i18n('columns.showTags', 'Show tags')"></a>`;
+                            return `<a data-bind="click: setShowTagsForGroup, text: ko.i18n('configuration.tagManagement.showTags', 'Show tags')"></a>`;
                         }
                     }
                 },
@@ -162,7 +162,7 @@ define([
                             });
                             this.showTagGroupModal(true);
                         };
-                        return `<a data-bind="click: editTagGroup, text: ko.i18n('columns.edit', 'Edit')"></a>`;
+                        return `<a data-bind="click: editTagGroup, text: ko.i18n('configuration.tagManagement.edit', 'Edit')"></a>`;
                     }
                 },
                 {
@@ -171,7 +171,7 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         d.deleteTag = () => this.deleteTag(d);
-                        return `<a data-bind="click: deleteTag, text: ko.i18n('columns.remove', 'Remove')"></a>`;
+                        return `<a data-bind="click: deleteTag, text: ko.i18n('configuration.tagManagement.remove', 'Remove')"></a>`;
                     }
                 }
             ];
@@ -237,7 +237,7 @@ define([
                             });
                             this.showTagModal(true);
                         };
-                        return `<a data-bind="click: editTag, text: ko.i18n('columns.edit', 'Edit')"></a>`;
+                        return `<a data-bind="click: editTag, text: ko.i18n('configuration.tagManagement.edit', 'Edit')"></a>`;
                     }
                 },
                 {
@@ -246,7 +246,7 @@ define([
                     sortable: false,
                     render: (s, p, d) => {
                         d.deleteTag = () => this.deleteTag(d);
-                        return `<a data-bind="click: deleteTag, text: ko.i18n('columns.remove', 'Remove')"></a>`;
+                        return `<a data-bind="click: deleteTag, text: ko.i18n('configuration.tagManagement.remove', 'Remove')"></a>`;
                     }
                 }
             ];
@@ -280,12 +280,18 @@ define([
         }
 
         async saveTag(tagToSave) {
+
             try {
                 let tag = ko.toJS(tagToSave);
 
+                if (this.exists(tag.name, tag.id)) {
+                    alert(ko.i18nformat('configuration.tagManagement.nameExistsWarning', 'Tag or Group name \'<%=tagName%>\' is already in use.', {tagName: tag.name})());
+                    return;
+                }
+
                 if (tag.id !== undefined) {
-                    let updatedTag = await TagsService.updateTag(tag);
                     let oldTag = ko.utils.arrayFirst(this.allTags(), t => t.id === tag.id);
+                    let updatedTag = await TagsService.updateTag(tag);
                     this.allTags.replace(oldTag, updatedTag.data);
                 } else {
                     let newTag = await TagsService.createNewTag(tag);
@@ -327,11 +333,11 @@ define([
                     }
                 });
                 if (!empty) {
-                    alert('Cannot delete tag group: the group contains tags');
+                    alert(ko.i18n('configuration.tagManagement.errorGroupNotEmpty', 'Cannot delete tag group: the group contains tags.')());
                     return;
                 }
 
-                if (!confirm('Are you sure?')) {
+                if (!confirm(ko.i18n('configuration.tagManagement.deleteConfirmation', 'Deletion cannot be undone! Are you sure?')())) {
                     return;
                 }
                 await TagsService.deleteTag(tag);
@@ -346,6 +352,10 @@ define([
                 console.log(e);
                 alert("Error! Check the console.")
             }
+        }
+
+        exists(tagName, skipId) {
+            return this.allTags().find(t => t.id !== skipId && t.name.toLowerCase() === tagName.toLowerCase());
         }
 
         closeGroup() {
