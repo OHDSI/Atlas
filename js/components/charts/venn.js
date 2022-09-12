@@ -22,7 +22,6 @@ define([
             this.firstConceptSet = params.firstConceptSet();
             this.secondConceptSet = params.secondConceptSet();
             this.data = params.data();
-            console.log(params)
             this.conceptInBothConceptSets = [];
             this.conceptInFirstConceptSetOnly = [];
             this.conceptInSecondConceptSetOnly = [];
@@ -54,7 +53,8 @@ define([
             });
 
             var chart = venn.VennDiagram();
-            chart.wrap(false);
+            chart.wrap(false)
+                 .height(450)
 
             // const showText = ['visible', 'visible', 'visible'];
             //     .style('visibility', function(d,i) { return showText[i]; })
