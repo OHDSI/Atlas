@@ -325,29 +325,40 @@ define([
 
         async deleteTag(tag) {
             try {
-                // check if group is empty
-                let empty = true;
-                ko.utils.arrayFirst(this.allTags(), t => {
-                    if (t.groups.length > 0 && t.groups[0].id === tag.id) {
-                        empty = false;
+                if (tag.groups.length === 0) {   // group
+
+                    // check if group is empty
+                    let empty = true;
+                    ko.utils.arrayFirst(this.allTags(), t => {
+                        if (t.groups.length > 0 && t.groups[0].id === tag.id) {
+                            empty = false;
+                        }
+                    });
+
+                    if (!empty) {
+                        alert(ko.i18n('configuration.tagManagement.errorGroupNotEmpty', 'Cannot delete tag group: the group contains tags.')());
+                        return;
                     }
-                });
-                if (!empty) {
-                    alert(ko.i18n('configuration.tagManagement.errorGroupNotEmpty', 'Cannot delete tag group: the group contains tags.')());
-                    return;
+
+                    if (!confirm(ko.i18n('configuration.tagManagement.deleteGroupConfirmation', 'Deletion cannot be undone! Are you sure?')())) {
+                        return;
+                    }
+                } else {        // tag
+                    if (!confirm(ko.i18n('configuration.tagManagement.deleteTagConfirmation', 'If the tag is assigned to an asset, it will be unassigned. Deletion cannot be undone. Are you sure you want to delete the tag?')())) {
+                        return;
+                    }
                 }
 
-                if (!confirm(ko.i18n('configuration.tagManagement.deleteConfirmation', 'Deletion cannot be undone! Are you sure?')())) {
-                    return;
-                }
                 await TagsService.deleteTag(tag);
                 this.allTags.remove(tag);
+
                 if (tag.groups.length > 0) {   // tag
                     this.tags(this.allTags().filter(t => t.groups && t.groups.length > 0 && t.groups[0].id === tag.groups[0].id));
                 } else {                       // group
                     this.tagGroups(this.allTags().filter(t => !t.groups || t.groups.length === 0));
                     this.showTagsForGroup(null);
                 }
+
             } catch(e) {
                 console.log(e);
                 alert("Error! Check the console.")
