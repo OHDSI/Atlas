@@ -5,7 +5,7 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../CriteriaGroup",
-  "text!./VisitDetailsTemplate.html",
+  "text!./VisitDetailTemplate.html",
   "../const",
 ], function (
   ko,
@@ -165,13 +165,13 @@ define([
 		}
 
     self.indexMessage = ko.i18nformat(
-      'components.conditionVisitDetails.indexDataText',
-      'The index date refers to the visit details of <%= conceptSetName %>.',
+      'components.conditionVisitDetail.indexDataText',
+      'The index date refers to the visit detail of <%= conceptSetName %>.',
       {
         conceptSetName: utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n('components.conditionVisitDetails.anyVisitDetails', 'Any Visit details')
+          ko.i18n('components.conditionVisitDetail.anyVisitDetail', 'Any Visit Detail')
         )
       }
     );
