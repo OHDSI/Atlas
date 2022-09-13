@@ -29,7 +29,7 @@ define([
 			this.tableData = ko.observable();
 			this.currentConcept = ko.observable();
 			this.currentConceptSubscription = this.currentConcept.subscribe(c => {
-				c && this.context.loadingReportDrilldown(true);
+				c && this.context.showLoadingDrilldownModal(true) && this.context.loadingDrilldownDone(false);
 			});
 
 			this.byFrequency = false;
