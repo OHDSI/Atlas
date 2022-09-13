@@ -4,7 +4,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.datadensityReport.totalRows', 'Total Rows')"></div>
 		<div class="panel-body">
-			<atlasline class="evidenceVisualization" params="data: totalLineData, format: chartFormats.totalLine"></atlasline>
+			<atlasline class="evidenceVisualization" params="data: totalLineData, format: chartFormats.totalLine, reportName: name, chartName: 'Total Rows'"></atlasline>
 		</div>
 	</div>
 </div>
@@ -12,7 +12,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.datadensityReport.recordsPerPerson', 'Records Per Person')"></div>
 		<div class="panel-body">
-			<atlasline class="evidenceVisualization" params="data: recordsperpersonLineData, format: chartFormats.recordsperpersonLine"></atlasline>
+			<atlasline class="evidenceVisualization" params="data: recordsperpersonLineData, format: chartFormats.recordsperpersonLine, reportName: name, chartName: 'Records Per Person'"></atlasline>
 		</div>
 	</div>
 </div>
@@ -20,7 +20,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.datadensityReport.conceptsPerPerson', 'Concepts Per Person')"></div>
 		<div class="panel-body">
-			<boxplot class="evidenceVisualization" params="data: conceptsPerPersonData, format: chartFormats.conceptsPerPerson"></boxplot>
+			<boxplot class="evidenceVisualization" params="data: conceptsPerPersonData, format: chartFormats.conceptsPerPerson, reportName: name, chartName: 'Concepts Per Person'"></boxplot>
 		</div>
 	</div>
 </div>

@@ -1,6 +1,7 @@
 <!-- ko if: data -->
 <div data-bind="css: chartClasses('container')">
-	<button data-bind="css: chartClasses('export-button'), click: $component.export">Export</button>
+	<button title="PNG" data-bind="css: chartClasses('export-button'), click: $component.export">PNG</button>
+	<button title="SVG" data-bind="css: chartClasses('exportSvg-button'), click: $component.exportSvg">SVG</button>
 	<div data-bind="chart: { data: data, minHeight: minHeight, format: format, renderer: renderer }"></div>
 </div>	
 <!-- /ko -->
