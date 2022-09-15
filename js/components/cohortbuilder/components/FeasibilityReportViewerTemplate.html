@@ -1,6 +1,6 @@
 
 <!-- ko if: report -->
-<table style="border-collapse: collapse; width:500px; margin-left:0px; margin-right:auto" class="indexSummary">
+<table class="indexSummary">
 	<thead>
 		<th style="width: 15px;"></th>
 		<th></th>
@@ -43,9 +43,9 @@ data-bind="click: function() { selectedView('attrition'); }, text: ko.i18n('comp
 data-bind="click: function() { selectedView('intersect'); }, text: ko.i18n('components.feasibilityReportViewer.feasibilityReportViewerText_7', 'Switch to intersect view')"></span> <!-- /ko -->
 </div>
 <div data-bind="visible: selectedView() == 'intersect'">
-	<feasibility-intersect-report params="report: report"></feasibility-intersect-report></div>
+	<feasibility-intersect-report params="reportType: reportType, report: report"></feasibility-intersect-report></div>
 <div data-bind="visible: selectedView() == 'attrition'">
-	<feasibility-attrition-report params="report: report"></feasibility-attrition-report></div>
+	<feasibility-attrition-report params="reportType: reportType, report: report"></feasibility-attrition-report></div>
 <!-- /ko -->
 <!-- ko if: report().inclusionRuleStats.length == 0 -->
 <div class="no-inclusion-message__container">
