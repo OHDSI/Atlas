@@ -25,7 +25,7 @@ define(['knockout', 'atlas-state', 'lodash'],
 			return ko.pureComputed(() => {
 				const tmpl = ko.i18n(key, defaultValue);
 				const unwrappedOptions = mapValues(options, ko.unwrap);
-				let compiledTemplate = template(ko.unwrap(tmpl), {sourceURL: 'i18n/templates[' + key + ']'});
+				const compiledTemplate = template(ko.unwrap(tmpl), {sourceURL: 'i18n/templates[' + key + ']'});
 				return compiledTemplate(unwrappedOptions);
 			});
 		};
