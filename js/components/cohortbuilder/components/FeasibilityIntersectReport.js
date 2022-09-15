@@ -30,9 +30,6 @@ define(['knockout',
 			}
 		];
 		self.allAnyOption = ko.observable('ANY');
-		self.allAnyOption.subscribe(() => {
-			self.grayRectsInTreemap()
-		});
 
 		self.passedFailedOptions = [
 			{
@@ -44,11 +41,9 @@ define(['knockout',
 				name: ko.i18n('cohortDefinitions.cohortreports.failed', 'failed')
 			}
 		];
+
 		self.passedFailedOption = ko.observable('PASSED');
-		self.passedFailedOption.subscribe(() => self.grayRectsInTreemap());
-
 		self.checkedRulesIds = ko.observableArray(self.report().inclusionRuleStats.map(r => r.id));
-
 		self.summaryValue = ko.observable(0);
 		self.summaryPercent = ko.observable(0);
 
@@ -100,7 +95,6 @@ define(['knockout',
 			} else {
 				self.checkedRulesIds(self.report().inclusionRuleStats.map(r => r.id));
 			}
-			self.grayRectsInTreemap();
 		}
 
 		self.isRuleChecked = (id) => {
@@ -113,61 +107,55 @@ define(['knockout',
 			} else {
 				self.checkedRulesIds.push(id);
 			}
-			self.grayRectsInTreemap();
 		}
 
-		self.grayRectsInTreemap = () => {
-			self.populationTreemapData.valueHasMutated(); // rerender treemap
-
-			setTimeout(() => {
-				const checkRulesAll = (rectId, checkForFail) => {
-					const checkedRulesIds = self.checkedRulesIds();
-					if (checkedRulesIds.length === 0) {
+		self.grayRectsInTreemap = (element) => {
+			const checkRulesAll = (rectId, checkForFail) => {
+				const checkedRulesIds = self.checkedRulesIds();
+				if (checkedRulesIds.length === 0) {
+					return false;
+				}
+				for (let i = 0; i < checkedRulesIds.length; i++) {
+					if (rectId[checkedRulesIds[i]] !== (checkForFail ? '0' : '1')) {
 						return false;
 					}
-					for (let i = 0; i < checkedRulesIds.length; i++)  {
-						if (rectId[checkedRulesIds[i]] !== (checkForFail ? '0' : '1')) {
-							return false;
-						}
+				}
+				return true;
+			};
+
+			const checkRulesAny = (rectId, checkForFail) => {
+				let checkPassed = false;
+				ko.utils.arrayForEach(self.checkedRulesIds(), (id) => {
+					if (rectId[id] === (checkForFail ? '0' : '1')) {
+						checkPassed = true;
 					}
-					return true;
-				};
-
-				const checkRulesAny = (rectId, checkForFail) => {
-					let checkPassed = false;
-					ko.utils.arrayForEach(self.checkedRulesIds(), (id) => {
-						if (rectId[id] === (checkForFail ? '0' : '1')) {
-							checkPassed = true;
-						}
-					});
-					return checkPassed;
-				};
-
-				self.summaryValue(0);
-				self.summaryPercent(0);
-				const rects = $('#treemap' + self.reportType).find('rect');
-				ko.utils.arrayForEach(rects, (rect) => {
-					if (self.allAnyOption() === 'ANY' && self.passedFailedOption() === 'PASSED' && checkRulesAny(rect.id) ||
-						self.allAnyOption() === 'ALL' && self.passedFailedOption() === 'PASSED' && checkRulesAll(rect.id) ||
-						self.allAnyOption() === 'ANY' && self.passedFailedOption() === 'FAILED' && checkRulesAny(rect.id, true) ||
-						self.allAnyOption() === 'ALL' && self.passedFailedOption() === 'FAILED' && checkRulesAll(rect.id, true)) {
-
-						self.summaryValue(self.summaryValue() + rect.__data__.value);
-
-						let percent = 0;
-						if (self.report().summary.baseCount > 0) {
-							percent = (rect.__data__.value / self.report().summary.baseCount * 100);
-							self.summaryPercent(self.summaryPercent() + percent);
-						}
-
-						return;
-					}
-					rect.setAttribute('style', 'fill: #CCC');
 				});
-			}, 0);
-		};
+				return checkPassed;
+			};
 
-		self.grayRectsInTreemap();
+			let summaryValue = 0;
+			let summaryPercent = 0;
+			const rects = $(element).find('rect');
+			ko.utils.arrayForEach(rects, (rect) => {
+				if (self.allAnyOption() === 'ANY' && self.passedFailedOption() === 'PASSED' && checkRulesAny(rect.id) ||
+					self.allAnyOption() === 'ALL' && self.passedFailedOption() === 'PASSED' && checkRulesAll(rect.id) ||
+					self.allAnyOption() === 'ANY' && self.passedFailedOption() === 'FAILED' && checkRulesAny(rect.id, true) ||
+					self.allAnyOption() === 'ALL' && self.passedFailedOption() === 'FAILED' && checkRulesAll(rect.id, true)) { // include this rectangle in summary
+
+					summaryValue += rect.__data__.value;
+
+					let percent = 0;
+					if (self.report().summary.baseCount > 0) {
+						percent = (rect.__data__.value / self.report().summary.baseCount * 100);
+						summaryPercent += percent;
+					}
+				} else { // gray out rectangle that is not included in summary statistic
+					rect.setAttribute('style', 'fill: #CCC');
+				}
+			});
+			self.summaryValue(summaryValue);
+			self.summaryPercent(summaryPercent);
+		};
 	}
 
 	var component = {

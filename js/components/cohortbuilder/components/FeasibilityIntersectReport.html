@@ -57,7 +57,7 @@
 																								 { event: 'mouseover', selector: '.cell rect', callback: handleCellOver},
 																								 { event: 'mouseout', selector: '.cell rect', callback: describeClear}]">
 				<div style="height: 25px; text-align: center; line-height: 25px; font-size: 12px; color: #222;" class="rect_summary" data-bind="text: rectSummary"></div>
-				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="attr: {id: 'treemap' + reportType}, populationTreemap: populationTreemapData"></div>
+				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="populationTreemap: populationTreemapData, populationTreemapAfterRender:grayRectsInTreemap"></div>
 			</div>
 		</td>
 	</tr>

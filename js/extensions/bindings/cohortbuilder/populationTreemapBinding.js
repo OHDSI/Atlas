@@ -93,6 +93,10 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 				data = JSON.parse(va.data);
 			d3.select(element).selectAll('svg').remove();
 			renderTreemap(data, element);
+			const afterRender = allBindingsAccessor.get('populationTreemapAfterRender');
+			if (afterRender && "function" == typeof afterRender) {
+				afterRender(element);
+			}
 		}
 	};
 });
