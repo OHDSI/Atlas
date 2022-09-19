@@ -25,6 +25,7 @@ define([
             this.conceptInBothConceptSets = [];
             this.conceptInFirstConceptSetOnly = [];
             this.conceptInSecondConceptSetOnly = [];
+            this.updateOutsideFilters = params.updateOutsideFilters;
             this.sets = ko.computed(() => {
                 this.data.forEach(concept => {
                     if (concept.conceptIn1Only === 1) {
@@ -38,15 +39,16 @@ define([
                     }
                 });
                 const conceptSets = [
-                    {sets: ['1'], size: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, name: this.firstConceptSet },
-                    {sets: ['2'], size:this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length, name: this.secondConceptSet},
+                    {sets: ['1'], size: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, name: this.firstConceptSet, key: '1 Only' },
+                    {sets: ['2'], size:this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length, name: this.secondConceptSet, key: '2 Only'},
                 ];
                 if (this.conceptInBothConceptSets.length > 0) {
                     conceptSets.push({
                         sets: ['1','2'],
                         size: this.conceptInBothConceptSets.length,
                         label: `${this.conceptInBothConceptSets.length} common concept${this.conceptInBothConceptSets.length === 1 ? '' : 's'}`,
-                        tooltipText: this.conceptInBothConceptSets
+                        tooltipText: this.conceptInBothConceptSets,
+                        key: 'Both'
                     });
                 }
                 return conceptSets;
@@ -67,6 +69,7 @@ define([
                 .style("stroke-opacity", 0)
                 .style("stroke", "#fff")
                 .style("stroke-width", 3)
+                .style("cursor",'pointer')
                 .style("fill", function(d,i) { return colors[i]; });
             // add a tooltip
             var tooltip = d3.select("body").append("div")
@@ -74,15 +77,18 @@ define([
 
             // add listeners to all the groups to display tooltip on mouseover
             div.selectAll("g")
+                .on("click", function(d,i) {
+                    params.updateOutsideFilters(d.key);
+                })
+
                 .on("mouseover", function(d, i) {
                     // sort all the areas relative to the current item
                     venn.sortAreas(div, d);
                     tooltip.transition().duration(400).style("opacity", 0.9).style("visibility", 'visible');
-                    const html = d.tooltipText.map(concept => `<div>- ${concept}</div>`);
                     const title = `<div class="title">${d.label ? 'Common concepts' : `${d.name} concept set`}</div>`;
                     const amount =  d.label ? `<div class="title">The amount: ${d.size}</div>` : `<div class="title">The total amount of concepts: ${d.size}</div>`;
                     const concepts = d.label ? `<div></div>` : `<div class="title">The concepts are  only in this concept set: ${d.amountOnly}</div>`;
-                    const textHtml = `${title}${amount}${concepts}${html.join('')}`;
+                    const textHtml = `${title}${amount}${concepts}`;
                     tooltip.html(textHtml);
                     var selection = d3.select(this).transition("tooltip").duration(400);
                     selection.select("text").style("font-size", '16px');

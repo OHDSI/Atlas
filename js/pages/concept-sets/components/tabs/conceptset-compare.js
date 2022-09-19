@@ -60,6 +60,8 @@ define([
       this.compareResults = ko.observable();
       this.compareResultsSame = ko.observable();
 
+      this.outsideFilters = ko.observable("");
+
       this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
         return (
@@ -379,6 +381,10 @@ define([
 
     toggleShowDiagram() {
         this.showDiagram(!this.showDiagram())
+    }
+
+    updateOutsideFilters(key) {
+        this.outsideFilters(key);
     }
 	}
 
