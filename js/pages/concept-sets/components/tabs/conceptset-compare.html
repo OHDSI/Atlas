@@ -108,7 +108,7 @@
           <div class="compare-results-same">These concept sets are completely identical concepts</div>
           <!-- /ko -->
           <!-- ko if: compareResultsSame() -->
-          <venn-diagram params="{data: compareResults, firstConceptSet: compareCS1Caption, secondConceptSet:compareCS2Caption }"/>
+          <venn-diagram params="{data: compareResults, firstConceptSet: compareCS1Caption, secondConceptSet:compareCS2Caption, updateOutsideFilters: $component.updateOutsideFilters }"/>
           <!-- /ko -->
       </div>
 
@@ -116,6 +116,7 @@
     <div id="compareResults">
       <faceted-datatable params="{
         reference:$component.compareResults,
+        outsideFilters: $component.outsideFilters,
         columns: compareResultsColumns,
         options:compareResultsOptions,
         order: $component.compareResultsOptions.order,
