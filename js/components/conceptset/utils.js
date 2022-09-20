@@ -96,6 +96,12 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			'binding': function (o) {
 				return o.DOMAIN_ID;
 			}
+		},{
+			'caption': ko.i18n('facets.caption.recommendRelationship', 'Relationship'),
+			'binding': function (o) {
+				return o.RELATIONSHIPS;
+			},
+			'isArray': true
 		}]
 	};
 

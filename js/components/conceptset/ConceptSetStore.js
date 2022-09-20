@@ -188,6 +188,7 @@ define([
 
 		async loadRecommended() {
 			this.loadingRecommended(true);
+			this.isRecommendedAvailable(true);
 			this.includedConcepts() == null && await this.loadIncluded();
 			let concepts = this.includedConcepts();
 			const identifiers = concepts.map(c => c.CONCEPT_ID);
@@ -202,7 +203,6 @@ define([
 					isSelected: ko.observable(false),
 				}))
 				this.recommendedConcepts(normalizedData);
-				this.isRecommendedAvailable(true);
 				return filtered;
 			} catch (err) {
 				if (err.status == 501) { // NOT_IMPLEMENTED means table does not exist
