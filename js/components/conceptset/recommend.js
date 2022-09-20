@@ -47,6 +47,10 @@ define([
 			});
 			commonUtils.clearConceptsSelectionState(this.recommendedConcepts);
 		}
+
+		isRecommendedAvailable() {
+			return this.conceptSetStore.isRecommendedAvailable();
+		}
 	}
 
 	return commonUtils.build('conceptset-recommend', ConceptSetRecommend, view);

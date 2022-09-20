@@ -202,11 +202,14 @@ define([
 					isSelected: ko.observable(false),
 				}))
 				this.recommendedConcepts(normalizedData);
+				this.isRecommendedAvailable(true);
 				return filtered;
 			} catch (err) {
 				if (err.status == 501) { // NOT_IMPLEMENTED means table does not exist
 					this.isRecommendedAvailable(false);
 					this.recommendedConcepts([]);
+				} else {
+					throw(err);
 				}
 			} finally {
 				this.loadingRecommended(false);
