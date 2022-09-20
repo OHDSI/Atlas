@@ -4,7 +4,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.yearOfBirth', 'Year of Birth')"></div>
 		<div class="panel-body">
-			<histogram params="data: yearHistogramData, format: chartFormats.yearHistogram"></histogram>
+			<histogram params="data: yearHistogramData, format: chartFormats.yearHistogram, reportName: name, chartName: 'Year of Birth'"></histogram>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: source() && source().sourceName"></div>
@@ -17,7 +17,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.gender', 'Gender')"></div>
 		<div class="panel-body">
-			<donut params="data: genderData"></donut>
+			<donut params="data: genderData, reportName: name, chartName: 'Gender'"></donut>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: source() && source().sourceName"></div>
@@ -29,7 +29,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.race', 'Race')"></div>
 		<div class="panel-body">
-			<donut params="data: raceData"></donut>
+			<donut params="data: raceData, reportName: name, chartName: 'Race'"></donut>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: source() && source().sourceName"></div>
@@ -41,7 +41,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.personReport.ethnicity', 'Ethnicity')"></div>
 		<div class="panel-body">
-			<donut params="data: ethnicityData"></donut>
+			<donut params="data: ethnicityData, reportName: name, chartName: 'Ethnicity'"></donut>
 		</div>
 		<div class="panel-footer">
 			<div data-bind="css: classes('ds-title'), text: source() && source().sourceName"></div>

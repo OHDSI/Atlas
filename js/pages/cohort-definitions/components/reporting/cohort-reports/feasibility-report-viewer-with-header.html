@@ -5,9 +5,15 @@
     <!-- ko if: !isLoading() -->
 			<div class="heading">
 				<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.inclusionReportFor', 'Inclusion Report for')"></span>
-				<span data-bind="text: source().sourceName"></span>
+				<b data-bind="text: source().sourceName"></b>
 				<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.inclusionReportFor1', '')"></span>
+				<!-- ko if: reportType === 0 -->
+				<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.tabs.byEventsSubtitle', 'using all events')"></span>
+				<!-- /ko -->
+				<!-- ko if: reportType === 1 -->
+				<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.tabs.byPersonSubtitle', 'using 1 event per person')"></span>
+				<!-- /ko -->
 			</div>
-			<feasibility-report-viewer params="report: report"></feasibility-report-viewer>
+			<feasibility-report-viewer params="reportType: reportType, report: report"></feasibility-report-viewer>
     <!-- /ko -->
 </div>

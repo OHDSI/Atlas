@@ -1,18 +1,19 @@
-<!-- ko ifnot: context.loadingReportDrilldown() -->
+<!-- ko if: context.loadingDrilldownDone() -->
 <!-- ko if: isError -->
 <empty-state params="message: ko.i18n('dataSources.drilldown.noData', 'No data')"></empty-state>
 <!-- /ko -->
 
-<div data-bind="visible: !isError()">
+<div data-bind="visible: !isError()" id="drilldownReport">
 	<!-- ko if: currentConcept() -->
-	<heading-title params="name: ` ${currentConcept().name} ${ko.i18n('dataSources.drilldown.drilldownReport', 'Drilldown Report')()}`"></heading-title>
+	<span class="report-heading-title" data-bind="text: `${currentConcept().name} ${ko.i18n('dataSources.drilldown.drilldownReport', 'Drilldown Report')()}`"></span>
+	<a class="scroll-to-top-link" data-bind="click: () => document.getElementById('dataSourcesTop').scrollIntoView()">scroll to the top</a>
 	<!-- /ko -->
 
 	<div class="col-xs-12">
 		<div class="panel panel-primary">
 			<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.prevalence', 'Prevalence')"></div>
 			<div class="panel-body">
-				<trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear"></trellisline>
+				<trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear, reportName: reportName,chartName: 'Prevalence'"></trellisline>
 			</div>
 		</div>
 	</div>
@@ -23,7 +24,7 @@
 
 			</div>
 			<div class="panel-body">
-				<atlasline class="evidenceVisualization" params="data: prevalenceByMonthData, format: chartFormats.prevalenceByMonth"></atlasline>
+				<atlasline class="evidenceVisualization" params="data: prevalenceByMonthData, format: chartFormats.prevalenceByMonth, reportName: reportName, chartName: 'Prevalence by Month'"></atlasline>
 			</div>
 		</div>
 	</div>
@@ -34,7 +35,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.type', 'Type')"></div>
 				<div class="panel-body">
-					<donut class="evidenceVisualization" params="data: prevalenceByTypeData, format: chartFormats.prevalenceByType"></donut>
+					<donut class="evidenceVisualization" params="data: prevalenceByTypeData, format: chartFormats.prevalenceByType, reportName: reportName,chartName: 'Type'"></donut>
 				</div>
 			</div>
 		</div>
@@ -44,7 +45,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.ageAtFirstOccurrence', 'Age at First Occurrence')"></div>
 				<div class="panel-body">
-					<boxplot class="evidenceVisualization" params="data: ageData, format: chartFormats.age"></boxplot>
+					<boxplot class="evidenceVisualization" params="data: ageData, format: chartFormats.age, reportName: reportName, chartName: 'Age at First Occurrence'"></boxplot>
 				</div>
 			</div>
 		</div>
@@ -54,7 +55,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.lengthOfEraDistribution', 'Length of Era Distribution')"></div>
 				<div class="panel-body">
-					<boxplot class="evidenceVisualization" params="data: lengthOfEra, format: chartFormats.lengthOfEra"></boxplot>
+					<boxplot class="evidenceVisualization" params="data: lengthOfEra, format: chartFormats.lengthOfEra, reportName: reportName, chartName: 'Length of Era Distribution'"></boxplot>
 				</div>
 			</div>
 		</div>
@@ -69,7 +70,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.valueAsConcept', 'Value As Concept')"></div>
 				<div class="panel-body">
-					<donut class="evidenceVisualization" params="data: prevalenceByValueAsConceptData, format: chartFormats.prevalenceByType"></donut>
+					<donut class="evidenceVisualization" params="data: prevalenceByValueAsConceptData, format: chartFormats.prevalenceByType, reportName: reportName, chartName: 'Value as Concept'"></donut>
 				</div>
 			</div>
 		</div>
@@ -80,7 +81,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.qualifierConcept', 'Qualifier Concept')"></div>
 				<div class="panel-body">
-					<donut class="evidenceVisualization" params="data: prevalenceByQualifierData, format: chartFormats.prevalenceByType"></donut>
+					<donut class="evidenceVisualization" params="data: prevalenceByQualifierData, format: chartFormats.prevalenceByType, reportName: reportName, chartName: 'Qualifier Concept'"></donut>
 				</div>
 			</div>
 		</div>
@@ -91,7 +92,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.operatorConcept', 'Operator Concept')"></div>
 				<div class="panel-body">
-					<donut class="evidenceVisualization" params="data: prevalenceByOperatorData, format: chartFormats.prevalenceByType"></donut>
+					<donut class="evidenceVisualization" params="data: prevalenceByOperatorData, format: chartFormats.prevalenceByType, reportName: reportName, chartName: 'Operator Concept'"></donut>
 				</div>
 			</div>
 		</div>
@@ -105,7 +106,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.measurementRecordsByUnit', 'Measurement Records by Unit')"></div>
 				<div class="panel-body">
-					<donut class="evidenceVisualization" params="data: recordsByUnitData, format: chartFormats.recordsByUnit"></donut>
+					<donut class="evidenceVisualization" params="data: recordsByUnitData, format: chartFormats.recordsByUnit, reportName: reportName, chartName: 'Measurement Records by Unit'"></donut>
 				</div>
 			</div>
 		</div>
@@ -114,7 +115,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.measurementValueDistribution', 'Measurement Value Distribution')"></div>
 				<div class="panel-body">
-					<boxplot class="evidenceVisualization" params="data: measurementValueDistributionData, format: chartFormats.measurementValueDistribution"></boxplot>
+					<boxplot class="evidenceVisualization" params="data: measurementValueDistributionData, format: chartFormats.measurementValueDistribution, reportName: reportName, chartName: 'Measurement Value Distribution'"></boxplot>
 				</div>
 			</div>
 		</div>
@@ -125,7 +126,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.lowerLimitDistribution', 'Lower limit Distribution')"></div>
 				<div class="panel-body">
-					<boxplot class="evidenceVisualization" params="data: lowerLimitDistributionData, format: chartFormats.lowerLimitDistribution"></boxplot>
+					<boxplot class="evidenceVisualization" params="data: lowerLimitDistributionData, format: chartFormats.lowerLimitDistribution, reportName: reportName, chartName: 'Lower limit Distribution'"></boxplot>
 				</div>
 			</div>
 		</div>
@@ -134,7 +135,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.upperLimitDistribution', 'Upper Limit Distribution')"></div>
 				<div class="panel-body">
-					<boxplot class="evidenceVisualization" params="data: upperLimitDistributionData, format: chartFormats.upperLimitDistribution"></boxplot>
+					<boxplot class="evidenceVisualization" params="data: upperLimitDistributionData, format: chartFormats.upperLimitDistribution, reportName: reportName, chartName: 'Upper limit Distribution'"></boxplot>
 				</div>
 			</div>
 		</div>
@@ -143,7 +144,7 @@
 			<div class="panel panel-primary">
 				<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.valuesRelativeToNormalRange', 'Values Relative to Normal Range')"></div>
 				<div class="panel-body">
-					<donut class="evidenceVisualization" params="data: valuesRelativeToNormData, format: chartFormats.valuesRelativeToNorm"></donut>
+					<donut class="evidenceVisualization" params="data: valuesRelativeToNormData, format: chartFormats.valuesRelativeToNorm, reportName: reportName, chartName: 'Values Relative to Normal Range'"></donut>
 				</div>
 			</div>
 		</div>
@@ -155,7 +156,7 @@
 		<div class="panel panel-primary">
 			<div class="panel-heading" data-bind="text: ko.i18n('dataSources.drilldown.frequencyDistribution', 'Frequency Distribution')"></div>
 			<div class="panel-body">
-				<frequency-histogram class="evidenceVisualization" params="data: frequencyDistributionData, format: chartFormats.frequencyDistribution"></frequency-histogram>
+				<frequency-histogram class="evidenceVisualization" params="data: frequencyDistributionData, format: chartFormats.frequencyDistribution, reportName: reportName, chartName: 'Frequency Distribution'"></frequency-histogram>
 			</div>
 		</div>
 	</div>

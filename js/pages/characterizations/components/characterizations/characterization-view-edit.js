@@ -31,7 +31,7 @@ define([
     'components/heading',
     'components/authorship',
     'components/security/access/configure-access-modal',
-    'components/tags/tags',
+    'components/tags/modal/tags-modal',
     'components/checks/warnings',
     'components/name-validation',
     'components/versions/versions'

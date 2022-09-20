@@ -7,7 +7,7 @@ define([
 	'appConfig',
 	'text!./linked-cohort-list.html',
 	'const',
-	'components/cohort-definition-browser',
+	'components/entityBrowsers/cohort-definition-browser',
 	'less!./linked-cohort-list.less',
 	'components/linked-entity-list',
 	'components/modal',

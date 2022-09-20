@@ -73,6 +73,7 @@ define([
 
 			// the recommended concepts (from loadRecommended)
 			this.recommendedConcepts = ko.observableArray([]);
+			this.isRecommendedAvailable = ko.observable(true);
 	
 			// loading state of individual aspects of the concept set store
 			this.resolvingConceptSetExpression = ko.observable(false);
@@ -203,7 +204,10 @@ define([
 				this.recommendedConcepts(normalizedData);
 				return filtered;
 			} catch (err) {
-				console.error(err);
+				if (err.status == 501) { // NOT_IMPLEMENTED means table does not exist
+					this.isRecommendedAvailable(false);
+					this.recommendedConcepts([]);
+				}
 			} finally {
 				this.loadingRecommended(false);
 			}
