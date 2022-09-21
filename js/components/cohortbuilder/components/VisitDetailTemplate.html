@@ -63,9 +63,9 @@
 					<div>
 						<span
 								data-bind="text: ko.i18n('components.conditionVisitDetail.visitDetailType', 'visit detail type')"></span>
-						<cycle-toggle-input params="{value: VisitDetailTypeExclude, options: $component.options.DomainTypeExcludeOptions}">
+						<cycle-toggle-input params="{value: VisitDetailTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
 						</cycle-toggle-input>
-						<conceptset-selector params="conceptSetId: VisitDetailTypeCS(), conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: VisitDetailTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
 						ko.i18n('components.conditionVisitDetail.anyType', 'Any Visit Detail Type')"></conceptset-selector>
 					</div>
 				</td>
@@ -103,9 +103,10 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('GenderCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-						<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_8', 'with a gender of:')"></span>
-
-						<conceptset-selector params="conceptSetId: GenderCS(), conceptSets: $component.expression.ConceptSets, defaultText:
+						<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_8', 'with a gender ')"></span>
+						<cycle-toggle-input params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
 						ko.i18n('components.conditionVisitDetail.anyGender', 'Any Gender')"></conceptset-selector>
 					</div>
 				</td>
@@ -115,10 +116,11 @@
 				<td>
 					<div>
 						<span
-								data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_9', 'with a Provider Specialty of:')"></span>
-
-						<conceptset-selector params="conceptSetId: ProviderSpecialtyCS(), conceptSets: $component.expression.ConceptSets, defaultText:
-						ko.i18n('components.conditionVisitDetail.anyProviderSpeciality', 'Any Provider Speciality')"></conceptset-selector>
+								data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_9', 'with a Provider Specialty ')"></span>
+						<cycle-toggle-input params="{value: ProviderSpecialtyCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: ProviderSpecialtyCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
+						ko.i18n('components.conditionVisitDetail.anyProviderSpeciality', 'Any Provider Specialty')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
@@ -126,10 +128,9 @@
 				<td><i data-bind="click: function() { $component.removeCriterion('PlaceOfServiceCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
-	<span
-			data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_10', 'with a Place of Service of:')"></span>
-
-						<conceptset-selector params="conceptSetId: PlaceOfServiceCS(), conceptSets: $component.expression.ConceptSets, defaultText:
+						<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_10', 'with a Place of Service ')"></span>
+						<cycle-toggle-input params="{value: PlaceOfServiceCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: PlaceOfServiceCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
 						ko.i18n('components.conditionVisitDetail.anyPlaceService', 'Any Place of Service')"></conceptset-selector>
 					</div>
 				</td>
