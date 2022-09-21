@@ -15,16 +15,16 @@ define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/ConceptS
 						if (ko.utils.unwrapObservable(self.VisitDetailSourceConcept()) == change.value.id) {
 							self.VisitSourceConcept()(null);
 						}
-						if (ko.utils.unwrapObservable(self.VisitDetailTypeCS().CodesetId) == change.value.id) {
+						if (ko.utils.unwrapObservable(self.VisitDetailTypeCS()?.CodesetId) == change.value.id) {
 							self.VisitDetailTypeCS(new ConceptSetSelection());
 						}
-						if (ko.utils.unwrapObservable(self.GenderCS().CodesetId) == change.value.id) {
+						if (ko.utils.unwrapObservable(self.GenderCS()?.CodesetId) == change.value.id) {
 							self.GenderCS(new ConceptSetSelection());
 						}
-						if (ko.utils.unwrapObservable(self.ProviderSpecialtyCS().CodesetId) == change.value.id) {
+						if (ko.utils.unwrapObservable(self.ProviderSpecialtyCS()?.CodesetId) == change.value.id) {
 							self.ProviderSpecialtyCS(new ConceptSetSelection());
 						}
-						if (ko.utils.unwrapObservable(self.PlaceOfServiceCS().CodesetId) == change.value.id) {
+						if (ko.utils.unwrapObservable(self.PlaceOfServiceCS()?.CodesetId) == change.value.id) {
 							self.PlaceOfServiceCS(new ConceptSetSelection());
 						}
 
