@@ -4,6 +4,7 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./VisitDetailTemplate.html",
   "../const",
@@ -13,6 +14,7 @@ define([
   options,
   utils,
   Range,
+  ConceptSetSelection,
   CriteriaGroup,
   template,
   constants
@@ -40,7 +42,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.GenderCS() == null)
-            self.Criteria.GenderCS(ko.observable());
+            self.Criteria.GenderCS(new ConceptSetSelection());
         },
       },
       {
@@ -72,7 +74,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.VisitDetailTypeCS() == null)
-            self.Criteria.VisitDetailTypeCS(ko.observable());
+            self.Criteria.VisitDetailTypeCS(new ConceptSetSelection());
         },
       },
       {
@@ -96,7 +98,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.ProviderSpecialtyCS() == null)
-            self.Criteria.ProviderSpecialtyCS(ko.observable());
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection());
         },
       },
       {
@@ -104,7 +106,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.PlaceOfServiceCS() == null)
-            self.Criteria.PlaceOfServiceCS(ko.observable());
+            self.Criteria.PlaceOfServiceCS(new ConceptSetSelection());
         },
       },
       {
