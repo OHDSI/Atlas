@@ -117,22 +117,6 @@ define([
         },
       },
       {
-        ...constants.visitDetailAttributes.addAdmittedFromConcept,
-        selected: false,
-        action: function () {
-          if (self.Criteria.AdmittedFromConcept() == null)
-            self.Criteria.AdmittedFromConcept(ko.observable());
-        },
-      },
-      {
-        ...constants.visitDetailAttributes.addDischargedToConcept,
-        selected: false,
-        action: function () {
-          if (self.Criteria.DischargedToConcept() == null)
-            self.Criteria.DischargedToConcept(ko.observable());
-        },
-      },
-      {
         ...constants.visitDetailAttributes.addNested,
         selected: false,
         action: function () {

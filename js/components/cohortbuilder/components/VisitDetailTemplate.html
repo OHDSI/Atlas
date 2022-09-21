@@ -157,27 +157,6 @@
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: AdmittedFromConcept() != null, visible: AdmittedFromConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AdmittedFromConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
-				<td>
-					<div>
-
-						<span data-bind="text: ko.i18n('components.conditionVisitDetail.admittedFromConcept', 'the patient was admitted from:')"></span>
-						<conceptset-selector params="conceptSetId: AdmittedFromConcept(), conceptSets: $component.expression.ConceptSets, defaultText:
-						ko.i18n('components.conditionVisitDetail.anyAdmitted', 'Any Place')"></conceptset-selector>
-					</div>
-				</td>
-			</tr>
-			<tr data-bind="if: DischargedToConcept() != null, visible: DischargedToConcept() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('DischargedToConcept') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
-				<td>
-					<div>
-						<span data-bind="text: ko.i18n('components.conditionVisitDetail.dischargedToConcept', 'the patient was discharged to:')"></span>
-						<conceptset-selector params="conceptSetId: DischargedToConcept(), conceptSets: $component.expression.ConceptSets, defaultText:
-						ko.i18n('components.conditionVisitDetail.anyDischarged', 'Any Place')"></conceptset-selector>
-					</div>
-				</td>
-			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td style="background-color: white">
