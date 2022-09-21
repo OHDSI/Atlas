@@ -46,9 +46,6 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 
 		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation != null ? ko.observable(data.PlaceOfServiceLocation) : null);
 		self.PlaceOfServiceDistance = ko.observable(data.PlaceOfServiceDistance && new Range(data.PlaceOfServiceDistance));
-		self.DischargedToConcept =ko.observable(data.DischargedToConcept != null ? ko.observable(data.DischargedToConcept) : null);
-
-		self.AdmittedFromConcept = ko.observable(data.AdmittedFromConcept != null ? ko.observable(data.AdmittedFromConcept) : null);
 	}
 
 	VisitDetail.prototype = new Criteria();

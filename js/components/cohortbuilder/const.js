@@ -1056,18 +1056,7 @@ define(["knockout"], function (ko) {
       descriptionGroup: 'const.eventsList.addLocationRegion.desc_group',
       defaultDescriptionGroup: 'Find patients within geographical area.',
     },
-    addAdmittedFromConcept: {
-      titleVisitdetail: 'const.eventsList.addAdmittedFromConcept.title_visitDetail',
-      defaultTitleVisitdetail: 'Add Admitted From Concept Criteria',
-      descriptionVisitdetail: 'const.eventsList.addAdmittedFromConcept.desc_visitDetail',
-      defaultDescriptionVisitdetail: 'Filter the patient was admitted from concept.',
-    },
-    addDischargedToConcept: {
-      titleVisitdetail: 'const.eventsList.addDischargedToConcept.title_visitDetail',
-      defaultTitleVisitdetail: 'Add Discharged To Concept Criteria',
-      descriptionVisitdetail: 'const.eventsList.addDischargedToConcept.desc_visitDetail',
-      defaultDescriptionVisitdetail: 'Filter the patient was discharged to concept after a visit.',
-    },
+
   };
 
   function setCriteria(criteria) {
@@ -1355,8 +1344,6 @@ define(["knockout"], function (ko) {
     'addPlaceService',
     'addPlaceServiceLocation',
     'addPlaceServiceDistance',
-    'addAdmittedFromConcept',
-    'addDischargedToConcept',
     'addNested',
   ];
   const demographicAttributesList = [
