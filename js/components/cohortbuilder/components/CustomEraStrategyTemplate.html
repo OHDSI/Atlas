@@ -41,7 +41,7 @@
 		<!-- ko ifnot: strategy().DaysSupplyOverride() == null  -->
 		<li class="criteriaSection">
 			<span
-				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_10', 'Force drug exposure days suply to:')"></span>
+				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_10', 'Force drug exposure days supply to:')"></span>
 			<span contenteditable="true" class="numericInputField dropdown"
 				data-bind="htmlValue: strategy().DaysSupplyOverride.numeric(), eventType:'blur', ko_autocomplete: { value: strategy().DaysSupplyOverride, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"></span>
 			<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_11', 'days.')"></span>
