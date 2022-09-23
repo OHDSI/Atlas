@@ -75,7 +75,6 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 
 	const recommendedConceptOptions = {
 		xssSafe: true,
-		order: [[7,'desc']],
 		Facets: [{
 			'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
 			'binding': function (o) {
