@@ -17,6 +17,12 @@ define(function (require, exports) {
 		return sourceKey === undefined ? sharedState.vocabularyUrl() : (url || config.webAPIRoot) + 'vocabulary/' + sourceKey;
 	}
 
+	function encodeQuery(str) {
+		str = encodeURIComponent(str);
+		str = str.replace(/\*/g, '%2A'); // handle asterisk for wildcard search
+		return str;
+	}
+
 	function getDomains() {
 		// if domains haven't yet been requested, create the promise
 		if (!domainsPromise) {
@@ -38,7 +44,7 @@ define(function (require, exports) {
 		return domainsPromise;
 	}
 
-	function loadDensity(results, sourceKey) {
+	function loadDensity(results, sourceKey, formatter) {
 		var densityPromise = $.Deferred();
 
 		if (results.length == 0) {
@@ -55,32 +61,19 @@ define(function (require, exports) {
 			searchResultIdentifiers.push(results[c].CONCEPT_ID);
 		}
 		return sourceKey ?
-			CDMResultAPI.getConceptRecordCount(sourceKey, searchResultIdentifiers, results, false) :
-			CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false);
+			CDMResultAPI.getConceptRecordCount(sourceKey, searchResultIdentifiers, results, false, formatter) :
+			CDMResultAPI.getConceptRecordCountWithResultsUrl(sharedState.resultsUrl(), searchResultIdentifiers, results, false, formatter);
 	}
 
-	function search(searchString, options) {
+	async function search(params) {
 		const vocabUrl = getVocabUrl();
 
-		var deferred = $.Deferred();
-
-		var search = {
-			QUERY: searchString,
-			DOMAIN_ID: options.domains,
-			INVALID_REASON: 'V'
+		if (params.QUERY && Object.keys(params).length == 1)  // simple search via GET
+		{
+			return  httpService.doGet(`${vocabUrl}search?query=${encodeQuery(params.QUERY)}`).then(({ data }) => data)
 		}
 
-		$.ajax({
-			url: vocabUrl + 'search',
-			method: 'POST',
-			contentType: 'application/json',
-			data: JSON.stringify(search),
-			success: function (results) {
-				deferred.resolve(results)
-			}
-		});
-
-		return deferred.promise();
+		return httpService.doPost(`${vocabUrl}search`,params).then(({ data }) => data);
 	}
 
 	function getConcept(id) {
@@ -159,9 +152,14 @@ define(function (require, exports) {
 			method: 'POST',
 			contentType: 'application/json',
 			error: authAPI.handleAccessDenied,
-	});
+		});
 
 		return getMappedConceptsByIdPromise;
+	}
+
+	async function  getRecommendedConceptsById(identifiers, url, sourceKey) {
+		var vocabUrl = getVocabUrl(url, sourceKey) + 'lookup/recommended';
+		return httpService.doPost(vocabUrl, identifiers).then(({ data }) => data);;
 	}
 
 	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
@@ -208,6 +206,7 @@ define(function (require, exports) {
 		getConceptsById: getConceptsById,
 		getConceptsByCode: getConceptsByCode,
 		getMappedConceptsById: getMappedConceptsById,
+		getRecommendedConceptsById: getRecommendedConceptsById,
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,

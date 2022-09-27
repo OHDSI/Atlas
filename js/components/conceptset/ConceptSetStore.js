@@ -72,11 +72,16 @@ define([
 			
 			// the included source codes (from loadSourceCodes)
 			this.includedSourcecodes = ko.observableArray([]);
+
+			// the recommended concepts (from loadRecommended)
+			this.recommendedConcepts = ko.observableArray([]);
+			this.isRecommendedAvailable = ko.observable(true);
 	
 			// loading state of individual aspects of the concept set store
 			this.resolvingConceptSetExpression = ko.observable(false);
 			this.loadingSourceCodes = ko.observable(false);
 			this.loadingIncluded = ko.observable(false);
+			this.loadingRecommended = ko.observable(false);
 			
 			// metadata about this store
 			this.source = props.source || "unnamed";
@@ -94,13 +99,14 @@ define([
 			this.current(null);
 			this.includedConcepts(null);
 			this.includedSourcecodes(null);
+			this.recommendedConcepts(null);
 			this.conceptSetInclusionIdentifiers(null);
 		}
     
     clearIncluded() {
-      ['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
+      ['includedConcepts', 'includedSourcecodes', 'recommendedConcepts', 'conceptSetInclusionIdentifiers']
 				.forEach(key => this[key](null));	
-			['loadingIncluded', 'loadingSourceCodes']
+			['loadingIncluded', 'loadingSourceCodes', 'loadingRecommended']
 				.forEach(key => this[key](true));
     }
     
@@ -133,6 +139,8 @@ define([
         case ViewMode.SOURCECODES:
           this.includedSourcecodes() == null && await this.loadSourceCodes();
           break;
+				case ViewMode.RECOMMEND:
+					this.recommendedConcepts() == null && await this.loadRecommended();
       }
     }
 		
@@ -152,7 +160,6 @@ define([
           ANCESTORS: null,
           isSelected: ko.observable(false)
         })));
-        //await utils.loadAndApplyAncestors(this.includedConcepts(),this);
       } catch (err) {
         console.error(err);
       } finally {
@@ -178,6 +185,36 @@ define([
 				console.error(err);
 			} finally {
 				this.loadingSourceCodes(false);
+			}
+		}
+
+		async loadRecommended() {
+			this.loadingRecommended(true);
+			this.isRecommendedAvailable(true);
+			this.includedConcepts() == null && await this.loadIncluded();
+			let concepts = this.includedConcepts();
+			const identifiers = concepts.map(c => c.CONCEPT_ID);
+			try {
+				const data = await vocabularyService.getRecommendedConceptsById(identifiers);
+				const includedSet = new Set(this.conceptSetInclusionIdentifiers());
+				const excludedSet = new Set(this.current().expression.items().filter(i => i.isExcluded()).map(i=>i.concept.CONCEPT_ID));
+				const filtered = data.filter(f => !(includedSet.has(f.CONCEPT_ID) || excludedSet.has(f.CONCEPT_ID)));
+        await vocabularyService.loadDensity(filtered);
+				const normalizedData = filtered.map(item => ({
+					...item, 
+					isSelected: ko.observable(false),
+				}))
+				this.recommendedConcepts(normalizedData);
+				return filtered;
+			} catch (err) {
+				if (err.status == 501) { // NOT_IMPLEMENTED means table does not exist
+					this.isRecommendedAvailable(false);
+					this.recommendedConcepts([]);
+				} else {
+					throw(err);
+				}
+			} finally {
+				this.loadingRecommended(false);
 			}
 		}
 

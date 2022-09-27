@@ -6,7 +6,7 @@ define([
     'services/Tags',
     'components/security/access/const',
     'components/cohortbuilder/CriteriaGroup',
-    'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/InputTypes/ConceptSet',
     'components/conceptset/ConceptSetStore',
     './CharacterizationAnalysis',
     'text!./characterization-view-edit.html',

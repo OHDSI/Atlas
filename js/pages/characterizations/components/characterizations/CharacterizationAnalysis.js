@@ -2,7 +2,7 @@ define(function(require, exports){
 
 	const ko = require('knockout');
 	const constants = require('const');
-	const ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+	const ConceptSet = require('components/conceptset/InputTypes/ConceptSet');
 	const CriteriaGroup = require('components/cohortbuilder/CriteriaGroup');
 
 	class CharacterizationAnalysis {
