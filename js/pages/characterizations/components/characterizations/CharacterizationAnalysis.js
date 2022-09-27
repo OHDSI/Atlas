@@ -23,6 +23,7 @@ define(function(require, exports){
 				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets)),
 			}))) || []);
 			this.tags = ko.observableArray(data.tags);
+			this.description = ko.observable(data.description || null);
 		}
 	}
 

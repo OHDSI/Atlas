@@ -1,4 +1,7 @@
 <div class="paddedWrapper">
+  <!-- ko if: (conceptSetStore.current() != null) -->
+  <div class="divtext cohort-description" data-bind="contentEditable: conceptSetStore.current().description, contenteditableSwitch: canEditCurrentConceptSet(), placeholder: ko.i18n('components.conceptSet.descriptionPlaceholder', 'Enter the concept set description here')"></div>
+  <!-- /ko -->
   <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
         xssSafe: true,
         data: data(),
