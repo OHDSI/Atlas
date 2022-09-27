@@ -243,6 +243,11 @@ define([
 					'binding': function (o) {
 						return parseInt(o.RECORD_COUNT) > 0;
 					}
+				}, {
+					'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
+					'binding': function (o) {
+						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
+					}
 				}]
 			};
 
