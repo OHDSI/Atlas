@@ -3,12 +3,14 @@ define([
 	'text!./concept-details.html',
 	'components/Component',
 	'utils/CommonUtils',
+	'services/MomentAPI',
 	'less!./concept-details.less',
 ], function (
 	ko,
 	view,
 	Component,
 	commonUtils,
+	momentApi
 ) {
 	class ConceptDetails extends Component {
 		constructor(params) {
@@ -17,6 +19,10 @@ define([
 			this.hasInfoAccess = params.hasInfoAccess;
 			this.isAuthenticated = params.isAuthenticated;
 			this.addConcept = params.addConcept;
+		}
+
+		formatDate(date) {
+			return momentApi.formatDateTimeWithFormat(date, momentApi.ISO_DATE_FORMAT);
 		}
 	}
 

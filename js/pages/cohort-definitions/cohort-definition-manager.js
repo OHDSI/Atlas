@@ -1509,6 +1509,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return "observation-criteria-viewer";
 			else if (data.hasOwnProperty("VisitOccurrence"))
 				return "visit-occurrence-criteria-viewer";
+			else if (data.hasOwnProperty("VisitDetail"))
+				return "visit-detail-criteria-viewer";
 			else if (data.hasOwnProperty("DeviceExposure"))
 				return "device-exposure-criteria-viewer";
 			else if (data.hasOwnProperty("Measurement"))
@@ -1562,7 +1564,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			    this.sortedConceptSets().forEach((set) => {
 				setsText += '\n' + set.name() + '\n';
 				columns.forEach((c) => {
-				    setsText += c.title + '\t';
+				    setsText += c.title() + '\t';
 				});
 				setsText += 'Excluded\tDescendants\tMapped' + '\n';
 				set.expression.items().forEach((item) => {

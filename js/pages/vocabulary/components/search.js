@@ -4,6 +4,7 @@ define([
 	'appConfig',
 	'text!./search.html',
 	'services/AuthAPI',
+	'services/MomentAPI',
 	'components/conceptset/utils',
 	'../PermissionService',
 	'components/Component',
@@ -27,6 +28,7 @@ define([
 	config,
 	view,
 	authApi,
+	MomentApi,
 	conceptSetUtils,
 	PermissionService,
 	Component,
@@ -193,6 +195,16 @@ define([
 				className: 'numeric',
 				visible: config.enablePersonCount
 			}, {
+				title: ko.i18n('columns.validStartDate', 'Valid Start Date'),
+				render: (s, type, d) => type === "sort" ? +d['VALID_START_DATE'] :
+						MomentApi.formatDateTimeWithFormat(d['VALID_START_DATE'], MomentApi.DATE_FORMAT),
+				visible: false
+			}, {
+				title: ko.i18n('columns.validEndDate', 'Valid End Date'),
+				render: (s, type, d) => type === "sort" ? +d['VALID_END_DATE'] :
+						MomentApi.formatDateTimeWithFormat(d['VALID_END_DATE'], MomentApi.DATE_FORMAT),
+				visible: false
+			}, {
 				title: ko.i18n('columns.domain', 'Domain'),
 				data: 'DOMAIN_ID'
 			}, {
@@ -230,11 +242,6 @@ define([
 					'caption': ko.i18n('facets.caption.hasRecords', 'Has Records'),
 					'binding': function (o) {
 						return parseInt(o.RECORD_COUNT) > 0;
-					}
-				}, {
-					'caption': ko.i18n('facets.caption.hasDescendantRecords', 'Has Descendant Records'),
-					'binding': function (o) {
-						return parseInt(o.DESCENDANT_RECORD_COUNT) > 0;
 					}
 				}]
 			};

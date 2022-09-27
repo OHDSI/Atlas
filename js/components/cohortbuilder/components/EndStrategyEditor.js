@@ -61,6 +61,7 @@ define([
     };
 
     self.strategyComponentName = ko.pureComputed(function () {
+
       var strategy = ko.utils.unwrapObservable(params.strategy);
       if (strategy.hasOwnProperty("DateOffset")) 
         return "date-offset-strategy";
