@@ -222,6 +222,18 @@ define([
 				}
 			},
 			{
+				...constants.groupAttributes.addVisitDetail,
+				selected: false,
+				action: function () {
+					var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+					self.group().CriteriaList.push(new AdditionalCriteria({
+						Criteria: {
+							VisitDetail: {}
+						}
+					}, unwrappedExpression.ConceptSets));
+				}
+			},
+			{
 				...constants.groupAttributes.addGroup,
 				selected: false,
 				action: function () {
