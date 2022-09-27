@@ -1,0 +1,21 @@
+<div data-bind="visible: !isLoading()">
+    <faceted-datatable params="
+        orderColumn: 3,
+        autoWidth: false,
+        reference:data,
+        columns: columns,
+        options: options,
+        buttons: buttons,
+        dom: tableDom,
+        rowClick: !multiChoice ? rowClick : null,
+        scrollY: scrollY,
+        selectedData: filteredData,
+        dtApi: dtApi,
+        pageLength: pageLength,
+        lengthMenu: lengthMenu,
+        language: ko.i18n('datatable.language')
+    ">
+    </faceted-datatable>
+</div>
+
+<loading data-bind="visible: isLoading()" params="status: ko.i18n('common.loadingWithDots', 'Loading...')"></loading>

@@ -1,0 +1,135 @@
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isAuthenticated"></access-denied>
+
+<div data-bind="css: classes('container')">
+
+    <div data-bind="css: classes('section', 'tags')">
+        <h4 data-bind="text: ko.i18n('tagging.multiAssign.selectedTags', 'Selected Tags')"></h4>
+
+        <button type="button" class="btn btn-primary"
+                data-bind="css: classes('selector-button'),
+                        click: openTagsModal,
+                        text: ko.i18n('tagging.multiAssign.chooseTags', 'Choose tags')"></button>
+
+        <div data-bind="css: classes('tags-to-handle')">
+            <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: selectedTags,
+                    options: {
+                        order: [],
+                        columns: selectedTagsColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            "/>
+        </div>
+    </div>
+
+    <div data-bind="css: classes('section', 'entities')">
+        <h4 data-bind="text: ko.i18n('tagging.multiAssign.selectedAssets', 'Selected Assets')"></h4>
+
+        <button type="button" class="btn btn-primary"
+                data-bind="css: classes('selector-button'),
+                        click: () => showAssetsTabsModal(!showAssetsTabsModal()),
+                        text: ko.i18n('tagging.multiAssign.chooseAssets', 'Choose assets')"></button>
+
+        <div data-bind="css: classes('assets-to-handle')">
+            <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: selectedAssets,
+                    options: {
+                        order: [],
+                        columns: selectedAssetsColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            "/>
+        </div>
+    </div>
+
+    <div data-bind="css: classes('button')">
+        <div data-bind="css: classes('section', 'radio')">
+            <label for="assignRadio">
+                <input id="assignRadio" type="radio" name="assignOrRemoveRadio" value="assign"data-bind="checked: actionType">
+                <span data-bind="text: ko.i18n('tagging.multiAssign.assignTags', 'Assign tags')"></span>
+            </label>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label for="removeRadio">
+                <input id="removeRadio" type="radio" name="assignOrRemoveRadio" value="unassign" data-bind="checked: actionType">
+                <span data-bind="text: ko.i18n('tagging.multiAssign.unassignTags', 'Unassign tags')"></span>
+            </label>
+            <!-- ko if: actionType() == 'assign' -->
+            <button type="button" class="btn btn-success"
+                    data-bind="click: doAssign, disable: !hasEnoughSelectedData(), text: ko.i18n('tagging.multiAssign.assignTags', 'Assign tags')">
+            </button>
+            <!-- /ko -->
+            <!-- ko if: actionType() == 'unassign' -->
+            <button type="button" class="btn btn-danger"
+                    data-bind="click: doUnassign, disable: !hasEnoughSelectedData(), text: ko.i18n('tagging.multiAssign.unassignTags', 'Unassign tags')">
+            </button>
+            <!-- /ko -->
+        </div>
+        <div data-bind="css: classes(actionResultSuccess() ? 'action-results success' : 'action-results error'), text: actionResultText"></div>
+    </div>
+</div>
+
+<atlas-modal params="
+        showModal: showTagsModal,
+        title: ko.i18n('tagging.multiAssign.chooseTags', 'Choose Tags'),
+        data: {
+            classes: classes,
+            availableTags: availableTags,
+            availableTagsColumns: availableTagsColumns,
+            showModal: showTagsModal,
+            tagsMessage: tagsMessage,
+            applyTagsSelection: applyTagsSelection,
+            tableOptions: tableOptions,
+        }
+    ">
+    <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: availableTags,
+                    options: {
+                        order: [1, 'asc'],
+                        columns: availableTagsColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            " style="width: 100%"/>
+    <div class="modal-footer">
+        <div class="modal-message" data-bind="visible: tagsMessage()">
+            <i class="fa fa-info"></i>&nbsp;&nbsp;<span data-bind="text: tagsMessage"></span>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="click: applyTagsSelection, text: ko.i18n('tagging.multiAssign.select', 'Apply')"></button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
+        </div>
+    </div>
+</atlas-modal>
+
+<atlas-modal params="
+        showModal: showAssetsTabsModal,
+        title: ko.i18n('tagging.multiAssign.chooseAssets', 'Choose Assets'),
+        data: {
+            assetTabsParams: assetTabsParams,
+            showModal: showAssetsTabsModal,
+            applyAssetsSelection: applyAssetsSelection
+        }
+    " class="assets-selector">
+    <div data-bind="component: { name: 'tabs', params: assetTabsParams }"></div>
+    <div class="modal-footer with-padding">
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="click: applyAssetsSelection, text: ko.i18n('tagging.multiAssign.select', 'Apply')"></button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
+        </div>
+    </div>
+</atlas-modal>
+

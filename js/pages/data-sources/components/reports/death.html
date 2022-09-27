@@ -5,7 +5,7 @@
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.deathReport.deathPrevalenceByAgeGenderYear', 'Death Prevalence by Age, Gender, Year')"></div>
 		<div class="panel-body">
 			<div class="evidenceVisualization">
-				<trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear"></trellisline>
+				<trellisline class="evidenceVisualization" params="data: prevalenceByGenderAgeYearData, format: chartFormats.prevalenceByGenderAgeYear, reportName: name, chartName: 'Death Prevalence by Age, Gender, Year'"></trellisline>
 			</div>
 		</div>
 	</div>
@@ -15,7 +15,7 @@
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.deathReport.deathPrevalenceByMonth', 'Death Prevalence by Month')"></div>
 		<div class="panel-body">
 			<div class="evidenceVisualization">
-				<atlasline class="evidenceVisualization" params="data: byMonthSeriesLineData, format: chartFormats.byMonthSeriesLine"></atlasline>
+				<atlasline class="evidenceVisualization" params="data: byMonthSeriesLineData, format: chartFormats.byMonthSeriesLine, reportName: name, chartName: 'Death Prevalence by Month'"></atlasline>
 			</div>
 		</div>
 	</div>
@@ -25,7 +25,7 @@
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.deathReport.deathByType', 'Death by Type')"></div>
 		<div class="panel-body">
 			<div class="evidenceVisualization">
-				<donut class="evidenceVisualization" params="data: prevalenceByTypeDonutData, format: chartFormats.prevalenceByTypeDonut"></donut>
+				<donut class="evidenceVisualization" params="data: prevalenceByTypeDonutData, format: chartFormats.prevalenceByTypeDonut, reportName: name, chartName: 'Death by Type'"></donut>
 			</div>
 		</div>
 	</div>
@@ -35,7 +35,7 @@
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.deathReport.ageAtDeath', 'Age at Death')"></div>
 		<div class="panel-body">
 			<div class="evidenceVisualization">
-				<boxplot class="evidenceVisualization" params="data: ageBoxplotData, format: chartFormats.ageBoxplot"></boxplot>
+				<boxplot class="evidenceVisualization" params="data: ageBoxplotData, format: chartFormats.ageBoxplot, reportName: name, chartName: 'Age at Death'"></boxplot>
 			</div>
 		</div>
 	</div>

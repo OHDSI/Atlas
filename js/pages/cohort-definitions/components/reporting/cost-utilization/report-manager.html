@@ -81,7 +81,11 @@
 		<div class="reportSectionHeading">
 			<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_5', 'Entropy by Date')"></span>
 		</div>
-		<div class="evidenceVisualization" id="entropyByDate" />
+		<div class="chartContainer" data-bind="css: classes('chartContainer')">
+			<button title="Export image" data-bind="css: classes('export-button'), click: $component.export"><i class="far fa-file-image"></i></button>
+			<button title="Export SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg"><i class="fas fa-file-download"></i></button>
+			<div class="evidenceVisualization" id="entropyByDate" />
+		</div>
 	</div>
 </div>
 
@@ -93,7 +97,11 @@
 				<i data-bind="click:function(){ setHelpContent('year-of-birth') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="hist"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="hist"></div>
+				</div>
 			</div>
 			<div class="panel-footer">
 				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_7', 'The number of people in this cohort shown with respect to their year of birth.')"></span>
@@ -108,19 +116,31 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-xs-4">
-						<div class="evidenceVisualization" id="gender"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="gender"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_9', 'Gender')"></span>
 						</div>
 					</div>
 					<div class="col-xs-4">
-						<div class="evidenceVisualization" id="race"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="race"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_10', 'Race')"></span>
 						</div>
 					</div>
 					<div class="col-xs-4">
-						<div class="evidenceVisualization" id="ethnicity"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="ethnicity"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_11', 'Ethnicity')"></span>
 						</div>
@@ -150,7 +170,11 @@
 				<i data-bind="click:function(){ setHelpContent('cohort-specific-prevalence-per-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="prevalenceByMonth"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="prevalenceByMonth"></div>
+				</div>
 			</div>
 		</div>
 
@@ -160,7 +184,11 @@
 				<i data-bind="click:function(){ setHelpContent('cohort-specific-cohort-start') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="cohort_trellisLinePlot"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="cohort_trellisLinePlot"></div>
+				</div>
 			</div>
 		</div>
 
@@ -170,7 +198,11 @@
 				<i data-bind="click:function(){ setHelpContent('cohort-specific-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="personinCohortFromStartToEnd"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="personinCohortFromStartToEnd"></div>
+				</div>
 			</div>
 		</div>
 
@@ -180,7 +212,11 @@
 				<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="personsByDurationFromStartToEnd"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="personsByDurationFromStartToEnd"></div>
+				</div>
 			</div>
 		</div>
 
@@ -190,7 +226,11 @@
 				<i data-bind="click:function(){ setHelpContent('cohort-specific-duration-start-to-end') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="distributionAgeCohortStartByCohortStartYear"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="distributionAgeCohortStartByCohortStartYear"></div>
+				</div>
 			</div>
 		</div>
 
@@ -202,13 +242,21 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-6">
-						<div class="evidenceVisualization" id="distributionAgeCohortStartByGender"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="distributionAgeCohortStartByGender"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_20', 'Distribution of Age at Cohort Start by Gender')"></span>
 						</div>
 					</div>
 					<div class="col-sm-6">
-						<div class="evidenceVisualization" id="ageAtIndex"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="ageAtIndex"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_21', 'Age at Index')"></span>
 						</div>
@@ -227,7 +275,11 @@
 				<i data-bind="click:function(){ setHelpContent('tornado') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body pad-5">
-				<div id="tornadoPlot" class="text-center"><svg width="1000" height="300" preserveAspectRatio></svg></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div id="tornadoPlot" class="text-center evidenceVisualization"><svg width="1000" height="300" preserveAspectRatio></svg></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -275,8 +327,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
-						<div id="condition_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="condition_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
@@ -317,7 +371,11 @@
 				<div>
 					<div id="conditionDrilldownScatterplotHeading" class="reportSectionHeading">
 					</div>
-					<div class="evidenceVisualization" id="conditionDrilldownScatterplot"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditionDrilldownScatterplot"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -345,8 +403,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="drugs-by-index-treemap-panel">
-						<div id="drugindex_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="drugindex_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
@@ -380,7 +440,11 @@
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div id="drugDrilldownScatterplotHeading" class="reportSectionHeading">
 			</div>
-			<div class="evidenceVisualization" id="drugDrilldownScatterplot"></div>
+			<div class="chartContainer" data-bind="css: classes('chartContainer')">
+				<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+				<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+				<div class="evidenceVisualization" id="drugDrilldownScatterplot"></div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -394,7 +458,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-age-at-first-observation') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="ageatfirstobservation"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="ageatfirstobservation"></div>
+				</div>
 			</div>
 			<div class="panel-footer">
 				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_32', 'The distribution of age at first observation in the cohort.')"></span>
@@ -408,7 +476,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-age-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="agebygender"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="agebygender"></div>
+				</div>
 			</div>
 			<div class="panel-footer">
 				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_34', 'The distribution of age at first observation in the cohort stratified by gender.')"></span>
@@ -422,7 +494,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-length') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="observationlength"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="observationlength"></div>
+				</div>
 			</div>
 			<div class="panel-footer">
 				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_36', 'Distribution of total observation time in cohort.')"></span>
@@ -436,7 +512,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-gender') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="opbygender"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="opbygender"></div>
+				</div>
 			</div>
 			<div class="panel-footer">
 				<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_38', 'Distribution of total observation time in cohort by gender.')"></span>
@@ -458,7 +538,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-length-by-age-decile') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="opbyage"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="opbyage"></div>
+				</div>
 			</div>
 		</div>
 
@@ -479,7 +563,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-per-person') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="opperperson"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="opperperson"></div>
+				</div>
 			</div>
 		</div>
 
@@ -490,7 +578,11 @@
 				<i data-bind="click:function(){ setHelpContent('observation-periods-continuous-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="oppeoplebymonthsingle"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="oppeoplebymonthsingle"></div>
+				</div>
 			</div>
 		</div>
 
@@ -519,8 +611,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="conditionera-treemap-panel">
-						<div id="conditionera_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="conditionera_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
@@ -557,7 +651,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_42', 'Condition Era Prevalence')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="conditionera_trellisLinePlot"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditionera_trellisLinePlot"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -566,7 +664,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="conditioneraPrevalenceByMonth"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditioneraPrevalenceByMonth"></div>
+					</div>
 				</div>
 			</div>
 
@@ -575,7 +677,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_44', 'Age at First Diagnosis')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="conditioneras_age_at_first_diagnosis"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditioneras_age_at_first_diagnosis"></div>
+					</div>
 				</div>
 			</div>
 
@@ -585,7 +691,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_45', 'Length of Condition Era')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="conditioneras_length_of_era"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditioneras_length_of_era"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -612,8 +722,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="procedure-treemap-panel">
-						<div id="procedureindex_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="procedureindex_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
@@ -645,7 +757,11 @@
 		<div data-bind="if:$component.activeReportDrilldown">
 			<div id="procedureDrilldownScatterplotHeading" class="reportSectionHeading">
 			</div>
-			<div class="evidenceVisualization" id="procedureDrilldownScatterplot"></div>
+			<div class="chartContainer" data-bind="css: classes('chartContainer')">
+				<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+				<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+				<div class="evidenceVisualization" id="procedureDrilldownScatterplot"></div>
+			</div>
 		</div>
 	</div>
 </div>
@@ -681,8 +797,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="condition-treemap-panel">
-						<div id="condition_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="condition_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span>
@@ -722,7 +840,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_47', 'Condition Prevalence')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="condition_trellisLinePlot"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="condition_trellisLinePlot"></div>
+					</div>
 				</div>
 			</div>
 
@@ -732,7 +854,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="conditionPrevalenceByMonth"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditionPrevalenceByMonth"></div>
+					</div>
 				</div>
 			</div>
 
@@ -742,7 +868,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="conditionsByType"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="conditionsByType"></div>
+					</div>
 				</div>
 			</div>
 
@@ -751,7 +881,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_44', 'Age at First Diagnosis')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="ageAtFirstDiagnosis"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="ageAtFirstDiagnosis"></div>
+					</div>
 				</div>
 		</div>
 		</div>
@@ -779,12 +913,14 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div role="tabpanel" class="tab-pane" id="drugera-treemap-panel">
-						<div id="drugera_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="drugera_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
-					</div>	
+						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane active" id="drugera-table-panel" data-bind="eventListener: { event: 'click', selector: '.drugera_table_selector', callback: handleDrugEraTableClick}">
 						<table id="drugera_table" class="stripe compact hover dataTable no-footer">
@@ -818,7 +954,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_50', 'Drug Era Prevalence')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drugera_trellisLinePlot"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drugera_trellisLinePlot"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -827,7 +967,11 @@
 				
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drugeraPrevalenceByMonth"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drugeraPrevalenceByMonth"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -836,7 +980,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drugeras_age_at_first_exposure"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drugeras_age_at_first_exposure"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -845,7 +993,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drugeras_length_of_era"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drugeras_length_of_era"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -873,8 +1025,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div class="tab-pane" id="drug_treemap_panel">
-						<div id="drug_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="drug_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
@@ -913,7 +1067,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drug_trellisLinePlot"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drug_trellisLinePlot"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -922,7 +1080,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drugPrevalenceByMonth"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drugPrevalenceByMonth"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -931,7 +1093,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="ageAtFirstExposure"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="ageAtFirstExposure"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -939,7 +1105,11 @@
 					<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_58', 'Days Supply Distribution')"></span>
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="daysSupplyDistribution"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="daysSupplyDistribution"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -948,7 +1118,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="quantityDistribution"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="quantityDistribution"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -957,7 +1131,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="refillsDistribution"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="refillsDistribution"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -966,7 +1144,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="drugsByType"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="drugsByType"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -994,8 +1176,10 @@
 				</ul>
 				<div id='content' class="tab-content">
 					<div class="tab-pane" role="tabpanel" id="procedure-treemap-panel">
-						<div id="procedure_treemap_container">
-							<div class="treemap_zoomtarget"></div>
+						<div class="report-manager__chartContainer chartContainer" id="procedure_treemap_container">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="treemap_zoomtarget evidenceVisualization"></div>
 						</div>
 						<div class="treemap_legend">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_28', 'Box Size: Prevalence, Color: Log of Relative Risk (Red to Green = Negative to Positive), Use Ctrl-Click to Zoom, Alt-Click to Reset Zoom')"></span></div>
@@ -1033,7 +1217,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="procedure_trellisLinePlot"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="procedure_trellisLinePlot"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -1042,7 +1230,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="procedurePrevalenceByMonth"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="procedurePrevalenceByMonth"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -1051,7 +1243,11 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="proceduresByType"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="proceduresByType"></div>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-primary">
@@ -1060,7 +1256,12 @@
 					
 				</div>
 				<div class="panel-body">
-					<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+					<div class="chartContainer" data-bind="css: classes('chartContainer')">
+						<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+						<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+						<div class="evidenceVisualization" id="ageAtFirstOccurrence"></div>
+					</div>
+
 				</div>
 			</div>
 		</div>
@@ -1076,7 +1277,11 @@
 				<i data-bind="click:function(){ setHelpContent('death-prevalence') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="death_trellisLinePlot"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="death_trellisLinePlot"></div>
+				</div>
 			</div>
 		</div>
 
@@ -1087,7 +1292,11 @@
 				<i data-bind="click:function(){ setHelpContent('death-prevalence-by-month') }" data-toggle="modal" data-target="#helpModal" class="fa fa-question-circle pull-right"></i>
 			</div>
 			<div class="panel-body">
-				<div class="evidenceVisualization" id="deathPrevalenceByMonth"></div>
+				<div class="chartContainer" data-bind="css: classes('chartContainer')">
+					<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+					<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+					<div class="evidenceVisualization" id="deathPrevalenceByMonth"></div>
+				</div>
 			</div>
 		</div>
 
@@ -1100,13 +1309,21 @@
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-sm-6">
-						<div class="evidenceVisualization" id="ageAtDeath"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="ageAtDeath"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_69', 'Age at Death')"></span>
 							</div>
 					</div>
 					<div class="col-sm-6">
-						<div class="evidenceVisualization" id="deathByType"></div>
+						<div class="chartContainer" data-bind="css: classes('chartContainer')">
+							<button title="PNG" data-bind="css: classes('export-button'), click: $component.export">PNG</button>
+							<button title="SVG" data-bind="css: classes('exportSvg-button'), click: $component.exportSvg">SVG</button>
+							<div class="evidenceVisualization" id="deathByType"></div>
+						</div>
 						<div class="evidenceDescription">
 							<span data-bind="text: ko.i18n('cohortDefinitions.costUtilization.reportManager.reportManagerText_70', 'Death by Type')"></span>
 						</div>

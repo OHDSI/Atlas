@@ -2,7 +2,7 @@ define(function (require, exports) {
 
 	var ko = require('knockout');
 	var CriteriaGroup = require('./CriteriaGroup');
-	var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+	var ConceptSet = require('components/conceptset/InputTypes/ConceptSet');
 	var PrimaryCriteria = require('./PrimaryCriteria');
 	var InclusionRule = require('./InclusionRule');
 	var EndStrategies = require('./EndStrategies');

@@ -1,0 +1,11 @@
+<div data-bind="foreach: getTags()" class="tags">
+		<span class="tag" data-bind="attr: { style: 'background-color: ' + tagColor }">
+			<i data-bind="attr: { class: tagIcon }"></i>
+			<span data-bind="text: ellipsisName"></span>
+			<span class="tooltip">
+				<b data-bind="text: groupLabel"></b> <span data-bind="text: groupList"></span><br>
+				<b data-bind="text: ko.i18n('components.heading.tag.tooltip.tag', 'Tag:')"></b> <span data-bind="text: fullName"></span>
+			</span>
+			<span class="remove" data-bind="visible: $component.removable, click: () => $component.removeFunc($data)"><i class="fa fa-times"></i></span>
+		</span>
+</div>

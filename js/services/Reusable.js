@@ -3,7 +3,7 @@ define(function (require) {
     var ko = require('knockout');
     var constants = require('const');
     var ReusableParameter = require('../pages/reusables/ReusableParameter');
-    var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+    var ConceptSet = require('components/conceptset/InputTypes/ConceptSet');
     var CriteriaGroup = require('components/cohortbuilder/CriteriaGroup');
     var PrimaryCriteria = require('components/cohortbuilder/PrimaryCriteria');
     var CriteriaTypes = require('components/cohortbuilder/CriteriaTypes');

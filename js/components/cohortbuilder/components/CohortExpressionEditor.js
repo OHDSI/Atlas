@@ -91,58 +91,6 @@ define([
       self.selectedInclusionRule(copiedRule);
     };
 
-    self.addPrimaryCriteriaOptions = {
-      selectText: ko.i18n('components.cohortExpressionEditor.addInitialEvent', 'Add Initial Event...'),
-      width: 250,
-      height: 300,
-      actionOptions: self.primaryCriteriaOptions,
-      onAction: function (data) {
-        data.selectedData.action();
-      },
-    };
-
-    self.addCensorCriteriaOptions = {
-      selectText: ko.i18n('components.cohortExpressionEditor.addCensoringEvent', 'Add Censoring Event...'),
-      width: 250,
-      height: 300,
-      actionOptions: self.censorCriteriaOptions,
-      onAction: function (data) {
-        data.selectedData.action();
-      },
-    };
-
-    self.getCriteriaIndexComponent = function (data) {
-      data = ko.utils.unwrapObservable(data);
-
-      if (data.hasOwnProperty("ConditionOccurrence"))
-        return "condition-occurrence-criteria";
-      else if (data.hasOwnProperty("ConditionEra"))
-        return "condition-era-criteria";
-      else if (data.hasOwnProperty("DrugExposure"))
-        return "drug-exposure-criteria";
-      else if (data.hasOwnProperty("DrugEra")) return "drug-era-criteria";
-      else if (data.hasOwnProperty("DoseEra")) return "dose-era-criteria";
-      else if (data.hasOwnProperty("ProcedureOccurrence"))
-        return "procedure-occurrence-criteria";
-      else if (data.hasOwnProperty("Observation"))
-        return "observation-criteria";
-      else if (data.hasOwnProperty("VisitOccurrence"))
-        return "visit-occurrence-criteria";
-      else if (data.hasOwnProperty("DeviceExposure"))
-        return "device-exposure-criteria";
-      else if (data.hasOwnProperty("Measurement"))
-        return "measurement-criteria";
-      else if (data.hasOwnProperty("Specimen")) return "specimen-criteria";
-      else if (data.hasOwnProperty("ObservationPeriod"))
-        return "observation-period-criteria";
-      else if (data.hasOwnProperty("PayerPlanPeriod"))
-        return "payer-plan-period-criteria";
-      else if (data.hasOwnProperty("Death")) return "death-criteria";
-      else if (data.hasOwnProperty("LocationRegion"))
-        return "location-region-criteria";
-      else return "unknownCriteriaType";
-    };
-
     self.getExpressionJSON = function () {
       return ko.toJSON(
         self.expression(),

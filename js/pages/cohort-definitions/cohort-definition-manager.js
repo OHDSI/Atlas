@@ -9,7 +9,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
-	'conceptsetbuilder/InputTypes/ConceptSet',
+	'components/conceptset/InputTypes/ConceptSet',
 	'components/conceptset/ConceptSetStore',
 	'services/CohortReporting',
 	'services/VocabularyProvider',
@@ -53,7 +53,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'components/modal-exit-message',
 	'./components/reporting/cohort-reports/cohort-reports',
 	'components/security/access/configure-access-modal',
-	'components/tags/tags',
+	'components/tags/modal/tags-modal',
 	'components/authorship',
 	'utilities/sql',
 	'components/conceptset/conceptset-list',
@@ -1509,6 +1509,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return "observation-criteria-viewer";
 			else if (data.hasOwnProperty("VisitOccurrence"))
 				return "visit-occurrence-criteria-viewer";
+			else if (data.hasOwnProperty("VisitDetail"))
+				return "visit-detail-criteria-viewer";
 			else if (data.hasOwnProperty("DeviceExposure"))
 				return "device-exposure-criteria-viewer";
 			else if (data.hasOwnProperty("Measurement"))
@@ -1562,7 +1564,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			    this.sortedConceptSets().forEach((set) => {
 				setsText += '\n' + set.name() + '\n';
 				columns.forEach((c) => {
-				    setsText += c.title + '\t';
+				    setsText += c.title() + '\t';
 				});
 				setsText += 'Excluded\tDescendants\tMapped' + '\n';
 				set.expression.items().forEach((item) => {

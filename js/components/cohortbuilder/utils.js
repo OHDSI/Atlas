@@ -22,6 +22,8 @@ function(
 			return "procedure-occurrence-criteria";
 		else if (data.hasOwnProperty("VisitOccurrence"))
 			return "visit-occurrence-criteria";
+		else if (data.hasOwnProperty("VisitDetail"))
+			return "visit-detail-criteria";
 		else if (data.hasOwnProperty("Observation"))
 			return "observation-criteria";
 		else if (data.hasOwnProperty("DeviceExposure"))

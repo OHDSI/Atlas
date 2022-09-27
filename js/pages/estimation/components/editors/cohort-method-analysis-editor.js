@@ -13,7 +13,7 @@ define([
 	'./stratify-args-editor',
 	'./outcome-model-args-editor',
 	'featureextraction/components/covariate-settings-editor',
-	'components/cohort-definition-browser',
+	'components/entityBrowsers/cohort-definition-browser',
 	'less!./cohort-method-analysis.less',
 ], function (
 	ko,

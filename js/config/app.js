@@ -153,5 +153,8 @@ define(function () {
 
    appConfig.enablePersonCount = true;
 
+   // "Tagging" section is hidden by default
+   appConfig.enableTaggingSection = false;
+
 	return appConfig;
 });
