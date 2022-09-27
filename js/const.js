@@ -1,12 +1,14 @@
 define([
 	'knockout',
 	'appConfig',
-	'utils/Renderers'
+	'utils/Renderers',
+	'services/MomentAPI'
 	],
 	(
 		ko,
 		config,
-		renderers) => {
+		renderers,
+		MomentApi) => {
 
 	  const maxEntityNameLength = 100;
 		const minChartHeight = 300;
@@ -143,6 +145,18 @@ define([
 			{
 				title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 				data: 'STANDARD_CONCEPT_CAPTION',
+				visible: false
+			},
+			{
+				title: ko.i18n('columns.validStartDate', 'Valid Start Date'),
+				render: (s, type, d) => type === "sort" ? +d['VALID_START_DATE'] :
+					MomentApi.formatDateTimeWithFormat(d['VALID_START_DATE'], MomentApi.DATE_FORMAT),
+				visible: false
+			},
+			{
+				title: ko.i18n('columns.validEndDate', 'Valid End Date'),
+				render: (s, type, d) => type === "sort" ? +d['VALID_END_DATE'] :
+					MomentApi.formatDateTimeWithFormat(d['VALID_END_DATE'], MomentApi.DATE_FORMAT),
 				visible: false
 			},
 			{

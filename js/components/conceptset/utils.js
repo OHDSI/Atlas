@@ -1,5 +1,5 @@
-define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atlas-state','services/Vocabulary', 'conceptsetbuilder/InputTypes/ConceptSet', 'conceptsetbuilder/InputTypes/ConceptSetItem']
-, function(ko, commonUtils, renderers, httpService, sharedState, vocabularyService, ConceptSet, ConceptSetItem){
+define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atlas-state','services/Vocabulary', 'services/MomentAPI', 'conceptsetbuilder/InputTypes/ConceptSet', 'conceptsetbuilder/InputTypes/ConceptSetItem']
+, function(ko, commonUtils, renderers, httpService, sharedState, vocabularyService, MomentApi, ConceptSet, ConceptSetItem){
 	
   function toRepositoryConceptSetItems(conceptSetItems){
     const convertedItems = conceptSetItems.map((item) => ({
@@ -41,6 +41,18 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 		{
 			title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
 			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+		},
+		{
+			title: ko.i18n('columns.validStartDate', 'Valid Start Date'),
+			render: (s, type, d) => type === "sort" ? +d['VALID_START_DATE'] :
+				MomentApi.formatDateTimeWithFormat(d['VALID_START_DATE'], MomentApi.DATE_FORMAT),
+			visible: false
+		},
+		{
+			title: ko.i18n('columns.validEndDate', 'Valid End Date'),
+			render: (s, type, d) => type === "sort" ? +d['VALID_END_DATE'] :
+				MomentApi.formatDateTimeWithFormat(d['VALID_END_DATE'], MomentApi.DATE_FORMAT),
 			visible: false
 		},
 		{
