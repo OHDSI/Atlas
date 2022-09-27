@@ -10,7 +10,7 @@ define([
   'jquery',
   'atlas-state',
   'components/conceptset/ConceptSetStore',
-  'conceptsetbuilder/InputTypes/ConceptSet',
+  'components/conceptset/InputTypes/ConceptSet',
   'components/modal',
 ], function (
 	ko,

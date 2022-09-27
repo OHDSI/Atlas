@@ -3,7 +3,7 @@ define(function (require, exports) {
 	var ko = require('knockout');
 	var StudyWindow = require('pages/incidence-rates/inputTypes/StudyWindow');
 	var TimeAtRisk = require('pages/incidence-rates/inputTypes/TimeAtRisk');
-	var ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+	var ConceptSet = require('components/conceptset/InputTypes/ConceptSet');
 	var StratifyRule = require('./StratifyRule');
 	
 	function IRAnalysisExpression(data) {

@@ -12,14 +12,14 @@ define([
 	'services/Permission',
 	'services/Tags',
 	'components/security/access/const',
-	'conceptsetbuilder/InputTypes/ConceptSet',
-	'conceptsetbuilder/InputTypes/ConceptSetItem',
+	'components/conceptset/InputTypes/ConceptSet',
+	'components/conceptset/InputTypes/ConceptSetItem',
 	'atlas-state',
 	'services/ConceptSet',
 	'components/conceptset/ConceptSetStore',
 	'components/conceptset/utils',
 	'services/AuthAPI',
-    'lodash',
+	'lodash',
 	'databindings',
 	'bootstrap',
 	'faceted-datatable',
@@ -34,6 +34,7 @@ define([
 	'./components/tabs/conceptset-expression',
 	'components/conceptset/included',
 	'components/conceptset/included-sourcecodes',
+	'components/conceptset/recommend',
 	'components/conceptset/import',
 	'components/conceptset/export',
 	'./components/tabs/explore-evidence',
@@ -65,7 +66,7 @@ define([
 	ConceptSetStore,
 	conceptSetUtils,
 	authApi,
-    lodash,
+	lodash,
 ) {
   
   const { ViewMode, RESOLVE_OUT_OF_ORDER } = constants;
@@ -243,7 +244,7 @@ define([
 					hasBadge: true,
 				},
 				{
-					title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Included Source Codes'),
+					title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Source Codes'),
 					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
 					componentParams: {
@@ -251,8 +252,22 @@ define([
 						tableOptions,
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
-						loading: this.conceptSetStore.loadingSourceCodes},
+						loading: this.conceptSetStore.loadingSourceCodes,
 						activeConceptSet: ko.observable(this.conceptSetStore),
+					},
+				},
+				{
+					title: ko.i18n('cs.manager.tabs.recommend', 'Recommend'),
+					key: ViewMode.RECOMMEND,
+					componentName: 'conceptset-recommend',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						loading: this.conceptSetStore.loadingRecommended,
+						activeConceptSet: ko.observable(this.conceptSetStore),
+					}
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.exploreEvidence', 'Explore Evidence'),

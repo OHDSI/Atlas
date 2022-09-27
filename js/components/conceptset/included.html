@@ -2,6 +2,7 @@
 <div data-bind="hidden: loading">
     <datasource-select params="{conceptSetStore: $component.conceptSetStore}"/>
     <faceted-datatable params="{
+      orderColumn:7,
       columns: $component.includedConceptsColumns,
       options: $component.includedConceptsOptions,
       reference: $component.includedConcepts,

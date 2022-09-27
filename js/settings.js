@@ -182,7 +182,6 @@ const settingsObject = {
 		"loading": "components/loading",
 		"atlas-state": "components/atlas-state",
 		"feedback": "components/feedback",
-		"conceptsetbuilder": "components/conceptsetbuilder",
 		"conceptpicker": "components/conceptpicker",
 		"css": "extensions/plugins/css",
 	},
