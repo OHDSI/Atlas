@@ -238,8 +238,7 @@ define([
 						canEdit: this.canEdit,
 						currentConceptSet: this.conceptSetStore.current,
 						conceptSetStore: this.conceptSetStore,
-						loading: this.conceptSetStore.loadingIncluded,
-						activeConceptSet: ko.observable(this.conceptSetStore),
+						loading: this.conceptSetStore.loadingIncluded
 					},
 					hasBadge: true,
 				},
@@ -252,8 +251,7 @@ define([
 						tableOptions,
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
-						loading: this.conceptSetStore.loadingSourceCodes,
-						activeConceptSet: ko.observable(this.conceptSetStore),
+						loading: this.conceptSetStore.loadingSourceCodes
 					},
 				},
 				{
@@ -265,8 +263,7 @@ define([
 						tableOptions,
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
-						loading: this.conceptSetStore.loadingRecommended,
-						activeConceptSet: ko.observable(this.conceptSetStore),
+						loading: this.conceptSetStore.loadingRecommended
 					}
 				},
 				{
