@@ -17,6 +17,7 @@ define([
 	'./included',
 	'./included-badge',
 	'./included-sourcecodes',
+	'./recommend',
 	'./export',
 	'./import',
 	'less!./conceptset-list.less',
@@ -89,6 +90,7 @@ define([
 				loadConceptSet: this.loadConceptSet,
 				importing: this.importing,
 				selectedTabKey: this.selectedTabKey,
+				canEdit: this.canEdit,
 			};
 			this.tabs = [
 				{
@@ -109,6 +111,14 @@ define([
 					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
 					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingSourceCodes() || this.loading()))}
+				},
+				{
+					title: ko.i18n('cs.manager.tabs.recommend', 'Recommend'),
+					key: ViewMode.RECOMMEND,
+					componentName: 'conceptset-recommend',
+					componentParams: {
+						...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingRecommended() || this.loading()))
+					}
 				},
 				{
 					title: ko.i18n('common.export', 'Export'),
