@@ -70,7 +70,8 @@ define([
                 .style("stroke", "#fff")
                 .style("stroke-width", 3)
                 .style("cursor",'pointer')
-                .style("fill", function(d,i) { return colors[i]; });
+                .style("fill", function(d,i) { return colors[i]; })
+                .attr("class", function(d,i) { return d.key; });
             // add a tooltip
             var tooltip = d3.select("body").append("div")
                 .attr("class", "venntooltip");
