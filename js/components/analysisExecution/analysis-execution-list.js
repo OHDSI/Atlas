@@ -60,7 +60,6 @@ define([
       this.pollId = null;
       this.PollService = PollService;
       this.selectedSourceId = selectedSourceId;
-      this.selectedSourceId.subscribe(() => this.expandSelectedSource());
       this.tableOptions = tableOptions || CommonUtils.getTableOptions('S');
       this.loading = ko.observable(false);
       this.downloading = ko.observableArray();
@@ -75,16 +74,39 @@ define([
         this.executionStatuses.RUNNING,
         this.executionStatuses.STARTED,
       ];
-      this.expandedSection = ko.observable();
 
       this.isExitMessageShown = ko.observable(false);
       this.exitMessage = ko.observable();
 
       this.executionResultMode = executionResultMode;
       this.executionGroups = ko.observableArray([]);
+      this.filteredExecutionGroups = ko.observableArray([]);
       this.executionResultModes = consts.executionResultModes;
       this.isExecutionDesignShown = ko.observable(false);
       this.executionDesign = ko.observable(null);
+      this.showOnlySourcesWithResults = ko.observable(false);
+      this.showOnlySourcesWithResults.subscribe((filter) => {
+        if (filter) {
+          this.filteredExecutionGroups(this.executionGroups().filter(eg => eg.submissions().length > 0));
+        } else {
+          this.filteredExecutionGroups(this.executionGroups());
+        }
+      });
+
+      this.sourcesColumn = [{
+          render: (s, p, d) => {
+            return `<span>${d.sourceName}</span><span data-bind="template: {
+                        name: 'execution-group',
+                        data: {
+                            ...$data,
+                            classes: $parent.classes,
+                            execColumns: $parent.execColumns,
+                            isExpanded: $parent.selectedSourceId() == $data.sourceId,
+                            toggleSection: () => $parent.toggleSection($data.sourceId)
+                        }    
+                    }"></span>`;
+          }
+      }];
 
       this.stopping = ko.observable({});
       this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
@@ -172,22 +194,14 @@ define([
 
           group.submissions(executionList.filter(({ sourceKey: exSourceKey }) => exSourceKey === sourceKey));
           this.setExecutionGroupStatus(group);
-        })
-        this.expandSelectedSource();
+        });
+        this.filteredExecutionGroups(this.executionGroups().filter(eg =>
+            this.showOnlySourcesWithResults() ? eg.submissions().length > 0 : true));
       } catch (err) {
         console.error(err);
       } finally {
         this.loading(false);
       }
-    }
-
-    expandSelectedSource() {
-      let idx = null;
-      if (this.selectedSourceId()) {
-        const sourceId = parseInt(this.selectedSourceId());
-        idx = this.executionGroups().findIndex(g => g.sourceId === sourceId);
-      }
-      this.expandedSection(idx);
     }
 
     async showExecutionDesign(executionId) {
@@ -217,16 +231,13 @@ define([
       }
     }
 
-    toggleSection(idx) {
-      if (this.expandedSection() === idx) {
-        this.expandedSection(null);
+    toggleSection(sourceId) {
+      if (parseInt(this.selectedSourceId()) === sourceId) {
         this.selectedSourceId(null);
         CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions`);
       } else {
-        this.expandedSection(idx);
-        const executionGroup = this.executionGroups()[idx];
-        this.selectedSourceId(executionGroup.sourceId);
-        CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions/${executionGroup.sourceId}`);
+        this.selectedSourceId(sourceId);
+        CommonUtils.routeTo(`${this.resultsPathPrefix}${this.analysisId()}/executions/${sourceId}`);
       }
     }
 
