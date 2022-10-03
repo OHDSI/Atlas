@@ -380,7 +380,7 @@ define([
 		}
 
     toggleShowDiagram() {
-        this.showDiagram(!this.showDiagram())
+        this.showDiagram(!this.showDiagram());
     }
 
     updateOutsideFilters(key) {
