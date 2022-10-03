@@ -245,31 +245,48 @@
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'generation' }" class="tab-pane">
-				<div class="heading"
-					data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.availableCDMSources', 'Available CDM Sources')">
+				<!-- cohort-generation params="cohort: currentCohortDefinition, selectReport: (source) => selectedReportSource(source)"></cohort-generation -->
+				<div class="generation-container">
+					<div class="generation-heading"
+						 data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generation', 'Generation')">
+					</div>
+					<label class="only-results-checkbox"><input type="checkbox" data-bind="checked: showOnlySourcesWithResults"> Show only sources with results</label>
+
+					<table class="sources-table" style="width: 100%" data-bind="
+						dataTable: {
+							data: showOnlySourcesWithResults() ? cohortDefinitionSourceInfo().filter(c => c.isValid()) : cohortDefinitionSourceInfo,
+							options: {
+								columns: sourcesColumns,
+								order: [[ 0, 'asc' ]],
+								pageLength: sourcesTableOptions.pageLength,
+								language: ko.i18n('datatable.language')
+							}
+						}
+					"></table>
 				</div>
-				<table class="cohort-generate-sources">
+
+				<table class="cohort-generate-sources" style="display: none">
 					<thead>
-						<th></th>
-						<th data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name')"></th>
-						<th class="text-right nowrap"
-							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationStatus', 'Generation Status')"></th>
-						<th class="text-right nowrap" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.people', 'People')">
-						</th>
-						<th class="text-right nowrap"
-							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.records', 'Records')"></th>
-						<th class="text-right nowrap"
-							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generated', 'Generated')"></th>
-						<th class="text-right nowrap"
-							data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration')">
-						</th>
-						<th></th>
+					<th></th>
+					<th data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name')"></th>
+					<th class="text-right nowrap"
+						data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationStatus', 'Generation Status')"></th>
+					<th class="text-right nowrap" data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.people', 'People')">
+					</th>
+					<th class="text-right nowrap"
+						data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.records', 'Records')"></th>
+					<th class="text-right nowrap"
+						data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generated', 'Generated')"></th>
+					<th class="text-right nowrap"
+						data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration')">
+					</th>
+					<th></th>
 					</thead>
 					<tbody
-						data-bind="foreach:cohortDefinitionSourceInfo, css: {overflow: cohortDefinitionSourceInfo().length > 3, 'max-height': $component.selectedReportSource()}">
-						<tr
+							data-bind="foreach:cohortDefinitionSourceInfo, css: {overflow: cohortDefinitionSourceInfo().length > 3, 'max-height': $component.selectedReportSource()}">
+					<tr
 							data-bind="css: { 'selected': $component.selectedReportSource() && $component.selectedReportSource().sourceKey == $data.sourceKey}">
-							<td>
+						<td>
 								<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate($data.sourceKey) ? 'Not enough permissions to generate' : null" data-placement="right">
 									<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="right">
 										<button class="btn btn-sm btn-primary"
@@ -280,34 +297,34 @@
 										</button>
 									</span>
 								</span>
-								<a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,
+							<a role="button" class="btn btn-sm btn-danger" data-bind="click:$component.cancelGenerate,
 															visible: $component.isSourceRunning($data),
 															attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
-								</a>
-							</td>
-							<td class="nowrap" data-bind="text:name"></td>
-							<td class="statusIndicator text-right nowrap">
+							</a>
+						</td>
+						<td class="nowrap" data-bind="text:name"></td>
+						<td class="statusIndicator text-right nowrap">
 								<span
-									data-bind="template: { name: $component.getStatusTemplate, data: { item: $data, status: $component.getStatusMessage($data)} }"></span>
-							</td>
-							<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.personCount)">
-							</td>
-							<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.recordCount)">
-							</td>
-							<td class="text-right nowrap" data-bind="text: startTime">
-							</td>
-							<td class="text-right nowrap" data-bind="text: executionDuration">
-							</td>
-							<td>
-								<div class="btn btn-sm btn-primary"
-									data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
-									<i class="fa fa-eye"></i>
-									<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey)
+										data-bind="template: { name: $component.getStatusTemplate, data: { item: $data, status: $component.getStatusMessage($data)} }"></span>
+						</td>
+						<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.personCount)">
+						</td>
+						<td class="text-right nowrap" data-bind="html: $component.renderCountColumn($data.recordCount)">
+						</td>
+						<td class="text-right nowrap" data-bind="text: startTime">
+						</td>
+						<td class="text-right nowrap" data-bind="text: executionDuration">
+						</td>
+						<td>
+							<div class="btn btn-sm btn-primary"
+								 data-bind="visible:!$component.isSourceRunning($data) && isValid(), click:$component.toggleCohortReport">
+								<i class="fa fa-eye"></i>
+								<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === $data.sourceKey)
 										? ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.hideReports', 'Hide Reports')
 										: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
-								</div>
-							</td>
-						</tr>
+							</div>
+						</td>
+					</tr>
 					</tbody>
 				</table>
 				<!-- ko if: selectedReportSource() -->
@@ -745,6 +762,33 @@
 
 <script type="text/html" id="failed-status-tmpl">
 	<a href='#' data-bind="css: $component.classes('status-link'), click: () => $component.showExitMessage($data.item.sourceKey), text: $component.getStatusMessageTranslated($data.status)"></a>
+</script>
+
+<script type="text/html" id="generation-buttons">
+	<div class="generation-buttons">
+		<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate(sourceKey) ? 'Not enough permissions to generate' : null" data-placement="left">
+			<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="left">
+				<button class="btn btn-sm btn-primary"
+						data-bind="attr: {'disabled':!$component.canGenerate() || !$component.hasAccessToGenerate(sourceKey)},
+												visible: !$component.isSourceRunning($data),
+												click: (data, event) => $component.generateCohort(data)">
+						<i class="fa fa-play"></i>&nbsp;<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generate', 'Generate')"></span>
+				</button>
+			</span>
+		</span>
+		<a role="button" class="btn btn-sm btn-danger"
+		   data-bind="click:$component.cancelGenerate,
+								visible: $component.isSourceRunning($data),
+								attr: {disabled: $component.isCancelDisabled($data)}"><i class="fa fa-spinner fa-spin"></i> <span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
+		</a>
+		<button class="btn btn-sm btn-primary"
+			 data-bind="attr: {disabled: $component.isSourceRunning($data) || !isValid()}, click:$component.toggleCohortReport">
+			<i class="fa fa-eye"></i>
+			<span data-bind="text: (($component.selectedReportSource() && $component.selectedReportSource().sourceKey === sourceKey)
+											? ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.hideReports', 'Hide Reports')
+											: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
+		</button>
+	</div>
 </script>
 
 <!-- /ko -->

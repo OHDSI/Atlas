@@ -87,4 +87,28 @@
     color: #265a88;
     cursor: pointer;
 }
+
+.generation-container {
+    margin: 0 6px;
+}
+.generation-heading {
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: 500;
+    margin: 12px 0 3px 0;
+}
+.only-results-checkbox {
+}
+table.sources-table td.generation-buttons-column {
+    text-align: right;
+}
+table.sources-table thead th, table.sources-table tbody tr:first-child td {
+    padding: 4px 10px;
+}
+table.sources-table tbody td {
+    padding: 0 10px 4px;
+}
+.generation-buttons {
+    white-space: nowrap;
+}
   
