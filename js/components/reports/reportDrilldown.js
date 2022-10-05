@@ -1,12 +1,12 @@
 define([
 	'knockout',
-	'text!./treemapDrilldown.html',
+	'text!./reportDrilldown.html',
 	'd3',
 	'atlascharts',
 	'utils/CommonUtils',
 	'utils/ChartUtils',
 	'const',
-	'pages/data-sources/classes/Report',
+	'./classes/Report',
 	'components/Component',
 	'components/charts/histogram',
 	'components/charts/line',
@@ -25,10 +25,9 @@ define([
 	commonUtils,
 	ChartUtils,
 	constants,
-	Report,
-	Component
+	Report
 ) {
-	class TreemapDrilldown extends Report {
+	class ReportDrilldown extends Report {
 		constructor(params) {
 			super(params);
 
@@ -144,7 +143,7 @@ define([
 					yFormat: d3.format('d')
 				},
 			};
-
+			console.log('report!')
 			this.currentReport = params.currentReport;
 			this.byFrequency = params.byFrequency;
 			this.byUnit = params.byUnit;
@@ -338,6 +337,7 @@ define([
 			this.isError(false);
 			this.getData()
 				.then((data) => {
+					console.log(data)
 					this.parseData(data);
 					this.context.loadingDrilldownDone(true);
 					this.context.showLoadingDrilldownModal(false);
@@ -351,5 +351,5 @@ define([
 		}
 	}
 
-	return commonUtils.build('report-treemap-drilldown', TreemapDrilldown, view);
+	return commonUtils.build('report-drilldown', ReportDrilldown, view);
 });

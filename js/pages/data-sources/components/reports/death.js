@@ -5,7 +5,7 @@ define([
 	'utils/CommonUtils',
 	'utils/ChartUtils',
 	'const',
-	'pages/data-sources/classes/Report',
+	'components/reports/classes/Report',
 	'components/Component',
 	'components/heading',
 	'components/charts/donut',
@@ -20,7 +20,6 @@ define([
 	ChartUtils,
 	constants,
 	Report,
-	Component
 ) {
 	class Death extends Report {
 		constructor(params) {
