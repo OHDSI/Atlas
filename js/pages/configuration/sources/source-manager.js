@@ -159,6 +159,7 @@ define([
         { id: 'hive', name: ko.i18n('configuration.viewEdit.dialect.options.hive', 'Hive LLAP')},
         { id: 'spark', name: ko.i18n('configuration.viewEdit.dialect.options.spark', 'Spark')},
         { id: 'snowflake', name: ko.i18n('configuration.viewEdit.dialect.options.snowflake', 'Snowflake')},
+        { id: 'synapse', name: ko.i18n('configuration.viewEdit.dialect.options.synapse', 'Azure Synapse') },
       ];
 
       this.sourceCaption = ko.computed(() => {

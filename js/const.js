@@ -272,6 +272,10 @@ define([
 			SNOWFLAKE: {
 				title: "Snowflake",
 				dialect: "snowflake",
+      },      
+			SYNAPSE: {
+				title: "Azure Synapse",
+				dialect: "synapse",
 			},
 		};
 
