@@ -1,7 +1,5 @@
 <div class="paddedWrapper">
-  <!-- ko if: (conceptSetStore.current() != null) -->
-  <div class="divtext cohort-description" data-bind="contentEditable: conceptSetStore.current().description, contenteditableSwitch: canEditCurrentConceptSet(), placeholder: ko.i18n('components.conceptSet.descriptionPlaceholder', 'Enter the concept set description here')"></div>
-  <!-- /ko -->
+
   <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
         xssSafe: true,
         data: data(),
@@ -26,17 +24,6 @@
         }
       }">
       <thead>
-        <th>
-          <!-- ko if: canEditCurrentConceptSet -->
-            <span data-bind="
-              css: classes({
-                  element: 'checkmark',
-                  extra: `fa fa-check ${areAllConceptsCheckedForRemoval() ? 'selected' : ''}`
-              }),
-              click: toggleSelectedConceptsForRemoval
-            "></span>
-          <!-- /ko -->
-        </th>
         <th data-bind="text: ko.i18n('columns.conceptId', 'Concept Id')"></th>
         <th data-bind="text: ko.i18n('columns.conceptCode', 'Concept Code')"></th>
         <th data-bind="text: ko.i18n('columns.conceptName', 'Concept Name')"></th>
@@ -44,7 +31,6 @@
         <th data-bind="text: ko.i18n('columns.standardConceptCode', 'Standard Concept Code')"></th>
         <th data-bind="text: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption')"></th>
         <th>
-          <!-- ko if: canEditCurrentConceptSet -->
             <span data-bind="
               css: classes({
                   element: 'checkmark',
@@ -52,11 +38,9 @@
               }),
               click: toggleExcluded
             "></span>
-          <!-- /ko -->
           <span data-bind="text: ko.i18n('columns.exclude', 'Exclude')"></span>
         </th>
         <th>
-          <!-- ko if: canEditCurrentConceptSet -->
           <span data-bind="
             css: classes({
                 element: 'checkmark',
@@ -64,11 +48,9 @@
             }),
             click: toggleDescendants
           "></span>
-          <!-- /ko -->
           <span data-bind="text: ko.i18n('columns.descendants', 'Descendants')"></span>
         </th>
         <th>
-          <!-- ko if: canEditCurrentConceptSet -->
             <span data-bind="
               css: classes({
                   element: 'checkmark',
@@ -76,35 +58,10 @@
               }),
               click: toggleMapped
             "></span>
-          <!-- /ko -->
           <span data-bind="text: ko.i18n('columns.mapped', 'Mapped')"></span>
         </th>
       </thead>
   </table>
 
   <concept-legend></concept-legend>
-
-  <!-- ko if: canEditCurrentConceptSet -->
-  <div class="row">
-    <span data-bind="tooltip: buttonTooltip">
-      <button
-        class="btn btn-danger btn-sm"
-        data-bind="
-          click: removeConceptsFromConceptSet,
-          css: { disabled: conceptsForRemovalLength() === 0 },
-          text: ko.i18n('components.conceptSet.removeSelected', 'Remove Selected'),
-        "
-      ></button>
-    </span>
-    <span data-bind="tooltip: buttonTooltip">
-      <button
-      class="btn btn-success btn-sm"
-      data-bind="
-        click: navigateToSearchPage,
-        text: ko.i18n('components.conceptSet.addConcepts', 'Add concepts')
-      "
-    ></button>
-    </span>
-  </div>
-  <!-- /ko -->
 </div>
