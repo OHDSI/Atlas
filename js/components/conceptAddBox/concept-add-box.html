@@ -49,6 +49,12 @@
       <span data-bind="text: ko.i18n('components.conceptAddBox.mapped', 'Mapped')"></span>
     </div>
   </div>
+  <span class="preview-button">
+    <button
+      class="btn btn-primary"
+      data-bind="click: handlePreview, css: { disabled: !canAddConcepts() || isDisabled() }, text: ko.i18n('components.conceptAddBox.previewButton', 'Preview...')"
+    ></button>
+  </span>
   <span data-bind="tooltip: buttonTooltipText">
     <button
       class="btn btn-success"

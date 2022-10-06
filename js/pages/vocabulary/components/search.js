@@ -14,13 +14,18 @@ define([
 	'utils/CommonUtils',
 	'services/Vocabulary',
 	'components/conceptset/ConceptSetStore',
-	'const',
+	'components/conceptset/InputTypes/ConceptSetItem',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
 	'components/empty-state',
 	'components/conceptLegend/concept-legend',
 	'components/conceptAddBox/concept-add-box',
+	'pages/concept-sets/components/tabs/conceptset-expression',
+	'./conceptset-expression-preview',
+	'./included-preview',
+	'./included-preview-badge',
+	'./included-sourcecodes-preview',
 	'less!./search.less'
 ], function (
 	ko,
@@ -38,7 +43,7 @@ define([
 	commonUtils,
 	vocabularyProvider,
 	ConceptSetStore,
-	globalConstants,
+	ConceptSetItem,
 ) {
 	class Search extends AutoBind(Component) {
 		constructor(params) {
@@ -291,6 +296,61 @@ define([
 				this.getDomains();
 				this.getVocabularies();
 			}
+
+			this.conceptSetStore = ConceptSetStore.repository();
+			const tableOptions = commonUtils.getTableOptions('L');
+			this.previewConcepts = ko.observableArray();
+			this.previewOptions = ko.observableArray();
+			this.showPreviewModal = ko.observable(false);
+			this.showPreviewModal.subscribe((show) => {
+				if (!show) {
+					this.previewConcepts([]);
+				}
+			});
+			this.previewTabsParams = ko.observable({
+				tabs: [
+					{
+						title: ko.i18n('components.conceptAddBox.previewModal.tabs.concepts', 'Concepts'),
+						key: 'expression',
+						componentName: 'conceptset-expression-preview',
+						componentParams: {
+							tableOptions,
+							//canEditCurrentConceptSet: ko.observable(false),
+							//showConceptsAsLinks: false,
+							//conceptSetStore: this.conceptSetStore,
+							conceptSetItems: this.previewConcepts
+						},
+					},
+					{
+						title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
+						key: 'included',
+						componentName: 'conceptset-list-included-preview',
+						componentParams: {
+							tableOptions,
+							previewConcepts: this.previewConcepts
+						},
+						hasBadge: true,
+					},
+					{
+						title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Source Codes'),
+						key: 'included-sourcecodes',
+						componentName: 'conceptset-list-included-sourcecodes-preview',
+						componentParams: {
+							tableOptions,
+							previewConcepts: this.previewConcepts
+						},
+					}
+				]
+			});
+		}
+
+		handlePreview(options) {
+			const concepts = commonUtils.getSelectedConcepts(this.data);
+			const items = commonUtils.buildConceptSetItems(concepts, options);
+			const itemsToAdd = items.map(item => new ConceptSetItem(item));
+			this.previewConcepts(itemsToAdd.concat(this.conceptSetStore.current() ? this.conceptSetStore.current().expression.items() : []));
+			this.previewOptions = options;
+			this.showPreviewModal(true);
 		}
 
 		renderCheckbox(field) {

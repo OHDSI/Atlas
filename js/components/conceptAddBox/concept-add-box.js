@@ -35,6 +35,8 @@ define([
 			});
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
+      this.isPreviewAvailable = params.isPreviewAvailable;
+      this.onPreview = params.onPreview;
       this.canSelectSource = params.canSelectSource || false;
       this.isAdded = ko.observable(false);
       this.defaultSelectionOptions = {
@@ -77,7 +79,11 @@ define([
       this.isDisabled = ko.pureComputed(() => !this.isActive() || !!this.isSuccessMessageVisible());
       this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.hasActiveConceptSets() || this.canCreateConceptSet(), 'create');
     }
-    
+
+    handlePreview() {
+      this.onPreview(this.selectionOptions());
+    }
+
     handleSubmit() {
       clearTimeout(this.messageTimeout);
       this.isSuccessMessageVisible(true);
