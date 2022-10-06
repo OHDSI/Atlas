@@ -7,6 +7,7 @@ define(
       EXPRESSION: conceptSetConstants.ViewMode.EXPRESSION,
       INCLUDED: conceptSetConstants.ViewMode.INCLUDED,
       SOURCECODES: conceptSetConstants.ViewMode.SOURCECODES,
+      RECOMMEND: conceptSetConstants.ViewMode.RECOMMEND,
       EXPORT: conceptSetConstants.ViewMode.EXPORT,
       IMPORT: conceptSetConstants.ViewMode.IMPORT,
       EXPLORE: 'explore',

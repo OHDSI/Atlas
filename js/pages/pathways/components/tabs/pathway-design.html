@@ -1,4 +1,5 @@
 <div data-bind="css: classes()">
+	<div class="divtext" data-bind="contentEditable: design().description, contenteditableSwitch: isEditPermitted(), placeholder: ko.i18n('pathways.manager.design.descriptionPlaceholder', 'Enter the cohort pathway description here')"></div>
 	<p data-bind="css: classes('descr'), html: ko.i18n('pathways.manager.design.description', '<b>Cohort Pathway</b> is defined as the process of generating an aggregated sequence of transitions between the Event Cohorts among those people in the Target Cohorts.')">
 
 	</p>

@@ -11,7 +11,7 @@ define([
 	'../inputTypes/PredictionCovariateSettings',
 	'featureextraction/components/covariate-settings-editor',
 	'featureextraction/components/temporal-covariate-settings-editor',
-	'components/cohort-definition-browser',
+	'components/entityBrowsers/cohort-definition-browser',
 	'faceted-datatable',
 	'less!./prediction-specification-view-edit.less',
 ], function (

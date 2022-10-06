@@ -1,4 +1,4 @@
-define(['knockout'], function (ko) {
+define(['knockout', 'services/MomentAPI'], function (ko, momentApi) {
 
 	function Concept(data) {
 		var self = this;
@@ -14,6 +14,8 @@ define(['knockout'], function (ko) {
         self.STANDARD_CONCEPT = data.STANDARD_CONCEPT;
         self.STANDARD_CONCEPT_CAPTION = data.STANDARD_CONCEPT_CAPTION;
 		self.VOCABULARY_ID = data.VOCABULARY_ID;
+		self.VALID_START_DATE = momentApi.formatDateTimeWithFormat(data.VALID_START_DATE, momentApi.ISO_DATE_FORMAT);
+		self.VALID_END_DATE = momentApi.formatDateTimeWithFormat(data.VALID_END_DATE, momentApi.ISO_DATE_FORMAT);
 	}
 
 	return Concept;

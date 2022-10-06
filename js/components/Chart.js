@@ -18,7 +18,7 @@ define([
   class Chart extends AutoBind(Component) {
     constructor(params, container) {
       super(params);
-			const bemHelper = new BemHelper('Chart');
+      const bemHelper = new BemHelper('Chart');
       this.chartClasses = bemHelper.run.bind(bemHelper);
       this.renderer = null; // atlascharts
       this.rawData = ko.observable();
@@ -28,8 +28,14 @@ define([
       this.data = ko.computed(() => {
         return this.prepareData(this.rawData());
       });
-			this.container = container;
-			this.filename = ko.unwrap(params.filename);
+      this.container = container;
+      this.chartName = params.chartName ? params.chartName : '';
+      this.reportName = ko.unwrap(params.reportName);
+      this.filename = ko.computed (() => {
+         const fileName = this.reportName ? `${ko.unwrap(params.reportName)}_${this.chartName}`.replace(/ /g, '') : 'untitled';
+         return fileName.length > 90 ? fileName.slice(0,90) : fileName;
+      });
+
     }
 
     prepareData(rawData) {
@@ -43,9 +49,12 @@ define([
 		
 		export() {
 			const svg = this.container.element.querySelector('svg');
-			ChartUtils.downloadSvgAsPng(svg, this.filename || "untitled.png");
+			ChartUtils.downloadSvgAsPng(svg, this.filename() || "untitled.png");
 		}
-		
+		exportSvg() {
+            const svg = this.container.element.querySelector('svg');
+            ChartUtils.downloadSvg(svg, this.filename() + ".svg" || "untitled.svg");
+        }
 		dispose() {
 			this.renderer && this.renderer.dispose();
 		}

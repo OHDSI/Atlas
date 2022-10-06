@@ -1,5 +1,5 @@
 define(
-  ['d3', 'lodash', 'html2canvas', 'file-saver'],
+  ['d3', 'lodash', 'html2canvas', 'file-saver', 'svgsaver'],
   function (d3, _, html2canvas) {
     // TODO: move into Visualizations repo
     class ChartUtils {      
@@ -78,7 +78,9 @@ define(
       static downloadSvgAsPng(container, filename) {
 				const svgString = ChartUtils.getSVGString(container);
 				const containerBBox = container.getBBox();
-				ChartUtils.svgString2Image( svgString, 2*containerBBox.width, 2*containerBBox.height, 'png', save ); // passes Blob and filesize String to the callback
+                const containerWidth = containerBBox.width || container.getAttribute('width');
+                const containerHeight = containerBBox.height || container.getAttribute('height');
+				ChartUtils.svgString2Image( svgString, 2*containerWidth, 2*containerHeight, 'png', save ); // passes Blob and filesize String to the callback
 
 				function save( dataBlob, filesize ){
 					saveAs( dataBlob, filename );
@@ -91,6 +93,35 @@ define(
             saveAs(dataBlob, filename);
           });
         });
+      }
+
+      static downloadSvg(container,name) {
+        var SvgSaver = require('svgsaver');
+        var svgsaver = new SvgSaver();
+        svgsaver.asSvg(container, name);
+      }
+
+      static combineSvgWithLegend(svgFiles) {
+        let heightSvg = 0;
+        svgFiles.forEach(file => heightSvg += file.clientHeight);
+        const heightWithoutLegend = svgFiles[0].clientHeight;
+        const widthSvg = svgFiles[0].clientWidth;
+        const svgNS = "http://www.w3.org/2000/svg";
+        const combineSvg = document.createElementNS(svgNS, 'svg');
+        combineSvg.setAttribute('width', widthSvg);
+        combineSvg.setAttribute('height', heightSvg);
+        for (let i = 0; i < svgFiles.length; i++) {
+          const childNodes = Array.from(svgFiles[i].childNodes);
+          for (let j = 0; j < childNodes.length; j++) {
+            const g = childNodes[j].cloneNode(true);
+            if (g.classList.contains('treeLegend')) {
+              const translateAttr = "translate(15," + heightWithoutLegend + ")";
+              g.setAttribute('transform', translateAttr);
+            }
+            combineSvg.appendChild(g);
+          }
+        }
+        return combineSvg;
       }
 			
 			static mapConceptData(data) {

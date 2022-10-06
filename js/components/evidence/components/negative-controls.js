@@ -11,7 +11,7 @@ define(['knockout',
 	'services/JobDetailsService',
 	'services/MomentAPI',
 	'services/AuthAPI',
-	'conceptsetbuilder/InputTypes/ConceptSet',
+	'components/conceptset/InputTypes/ConceptSet',
 	'assets/ohdsi.util',
 	'databindings',
 	'evidence',
@@ -64,7 +64,7 @@ define(['knockout',
 			this.linkoutConditionConceptIds = [];
 			this.sourceIds = config.cemOptions.evidenceLinkoutSources;
 			this.recordCountClass = ko.pureComputed(() => {
-				return this.recordCountsRefreshing() ? "fa fa-circle-o-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+				return this.recordCountsRefreshing() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-database fa-lg";
 			});
 			this.newConceptSetName = ko.observable(this.conceptSet()
 				.name() + " - Candidate Controls");
@@ -333,11 +333,11 @@ define(['knockout',
 					this.recordCountsRefreshing(true);
 					$("#dtNegCtrlRC")
 						.toggleClass("fa-database")
-						.toggleClass("fa-circle-o-notch")
+						.toggleClass("fa-circle-notch")
 						.toggleClass("fa-spin");
 					$("#dtNegCtrlDRC")
 						.toggleClass("fa-database")
-						.toggleClass("fa-circle-o-notch")
+						.toggleClass("fa-circle-notch")
 						.toggleClass("fa-spin");
 					$(".ncRecordCount").each(function(index) { $(this).text("...") });
 					var negativeControls = this.negativeControls();

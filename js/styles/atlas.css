@@ -102,6 +102,10 @@ body {
   font-weight: bold;
 }
 
+.heading b {
+  color: #333;
+}
+
 .subheading {
   font-size: 12px;
   color: #000;
@@ -884,7 +888,7 @@ i.fa.fa-refresh.fa-spin {
   padding-right: 0px;
 }
 
-.i.fa.fa-circle-o-notch.fa-spin {
+.i.fa.fa-circle-notch.fa-spin {
   font-size: .9em;
   padding-right: 0px;
 }

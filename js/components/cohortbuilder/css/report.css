@@ -1,5 +1,7 @@
 table.indexSummary {
 	border-collapse: collapse;
+	width: 500px;
+	margin: 10px auto 20px 0;
 }
 table.indexSummary th {
 	padding-left: 5px;
@@ -33,8 +35,13 @@ table.inclusionRules tr td {
 div.inclusionRuleType .header {
 	font-size: 12px;
 	font-weight: bold;
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+div.inclusionRuleType .rule-checkbox {
+	vertical-align: top;
+	text-align: left;
+	padding: 1px 0;
 }
 
 div.inclusionRuleType th {
@@ -53,12 +60,27 @@ rect.selected {
 	stroke-width: 3px;
 }
 
+.all-any-selector {
+	margin: 6px 0 12px;
+}
+
+.rules-summary {
+	margin: 15px 0 0;
+}
+.rules-summary b {
+	color: #333;
+}
+
 .inclusionRulePass {
 	
 }
 
 .inclusionRuleFail {
 	color: #f44;
+}
+
+.inclusionRuleNotSelected {
+	color: darkgray;
 }
 
 div.attritionbar {
@@ -76,3 +98,26 @@ span.toggleView {
 span.toggleView:hover {
 	text-decoration: underline;
 }
+
+.visualization_container {
+	 position: relative;
+ }
+
+.export-button {
+	 display:none;
+	 position:absolute;
+	 top:42px;
+	 right:32px;
+ }
+
+.exportSvg-button {
+	 display:none;
+	 position:absolute;
+	 top:42px;
+	 right:0px;
+ }
+
+.visualization_container:hover > .export-button,
+.visualization_container:hover > .exportSvg-button {
+	 display:block;
+ }

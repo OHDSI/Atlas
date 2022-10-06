@@ -14,7 +14,7 @@ define([
     'services/Vocabulary',
     'services/Permission',
     'components/security/access/const',
-    'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/InputTypes/ConceptSet',
     'components/conceptset/ConceptSetStore',
     'pages/Page',
     'pages/characterizations/const',

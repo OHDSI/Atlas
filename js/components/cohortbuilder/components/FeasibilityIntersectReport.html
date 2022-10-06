@@ -2,8 +2,16 @@
 	<tr>
 		<td style="vertical-align: top; padding-right: 25px;">
 			<div class="inclusionRuleType">
-				<table style="border-collapse: collapse; width:100%; max-width:750px; margin-left: auto">
+				<div class="all-any-selector">
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.having', 'Having')"></span>
+					<select data-bind="options: allAnyOptions, optionsText: 'name', optionsValue: 'id', value: allAnyOption"></select>
+					<span data-bind="text: ko.i18n('cohortDefinitions.cohortreports.ofSelectedCriteria', 'of selected criteria')"></span>
+					<select data-bind="options: passedFailedOptions, optionsText: 'name', optionsValue: 'id', value: passedFailedOption"></select>
+			    </div>
+
+				<table>
 					<thead>
+						<th class="rule-checkbox" data-bind="click: headerCheckboxClicked"><i class="fa fa-check" data-bind="css: {selected: report().inclusionRuleStats.length === checkedRulesIds().length}"></i></th>
 						<th style="width: 15px;"></th>
 						<th class="header">
 							<span data-bind="text: ko.i18n('components.feasibilityIntersectReport.inclusionRule', 'Inclusion Rule')"></span>
@@ -17,8 +25,9 @@
 						</th>
 					</thead>
 					<tbody data-bind="foreach: report().inclusionRuleStats">
-						<tr data-bind="css: {inclusionRulePass: ($parent.pass.indexOf($data) != -1), inclusionRuleFail: ($parent.fail.indexOf($data) != -1)}">
-							<td style="vertical-align: top;"><span data-bind="text: ($index()+1) + '.'"></span>
+						<tr data-bind="css: {inclusionRulePass: ($parent.pass.indexOf($data) != -1), inclusionRuleFail: ($parent.fail.indexOf($data) != -1), inclusionRuleNotSelected: !$parent.isRuleChecked(id)}">
+							<td class="rule-checkbox"><i class="fa fa-check" data-bind="css: {selected: $parent.isRuleChecked(id)}, click: () => $parent.checkRule(id)"></i></td>
+							<td><span data-bind="text: ($index()+1) + '.'"></span>
 							</td>
 							<td style="text-align: left"><span data-bind="text:name"></span>
 							</td>
@@ -31,6 +40,13 @@
 						</tr>
 					</tbody>
 				</table>
+
+				<div class="rules-summary">
+					<b data-bind="text: ko.i18n('cohortDefinitions.cohortreports.summary', 'Summary:')"></b>
+					<span data-bind="text: ko.i18nformat('cohortDefinitions.cohortreports.summaryText',
+							'<%=events%> events (<%=percentage%>%)',
+							{events: summaryValue().toLocaleString(), percentage: summaryPercent().toFixed(2)})"></span>
+				</div>
 			</div>
 		</td>
 		<td style="padding-left: 25px; vertical-align: top; width: 400px; border-left: solid 1px #eee;">
@@ -41,7 +57,7 @@
 																								 { event: 'mouseover', selector: '.cell rect', callback: handleCellOver},
 																								 { event: 'mouseout', selector: '.cell rect', callback: describeClear}]">
 				<div style="height: 25px; text-align: center; line-height: 25px; font-size: 12px; color: #222;" class="rect_summary" data-bind="text: rectSummary"></div>
-				<div id="treemap" style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="populationTreemap: { data: report().treemapData }"></div>
+				<div style="vertical-align: middle; text-align: center; width: 400px; margin: 7px auto 7px auto;" data-bind="populationTreemap: populationTreemapData, populationTreemapAfterRender:grayRectsInTreemap"></div>
 			</div>
 		</td>
 	</tr>

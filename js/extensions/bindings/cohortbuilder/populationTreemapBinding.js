@@ -3,7 +3,7 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 		function bitCounter(bits) {
 			var counted = 0;
 			for (var b = 0; b < bits.length; b++) {
-				if (bits[b] == '1') {
+				if (bits[b] === '1') {
 					counted++;
 				}
 			}
@@ -14,13 +14,13 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 		var passed = bitCounter(bits);
 		var failed = bits.length - passed;
 
-		if (passed == bits.length) {
+		if (passed === bits.length) {
 			return '#7BB209';
-		} else if (failed == bits.length) {
+		} else if (failed === bits.length) {
 			return '#FF3D19';
-		} else if (failed == 1) {
+		} else if (failed === 1) {
 			return '#95B90A';
-		} else if (failed == 2) {
+		} else if (failed === 2) {
 			return '#C9C40D';
 		} else if (failed < 5) {
 			return '#E77F13';
@@ -89,9 +89,14 @@ define(['jquery', 'knockout', 'd3'], function ($, ko, d3) {
 			return { controlsDescendantBindings: true };
 		},
 		update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-			var data = JSON.parse(valueAccessor().data);
+			let va = ko.unwrap(valueAccessor()),
+				data = JSON.parse(va.data);
 			d3.select(element).selectAll('svg').remove();
 			renderTreemap(data, element);
+			const afterRender = allBindingsAccessor.get('populationTreemapAfterRender');
+			if (afterRender && "function" == typeof afterRender) {
+				afterRender(element);
+			}
 		}
 	};
 });

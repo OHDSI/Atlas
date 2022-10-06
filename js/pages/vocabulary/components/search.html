@@ -44,16 +44,17 @@
 					extra: 'form-control'
 				}),
 				placeholder: ko.i18n('search.placeholder', 'Type your search here'),
-				disable: loading()" />
-			<div class="input-group-btn">
-				<button class="pull-right btn btn-primary" type="submit" data-bind="title: ko.i18n('search.buttonTitle', 'Search'), disable: loading()"><i class="fa fa-search"></i></button>
+				disable: searching()" />
+			<div class="input-group-btn" data-bind="tooltip:recommendButtonTooltip">
+				<button class="btn btn-primary" type="submit" data-bind="title: ko.i18n('search.buttonTitle', 'Search'), disable: searching()"><i class="fa fa-search"></i></button>
+				<button class="btn btn-success" type="button" data-bind="title: ko.i18n('search.recommendButtonTitle', 'Recommend'), disable: isRecommendDisabled, click: recommendClick"><i class="fa fa-shopping-cart"></i></button>
 			</div>
 		</div>
 	</form>
 	<div class="row">
 		<div data-bind="click: toggleAdvanced, text: ko.i18n('search.advancedOptions', 'Advanced Options')" class="pull-right btn btn-sm btn-link"></div>
 	</div>
-	<!-- ko if: isInProgress() || loading() -->
+	<!-- ko if: isInProgress() || loading() || recommending() -->
 		<loading params="status: loadingMessage"></loading>
 	<!-- /ko -->
 	<div class="advanced-options" data-bind="visible: showAdvanced">
@@ -83,7 +84,7 @@
         "></select>
 		</div>
 		<faceted-datatable params="{
-			orderColumn: 7,
+			orderColumn: 9,
 			columns: searchColumns,
 			options: searchOptions,
 			reference: data,
