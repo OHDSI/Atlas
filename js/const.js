@@ -269,6 +269,10 @@ define([
 				title: "Spark",
 				dialect: "spark",
 			},
+			SNOWFLAKE: {
+				title: "Snowflake",
+				dialect: "snowflake",
+			},
 		};
 
 		const eventTypes = {
