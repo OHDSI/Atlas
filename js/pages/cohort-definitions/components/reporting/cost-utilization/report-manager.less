@@ -1,0 +1,22 @@
+.report-manager {
+
+  &__chartContainer {
+    position:relative;
+  }
+
+  &__export-button {
+    display:none;
+    position:absolute;
+    top:0px;
+    right:37px;
+  }
+  &__exportSvg-button {
+    display:none;
+    position:absolute;
+    top:0px;
+    right:0px;
+  }
+  &__chartContainer:hover > &__export-button, &__chartContainer:hover > &__exportSvg-button {
+    display:block;
+  }
+}

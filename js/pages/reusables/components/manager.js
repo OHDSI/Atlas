@@ -24,7 +24,7 @@ define([
 	'./tabs/reusable-concept-sets',
 	'faceted-datatable',
 	'components/security/access/configure-access-modal',
-	'components/tags/tags',
+	'components/tags/modal/tags-modal',
 	'components/heading',
 	'components/authorship',
 	'components/name-validation',

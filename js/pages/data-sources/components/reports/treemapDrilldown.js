@@ -145,13 +145,6 @@ define([
 				},
 			};
 
-			this.scrollTo = function (s) {
-				var e = $(s);
-				if (e.length > 0) {
-					e[0].scrollIntoView();
-				}
-			}
-
 			this.currentReport = params.currentReport;
 			this.byFrequency = params.byFrequency;
 			this.byUnit = params.byUnit;
@@ -163,6 +156,7 @@ define([
 			this.context = params.context;
 			this.subscriptions.push(params.currentConcept.subscribe(this.loadData.bind(this)));
 			this.loadData(params.currentConcept());
+			this.reportName = ko.computed(() => `${this.currentReport.name()}_${this.currentConcept().name}`);
 		}
 
 		parseAgeData(rawAgeData) {
@@ -345,14 +339,14 @@ define([
 			this.getData()
 				.then((data) => {
 					this.parseData(data);
+					this.context.loadingDrilldownDone(true);
+					this.context.showLoadingDrilldownModal(false);
+					setTimeout(() => document.getElementById('drilldownReport').scrollIntoView(), 0);
 				})
 				.catch((er) => {
 					this.isError(true);
 					console.error(er);
-				})
-				.finally(() => {
-					this.context.loadingReportDrilldown(false);
-					this.scrollTo("#datasourceReportDrilldownTitle");
+					this.context.showLoadingDrilldownModal(false);
 				});
 		}
 	}

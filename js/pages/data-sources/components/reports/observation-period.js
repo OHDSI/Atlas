@@ -18,6 +18,7 @@ define([
         constructor(params) {
             super(params);
 
+            this.name = 'ObservationPeriod';
             // plots
             this.ageAtFirstObservationData = ko.observable();
             this.ageByGenderData = ko.observable();

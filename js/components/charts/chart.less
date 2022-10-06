@@ -2,17 +2,22 @@
 	
 	&__container {
 		position:relative;
+		font-size: 10px;
 	}
 	
 	&__export-button {
 		display:none;
 		position:absolute;
 		top:0px;
-		right:0px;		
+		right:32px;
 	}
-
-	&__container:hover > &__export-button {
+	&__exportSvg-button {
+		display:none;
+		position:absolute;
+		top:0px;
+		right:0px;
+	}
+	&__container:hover > &__export-button, &__container:hover > &__exportSvg-button {
 		display:block;
 	}
-	
 }

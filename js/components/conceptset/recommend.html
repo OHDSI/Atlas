@@ -1,0 +1,20 @@
+<loading params="status: ko.i18n('components.conceptSet.loadingRecommendedConcepts', 'Loading Recommended Concepts')" data-bind="visible: loading()"></loading>
+<div data-bind="hidden: loading, if:isRecommendedAvailable()">
+    <faceted-datatable params="{
+        orderColumn: 7,
+        columns: $component.recommendedConceptColumns,
+        options: $component.recommendedConceptOptions,
+        reference: $component.recommendedConcepts,
+        pageLength: tableOptions.pageLength,
+        lengthMenu: tableOptions.lengthMenu,
+        language: ko.i18n('datatable.language')
+    }"></faceted-datatable>
+    <concept-add-box params="{
+        isActive: canAddConcepts,
+        onSubmit: addConcepts
+    }"></concept-add-box>
+</div>
+<div data-bind="ifnot:isRecommendedAvailable()">
+    Recommendations not available.  Please see <a href="https://forums.ohdsi.org/t/phoebe-2-0/17410" target="_new">this OHDSI forum thread</a> 
+    with information on installing the necessary tables.
+</div>

@@ -4,7 +4,7 @@ define(function (require, exports) {
 	var config = require('appConfig');
 	var d3 = require('d3');
 
-	function getConceptRecordCountWithResultsUrl(resultsUrl, conceptIds, results, isCamelCaseProps = true) {
+	function getConceptRecordCountWithResultsUrl(resultsUrl, conceptIds, results, isCamelCaseProps = true, formatter = d3.format(',')) {
 
 		const getConceptId = (concept) => isCamelCaseProps ? concept.conceptId : concept.CONCEPT_ID;
 		const setRecordCount = (concept, val) => isCamelCaseProps ? (concept.recordCount = val) : (concept.RECORD_COUNT = val);
@@ -28,8 +28,6 @@ define(function (require, exports) {
 			contentType: 'application/json',
 			data: JSON.stringify(conceptIds),
 			success: function (entries) {
-				var formatComma = d3.format(',');
-
 				for (var e = 0; e < entries.length; e++) {
 					densityIndex[Object.keys(entries[e])[0]] = Object.values(entries[e])[0];
 				}
@@ -37,10 +35,10 @@ define(function (require, exports) {
 				for (var c = 0; c < results.length; c++) {
 					var concept = results[c];
 					if (densityIndex[getConceptId(concept)] != undefined) {
-						setRecordCount(concept, formatComma(densityIndex[getConceptId(concept)][0]));
-						setDescendantRecordCount(concept, formatComma(densityIndex[getConceptId(concept)][1]));
-						setPersonCount(concept, formatComma(densityIndex[getConceptId(concept)][2]));
-						setDescendantPersonCount(concept, formatComma(densityIndex[getConceptId(concept)][3]));
+						setRecordCount(concept, formatter(densityIndex[getConceptId(concept)][0]));
+						setDescendantRecordCount(concept, formatter(densityIndex[getConceptId(concept)][1]));
+						setPersonCount(concept, formatter(densityIndex[getConceptId(concept)][2]));
+						setDescendantPersonCount(concept, formatter(densityIndex[getConceptId(concept)][3]));
 					} else {
 						setRecordCount(concept, 0);
 						setDescendantRecordCount(concept, 0);
@@ -67,8 +65,8 @@ define(function (require, exports) {
 		return densityPromise;
 	}
 
-	function getConceptRecordCount(sourceKey, conceptIds, results, isCamelCaseProps = true) {
-		return getConceptRecordCountWithResultsUrl(config.webAPIRoot + 'cdmresults/' + sourceKey + '/', conceptIds, results, isCamelCaseProps);
+	function getConceptRecordCount(sourceKey, conceptIds, results, isCamelCaseProps = true, formatter = d3.format(',')) {
+		return getConceptRecordCountWithResultsUrl(config.webAPIRoot + 'cdmresults/' + sourceKey + '/', conceptIds, results, isCamelCaseProps, formatter);
 	}
 
 	var api = {

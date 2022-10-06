@@ -1,0 +1,15 @@
+<heading-title params="name: ko.i18n('navigation.tagging', 'Tagging'), icon: 'tags', theme: 'dark'"></heading-title>
+
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isAuthenticated"></access-denied>
+
+<tabs params="
+		selectedTabKey: $component.selectedTabKey,
+		selectTab: $component.selectTab,
+		tabs: [
+			{
+				title: ko.i18n('tagging.tabs.multiAssign', 'Multi-assign'),
+				key: 'multi-assign',
+				componentName: 'multi-assign'
+			}
+		]">
+</tabs>

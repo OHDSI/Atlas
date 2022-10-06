@@ -40,6 +40,9 @@ define(function (require, exports) {
 	
 	var visitOccurrence = require('./components/VisitOccurrence');
 	ko.components.register('visit-occurrence-criteria', visitOccurrence);
+
+	var visitDetail = require('./components/VisitDetail');
+	ko.components.register('visit-detail-criteria', visitDetail);
 	
 	var deviceExposure = require('./components/DeviceExposure');
 	ko.components.register('device-exposure-criteria', deviceExposure);

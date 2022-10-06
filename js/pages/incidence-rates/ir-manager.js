@@ -37,7 +37,7 @@ define([
 	'utilities/export',
 	'utilities/sql',
 	'components/security/access/configure-access-modal',
-	'components/tags/tags',
+	'components/tags/modal/tags-modal',
 	'components/name-validation',
 	'less!./ir-manager.less',
 	'components/authorship',

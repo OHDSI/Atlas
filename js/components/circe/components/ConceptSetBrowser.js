@@ -3,7 +3,7 @@ define([
 	'text!./ConceptSetBrowserTemplate.html',
 	'services/VocabularyProvider',
 	'appConfig',
-	'conceptsetbuilder/InputTypes/ConceptSet',
+	'components/conceptset/InputTypes/ConceptSet',
 	'services/AuthAPI',
 	'utils/DatatableUtils',
 	'utils/CommonUtils',
