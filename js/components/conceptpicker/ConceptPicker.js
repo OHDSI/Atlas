@@ -65,10 +65,11 @@ define(['jquery','knockout', 'text!./ConceptPickerTemplate.html', './InputTypes/
 
 	ConceptPickerViewModel.prototype.search = function () {
 		var self = this;
-		return VocabularyProvider.search(this.searchText, {
-			domains: [this.SelectedDomain],
-			maxResults: this.MaxResults
-		})
+		searchParams = {
+			QUERY: this.searchText,
+			DOMAIN_ID: [this.SelectedDomain]
+		}
+		return VocabularyProvider.search(searchParams)
 		.then(function (searchResults) {
 			self.results(searchResults);
 		});
