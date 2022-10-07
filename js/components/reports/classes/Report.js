@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'pages/data-sources/const',
+	'components/reports/const',
 	'services/http',
 	'components/Component',
 ], function (
@@ -14,7 +14,6 @@ define([
 			super(params);
 			this.isLoading = ko.observable(true);
 			this.chartFormats = {};
-			console.log(params)
 			this.context = params.context;
 			this.source = this.context.currentSource;
 			this.title = ko.computed(() => {
@@ -35,7 +34,7 @@ define([
 		}
 
 		getData() {
-			console.log(this.context)
+
 			const url = constants.apiPaths.report({
 				sourceKey: this.source() ? this.source().sourceKey : this.context.routerParams.sourceKey,
 				path: this.context.currentReport().path || this.context.routerParams.reportName,

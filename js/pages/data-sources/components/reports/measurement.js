@@ -3,7 +3,7 @@ define([
 	'text!./treemap.html',
 	'components/reports/classes/Treemap',
 	'components/Component',
-	'pages/data-sources/const',
+	'components/reports/const',
 	'utils/CommonUtils',
 	'components/heading',
 	'components/charts/treemap',
