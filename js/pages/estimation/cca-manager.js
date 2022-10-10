@@ -264,6 +264,11 @@ define([
 
 		prepForSave() {
 			const specification = ko.toJS(this.estimationAnalysis());
+
+			// createdBy/modifiedBy INSIDE the spec should not be objects, just a string
+			specification.createdBy = this.estimationAnalysis().createdBy ? this.estimationAnalysis().createdBy.login : null;
+			specification.modifiedBy = this.estimationAnalysis().modifiedBy ? this.estimationAnalysis().modifiedBy.login : null;
+
 			specification.cohortDefinitions = [];
 			specification.conceptSets = [];
 			specification.conceptSetCrossReference = [];
