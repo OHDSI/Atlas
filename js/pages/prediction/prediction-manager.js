@@ -329,6 +329,11 @@ define([
 
 		prepForSave() {
 			const specification = ko.toJS(this.patientLevelPredictionAnalysis());
+
+			// createdBy/modifiedBy INSIDE the spec should not be objects, just a string
+			specification.createdBy = this.patientLevelPredictionAnalysis().createdBy ? this.patientLevelPredictionAnalysis().createdBy.login : null;
+			specification.modifiedBy = this.patientLevelPredictionAnalysis().modifiedBy ? this.patientLevelPredictionAnalysis().modifiedBy.login : null;
+
 			specification.targetIds = [];
 			specification.outcomeIds = [];
 			specification.cohortDefinitions = [];
