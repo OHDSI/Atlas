@@ -61,6 +61,7 @@ define([
       this.compareResultsSame = ko.observable();
 
       this.outsideFilters = ko.observable("");
+      this.lastSelectedMatchFilter = ko.observable("");
 
       this.comparisonTargets = ko.observable(null);
       this.compareError = ko.pureComputed(() => {
@@ -385,6 +386,10 @@ define([
 
     updateOutsideFilters(key) {
         this.outsideFilters(key);
+    }
+
+    updateLastSelectedMatchFilter(key) {
+        this.lastSelectedMatchFilter(key)
     }
 	}
 

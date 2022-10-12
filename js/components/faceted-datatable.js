@@ -90,6 +90,10 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 				});
 			}
 			self.data.valueHasMutated();
+
+			if (params?.updateLastSelectedMatchFilter) {
+				params.updateLastSelectedMatchFilter(data.key);
+			}
 		}
 
 
