@@ -3,6 +3,7 @@ define([
     'text!./chartVenn.html',
     'components/Component',
     'utils/CommonUtils',
+    'utils/ChartUtils',
     'd3',
     'venn',
     'less!./venn.less'
@@ -11,17 +12,23 @@ define([
     view,
     Component,
     commonUtils,
+    ChartUtils,
     d3,
     venn
 ){
 
     class Venn extends Component {
 
-        constructor(params){
+        constructor(params,container){
             super(params);
             this.firstConceptSet = params.firstConceptSet();
             this.secondConceptSet = params.secondConceptSet();
             this.data = params.data();
+            this.container = container;
+            this.chartName = ko.computed(() => {
+
+                return `${this.firstConceptSet}_${this.secondConceptSet}_venn`.replaceAll(' ', '_')
+            });
             this.conceptInBothConceptSets = [];
             this.conceptInFirstConceptSetOnly = [];
             this.conceptInSecondConceptSetOnly = [];
@@ -205,6 +212,16 @@ define([
 
             return [csLeftCircle,csRightCircle,csCommonCircle];
 
+        }
+
+        export() {
+            const svg = this.container.element.querySelector('svg');
+            ChartUtils.downloadSvgAsPng(svg, this.chartName() || "untitled.png");
+        }
+        exportSvg() {
+            console.log(this.chartName())
+            const svg = this.container.element.querySelector('svg');
+            ChartUtils.downloadSvg(svg, this.chartName() + ".svg" || "untitled.svg");
         }
 
     }
