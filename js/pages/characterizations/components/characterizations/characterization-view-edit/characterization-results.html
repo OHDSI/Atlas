@@ -148,12 +148,14 @@
                     <!-- ko if: type === 'distribution' && data.length === 1 && cohorts.length === 2 -->
                         <div data-bind="css: $component.classes('chart-wrapper')">
                             <split-boxplot data-bind="css: $component.classes('boxplot')" params="
-                                        data: () => $component.convertBoxplotData($data),
-                                        minHeight: 125,
-                                        format: {
-                                            valueFormatter: v => v,
-                                            boxHeight: 40,
-                                        }"
+                                data: () => $component.convertBoxplotData($data),
+                                minHeight: 125,
+                                format: {
+                                    valueFormatter: v => v,
+                                    boxHeight: 40,
+                                },
+                                chartName: `${$component.analysisTitle($data)}`,
+                                reportName: `characterization_${$component.characterizationId()}_execution_${$component.executionId()}`"
                             />
                         </div>
                     <!-- /ko -->
