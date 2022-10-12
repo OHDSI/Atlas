@@ -4,7 +4,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.ageAtFirstObservation', 'Age at First Observation')"></div>
 		<div class="panel-body">
-			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation"></histogram>
+			<histogram class="evidenceVisualization" params="data: ageAtFirstObservationData, format: chartFormats.ageAtFirstObservation, reportName: name, chartName: 'Age at First Observation'"></histogram>
 		</div>
 	</div>
 </div>
@@ -13,7 +13,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.ageByGender', 'Age by Gender')"></div>
 		<div class="panel-body">
-			<boxplot class="evidenceVisualization" params="data: ageByGenderData, format: chartFormats.ageByGender"></boxplot>
+			<boxplot class="evidenceVisualization" params="data: ageByGenderData, format: chartFormats.ageByGender, reportName: name, chartName: 'Age by Gender'"></boxplot>
 		</div>
 	</div>
 </div>
@@ -22,7 +22,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.observationLength', 'Observation Length')"></div>
 		<div class="panel-body">
-			<histogram class="evidenceVisualization" params="data: observationLengthData, format: chartFormats.observationLength"></histogram>
+			<histogram class="evidenceVisualization" params="data: observationLengthData, format: chartFormats.observationLength, reportName: name, chartName: 'Observation Length'"></histogram>
 		</div>
 	</div>
 </div>
@@ -31,7 +31,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.durationByGender', 'Duration By Gender')"></div>
 		<div class="panel-body">
-			<boxplot class="evidenceVisualization" params="data: durationByGenderData, format: chartFormats.durationByGender"></boxplot>
+			<boxplot class="evidenceVisualization" params="data: durationByGenderData, format: chartFormats.durationByGender, reportName: name, chartName: 'Duration By Gender'"></boxplot>
 		</div>
 	</div>
 </div>
@@ -40,7 +40,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.cumulativeObservation', 'Cumulative Observation')"></div>
 		<div class="panel-body">
-			<atlasline class="evidenceVisualization" params="data: cumulativeObservationData, format: chartFormats.cumulativeObservation"></atlasline>
+			<atlasline class="evidenceVisualization" params="data: cumulativeObservationData, format: chartFormats.cumulativeObservation, reportName: name, chartName: 'Cumulative Observation'"></atlasline>
 		</div>
 	</div>
 </div>
@@ -49,7 +49,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.durationByAgeDecile', 'Duration By Age Decile')"></div>
 		<div class="panel-body">
-			<boxplot class="evidenceVisualization" params="data: durationByAgeDecileData, format: chartFormats.durationByAgeDecile"></boxplot>
+			<boxplot class="evidenceVisualization" params="data: durationByAgeDecileData, format: chartFormats.durationByAgeDecile, reportName: name, chartName: 'Duration By Age Decile'"></boxplot>
 		</div>
 	</div>
 </div>
@@ -58,7 +58,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.personsWithContinuousObservationByYear', 'Persons With Continuous Observation By Year')"></div>
 		<div class="panel-body">
-			<histogram class="evidenceVisualization" params="data: personsWithContinuousObservationsByYearData, format: chartFormats.personsWithContinuousObservationsByYear"></histogram>
+			<histogram class="evidenceVisualization" params="data: personsWithContinuousObservationsByYearData, format: chartFormats.personsWithContinuousObservationsByYear, reportName: name, chartName: 'Persons With Continuous Observation By Year'"></histogram>
 		</div>
 	</div>
 </div>
@@ -67,7 +67,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.observationPeriodsPerPerson', 'Observation Periods per Person')"></div>
 		<div class="panel-body">
-			<donut params="data: observationPeriodsPerPersonData"></donut>
+			<donut params="data: observationPeriodsPerPersonData, reportName: name, chartName: 'Observation Periods per Person'"></donut>
 		</div>
 	</div>
 </div>
@@ -76,7 +76,7 @@
 	<div class="panel panel-primary">
 		<div class="panel-heading" data-bind="text: ko.i18n('dataSources.observationPeriodReport.personsWithContinuousObservationByMonth', 'Persons With Continuous Observation By Month')"></div>
 		<div class="panel-body">
-			<atlasline class="evidenceVisualization" params="data: personsWithContinuousObservationByMonthData, format: chartFormats.personsWithContinuousObservationByMonth"></atlasline>
+			<atlasline class="evidenceVisualization" params="data: personsWithContinuousObservationByMonthData, format: chartFormats.personsWithContinuousObservationByMonth, reportName: name, chartName: 'Persons With Continuous Observation By Month'"></atlasline>
 		</div>
 	</div>
 </div>

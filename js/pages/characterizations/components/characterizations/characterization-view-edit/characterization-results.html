@@ -140,7 +140,8 @@
                                     yScale: $component.scatterYScale,
                                     tooltip: $component.tooltipBuilder
                                 },
-                                filename: `characterization_${$component.characterizationId()}_execution_${$component.executionId()}_${$component.analysisTitle($data)}`"
+                                chartName: `${$component.analysisTitle($data)}`,
+                                reportName: `characterization_${$component.characterizationId()}_execution_${$component.executionId()}`"
                             />
                         </div>
                     <!-- /ko -->

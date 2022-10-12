@@ -163,6 +163,7 @@ define([
 			this.context = params.context;
 			this.subscriptions.push(params.currentConcept.subscribe(this.loadData.bind(this)));
 			this.loadData(params.currentConcept());
+			this.reportName = ko.computed(() => `${this.currentReport.name()}_${this.currentConcept().name}`);
 		}
 
 		parseAgeData(rawAgeData) {
