@@ -3,7 +3,7 @@ define([
 	'components/Component',
 	'utils/CommonUtils',
 	'text!./linked-entity-list.html',
-	'components/cohort-definition-browser',
+	'components/entityBrowsers/cohort-definition-browser',
 	'less!./linked-entity-list.less',
 ], function (
 	ko,

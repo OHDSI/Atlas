@@ -9,7 +9,7 @@ define(
           require([
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
           ], function () {
             router.setCurrentView('cohort-definitions');
           });
@@ -23,7 +23,7 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'components/explore-cohort',
@@ -45,7 +45,7 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'components/explore-cohort',
@@ -67,7 +67,7 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'components/explore-cohort',
@@ -91,7 +91,7 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'components/explore-cohort',
@@ -113,7 +113,7 @@ define(
                   'components/atlas.cohort-editor',
                   './cohort-definitions',
                   './cohort-definition-manager',
-                  'components/cohort-definition-browser',
+                  'components/entityBrowsers/cohort-definition-browser',
                   'conceptset-editor',
                   'components/conceptset/concept-modal',
               ], function() {
@@ -133,7 +133,7 @@ define(
             'components/atlas.cohort-editor',
             './cohort-definitions',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
             'conceptset-editor',
             './components/reporting/cost-utilization/report-manager',
             'components/explore-cohort',
@@ -166,7 +166,7 @@ define(
           require([
             './components/reporting/cost-utilization/report-manager',
             './cohort-definition-manager',
-            'components/cohort-definition-browser',
+            'components/entityBrowsers/cohort-definition-browser',
           ], function () {
             router.setCurrentView('report-manager');
           });

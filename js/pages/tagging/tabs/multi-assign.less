@@ -1,0 +1,135 @@
+.multi-assign {
+  &__container {
+  }
+
+  &__section {
+    margin-bottom: 25px;
+
+    &--radio {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 5px 10px 1px;
+      border-radius: 8px;
+      border: 1px solid lightgray;
+
+      label {
+        position: relative;
+        font-size: 14px;
+        margin: 0 0 5px 20px;
+        cursor: pointer;
+      }
+      input {
+        position: absolute;
+        top: 3px;
+        left: -20px;
+      }
+      .btn {
+        margin: 3px 0 8px 12px;
+      }
+    }
+
+    &--tags {
+      font-size: 14px;
+
+      table {
+        width: 100% !important;
+      }
+
+      .tags {
+        margin-left: 5px;
+      }
+    }
+  }
+
+  &__selector-button {
+    margin: 5px 0 10px;
+    font-size: 12px;
+  }
+
+  &__tags-to-handle {
+    margin: 11px 0 10px;
+  }
+
+  &__assets-to-handle {
+    margin: 11px 0 10px;
+    font-size: 14px;
+    b {
+      color: #555;
+    }
+  }
+
+  &__assets {
+    display: inline-block;
+    margin-bottom: 2px;
+  }
+
+  &__action-link {
+    cursor: pointer;
+  }
+
+  .remove-link {
+    color: red;
+    cursor: pointer;
+  }
+
+  &__action-results {
+    display: inline-block;
+    margin-left: 15px;
+    font-weight: bold;
+    font-size: 14px;
+
+    &.success {
+      color: green;
+    }
+    &.error {
+      color: red;
+    }
+  }
+}
+
+.assets-selector .modal-body {
+  padding: 0;
+}
+
+.modal-footer {
+  display: table;
+  width: 100%;
+  padding: 0;
+  border: 0;
+
+  .modal-message {
+    display: table-cell;
+    text-align: left;
+    font-size: 12px;
+    color: #2e5899;
+    padding-left: 2px;
+  }
+
+  .modal-buttons {
+    display: table-cell;
+    text-align: right;
+
+    button + button {
+      margin-left: 10px;
+    }
+  }
+
+  &.with-padding {
+    padding: 0 11px 10px 0;
+  }
+}
+
+.tag {
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  position: relative;
+  background-color: #bdbdbd;
+  color: black;
+  border-radius: 2px 2px;
+  padding: 1px 4px 0 3px;
+}
+
+.dataTables_scrollBody {
+  border-bottom: solid 1px #ccc !important;
+}

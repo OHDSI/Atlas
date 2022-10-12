@@ -1,12 +1,12 @@
 define([
     'knockout',
-    'text!./tags.html',
+    'text!./tags-modal.html',
     'components/Component',
     'utils/CommonUtils',
     'utils/AutoBind',
     'utils/DatatableUtils',
     'services/AuthAPI',
-    'less!./tags.less',
+    'less!./tags-modal.less',
     'databindings',
 ], function (
     ko,

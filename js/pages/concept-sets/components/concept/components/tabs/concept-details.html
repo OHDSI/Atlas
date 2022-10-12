@@ -42,6 +42,14 @@
 				<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.standardConcept', 'Standard Concept')"></td>
 				<td data-bind="text:STANDARD_CONCEPT_CAPTION, css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}"></td>
 			</tr>
+			<tr>
+				<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.validStartDate', 'Valid Start Date')"></td>
+				<td data-bind="text: $component.formatDate(VALID_START_DATE)"></td>
+			</tr>
+			<tr>
+				<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.validEndDate', 'Valid End Date')"></td>
+				<td data-bind="text: $component.formatDate(VALID_END_DATE)"></td>
+			</tr>
 		</tbody>
 	</table>
 	<div class="concept-add-container">

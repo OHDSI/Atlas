@@ -6,11 +6,12 @@ define([
 	'utils/AutoBind',
 	'utils/CommonUtils',
 	'services/Vocabulary',
+	'services/MomentAPI',
   'services/CDMResultsAPI',
   'jquery',
   'atlas-state',
   'components/conceptset/ConceptSetStore',
-  'conceptsetbuilder/InputTypes/ConceptSet',
+  'components/conceptset/InputTypes/ConceptSet',
   'components/modal',
   'components/charts/venn',
   'less!./conceptset-compare.less'
@@ -22,6 +23,7 @@ define([
   AutoBind,
   commonUtils,
   vocabularyProvider,
+  MomentApi,
   cdmResultsAPI,
   $,
   sharedState,
@@ -149,6 +151,16 @@ define([
         },
         {
           data: d => d.conceptClassId,
+        },
+        {
+          render: (s, type, d) => type === "sort" ? +d.validStartDate :
+              MomentApi.formatDateTimeWithFormat(d.validStartDate, MomentApi.DATE_FORMAT),
+          visible: false
+        },
+        {
+          render: (s, type, d) => type === "sort" ? +d.validEndDate :
+              MomentApi.formatDateTimeWithFormat(d.validEndDate, MomentApi.DATE_FORMAT),
+          visible: false
         },
         {
           data: d => d.recordCount,

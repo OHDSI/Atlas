@@ -25,7 +25,7 @@ define([
 	'services/FeatureExtraction',
 	'featureextraction/components/covariate-settings-editor',
 	'featureextraction/components/temporal-covariate-settings-editor',
-	'components/cohort-definition-browser',
+	'components/entityBrowsers/cohort-definition-browser',
 	'faceted-datatable',
     'components/tabs',
 	'./components/prediction-specification-view-edit',

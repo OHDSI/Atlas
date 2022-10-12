@@ -9,7 +9,7 @@ define([
     'utils/AutoBind',
     'utils/CommonUtils',
     'components/cohortbuilder/CriteriaGroup',
-    'conceptsetbuilder/InputTypes/ConceptSet',
+    'components/conceptset/InputTypes/ConceptSet',
     'services/Vocabulary',
     'lodash',
     'components/conceptset/utils',

@@ -7,8 +7,7 @@ define([
 	'components/Component',
 	'utils/AutoBind',	
 	'utils/CommonUtils',
-	'conceptsetbuilder/components',
-	'components/cohort-definition-browser',				
+	'components/entityBrowsers/cohort-definition-browser',
 	'databindings',
 	'components/cohortbuilder/components',
 	'less!./editor.less',
@@ -26,7 +25,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.options = options;
-			
+			this.analysisDescription = params.description;
 			this.analysis = params.analysis;
 			this.analysisCohorts = params.analysisCohorts;
 			this.loading = ko.observable(false);

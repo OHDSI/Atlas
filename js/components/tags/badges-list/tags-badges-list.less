@@ -1,0 +1,64 @@
+.tags {
+  display: inline-block;
+  margin-left: 16px;
+  font-size: 0;
+
+  .tag + .tag {
+    margin-left: 6px;
+  }
+
+  .tag {
+    font-size: 13px;
+    display: inline-block;
+    position: relative;
+    background-color: #bdbdbd;
+    color: black;
+    border-radius: 2px 2px;
+    padding-right: 4px;
+    margin: 3px 0 0 5px;
+    cursor: default;
+
+    i {
+      padding: 0 0 0 4px;
+    }
+
+    .tooltip {
+      display: none;
+      border: 1px solid grey;
+      border-radius: 2px 2px;
+      padding: 3px 5px;
+      background-color: white;
+      font-size: 12px;
+      top: 20px;
+      left: 0;
+      max-width: 200px;
+      width: max-content;
+      opacity: 1;
+    }
+
+    &:hover .tooltip, &:hover .remove {
+      display: block;
+      position: absolute;
+    }
+
+    .remove {
+      display: none;
+      top: -5px;
+      right: -6px;
+      width: 13px;
+      height: 13px;
+      font-size: 9px;
+      cursor: pointer;
+      border: 0;
+      border-radius: 50%;
+      color: white;
+      background-color: #555;
+
+      .fa {
+        position: absolute;
+        top: 0.2em;
+        left: -0.06em;
+      }
+    }
+  }
+}

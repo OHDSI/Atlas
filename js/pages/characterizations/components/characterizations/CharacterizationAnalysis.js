@@ -2,7 +2,7 @@ define(function(require, exports){
 
 	const ko = require('knockout');
 	const constants = require('const');
-	const ConceptSet = require('conceptsetbuilder/InputTypes/ConceptSet');
+	const ConceptSet = require('components/conceptset/InputTypes/ConceptSet');
 	const CriteriaGroup = require('components/cohortbuilder/CriteriaGroup');
 
 	class CharacterizationAnalysis {
@@ -23,6 +23,7 @@ define(function(require, exports){
 				criteria: ko.observable(new CriteriaGroup(s.criteria, this.strataConceptSets)),
 			}))) || []);
 			this.tags = ko.observableArray(data.tags);
+			this.description = ko.observable(data.description || null);
 		}
 	}
 
