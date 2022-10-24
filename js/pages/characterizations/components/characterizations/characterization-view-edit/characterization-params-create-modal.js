@@ -36,6 +36,12 @@ define([
                 name: this.paramName(),
                 value: this.paramValue()
             });
+            this.resetParams();
+        }
+
+        resetParams() {
+            this.paramName('')
+            this.paramValue('')
         }
     }
 
