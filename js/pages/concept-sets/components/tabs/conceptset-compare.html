@@ -27,6 +27,10 @@
         <button class="btn btn-primary" data-bind="click: chooseCS1">
           <i class="fa fa-folder-open"></i>
         </button>
+        <div class="upload-container">
+        <input id="file-CS1" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function() { uploadCS1($element.files[0]) } }">
+        <label  class="btn btn-primary" for="file-CS1"><i class="fa fa-file"></i></label>
+        </div>
         <button class="btn btn-danger" data-bind="
           disable: $component.compareCS1Id() == 0,
           click: clearCS1
@@ -47,6 +51,10 @@
         <button class="btn btn-primary" data-bind="click:chooseCS2">
           <i class="fa fa-folder-open"></i>
         </button>
+        <div class="upload-container">
+        <input id="file-CS2" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function() { uploadCS2($element.files[0]) } }">
+        <label  class="btn btn-primary" for="file-CS2"><i class="fa fa-file"></i></label>
+        </div>
         <button class="btn btn-danger" data-bind="
           disable: $component.compareCS2Id() == 0,
           click: clearCS2
