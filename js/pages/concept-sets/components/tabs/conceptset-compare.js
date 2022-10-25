@@ -342,7 +342,7 @@ class ConceptsetCompare extends AutoBind(Component) {
             .then((compareResults) => {
                 const conceptIds = compareResults.map((o, n) => {
                     return o.conceptId;
-                });
+                }).filter((id) => id !== null);
                 cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
                     .then((rowcounts) => {
                         //this.compareResults(null);
@@ -415,10 +415,9 @@ class ConceptsetCompare extends AutoBind(Component) {
                 .addClass("fa-circle-notch")
                 .addClass("fa-spin");
             var compareResults = this.compareResults();
-            var conceptIds = $.filter(compareResults, function(o) {return o.conceptId !== null; }).map(compareResults, function (o, n) {
+            var conceptIds = $.map(compareResults, function (o, n) {
                 return o.conceptId;
             });
-            console.log(conceptIds)
             cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
                 .then((rowcounts) => {
                     this.compareResults(compareResults);

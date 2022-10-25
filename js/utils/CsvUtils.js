@@ -84,7 +84,7 @@ define(
 
       static csvToJson(file, requiredHeader = null) {
         const Papa = require('papaparse');
-        const regex = /^([a-zA-Z0-9\s_\\.\-:])+(csv|application\/vnd.openxmlformats-officedocument.spreadsheetml.sheet|application\/vnd.ms-excel)$/;//regex for the check valid files csv of txt
+        const regex = /^([\w|\W])+(csv|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet|application\/vnd\.ms-excel)$/;//regex for the check valid files
         if (!regex.test(file.type)) {
           return alert("Select a valid CSV File.");
         }
