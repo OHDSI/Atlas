@@ -157,11 +157,13 @@ define([
 			this.refreshReport = !!params.refreshReport;
 			this.subscriptions.push(params.currentConcept.subscribe(this.loadData.bind(this)));
 
-			if (params.currentSource) {this.subscriptions.push(params.currentSource.subscribe(v => {
-				if (this.refreshReport) {
-					this.loadData(params.currentConcept());
-				}
-			}))};
+			if (params.currentSource) {
+				this.subscriptions.push(params.currentSource.subscribe(newValue => {
+					if (newValue && this.refreshReport) {
+						this.loadData(params.currentConcept());
+					}
+				})
+			)};
 			this.loadData(params.currentConcept());
 			this.reportName = ko.computed(() => this.currentConcept().name ? `${this.currentReport.name()}_${this.currentConcept().name}`: `${this.currentReport.name()}`);
 			this.isData= ko.observable(true);
@@ -289,7 +291,7 @@ define([
 			this.parsePrevalenceByType(data.byType);
 			this.parsePrevalenceByGenderAgeYear(data.prevalenceByGenderAgeYear);
 			if (this.byFrequency) {
-				this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.name);
+				this.parseFrequencyDistribution(data.frequencyDistribution, this.currentReport.name());
 			}
 
 			if (this.byValueAsConcept) {
