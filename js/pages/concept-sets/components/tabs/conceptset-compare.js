@@ -349,7 +349,7 @@ class ConceptsetCompare extends AutoBind(Component) {
 				.then((compareResults) => {
 					const conceptIds = compareResults.map((o, n) => {
 						return o.conceptId;
-					});
+					}).filter((id) => id !== null);;
                     const sameConcepts = compareResults.find(concept => concept.conceptIn1And2 === 0);
 					cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
 						.then((rowcounts) => {
@@ -414,34 +414,35 @@ class ConceptsetCompare extends AutoBind(Component) {
     refreshRecordCounts(obj, event) {
         if (event.originalEvent) {
         // User changed event
-			this.recordCountsRefreshing(true);
-			$("#dtConeptManagerRC")
-				.removeClass("fa-database")
-				.addClass("fa-circle-notch")
-				.addClass("fa-spin");
-			$("#dtConeptManagerDRC")
-				.removeClass("fa-database")
-				.addClass("fa-circle-notch")
-				.addClass("fa-spin");
-			var compareResults = this.compareResults();
+            this.recordCountsRefreshing(true);
+            $("#dtConeptManagerRC")
+                .removeClass("fa-database")
+                .addClass("fa-circle-notch")
+                .addClass("fa-spin");
+            $("#dtConeptManagerDRC")
+                .removeClass("fa-database")
+                .addClass("fa-circle-notch")
+                .addClass("fa-spin");
+            var compareResults = this.compareResults();
             var conceptIds = $.filter(compareResults, function(o) {return o.conceptId !== null; }).map(compareResults, function (o, n) {
                 return o.conceptId;
             });
-			cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
-				.then((rowcounts) => {
-					    this.compareResults(compareResults);
-                        this.recordCountsRefreshing(false);
-						$("#dtConeptManagerRC")
-							.addClass("fa-database")
-							.removeClass("fa-circle-notch")
-							.removeClass("fa-spin");
-						$("#dtConeptManagerDRC")
-							.addClass("fa-database")
-							.removeClass("fa-circle-notch")
-							.removeClass("fa-spin");
-					});
-			}
-		}
+            console.log(conceptIds)
+            cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
+                .then((rowcounts) => {
+                    this.compareResults(compareResults);
+                    this.recordCountsRefreshing(false);
+                    $("#dtConeptManagerRC")
+                        .addClass("fa-database")
+                        .removeClass("fa-circle-notch")
+                        .removeClass("fa-spin");
+                    $("#dtConeptManagerDRC")
+                        .addClass("fa-database")
+                        .removeClass("fa-circle-notch")
+                        .removeClass("fa-spin");
+                });
+        }
+    }
 
     toggleShowDiagram() {
         this.showDiagram(!this.showDiagram());
