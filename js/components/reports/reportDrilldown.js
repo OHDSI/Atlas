@@ -188,18 +188,26 @@ define([
 				this.chartFormats.prevalenceByMonth.xScale = d3.scaleTime()
 					.domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
 				this.prevalenceByMonthData(byMonthSeries);
+			} else {
+				this.prevalenceByMonthData(null);
 			}
 		}
 
 		parsePrevalenceByType(rawPrevalenceByType) {
 			if (!!rawPrevalenceByType && rawPrevalenceByType.length > 0) {
 				this.prevalenceByTypeData(ChartUtils.mapConceptData(rawPrevalenceByType));
+			} else {
+				this.prevalenceByTypeData(null);
 			}
 		}
 
 		parsePrevalenceByGenderAgeYear(rawPrevalenceByGenderAgeYear) {
-			this.chartFormats.prevalenceByGenderAgeYear.trellisSet = constants.defaultDeciles;
-			this.prevalenceByGenderAgeYearData(rawPrevalenceByGenderAgeYear);
+			if (rawPrevalenceByGenderAgeYear) {
+				this.chartFormats.prevalenceByGenderAgeYear.trellisSet = constants.defaultDeciles;
+				this.prevalenceByGenderAgeYearData(rawPrevalenceByGenderAgeYear);
+			} else {
+				this.prevalenceByGenderAgeYearData(null);
+			}
 		}
 
 		parseFrequencyDistribution(rawData, report) {
@@ -233,6 +241,8 @@ define([
 					const freqHistData = atlascharts.histogram.mapHistogram(frequencyHistogram);
 					this.frequencyDistributionData(freqHistData);
 				}
+			} else {
+				this.frequencyDistributionData(null);
 			}
 		}
 
