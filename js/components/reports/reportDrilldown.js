@@ -1,12 +1,12 @@
 define([
 	'knockout',
-	'text!./treemapDrilldown.html',
+	'text!./reportDrilldown.html',
 	'd3',
 	'atlascharts',
 	'utils/CommonUtils',
 	'utils/ChartUtils',
 	'const',
-	'pages/data-sources/classes/Report',
+	'./classes/Report',
 	'components/Component',
 	'components/charts/histogram',
 	'components/charts/line',
@@ -25,10 +25,9 @@ define([
 	commonUtils,
 	ChartUtils,
 	constants,
-	Report,
-	Component
+	Report
 ) {
-	class TreemapDrilldown extends Report {
+	class ReportDrilldown extends Report {
 		constructor(params) {
 			super(params);
 
@@ -36,6 +35,7 @@ define([
 				name: '',
 			});
 			this.isError = ko.observable(false);
+			this.hideReportName = ko.observable(params.hideReportName || false);
 
 			// options
 			this.byFrequency = false;
@@ -145,7 +145,7 @@ define([
 				},
 			};
 
-			this.currentReport = params.currentReport;
+			this.currentReport = params.currentReport();
 			this.byFrequency = params.byFrequency;
 			this.byUnit = params.byUnit;
 			this.byType = params.byType;
@@ -154,13 +154,21 @@ define([
 			this.byQualifier = params.byQualifier;
 			this.byLengthOfEra = params.byLengthOfEra;
 			this.context = params.context;
+			this.refreshReport = !!params.refreshReport;
 			this.subscriptions.push(params.currentConcept.subscribe(this.loadData.bind(this)));
+
+			if (params.currentSource) {this.subscriptions.push(params.currentSource.subscribe(v => {
+				if (this.refreshReport) {
+					this.loadData(params.currentConcept());
+				}
+			}))};
 			this.loadData(params.currentConcept());
-			this.reportName = ko.computed(() => `${this.currentReport.name()}_${this.currentConcept().name}`);
+			this.reportName = ko.computed(() => this.currentConcept().name ? `${this.currentReport.name()}_${this.currentConcept().name}`: `${this.currentReport.name()}`);
+			this.isData= ko.observable(true);
 		}
 
 		parseAgeData(rawAgeData) {
-			this.ageData(this.parseBoxplotData(rawAgeData).data);
+			this.ageData(this.parseBoxplotData(rawAgeData)?.data);
 		}
 
 		parseLengthOfEra(rawLengthOfEra) {
@@ -324,6 +332,10 @@ define([
 			}
 		}
 
+		checkData(data) {
+			const isData = Object.values(data).find(item => !!item.length);
+			this.isData(!!isData);
+		}
 		getData() {
 			const response = super.getData();
 			return response;
@@ -333,23 +345,29 @@ define([
 			if (!selectedConcept) {
 				return;
 			}
-			this.conceptId = selectedConcept.concept_id;
+
+			this.context.loadingDrilldownDone(false);
+			this.conceptId = selectedConcept.concept_id !== undefined ?  selectedConcept.concept_id : selectedConcept.CONCEPT_ID;
 			this.currentConcept(selectedConcept);
 			this.isError(false);
 			this.getData()
 				.then((data) => {
+					this.checkData(data.data);
 					this.parseData(data);
 					this.context.loadingDrilldownDone(true);
 					this.context.showLoadingDrilldownModal(false);
-					setTimeout(() => document.getElementById('drilldownReport').scrollIntoView(), 0);
+					if (!this.hideReportName()) {
+						setTimeout(() => document.getElementById('drilldownReport').scrollIntoView(), 0);
+					}
 				})
 				.catch((er) => {
 					this.isError(true);
 					console.error(er);
+					this.context.loadingDrilldownDone(true);
 					this.context.showLoadingDrilldownModal(false);
 				});
 		}
 	}
 
-	return commonUtils.build('report-treemap-drilldown', TreemapDrilldown, view);
+	return commonUtils.build('report-drilldown', ReportDrilldown, view);
 });

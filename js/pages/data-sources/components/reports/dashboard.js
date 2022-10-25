@@ -6,7 +6,7 @@ define([
 	'd3-tip',
 	'utils/CommonUtils',
 	'utils/ChartUtils',
-	'pages/data-sources/classes/Report',
+	'components/reports/classes/Report',
 	'components/Component',
 	'components/heading',
 	'components/charts/donut',
@@ -20,8 +20,7 @@ define([
 	d3tip,
 	commonUtils,
 	ChartUtils,
-	Report,
-	Component
+	Report
 ) {
 
 	const FORMAT_VALUES_BIGGER_THAN = 99999;
