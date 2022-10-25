@@ -119,6 +119,7 @@ const settingsObject = {
 		"localStorageExtender": "assets/localStorageExtender",
 		"appConfig": "config",
 		"prism": "../node_modules/prismjs/prism",
+		"papaparse": "../node_modules/papaparse/papaparse",
 		"js-cookie": "../node_modules/js-cookie/src/js.cookie",
 		"d3": "../node_modules/d3/build/d3",
 		"d3-tip": "../node_modules/d3-tip/dist/index",
