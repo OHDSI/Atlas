@@ -57,7 +57,8 @@ define([
             this.recordCountsRefreshing(true);
             // this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, true));
             const currentResultSource = this.resultSources().find(source => source.sourceId == event.target.value)
-            this.currentResultSource(...currentResultSource)
+            this.currentResultSource(currentResultSource);
+
             const { ViewMode } = constants;
             switch (this.currentConseptSetTab()) {
                 case ViewMode.INCLUDED:
