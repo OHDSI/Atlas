@@ -28,24 +28,32 @@ define([
 			this.previewConcepts = params.previewConcepts;
 			this.loading = ko.observable(true);
 			this.includedSourcecodes = ko.observableArray();
-			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: ko.observable(false) },
-				(data, selected) => {
-					const conceptIds = data.map(c => c.CONCEPT_ID);
-					ko.utils.arrayForEach(this.includedSourcecodes(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
-					this.includedSourcecodes.valueHasMutated();
-				});
-			this.relatedSourcecodesColumns.shift();
+			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: ko.observable(false) }, () => {})
+				.filter(c =>
+					c.data === 'CONCEPT_ID' ||
+					c.data === 'CONCEPT_CODE' ||
+					c.data === 'CONCEPT_NAME' ||
+					c.data === 'CONCEPT_CLASS_ID' ||
+					c.data === 'DOMAIN_ID' ||
+					c.data === 'VOCABULARY_ID'
+				);
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 
+			this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.previewConcepts()))
+				.extend({
+					rateLimit: {
+						timeout: 1000,
+						method: "notifyWhenChangesStop"
+					}
+				})
+				.subscribe(this.loadSourceCodes));
 			this.loadSourceCodes();
-			this.previewConcepts.subscribe(() => {
-				this.loadSourceCodes();
-			});
 		}
 
 		async loadSourceCodes() {
 			try {
+				this.loading(true);
 				const conceptIds = await vocabularyService.resolveConceptSetExpression({
 					items: this.previewConcepts()
 				});
