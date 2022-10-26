@@ -128,7 +128,7 @@
         data: {
             previewTabsParams: previewTabsParams,
             showModal: showPreviewModal,
-            apply: () => { addConcepts(previewOptions); showPreviewModal(false); }
+            apply: () => { addPreviewConcepts(); showPreviewModal(false); }
         }" class="preview-modal">
 	<div data-bind="component: { name: 'tabs', params: previewTabsParams }"></div>
 	<div class="modal-footer with-padding">

@@ -25,9 +25,7 @@ define([
 			this.loading = ko.observable(true);
 			this.includedConcepts = ko.observableArray();
 			this.commonUtils = commonUtils;
-			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns({
-				canEditCurrentConceptSet: ko.observable(false)
-			}, commonUtils, () => {});
+			this.includedConceptsColumns = conceptSetUtils.getIncludedConceptsColumns({ canEditCurrentConceptSet: ko.observable(false) }, commonUtils, () => {});
 			this.includedConceptsColumns.shift();
 			this.includedConceptsOptions = conceptSetUtils.includedConceptsOptions;
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
@@ -51,10 +49,15 @@ define([
 				)
 			});
 
+			this.subscriptions.push(ko.pureComputed(() => ko.toJSON(this.previewConcepts()))
+				.extend({
+					rateLimit: {
+						timeout: 1000,
+						method: "notifyWhenChangesStop"
+					}
+				})
+				.subscribe(this.loadIncluded));
 			this.loadIncluded();
-			this.previewConcepts.subscribe(() => {
-				this.loadIncluded();
-			});
 		}
 
 		async loadIncluded() {
