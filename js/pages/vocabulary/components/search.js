@@ -300,7 +300,6 @@ define([
 			this.conceptSetStore = ConceptSetStore.repository();
 			const tableOptions = commonUtils.getTableOptions('L');
 			this.previewConcepts = ko.observableArray();
-			this.previewOptions = ko.observableArray();
 			this.showPreviewModal = ko.observable(false);
 			this.showPreviewModal.subscribe((show) => {
 				if (!show) {
@@ -342,15 +341,6 @@ define([
 					}
 				]
 			});
-		}
-
-		handlePreview(options) {
-			const concepts = commonUtils.getSelectedConcepts(this.data);
-			const items = commonUtils.buildConceptSetItems(concepts, options);
-			const itemsToAdd = items.map(item => new ConceptSetItem(item));
-			this.previewConcepts(itemsToAdd.concat(this.conceptSetStore.current() ? this.conceptSetStore.current().expression.items() : []));
-			this.previewOptions = options;
-			this.showPreviewModal(true);
 		}
 
 		renderCheckbox(field) {
@@ -543,6 +533,22 @@ define([
 			const concepts = commonUtils.getSelectedConcepts(this.data);
 			const items = commonUtils.buildConceptSetItems(concepts, options);
 			conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
+			commonUtils.clearConceptsSelectionState(this.data);
+		}
+
+		handlePreview(options) {
+			const concepts = commonUtils.getSelectedConcepts(this.data);
+			const items = commonUtils.buildConceptSetItems(concepts, options);
+			const itemsToAdd = items.map(item => new ConceptSetItem(item));
+			this.previewConcepts(itemsToAdd.concat(this.conceptSetStore.current() ? this.conceptSetStore.current().expression.items() : []));
+			this.showPreviewModal(true);
+		}
+
+		addPreviewConcepts(conceptSetStore = ConceptSetStore.repository()) {
+			if (!conceptSetStore.current()) {
+				conceptSetUtils.createRepositoryConceptSet(conceptSetStore);
+			}
+			conceptSetStore.current().expression.items(this.previewConcepts());
 			commonUtils.clearConceptsSelectionState(this.data);
 		}
 
