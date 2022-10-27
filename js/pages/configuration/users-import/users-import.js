@@ -184,7 +184,7 @@ define(['knockout',
 				const users = this.usersList()
 					.filter(u => !!u.included())
 					.map(u => ({
-							login: u.login, roles: u.roles(),
+							login: u.login, displayName: u.displayName, roles: u.roles(),
 					}));
 				userService.importUsers(users, this.importProvider()).then(job => {
 					this.startPolling(job.id);
