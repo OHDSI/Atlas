@@ -267,7 +267,7 @@ class ConceptsetCompare extends AutoBind(Component) {
         this.targetId = this.compareCS1Id;
         this.targetCaption = this.compareCS1Caption;
         this.targetExpression = this.compareCS1ConceptSet;
-        this.targetTypeFile =this.compareCS1TypeFile;
+        this.targetTypeFile = this.compareCS1TypeFile;
     }
 
     clearCS1() {
@@ -275,7 +275,7 @@ class ConceptsetCompare extends AutoBind(Component) {
         this.compareCS1Caption(null);
         this.compareCS1ConceptSet(null);
         this.compareResults(null);
-        this.compareCS1TypeFile = (null);
+        this.compareCS1TypeFile(null);
     }
 
     chooseCS2() {
@@ -291,7 +291,7 @@ class ConceptsetCompare extends AutoBind(Component) {
         this.compareCS2Caption(null);
         this.compareCS2ConceptSet(null);
         this.compareResults(null);
-        this.compareCS2TypeFile = (null);
+        this.compareCS2TypeFile(null);
     }
 
     prepareDataAfterUploadFile(csvParse) {
@@ -305,7 +305,8 @@ class ConceptsetCompare extends AutoBind(Component) {
             };
         });
     }
-    async uploadCS1(file) {
+    async uploadCS1(e) {
+        const file = e.target.files[0];
         try {
             const csvParse = await CsvUtils.csvToJson(file, Const.requiredHeader);
             const data = this.prepareDataAfterUploadFile(csvParse);
@@ -314,19 +315,24 @@ class ConceptsetCompare extends AutoBind(Component) {
             this.compareCS1Id(file.name);
             this.compareCS1TypeFile(Const.expressionType.BRIEF);
         } catch (e) {
-            throw Error(e);
+            throw new Error(e);
+        } finally {
+            e.target.value = '';
         }
     }
-    async uploadCS2(file) {
+    async uploadCS2(e) {
+        const file = e.target.files[0];
         try {
-            const csvParse = await CsvUtils.csvToJson(file, this.requiredHeader);
+            const csvParse = await CsvUtils.csvToJson(file, Const.requiredHeader);
             const data = this.prepareDataAfterUploadFile(csvParse);
             this.compareCS2Caption(file.name);
             this.compareCS2ConceptSet(data);
             this.compareCS2Id(file.name);
             this.compareCS2TypeFile(Const.expressionType.BRIEF);
         } catch (e) {
-            throw Error(e);
+            throw new Error(e);
+        } finally {
+            e.target.value = '';
         }
     }
     getCompareTargets() {

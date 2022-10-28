@@ -96,10 +96,12 @@ define(
               header: true,
               skipEmptyLines: true,
             });
+
             if (requiredHeader) {
               const header = requiredHeader.every(head => file.meta.fields.includes(head));
               if (!header) {
-                return alert('Select a valid CSV File with required headers');
+                alert('Select a valid CSV File with required headers');
+                reject('Select a valid CSV File with required headers');
               }
             }
             resolve(file.data);

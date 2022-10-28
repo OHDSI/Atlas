@@ -28,7 +28,7 @@
           <i class="fa fa-folder-open"></i>
         </button>
         <div class="upload-container">
-        <input id="file-CS1" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function() { uploadCS1($element.files[0]) } }">
+        <input id="file-CS1" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function(data, event) { uploadCS1(event) } }">
         <label  class="btn btn-primary" for="file-CS1"><i class="fa fa-file"></i></label>
         </div>
         <button class="btn btn-danger" data-bind="
@@ -52,7 +52,7 @@
           <i class="fa fa-folder-open"></i>
         </button>
         <div class="upload-container">
-        <input id="file-CS2" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function() { uploadCS2($element.files[0]) } }">
+        <input id="file-CS2" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function(data, event) { uploadCS2(event) } }">
         <label  class="btn btn-primary" for="file-CS2"><i class="fa fa-file"></i></label>
         </div>
         <button class="btn btn-danger" data-bind="
