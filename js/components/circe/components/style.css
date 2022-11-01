@@ -1,13 +1,9 @@
 .conceptset-browser-panel {
     display: flex;
     justify-content: flex-end;
-    margin: 10px 0 10px 0;
+    margin: 10px 0;
 }
 
-.conceptset-browser-panel div:last-child{
+.conceptset-browser-panel button:last-child{
     margin-left: 10px;
-}
-
-.conceptset-browser-panel .new-concept-set {
-    width: 175px;
 }

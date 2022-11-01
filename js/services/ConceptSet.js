@@ -29,6 +29,11 @@ define(function (require) {
 				alert(message);
 				self.isLoading(false);
 			});
+	};
+
+	function searchConceptSets(searchParams) {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doPost(`${config.api.url}conceptset/${sourceKey}/search`, searchParams).then(({ data }) => data);
 	}
 
 	function lookupIdentifiers(identifiers) {
@@ -139,7 +144,8 @@ define(function (require) {
 		getVersion,
 		getVersionExpression,
 		updateVersion,
-		copyVersion
+		copyVersion,
+		searchConceptSets
 	};
 
 	return api;

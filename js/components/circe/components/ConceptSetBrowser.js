@@ -7,10 +7,12 @@ define([
 	'services/AuthAPI',
 	'utils/DatatableUtils',
 	'utils/CommonUtils',
+	'services/ConceptSet',
 	'components/ac-access-denied',
+	'components/advancedSearch/advancedSearch',
 	'databindings',
 	'css!./style.css'
-], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
+], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils, conceptSetService) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -59,13 +61,18 @@ define([
 				});
 		}
 
-
 		function setDisabledConceptSetButton(action) {
 			if (action && action()) {
 				return action()
 			} else {
 				return false;
 			}
+		}
+
+		function prepareDataTable (results) {
+			datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
+			datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
+			datatableUtils.addTagGroupsToColumns(results, self.columns);
 		}
 
 		self.datatableUtils = datatableUtils;
@@ -99,9 +106,7 @@ define([
 
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
-					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
-					datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
-					datatableUtils.addTagGroupsToColumns(results, self.columns);
+					prepareDataTable(results);
 					self.repositoryConceptSets(results);
 					self.loading(false);
 				})
@@ -179,6 +184,24 @@ define([
 		const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
 		this.pageLength = params.pageLength || pageLength;
 		this.lengthMenu = params.lengthMenu || lengthMenu;
+
+		// advanced search
+		this.showSearch = ko.observable(false);
+		this.toggleShowSearch =  function () {
+			this.showSearch(!this.showSearch());
+		};
+		self.searchConceptSets = async function (searchParams) {
+			self.loading(true);
+			try {
+				const data = await conceptSetService.searchConceptSets(searchParams);
+				prepareDataTable(data);
+				self.repositoryConceptSets(data);
+			} catch(e) {
+				throw new Error(e);
+			} finally {
+				self.loading(false);
+			}
+		};
 	}
 	
 	var component = {
