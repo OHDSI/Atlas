@@ -31,6 +31,7 @@ define([
 			super(params);
 
 			const { sql, templateSql, dialect, clipboardTarget } = params;
+			this.currentCohort = ko.pureComputed(() =>sharedState.CohortDefinition.current().id());
 			this.dialect = dialect;
 			this.loading = ko.observable();
 			this.sqlText = ko.observable(highlightJS(sql,'sql'));
@@ -58,6 +59,7 @@ define([
 			});
 			this.inputParamsValues = ko.observable(this.defaultParamsValue(this.currentResultSource));
 			this.subscriptions.push(this.sqlParams.subscribe(v => !!v && this.inputParamsValues(this.defaultParamsValue(this.currentResultSource))));
+			this.subscriptions.push(this.sourceSql.subscribe(v => !v && this.onChangeParamsValue()));
 		}
 
 		dispose() {
@@ -101,6 +103,7 @@ define([
 			const daimons = source().daimons;
 			const inputParams = {};
 			this.sqlParams().forEach(param => {
+
 				const defaultParam = daimons.find(daimon => daimon.daimonType === defaultInputParamsValues[param]);
 
 				if (!!defaultParam) {
@@ -109,6 +112,8 @@ define([
 					inputParams[param] = "";
 				}
 			});
+			inputParams['@target_cohort_id'] = `${this.currentCohort()}`;
+
 			return inputParams;
 		}
 

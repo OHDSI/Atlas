@@ -8,7 +8,7 @@
     <!-- /ko -->
     <!-- ko ifnot: sourceSql -->
     <h5 class="title">
-        Rendered target:
+        Rendered translation:
     </h5>
     <!-- /ko -->
     <div class="flex-container">
@@ -32,16 +32,16 @@
                   event: { change: $component.changeSource }">
                 </select>
             </div>
-            <!-- ko if: sourceSql -->
-            <button class="btn btn-sm btn-success" type="button" data-bind="click: onSwitch, text: 'Switch to target'"></button>
-            <!-- /ko -->
-            <!-- ko ifnot: sourceSql -->
-            <button class="btn btn-sm btn-primary" type="button" data-bind="click: onSwitch, text: 'Switch to source'"></button>
-            <!-- /ko -->
             <div class="sql-params" data-bind="foreach: sqlParams">
                 <div class="sql-params-label" data-bind="text: $data.slice(1)"></div>
                 <input class="sql-params-input" type="text" data-bind="disable: $component.sourceSql, textInput: $component.inputParamsValues()[$data], attr: {name: $data}, event:{ input: $component.onChangeParamsValue}" >
             </div>
+            <!-- ko if: sourceSql -->
+            <button class="btn btn-sm btn-success" type="button" data-bind="click: onSwitch, text: 'Replace parameters with values'"></button>
+            <!-- /ko -->
+            <!-- ko ifnot: sourceSql -->
+            <button class="btn btn-sm btn-primary" type="button" data-bind="click: onSwitch, text: 'Revert to sql output'"></button>
+            <!-- /ko -->
         </div>
     </div>
     <!-- /ko -->
