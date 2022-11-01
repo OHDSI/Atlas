@@ -102,7 +102,7 @@ define([
 	function renderLink(s, p, d) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		return p === 'display'
+		return p === 'display' && d.CONCEPT_ID
 			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>'
 			: d.CONCEPT_NAME;
 	}
