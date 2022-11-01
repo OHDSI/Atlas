@@ -1,0 +1,38 @@
+.panel {
+  
+  &__header {
+    font-size: 1.4rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  &__content {
+    padding: 1rem;
+  }
+}
+
+.panel-heading-collapsible {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+}
+.active .icon-chevron:after {
+  /* symbol for "collapsed" panels */
+  font-family: 'Font Awesome 5 Free';
+  content: "\f078";
+  font-weight: 900;
+}
+
+.icon-chevron:after {
+  font-family: 'Font Awesome 5 Free';
+  content: "\f077";
+  font-weight: 900;
+
+}
+
+.advanced-panel {
+  margin: 10px 0;
+  border-radius: 4px;
+}
