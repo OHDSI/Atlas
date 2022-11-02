@@ -45,14 +45,34 @@ define([
                         this.conceptInBothConceptSets.push(concept.conceptName);
                     }
                 });
+
+                let lengthFirstConceptSets = this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length;
+                let lengthSecondConceptSets = this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length;
+                let lengthBothConceptSets = this.conceptInBothConceptSets.length;
+                const maxDifference = 999;
+
+                if (lengthFirstConceptSets/lengthSecondConceptSets > maxDifference) {
+                    const difference = Math.round(lengthFirstConceptSets/lengthSecondConceptSets);
+                    const sameLength = lengthSecondConceptSets === lengthBothConceptSets;
+                    lengthBothConceptSets = sameLength ? lengthBothConceptSets*Math.round(difference/100) : lengthBothConceptSets + lengthBothConceptSets * Math.round(difference/100);
+                    lengthSecondConceptSets *= Math.round(difference/100);
+                }
+                if (lengthSecondConceptSets/lengthFirstConceptSets > maxDifference) {
+                    const difference = Math.round(lengthSecondConceptSets/lengthFirstConceptSets);
+                    const sameLength = lengthFirstConceptSets === lengthBothConceptSets;
+                    lengthBothConceptSets = sameLength ? lengthBothConceptSets * Math.round(difference/100) : lengthBothConceptSets + lengthBothConceptSets * Math.round(difference/100);
+                    lengthFirstConceptSets *= Math.round(difference/100);
+                }
+
                 const conceptSets = [
-                    {sets: ['1'], size: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, name: this.firstConceptSet, key: '1 Only' },
-                    {sets: ['2'], size:this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length, name: this.secondConceptSet, key: '2 Only'},
+                    {sets: ['1'], size: lengthFirstConceptSets, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, count: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.firstConceptSet, key: '1 Only' },
+                    {sets: ['2'], size: lengthSecondConceptSets, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length,count: this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.secondConceptSet, key: '2 Only'},
                 ];
                 if (this.conceptInBothConceptSets.length > 0) {
                     conceptSets.push({
                         sets: ['1','2'],
-                        size: this.conceptInBothConceptSets.length,
+                        size: lengthBothConceptSets,
+                        count: this.conceptInBothConceptSets.length,
                         label: `${this.conceptInBothConceptSets.length} common concept${this.conceptInBothConceptSets.length === 1 ? '' : 's'}`,
                         tooltipText: this.conceptInBothConceptSets,
                         key: 'Both'
@@ -84,7 +104,8 @@ define([
             // calculate new circles coordinates
             const circlesPath = [];
             div.selectAll("path").each(function (d) { circlesPath.push(d3.select(this).attr('d'))});
-            const newCirclePathes =  this.calculateCoordinate(circlesPath);
+            const rightCircleBigger = this.sets()[1].amountOnly > this.conceptInBothConceptSets.length;
+            const newCirclePathes =  this.calculateCoordinate(circlesPath, rightCircleBigger);
             div.selectAll("path").attr('d',(d,i) => newCirclePathes[i]);
 
             // add a tooltip
@@ -102,7 +123,7 @@ define([
                     venn.sortAreas(div, d);
                     tooltip.transition().duration(400).style("opacity", 0.9).style("visibility", 'visible');
                     const title = `<div class="title">${d.label ? 'Common concepts' : `${d.name} concept set`}</div>`;
-                    const amount =  d.label ? `<div class="title">The amount: ${d.size}</div>` : `<div class="title">The total amount of concepts: ${d.size}</div>`;
+                    const amount =  d.label ? `<div class="title">The amount: ${d.count}</div>` : `<div class="title">The total amount of concepts: ${d.count}</div>`;
                     const concepts = d.label ? `<div></div>` : `<div class="title">The concepts are  only in this concept set: ${d.amountOnly}</div>`;
                     const textHtml = `${title}${amount}${concepts}`;
                     tooltip.html(textHtml);
@@ -172,11 +193,12 @@ define([
             //     .style("font-size", "18px")
         }
 
-        calculateCoordinate(circles) {
+        calculateCoordinate(circles,rightCircleBigger) {
 
             if (!circles[2]) {
                 return circles;
             }
+            const arcRightCircle = rightCircleBigger ? '1' : '0';
             const csCommonCircle = circles[2];
             const findNumbers = /-?\d+(\.\d+)?/g;
 
@@ -198,7 +220,7 @@ define([
                 const cs2curve = csRightCircle.match(/A\s(.*)/i)[0].match(findNumbers);
                 csRightCircle = `M ${startX} ${startY} 
                 A ${commonCurveCS2[0]} ${commonCurveCS2[1]} 0 0 0 ${startX} ${endY}
-                A ${cs2curve[0]} ${cs2curve[1]} 0 1 1 ${startX} ${startY} z`;
+                A ${cs2curve[0]} ${cs2curve[1]} 0 ${arcRightCircle} 1 ${startX} ${startY} z`;
             } else {
                 const commonCurve = csCommonCircle.match(/a\s(.*)/)[0].match(findNumbers);
                 const cs1curve = csLeftCircle.match(/a\s(.*)/i)[0].match(findNumbers);
