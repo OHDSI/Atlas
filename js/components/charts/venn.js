@@ -73,6 +73,7 @@ define([
                         sets: ['1','2'],
                         size: lengthBothConceptSets,
                         count: this.conceptInBothConceptSets.length,
+                        amountOnly: this.conceptInBothConceptSets.length,
                         label: `${this.conceptInBothConceptSets.length} common concept${this.conceptInBothConceptSets.length === 1 ? '' : 's'}`,
                         tooltipText: this.conceptInBothConceptSets,
                         key: 'Both'
@@ -83,23 +84,23 @@ define([
 
             let chart = venn.VennDiagram();
             chart.wrap(false)
-                 .height(450)
+                 .height(450);
 
-            // const showText = ['visible', 'visible', 'visible'];
-            //     .style('visibility', function(d,i) { return showText[i]; })
             const textY = [0,0,30];
             const colors = ['#1f77b4','#17becf', '#d62728'];
             let div = d3.select("#venn").datum(this.sets()).call(chart);
-            div.selectAll("text").attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); }).style("font-size", '12px').style("fill", function(d,i) { return colors[i]; });
+            div.selectAll("text").attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); }).style("font-size", '12px').style("fill", 'black').style('visibility', function(d) { return d.amountOnly ? 'visible' : 'hidden'});
+
+            colors.forEach(color => this.createPattern(div,color));
 
             div.selectAll("path")
-                .style("stroke-opacity", 0)
-                .style("stroke", function(d,i) { return colors[i]})
-                .style("stroke-width", 3)
+                .style("stroke", function(d,i) { return colors[i]; })
+                .style("stroke-width", 2)
                 .style("cursor",'pointer')
-                .style("fill-opacity",0.3)
-                .style("fill", function(d,i) { return colors[i] })
-                .attr("class", function(d,i) { return d.key });
+                .style("fill-opacity", 1)
+                .style("fill", function(d,i) {return `url('${colors[i]}')`; })
+                .attr("class", function(d,i) { return d.key; })
+                .attr("color", function(d,i) {return  colors[i]; });
 
             // calculate new circles coordinates
             const circlesPath = [];
@@ -131,9 +132,7 @@ define([
                     let selection = d3.select(this).transition("tooltip").duration(400);
                     selection.select("text").style("font-size", '16px');
                     selection.select("path")
-                        .style("stroke-width", 3)
-                        .style("fill-opacity", 0.7)
-                        .style("stroke-opacity", 1);
+                        .style("stroke-width", 3);
                 })
 
                 .on("mousemove", function() {
@@ -144,11 +143,9 @@ define([
                 .on("mouseout", function() {
                     tooltip.transition().duration(400).style('opacity', 0).style("visibility", 'hidden');
                     let selection = d3.select(this).transition("tooltip").duration(400);
-                    selection.select("text").style("font-size", '14px');
+                    selection.select("text").style("font-size", '12px');
                     selection.select("path")
-                        .style("stroke-width", 0)
-                        .style("fill-opacity", 0.3)
-                        .style("stroke-opacity", 0);
+                        .style("stroke-width", 2);
                 });
 
             const subscriptions = [];
@@ -156,42 +153,19 @@ define([
                 this.selectOutsideConceptSet.subscribe(function (newValue) {
                     if (this.selectOutsideConceptSet !== "") {
                         div.selectAll("path")
-                            .filter(function(d) { return d.key === newValue})
-                            .classed("selected", function() { return !d3.select(this).classed("selected"); });
+                            .filter(function(d) { return d.key === newValue;})
+                            .classed("selected", function() { return !d3.select(this).classed("selected"); })
+                            .style('fill', function() {
+                                const color = d3.select(this).attr('color');
+                                if (d3.select(this).classed("selected")) {
+                                    return color;
+                                } else {
+                                    return `url('${color}')`;
+                                }
+                            });
                     }
                 })
             );
-
-            // // add a legend
-            // var svg = d3.select("#legend").style('width', '100%');
-            // // legend
-            // // Add one dot in the legend for each name.
-            // var keys = [this.sets()[0].sets[0], this.sets()[1].sets[0]];
-            // var colorColor = d3.scaleOrdinal()
-            //     .domain(keys)
-            //     .range(colors);
-            //
-            // svg.selectAll("mydots")
-            //     .data(keys)
-            //     .enter()
-            //     .append("circle")
-            //     .attr("cx", 10)
-            //     .attr("cy", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
-            //     .attr("r", 7)
-            //     .style("fill", function(d){ return colorColor(d)})
-            //
-            // // Add one dot in the legend for each name.
-            // svg.selectAll("mylabels")
-            //     .data(keys)
-            //     .enter()
-            //     .append('text')
-            //     .attr("x", 30)
-            //     .attr("y", function(d,i){ return 100 + i*25}) // 100 is where the first dot appears. 25 is the distance between dots
-            //     .style("fill", function(d){ return colorColor(d)})
-            //     .text(function(d){ return d})
-            //     .attr("text-anchor", "left")
-            //     .style("alignment-baseline", "middle")
-            //     .style("font-size", "18px")
         }
 
         calculateCoordinate(circles,rightCircleBigger,rightCircleEqual) {
@@ -245,6 +219,21 @@ define([
             return [csLeftCircle,csRightCircle,csCommonCircle];
         }
 
+        createPattern (element, color) {
+            const defs = element.select('svg').append("defs");
+            const pattern = defs
+                .append("pattern")
+                .attr("id", color.slice(1))
+                .attr("height", 10)
+                .attr("width", 2)
+                .attr('patternUnits',"userSpaceOnUse")
+                .attr('patternTransform',"rotate(10)");
+
+            pattern
+                .append("line")
+                .attr("stroke", color)
+                .attr("stroke-width", 0.3)
+                .attr("y2", '10');
         }
 
         export() {
@@ -252,7 +241,6 @@ define([
             ChartUtils.downloadSvgAsPng(svg, this.chartName() || "untitled.png");
         }
         exportSvg() {
-            console.log(this.chartName())
             const svg = this.container.element.querySelector('svg');
             ChartUtils.downloadSvg(svg, this.chartName() + ".svg" || "untitled.svg");
         }
