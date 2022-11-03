@@ -105,7 +105,8 @@ define([
             const circlesPath = [];
             div.selectAll("path").each(function (d) { circlesPath.push(d3.select(this).attr('d'))});
             const rightCircleBigger = this.sets()[1].amountOnly > this.conceptInBothConceptSets.length;
-            const newCirclePathes =  this.calculateCoordinate(circlesPath, rightCircleBigger);
+            const rightCircleEqual = !!this.sets()[1].amountOnly;
+            const newCirclePathes =  this.calculateCoordinate(circlesPath, rightCircleBigger,rightCircleEqual);
             div.selectAll("path").attr('d',(d,i) => newCirclePathes[i]);
 
             // add a tooltip
@@ -193,15 +194,14 @@ define([
             //     .style("font-size", "18px")
         }
 
-        calculateCoordinate(circles,rightCircleBigger) {
-
+        calculateCoordinate(circles,rightCircleBigger,rightCircleEqual) {
             if (!circles[2]) {
                 return circles;
             }
-            const arcRightCircle = rightCircleBigger ? '1' : '0';
-            const csCommonCircle = circles[2];
-            const findNumbers = /-?\d+(\.\d+)?/g;
 
+            const arcRightCircle = rightCircleBigger || !rightCircleEqual ? '1' : '0';
+            const findNumbers = /-?\d+(\.\d+)?/g;
+            let csCommonCircle = circles[2];
             let csLeftCircle = circles[0];
             let csRightCircle = circles[1];
             const [startX, startY] = csCommonCircle.match(/M\s(.*)/)[0].match(findNumbers);
@@ -213,14 +213,24 @@ define([
                 const commonCurveCS2 = commonCurvies[1].match(findNumbers);
 
                 const cs1curve = csLeftCircle.match(/A\s(.*)/i)[0].match(findNumbers);
-                csLeftCircle = `M ${startX} ${startY} 
-                A ${commonCurveCS1[0]} ${commonCurveCS1[1]} 0 ${commonCurveCS1[3]} ${commonCurveCS1[4]} ${startX} ${endY}
-                A ${cs1curve[0]} ${cs1curve[1]} 0 1 0 ${startX} ${startY} z`;
+                csLeftCircle = `M ${Math.round(startX)} ${Math.round(startY)}
+                A ${Math.round(commonCurveCS1[0])} ${Math.round(commonCurveCS1[1])} 0 ${commonCurveCS1[3]} ${commonCurveCS1[4]} ${Math.round(startX)} ${Math.round(endY) - 1}
+                A ${Math.round(cs1curve[0])} ${Math.round(cs1curve[1])} 0 1 0 ${Math.round(startX)} ${Math.round(startY)} z`;
 
                 const cs2curve = csRightCircle.match(/A\s(.*)/i)[0].match(findNumbers);
-                csRightCircle = `M ${startX} ${startY} 
-                A ${commonCurveCS2[0]} ${commonCurveCS2[1]} 0 0 0 ${startX} ${endY}
-                A ${cs2curve[0]} ${cs2curve[1]} 0 ${arcRightCircle} 1 ${startX} ${startY} z`;
+                csRightCircle = `M ${Math.round(startX)} ${Math.round(startY)}
+                A ${Math.round(commonCurveCS2[0])} ${Math.round(commonCurveCS2[1])} 0 0 0 ${Math.round(startX)} ${Math.round(endY)}
+                A ${Math.round(cs2curve[0])} ${Math.round(cs2curve[1])} 0 ${arcRightCircle} 1 ${Math.round(startX)} ${Math.round(startY) - 1} z`;
+
+                if (!rightCircleEqual) {
+                    csCommonCircle = csRightCircle;
+                    csRightCircle = '';
+                } else {
+                    const newCommonCircle = csCommonCircle.replace(/\d+(?:\.\d+)?/g, num => Math.round(num));
+                    csCommonCircle = newCommonCircle;
+
+                }
+
             } else {
                 const commonCurve = csCommonCircle.match(/a\s(.*)/)[0].match(findNumbers);
                 const cs1curve = csLeftCircle.match(/a\s(.*)/i)[0].match(findNumbers);
@@ -233,6 +243,7 @@ define([
             }
 
             return [csLeftCircle,csRightCircle,csCommonCircle];
+        }
 
         }
 
