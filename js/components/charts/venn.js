@@ -65,12 +65,12 @@ define([
                 }
 
                 const conceptSets = [
-                    {sets: ['1'], size: lengthFirstConceptSets, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, count: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.firstConceptSet, key: '1 Only' },
-                    {sets: ['2'], size: lengthSecondConceptSets, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length,count: this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.secondConceptSet, key: '2 Only'},
+                    {sets: ['CS1'], size: lengthFirstConceptSets, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, count: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.firstConceptSet, key: '1 Only' },
+                    {sets: ['CS2'], size: lengthSecondConceptSets, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length,count: this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.secondConceptSet, key: '2 Only'},
                 ];
                 if (this.conceptInBothConceptSets.length > 0) {
                     conceptSets.push({
-                        sets: ['1','2'],
+                        sets: ['CS1','CS2'],
                         size: lengthBothConceptSets,
                         count: this.conceptInBothConceptSets.length,
                         amountOnly: this.conceptInBothConceptSets.length,

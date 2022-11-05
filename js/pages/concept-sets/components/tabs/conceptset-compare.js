@@ -124,9 +124,9 @@ define([
       this.compareResultsColumns = [{
         data: d => {
             if (d.conceptIn1Only == 1) {
-              return ko.i18n('facets.match.only1', '1 Only')();
+              return ko.i18n('facets.match.only1', 'CS1 Only')();
             } else if (d.conceptIn2Only == 1) {
-              return ko.i18n('facets.match.only2', '2 Only')();
+              return ko.i18n('facets.match.only2', 'CS2 Only')();
             } else {
               return ko.i18n('facets.match.both', 'Both')();
             }
@@ -186,9 +186,9 @@ define([
             'caption': ko.i18n('facets.caption.match', 'Match'),
             'binding': d => {
               if (d.conceptIn1Only == 1) {
-                return ko.i18n('facets.match.only1', '1 Only');
+                return ko.i18n('facets.match.only1', 'CS1 Only');
               } else if (d.conceptIn2Only == 1) {
-                return ko.i18n('facets.match.only2', '2 Only');
+                return ko.i18n('facets.match.only2', 'CS2 Only');
               } else {
                 return ko.i18n('facets.match.both', 'Both');
               }
