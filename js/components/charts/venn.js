@@ -88,6 +88,7 @@ define([
 
             const textY = [0,0,30];
             const colors = ['#1f77b4','#17becf', '#d62728'];
+            const defaultColors = ['#d9edf7','#bdf9ff','#f2dede'];
             let div = d3.select("#venn").datum(this.sets()).call(chart);
             div.selectAll("text").attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); }).style("font-size", '12px').style("fill", 'black').style('visibility', function(d) { return d.amountOnly ? 'visible' : 'hidden'});
 
@@ -98,16 +99,16 @@ define([
                 .style("stroke-width", 2)
                 .style("cursor",'pointer')
                 .style("fill-opacity", 1)
-                .style("fill", function(d,i) {return `url('${colors[i]}')`; })
+                .style("fill", function(d,i) {return  defaultColors[i]; })
                 .attr("class", function(d,i) { return d.key; })
-                .attr("color", function(d,i) {return  colors[i]; });
+                .attr("color", function(d,i) {return  colors[i]; })
+                .attr("defaultColor", function(d,i) {return  defaultColors[i]; });
 
             // calculate new circles coordinates
             const circlesPath = [];
             div.selectAll("path").each(function (d) { circlesPath.push(d3.select(this).attr('d'))});
-            const rightCircleBigger = this.sets()[1].amountOnly > this.conceptInBothConceptSets.length;
-            const rightCircleEqual = !!this.sets()[1].amountOnly;
-            const newCirclePathes =  this.calculateCoordinate(circlesPath, rightCircleBigger,rightCircleEqual);
+            const rightCircleEqual = !this.sets()[1].amountOnly;
+            const newCirclePathes =  this.calculateCoordinate(circlesPath,rightCircleEqual);
             div.selectAll("path").attr('d',(d,i) => newCirclePathes[i]);
 
             // add a tooltip
@@ -156,11 +157,11 @@ define([
                             .filter(function(d) { return d.key === newValue;})
                             .classed("selected", function() { return !d3.select(this).classed("selected"); })
                             .style('fill', function() {
-                                const color = d3.select(this).attr('color');
+
                                 if (d3.select(this).classed("selected")) {
-                                    return color;
+                                    return d3.select(this).attr('color');
                                 } else {
-                                    return `url('${color}')`;
+                                    return d3.select(this).attr('defaultColor');
                                 }
                             });
                     }
@@ -168,16 +169,15 @@ define([
             );
         }
 
-        calculateCoordinate(circles,rightCircleBigger,rightCircleEqual) {
-            if (!circles[2]) {
+        calculateCoordinate(circles,rightCircleEqual) {
+            if (!rightCircleEqual) {
                 return circles;
             }
 
-            const arcRightCircle = rightCircleBigger || !rightCircleEqual ? '1' : '0';
             const findNumbers = /-?\d+(\.\d+)?/g;
-            let csCommonCircle = circles[2];
             let csLeftCircle = circles[0];
             let csRightCircle = circles[1];
+            let csCommonCircle = circles[2];
             const [startX, startY] = csCommonCircle.match(/M\s(.*)/)[0].match(findNumbers);
 
             if (!!csCommonCircle.match(/A\s(.*)/)) {
@@ -188,23 +188,15 @@ define([
 
                 const cs1curve = csLeftCircle.match(/A\s(.*)/i)[0].match(findNumbers);
                 csLeftCircle = `M ${Math.round(startX)} ${Math.round(startY)}
-                A ${Math.round(commonCurveCS1[0])} ${Math.round(commonCurveCS1[1])} 0 ${commonCurveCS1[3]} ${commonCurveCS1[4]} ${Math.round(startX)} ${Math.round(endY) - 1}
-                A ${Math.round(cs1curve[0])} ${Math.round(cs1curve[1])} 0 1 0 ${Math.round(startX)} ${Math.round(startY)} z`;
+                    A ${Math.round(commonCurveCS1[0])} ${Math.round(commonCurveCS1[1])} 0 ${commonCurveCS1[3]} ${commonCurveCS1[4]} ${Math.round(startX)} ${Math.round(endY) - 1}
+                    A ${Math.round(cs1curve[0])} ${Math.round(cs1curve[1])} 0 1 0 ${Math.round(startX)} ${Math.round(startY)} z`;
 
                 const cs2curve = csRightCircle.match(/A\s(.*)/i)[0].match(findNumbers);
-                csRightCircle = `M ${Math.round(startX)} ${Math.round(startY)}
-                A ${Math.round(commonCurveCS2[0])} ${Math.round(commonCurveCS2[1])} 0 0 0 ${Math.round(startX)} ${Math.round(endY)}
-                A ${Math.round(cs2curve[0])} ${Math.round(cs2curve[1])} 0 ${arcRightCircle} 1 ${Math.round(startX)} ${Math.round(startY) - 1} z`;
+                csCommonCircle = `M ${Math.round(startX)} ${Math.round(startY)}
+                    A ${Math.round(commonCurveCS2[0])} ${Math.round(commonCurveCS2[1])} 0 0 0 ${Math.round(startX)} ${Math.round(endY)}
+                    A ${Math.round(cs2curve[0])} ${Math.round(cs2curve[1])} 0 ${cs2curve[3]} 1 ${Math.round(startX)} ${Math.round(startY) - 1} z`;
 
-                if (!rightCircleEqual) {
-                    csCommonCircle = csRightCircle;
-                    csRightCircle = '';
-                } else {
-                    const newCommonCircle = csCommonCircle.replace(/\d+(?:\.\d+)?/g, num => Math.round(num));
-                    csCommonCircle = newCommonCircle;
-
-                }
-
+                csRightCircle = '';
             } else {
                 const commonCurve = csCommonCircle.match(/a\s(.*)/)[0].match(findNumbers);
                 const cs1curve = csLeftCircle.match(/a\s(.*)/i)[0].match(findNumbers);
@@ -212,28 +204,11 @@ define([
                 const sY = startY;
 
                 csLeftCircle =`M ${sX} ${sY}
-                A ${commonCurve[0]} ${commonCurve[1]} 0 1 1 ${sX} ${sY - 0.1}
-                A ${cs1curve[0]} ${cs1curve[1]} 0 1 0 ${sX} ${sY} z`;
+                    A ${commonCurve[0]} ${commonCurve[1]} 0 1 1 ${sX} ${sY - 0.1}
+                    A ${cs1curve[0]} ${cs1curve[1]} 0 1 0 ${sX} ${sY} z`;
             }
 
             return [csLeftCircle,csRightCircle,csCommonCircle];
-        }
-
-        createPattern (element, color) {
-            const defs = element.select('svg').append("defs");
-            const pattern = defs
-                .append("pattern")
-                .attr("id", color.slice(1))
-                .attr("height", 10)
-                .attr("width", 2)
-                .attr('patternUnits',"userSpaceOnUse")
-                .attr('patternTransform',"rotate(10)");
-
-            pattern
-                .append("line")
-                .attr("stroke", color)
-                .attr("stroke-width", 0.3)
-                .attr("y2", '10');
         }
 
         export() {
