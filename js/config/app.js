@@ -16,6 +16,11 @@ define(function () {
   appConfig.enableCosts = false;
 	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	appConfig.supportMail = "atlasadmin@your.org";
+  appConfig.feedbackContants = 'For access or questions concerning the Atlas application please contact:';
+  appConfig.feedbackTitle = 'Feedback';
+  appConfig.feedbackCustomHtmlTemplate = '';
+  appConfig.companyInfoCustomHtmlTemplate = '';
+  appConfig.showCompanyInfo = true;
 	appConfig.defaultLocale = "en";
 	appConfig.authProviders = [
     {

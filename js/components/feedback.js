@@ -3,6 +3,9 @@ define(['knockout', 'text!./feedback.html', 'appConfig'], function (ko, view, co
     var self = this;
     self.supportMail = config.supportMail;
     self.supportMailRef = "mailto:" + config.supportMail;
+    self.title = config.feedbackTitle;
+    self.contacts = config.feedbackContants;
+    self.feedbackTemplate = config.feedbackCustomHtmlTemplate;
   }
   var component = {
     viewModel: feedback,
