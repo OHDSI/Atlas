@@ -92,8 +92,6 @@ define([
             let div = d3.select("#venn").datum(this.sets()).call(chart);
             div.selectAll("text").attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); }).style("font-size", '12px').style("fill", 'black').style('visibility', function(d) { return d.amountOnly ? 'visible' : 'hidden'});
 
-            colors.forEach(color => this.createPattern(div,color));
-
             div.selectAll("path")
                 .style("stroke", function(d,i) { return colors[i]; })
                 .style("stroke-width", 2)
