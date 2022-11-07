@@ -61,11 +61,17 @@ define([
             return 'Not logged in';
         });
         self.authProviders = appConfig.authProviders;
+        self.loginPlaceholder = ko.observable();
+        self.passwordPlaceholder = ko.observable();
 
         self.getAuthProvider = name => self.authProviders.filter(ap => ap.name === name)[0];
 
-        self.toggleCredentialsForm =function () {
+        self.toggleCredentialsForm = function (provider) {
             self.isDbLoginAtt(!self.isDbLoginAtt());
+            if (self.isDbLoginAtt()) {
+                self.loginPlaceholder(provider?.loginPlaceholder);
+                self.passwordPlaceholder(provider?.passwordPlaceholder);
+            }
         };
 
         self.getAuthorizationHeader = function() {
@@ -105,15 +111,15 @@ define([
         };
 
         self.signin = function (name) {
-            if(self.getAuthProvider(name).isUseCredentialsForm){
-                self.authUrl(self.getAuthProvider(name).url);
-                self.toggleCredentialsForm();
+            const selectedProvider = self.getAuthProvider(name);
+            if(selectedProvider.isUseCredentialsForm){
+                self.authUrl(selectedProvider.url);
+                self.toggleCredentialsForm(selectedProvider);
             }
             else {
-                var authProvider = self.getAuthProvider(name);
-                var loginUrl = self.serviceUrl + authProvider.url;
+                const loginUrl = self.serviceUrl + selectedProvider.url;
 
-            if (authProvider.ajax == true) {
+            if (selectedProvider.ajax == true) {
                 self.isInProgress(true);
                 $.ajax({
                     url: loginUrl,
