@@ -7,6 +7,7 @@ define([
 	'atlas-state',
 	'./utils',	
 	'components/conceptAddBox/concept-add-box',
+	'components/dataSourceSelect'
 ], function(
 	ko,
 	view,
