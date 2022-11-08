@@ -26,6 +26,7 @@ define([
             this.conceptSetStore = params.conceptSetStore;
             this.includedConcepts = this.conceptSetStore.includedConcepts;
             this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
+            this.recommendedConcepts = this.conceptSetStore.recommendedConcepts;
             this.currentConseptSetTab = this.conceptSetStore.currentConseptSetTab;
             this.commonUtils = commonUtils;
             this.loading = params.loading;
@@ -70,6 +71,11 @@ define([
                     const resultsIncludedSourcecodes = this.includedSourcecodes();
                     await vocabularyProvider.loadDensity(resultsIncludedSourcecodes, this.currentResultSource().sourceKey);
                     this.includedSourcecodes(resultsIncludedSourcecodes);
+                    break;
+                case ViewMode.RECOMMEND:
+                    const resultsRecommendedConcepts = this.recommendedConcepts();
+                    await vocabularyProvider.loadDensity(resultsRecommendedConcepts, this.currentResultSource().sourceKey);
+                    this.recommendedConcepts(resultsRecommendedConcepts);
                     break;
             }
             this.recordCountsRefreshing(false);
