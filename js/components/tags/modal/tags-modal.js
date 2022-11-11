@@ -33,6 +33,8 @@ define([
             this.newCustomTagName = ko.observable();
             this.newCustomTagGroup = ko.observable();
             this.groupsForCustomTags = ko.observableArray();
+            this.accessCreateNewCustomTag = ko.observable(false);
+            this.customTagNameError = ko.observable(false);
 
             this.isLoading = ko.observable(true);
 
@@ -163,6 +165,22 @@ define([
                         console.log(ex);
                     }
                 }, 0);
+            });
+
+            this.newCustomTagName.subscribe(newValue => {
+                if (!newValue) {
+                    this.accessCreateNewCustomTag(false);
+                    this.customTagNameError(false);
+                    return;
+                }
+                const validName = /^[\w-]+$/.test(newValue);
+                if (validName) {
+                    this.accessCreateNewCustomTag(true);
+                    this.customTagNameError(false);
+                } else {
+                    this.accessCreateNewCustomTag(false);
+                    this.customTagNameError(true);
+                }
             });
         }
 

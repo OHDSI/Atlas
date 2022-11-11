@@ -13,6 +13,8 @@
             showCreateCustomTag: showCreateCustomTag,
             newCustomTagName: newCustomTagName,
             newCustomTagGroup: newCustomTagGroup,
+            accessCreateNewCustomTag: accessCreateNewCustomTag,
+            customTagNameError: customTagNameError,
             groupsForCustomTags: groupsForCustomTags,
             createNewCustomTag: createNewCustomTag,
             tableOptions: tableOptions,
@@ -60,19 +62,28 @@
         <div data-bind="if: groupsForCustomTags().length > 0">
             <label data-bind="click: () => showCreateCustomTag(!showCreateCustomTag()), css: classes('new-tag-label')">
                 <span data-bind="text: ko.i18n('components.tags.assignExistingTag', 'Create custom tag')"></span>
-                <i data-bind="attr: { class: showCreateCustomTag() ? 'fa fa-angle-down' : 'fa fa-angle-right' }"></i>
+                <i data-bind="attr: { class: showCreateCustomTag() ? 'fa fa-angle-up' : 'fa fa-angle-down' }"></i>
             </label>
             <div class="input-group" data-bind="if: showCreateCustomTag()">
                 <input
-                        class="form-control"
-                        data-bind="placeholder: ko.i18n('components.tags.tagNamePlaceholder', 'Tag name'), textInput: newCustomTagName">
+                    data-bind="
+                    placeholder: ko.i18n('components.tags.tagNamePlaceholder', 'Tag name'),
+                    textInput: newCustomTagName,
+                    attr: { class: customTagNameError() ? 'form-control input-error' : 'form-control'}"
+                >
                 <span class="input-group-btn">
                     <select class="form-control groups-dropdown" data-bind="options: groupsForCustomTags, optionsText: 'name', optionsValue: 'id', value: newCustomTagGroup" />
                 </span>
                 <span class="input-group-btn">
-                    <button class="btn btn-primary" type="button" data-bind="click: createNewCustomTag, attr: { disabled: !(newCustomTagName() && newCustomTagName().length) }, text: ko.i18n('components.tags.createAndAssign', 'Create and assign')"></button>
+                    <button class="btn btn-primary" type="button" data-bind="click: createNewCustomTag, attr: { disabled: !accessCreateNewCustomTag() }, text: ko.i18n('components.tags.createAndAssign', 'Create and assign')"></button>
                 </span>
             </div>
+            <!-- ko if: customTagNameError() -->
+                <div
+                    class="name-error"
+                    data-bind="text: ko.i18n('components.tags.tagNameError','Please, enter correct custom tag name. The custom tag name must contain letters, numbers and the special characters: _-')">
+                </div>
+            <!-- /ko -->
         </div>
 
     </div>
