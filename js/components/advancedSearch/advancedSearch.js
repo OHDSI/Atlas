@@ -35,6 +35,7 @@ define([
                 if(!newValue) {
                     this.panelCollapsable(true);
                     this.showAdvanced(false);
+                    this.refreshConceptSets();
                 }
             });
         }
@@ -66,7 +67,11 @@ define([
         }
 
         resetSearchConceptSets() {
-            this.showSearch(false);
+            $('.advanced-options input').attr('checked', false);
+            this.selectedDomains.clear();
+            this.querySearch('');
+            this.showAdvanced(false);
+            this.panelCollapsable(true);
             this.refreshConceptSets();
         }
 
