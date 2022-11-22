@@ -7,13 +7,14 @@
 
         <div data-bind="visible: !loading() && !isProcessing()">
             <div class="conceptset-browser-panel" data-bind="visible: buttonActionEnabled">
-                <button type="button" class="btn btn-primary btn-sm" data-bind="click: toggleShowSearch">Show search concept sets</button>
+                <button type="button" class="btn btn-primary btn-sm" data-bind="click: toggleShowSearch">Search Concept Sets</button>
                 <button type="button" class="btn btn-sm btn-primary new-concept-set" data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></button>
             </div>
             <advanced-search
                 data-bind="visible: showSearch"
                 params="
                 searchConceptSets:searchConceptSets,
+                refreshConceptSets:loadConceptSetsFromRepository,
                 showSearch:showSearch">
             </advanced-search>
             <faceted-datatable params="
