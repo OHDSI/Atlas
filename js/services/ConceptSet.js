@@ -36,6 +36,10 @@ define(function (require) {
 		return httpService.doPost(`${config.api.url}conceptset/${sourceKey}/search`, searchParams).then(({ data }) => data);
 	}
 
+	function checkSearchAvailable() {
+		return httpService.doGet(config.api.url + 'conceptset/searchAvailable').then(({ data }) => data);
+	}
+
 	function lookupIdentifiers(identifiers) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 	}
@@ -145,7 +149,8 @@ define(function (require) {
 		getVersionExpression,
 		updateVersion,
 		copyVersion,
-		searchConceptSets
+		searchConceptSets,
+		checkSearchAvailable
 	};
 
 	return api;
