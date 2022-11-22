@@ -50,7 +50,7 @@ define([
                     title: ko.i18n('columns.name', 'Name'),
                     width: '100px',
                     render: (s, p, d) => {
-                        return `<span class="cell-tag-name" data-bind="title: '${d.name}'">${d.name}</span>`;
+                        return `<span class="cell-tag-name" data-bind="title: name">${d.name}</span>`;
                     }
                 },
                 {
@@ -86,7 +86,7 @@ define([
                     title: ko.i18n('columns.name', 'Name'),
                     width: '100px',
                     render: (s, p, d) => {
-                        return `<span class="cell-tag-name" data-bind="title: '${d.name}'">${d.name}</span>`;
+                        return `<span class="cell-tag-name" data-bind="title: name">${d.name}</span>`;
                     }
                 },
                 {
