@@ -26,12 +26,15 @@ define([
             this.panelCollapsable = ko.observable(true);
             this.searchConceptSets = params.searchConceptSets;
             this.showSearch = params.showSearch;
+            this.showAdvanced = ko.observable(false);
+            this.refreshConceptSets = params.refreshConceptSets;
             this.getDomains();
 
             //subscriptions
             this.showSearch.subscribe((newValue) => {
                 if(!newValue) {
                     this.panelCollapsable(true);
+                    this.showAdvanced(false);
                 }
             });
         }
@@ -56,9 +59,15 @@ define([
                 query: this.querySearch,
                 domainId: Array.from(this.selectedDomains)
             };
-            this.panelCollapsable(false);
+            this.showAdvanced(false);
+            this.panelCollapsable(true);
             this.searchConceptSets(searchParams);
 
+        }
+
+        resetSearchConceptSets() {
+            this.showSearch(false);
+            this.refreshConceptSets();
         }
 
         getDomains() {
@@ -72,6 +81,14 @@ define([
                     this.loading(false);
                 });
         }
+
+        toggleAdvanced() {
+            if(this.showAdvanced()) {
+                this.panelCollapsable(true);
+            }
+            this.showAdvanced(!this.showAdvanced());
+        }
+
     }
     return commonUtils.build('advanced-search', AdvancedSearch, view);
 });

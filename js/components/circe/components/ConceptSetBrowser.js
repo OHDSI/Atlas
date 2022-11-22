@@ -103,8 +103,8 @@ define([
 
 		self.loadConceptSetsFromRepository = function (url) {
 			self.loading(true);
-
-			VocabularyProvider.getConceptSetList(url)
+			const sourceUrl = url ? url : self.selectedSource().url;
+			VocabularyProvider.getConceptSetList(sourceUrl)
 				.done(function (results) {
 					prepareDataTable(results);
 					self.repositoryConceptSets(results);
@@ -194,7 +194,11 @@ define([
 			self.loading(true);
 			try {
 				const data = await conceptSetService.searchConceptSets(searchParams);
-				prepareDataTable(data);
+				const facets = self.options.Facets.find(item => item.caption == 'Status');
+				if (!facets) {
+					prepareDataTable(data);
+				}
+
 				self.repositoryConceptSets(data);
 			} catch(e) {
 				throw new Error(e);
