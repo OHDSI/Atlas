@@ -194,11 +194,7 @@ define([
 			self.loading(true);
 			try {
 				const data = await conceptSetService.searchConceptSets(searchParams);
-				const facets = self.options.Facets.find(item => item.caption == 'Status');
-				if (!facets) {
-					prepareDataTable(data);
-				}
-
+				prepareDataTable(data);
 				self.repositoryConceptSets(data);
 			} catch(e) {
 				throw new Error(e);
