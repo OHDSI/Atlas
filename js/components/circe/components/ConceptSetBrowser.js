@@ -190,10 +190,12 @@ define([
 		this.toggleShowSearch =  function () {
 			this.showSearch(!this.showSearch());
 		};
+		this.searchAvailable = ko.observable(false);
 		self.searchConceptSets = async function (searchParams) {
 			self.loading(true);
 			try {
 				const data = await conceptSetService.searchConceptSets(searchParams);
+
 				prepareDataTable(data);
 				self.repositoryConceptSets(data);
 			} catch(e) {
@@ -202,6 +204,19 @@ define([
 				self.loading(false);
 			}
 		};
+
+		self.checkSearchAvailable = async function () {
+			self.loading(true);
+			try {
+				const data = await conceptSetService.checkSearchAvailable();
+				self.searchAvailable(data);
+			} catch(e) {
+				throw new Error(e);
+			} finally {
+				self.loading(false);
+			}
+		};
+		self.checkSearchAvailable();
 	}
 	
 	var component = {
