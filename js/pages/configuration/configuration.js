@@ -13,6 +13,7 @@ define([
   'services/Poll',
   'services/job/jobDetail',
   'services/CacheAPI',
+  'services/ConceptSet',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -30,6 +31,7 @@ define([
   {PollService},
   jobDetail,
   cacheApi,
+  conceptSetService
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -82,7 +84,37 @@ define([
         callback: () => this.checkJobs(),
         interval: 5000
       });
+
+      this.searchAvailable = ko.observable(false);
+
+      this.checkSearchAvailable();
     }
+
+    async checkSearchAvailable () {
+        this.loading(true);
+        try {
+            const data = await conceptSetService.checkSearchAvailable();
+            this.searchAvailable(data);
+        } catch(e) {
+            throw new Error(e);
+        } finally {
+            this.loading(false);
+        }
+    };
+
+    async reindexConceptSets () {
+        const confirmAction = confirm(ko.unwrap(ko.i18n('configuration.confirms.reindexSource', 'Reindexing may take a long time. It depends on amount and complexity of concept sets')));
+        if (!confirmAction) {
+            return;
+        }
+        const sourceKey = this.sharedState.sourceKeyOfVocabUrl();
+        try {
+            const data = await conceptSetService.reindexConceptSets(sourceKey);
+
+        } catch(e) {
+            throw new Error(e);
+        }
+    };
 
     dispose() {
       PollService.stop(this.intervalId);
@@ -185,6 +217,9 @@ define([
       var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
       sharedState.priorityScope() === 'application' && sharedState.defaultVocabularyUrl(newVocabUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
+      if (this.searchAvailable()) {
+          alert(ko.unwrap(ko.i18n('configuration.alerts.changeSource', 'You are changing current source, we recommend you to do reindexing concept sets')));
+      }
       return true;
     };
 

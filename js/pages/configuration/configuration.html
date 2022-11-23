@@ -4,18 +4,31 @@
 		<div data-bind="if: $component.initializationCompleted() && !loading()">
 			<div data-bind="with:config.api">
 				<div class="configureHeader">
-					<div class="left">
-						<div data-bind="if:available==true">
-							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
-						</div>
+					<div class="left status-container">
+						<div class="status">
+							<div data-bind="if:available==true">
+								<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+							</div>
 
-						<div data-bind="if:available==false">
-							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
-						</div>
+							<div data-bind="if:available==false">
+								<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+							</div>
 
-						<span class="serviceName" data-bind="text:name"></span> (
-						<span class="serviceUrl" data-bind="text:url"></span>)
+							<span class="serviceName" data-bind="text:name"></span> (
+							<span class="serviceUrl" data-bind="text:url"></span>)
+						</div>
+						<div class="status">
+							<div data-bind="visible:$component.searchAvailable()">
+								<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+							</div>
+							<div data-bind="visible:!$component.searchAvailable()">
+								<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+							</div>
+							<div data-bind="text:ko.i18n('configuration.searchCS', 'Search Concept Sets')"></div>
+
+						</div>
 					</div>
+
 					<div class="right">
 						<div class="padded priority" data-bind="if:$component.canChangePriority">
 							<div class="priority-label" data-bind="text:ko.i18n('configuration.changeSourcePriorities', 'Change source priorities in:')"></div>
@@ -129,6 +142,11 @@
 						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearServerCache">
 							<span data-bind="text:ko.i18n('configuration.buttons.clearServerCache', 'Clear Server Cache')"></span>
 						</a>
+					</div>
+					<div class="configuration__padded" data-bind="if: $component.searchAvailable()">
+						<button class="btn btn-sm btn-primary" data-bind="click: reindexConceptSets">
+							<span data-bind="text:ko.i18n('configuration.buttons.reindexCS', 'Concept Sets Reindex')"></span>
+						</button>
 					</div>
 				</div>
 			</div>
