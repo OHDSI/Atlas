@@ -40,6 +40,10 @@ define(function (require) {
 		return httpService.doGet(config.api.url + 'conceptset/searchAvailable').then(({ data }) => data);
 	}
 
+	function reindexConceptSets(sourceKey) {
+		return httpService.doGet(`${config.api.url}${sourceKey}/index`).then(({ data }) => data);
+	}
+
 	function lookupIdentifiers(identifiers) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 	}
@@ -150,7 +154,8 @@ define(function (require) {
 		updateVersion,
 		copyVersion,
 		searchConceptSets,
-		checkSearchAvailable
+		checkSearchAvailable,
+		reindexConceptSets
 	};
 
 	return api;
