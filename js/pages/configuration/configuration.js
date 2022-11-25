@@ -108,9 +108,8 @@ define([
         if (!confirmAction) {
             return;
         }
-        const sourceKey = this.sharedState.sourceKeyOfVocabUrl();
         try {
-            const data = await conceptSetService.reindexConceptSets(sourceKey);
+            const data = await conceptSetService.reindexConceptSets();
 
         } catch(e) {
             throw new Error(e);

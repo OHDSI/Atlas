@@ -40,8 +40,9 @@ define(function (require) {
 		return httpService.doGet(config.api.url + 'conceptset/searchAvailable').then(({ data }) => data);
 	}
 
-	function reindexConceptSets(sourceKey) {
-		return httpService.doGet(`${config.api.url}${sourceKey}/index`).then(({ data }) => data);
+	function reindexConceptSets() {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doGet(`${config.api.url}conceptset/${sourceKey}/index`).then(({ data }) => data);
 	}
 
 	function lookupIdentifiers(identifiers) {
