@@ -522,6 +522,12 @@ define(["knockout"], function (ko) {
       descriptionDemographic: 'const.eventsList.addEndDate.desc_demographic',
       defaultDescriptionDemographic: 'Filter events based by End Date.',
     },
+    addDateAdjustment: {
+      title: 'const.eventsList.addDateAdjust.title',
+      defaultTitle: "Modify Event Start/End",
+      description: "const.eventsList.addDateAdjust.description",
+      defaultDescription: 'Modify the start and end date of the event by a specified offset.'
+    },
     addUnit: {
       titleDose: 'const.eventsList.addUnit.title_dose',
       defaultTitleDose: 'Add Dose Unit Criteria',
@@ -1067,10 +1073,10 @@ define(["knockout"], function (ko) {
         let attrT = titleAttr.toLowerCase().replace(titleAttr.charAt(0), titleAttr.charAt(0).toUpperCase());
         let attrD = descriptionAttr.toLowerCase().replace(descriptionAttr.charAt(0), descriptionAttr.charAt(0).toUpperCase());
         flatList[elem] = {
-          title: criteriaItem[`title${attrT ? attrT : ''}`],
-          defaultTitle: criteriaItem[`defaultTitle${attrT ? attrT : ''}`],
-          description: criteriaItem[`description${attrD ? attrD : ''}`],
-          defaultDescription: criteriaItem[`defaultDescription${attrD ? attrD : ''}`]
+          title: criteriaItem[`title${attrT ? attrT : ''}`] || criteriaItem["title"],
+          defaultTitle: criteriaItem[`defaultTitle${attrT ? attrT : ''}`] || criteriaItem["defaultTitle"],
+          description: criteriaItem[`description${attrD ? attrD : ''}`] || criteriaItem["description"],
+          defaultDescription: criteriaItem[`defaultDescription${attrD ? attrD : ''}`] || criteriaItem["defaultDescription"]
         };
       });
   
@@ -1138,6 +1144,7 @@ define(["knockout"], function (ko) {
     'addFirstDiagnosis',
     'addAgeAtStart',
     'addAgeAtEnd',
+    "addDateAdjustment",
     'addGender',
     'addStartDate',
     'addEndDate',
@@ -1152,6 +1159,7 @@ define(["knockout"], function (ko) {
     'addConditionStatus',
     'addStartDate',
     'addEndDate',
+    'addDateAdjustment',
     'addType',
     'addVisit',
     'addStopReason',
@@ -1160,6 +1168,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const deathAttributesList = [
+    'addDateAdjustment',
     'addAge',
     'addGender',
     'addDate',
@@ -1168,6 +1177,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const deviceAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAge',
     'addGender',
@@ -1182,6 +1192,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const doseAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAgeAtStart',
     'addAgeAtEnd',
@@ -1194,6 +1205,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const drugAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAgeAtStart',
     'addAgeAtEnd',
@@ -1205,6 +1217,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const measurementAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAge',
     'addGender',
@@ -1225,6 +1238,7 @@ define(["knockout"], function (ko) {
     'addNested'
   ];
   const drugexposureAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAge',
     'addGender',
@@ -1245,6 +1259,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const observationAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAge',
     'addGender',
@@ -1261,6 +1276,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const observationPeriodAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAgeAtStart',
     'addAgeAtEnd',
@@ -1272,6 +1288,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const payerPlanAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addAgeAtStart',
     'addAgeAtEnd',
@@ -1291,6 +1308,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const procedureOccurrenceAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addVisit',
     'addGender',
@@ -1304,6 +1322,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const specimenAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addGender',
     'addNested',
@@ -1317,6 +1336,7 @@ define(["knockout"], function (ko) {
     'addSourceId',
   ];
   const visitAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addGender',
     'addStartDate',
@@ -1332,6 +1352,7 @@ define(["knockout"], function (ko) {
     'addNested',
   ];
   const visitDetailAttributesList = [
+    'addDateAdjustment',
     'addFirstDiagnosis',
     'addGender',
     'addStartDate',

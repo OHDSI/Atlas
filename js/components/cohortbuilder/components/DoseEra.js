@@ -3,10 +3,11 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
+  "../InputTypes/DateAdjustment",
   "../CriteriaGroup",
   "text!./DoseEraTemplate.html",
   "../const",
-], function (ko, options, utils, Range, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, CriteriaGroup, template, constants) {
   function DoseEraViewModel(params) {
     var self = this;
     self.expression = ko.utils.unwrapObservable(params.expression);
@@ -66,6 +67,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.doseAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {
