@@ -148,8 +148,9 @@
 						</a>
 					</div>
 					<div class="configuration__padded" data-bind="if: $component.searchAvailable()">
-						<button class="btn btn-sm btn-primary" data-bind="click: reindexConceptSets">
-							<span data-bind="text:ko.i18n('configuration.buttons.reindexCS', 'Concept Sets Reindex')"></span>
+						<button data-bind="css: $component.getReindexButtonStyles().buttonClass, click: function(){$component.reindexConceptSets();}" class="connection-check-button btn btn-sm">
+							<i data-bind="css : $component.getReindexButtonStyles().iconClass" class="fa"></i>
+							<span data-bind="text: $component.getReindexButtonTitle()"></span>
 						</button>
 					</div>
 				</div>

@@ -45,6 +45,11 @@ define(function (require) {
 		return httpService.doGet(`${config.api.url}conceptset/${sourceKey}/index`).then(({ data }) => data);
 	}
 
+	function statusReindexConceptSets(jobExecutionId) {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doGet(`${config.api.url}conceptset/${sourceKey}/index/${jobExecutionId || -1}/status`).then(({ data }) => data);
+	}
+
 	function lookupIdentifiers(identifiers) {
 		return httpService.doPost(sharedState.vocabularyUrl() + 'lookup/identifiers', identifiers);
 	}
@@ -156,7 +161,8 @@ define(function (require) {
 		copyVersion,
 		searchConceptSets,
 		checkSearchAvailable,
-		reindexConceptSets
+		reindexConceptSets,
+		statusReindexConceptSets
 	};
 
 	return api;
