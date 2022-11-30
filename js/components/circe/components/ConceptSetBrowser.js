@@ -187,10 +187,18 @@ define([
 
 		// advanced search
 		this.showSearch = ko.observable(false);
-		this.toggleShowSearch =  function () {
-			this.showSearch(!this.showSearch());
+
+		self.checkSearchAvailable = async function () {
+			self.loading(true);
+			try {
+				const data = await conceptSetService.checkSearchAvailable();
+				self.showSearch(data);
+			} catch(e) {
+				throw new Error(e);
+			} finally {
+				self.loading(false);
+			}
 		};
-		this.searchAvailable = ko.observable(false);
 		self.searchConceptSets = async function (searchParams) {
 			self.loading(true);
 			try {
@@ -198,18 +206,6 @@ define([
 
 				prepareDataTable(data);
 				self.repositoryConceptSets(data);
-			} catch(e) {
-				throw new Error(e);
-			} finally {
-				self.loading(false);
-			}
-		};
-
-		self.checkSearchAvailable = async function () {
-			self.loading(true);
-			try {
-				const data = await conceptSetService.checkSearchAvailable();
-				self.searchAvailable(data);
 			} catch(e) {
 				throw new Error(e);
 			} finally {
