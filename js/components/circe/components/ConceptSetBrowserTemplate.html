@@ -7,10 +7,6 @@
 
         <div data-bind="visible: !loading() && !isProcessing()">
             <div class="conceptset-browser-panel" data-bind="visible: buttonActionEnabled">
-                <!-- ko if: searchAvailable() -->
-                <button type="button" class="btn btn-primary btn-sm" data-bind="click: toggleShowSearch, visible:!showSearch(), text: ko.i18n('cs.browser.searchCS', 'Search Concept Sets')"></button>
-                <button type="button" class="btn btn-danger btn-sm" data-bind="click: toggleShowSearch, visible:showSearch(), text: ko.i18n('cs.browser.closeSearchCS', 'Close Search Concept Sets')"></button>
-                <!-- /ko -->
                 <button type="button" class="btn btn-sm btn-primary new-concept-set" data-bind="click: addConceptSet, css: {disabled: disableConceptSetButton}, text: buttonActionText"></button>
             </div>
             <advanced-search
