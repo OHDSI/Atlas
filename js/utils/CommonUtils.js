@@ -99,12 +99,13 @@ define([
 		return source.daimons.find(daimon => daimon.daimonType == 'Results') !== undefined;
 	}
 
-	function renderLink(s, p, d) {
+	function renderLink(s, p, d, prefixHtml) {
 		var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
 		var linkClass = getConceptLinkClass(d);
-		return p === 'display' && d.CONCEPT_ID
+		var renderedValue = p === 'display' && d.CONCEPT_ID
 			? '<a class="' + valid + ' ' + linkClass + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>'
 			: d.CONCEPT_NAME;
+		return prefixHtml ? `${prefixHtml} ${renderedValue}` : renderedValue;
 	}
 
 	function renderBoundLink(s, p, d) {

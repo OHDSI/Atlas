@@ -133,7 +133,13 @@ class ConceptsetCompare extends AutoBind(Component) {
           },
         },
         {
-          data: d => d.conceptId,
+          render: (s,p,d) => {
+              return d.conceptId ? d.conceptId :
+                  `<span data-bind="title: ko.i18n('cs.browser.compare.idNotFoundTitle', 'Concept ID not found by Code and Vocabulary')">
+                        <i class="fa fa-exclamation-triangle id-not-found"></i>
+                        <span data-bind="text: ko.i18n('cs.browser.compare.idNotFound', 'Not found')"></span>
+                   </span>`;
+          }
         },
         {
           data: d => d.conceptCode,
@@ -146,7 +152,10 @@ class ConceptsetCompare extends AutoBind(Component) {
               INVALID_REASON_CAPTION: d.invalidReason,
               STANDARD_CONCEPT: d.standardConcept,
             };
-            return commonUtils.renderLink(s,p,concept)
+            const nameMismatchSign = d.nameMismatch
+                ? `<span data-bind="title: ko.i18n('cs.browser.compare.nameMismatchWarning', 'Concept is found in the source by code and vocabulary, but the name does not match')"><i class="fa fa-exclamation-triangle name-mismatch"></i></span>`
+                : null;
+            return commonUtils.renderLink(s, p, concept, nameMismatchSign);
           }
         },
         {
