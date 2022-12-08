@@ -76,7 +76,10 @@ define([
 			return {
 				title: ko.i18n('columns.pct', 'Pct'),
 				class: this.classes('col-pct'),
-				render: (s, p, d) => utils.formatPct(d.pct[strata] || 0),
+				render: (s, p, d) => {
+					const pct = utils.formatPct(d.pct[strata] || 0);
+					return `<div class="pct-fill" style="width: ${pct}"><div>${pct}</div></div>`;
+				},
 			};
 		}
 
