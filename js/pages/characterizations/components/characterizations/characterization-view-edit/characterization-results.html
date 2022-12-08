@@ -157,6 +157,18 @@
                             />
                         </div>
                     <!-- /ko -->
+                    <!-- ko if: type === 'distribution' && data.length === 1 && cohorts.length !== 2 -->
+                    <div data-bind="css: $component.classes('chart-wrapper')">
+                        <horizontal-boxplot data-bind="css: $component.classes('boxplot')" params="
+                                        data: () => $component.convertHorizontalBoxplotData($data),
+                                        minHeight: 125,
+                                        format: {
+
+                                            boxHeight: 40,
+                                        }"
+                        />
+                    </div>
+                    <!-- /ko -->
                 </div>
             </div>
         <!-- /ko -->

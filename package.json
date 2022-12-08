@@ -46,7 +46,7 @@
     "terser": "3.17.0"
   },
   "dependencies": {
-    "@ohdsi/atlascharts": "2.0.1",
+    "@ohdsi/atlascharts": "2.1.0",
     "@ohdsi/ui-toolbox": "^1.0.3",
     "@ohdsi/visibilityjs": "^2.0.2",
     "ajv": "^6.10.0",
