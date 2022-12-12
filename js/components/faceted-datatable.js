@@ -66,6 +66,8 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 		self.scrollY = params.scrollY || null;
 		self.scrollCollapse = params.scrollCollapse || false;
 
+		self.outsideFilters = (params.outsideFilters || ko.observable()).extend({notify: 'always'});
+
 		self.updateFilters = function (data, event) {
 			var facet = data.facet;
 			data.selected(!data.selected());
@@ -88,7 +90,21 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 				});
 			}
 			self.data.valueHasMutated();
+
+			if (params?.updateLastSelectedMatchFilter) {
+				params.updateLastSelectedMatchFilter(data.key);
+			}
 		}
+
+
+		self.updateOutsideFilters = function (key) {
+			const facets = self.facets();
+			const facetItems = facets.map(facet => facet.facetItems);
+			const selectedItemIndex = facetItems.findIndex(facet => facet.find(el => el.key === key));
+			const selectedFacet = facets[selectedItemIndex].facetItems.find(facet => facet.key === key);
+
+			self.updateFilters({...selectedFacet});
+		};
 
 		// additional helper function to help with crossfilter-ing dimensions that contain nulls
 		self.facetDimensionHelper = function facetDimensionHelper(val) {
@@ -144,6 +160,13 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 			})
 		);
 
+		subscriptions.push(
+			self.outsideFilters.subscribe(function (newValue) {
+				if (self.outsideFilters() != undefined) {
+					self.updateOutsideFilters(newValue);
+				}
+			})
+		);
 		// init component
 		if (ko.isComputed(self.reference)) {
 			// valueHasMutated doesn't work for computed
