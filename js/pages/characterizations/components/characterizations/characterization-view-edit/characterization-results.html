@@ -146,6 +146,7 @@
                         </div>
                     <!-- /ko -->
                     <!-- ko if: type === 'distribution' && data.length === 1 && cohorts.length === 2 -->
+                    <div class="characterization-results-boxplot-container">
                         <div data-bind="css: $component.classes('chart-wrapper')">
                             <split-boxplot data-bind="css: $component.classes('boxplot')" params="
                                         data: () => $component.convertBoxplotData($data),
@@ -156,17 +157,33 @@
                                         }"
                             />
                         </div>
+                    </div>
                     <!-- /ko -->
                     <!-- ko if: type === 'distribution' && data.length === 1 && cohorts.length !== 2 -->
-                    <div data-bind="css: $component.classes('chart-wrapper')">
-                        <horizontal-boxplot data-bind="css: $component.classes('boxplot')" params="
-                                        data: () => $component.convertHorizontalBoxplotData($data),
-                                        minHeight: 125,
-                                        format: {
-                                            valueFormatter: v => v,
-                                            boxHeight: 40,
-                                        }"
-                        />
+                    <div class="characterization-results-container">
+                        <div class="characterization-results-boxplot-container">
+                            <div data-bind="css: $component.classes('chart-wrapper')">
+                                <horizontal-boxplot data-bind="css: $component.classes('boxplot')" params="
+                                                data: () => $component.convertHorizontalBoxplotData($data),
+                                                minHeight: 125,
+                                                format: {
+                                                    valueFormatter: v => v,
+                                                    boxHeight: 40,
+                                                }"
+                                />
+                            </div>
+                        </div>
+                        <div class="characterization-results-legend-container">
+                            <h4 class="legend-header">Cohort Legend</h4>
+                            <div>
+                                <table data-bind="foreach: $component.prepareLegendBoxplotData($data)">
+                                    <tr class="color-row">
+                                        <td class="color-cell"><div data-bind="style: {'background-color' : cohortColor}" class="swatch"></div></td>
+                                        <td> <div data-bind="text: cohortName" class="legend-cohort-name"></div></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <!-- /ko -->
                 </div>

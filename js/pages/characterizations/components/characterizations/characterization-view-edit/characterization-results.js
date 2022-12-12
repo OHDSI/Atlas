@@ -497,6 +497,20 @@ define([
             });
         }
 
+        prepareLegendBoxplotData (analysis) {
+            const cohortNames = analysis.cohorts.map(d => d.cohortName);
+            const legendColorsSchema = d3.scaleOrdinal().domain(cohortNames)
+                .range(utils.colorHorizontalBoxplot);
+
+            const legendColors = cohortNames.map(cohort => {
+                return {
+                    cohortName: cohort,
+                    cohortColor: legendColorsSchema(cohort)
+                };
+            });
+            return legendColors.reverse();
+        }
+
         analysisTitle(data) {
             const strata = data.stratified ? (' / stratified by ' + this.stratifiedByTitle()): '';
             return (data.domainId ? (data.domainId + ' / ') : '') + data.analysisName + strata;
