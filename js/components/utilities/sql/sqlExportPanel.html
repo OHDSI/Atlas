@@ -1,22 +1,12 @@
 <div>
     <loading data-bind="visible: loading"></loading>
     <!-- ko ifnot: loading -->
-    <!-- ko if: sourceSql -->
-    <h5 class="title">
-        Source output:
-    </h5>
-    <!-- /ko -->
-    <!-- ko ifnot: sourceSql -->
-    <h5 class="title">
-        Rendered translation:
-    </h5>
-    <!-- /ko -->
     <div class="flex-container">
         <div class="sql-text">
-            <!-- ko if: sourceSql -->
+            <!-- ko ifnot: sourceSql() -->
             <pre  data-bind="html: sqlText, attr:{ id: clipboardTarget }"></pre>
             <!-- /ko -->
-            <!-- ko ifnot: sourceSql -->
+            <!-- ko if: sourceSql() -->
             <pre  data-bind="html: paramsTemplateSql(), attr:{ id: clipboardTarget }"></pre>
             <!-- /ko -->
 
@@ -34,14 +24,9 @@
             </div>
             <div class="sql-params" data-bind="foreach: sqlParams">
                 <div class="sql-params-label" data-bind="text: $data.slice(1)"></div>
-                <input class="sql-params-input" type="text" data-bind="disable: $component.sourceSql, textInput: $component.inputParamsValues()[$data], attr: {name: $data}, event:{ input: $component.onChangeParamsValue}" >
+                <input class="sql-params-input" type="text" data-bind="textInput: $component.inputParamsValues()[$data], attr: {name: $data}, event:{ input: $component.onChangeParamsValue}" >
             </div>
-            <!-- ko if: sourceSql -->
-            <button class="btn btn-sm btn-success" type="button" data-bind="click: onSwitch, text: 'Replace parameters with values'"></button>
-            <!-- /ko -->
-            <!-- ko ifnot: sourceSql -->
-            <button class="btn btn-sm btn-primary" type="button" data-bind="click: onSwitch, text: 'Revert to sql output'"></button>
-            <!-- /ko -->
+            <div class="sql-checkbox-container"><input type="checkbox" name="sourceSql" data-bind="checked: sourceSql" /> Sql output with editable values</div>
         </div>
     </div>
     <!-- /ko -->

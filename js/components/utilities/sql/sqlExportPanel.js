@@ -41,7 +41,7 @@ define([
 			this.clipboardTarget = clipboardTarget;
 			this.subscriptions = [];
 			this.subscriptions.push(this.templateSql.subscribe(v => !!v && this.translateSql()));
-			this.sourceSql = ko.observable(true);
+			this.sourceSql = ko.observable(false);
 			this.paramsTemplateSql = ko.observable(this.sqlText);
 			this.currentResultSource = ko.observable();
 			this.resultSources = ko.computed(() => {
@@ -59,7 +59,7 @@ define([
 			});
 			this.inputParamsValues = ko.observable(this.defaultParamsValue(this.currentResultSource));
 			this.subscriptions.push(this.sqlParams.subscribe(v => !!v && this.inputParamsValues(this.defaultParamsValue(this.currentResultSource))));
-			this.subscriptions.push(this.sourceSql.subscribe(v => !v && this.onChangeParamsValue()));
+			this.subscriptions.push(this.sourceSql.subscribe(v => this.onChangeParamsValue()));
 		}
 
 		dispose() {
