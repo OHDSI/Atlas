@@ -15,7 +15,8 @@ define([
   'components/conceptset/InputTypes/ConceptSet',
   './coneptset-compare-const',
   'components/modal',
-  'less!./conceptset-compare.less',
+  'components/charts/venn',
+  'less!./conceptset-compare.less'
 ], function (
 	ko,
 	view,
@@ -57,14 +58,20 @@ class ConceptsetCompare extends AutoBind(Component) {
         this.compareCS2Caption = ko.observable();
         this.compareCS2ConceptSet = ko.observable(null);
         this.compareCS2ConceptSetExpression = ko.pureComputed(() => {
-        if (this.currentConceptSet() && this.compareCS2Id() === this.currentConceptSet().id) {
-          return ko.toJS(this.selectedConcepts());
-        } else {
-          return ko.toJS(this.compareCS2ConceptSet());
-        }
+          if (this.currentConceptSet() && this.compareCS2Id() === this.currentConceptSet().id) {
+            return ko.toJS(this.selectedConcepts());
+          } else {
+            return ko.toJS(this.compareCS2ConceptSet());
+          }
         });
+
         this.compareCS2TypeFile = ko.observable(null);
         this.compareResults = ko.observable();
+        this.compareResultsSame = ko.observable();
+
+        this.outsideFilters = ko.observable("");
+        this.lastSelectedMatchFilter = ko.observable("");
+
         this.comparisonTargets = ko.observable(null);
         this.compareError = ko.pureComputed(() => {
         return (
@@ -124,9 +131,9 @@ class ConceptsetCompare extends AutoBind(Component) {
         this.compareResultsColumns = [{
         data: d => {
             if (d.conceptIn1Only == 1) {
-              return ko.i18n('facets.match.only1', '1 Only')();
+              return ko.i18n('facets.match.only1', 'CS1 Only')();
             } else if (d.conceptIn2Only == 1) {
-              return ko.i18n('facets.match.only2', '2 Only')();
+              return ko.i18n('facets.match.only2', 'CS2 Only')();
             } else {
               return ko.i18n('facets.match.both', 'Both')();
             }
@@ -195,9 +202,9 @@ class ConceptsetCompare extends AutoBind(Component) {
             'caption': ko.i18n('facets.caption.match', 'Match'),
             'binding': d => {
               if (d.conceptIn1Only == 1) {
-                return ko.i18n('facets.match.only1', '1 Only');
+                return ko.i18n('facets.match.only1', 'CS1 Only');
               } else if (d.conceptIn2Only == 1) {
-                return ko.i18n('facets.match.only2', '2 Only');
+                return ko.i18n('facets.match.only2', 'CS2 Only');
               } else {
                 return ko.i18n('facets.match.both', 'Both');
               }
@@ -259,9 +266,10 @@ class ConceptsetCompare extends AutoBind(Component) {
         });
         this.recordCountsRefreshing = ko.observable(false);
         this.recordCountClass = ko.pureComputed(() => {
-        return this.recordCountsRefreshing() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-database fa-lg";
+          return this.recordCountsRefreshing() ? "fa fa-circle-notch fa-spin fa-lg" : "fa fa-database fa-lg";
         });
         this.conceptSetLoading = ko.observable(false);
+        this.showDiagram = ko.observable(false);
     }
 
     chooseCS1() {
@@ -307,6 +315,7 @@ class ConceptsetCompare extends AutoBind(Component) {
             };
         });
     }
+
     async uploadCS1(e) {
         const file = e.target.files[0];
         try {
@@ -322,6 +331,7 @@ class ConceptsetCompare extends AutoBind(Component) {
             e.target.value = '';
         }
     }
+
     async uploadCS2(e) {
         const file = e.target.files[0];
         try {
@@ -337,6 +347,7 @@ class ConceptsetCompare extends AutoBind(Component) {
             e.target.value = '';
         }
     }
+
     getCompareTargets() {
       return [{
 				items: this.compareCS1ConceptSetExpression()
@@ -345,28 +356,30 @@ class ConceptsetCompare extends AutoBind(Component) {
 			}];
     }
 
-    compareConceptSets() {
-        this.compareLoading(true);
-        const compareTargets = this.getCompareTargets();
-        const csTypes = [this.compareCS1TypeFile(),this.compareCS2TypeFile()];
-        const apiMethod = csTypes[0] === Const.expressionType.BRIEF || csTypes[1] === Const.expressionType.BRIEF ?
-            vocabularyProvider.compareConceptSetCsv(compareTargets,csTypes)
-            : vocabularyProvider.compareConceptSet(compareTargets);
+	compareConceptSets() {
+		this.compareLoading(true);
+		const compareTargets = this.getCompareTargets();
+           const csTypes = [this.compareCS1TypeFile(),this.compareCS2TypeFile()];
+           const apiMethod = csTypes[0] === Const.expressionType.BRIEF || csTypes[1] === Const.expressionType.BRIEF ?
+               vocabularyProvider.compareConceptSetCsv(compareTargets,csTypes)
+               : vocabularyProvider.compareConceptSet(compareTargets);
 
-        apiMethod
-            .then((compareResults) => {
-                const conceptIds = compareResults.map((o, n) => {
-                    return o.conceptId;
-                }).filter((id) => id !== null);
-                cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
-                    .then((rowcounts) => {
-                        //this.compareResults(null);
-                        this.compareResults(compareResults);
-                        this.comparisonTargets(compareTargets); // Stash the currently selected concept sets so we can use this to determine when to show/hide results
-                        this.compareLoading(false);
-                    });
-            });
-}
+           apiMethod
+               .then((compareResults) => {
+				const conceptIds = compareResults.map((o, n) => {
+					return o.conceptId;
+				}).filter((id) => id !== null);
+                   const sameConcepts = compareResults.find(concept => concept.conceptIn1And2 === 0);
+				cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
+					.then((rowcounts) => {
+						//this.compareResults(null);
+						this.compareResults(compareResults);
+                        this.compareResultsSame(sameConcepts);
+						this.comparisonTargets(compareTargets); // Stash the currently selected concept sets so we can use this to determine when to show/hide results
+						this.compareLoading(false);
+					});
+			});
+    }
 
     compareCreateNewConceptSet() {
         const dtItems = $('#compareResults table')
@@ -420,33 +433,45 @@ class ConceptsetCompare extends AutoBind(Component) {
     refreshRecordCounts(obj, event) {
         if (event.originalEvent) {
         // User changed event
-            this.recordCountsRefreshing(true);
-            $("#dtConeptManagerRC")
-                .removeClass("fa-database")
-                .addClass("fa-circle-notch")
-                .addClass("fa-spin");
-            $("#dtConeptManagerDRC")
-                .removeClass("fa-database")
-                .addClass("fa-circle-notch")
-                .addClass("fa-spin");
-            var compareResults = this.compareResults();
-            var conceptIds = $.map(compareResults, function (o, n) {
-                return o.conceptId;
-            });
-            cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
-                .then((rowcounts) => {
-                    this.compareResults(compareResults);
-                    this.recordCountsRefreshing(false);
-                    $("#dtConeptManagerRC")
-                        .addClass("fa-database")
-                        .removeClass("fa-circle-notch")
-                        .removeClass("fa-spin");
-                    $("#dtConeptManagerDRC")
-                        .addClass("fa-database")
-                        .removeClass("fa-circle-notch")
-                        .removeClass("fa-spin");
-                });
-        }
+				this.recordCountsRefreshing(true);
+				$("#dtConeptManagerRC")
+					.removeClass("fa-database")
+					.addClass("fa-circle-notch")
+					.addClass("fa-spin");
+				$("#dtConeptManagerDRC")
+					.removeClass("fa-database")
+					.addClass("fa-circle-notch")
+					.addClass("fa-spin");
+				var compareResults = this.compareResults();
+				var conceptIds = $.map(compareResults, function (o, n) {
+					return o.conceptId;
+				});
+				cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
+					.then((rowcounts) => {
+						this.compareResults(compareResults);
+            this.recordCountsRefreshing(false);
+						$("#dtConeptManagerRC")
+							.addClass("fa-database")
+							.removeClass("fa-circle-notch")
+							.removeClass("fa-spin");
+						$("#dtConeptManagerDRC")
+							.addClass("fa-database")
+							.removeClass("fa-circle-notch")
+							.removeClass("fa-spin");
+					});
+			}
+		}
+
+    toggleShowDiagram() {
+        this.showDiagram(!this.showDiagram());
+    }
+
+    updateOutsideFilters(key) {
+        this.outsideFilters(key);
+    }
+
+    updateLastSelectedMatchFilter(key) {
+        this.lastSelectedMatchFilter(key)
     }
 }
 
