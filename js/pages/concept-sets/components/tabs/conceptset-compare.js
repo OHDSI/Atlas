@@ -159,10 +159,10 @@ class ConceptsetCompare extends AutoBind(Component) {
               INVALID_REASON_CAPTION: d.invalidReason,
               STANDARD_CONCEPT: d.standardConcept,
             };
-            const nameMismatchSign = d.nameMismatch
-                ? `<span data-bind="title: ko.i18n('cs.browser.compare.nameMismatchWarning', 'Concept is found in the source by code and vocabulary, but the name does not match')"><i class="fa fa-exclamation-triangle name-mismatch"></i></span>`
-                : null;
-            return commonUtils.renderLink(s, p, concept, nameMismatchSign);
+            const link = commonUtils.renderLink(s, p, concept);
+            return d.nameMismatch
+                ? `<span data-bind="title: ko.i18n('cs.browser.compare.nameMismatchWarning', 'Concept is found in the source by code and vocabulary, but the name does not match')"><i class="fa fa-exclamation-triangle name-mismatch"></i></span> ${link}`
+                : link;
           }
         },
         {
