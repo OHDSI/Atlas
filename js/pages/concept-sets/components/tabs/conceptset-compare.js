@@ -356,29 +356,26 @@ class ConceptsetCompare extends AutoBind(Component) {
 			}];
     }
 
-	compareConceptSets() {
-		this.compareLoading(true);
-		const compareTargets = this.getCompareTargets();
-           const csTypes = [this.compareCS1TypeFile(),this.compareCS2TypeFile()];
-           const apiMethod = csTypes[0] === Const.expressionType.BRIEF || csTypes[1] === Const.expressionType.BRIEF ?
-               vocabularyProvider.compareConceptSetCsv(compareTargets,csTypes)
-               : vocabularyProvider.compareConceptSet(compareTargets);
+    compareConceptSets() {
+        this.compareLoading(true);
+        const compareTargets = this.getCompareTargets();
+        const csTypes = [this.compareCS1TypeFile(), this.compareCS2TypeFile()];
+        const apiMethod = csTypes[0] === Const.expressionType.BRIEF || csTypes[1] === Const.expressionType.BRIEF
+            ? vocabularyProvider.compareConceptSetCsv(compareTargets, csTypes)
+            : vocabularyProvider.compareConceptSet(compareTargets);
 
-           apiMethod
-               .then((compareResults) => {
-				const conceptIds = compareResults.map((o, n) => {
-					return o.conceptId;
-				}).filter((id) => id !== null);
-                   const sameConcepts = compareResults.find(concept => concept.conceptIn1And2 === 0);
-				cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults)
-					.then((rowcounts) => {
-						//this.compareResults(null);
-						this.compareResults(compareResults);
-                        this.compareResultsSame(sameConcepts);
-						this.comparisonTargets(compareTargets); // Stash the currently selected concept sets so we can use this to determine when to show/hide results
-						this.compareLoading(false);
-					});
-			});
+        apiMethod.then((compareResults) => {
+            const conceptIds = compareResults.map((o, n) => {
+                return o.conceptId;
+            }).filter((id) => id !== null);
+            const sameConcepts = compareResults.find(concept => concept.conceptIn1And2 === 0);
+            cdmResultsAPI.getConceptRecordCount(this.currentResultSource().sourceKey, conceptIds, compareResults).then(() => {
+                this.compareResults(compareResults);
+                this.compareResultsSame(sameConcepts);
+                this.comparisonTargets(compareTargets); // Stash the currently selected concept sets so we can use this to determine when to show/hide results
+                this.compareLoading(false);
+            });
+        });
     }
 
     compareCreateNewConceptSet() {
