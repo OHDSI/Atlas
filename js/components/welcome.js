@@ -69,8 +69,8 @@ define([
         self.toggleCredentialsForm = function (provider) {
             self.isDbLoginAtt(!self.isDbLoginAtt());
             if (self.isDbLoginAtt()) {
-                self.loginPlaceholder(provider?.loginPlaceholder);
-                self.passwordPlaceholder(provider?.passwordPlaceholder);
+                self.loginPlaceholder(provider ? provider.loginPlaceholder : null);
+                self.passwordPlaceholder(provider ? provider.passwordPlaceholder : null);
             }
         };
 
