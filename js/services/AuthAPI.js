@@ -479,6 +479,10 @@ define(function(require, exports) {
         return isPermitted(`cache:clear:get`);
     };
 
+    const isPermittedTagsManagement = function () {
+        return isPermitted(`tag:management`);
+    };
+
     const isPermittedRunAs = () => isPermitted('user:runas:post');
 
     const isPermittedViewDataSourceReport = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:get`);
@@ -596,6 +600,7 @@ define(function(require, exports) {
         isPermittedImportUsers,
         hasSourceAccess,
         isPermittedRunAs,
+        isPermittedTagsManagement,
         isPermittedClearServerCache,
         isPermittedViewDataSourceReport,
         isPermittedViewDataSourceReportDetails,
