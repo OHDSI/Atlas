@@ -1,0 +1,181 @@
+<heading-title params="name: 'Tag Management', icon: 'database', theme: 'dark'"></heading-title>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+
+<div data-bind="if: hasAccess, css: classes('container')">
+
+    <h4 data-bind="text: ko.i18n('configuration.tagManagement.tagGroups', 'Tag Groups')"></h4>
+
+    <button type="button" class="btn btn-primary"
+            data-bind="click: createGroup,
+                        css: classes('create-button'),
+                        text: ko.i18n('configuration.tagManagement.createGroup', 'Create Group')"></button>
+
+    <table data-bind="
+                css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                dataTable:{
+                    data: tagGroups,
+                    options: {
+                        order: [0, 'asc'],
+                        columns: tagGroupColumns,
+                        pageLength: tableOptions.pageLength,
+                        lengthMenu: tableOptions.lengthMenu,
+                        language: ko.i18n('datatable.language')
+                    },
+                }
+            " style="width: 100%"/>
+
+    <div data-bind="if: showTagsForGroup, css: classes('tags-container')">
+
+        <h4 data-bind="text: ko.i18nformat('configuration.tagManagement.tagsInGroup', 'Tags in Group \'<%=group%>\'', {group: showTagsForGroup().name})"></h4>
+
+        <button type="button" class="btn btn-primary"
+                data-bind="click: createTag,
+                            css: classes('create-button'),
+                            text: ko.i18n('configuration.tagManagement.createTag', 'Create Tag')"></button>
+
+        <table data-bind="
+                    css: classes({ extra: ['table', 'table-bordered', 'table-hover'] }),
+                    dataTable:{
+                        data: tags,
+                        options: {
+                            order: [0, 'asc'],
+                            columns: tagColumns,
+                            pageLength: tableOptions.pageLength,
+                            lengthMenu: tableOptions.lengthMenu,
+                            language: ko.i18n('datatable.language')
+                        },
+                    }
+                " style="width: 100%"/>
+
+    </div>
+
+</div>
+
+<atlas-modal params="
+        showModal: showTagGroupModal,
+        title: ko.i18n('configuration.tagManagement.editTagGroup', 'Edit Tag Group'),
+        backdropClosable: false,
+        data: {
+            tagGroup: currentTagGroup,
+            showModal: showTagGroupModal,
+            saveTag: saveTag,
+            closeGroup: closeGroup
+        }
+    ">
+    <span class="help-block" data-bind="text: ko.i18n('configuration.tagManagement.mandatoryFields', '* Mandatory fields')"></span>
+
+    <div class="form-group" data-bind="css: {'has-error': tagGroup().name().trim() === '', 'has-success': tagGroup().name().trim().length > 0}">
+        <label for="tagGroupName" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagGroupName', '* Tag group name')"></label>
+        <input required data-bind="textInput: tagGroup().name, placeholder: ko.i18n('configuration.tagManagement.tagGroupNamePlaceholder', 'Enter tag group name')" type="text" id="tagGroupName" class="form-control">
+        <span class="help-block" data-bind="visible: tagGroup().name().trim() === '', text: ko.i18n('configuration.tagManagement.tagGroupNameEmpty', 'Tag group name cannot be empty')"></span>
+    </div>
+    <div class="form-group">
+        <label for="tagGroupDescription" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagGroupDescription', 'Tag group description')"></label>
+        <input data-bind="textInput: tagGroup().description, placeholder: ko.i18n('configuration.tagManagement.tagGroupDescriptionPlaceholder', 'Enter tag group description')" type="text" id="tagGroupDescription" class="form-control">
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <label for="tagGroupColor" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagGroupColor', 'Tag group color')"></label>
+            <input data-bind="textInput: tagGroup().color, placeholder: ko.i18n('configuration.tagManagement.tagGroupNamePlaceholder', 'Enter tag group color in #xxxxxx format')" type="text" id="tagGroupColor" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="tagGroupIcon" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagGroupIcon', 'Tag group icon')"></label>
+            <input data-bind="textInput: tagGroup().icon, placeholder: ko.i18n('configuration.tagManagement.tagGroupNamePlaceholder', 'Enter tag group icon as font-awesome class')" type="text" id="tagGroupIcon" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <div class="control-label tag-example-label" data-bind="text: ko.i18n('configuration.tagManagement.exampleTagGroup', 'Example')"></div>
+            <span class="tag" data-bind="attr: { style: 'background-color: ' + (tagGroup().color() || '#cecece')}">
+                <i data-bind="attr: {class: tagGroup().icon() || 'fa fa-tag'}"></i>
+                <span data-bind="text: ko.i18n('configuration.tagManagement.exampleTagGroupTag', 'Example name')"></span>
+			    <span class="tooltip">
+			    	<b data-bind="text: ko.i18n('components.heading.tag.tooltip.group', 'Group:')"></b> <span data-bind="text: tagGroup().name"></span><br>
+			    	<b data-bind="text: ko.i18n('components.heading.tag.tooltip.tag', 'Tag:')"></b> <span data-bind="text: ko.i18n('configuration.tagManagement.exampleTagGroupTag', 'Example name')"></span></span>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: tagGroup().mandatory"><span class="checkbox-description" data-bind="text: ko.i18n('configuration.tagManagement.mandatoryCheckbox', 'Tag from the group is mandatory for an asset')"></span>
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: tagGroup().showGroup"><span class="checkbox-description" data-bind="text: ko.i18n('configuration.tagManagement.showGroupCheckbox', 'Show Tag Group column in assets table')"></span>
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: tagGroup().multiSelection"><span class="checkbox-description" data-bind="text: ko.i18n('configuration.tagManagement.multiSelectionCheckbox', 'Allow multiple tags from the group in a single asset')"></span>
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: tagGroup().allowCustom"><span class="checkbox-description" data-bind="text: ko.i18n('configuration.tagManagement.allowCustomCheckbox', 'Allow custom tags creation in this group')"></span>
+            </label>
+        </div>
+    </div>
+    <div class="modal-footer with-padding">
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="disable: tagGroup().name().trim() === '', click: () => saveTag(tagGroup), text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
+            <button type="button" class="btn btn-danger" data-bind="click: closeGroup, text: ko.i18n('common.cancel', 'Cancel')"></button>
+        </div>
+    </div>
+</atlas-modal>
+
+<atlas-modal params="
+        showModal: showTagModal,
+        title: ko.i18n('configuration.tagManagement.editTag', 'Edit Tag'),
+        backdropClosable: false,
+        data: {
+            tag: currentTag,
+            showModal: showTagModal,
+            saveTag: saveTag,
+            closeTag: closeTag
+        }
+    ">
+    <span class="help-block" data-bind="text: ko.i18n('configuration.tagManagement.mandatoryFields', '* Mandatory fields')"></span>
+
+    <div class="form-group" data-bind="css: {'has-error': tag().name().trim() === '', 'has-success': tag().name().trim() !== ''}">
+        <label for="tagName" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagName', '* Tag name')"></label>
+        <input required data-bind="textInput: tag().name, placeholder: ko.i18n('configuration.tagManagement.tagNamePlaceholder', 'Enter tag name')" type="text" id="tagName" class="form-control">
+        <span class="help-block" data-bind="visible: tag().name().trim() === '', text: ko.i18n('configuration.tagManagement.tagNameEmpty', 'Tag name cannot be empty')"></span>
+    </div>
+    <div class="form-group">
+        <label for="tagDescription" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.tagDescription', 'Tag description')"></label>
+        <input data-bind="textInput: tag().description, placeholder: ko.i18n('configuration.tagManagement.tagDescriptionPlaceholder', 'Enter tag description')" type="text" id="tagDescription" class="form-control">
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <label for="tagColor" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.overrideTagColor', 'Override tag group color')"></label>
+            <input data-bind="textInput: tag().color, placeholder: ko.i18n('configuration.tagManagement.tagColorPlaceholder', 'Enter color in #xxxxxx format')" type="text" id="tagColor" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="tagIcon" class="control-label" data-bind="text: ko.i18n('configuration.tagManagement.overrideTagIcon', 'Override tag group icon')"></label>
+            <input data-bind="textInput: tag().icon, placeholder: ko.i18n('configuration.tagManagement.tagIconPlaceholder', 'Enter tag icon as font-awesome class')" type="text" id="tagIcon" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <div class="control-label tag-example-label" data-bind="text: ko.i18n('configuration.tagManagement.exampleTag', 'Example')"></div>
+            <span class="tag" data-bind="attr: { style: 'background-color: ' + (tag().color() || tag().groups[0].color || '#cecece')}">
+                <i data-bind="attr: {class: tag().icon() || tag().groups[0].icon || 'fa fa-tag'}"></i>
+                <span data-bind="text: tag().name().length > 22 ? tag().name().substring(0, 20) + '...' : tag().name()"></span>
+                <span class="tooltip">
+                    <b data-bind="text: ko.i18n('components.heading.tag.tooltip.group', 'Group:')"></b> <span data-bind="text: tag().groups[0].name"></span><br>
+                    <b data-bind="text: ko.i18n('components.heading.tag.tooltip.tag', 'Tag:')"></b> <span data-bind="text: tag().name"></span></span>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: tag().permissionProtected"><span class="checkbox-description" data-bind="text: ko.i18n('configuration.tagManagement.permissionProtectedCheckbox', 'Protected tag')"></span>
+            </label>
+        </div>
+    </div>
+    <div class="modal-footer with-padding">
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="disable: tag().name().trim() === '', click: () => saveTag(tag), text: ko.i18n('configuration.tagManagement.apply', 'Submit')"></button>
+            <button type="button" class="btn btn-danger" data-bind="click: closeTag, text: ko.i18n('common.cancel', 'Cancel')"></button>
+        </div>
+    </div>
+</atlas-modal>

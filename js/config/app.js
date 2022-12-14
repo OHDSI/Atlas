@@ -1,21 +1,25 @@
 define(function () {
-	var appConfig = {};
+    var appConfig = {};
 
-	// default configuration
-	appConfig.api = {
-		name: 'Local',
-		url: 'http://localhost:8080/WebAPI/'
-  };
-  appConfig.cacheSources = false;
-  appConfig.pollInterval = 60000;
+    // default configuration
+    appConfig.api = {
+        name: 'Local',
+        url: 'http://localhost:8080/WebAPI/'
+    };
+    appConfig.cacheSources = false;
+    appConfig.pollInterval = 60000;
 	appConfig.cohortComparisonResultsEnabled = false;
 	appConfig.userAuthenticationEnabled = false;
 	appConfig.plpResultsEnabled = false;
 	appConfig.useExecutionEngine = false;
 	appConfig.viewProfileDates = false;
-  appConfig.enableCosts = false;
+    appConfig.enableCosts = false;
 	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
 	appConfig.supportMail = "atlasadmin@your.org";
+    appConfig.feedbackContacts = 'For access or questions concerning the Atlas application please contact:';
+    appConfig.feedbackCustomHtmlTemplate = '';
+    appConfig.companyInfoCustomHtmlTemplate = '';
+    appConfig.showCompanyInfo = true;
 	appConfig.defaultLocale = "en";
 	appConfig.authProviders = [
     {
@@ -82,10 +86,10 @@ define(function () {
       "isUseCredentialsForm": true
     }
   ];
-  appConfig.strictXSSOptions = {
+    appConfig.strictXSSOptions = {
     whiteList: [],
   };
-  appConfig.xssOptions = {
+    appConfig.xssOptions = {
     "whiteList": {
       "a": ["href", "class", "data-bind", "data-toggle", "aria-expanded"],
 			"button": ["class", "type", "data-toggle", "aria-expanded"],
@@ -103,7 +107,7 @@ define(function () {
     "stripIgnoreTag": true,
     "stripIgnoreTagBody": ['script'],
   };
-  appConfig.cemOptions = {
+    appConfig.cemOptions = {
     "evidenceLinkoutSources": ["medline_winnenburg","splicer"],
     "sourceRestEndpoints": {
       "medline_winnenburg": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={@ids}&retmode=json&tool=ohdsi_atlas&email=admin@ohdsi.org",
@@ -113,7 +117,7 @@ define(function () {
       "splicer": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid={@id}"
     },
   };
-  appConfig.enableTermsAndConditions = true;
+    appConfig.enableTermsAndConditions = true;
 	appConfig.webAPIRoot = appConfig.api.url;
 	// todo: move "userAuthenticationEnabled", "plpResultsEnabled", etc into the object
 	appConfig.features = {

@@ -89,7 +89,9 @@ define(
 					}
 
 					return pageTitle;
-				})
+				});
+				this.companyInfoTemplate = config.companyInfoCustomHtmlTemplate;
+				this.showCompanyInfo = config.showCompanyInfo;
 			}
 
 			/**
