@@ -1,6 +1,6 @@
 <loading params="status: ko.i18n('components.conceptSet.loadingRecommendedConcepts', 'Loading Recommended Concepts')" data-bind="visible: loading()"></loading>
 <div data-bind="hidden: loading, if:isRecommendedAvailable()">
-    <datasource-select params="{conceptSetStore: $component.conceptSetStore}"/>
+    <datasource-select params="{conceptSetStore: $component.conceptSetStore}"></datasource-select>
     <faceted-datatable params="{
         orderColumn: 7,
         columns: $component.recommendedConceptColumns,
