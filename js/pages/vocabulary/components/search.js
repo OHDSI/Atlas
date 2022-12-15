@@ -538,7 +538,7 @@ define([
 			const items = commonUtils.buildConceptSetItems(concepts, options);
 			const itemsToAdd = items.map(item => new ConceptSetItem(item));
 			const existingConceptsCopy = this.conceptSetStore.current()
-				? this.conceptSetStore.current().expression.items().map(item => new ConceptSetItem(item))
+				? this.conceptSetStore.current().expression.items().map(item => new ConceptSetItem(ko.toJS(item)))
 				: [];
 			this.previewConcepts(itemsToAdd.concat(existingConceptsCopy));
 			this.showPreviewModal(true);
