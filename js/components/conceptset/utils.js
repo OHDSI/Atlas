@@ -59,6 +59,16 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			className: 'numeric'
 		},
 		{
+			title: ko.i18n('columns.pc', 'PC'),
+			data: 'PERSON_COUNT',
+			className: 'numeric',
+		},
+		{
+			title: ko.i18n('columns.dpc', 'DPC'),
+			data: 'DESCENDANT_PERSON_COUNT',
+			className: 'numeric',
+		},
+		{
 			title: ko.i18n('columns.domain', 'Domain'),
 			data: 'DOMAIN_ID'
 		},
