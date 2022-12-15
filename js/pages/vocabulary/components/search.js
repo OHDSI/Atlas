@@ -314,9 +314,6 @@ define([
 						componentName: 'conceptset-expression-preview',
 						componentParams: {
 							tableOptions,
-							//canEditCurrentConceptSet: ko.observable(false),
-							//showConceptsAsLinks: false,
-							//conceptSetStore: this.conceptSetStore,
 							conceptSetItems: this.previewConcepts
 						},
 					},
@@ -540,7 +537,10 @@ define([
 			const concepts = commonUtils.getSelectedConcepts(this.data);
 			const items = commonUtils.buildConceptSetItems(concepts, options);
 			const itemsToAdd = items.map(item => new ConceptSetItem(item));
-			this.previewConcepts(itemsToAdd.concat(this.conceptSetStore.current() ? this.conceptSetStore.current().expression.items() : []));
+			const existingConceptsCopy = this.conceptSetStore.current()
+				? this.conceptSetStore.current().expression.items().map(item => new ConceptSetItem(item))
+				: [];
+			this.previewConcepts(itemsToAdd.concat(existingConceptsCopy));
 			this.showPreviewModal(true);
 		}
 
