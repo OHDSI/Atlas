@@ -37,12 +37,6 @@ define([
 			this.sqlText = ko.observable(highlightJS(sql,'sql'));
 			this.templateSql = templateSql || ko.observable();
 			this.templateSql() && this.translateSql();
-			this.sqlParams = ko.computed(() => this.sqlParamsList(this.sqlText() || this.templateSql()));
-			this.clipboardTarget = clipboardTarget;
-			this.subscriptions = [];
-			this.subscriptions.push(this.templateSql.subscribe(v => !!v && this.translateSql()));
-			this.sourceSql = ko.observable(false);
-			this.paramsTemplateSql = ko.observable(this.sqlText);
 			this.currentResultSource = ko.observable();
 			this.resultSources = ko.computed(() => {
 				const resultSources = [];
@@ -57,8 +51,14 @@ define([
 
 				return resultSources;
 			});
-			this.inputParamsValues = ko.observable(this.defaultParamsValue(this.currentResultSource));
-			this.subscriptions.push(this.sqlParams.subscribe(v => !!v && this.inputParamsValues(this.defaultParamsValue(this.currentResultSource))));
+			this.sqlParamsList = ko.pureComputed(() => this.calculateSqlParamsList(this.sqlText() || this.templateSql()))
+			this.sqlParams = ko.observable(this.defaultParamsValue(this.sqlParamsList()));
+			this.clipboardTarget = clipboardTarget;
+			this.sourceSql = ko.observable(false);
+			this.paramsTemplateSql = ko.observable(this.sqlText);
+
+			//subscriptions
+			this.subscriptions = [];
 			this.subscriptions.push(this.sourceSql.subscribe(v => this.onChangeParamsValue()));
 		}
 
@@ -72,54 +72,54 @@ define([
 				try {
 					const result = await cohortService.translateSql(this.templateSql(), this.dialect);
 					this.sqlText(result.data && highlightJS(result.data.targetSQL, 'sql'));
+					this.sqlParams(this.defaultParamsValue(this.sqlParamsList()));
 				} finally {
 					this.loading(false);
 				}
 			}
 		}
 
-		sqlParamsList(templateSql) {
+		calculateSqlParamsList(templateSql) {
 			const regexp = /@[-\w]+/g;
 			const params = templateSql.match(regexp);
 			const paramsList = new Set(params);
-			return [...paramsList];
-		}
 
-		onSwitch() {
-			this.sourceSql(!this.sourceSql());
+			return paramsList;
 		}
 
 		onChangeParamsValue() {
 			let templateText = this.sqlText();
-			for (const param in this.inputParamsValues()) {
-				if (!!this.inputParamsValues()[param].length) {
-					templateText = templateText.replaceAll(param, this.inputParamsValues()[param])
+			this.sqlParams().forEach(currentParam => {
+				if (!!currentParam.value.length) {
+					templateText = templateText.replaceAll(currentParam.name, currentParam.value);
 				}
-			}
+			});
 			this.paramsTemplateSql(templateText);
 		}
 
-		defaultParamsValue(source) {
-			const daimons = source().daimons;
-			const inputParams = {};
-			this.sqlParams().forEach(param => {
-
-				const defaultParam = daimons.find(daimon => daimon.daimonType === defaultInputParamsValues[param]);
-
-				if (!!defaultParam) {
-					inputParams[param] = defaultParam.tableQualifier;
+		defaultParamsValue(paramsList) {
+			const daimons = this.currentResultSource().daimons;
+			const inputParams = [];
+			paramsList.forEach(param => {
+				const currentDaimon = daimons.find(daimon => daimon.daimonType === defaultInputParamsValues[param]);
+				const defaultInput = {
+					name: param,
+					value: ''
+				};
+				if (!!currentDaimon) {
+					defaultInput.value = currentDaimon.tableQualifier;
+				} else if (param === '@target_cohort_id'){
+					defaultInput.value = `${this.currentCohort()}`;
 				} else {
-					inputParams[param] = "";
+					defaultInput.value = "";
 				}
+				inputParams.push(defaultInput);
 			});
-			inputParams['@target_cohort_id'] = `${this.currentCohort()}`;
-
 			return inputParams;
 		}
 
 		changeSource() {
-			const inputParams = this.defaultParamsValue(this.currentResultSource);
-			this.inputParamsValues(inputParams);
+			this.sqlParams(this.defaultParamsValue(this.sqlParamsList()));
 			this.onChangeParamsValue();
 		}
 	}

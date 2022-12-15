@@ -22,10 +22,10 @@
                   event: { change: $component.changeSource }">
                 </select>
             </div>
-            <div class="sql-params" data-bind="foreach: sqlParams">
-                <div class="sql-params-label" data-bind="text: $data.slice(1)"></div>
-                <input class="sql-params-input" type="text" data-bind="textInput: $component.inputParamsValues()[$data], attr: {name: $data}, event:{ input: $component.onChangeParamsValue}" >
-            </div>
+                <div class="sql-params" data-bind="foreach: sqlParams">
+                    <div class="sql-params-label" data-bind="text: name.slice(1)"></div>
+                    <input class="sql-params-input" type="text" data-bind="textInput: value, attr: {name: name}, event:{ input: $component.onChangeParamsValue}" >
+                </div>
             <div class="sql-checkbox-container"><input type="checkbox" name="sourceSql" data-bind="checked: sourceSql" /> Sql output with editable values</div>
         </div>
     </div>
