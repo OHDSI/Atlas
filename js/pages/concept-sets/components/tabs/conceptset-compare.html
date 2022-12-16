@@ -101,11 +101,11 @@
     </div>
     <div class="panel panel-default" data-bind="collapsable: showDiagram, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
       <div class="panel-heading panel-subheading panel-heading-collapsible div-enabled" data-bind="click: toggleShowDiagram">
-        <span class="glyphicon-chevron-up"><i class="fas fa-chart-pie"></i> <span data-bind="text: ko.i18n('ADDSOURCE', 'Venn Diagram')"></span></span>
+        <span class="glyphicon-chevron-up"><i class="fas fa-chart-pie"></i> <span data-bind="text: ko.i18n('cs.browser.compare.vennDiagram', 'Venn Diagram')"></span></span>
       </div>
       <div class="panel-body collapse">
           <!-- ko if: !compareResultsSame() -->
-          <div class="compare-results-same">Compared Concept Sets contain Concepts which are identical</div>
+          <div class="compare-results-same" data-bind="text: ko.i18n('cs.browser.compare.sameConcepts', 'Compared Concept Sets contain Concepts which are identical')"></div>
           <!-- /ko -->
           <!-- ko if: compareResultsSame() -->
           <venn-diagram params="{
@@ -117,7 +117,6 @@
             }"></venn-diagram>
           <!-- /ko -->
       </div>
-
     </div>
     <div id="compareResults">
       <faceted-datatable params="{

@@ -123,9 +123,9 @@ define([
                     // sort all the areas relative to the current item
                     venn.sortAreas(div, d);
                     tooltip.transition().duration(400).style("opacity", 0.9).style("visibility", 'visible');
-                    const title = `<div class="title">${d.label ? 'Common concepts' : `${d.name} concept set`}</div>`;
-                    const amount =  d.label ? `<div class="title">The amount: ${d.count}</div>` : `<div class="title">The total amount of concepts: ${d.count}</div>`;
-                    const concepts = d.label ? `<div></div>` : `<div class="title">The concepts are  only in this concept set: ${d.amountOnly}</div>`;
+                    const title = `<div class="title">${d.label ? ko.i18n('cs.browser.compare.vennDiagramCommonConcepts', 'Common concepts')() : ko.i18nformat('cs.browser.compare.vennDiagramNameConceptSet', '<%=name%> concept set', {name: d.name})()}</div>`;
+                    const amount =  d.label ? `<div class="title">${ko.i18nformat('cs.browser.compare.vennDiagramAmountConcepts', 'The amount: <%=count%>', {count: d.count})()}</div>` : `<div class="title">${ko.i18nformat('cs.browser.compare.vennDiagramTotalAmountConcepts', 'The total amount of concepts: <%=count%>', {count: d.count})()}</div>`;
+                    const concepts = d.label ? `<div></div>` : `<div class="title">${ko.i18nformat('cs.browser.compare.vennDiagramAmountOnly', 'The concepts are only in this concept set: <%=amountOnly%>', {amountOnly: d.amountOnly})()}</div>`;
                     const textHtml = `${title}${amount}${concepts}`;
                     tooltip.html(textHtml);
                     let selection = d3.select(this).transition("tooltip").duration(400);
