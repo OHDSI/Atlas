@@ -82,7 +82,27 @@
     <div class="heading compare-results">
       <b data-bind="text: ko.i18n('cs.browser.compare.comparisonResults', 'Comparison Results')"></b>
     </div>
-    <div class="container-fluid">
+    <div class="panel panel-default" data-bind="collapsable: showDiagram, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+      <div class="panel-heading panel-subheading panel-heading-collapsible div-enabled" data-bind="click: toggleShowDiagram">
+        <span class="glyphicon-chevron-up"><i class="fas fa-chart-pie"></i> <span data-bind="text: ko.i18n('ADDSOURCE', 'Venn Diagram')"></span></span>
+      </div>
+      <div class="panel-body collapse">
+        <!-- ko if: !compareResultsSame() -->
+        <div class="compare-results-same">Compared Concept Sets contain Concepts which are identical</div>
+        <!-- /ko -->
+        <!-- ko if: compareResultsSame() -->
+        <venn-diagram params="{
+            data: compareResults,
+            firstConceptSet: compareCS1Caption,
+            secondConceptSet:compareCS2Caption,
+            updateOutsideFilters: $component.updateOutsideFilters,
+            lastSelectedMatchFilter: $component.lastSelectedMatchFilter
+            }"></venn-diagram>
+        <!-- /ko -->
+      </div>
+
+    </div>
+    <div class="container-fluid pad-0">
       <div class="pull-left">
         <button class="btn btn-sm btn-primary" data-bind="click: showSaveNewModal, text: ko.i18n('cs.browser.compare.saveMessage', 'Save New Concept Set From Selection Below')"></button>
       </div>
@@ -99,26 +119,7 @@
         "></select>
       </div>
     </div>
-    <div class="panel panel-default" data-bind="collapsable: showDiagram, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
-      <div class="panel-heading panel-subheading panel-heading-collapsible div-enabled" data-bind="click: toggleShowDiagram">
-        <span class="glyphicon-chevron-up"><i class="fas fa-chart-pie"></i> <span data-bind="text: ko.i18n('ADDSOURCE', 'Venn Diagram')"></span></span>
-      </div>
-      <div class="panel-body collapse">
-          <!-- ko if: !compareResultsSame() -->
-          <div class="compare-results-same">Compared Concept Sets contain Concepts which are identical</div>
-          <!-- /ko -->
-          <!-- ko if: compareResultsSame() -->
-          <venn-diagram params="{
-            data: compareResults,
-            firstConceptSet: compareCS1Caption,
-            secondConceptSet:compareCS2Caption,
-            updateOutsideFilters: $component.updateOutsideFilters,
-            lastSelectedMatchFilter: $component.lastSelectedMatchFilter
-            }"></venn-diagram>
-          <!-- /ko -->
-      </div>
 
-    </div>
     <div id="compareResults">
       <faceted-datatable params="{
         reference:$component.compareResults,
