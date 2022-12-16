@@ -123,9 +123,9 @@ define([
                     // sort all the areas relative to the current item
                     venn.sortAreas(div, d);
                     tooltip.transition().duration(400).style("opacity", 0.9).style("visibility", 'visible');
-                    const title = `<div class="title">${d.label ? 'Common concepts' : `${d.name} concept set`}</div>`;
-                    const amount =  d.label ? `<div class="title">The amount: ${d.count}</div>` : `<div class="title">The total amount of concepts: ${d.count}</div>`;
-                    const concepts = d.label ? `<div></div>` : `<div class="title">The concepts are  only in this concept set: ${d.amountOnly}</div>`;
+                    const title = `<div class="title">${d.label ? ko.i18n('', 'Common concepts')() : ko.i18nformat('', '<%=name%> concept set', {name: d.name})()}</div>`;
+                    const amount =  d.label ? `<div class="title">${ko.i18n('', 'The amount:')()} ${d.count}</div>` : `<div class="title">${ko.i18n('', 'The total amount of concepts:')()} ${d.count}</div>`;
+                    const concepts = d.label ? `<div></div>` : `<div class="title">${ko.i18n('', 'The concepts are only in this concept set:')()} ${d.amountOnly}</div>`;
                     const textHtml = `${title}${amount}${concepts}`;
                     tooltip.html(textHtml);
                     let selection = d3.select(this).transition("tooltip").duration(400);
