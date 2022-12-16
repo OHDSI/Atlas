@@ -169,6 +169,12 @@ define([
           data: d => d.descendantRecordCount,
         },
         {
+          data: d => d.personCount,
+        },
+        {
+          data: d => d.descendantPersonCount,
+        },
+        {
           data: d => d.domainId,
         },
         {
