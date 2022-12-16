@@ -761,8 +761,16 @@ ul.ColVis_collection li {
   margin: 3px;
 }
 
+.pad-0 {
+  padding: 0;
+}
+
 .pad-5 {
   padding: 5px;
+}
+
+.pad-10 {
+  padding: 10px;
 }
 
 .form-control {
@@ -821,10 +829,6 @@ input.btn.btn-default {
 
 .evidenceVisualization .axislabel {
   /* font-size: 1.8em; */
-}
-
-.pad-10 {
-  padding: 10px;
 }
 
 .report svg {
