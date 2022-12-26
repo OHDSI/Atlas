@@ -1,0 +1,71 @@
+.flex-container {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.params-container {
+  width: 20%;
+  height:100%;
+  margin-top: 5px;
+  padding-left: 15px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 20px;
+}
+.sql-text {
+  width: 80%;
+}
+
+.params-source {
+  color: #003142;
+  font-weight: 600;
+  margin-bottom: 10px;
+  select {
+    color: #333;
+    font-weight: 400;
+    box-shadow: inset 0 1px 1px #00000014;
+    border-radius: 2px;
+    border: 1px solid #6d6d6d;
+    outline: none;
+  }
+}
+
+.sql-params {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.sql-params-label {
+  color: #003142;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.sql-params-input {
+  margin-bottom: 10px;
+  box-shadow: inset 0 1px 1px #00000014;
+  border-radius: 2px;
+  border: 1px solid #6d6d6d;
+  outline: none;
+  &:focus {
+    border-color: #66afe9;
+  }
+  &:disabled {
+    background: #eee;
+  }
+}
+
+.title {
+  color: #003142;
+}
+
+.sql-checkbox-container {
+  display: flex;
+  font-weight: bold;
+  margin-top: 16px;
+  align-items: center;
+  input {
+    margin: 0 8px 0 0;
+  }
+}
