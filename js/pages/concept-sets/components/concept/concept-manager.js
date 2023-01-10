@@ -7,14 +7,13 @@ define([
 	'utils/CommonUtils',
 	'services/ConceptSet',
 	'components/conceptset/ConceptSetStore',
-  'components/conceptset/utils',
+  	'components/conceptset/utils',
 	'utils/Renderers',
 	'atlas-state',
 	'services/http',
 	'../../const',
 	'services/AuthAPI',
 	'../../PermissionService',
-	'const',
 	'faceted-datatable',
 	'components/heading',
 	'components/conceptLegend/concept-legend',
@@ -25,6 +24,7 @@ define([
 	'./components/tabs/concept-related',
 	'./components/tabs/concept-hierarchy',
 	'./components/tabs/concept-count',
+	'./components/tabs/concept-drilldown-report',
 ], function (
 	ko,
 	view,
@@ -41,7 +41,6 @@ define([
 	constants,
 	authApi,
 	PermissionService,
-	globalConstants,
 ) {
 	class ConceptManager extends AutoBind(Page) {
 		constructor(params) {
