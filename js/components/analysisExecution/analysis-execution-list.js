@@ -80,18 +80,15 @@ define([
 
       this.executionResultMode = executionResultMode;
       this.executionGroups = ko.observableArray([]);
-      this.filteredExecutionGroups = ko.observableArray([]);
+      this.showOnlySourcesWithResults = ko.observable(false);
+      this.filteredExecutionGroups = ko.pureComputed(() => {
+        return this.showOnlySourcesWithResults()
+            ? this.executionGroups().filter(eg => eg.submissions().length > 0)
+            : this.executionGroups();
+      });
       this.executionResultModes = consts.executionResultModes;
       this.isExecutionDesignShown = ko.observable(false);
       this.executionDesign = ko.observable(null);
-      this.showOnlySourcesWithResults = ko.observable(false);
-      this.showOnlySourcesWithResults.subscribe((filter) => {
-        if (filter) {
-          this.filteredExecutionGroups(this.executionGroups().filter(eg => eg.submissions().length > 0));
-        } else {
-          this.filteredExecutionGroups(this.executionGroups());
-        }
-      });
 
       this.sourcesColumn = [{
           render: (s, p, d) => {
@@ -195,8 +192,7 @@ define([
           group.submissions(executionList.filter(({ sourceKey: exSourceKey }) => exSourceKey === sourceKey));
           this.setExecutionGroupStatus(group);
         });
-        this.filteredExecutionGroups(this.executionGroups().filter(eg =>
-            this.showOnlySourcesWithResults() ? eg.submissions().length > 0 : true));
+        this.executionGroups.valueHasMutated();
       } catch (err) {
         console.error(err);
       } finally {
