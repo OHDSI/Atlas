@@ -17,6 +17,7 @@ define([
 	'./included',
 	'./included-badge',
 	'./included-sourcecodes',
+	'./recommend',
 	'./export',
 	'./import',
 	'less!./conceptset-list.less',
@@ -108,6 +109,12 @@ define([
 					title: ko.i18n('components.conceptSet.includedSourceCodes', 'Included Source Codes'),
 					key: ViewMode.SOURCECODES,
 					componentName: 'conceptset-list-included-sourcecodes',
+					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingSourceCodes() || this.loading()))}
+				},
+				{
+					title: 'Recommend',
+					key: ViewMode.RECOMMEND,
+					componentName: 'conceptset-recommend',
 					componentParams: {...tabParams, loading: ko.pureComputed(() => (this.conceptSetStore.loadingSourceCodes() || this.loading()))}
 				},
 				{

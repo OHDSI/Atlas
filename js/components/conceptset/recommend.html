@@ -1,0 +1,15 @@
+<loading params="status: ko.i18n('components.conceptSet.loadingRecommended', 'Loading Recommended')" data-bind="visible: loading()"></loading>
+<div data-bind="hidden: loading">
+    <faceted-datatable params="{
+        columns: $component.recommendedConceptsColumns,
+        options: $component.recommendedConceptsOptions,
+        reference: $component.recommendConcepts,
+        pageLength: tableOptions.pageLength,
+        lengthMenu: tableOptions.lengthMenu,
+        language: ko.i18n('datatable.language')
+    }"></faceted-datatable>
+    <concept-add-box params="{
+        isActive: canAddConcepts,
+        onSubmit: addConcepts
+    }"></concept-add-box>
+</div>

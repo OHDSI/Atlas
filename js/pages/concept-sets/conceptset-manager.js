@@ -34,6 +34,7 @@ define([
 	'./components/tabs/conceptset-expression',
 	'components/conceptset/included',
 	'components/conceptset/included-sourcecodes',
+	'components/conceptset/recommend',
 	'components/conceptset/import',
 	'components/conceptset/export',
 	'./components/tabs/explore-evidence',
@@ -253,6 +254,19 @@ define([
 						conceptSetStore: this.conceptSetStore,
 						loading: this.conceptSetStore.loadingSourceCodes},
 						activeConceptSet: ko.observable(this.conceptSetStore),
+				},
+				{
+					title: 'Recommend',
+					key: ViewMode.RECOMMEND,
+					componentName: 'conceptset-recommend',
+					componentParams: {
+						...params,
+						tableOptions,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						loading: this.conceptSetStore.loadingRecommend
+					},
+					activeConceptSet: ko.observable(this.conceptSetStore),
 				},
 				{
 					title: ko.i18n('cs.manager.tabs.exploreEvidence', 'Explore Evidence'),

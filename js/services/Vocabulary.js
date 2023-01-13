@@ -164,6 +164,11 @@ define(function (require, exports) {
 		return getMappedConceptsByIdPromise;
 	}
 
+	function getRecommendedConcepts(identifiers, url, sourceKey) {
+		const vocabUrl = getVocabUrl(url, sourceKey);
+		return httpService.doPost(vocabUrl + 'lookup/recommended', identifiers).then(({ data }) => data);
+	}
+
 	function optimizeConceptSet(conceptSetItems, url, sourceKey) {
 		const vocabUrl = getVocabUrl(url, sourceKey);
 
@@ -208,6 +213,7 @@ define(function (require, exports) {
 		getConceptsById: getConceptsById,
 		getConceptsByCode: getConceptsByCode,
 		getMappedConceptsById: getMappedConceptsById,
+		getRecommendedConcepts: getRecommendedConcepts,
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,

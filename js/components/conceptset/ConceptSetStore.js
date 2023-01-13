@@ -72,11 +72,15 @@ define([
 			
 			// the included source codes (from loadSourceCodes)
 			this.includedSourcecodes = ko.observableArray([]);
+
+			// recommended
+			this.recommendConcepts = ko.observableArray([]);
 	
 			// loading state of individual aspects of the concept set store
 			this.resolvingConceptSetExpression = ko.observable(false);
 			this.loadingSourceCodes = ko.observable(false);
 			this.loadingIncluded = ko.observable(false);
+			this.loadingRecommend = ko.observable(false);
 			
 			// metadata about this store
 			this.source = props.source || "unnamed";
@@ -94,13 +98,14 @@ define([
 			this.current(null);
 			this.includedConcepts(null);
 			this.includedSourcecodes(null);
+			this.recommendConcepts(null);
 			this.conceptSetInclusionIdentifiers(null);
 		}
     
     clearIncluded() {
-      ['includedConcepts', 'includedSourcecodes', 'conceptSetInclusionIdentifiers']
+      ['includedConcepts', 'includedSourcecodes', 'recommendConcepts', 'conceptSetInclusionIdentifiers']
 				.forEach(key => this[key](null));	
-			['loadingIncluded', 'loadingSourceCodes']
+			['loadingIncluded', 'loadingSourceCodes', 'loadingRecommend']
 				.forEach(key => this[key](true));
     }
     
@@ -133,6 +138,9 @@ define([
         case ViewMode.SOURCECODES:
           this.includedSourcecodes() == null && await this.loadSourceCodes();
           break;
+				case ViewMode.RECOMMEND:
+					this.recommendConcepts() == null && await this.loadRecommendations();
+					break;
       }
     }
 		
@@ -178,6 +186,28 @@ define([
 				console.error(err);
 			} finally {
 				this.loadingSourceCodes(false);
+			}
+		}
+
+		async loadRecommendations() {
+			this.loadingRecommend(true);
+			
+			this.includedConcepts() == null && await this.loadIncluded();
+			// load mapped
+			let concepts = this.includedConcepts();
+			const identifiers = concepts.map(c => c.CONCEPT_ID);
+			try {
+				const data = await vocabularyService.getRecommendedConcepts(identifiers);
+				const normalizedData = data.map(item => ({
+					...item, 
+					isSelected: ko.observable(false),
+				}));
+				this.recommendConcepts(normalizedData);
+				return data;
+			} catch (err) {
+				console.error(err);
+			} finally {
+				this.loadingRecommend(false);
 			}
 		}
 

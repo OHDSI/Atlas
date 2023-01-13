@@ -80,6 +80,87 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 		},
 	];
 
+	const getRecommendedConceptsColumns = (context, commonUtils, selectAllFn) => [
+		{
+			title: '',
+			orderable: false,
+			searchable: false,
+			className: 'text-center',
+			render: () => renderers.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
+			renderSelectAll: context.canEditCurrentConceptSet(),
+			selectAll: selectAllFn
+		},
+		{
+			title: ko.i18n('columns.id', 'Id'),
+			data: 'CONCEPT_ID'
+		},
+		{
+			title: ko.i18n('columns.code', 'Code'),
+			data: 'CONCEPT_CODE'
+		},
+		{
+			title: ko.i18n('columns.name', 'Name'),
+			data: 'CONCEPT_NAME',
+			render: commonUtils.renderLink,
+		},
+		{
+			title: ko.i18n('columns.class', 'Class'),
+			data: 'CONCEPT_CLASS_ID'
+		},
+		{
+			title: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption'),
+			data: 'STANDARD_CONCEPT_CAPTION',
+			visible: false
+		},
+		{
+			title: ko.i18n('columns.validStartDate', 'Valid Start Date'),
+			render: (s, type, d) => type === "sort" ? +d['VALID_START_DATE'] :
+				MomentApi.formatDateTimeWithFormat(d['VALID_START_DATE'], MomentApi.DATE_FORMAT),
+			visible: false
+		},
+		{
+			title: ko.i18n('columns.validEndDate', 'Valid End Date'),
+			render: (s, type, d) => type === "sort" ? +d['VALID_END_DATE'] :
+				MomentApi.formatDateTimeWithFormat(d['VALID_END_DATE'], MomentApi.DATE_FORMAT),
+			visible: false
+		},
+		// {
+		// 	title: ko.i18n('columns.rc', 'RC'),
+		// 	data: 'RECORD_COUNT',
+		// 	className: 'numeric'
+		// },
+		// {
+		// 	title: ko.i18n('columns.drc', 'DRC'),
+		// 	data: 'DESCENDANT_RECORD_COUNT',
+		// 	className: 'numeric'
+		// },
+		{
+			title: ko.i18n('columns.rc', 'RC'),
+			render: function () {
+				return 'timeout';
+			}
+		},
+		{
+			title: ko.i18n('columns.drc', 'DRC'),
+			render: function () {
+				return 'timeout';
+			}
+		},
+		{
+			title: ko.i18n('columns.domain', 'Domain'),
+			data: 'DOMAIN_ID'
+		},
+		{
+			title: ko.i18n('columns.vocabulary', 'Vocabulary'),
+			data: 'VOCABULARY_ID'
+		},
+		{
+			title: 'Count',
+			data: 'RELATIONSHIPS',
+			render: recommendedTooltipRenderFunction()
+		}
+	];
+
 	const includedConceptsOptions = {
 		xssSafe: true,
 		autoWidth:false,
@@ -178,6 +259,43 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
 			}
 		};
 	}
+
+	function recommendedTooltipRenderFunction() {
+		return (s, p, d) => {
+			const tooltip = d.RELATIONSHIPS.map(d => commonUtils.escapeTooltip(d)).join('<br/>');
+			return `<span data-bind="tooltip: '${tooltip}'">${d.RELATIONSHIPS.length}</span>`
+		}
+	}
+
+	const recommendedConceptOptions = {
+		Facets: [{
+			'caption': ko.i18n('facets.caption.vocabulary', 'Vocabulary'),
+			'binding': function (o) {
+				return o.VOCABULARY_ID;
+			}
+		}, {
+			'caption': ko.i18n('facets.caption.invalidReason', 'Invalid Reason'),
+			'binding': function (o) {
+				return o.INVALID_REASON_CAPTION;
+			}
+		}, {
+			'caption': ko.i18n('facets.caption.class', 'Class'),
+			'binding': function (o) {
+				return o.CONCEPT_CLASS_ID;
+			}
+		}, {
+			'caption': ko.i18n('facets.caption.domain', 'Domain'),
+			'binding': function (o) {
+				return o.DOMAIN_ID;
+			}
+		}, {
+			'caption': ko.i18n('facets.caption.recommendRelationship', 'Relationship'),
+			'binding': function (o) {
+				return o.RELATIONSHIPS;
+			},
+			'isArray': true
+		}]
+	};
 	
 	async function loadSourceCodes(conceptSetStore) {
 		conceptSetStore.loadingSourcecodes(true);
@@ -392,5 +510,7 @@ define(['knockout','utils/CommonUtils', 'utils/Renderers', 'services/http','atla
     newConceptSetHandler,
 		conceptSetSelectionHandler,
 		getPermissionsText,
+		getRecommendedConceptsColumns,
+		recommendedConceptOptions
   };
 });
