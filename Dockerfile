@@ -1,11 +1,11 @@
 # Build the source
-FROM node:14-alpine as builder
+FROM docker.io/library/node:18.13.0-alpine@sha256:fda98168118e5a8f4269efca4101ee51dd5c75c0fe56d8eb6fad80455c2f5827 as builder
 
 WORKDIR /code
 
 # First install dependencies. This part will be cached as long as
-# the package(-lock).json files remain identical.
-COPY package*.json /code/
+# the package.json file remains identical.
+COPY package.json /code/
 RUN npm install
 
 # Build code
@@ -26,7 +26,7 @@ RUN find . -type f "(" \
       | xargs -0 -n 1 gzip -kf
 
 # Production Nginx image
-FROM nginxinc/nginx-unprivileged:1.23.0-alpine
+FROM docker.io/nginxinc/nginx-unprivileged:1.23.3-alpine@sha256:c748ba587e7436aaa8729b64d4e0412410a486f0c592f0eec100fb3804ff9afd
 
 LABEL org.opencontainers.image.title="OHDSI-Atlas"
 LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com"
