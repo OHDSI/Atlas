@@ -35,7 +35,6 @@ define([
 			});
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
-      this.isPreviewAvailable = params.isPreviewAvailable;
       this.onPreview = params.onPreview;
       this.canSelectSource = params.canSelectSource || false;
       this.isAdded = ko.observable(false);
@@ -80,8 +79,13 @@ define([
       this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.hasActiveConceptSets() || this.canCreateConceptSet(), 'create');
     }
 
+    isPreviewHandlerAvailable() {
+      return !!this.onPreview;
+    }
+
     handlePreview() {
-      this.onPreview(this.selectionOptions());
+      const conceptSet = this.canSelectSource && this.activeConceptSet() ? this.activeConceptSet() : undefined;
+      this.onPreview(this.selectionOptions(), conceptSet);
     }
 
     handleSubmit() {

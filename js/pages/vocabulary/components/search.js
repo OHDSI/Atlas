@@ -300,6 +300,7 @@ define([
 			this.conceptSetStore = ConceptSetStore.repository();
 			const tableOptions = commonUtils.getTableOptions('L');
 			this.previewConcepts = ko.observableArray();
+			this.previewStore = ko.observable();
 			this.showPreviewModal = ko.observable(false);
 			this.showPreviewModal.subscribe((show) => {
 				if (!show) {
@@ -533,22 +534,23 @@ define([
 			commonUtils.clearConceptsSelectionState(this.data);
 		}
 
-		handlePreview(options) {
+		handlePreview(options, conceptSetStore = ConceptSetStore.repository()) {
 			const concepts = commonUtils.getSelectedConcepts(this.data);
 			const items = commonUtils.buildConceptSetItems(concepts, options);
 			const itemsToAdd = items.map(item => new ConceptSetItem(item));
-			const existingConceptsCopy = this.conceptSetStore.current()
-				? this.conceptSetStore.current().expression.items().map(item => new ConceptSetItem(ko.toJS(item)))
+			const existingConceptsCopy = conceptSetStore.current()
+				? conceptSetStore.current().expression.items().map(item => new ConceptSetItem(ko.toJS(item)))
 				: [];
 			this.previewConcepts(itemsToAdd.concat(existingConceptsCopy));
+			this.previewStore(conceptSetStore);
 			this.showPreviewModal(true);
 		}
 
-		addPreviewConcepts(conceptSetStore = ConceptSetStore.repository()) {
-			if (!conceptSetStore.current()) {
-				conceptSetUtils.createRepositoryConceptSet(conceptSetStore);
+		addPreviewConcepts() {
+			if (!this.previewStore().current()) {
+				conceptSetUtils.createRepositoryConceptSet(this.previewStore());
 			}
-			conceptSetStore.current().expression.items(this.previewConcepts());
+			this.previewStore().current().expression.items(this.previewConcepts());
 			commonUtils.clearConceptsSelectionState(this.data);
 		}
 
