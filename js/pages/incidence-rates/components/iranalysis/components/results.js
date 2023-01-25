@@ -112,6 +112,43 @@ define([
 			});
 
 			this.expandSelectedSource();
+
+			this.showOnlySourcesWithResults = ko.observable(false);
+			this.sourcesTableOptions = commonUtils.getTableOptions('S');
+			this.sourcesColumns = [{
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name'),
+				render: (s,p,d) => `${d.source.sourceName}`
+			}, {
+				/*title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationStatus', 'Generation Status'),
+				render: (s,p,d) => {
+					return d.info() ? `${d.info().status}` : `n/a`
+				}
+			}, { */
+				title: ko.i18n('ir.results.persons', 'Persons'),
+				render: (s,p,d) => d.info() ? `${this.getSummaryData(d.info().summaryList).totalPersons}` : `n/a`
+			}, {
+				title: ko.i18n('ir.results.cases', 'Cases'),
+				render: (s,p,d) => d.info() ? `${this.getSummaryData(d.info().summaryList).cases}` : `n/a`
+			}, {
+				title: `<span>${ko.i18n('ir.results.proportion', 'Proportion')()}</span><br/><small><span>${this.ipCaption()}</span></small>`,
+				render: (s,p,d) => d.info() ? `${this.getSummaryData(d.info().summaryList).proportion}` : `n/a`
+			}, {
+				title: `<span>${ko.i18n('ir.results.timeAtRisk', 'Time At Risk')()}</span><br/><small>(years)</small>`,
+				render: (s,p,d) => d.info() ? `${this.getSummaryData(d.info().summaryList).timeAtRisk}` : `n/a`
+			}, {
+				title: `<span>${ko.i18n('ir.results.rate', 'Rate')()}</span><br/><small><span>${this.irCaption()}</span></small>`,
+				render: (s,p,d) => d.info() ? `${this.getSummaryData(d.info().summaryList).rate}` : `n/a`
+			}, {
+				title: ko.i18n('ir.results.started', 'Started'),
+				render: (s,p,d) => d.info() ? `${this.formatDateTime(d.info().executionInfo.startTime)}` : `n/a`
+			}, {
+				title: ko.i18n('ir.results.duration', 'Duration'),
+				render: (s,p,d) => d.info() ? `${this.msToTime(d.info().executionInfo.executionDuration)}` : `n/a`
+			}, {
+				sortable: false,
+				className: 'generation-buttons-column',
+				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
+			}];
 		}
 
 		reportDisabledReason(source) {

@@ -2,18 +2,20 @@
   <loading data-bind="css: classes('loading-panel'), visible: loading" params="status: ko.i18n('common.loadingWithDots', 'Loading...')"></loading>
   <div data-bind="visible: !loading()">
     <h2 data-bind="css: classes('title'), text: ko.i18n('components.analysisExecution.title', 'Executions')"></h2>
+    <label data-bind="css: classes('only-results-checkbox')"><input type="checkbox" data-bind="checked: showOnlySourcesWithResults"> Show only sources with results</label>
     <div data-bind="css: classes('content')">
-      <!-- ko foreach: executionGroups -->
-        <div data-bind="template: {
-          name: 'execution-group',
-          data: Object.assign({}, $data, {
-            classes: $parent.classes,
-            execColumns: $parent.execColumns,
-            isExpanded: $parent.expandedSection() === $index(),
-            toggleSection: () => $parent.toggleSection($index()),
-          })
-        }"></div>
-      <!-- /ko -->
+      <table data-bind="
+          css: classes('execution-groups-table'),
+          dataTable: {
+            data: filteredExecutionGroups,
+            options: {
+              columns: sourcesColumn,
+              order: [[ 0, 'asc' ]],
+              pageLength: tableOptions.pageLength,
+              language: ko.i18n('datatable.language')
+            }
+          }
+        "></table>
     </div>
   </div>
 </div>
