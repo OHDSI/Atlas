@@ -117,26 +117,9 @@
 <!-- ko if: searchExecuted() && data().length > 0 -->
 <concept-add-box params="{
 	isActive: $component.canAddConcepts,
+	concepts: getSelectedConcepts,
 	onSubmit: addConcepts,
-	onPreview: handlePreview,
 	canSelectSource: true,
 }"></concept-add-box>
-
-<atlas-modal params="
-        showModal: showPreviewModal,
-        title: ko.i18n('search.previewModal.title', 'Concept Set Preview'),
-        data: {
-            previewTabsParams: previewTabsParams,
-            showModal: showPreviewModal,
-            apply: () => { addPreviewConcepts(); showPreviewModal(false); }
-        }" class="preview-modal">
-	<div data-bind="component: { name: 'tabs', params: previewTabsParams }"></div>
-	<div class="modal-footer with-padding">
-		<div class="modal-buttons">
-			<button type="button" class="btn btn-success" data-bind="click: apply, text: ko.i18n('common.apply', 'Apply')"></button>
-			<button type="button" class="btn btn-danger" data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
-		</div>
-	</div>
-</atlas-modal>
 <!-- /ko -->
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
