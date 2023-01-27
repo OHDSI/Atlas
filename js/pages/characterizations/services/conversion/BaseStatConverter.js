@@ -136,10 +136,14 @@ define([
     getColumn(label, field, strata, cohortId, formatter) {
       return {
         title: label,
+        className: field === 'pct' ? 'pct-cell' : '',
         render: (s, p, d) => {
           let res = d[field][strata] && d[field][strata][cohortId] || 0;
           if (p === "display" && formatter) {
             res = formatter(res);
+          }
+          if (field === 'pct') {
+            return `<div class="pct-fill" style="width: ${res}"><div>${res}</div></div>`;
           }
           return res;
         }

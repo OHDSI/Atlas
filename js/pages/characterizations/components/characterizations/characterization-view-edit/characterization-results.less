@@ -204,6 +204,21 @@
 
   &__report-table {
     width: 100% !important;
+    height: fit-content;    // needed if pct-cell has more than one-line height (to correctly fill it vertically)
+
+    td.pct-cell {
+      padding: 0 !important;
+      height: 100%;
+    }
+    div.pct-fill {
+      background-color: #afd9ee;
+      height: 100%;
+
+      div {
+        vertical-align: middle;
+        padding: 8px 10px;
+      }
+    }
   }
 
   &__greyed-row {
