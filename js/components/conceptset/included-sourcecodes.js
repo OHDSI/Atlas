@@ -40,10 +40,13 @@ define([
 			this.canAddConcepts = ko.pureComputed(() => this.includedSourcecodes() && this.includedSourcecodes().some(item => item.isSelected()));
 		}
 
+		getSelectedConcepts() {
+			return ko.unwrap(this.includedSourcecodes) && commonUtils.getSelectedConcepts(this.includedSourcecodes);
+		}
+
 		addConcepts(options) {
 			this.conceptSetStore.loadingSourceCodes(true);
-			const concepts = commonUtils.getSelectedConcepts(this.includedSourcecodes);
-			const items = commonUtils.buildConceptSetItems(concepts, options);
+			const items = commonUtils.buildConceptSetItems(this.getSelectedConcepts(), options);
 			conceptSetUtils.addItemsToConceptSet({
 				items,
 				conceptSetStore: this.conceptSetStore,

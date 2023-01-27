@@ -11,14 +11,4 @@
       lengthMenu: tableOptions.lengthMenu,
       language: ko.i18n('datatable.language')
     }"></faceted-datatable>
-    <concept-add-box params="{
-        isActive: canAddConcepts,
-        concepts: getSelectedConcepts,
-        onSubmit: addConcepts
-      }"></concept-add-box>
 </div>
-<conceptset-concept-modal params="{
-  isShown: $component.ancestorsModalIsShown,
-  conceptSetList: $component.ancestors,
-  title: ko.i18n('components.conceptSet.commonAncestors', 'Common Ancestors')
-}"></conceptset-concept-modal>

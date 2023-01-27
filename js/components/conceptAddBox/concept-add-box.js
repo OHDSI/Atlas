@@ -1,6 +1,7 @@
 define([
   'knockout',
   'components/conceptset/ConceptSetStore',
+  'components/conceptset/InputTypes/ConceptSetItem',
   'components/conceptset/utils',
   'components/Component',
   'utils/CommonUtils',
@@ -10,18 +11,23 @@ define([
   'const',
   'text!./concept-add-box.html',
   'less!./concept-add-box.less',
-	'databindings/cohortbuilder/dropupBinding',
+  'databindings/cohortbuilder/dropupBinding',
+  './preview/conceptset-expression-preview',
+  './preview/included-preview',
+  './preview/included-preview-badge',
+  './preview/included-sourcecodes-preview',
 ], (
-	ko,
+  ko,
   ConceptSetStore,
+  ConceptSetItem,
   conceptSetUtils,
-	Component,
+  Component,
   CommonUtils,
   AuthAPI,
   sharedState,
   config,
-	globalConstants,
-	view,
+  globalConstants,
+  view,
 ) => {
 	
 	const storeKeys = ConceptSetStore.sourceKeys();
@@ -35,6 +41,7 @@ define([
 			});
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
+      this.conceptsToAdd = params.concepts;
       this.canSelectSource = params.canSelectSource || false;
       this.isAdded = ko.observable(false);
       this.defaultSelectionOptions = {
@@ -76,8 +83,63 @@ define([
       this.messageTimeout = null;
       this.isDisabled = ko.pureComputed(() => !this.isActive() || !!this.isSuccessMessageVisible());
       this.buttonTooltipText = conceptSetUtils.getPermissionsText(this.hasActiveConceptSets() || this.canCreateConceptSet(), 'create');
+
+      const tableOptions = CommonUtils.getTableOptions('L');
+      this.previewConcepts = ko.observableArray();
+      this.showPreviewModal = ko.observable(false);
+/*      this.showPreviewModal.subscribe((show) => {
+        if (!show) {
+          this.previewConcepts([]);
+        }
+      });*/
+      this.previewTabsParams = ko.observable({
+        tabs: [
+          {
+            title: ko.i18n('components.conceptAddBox.previewModal.tabs.concepts', 'Concepts'),
+            key: 'expression',
+            componentName: 'conceptset-expression-preview',
+            componentParams: {
+              tableOptions,
+              conceptSetItems: this.previewConcepts
+            },
+          },
+          {
+            title: ko.i18n('cs.manager.tabs.includedConcepts', 'Included Concepts'),
+            key: 'included',
+            componentName: 'conceptset-list-included-preview',
+            componentParams: {
+              tableOptions,
+              previewConcepts: this.previewConcepts
+            },
+            hasBadge: true,
+          },
+          {
+            title: ko.i18n('cs.manager.tabs.includedSourceCodes', 'Source Codes'),
+            key: 'included-sourcecodes',
+            componentName: 'conceptset-list-included-sourcecodes-preview',
+            componentParams: {
+              tableOptions,
+              previewConcepts: this.previewConcepts
+            },
+          }
+        ]
+      });
     }
-    
+
+    isPreviewAvailable() {
+      return !!this.conceptsToAdd;
+    }
+
+    handlePreview() {
+      const items = CommonUtils.buildConceptSetItems(this.conceptsToAdd(), this.selectionOptions());
+      const itemsToAdd = items.map(item => new ConceptSetItem(item));
+      const existingConceptsCopy = this.activeConceptSet() && this.activeConceptSet().current()
+          ? this.activeConceptSet().current().expression.items().map(item => new ConceptSetItem(ko.toJS(item)))
+          : [];
+      this.previewConcepts(itemsToAdd.concat(existingConceptsCopy));
+      this.showPreviewModal(true);
+    }
+
     handleSubmit() {
       clearTimeout(this.messageTimeout);
       this.isSuccessMessageVisible(true);

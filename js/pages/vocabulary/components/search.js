@@ -14,7 +14,6 @@ define([
 	'utils/CommonUtils',
 	'services/Vocabulary',
 	'components/conceptset/ConceptSetStore',
-	'const',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
@@ -38,7 +37,6 @@ define([
 	commonUtils,
 	vocabularyProvider,
 	ConceptSetStore,
-	globalConstants,
 ) {
 	class Search extends AutoBind(Component) {
 		constructor(params) {
@@ -478,10 +476,18 @@ define([
 			return promise;
 		}
 
-		addConcepts(options, conceptSetStore = ConceptSetStore.repository()) {
+		getSelectedConcepts() {
+			return commonUtils.getSelectedConcepts(this.data)
+		}
+
+		addConcepts(options, conceptSetStore = ConceptSetStore.repository(), concepts) {
 			sharedState.activeConceptSet(conceptSetStore);
-			const concepts = commonUtils.getSelectedConcepts(this.data);
-			const items = commonUtils.buildConceptSetItems(concepts, options);
+			let items;
+			if (concepts) {
+				items = concepts;
+			} else {
+				items = commonUtils.buildConceptSetItems(this.getSelectedConcepts(), options);
+			}
 			conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
 			commonUtils.clearConceptsSelectionState(this.data);
 		}
