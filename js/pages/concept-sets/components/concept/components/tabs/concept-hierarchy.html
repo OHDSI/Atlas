@@ -52,7 +52,7 @@
 								<concept-add-box params="{
 									canSelectSource: true,
 									isActive: () => metarchy.parents().filter(c => c.isSelected()).length > 0,
-									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.parents),
+									concepts: () => getSelectedConcepts($component.metarchy.parents),
 								}"></concept-add-box>
 							</div>
 							<!-- /ko -->
@@ -82,7 +82,7 @@
 							<concept-add-box params="{
 								canSelectSource: true,
 								isActive: () => currentConceptArray().filter(c => c.isSelected()).length > 0,
-								onSubmit: (options, source) => $component.addConcepts(options, source)([$component.currentConcept()], true),
+								concepts: ko.observableArray([$component.currentConcept()]),
 							}"></concept-add-box>
 						</div>
 					</div>
@@ -116,7 +116,7 @@
 								<concept-add-box params="{
 									canSelectSource: true,
 									isActive: () => metarchy.children().filter(c => c.isSelected()).length > 0,
-									onSubmit: (options, source) => $component.addConcepts(options, source)($component.metarchy.children),
+									concepts: () => getSelectedConcepts($component.metarchy.children),
 								}"></concept-add-box>
 							</div>
 							<!-- /ko -->
