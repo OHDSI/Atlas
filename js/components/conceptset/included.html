@@ -1,6 +1,6 @@
 <loading params="status: ko.i18n('components.conceptSet.loadingIncludedConcepts', 'Loading Included Concepts')" data-bind="visible: loading"></loading>
 <div data-bind="hidden: loading">
-    <datasource-select params="{conceptSetStore: $component.conceptSetStore}"></datasource-select>
+    <datasource-select params="{conceptSetStore: $component.conceptSetStore, selectedSource: $component.selectedSource, tab: 'included'}"></datasource-select>
     <faceted-datatable params="{
       orderColumn:7,
       columns: $component.includedConceptsColumns,

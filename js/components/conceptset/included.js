@@ -26,6 +26,7 @@ define([
 			super(params);
 			this.canEdit = params.canEdit;
 			this.conceptSetStore = params.conceptSetStore;
+			this.selectedSource = params.selectedSource;
 			this.includedConcepts = this.conceptSetStore.includedConcepts;
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;

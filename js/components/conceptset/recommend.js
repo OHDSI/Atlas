@@ -24,6 +24,7 @@ define([
 			this.loading = params.loading;
 			this.canEdit = params.canEdit;
 			this.conceptSetStore = params.conceptSetStore;
+			this.selectedSource = params.selectedSource;
 			
 			this.recommendedConcepts = this.conceptSetStore.recommendedConcepts;
 			this.recommendedConceptOptions = ko.pureComputed(() => {

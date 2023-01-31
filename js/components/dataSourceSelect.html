@@ -6,8 +6,8 @@
           options: resultSources,
           optionsText: 'sourceName',
           optionsValue: 'sourceId',
-          value: currentResultSource(),
-          event: { change: refreshRecordCounts }
+          value: selectedSourceValue,
+          event: { change: refreshRecordCountsHandler }
         "></select>
 
 </div>

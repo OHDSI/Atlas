@@ -520,6 +520,8 @@ define([
 				return;
 			}
 
+			this.currentResultSource(this.resultSources().find(source => source.sourceKey == event.target.value));
+
 			this.recordCountsRefreshing(true);
 			this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, true));
 			const results = this.data();
