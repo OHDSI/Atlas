@@ -80,6 +80,10 @@ define([
 		}
 
 		calculateSqlParamsList(templateSql) {
+			if (!templateSql) { // on new cohort template sql does not exist yet
+				return [];
+			}
+
 			const regexp = /@[-\w]+/g;
 			const params = templateSql.match(regexp);
 			const paramsList = new Set(params);
