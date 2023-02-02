@@ -15,11 +15,11 @@
             <div class="params-source">
                 <span data-bind="text: ko.i18n('cs.browser.compare.vie', 'Source:')"></span>
                 <select data-bind="
-                  options: $component.resultSources,
+                  options: resultSources,
                   optionsText: 'sourceName',
                   optionsValue: 'sourceKey',
-                  value: $component.currentResultSource().sourceKey,
-                  event: { change: $component.changeSource }">
+                  value: currentResultSourceValue,
+                  event: { change: onSourceChange }">
                 </select>
             </div>
                 <div class="sql-params" data-bind="foreach: sqlParams">
