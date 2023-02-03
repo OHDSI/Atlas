@@ -18,7 +18,6 @@ define([
 			this.currentConcept = params.currentConcept;
 			this.hasInfoAccess = params.hasInfoAccess;
 			this.isAuthenticated = params.isAuthenticated;
-			this.addConcept = params.addConcept;
 		}
 
 		formatDate(date) {

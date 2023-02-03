@@ -41,6 +41,7 @@ define([
 			});
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;
+      this.noPreview = params.noPreview || false;
       this.conceptsToAdd = params.concepts;
       this.canSelectSource = params.canSelectSource || false;
       this.isAdded = ko.observable(false);
@@ -127,7 +128,7 @@ define([
     }
 
     isPreviewAvailable() {
-      return !!this.conceptsToAdd;
+      return !this.noPreview;
     }
 
     handlePreview() {
@@ -143,14 +144,35 @@ define([
     handleSubmit() {
       clearTimeout(this.messageTimeout);
       this.isSuccessMessageVisible(true);
-      const conceptSet = this.canSelectSource && this.activeConceptSet() ? this.activeConceptSet() : undefined;
-      this.onSubmit(this.selectionOptions(), conceptSet);
-      this.selectionOptions(this.defaultSelectionOptions);
       this.messageTimeout = setTimeout(() => {
         this.isSuccessMessageVisible(false);
       }, 1000);
+
+      if (this.noPreview) {
+        this.onSubmit();
+        return;
+      }
+
+      const conceptSet = this.activeConceptSet() || ConceptSetStore.repository();
+
+      sharedState.activeConceptSet(conceptSet);
+
+      // if concepts were previewed, then they already built and can have individual option flags!
+      if (this.previewConcepts().length > 0) {
+        if (!conceptSet.current()) {
+          conceptSetUtils.createRepositoryConceptSet(conceptSet);
+        }
+        conceptSet.current().expression.items(this.previewConcepts());
+
+      } else {
+        const items = CommonUtils.buildConceptSetItems(this.conceptsToAdd(), this.selectionOptions());
+        conceptSetUtils.addItemsToConceptSet({items, conceptSetStore: conceptSet});
+      }
+
+      CommonUtils.clearConceptsSelectionState(this.conceptsToAdd());
+      this.selectionOptions(this.defaultSelectionOptions);
     }
-    
+
     toggleSelectionOption(option) {
       const options = this.selectionOptions();
       this.selectionOptions({

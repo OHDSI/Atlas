@@ -480,18 +480,6 @@ define([
 			return commonUtils.getSelectedConcepts(this.data)
 		}
 
-		addConcepts(options, conceptSetStore = ConceptSetStore.repository(), concepts) {
-			sharedState.activeConceptSet(conceptSetStore);
-			let items;
-			if (concepts) {
-				items = concepts;
-			} else {
-				items = commonUtils.buildConceptSetItems(this.getSelectedConcepts(), options);
-			}
-			conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
-			commonUtils.clearConceptsSelectionState(this.data);
-		}
-
 		getVocabularies() {
 			httpService.doGet(constants.apiPaths.vocabularies())
 				.then(({ data }) => {
