@@ -50,10 +50,13 @@ define([
 
 		}
 
+		getSelectedConcepts() {
+			return ko.unwrap(this.includedConcepts) && commonUtils.getSelectedConcepts(this.includedConcepts);
+		}
+
 		addConcepts(options) {
 			this.conceptSetStore.loadingIncluded(true);
-			const concepts = commonUtils.getSelectedConcepts(this.includedConcepts);
-			const items = commonUtils.buildConceptSetItems(concepts, options);
+			const items = commonUtils.buildConceptSetItems(this.getSelectedConcepts(), options);
 			conceptSetUtils.addItemsToConceptSet({
 				items,
 				conceptSetStore: this.conceptSetStore,

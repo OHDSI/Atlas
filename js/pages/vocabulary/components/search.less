@@ -3,3 +3,29 @@
 		margin-bottom: 10px;
 	}
 }
+
+.preview-modal {
+	.modal-body {
+		padding: 0;
+	}
+
+	.modal-footer {
+		display: table;
+		width: 100%;
+		padding: 0;
+		border: 0;
+
+		.modal-buttons {
+			display: table-cell;
+			text-align: right;
+
+			button + button {
+				margin-left: 10px;
+			}
+		}
+
+		&.with-padding {
+			padding: 0 11px 10px 0;
+		}
+	}
+}

@@ -14,8 +14,8 @@
     }"></faceted-datatable>
     <concept-add-box params="{
         isActive: canAddConcepts,
-        onSubmit: addConcepts
-      }"/>
+        concepts: getSelectedConcepts,
+      }"></concept-add-box>
     <conceptset-concept-modal params="{
       isShown: $component.ancestorsModalIsShown,
       conceptSetList: $component.ancestors,

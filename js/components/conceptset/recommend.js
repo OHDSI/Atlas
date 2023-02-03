@@ -42,6 +42,10 @@ define([
 			this.canAddConcepts = ko.pureComputed(() => this.recommendedConcepts() && this.recommendedConcepts().some(item => item.isSelected()));
 		}
 
+		getSelectedConcepts() {
+			return commonUtils.getSelectedConcepts(this.recommendedConcepts);
+		}
+
 		addConcepts(options) {
 			this.conceptSetStore.loadingRecommended(true);
 			const concepts = commonUtils.getSelectedConcepts(this.recommendedConcepts);

@@ -1,0 +1,67 @@
+<div class="paddedWrapper">
+
+  <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+        xssSafe: true,
+        data: data(),
+        options: {
+          language: datatableLanguage,
+          dom: 'Clfiprt',
+          colVis: {
+            buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
+            align: 'right',
+            overlayFade: 0,
+            showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+            restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
+          },
+          rowCallback: commonUtils.contextSensitiveLinkColor,
+          pageLength: tableOptions.pageLength,
+          lengthMenu: tableOptions.lengthMenu,
+          orderClasses: false,
+          deferRender: true,
+          autoWidth: false,
+          order: [[3, 'desc']],
+          columns: columns,
+        }
+      }">
+      <thead>
+        <th data-bind="text: ko.i18n('columns.conceptId', 'Concept Id')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptCode', 'Concept Code')"></th>
+        <th data-bind="text: ko.i18n('columns.conceptName', 'Concept Name')"></th>
+        <th data-bind="text: ko.i18n('columns.domain', 'Domain')"></th>
+        <th data-bind="text: ko.i18n('columns.standardConceptCode', 'Standard Concept Code')"></th>
+        <th data-bind="text: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption')"></th>
+        <th>
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${allExcludedChecked() ? 'selected' : ''}`
+              }),
+              click: toggleExcluded
+            "></span>
+          <span data-bind="text: ko.i18n('columns.exclude', 'Exclude')"></span>
+        </th>
+        <th>
+          <span data-bind="
+            css: classes({
+                element: 'checkmark',
+                extra: `fa fa-check ${allDescendantsChecked() ? 'selected' : ''}`
+            }),
+            click: toggleDescendants
+          "></span>
+          <span data-bind="text: ko.i18n('columns.descendants', 'Descendants')"></span>
+        </th>
+        <th>
+            <span data-bind="
+              css: classes({
+                  element: 'checkmark',
+                  extra: `fa fa-check ${allMappedChecked() ? 'selected' : ''}`
+              }),
+              click: toggleMapped
+            "></span>
+          <span data-bind="text: ko.i18n('columns.mapped', 'Mapped')"></span>
+        </th>
+      </thead>
+  </table>
+
+  <concept-legend></concept-legend>
+</div>

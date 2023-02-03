@@ -12,7 +12,7 @@
     }"></faceted-datatable>
     <concept-add-box params="{
         isActive: canAddConcepts,
-        onSubmit: addConcepts
+        concepts: getSelectedConcepts,
     }"></concept-add-box>
 </div>
 <div data-bind="ifnot:isRecommendedAvailable()">

@@ -32,6 +32,7 @@ define([
     'components/visualizations/line-chart',
     'components/charts/scatterplot',
     'components/charts/splitBoxplot',
+    'components/charts/horizontalBoxplot',
     'd3-scale-chromatic',
 ], function (
     ko,
@@ -470,23 +471,44 @@ define([
             }));
         }
 
+        getBoxplotStruct(cohort, stat) {
+            return {
+            Category: cohort.cohortName,
+            min: stat.min[0][cohort.cohortId],
+            max: stat.max[0][cohort.cohortId],
+            median: stat.median[0][cohort.cohortId],
+            LIF: stat.p10[0][cohort.cohortId],
+            q1: stat.p25[0][cohort.cohortId],
+            q3: stat.p75[0][cohort.cohortId],
+            UIF: stat.p90[0][cohort.cohortId]
+            };
+        }
+
         convertBoxplotData(analysis) {
-
-            const getBoxplotStruct = (cohort, stat) => ({
-                Category: cohort.cohortName,
-                min: stat.min[0][cohort.cohortId],
-                max: stat.max[0][cohort.cohortId],
-                median: stat.median[0][cohort.cohortId],
-                LIF: stat.p10[0][cohort.cohortId],
-                q1: stat.p25[0][cohort.cohortId],
-                q3: stat.p75[0][cohort.cohortId],
-                UIF: stat.p90[0][cohort.cohortId]
-            });
-
             return [{
-                target: getBoxplotStruct(analysis.cohorts[0], analysis.data[0]),
-                compare: getBoxplotStruct(analysis.cohorts[1],  analysis.data[0]),
-            }]
+                target: this.getBoxplotStruct(analysis.cohorts[0], analysis.data[0]),
+                compare: this.getBoxplotStruct(analysis.cohorts[1],  analysis.data[0]),
+            }];
+        }
+
+        convertHorizontalBoxplotData(analysis) {
+            return analysis.cohorts.map(cohort => {
+                return this.getBoxplotStruct(cohort, analysis.data[0]);
+            });
+        }
+
+        prepareLegendBoxplotData (analysis) {
+            const cohortNames = analysis.cohorts.map(d => d.cohortName);
+            const legendColorsSchema = d3.scaleOrdinal().domain(cohortNames)
+                .range(utils.colorHorizontalBoxplot);
+
+            const legendColors = cohortNames.map(cohort => {
+                return {
+                    cohortName: cohort,
+                    cohortColor: legendColorsSchema(cohort)
+                };
+            });
+            return legendColors.reverse();
         }
 
         analysisTitle(data) {

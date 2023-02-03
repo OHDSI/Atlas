@@ -117,7 +117,7 @@
 <!-- ko if: searchExecuted() && data().length > 0 -->
 <concept-add-box params="{
 	isActive: $component.canAddConcepts,
-	onSubmit: addConcepts,
+	concepts: getSelectedConcepts,
 	canSelectSource: true,
 }"></concept-add-box>
 <!-- /ko -->

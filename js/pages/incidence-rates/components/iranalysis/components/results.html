@@ -1,3 +1,4 @@
+<div data-bind="css: classes('generation-heading'), text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generation', 'Generation')"></div>
 <div data-bind="css: classes('header')">
 	<div>
 		<span data-bind="text: ko.i18n('ir.results.showingTargetCohort', 'Showing target cohort:')"></span> <select data-bind="options: analysisCohorts().targetCohorts,
@@ -13,16 +14,31 @@
 		</select>
 	</div>
 	<div>
-		<select-sources-btn
+		<!-- select-sources-btn
 			data-bind="css: classes('generate-btn')"
 			params="sources: $component.generationSources, callback: $component.runGenerations, disabled: $component.executionDisabled, disabledReason: $component.executionDisabledReason"
-		></select-sources-btn>
+		></select-sources-btn -->
 		<button type="button" class="btn btn-sm btn-success pull-right exportAnalysisCSV" data-bind="css: {'disabled': disableExportAnalysis, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> <span data-bind="text: ko.i18n('ir.results.exportToCsvButton', 'Export Analysis to CSV')"></span></button>
 	</div>
 </div>
 
+<label data-bind="css: classes('only-results-checkbox')"><input type="checkbox" data-bind="checked: showOnlySourcesWithResults"> Show only sources with results</label>
+
 <div data-bind="css: classes({ element: 'tbl-container', modifiers: [ selectedReport() ? 'short' : '' ]})">
-	<table data-bind="css: classes({ element: 'tbl', extra: 'sourceTable' })">
+
+	<table style="width: 100%" data-bind="css: classes('sources-table'),
+						dataTable: {
+							data: showOnlySourcesWithResults() ? sources().filter(c => c.info()) : sources,
+							options: {
+								columns: sourcesColumns,
+								order: [[ 0, 'asc' ]],
+								pageLength: sourcesTableOptions.pageLength,
+								language: ko.i18n('datatable.language')
+							}
+						}
+					"></table>
+
+	<table data-bind="css: classes({ element: 'tbl', extra: 'sourceTable' })" style="display: none">
 		<thead>
 			<th data-bind="css: classes('tbl-th', 'execute')"></th>
 			<th data-bind="css: classes('tbl-th', 'source'), text: ko.i18n('ir.results.sourceName', 'Source Name')"></th>
@@ -32,8 +48,7 @@
 				<span data-bind="text: ko.i18n('ir.results.proportion', 'Proportion')"></span> [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: ipCaption"></span></small>
 			</th>
 			<th data-bind="css: classes('tbl-th', 'time-at-risk', 'smallHeading dataCol')">
-				<span data-bind="text: ko.i18n('ir.results.timeAtRisk', 'Time At Risk')"></span><br/>
-				<small data-bind="text: ko.i18n('ir.results.timeAtRiskYears', '(years)')"></small>
+				<span data-bind="text: ko.i18n('ir.results.timeAtRisk', 'Time At Risk')"></span><br/><small data-bind="text: ko.i18n('ir.results.timeAtRiskYears', '(years)')"></small>
 			</th>
 			<th data-bind="css: classes('tbl-th', 'rate', 'smallHeading dataCol')">
 				<span data-bind="text: ko.i18n('ir.results.rate', 'Rate')"></span> [<span data-bind="click: stepUp" class="clickable">+</span>|<span data-bind="click: stepDown" class="clickable">-</span>]<br/><small><span data-bind="text: irCaption"></span></small>
@@ -122,3 +137,22 @@
         exitMessage: $component.exitMessage,
     }">
 </modal-exit-message>
+
+<script type="text/html" id="generation-buttons">
+	<div class="generation-buttons">
+		<span data-bind="tooltip: $component.isExecutionDisabled($data.source)() ? $component.executionDisabledReason() : null" data-placement="left">
+			<button class="btn btn-sm btn-primary"
+					data-bind="attr: {'disabled': $component.isExecutionDisabled($data.source) }, click: (data, event) => $component.runGenerations([$data.source])">
+					<i class="fa fa-play"></i>&nbsp;<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generate', 'Generate')"></span>
+			</button>
+		</span>
+		<span data-bind="tooltip: $component.reportDisabledReason($data.source)">
+			<button class="btn btn-sm btn-primary" data-bind="attr: {'disabled': !$data.info() || !$data.info().executionInfo.isValid || !$component.hasSourceAccess($data.source.sourceKey)}, click: () => $component.selectSource($data)">
+				<i class="fa fa-eye"></i> <span data-bind="text: 'View Reports'"></span>
+			</button>
+			<button data-bind="attr: {'disabled': !$data.info() || !$data.info().executionInfo.isValid || !$component.hasSourceAccess($data.source.sourceKey)}, visible: $component.isEditable()" class="btn btn-sm btn-danger removeResult">
+				<i class="fa fa-trash"></i>
+			</button>
+		</span>
+	</div>
+</script>

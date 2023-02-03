@@ -1,6 +1,33 @@
 <div>
     <loading data-bind="visible: loading"></loading>
     <!-- ko ifnot: loading -->
-    <pre data-bind="html: sqlText, attr:{ id: clipboardTarget }"></pre>
+    <div class="flex-container">
+        <div class="sql-text">
+            <!-- ko ifnot: sourceSql() -->
+            <pre  data-bind="html: sqlText, attr:{ id: clipboardTarget }"></pre>
+            <!-- /ko -->
+            <!-- ko if: sourceSql() -->
+            <pre  data-bind="html: paramsTemplateSql(), attr:{ id: clipboardTarget }"></pre>
+            <!-- /ko -->
+
+        </div>
+        <div class="params-container">
+            <div class="params-source">
+                <span data-bind="text: ko.i18n('cs.browser.compare.vie', 'Source:')"></span>
+                <select data-bind="
+                  options: resultSources,
+                  optionsText: 'sourceName',
+                  optionsValue: 'sourceKey',
+                  value: currentResultSourceValue,
+                  event: { change: onSourceChange }">
+                </select>
+            </div>
+                <div class="sql-params" data-bind="foreach: sqlParams">
+                    <div class="sql-params-label" data-bind="text: name.slice(1)"></div>
+                    <input class="sql-params-input" type="text" data-bind="textInput: value, attr: {name: name}, event:{ input: $component.onChangeParamsValue}" >
+                </div>
+            <div class="sql-checkbox-container"><input type="checkbox" name="sourceSql" data-bind="checked: sourceSql" /> Sql output with editable values</div>
+        </div>
+    </div>
     <!-- /ko -->
 </div>

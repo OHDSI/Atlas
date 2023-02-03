@@ -92,7 +92,7 @@ const settingsObject = {
 			'd3-selection': 'd3',
 			'd3-transition': 'd3',
 			'd3-collection': 'd3',
-			'services/VocabularyProvider': 'services/Vocabulary'
+			'services/VocabularyProvider': 'services/Vocabulary',
 		}
 	},
 	paths: {
@@ -120,6 +120,7 @@ const settingsObject = {
 		"localStorageExtender": "assets/localStorageExtender",
 		"appConfig": "config",
 		"prism": "../node_modules/prismjs/prism",
+		"prismlanguages": "../node_modules/prismjs/components",
 		"js-cookie": "../node_modules/js-cookie/src/js.cookie",
 		"d3": "../node_modules/d3/build/d3",
 		"d3-tip": "../node_modules/d3-tip/dist/index",
