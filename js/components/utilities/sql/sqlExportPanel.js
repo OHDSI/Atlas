@@ -38,6 +38,7 @@ define([
 			this.templateSql = templateSql || ko.observable();
 			this.templateSql() && this.translateSql();
 			this.currentResultSource = ko.observable();
+			this.currentResultSourceValue = ko.pureComputed(() => this.currentResultSource() && this.currentResultSource().sourceKey);
 			this.resultSources = ko.computed(() => {
 				const resultSources = [];
 				sharedState.sources().forEach((source) => {
@@ -80,6 +81,10 @@ define([
 		}
 
 		calculateSqlParamsList(templateSql) {
+			if (!templateSql) { // on new cohort template sql does not exist yet
+				return [];
+			}
+
 			const regexp = /@[-\w]+/g;
 			const params = templateSql.match(regexp);
 			const paramsList = new Set(params);
@@ -118,7 +123,8 @@ define([
 			return inputParams;
 		}
 
-		changeSource() {
+		onSourceChange(obj, event) {
+			this.currentResultSource(this.resultSources().find(source => source.sourceKey === event.target.value));
 			this.sqlParams(this.defaultParamsValue(this.sqlParamsList()));
 			this.onChangeParamsValue();
 		}
