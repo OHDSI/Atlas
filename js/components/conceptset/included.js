@@ -7,9 +7,9 @@ define([
 	'atlas-state',
 	'services/ConceptSet',
 	'./utils',
-	'const',
 	'components/conceptAddBox/concept-add-box',
-	'./concept-modal'
+	'./concept-modal',
+	'components/dataSourceSelect'
 ], function (
 	ko,
 	view,
@@ -19,7 +19,6 @@ define([
 	sharedState,
 	conceptSetService,
 	conceptSetUtils,
-	globalConstants,
 ) {
 
 	class IncludedConcepts extends AutoBind(Component){
@@ -27,6 +26,7 @@ define([
 			super(params);
 			this.canEdit = params.canEdit;
 			this.conceptSetStore = params.conceptSetStore;
+			this.selectedSource = params.selectedSource;
 			this.includedConcepts = this.conceptSetStore.includedConcepts;
 			this.commonUtils = commonUtils;
 			this.loading = params.loading;
@@ -46,9 +46,8 @@ define([
 				ancestors: this.ancestors,
 				ancestorsModalIsShown: this.ancestorsModalIsShown
 			});
-
 			this.includedDrawCallback = conceptSetUtils.getIncludedConceptSetDrawCallback(this.includedConceptsColumns, this.conceptSetStore);
-	
+
 		}
 
 		getSelectedConcepts() {
@@ -63,7 +62,7 @@ define([
 				conceptSetStore: this.conceptSetStore,
 			});
 			commonUtils.clearConceptsSelectionState(this.includedConcepts);
-    }
+    	}
 	
 	}
 

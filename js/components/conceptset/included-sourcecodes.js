@@ -9,6 +9,7 @@ define([
 	'services/ConceptSet',
 	'./utils',	
 	'components/conceptAddBox/concept-add-box',
+	'components/dataSourceSelect'
 ], function(
 	ko,
 	view,
@@ -27,7 +28,8 @@ define([
 			this.loading = params.loading;
 			this.canEdit = params.canEdit;
 			this.conceptSetStore = params.conceptSetStore;
-			
+			this.selectedSource = params.selectedSource;
+			this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
 			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit },
 				(data, selected) => {
 					const conceptIds = data.map(c => c.CONCEPT_ID);
@@ -35,7 +37,6 @@ define([
 					this.includedSourcecodes.valueHasMutated();
 				});
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
-			this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 			this.canAddConcepts = ko.pureComputed(() => this.includedSourcecodes() && this.includedSourcecodes().some(item => item.isSelected()));
 		}
