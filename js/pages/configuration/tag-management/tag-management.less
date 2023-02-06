@@ -1,0 +1,92 @@
+.tag-management {
+
+  &__container {
+    padding: 10px;
+    margin-top: 5px;
+  }
+
+  &__tags-container {
+    margin-top: 25px;
+  }
+
+  &__create-button {
+    margin: 5px 0 10px;
+    font-size: 12px;
+  }
+
+  a {
+    cursor: pointer;
+  }
+}
+
+td .center-span {
+  display: block;
+  text-align: center;
+
+  .fa-check {
+    color: #333;
+    border: 0;
+    background-color: inherit;
+    cursor: inherit;
+  }
+}
+
+.tag {
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  position: relative;
+  background-color: #bdbdbd;
+  color: black;
+  border-radius: 2px 2px;
+  padding: 1px 4px 0 3px;
+
+  .tooltip {
+    display: none;
+    border: 1px solid grey;
+    border-radius: 2px 2px;
+    padding: 3px 5px;
+    background-color: white;
+    font-size: 12px;
+    top: 20px;
+    left: 0;
+    max-width: 200px;
+    width: max-content;
+    opacity: 1;
+  }
+
+  &:hover .tooltip {
+    display: block;
+    position: absolute;
+  }
+}
+
+.col-md-3 {
+  margin: 0 16px 0 0;
+  padding: 0;
+}
+
+.checkbox-description {
+  display: inline-block;
+  padding-top: 3px;
+}
+
+.tag-example-label {
+  margin-bottom: 11px;
+}
+
+.modal-footer {
+  display: table;
+  width: 100%;
+  padding: 0;
+  border: 0;
+
+  .modal-buttons {
+    display: table-cell;
+    text-align: right;
+
+    button + button {
+      margin-left: 10px;
+    }
+  }
+}

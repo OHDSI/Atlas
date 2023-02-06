@@ -4,6 +4,7 @@
 
 <div class="paddedWrapper">
     <div class="alert alert-info">
-        <p class="feedback-text"><i class="fa fa-fw fa-info-circle"></i> <span data-bind="text: ko.i18n('feedback.pleaseContact', 'For access or questions concerning the Atlas application please contact:')"></span> <a data-bind="text: supportMail, attr: {href: supportMailRef}"></a>.</p>
+        <p class="feedback-text"><i class="fa fa-fw fa-info-circle"></i> <span data-bind="text: contacts"></span> <a data-bind="text: supportMail, attr: {href: supportMailRef}"></a>.</p>
     </div>
+    <div data-bind="html: feedbackTemplate"></div>
 </div>

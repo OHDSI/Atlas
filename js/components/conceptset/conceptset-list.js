@@ -46,6 +46,7 @@ define([
 			this.conceptSets = params.conceptSets;
 			this.exportCSV = typeof params.exportCSV !== 'undefined' ? params.exportCSV : true;
 			this.conceptSetStore = params.conceptSetStore;
+			this.selectedSource = ko.observable();
 			this.canEdit = params.canEdit || (() => false);
 			this.exportConceptSets = params.exportConceptSets || (() => false);
 			this.currentConceptSet = this.conceptSetStore.current;
@@ -85,6 +86,7 @@ define([
 				...params,
 				tableOptions,
 				conceptSetStore: this.conceptSetStore,
+				selectedSource: this.selectedSource,
 				activeConceptSet: ko.observable(this.conceptSetStore), // addConceptBox expectes an observable for activeConceptSet
 				currentConceptSet: this.conceptSetStore.current,
 				loadConceptSet: this.loadConceptSet,

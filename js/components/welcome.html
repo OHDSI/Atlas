@@ -30,8 +30,8 @@
 				</div>
 				<form data-bind="if: isDbLoginAtt(), submit:signinWithLoginPass" class="text-centered paddedWrapper">
 					<div class="form-group">
-						<input type="text" class="form-control" id="lg_username" data-bind="placeholder: ko.i18n('components.welcome.username', 'Username')">
-						<input type="password" class="form-control" id="lg_password" data-bind="placeholder: ko.i18n('components.welcome.password', 'Password')">
+						<input type="text" class="form-control" id="lg_username" data-bind="placeholder: !!loginPlaceholder() ? loginPlaceholder() : ko.i18n('components.welcome.username', 'Username')">
+						<input type="password" class="form-control" id="lg_password" data-bind="placeholder:  !!passwordPlaceholder() ? passwordPlaceholder() : ko.i18n('components.welcome.password', 'Password')">
 					</div>
 					<div class="form-group">
 						<button type="submit" class="btn btn-sm btn-default" data-bind="text: ko.i18n('components.welcome.submit', 'Submit')"></button>

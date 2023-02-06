@@ -1,10 +1,15 @@
+<loading params="status: ko.i18n('dataSources.loadingReport', 'Loading report')" data-bind="visible: !context.loadingDrilldownDone()">
+</loading>
 <!-- ko if: context.loadingDrilldownDone() -->
 <!-- ko if: isError -->
 <empty-state params="message: ko.i18n('dataSources.drilldown.noData', 'No data')"></empty-state>
 <!-- /ko -->
+<!-- ko if: !isData() -->
+<empty-state params="message: ko.i18n('dataSources.drilldown.reportNoData', 'No data to display this report')"></empty-state>
+<!-- /ko -->
 
-<div data-bind="visible: !isError()" id="drilldownReport">
-	<!-- ko if: currentConcept() -->
+<div data-bind="visible: !isError() && isData()" id="drilldownReport">
+	<!-- ko if: (currentConcept() && !hideReportName()) -->
 	<span class="report-heading-title" data-bind="text: `${currentConcept().name} ${ko.i18n('dataSources.drilldown.drilldownReport', 'Drilldown Report')()}`"></span>
 	<a class="scroll-to-top-link" data-bind="click: () => document.getElementById('dataSourcesTop').scrollIntoView()">scroll to the top</a>
 	<!-- /ko -->

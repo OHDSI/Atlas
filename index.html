@@ -49,7 +49,8 @@
 				<!-- /ko -->
 			</div>
 
-			<div id="wrapper_ohdsi">
+			<!-- ko if: !companyInfoTemplate && showCompanyInfo-->
+			<div class="wrapper_ohdsi">
 				<div><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></div>
 				<div style="margin-bottom:10px;">open source software</div>
 
@@ -57,6 +58,10 @@
 				<div><a href="http://www.ohdsi.org"><img src="images/ohdsi_color.png"></a></div>
 				<div><a href="http://www.ohdsi.org">join the journey</a></div>
 			</div>
+			<!-- /ko -->
+			<!-- ko if: companyInfoTemplate && showCompanyInfo-->
+			<div class="wrapper_ohdsi" data-bind="html: companyInfoTemplate"></div>
+			<!-- /ko -->
 		</div>
 
 		<div id="wrapperMainWindow" style="display:none;" data-bind="visible:initializationComplete(), css: classes({ element: 'main-window'})">

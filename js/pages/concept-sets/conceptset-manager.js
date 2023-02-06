@@ -76,6 +76,7 @@ define([
 			super(params);
 			this.commonUtils = commonUtils;
 			this.conceptSetStore = ConceptSetStore.repository();
+			this.selectedSource = ko.observable();
 			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
 			this.previewVersion = sharedState.currentConceptSetPreviewVersion;
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
@@ -237,6 +238,7 @@ define([
 						tableOptions,
 						canEdit: this.canEdit,
 						currentConceptSet: this.conceptSetStore.current,
+						selectedSource: this.selectedSource,
 						conceptSetStore: this.conceptSetStore,
 						loading: this.conceptSetStore.loadingIncluded
 					},
@@ -251,6 +253,7 @@ define([
 						tableOptions,
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
+						selectedSource: this.selectedSource,
 						loading: this.conceptSetStore.loadingSourceCodes
 					},
 				},
@@ -263,6 +266,7 @@ define([
 						tableOptions,
 						canEdit: this.canEdit,
 						conceptSetStore: this.conceptSetStore,
+						selectedSource: this.selectedSource,
 						loading: this.conceptSetStore.loadingRecommended
 					}
 				},
@@ -303,6 +307,7 @@ define([
 					componentParams: {
 						...params,
 						saveConceptSetFn: this.saveConceptSet,
+						selectedSource: this.selectedSource,
 						saveConceptSetShow: this.saveConceptSetShow,
 					},
 					hidden: () => !!this.previewVersion()

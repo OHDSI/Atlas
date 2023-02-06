@@ -1,13 +1,13 @@
 define([
 	'knockout',
 	'text!./treemap.html',
-	'pages/data-sources/classes/Treemap',
+	'components/reports/classes/Treemap',
 	'components/Component',
-	'pages/data-sources/const',
+	'components/reports/const',
 	'utils/CommonUtils',
 	'components/heading',
 	'components/charts/treemap',
-	'pages/data-sources/components/reports/treemapDrilldown',
+	'components/reports/reportDrilldown'
 ], function (
 	ko,
 	view,

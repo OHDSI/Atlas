@@ -6,11 +6,31 @@
   }
 
   &__content {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  &__only-results-checkbox {
+    margin-top: 5px;
+  }
+
+  &__execution-groups-table {
+    &.dataTable.no-footer {
+      border: none !important;
+      thead {
+        display: none;
+      }
+      td {
+        padding: 0;
+
+        & > span:first-child {
+          display: none;
+        }
+      }
+    }
   }
 
   &__group {
-    margin-top: 1rem;
+    margin: .4rem 0;
 
     &--expanded {
       .analysis-execution-list {

@@ -49,6 +49,12 @@
       <span data-bind="text: ko.i18n('components.conceptAddBox.mapped', 'Mapped')"></span>
     </div>
   </div>
+  <span class="preview-button" data-bind="visible: isPreviewAvailable()">
+    <button
+      class="btn btn-primary"
+      data-bind="click: handlePreview, css: { disabled: !canAddConcepts() || isDisabled() }, text: ko.i18n('components.conceptAddBox.previewButton', 'Preview...')"
+    ></button>
+  </span>
   <span data-bind="tooltip: buttonTooltipText">
     <button
       class="btn btn-success"
@@ -57,3 +63,20 @@
   </span>
   <span data-bind="css: { active: isSuccessMessageVisible(), inactive: !isSuccessMessageVisible() }" class="alert alert-success add-tooltip" role="alert"><i class="fa fa-check-square-o" aria-hidden="true"></i><strong data-bind="text: ko.i18n('components.conceptAddBox.addedToConceptSet', 'Added To Concept Set!')"></strong></span>
 </div>
+
+<atlas-modal params="
+        showModal: showPreviewModal,
+        title: ko.i18n('search.previewModal.title', 'Concept Set Preview'),
+        data: {
+            previewTabsParams: previewTabsParams,
+            showModal: showPreviewModal,
+            apply: () => { handleSubmit(); showPreviewModal(false); }
+        }" class="preview-modal">
+  <div data-bind="component: { name: 'tabs', params: previewTabsParams }"></div>
+  <div class="modal-footer with-padding">
+    <div class="modal-buttons">
+      <button type="button" class="btn btn-success" data-bind="click: apply, text: ko.i18n('common.apply', 'Apply')"></button>
+      <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
+    </div>
+  </div>
+</atlas-modal>
