@@ -189,6 +189,20 @@ define(function (require, exports) {
 
 		return getComparedConceptSetPromise;
 	}
+
+	function compareConceptSetCsv(compareTargets,types, url, sourceKey) {
+		const vocabUrl = getVocabUrl(url, sourceKey);
+
+		var getComparedConceptSetPromise = $.ajax({
+			url: vocabUrl + 'compare-arbitrary',
+			data:  JSON.stringify({compareTargets: compareTargets, types:types}),
+			method: 'POST',
+			contentType: 'application/json',
+			error: authAPI.handleAccessDenied,
+		});
+
+		return getComparedConceptSetPromise;
+	}
 	
 	async function loadAncestors(ancestors, descendants, url, sourceKey) {
 		const vocabUrl = getVocabUrl(url, sourceKey);
@@ -210,6 +224,7 @@ define(function (require, exports) {
 		getConceptSetExpressionSQL: getConceptSetExpressionSQL,
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,
+		compareConceptSetCsv: compareConceptSetCsv,
 		loadDensity: loadDensity,
 		loadAncestors,
 	}
