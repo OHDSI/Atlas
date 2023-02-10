@@ -90,8 +90,9 @@ const settingsObject = {
 			'd3-color': 'd3',
 			'd3-interpolate': 'd3',
 			'd3-selection': 'd3',
+			'd3-transition': 'd3',
 			'd3-collection': 'd3',
-			'services/VocabularyProvider': 'services/Vocabulary'
+			'services/VocabularyProvider': 'services/Vocabulary',
 		}
 	},
 	paths: {
@@ -119,6 +120,8 @@ const settingsObject = {
 		"localStorageExtender": "assets/localStorageExtender",
 		"appConfig": "config",
 		"prism": "../node_modules/prismjs/prism",
+		"prismlanguages": "../node_modules/prismjs/components",
+		"papaparse": "../node_modules/papaparse/papaparse",
 		"js-cookie": "../node_modules/js-cookie/src/js.cookie",
 		"d3": "../node_modules/d3/build/d3",
 		"d3-tip": "../node_modules/d3-tip/dist/index",
@@ -143,7 +146,8 @@ const settingsObject = {
 		"ajv": "../node_modules/ajv/dist/ajv.bundle",
 		"hash-it": "../node_modules/hash-it/dist/hash-it.min",
 		"leaflet": "../node_modules/leaflet/dist/leaflet",
-		"html2canvas": "../node_modules/html2canvas/dist/html2canvas.min"
+		"html2canvas": "../node_modules/html2canvas/dist/html2canvas.min",
+		"venn": "../node_modules/venn.js/venn"
 	},
 	cssPaths: {
 		"font-awesome.min.css": "css!styles/font-awesome.min.css",

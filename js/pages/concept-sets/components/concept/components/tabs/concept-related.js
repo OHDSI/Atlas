@@ -153,6 +153,10 @@ define([
 			this.loadRelatedConcepts();
 		}
 
+		getSelectedConcepts(concepts) {
+			return commonUtils.getSelectedConcepts(concepts);
+		}
+
 		enhanceConcept(concept) {
 			return {
 				...concept,

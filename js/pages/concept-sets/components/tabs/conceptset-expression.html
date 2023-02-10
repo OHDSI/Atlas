@@ -83,13 +83,15 @@
   </table>
 
   <concept-legend></concept-legend>
+
+  <!-- ko if: canEditCurrentConceptSet -->
   <div class="row">
     <span data-bind="tooltip: buttonTooltip">
       <button
         class="btn btn-danger btn-sm"
         data-bind="
           click: removeConceptsFromConceptSet,
-          css: { disabled: conceptsForRemovalLength() === 0 || !canEditCurrentConceptSet() },
+          css: { disabled: conceptsForRemovalLength() === 0 },
           text: ko.i18n('components.conceptSet.removeSelected', 'Remove Selected'),
         "
       ></button>
@@ -99,10 +101,10 @@
       class="btn btn-success btn-sm"
       data-bind="
         click: navigateToSearchPage,
-        css: { disabled: !canEditCurrentConceptSet() },
         text: ko.i18n('components.conceptSet.addConcepts', 'Add concepts')
       "
     ></button>
     </span>
   </div>
+  <!-- /ko -->
 </div>

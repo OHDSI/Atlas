@@ -24,6 +24,7 @@ define([
 		// abstract, no need to define component name here
 
 		constructor(params) {
+
 			super(params);
 			this.treeData = ko.observable();
 			this.tableData = ko.observable();

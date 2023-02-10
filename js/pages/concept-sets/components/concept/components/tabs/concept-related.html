@@ -13,7 +13,7 @@
 				<concept-add-box params="{
 					canSelectSource: true,
 					isActive: () => $component.relatedConcepts().filter(c => c.isSelected()).length > 0,
-					onSubmit: (options, source) => $component.addConcepts(options, source)($component.relatedConcepts),
+					concepts: () => getSelectedConcepts($component.relatedConcepts),
 				}"></concept-add-box>
 			</div>
 		</div>

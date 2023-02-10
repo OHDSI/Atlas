@@ -9,6 +9,8 @@
     <th data-bind="text: ko.i18n('columns.validEndDate', 'Valid End Date')"></th>
     <th><i id="dtConeptManagerRC" class="fa fa-database" aria-hidden="true"></i> RC</th>
     <th><i id="dtConeptManagerDRC" class="fa fa-database" aria-hidden="true"></i> DRC</th>
+    <th><i id="dtConeptManagerPC" class="fa fa-database" aria-hidden="true"></i> PC</th>
+    <th><i id="dtConeptManagerDPC" class="fa fa-database" aria-hidden="true"></i> DPC</th>
     <th data-bind="text: ko.i18n('columns.domain', 'Domain')"></th>
     <th data-bind="text: ko.i18n('columns.vocabulary', 'Vocabulary')"></th>
   </tr>
@@ -27,6 +29,10 @@
         <button class="btn btn-primary" data-bind="click: chooseCS1">
           <i class="fa fa-folder-open"></i>
         </button>
+        <div class="upload-container">
+        <input id="file-CS1" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function(data, event) { uploadCS1(event) } }">
+        <label  class="btn btn-primary" for="file-CS1"><i class="fas fa-file-excel"></i></label>
+        </div>
         <button class="btn btn-danger" data-bind="
           disable: $component.compareCS1Id() == 0,
           click: clearCS1
@@ -47,6 +53,10 @@
         <button class="btn btn-primary" data-bind="click:chooseCS2">
           <i class="fa fa-folder-open"></i>
         </button>
+        <div class="upload-container">
+        <input id="file-CS2" type="file" name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" data-bind="event: { change: function(data, event) { uploadCS2(event) } }">
+        <label  class="btn btn-primary" for="file-CS2"><i class="fas fa-file-excel"></i></label>
+        </div>
         <button class="btn btn-danger" data-bind="
           disable: $component.compareCS2Id() == 0,
           click: clearCS2
@@ -99,9 +109,30 @@
         "></select>
       </div>
     </div>
+    <div class="panel panel-default" data-bind="collapsable: showDiagram, collapseTargetClass: 'panel-body', collapseOptions: { selectorClass: 'panel-heading', collapsabledClass: 'active' }">
+      <div class="panel-heading panel-subheading panel-heading-collapsible div-enabled" data-bind="click: toggleShowDiagram">
+        <span class="glyphicon-chevron-up"><i class="fas fa-chart-pie"></i> <span data-bind="text: ko.i18n('cs.browser.compare.vennDiagram', 'Venn Diagram')"></span></span>
+      </div>
+      <div class="panel-body collapse">
+          <!-- ko if: !compareResultsSame() -->
+          <div class="compare-results-same" data-bind="text: ko.i18n('cs.browser.compare.sameConcepts', 'Compared Concept Sets contain Concepts which are identical')"></div>
+          <!-- /ko -->
+          <!-- ko if: compareResultsSame() -->
+          <venn-diagram params="{
+            data: compareResults,
+            firstConceptSet: compareCS1Caption,
+            secondConceptSet:compareCS2Caption,
+            updateOutsideFilters: $component.updateOutsideFilters,
+            lastSelectedMatchFilter: $component.lastSelectedMatchFilter
+            }"></venn-diagram>
+          <!-- /ko -->
+      </div>
+    </div>
     <div id="compareResults">
       <faceted-datatable params="{
         reference:$component.compareResults,
+        outsideFilters: $component.outsideFilters,
+        updateLastSelectedMatchFilter: $component.updateLastSelectedMatchFilter,
         columns: compareResultsColumns,
         options:compareResultsOptions,
         order: $component.compareResultsOptions.order,
@@ -111,6 +142,7 @@
         language: ko.i18n('datatable.language')
       }">
     </faceted-datatable>
+
   </div>
 </div>
 </div>

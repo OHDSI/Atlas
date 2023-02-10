@@ -31,7 +31,7 @@ define([
       this.container = container;
       this.chartName = params.chartName ? params.chartName : '';
       this.reportName = ko.unwrap(params.reportName);
-      this.filename = ko.computed (() => {
+      this.fileName = ko.computed (() => {
          const fileName = this.reportName ? `${ko.unwrap(params.reportName)}_${this.chartName}`.replace(/ /g, '') : 'untitled';
          return fileName.length > 90 ? fileName.slice(0,90) : fileName;
       });
@@ -49,11 +49,11 @@ define([
 		
 		export() {
 			const svg = this.container.element.querySelector('svg');
-			ChartUtils.downloadSvgAsPng(svg, this.filename() || "untitled.png");
+			ChartUtils.downloadSvgAsPng(svg, this.fileName() || "untitled.png");
 		}
 		exportSvg() {
             const svg = this.container.element.querySelector('svg');
-            ChartUtils.downloadSvg(svg, this.filename() + ".svg" || "untitled.svg");
+            ChartUtils.downloadSvg(svg, this.fileName() + ".svg" || "untitled.svg");
         }
 		dispose() {
 			this.renderer && this.renderer.dispose();

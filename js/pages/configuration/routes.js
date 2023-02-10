@@ -52,6 +52,11 @@ define(
             router.setCurrentView('source-manager', { sourceId });
           });
         }),
+        '/tag-management': new AuthorizedRoute(() => {
+          require(['./tag-management/tag-management'], function () {
+            router.setCurrentView('tag-management');
+          });
+        }),
       };
     }
 

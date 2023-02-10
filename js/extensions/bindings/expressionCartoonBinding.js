@@ -695,9 +695,20 @@ define(['knockout', 'd3', 'd3-tip', 'lodash'],
 					//cohdef.selectedCriteria(getCrit("wrapper",crit));
 					var evt = d3.event;
 					var tt = $('div#cartoon-tooltip > div#tooltip');
+
+					const xTooltip = document.documentElement.clientWidth - 25 > evt.pageX + tt.width();
+					const left = xTooltip ?
+						evt.pageX - tt.parent().offset().left + 10 :
+						evt.pageX - tt.parent().offset().left - tt.width() - 10;
+
+					const yTooltip = document.documentElement.clientHeight - 25 > evt.pageY + tt.height();
+					const top = yTooltip ?
+						evt.pageY - tt.parent().offset().top + 10 :
+						evt.pageY - tt.parent().offset().top - tt.height() - 10;
+
 					tt.css('display', 'inline')
-						.css('left', evt.pageX - tt.parent().offset().left)
-						.css('top', evt.pageY - tt.parent().offset().top)
+						.css('left', left)
+						.css('top', top)
 					//console.log(`client: ${evt.clientX},${evt.clientY}, parent: ${JSON.stringify(tt.parent().offset())}`);
 				})
 				.on("mouseout", function (crit) {
