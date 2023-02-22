@@ -81,7 +81,7 @@ define([
 
       this.intervalId = PollService.add({
         callback: () => this.checkJobs(),
-        interval: 5000
+        interval: config.pollInterval
       });
     }
 

@@ -465,7 +465,7 @@ define([
 			if (!this.pollId) {
 				this.pollId = JobPollService.add({
 					callback: silently => this.pollForInfo({ silently }),
-					interval: 10000,
+					interval: config.pollInterval,
 					isSilentAfterFirstCall: true,
 				});
 			}

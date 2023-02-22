@@ -611,7 +611,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.pollForInfoPeriodically = () => {
 				this.pollTimeoutId = PollService.add({
 					callback: () => this.pollForInfo(),
-					interval: 10000,
+					interval: config.pollInterval,
 				});
 			}
 
@@ -917,7 +917,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		startPolling(cd, source) {
 			this.pollId = PollService.add({
 				callback: () => this.queryHeraclesJob(cd, source),
-				interval: 10000,
+				interval: config.pollInterval,
 			});
 		}
 
