@@ -110,7 +110,7 @@ define([
         ...constants.visitAttributes.addPlaceServiceLocation,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfServiceLocation() === null) {
+          if (self.Criteria.PlaceOfServiceLocation() == null) {
             self.Criteria.PlaceOfServiceLocation(ko.observable());
           }
         },
@@ -132,7 +132,7 @@ define([
         ...constants.visitAttributes.addPlaceServiceDistance,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfServiceDistance() === null) {
+          if (self.Criteria.PlaceOfServiceDistance() == null) {
             self.Criteria.PlaceOfServiceDistance(new Range());
           }
         },
