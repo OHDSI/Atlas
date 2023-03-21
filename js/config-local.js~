@@ -1,0 +1,20 @@
+define([], function () {
+	var configLocal = {};
+
+	configLocal.userAuthenticationEnabled = true;
+
+	configLocal.api = {
+		name: 'USAI Atlas [synthetic data]',
+		url: 'http://ec2-54-167-42-73.compute-1.amazonaws.com/WebAPI/' /* 'http://localhost:8080/WebAPI/' */
+	};
+
+	configLocal.authProviders = [{
+		"name": "Local Security Test DB",
+		"url": "user/login/db",
+		"ajax": true,
+		"icon": "fa fa-database",
+		"isUseCredentialsForm": true
+	}];
+
+	return configLocal;
+});

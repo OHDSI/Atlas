@@ -31,12 +31,24 @@
                     </span>
                 </div>
                 <div data-bind="css: classes('access-list')">
-                    <label data-bind="css: classes('access-list-label'), text: ko.i18n('common.configureAccessModal.rolesWithWriteAccess', 'Roles with write access:')"></label>
+                    <label data-bind="css: classes('access-list-label'), text: ko.i18n('common.configureAccessModal.rolesWithWriteAccess', 'Roles with WRITE access:')"></label>
                     <div>
                         <table data-bind="
                             css: classes({ element: 'access-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                             dataTable:{
-                                data: accessList,
+                                data: writeAccessList,
+                                options: {columns: columns, language: ko.i18n('datatable.language')},
+                            }
+                        "/>
+                    </div>
+                </div>
+		<div data-bind="css: classes('access-list')">
+                    <label data-bind="css: classes('access-list-label'), text: ko.i18n('common.configureAccessModal.rolesWithReadAccess', 'Roles with READ access:')"></label>
+                    <div>
+                        <table data-bind="
+                            css: classes({ element: 'access-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                            dataTable:{
+                                data: readAccessList,
                                 options: {columns: columns, language: ko.i18n('datatable.language')},
                             }
                         "/>

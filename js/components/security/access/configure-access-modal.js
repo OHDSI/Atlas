@@ -19,7 +19,8 @@ define([
 
 			this.isModalShown = params.isModalShown;
 			this.isLoading = ko.observable(false);
-			this.accessList = ko.observable([]);
+		        this.readAccessList = ko.observable([]);
+		        this.writeAccessList = ko.observable([]);
 			this.roleName = ko.observable();
 
 			this.roleSuggestions = ko.observable([]);
@@ -54,10 +55,16 @@ define([
 			this.isModalShown.subscribe(open => !!open && this.loadAccessList());
 		}
 
-		async _loadAccessList() {
-			let accessList = await this.loadAccessListFn();
+		async _loadReadAccessList() {
+			let accessList = await this.loadAccessListFn('READ');
 			accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id) }));
-			this.accessList(accessList);
+			this.readAccessList(accessList);
+		}
+
+	        async _loadWriteAccessList() {
+			let accessList = await this.loadAccessListFn('WRITE');
+			accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id) }));
+			this.writeAccessList(accessList);
 		}
 
 		async loadRoleSuggestions() {
@@ -66,9 +73,10 @@ define([
 		}
 
 		async loadAccessList() {
-			this.isLoading(false);
+			this.isLoading(true);
 			try {
-				await this._loadAccessList();
+			        await this._loadReadAccessList();
+			        await this._loadWriteAccessList();
 			} catch (ex) {
 				console.log(ex);
 			}

@@ -10,8 +10,8 @@ define(function (require, exports) {
 		return res.data;
 	}
 
-	async function loadEntityAccessList(entityType, entityId) {
-		const res = await httpService.doGet(config.webAPIRoot + `permission/access/${entityType}/${entityId}`);
+       async function loadEntityAccessList(entityType, entityId, role = 'WRITE') {
+		const res = await httpService.doGet(config.webAPIRoot + `permission/access/${entityType}/${entityId}/${role}`);
 		return res.data;
 	}
 
@@ -43,8 +43,8 @@ define(function (require, exports) {
 
 		component.isOwner = ko.computed(() => config.userAuthenticationEnabled && component.isOwnerFn(authApi.subject()));
 
-		component.loadAccessList = () => {
-			return loadEntityAccessList(entityTypeGetter(), entityIdGetter());
+		component.loadAccessList = (role='WRITE') => {
+ 		        return loadEntityAccessList(entityTypeGetter(), entityIdGetter(), role);
 		};
 
 		component.grantAccess = (roleId) => {
