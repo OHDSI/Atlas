@@ -19,14 +19,20 @@ define([
 
 			this.isModalShown = params.isModalShown;
 			this.isLoading = ko.observable(false);
-		        this.readAccessList = ko.observable([]);
-		        this.writeAccessList = ko.observable([]);
-			this.roleName = ko.observable();
 
-			this.roleSuggestions = ko.observable([]);
-			this.roleOptions = ko.computed(() => this.roleSuggestions().map(r => r.name));
-			this.roleSearch = ko.observable();
-			this.roleSearch.subscribe(str => this.loadRoleSuggestions(str));
+		        this.writeRoleName = ko.observable();
+		        this.writeAccessList = ko.observable([]);		    
+			this.writeRoleSuggestions = ko.observable([]);
+			this.writeRoleOptions = ko.computed(() => this.writeRoleSuggestions().map(r => r.name));
+			this.writeRoleSearch = ko.observable();
+		        this.writeRoleSearch.subscribe(str => this.loadWriteRoleSuggestions(str));
+
+		        this.readAccessList = ko.observable([]);
+		        this.readRoleName = ko.observable();		    
+		        this.readRoleSuggestions = ko.observable([]);
+			this.readRoleOptions = ko.computed(() => this.readRoleSuggestions().map(r => r.name));
+			this.readRoleSearch = ko.observable();
+			this.readRoleSearch.subscribe(str => this.loadReadRoleSuggestions(str));
 
 			this.isOwnerFn = params.isOwnerFn;
 			this.grantAccessFn = params.grantAccessFn;
@@ -67,9 +73,14 @@ define([
 			this.writeAccessList(accessList);
 		}
 
-		async loadRoleSuggestions() {
-			const res = await this.loadRoleSuggestionsFn(this.roleSearch());
-			this.roleSuggestions(res);
+		async loadReadRoleSuggestions() {
+			const res = await this.loadRoleSuggestionsFn(this.readRoleSearch());
+			this.readRoleSuggestions(res);
+		}
+
+	    	async loadWriteRoleSuggestions() {
+			const res = await this.loadRoleSuggestionsFn(this.writeRoleSearch());
+			this.writeRoleSuggestions(res);
 		}
 
 		async loadAccessList() {
@@ -83,13 +94,20 @@ define([
 			this.isLoading(false);
 		}
 
-		async grantAccess() {
+		async grantAccess(perm_type) {
 			this.isLoading(true);
 			try {
-				const role = this.roleSuggestions().find(r => r.name === this.roleName());
-				await this.grantAccessFn(role.id);
-				await this._loadAccessList();
-				this.roleName('');
+			       if (perm_type == 'WRITE'){
+				   const role = this.writeRoleSuggestions().find(r => r.name === this.writeRoleName());
+			           await this.grantAccessFn(role.id,'WRITE');
+				   await this._loadWriteAccessList();
+				   this.writeRoleName('');
+  			       } else {
+				   const role = this.readRoleSuggestions().find(r => r.name === this.readRoleName());
+			   	   await this.grantAccessFn(role.id,'READ');
+				   await this._loadReadAccessList();
+				   this.readRoleName('');
+			       }
 			} catch (ex) {
 				console.log(ex);
 			}

@@ -3,32 +3,35 @@
 										 data: {
 										    classes: classes,
 										    isLoading: isLoading,
-										    roleName: roleName,
+										    readRoleName: readRoleName,
+		                                                                    writeRoleName: writeRoleName,
 										    columns: columns,
 										    writeAccessList: writeAccessList,
 		                                                                    readAccessList: readAccessList,
 										    grantAccess: grantAccess,
 										    revokeRoleAccess: revokeRoleAccess,
-										    roleOptions: roleOptions,
-										    roleSearch: roleSearch
+										    readRoleOptions: readRoleOptions,
+										    readRoleSearch: readRoleSearch,
+		                                                                    writeRoleOptions: writeRoleOptions,
+										    writeRoleSearch: writeRoleSearch
 										 }">
     <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('common.configureAccessModal.loadingAccessList', 'Loading access list...')"></loading>
     <div data-bind="css: classes()">
         <div data-bind="if: !isLoading()">
             <div data-bind="css: classes('new-access')">
-                <label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addWriteAccessToRole', 'Add write access to role:')"></label>
+                <label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addWriteAccessToRole', 'Add WRITE access to role:')"></label>
                 <div class="input-group"
                      data-bind="css: classes({ element: 'new-access-btn-group', extra: ['new-access-btn-group'] })">
                     <input
                         class="form-control"
                         data-bind="
-                            textInput: roleSearch,
-                            value: roleName,
+                            textInput: writeRoleSearch,
+                            value: writeRoleName,
                             eventType: 'blur',
-                            ko_autocomplete: { source: roleOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
+                            ko_autocomplete: { source: writeRoleOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
                     >
                     <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button" data-bind="click: grantAccess, attr: { disabled: !(roleName() && roleName().length) }, text: ko.i18n('common.add', 'Add')"></button>
+                        <button class="btn btn-primary" type="button" data-bind="click: grantAccess.bind($data,'WRITE'), attr: { disabled: !(writeRoleName() && writeRoleName().length) }, text: ko.i18n('common.add', 'Add')"></button>
                     </span>
                 </div>
                 <div data-bind="css: classes('access-list')">
@@ -43,6 +46,23 @@
                         "/>
                     </div>
                 </div>
+	    </div>
+	    <div data-bind="css: classes('new-access')">
+		<label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addReadAccessToRole', 'Add READ access to role:')"></label>
+                <div class="input-group"
+                     data-bind="css: classes({ element: 'new-access-btn-group', extra: ['new-access-btn-group'] })">
+                    <input
+                        class="form-control"
+                        data-bind="
+                            textInput: readRoleSearch,
+                            value: readRoleName,
+                            eventType: 'blur',
+                            ko_autocomplete: { source: readRoleOptions(), minLength: 0, maxShowItems: 10, scroll: true }"
+                    >
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" data-bind="click: grantAccess.bind($data,'READ'), attr: { disabled: !(readRoleName() && readRoleName().length) }, text: ko.i18n('common.add', 'Add')"></button>
+                    </span>
+                </div>
 		<div data-bind="css: classes('access-list')">
                     <label data-bind="css: classes('access-list-label'), text: ko.i18n('common.configureAccessModal.rolesWithReadAccess', 'Roles with READ access:')"></label>
                     <div>
@@ -54,8 +74,8 @@
                             }
                         "/>
                     </div>
-                </div>
-            </div>
+		</div>
+	    </div>
         </div>
     </div>
 </atlas-modal>
