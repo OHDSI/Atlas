@@ -33,13 +33,22 @@ define(function (require, exports) {
 	   }
 	}
 
-	function revokeEntityAccess(entityType, entityId, roleId) {
-		return httpService.doDelete(
+        function revokeEntityAccess(entityType, entityId, roleId, perm_type) {
+	        if (perm_type == 'WRITE') {
+	            return httpService.doDelete(
 			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
 			{
 				accessType: 'WRITE'
 			}
-		);
+		    );
+		} else {
+		    return httpService.doDelete(
+			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
+			{
+				accessType: 'READ'
+			}
+		    );
+		}
 	}
 
 	function decorateComponent(component, { entityTypeGetter, entityIdGetter, createdByUsernameGetter }) {
@@ -60,8 +69,8 @@ define(function (require, exports) {
 		        return grantEntityAccess(entityTypeGetter(), entityIdGetter(), roleId, perm_type);
 		};
 
-		component.revokeAccess = (roleId) => {
-			return revokeEntityAccess(entityTypeGetter(), entityIdGetter(), roleId);
+	        component.revokeAccess = (roleId, perm_type='WRITE') => {
+		        return revokeEntityAccess(entityTypeGetter(), entityIdGetter(), roleId, perm_type);
 		};
 
 		component.loadAccessRoleSuggestions = (searchStr) => {

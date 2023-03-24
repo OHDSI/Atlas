@@ -40,20 +40,38 @@ define([
 			this.revokeAccessFn = params.revokeAccessFn;
 			this.loadRoleSuggestionsFn = params.loadRoleSuggestionsFn;
 
-			this.columns = [
+			this.readAccessColumns = [
 				{
 					class: this.classes('access-tbl-col-id'),
-					title: ko.i18n('columns.id', 'ID'),
+					title: ko.i18n('readAccessColumns.id', 'ID'),
 					data: 'id'
 				},
 				{
 					class: this.classes('access-tbl-col-name'),
-					title: ko.i18n('columns.name', 'Name'),
+					title: ko.i18n('readAccessColumns.name', 'Name'),
 					data: 'name'
 				},
 				{
 					class: this.classes('access-tbl-col-action'),
-					title: ko.i18n('columns.action', 'Action'),
+					title: ko.i18n('readAccessColumns.action', 'Action'),
+					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${this.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
+				}
+			];
+
+		        this.writeAccessColumns = [
+				{
+					class: this.classes('access-tbl-col-id'),
+					title: ko.i18n('writeAccessColumns.id', 'ID'),
+					data: 'id'
+				},
+				{
+					class: this.classes('access-tbl-col-name'),
+					title: ko.i18n('writeAccessColumns.name', 'Name'),
+					data: 'name'
+				},
+				{
+					class: this.classes('access-tbl-col-action'),
+					title: ko.i18n('writeAccessColumns.action', 'Action'),
 					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${this.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
 				}
 			];
@@ -63,13 +81,13 @@ define([
 
 		async _loadReadAccessList() {
 			let accessList = await this.loadAccessListFn('READ');
-			accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id) }));
+		        accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id, 'READ') }));
 			this.readAccessList(accessList);
 		}
 
 	        async _loadWriteAccessList() {
 			let accessList = await this.loadAccessListFn('WRITE');
-			accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id) }));
+		        accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id, 'WRITE') }));
 			this.writeAccessList(accessList);
 		}
 
@@ -114,11 +132,11 @@ define([
 			this.isLoading(false);
 		}
 
-		async revokeRoleAccess(roleId) {
+	        async revokeRoleAccess(roleId, perm_type) {
 			this.isLoading(true);
-			try {
-				await this.revokeAccessFn(roleId);
-				await this._loadAccessList();
+		        try {
+			    await this.revokeAccessFn(roleId, perm_type);
+			    await this._loadAccessList();
 			} catch (ex) {
 				console.log(ex);
 			}

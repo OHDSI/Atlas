@@ -5,7 +5,8 @@
 										    isLoading: isLoading,
 										    readRoleName: readRoleName,
 		                                                                    writeRoleName: writeRoleName,
-										    columns: columns,
+										    writeAccessColumns: writeAccessColumns,
+		                                                                    readAccessColumns: readAccessColumns,
 										    writeAccessList: writeAccessList,
 		                                                                    readAccessList: readAccessList,
 										    grantAccess: grantAccess,
@@ -41,7 +42,7 @@
                             css: classes({ element: 'access-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                             dataTable:{
                                 data: writeAccessList,
-                                options: {columns: columns, language: ko.i18n('datatable.language')},
+                                options: {columns: writeAccessColumns, language: ko.i18n('datatable.language')},
                             }
                         "/>
                     </div>
@@ -70,7 +71,7 @@
                             css: classes({ element: 'access-table', extra: ['table', 'table-bordered', 'table-hover'] }),
                             dataTable:{
                                 data: readAccessList,
-                                options: {columns: columns, language: ko.i18n('datatable.language')},
+                                options: {columns: readAccessColumns, language: ko.i18n('datatable.language')},
                             }
                         "/>
                     </div>
