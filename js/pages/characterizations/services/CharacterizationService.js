@@ -3,11 +3,13 @@ define([
     'services/file',
     'appConfig',
     'utils/ExecutionUtils',
+    'services/AuthAPI',
 ], function (
     httpService,
     fileService,
     config,
     executionUtils,
+    authApi
 ) {
     function loadCharacterizationList() {
         return httpService
@@ -34,11 +36,15 @@ define([
     }
 
     function createCharacterization(design) {
-        return httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
+        let promise = httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
+        promise.then(authApi.refreshToken)
+        return promise;
     }
 
     function copyCharacterization(id) {
-        return httpService.doPost(config.webAPIRoot + 'cohort-characterization/' + id).then(res => res.data);
+        let promise = httpService.doPost(config.webAPIRoot + 'cohort-characterization/' + id).then(res => res.data);
+        promise.then(authApi.refreshToken);
+        return promise;
     }
 
     function updateCharacterization(id, design) {

@@ -1,11 +1,13 @@
 define([
     'services/http',
     'appConfig',
-    'utils/ExecutionUtils'
+    'utils/ExecutionUtils',
+		'services/AuthAPI',
 ], function (
 	httpService,
 	config,
-    executionUtils,
+  executionUtils,
+	authApi
 ) {
 	const servicePath = config.webAPIRoot + 'pathway-analysis';
 
@@ -16,7 +18,9 @@ define([
 	}
 
 	function create(design) {
-		return request = httpService.doPost(servicePath, design).then(res => res.data);
+		let promise = httpService.doPost(servicePath, design).then(res => res.data);
+		promise.then(authApi.refreshToken)
+		return promise;
 	}
 
 	function load(id) {
@@ -30,7 +34,9 @@ define([
 	}
 
 	function copy(id) {
-		return httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
+		let promise = httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
+		promise.then(authApi.refreshToken);
+		return promise;
 	}
 
 	function del(id) {

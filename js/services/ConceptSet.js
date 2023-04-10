@@ -57,12 +57,13 @@ define(function (require) {
   }
 
   function saveConceptSet(conceptSet) {
-		let promise = new Promise(r => r());
+		let promise;
 		const url = `${config.api.url}conceptset/${conceptSet.id ? conceptSet.id : ''}`;
 		if (conceptSet.id) {
 			promise = httpService.doPut(url, conceptSet);
 		} else {
 			promise = httpService.doPost(url, conceptSet);
+			promise.then(authApi.refreshToken);
 		}
 		promise.catch(authApi.handleAccessDenied);
 
@@ -112,6 +113,7 @@ define(function (require) {
 
 	function copyVersion(conceptSetId, versionId) {
 		return httpService.doPut(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionId}/createAsset`)
+			.then(authApi.refreshToken)
 			.then(({ data }) => data);
 	}
 

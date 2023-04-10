@@ -50,11 +50,12 @@ define(function (require, exports) {
 			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
 		
 		const url = `${config.webAPIRoot}ir/${definitionCopy.id || ""}`;
-		let promise = new Promise(r => r());
+		let promise;
 		if (definitionCopy.id) {
 			promise = httpService.doPut(url, definitionCopy);
 		} else {
 			promise = httpService.doPost(url, definitionCopy);
+			promise.then(authApi.refreshToken);
 		}
 
 		return promise

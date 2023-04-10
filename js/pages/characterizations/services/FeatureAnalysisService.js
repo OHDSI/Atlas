@@ -2,10 +2,12 @@ define([
     'services/http',
     'services/file',
     'appConfig',
+	'services/AuthAPI',
 ], function (
     httpService,
     fileService,
-    config
+    config,
+    authApi
 ) {
 
     function loadFeatureAnalysisList() {
@@ -21,7 +23,9 @@ define([
     }
 
     function createFeatureAnalysis(design) {
-        return request = httpService.doPost(config.webAPIRoot + 'feature-analysis', design).then(res => res.data);
+        let promise = httpService.doPost(config.webAPIRoot + 'feature-analysis', design).then(res => res.data);
+        promise.then(authApi.refreshToken);
+        return promise;
     }
 
     function updateFeatureAnalysis(id, design) {
@@ -46,7 +50,9 @@ define([
     }
 
     function copyFeatureAnalysis(id) {
-        return httpService.doGet(`${config.webAPIRoot}feature-analysis/${id}/copy`);
+        let promise = httpService.doGet(`${config.webAPIRoot}feature-analysis/${id}/copy`);
+        promise.then(authApi.refreshToken);
+        return promise;        
     }
 
     return {

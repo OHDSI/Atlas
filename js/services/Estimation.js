@@ -16,21 +16,23 @@ define(function (require, exports) {
 			promise = httpService.doPut(url, analysis);
 		} else {
 			promise = httpService.doPost(url, analysis);
+			promise.then(authApi.refreshToken);
 		}
 		promise.catch((error) => {
 			console.log("Error: " + error);
 			authApi.handleAccessDenied(error);
 		});
-
 		return promise;
 	}
 
 	function copyEstimation(id) {
-		return httpService.doGet(config.webAPIRoot + estimationEndpoint + (id || "") + "/copy")
+		let promise = httpService.doGet(config.webAPIRoot + estimationEndpoint + (id || "") + "/copy")
 			.catch((error) => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			});
+			promise.then(authApi.refreshToken);
+		return promise;
 	}
 
 	function deleteEstimation(id) {

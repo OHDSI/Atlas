@@ -15,6 +15,7 @@ define(function (require, exports) {
 			promise = httpService.doPut(url, analysis);
 		} else {
 			promise = httpService.doPost(url, analysis);
+			promise.then(authApi.refreshToken);
 		}
 		promise.catch((error) => {
 			console.log("Error: " + error);
@@ -25,11 +26,13 @@ define(function (require, exports) {
 	}
 
 	function copyPlp(id) {
-		return httpService.doGet(config.webAPIRoot + 'plp/' + (id || "") + "/copy")
-			.catch((error) => {
-				console.log("Error: " + error);
-				authApi.handleAccessDenied(error);
-			});
+		let promise = httpService.doGet(config.webAPIRoot + 'plp/' + (id || "") + "/copy")
+		.catch((error) => {
+			console.log("Error: " + error);
+			authApi.handleAccessDenied(error);
+		});
+		promise.then(authApi.refreshToken);
+		return promise;
 	}
 
 	function deletePlp(id) {

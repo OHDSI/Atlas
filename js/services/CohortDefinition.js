@@ -33,6 +33,7 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(error);
 			}
 	    });
+		savePromise.then(authApi.refreshToken);
 		return savePromise;
 	}
 
