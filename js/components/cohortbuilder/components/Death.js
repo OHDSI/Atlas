@@ -88,11 +88,11 @@ define([
       'components.conditionDeath.indexDataText',
       'The index date refers to the death event of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionDeath.anyDeath', 'Any Death')
-        )
+        ))
       }
     );
   }

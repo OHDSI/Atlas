@@ -17,14 +17,14 @@ define(['knockout', 'atlas-state', 'lodash'],
 			let options;
 			if (arg2 === undefined) {
 				defaultValue = undefined;
-				options = arg1;
+				options =arg1;
 			} else {
 				defaultValue = arg1;
 				options = arg2;
 			}
 			return ko.pureComputed(() => {
 				const tmpl = ko.i18n(key, defaultValue);
-				const unwrappedOptions = mapValues(options, ko.unwrap);
+				const unwrappedOptions = mapValues(options, ko.toJS);
 				const compiledTemplate = template(ko.unwrap(tmpl), {sourceURL: 'i18n/templates[' + key + ']'});
 				return compiledTemplate(unwrappedOptions);
 			});
