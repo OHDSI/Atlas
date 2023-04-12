@@ -121,24 +121,16 @@ define([
       self.Criteria[propertyName](null);
     };
 
-    self.indexMessage = ko.pureComputed(() => {
-      var conceptSetName = utils.getConceptSetName(
-        self.Criteria.CodesetId,
-        self.expression.ConceptSets,
-        ""
-      );
-      return `The index date refers to the specimen of ${conceptSetName}.`;
-    });
 
     self.indexMessage = ko.i18nformat(
       'components.conditionSpecimen.indexDataText',
       'The index date refers to the specimen of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionSpecimen.anySpecimen', 'Any Specimen')
-        ),
+        ))
       }
     );
   }

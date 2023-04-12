@@ -60,11 +60,11 @@ define([
       'components.locationRegion.criteria.indexData.text',
       'The index date refers to the location region of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.locationRegion.anyLocationRegion', 'Any Region')
-        )
+        ))
       }
     );
   }

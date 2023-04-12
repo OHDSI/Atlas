@@ -149,11 +149,11 @@ define([
       'components.conditionObservation.indexDataText',
       'The index date refers to the observation of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionObservation.anyObservation', 'Any Observation')
-        )
+        ))
       }
     );
   }
