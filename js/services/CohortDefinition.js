@@ -47,6 +47,7 @@ define(function (require, exports) {
 				authApi.handleAccessDenied(error);
 			}
 		});
+		copyPromise.then(authApi.refreshToken);
 		return copyPromise;
 	}
 
