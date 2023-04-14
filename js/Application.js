@@ -16,7 +16,6 @@ define(
 		'utils/CommonUtils',
 		'utils/BemHelper',
 		'const',
-		'databindings',
 		'less!app.less',
 	],
 	(
