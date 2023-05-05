@@ -22,13 +22,7 @@ define(['knockout'], (ko) => {
       const chart = valueAccessor();
       try {
 
-        let format = {};
-
-        if (chart.format) {
-            for (let [key, value] of Object.entries(chart.format)) {
-                format[`${key}`] = (typeof value === "function") ? ko.unwrap(value) : value;
-            }
-        }
+        let format = ko.toJS(chart.format || {});
 
         draw(chart.data(), element, chart.minHeight, format, chart.renderer);
 

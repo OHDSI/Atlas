@@ -70,7 +70,7 @@ define([
 
 			this.chartFormats = {
 				prevalenceByMonth: {
-					xScale: null,
+					xScale: d3.scaleTime(),
 					xFormat: d3.timeFormat("%m/%Y"),
 					tickFormat: d3.timeFormat("%Y"),
 					xLabel: ko.i18n('dataSources.drilldown.chartFormat.date', 'Date'),
@@ -185,7 +185,7 @@ define([
 					yValue: 'yPrevalence1000Pp',
 					yPercent: 'yPrevalence1000Pp'
 				});
-				this.chartFormats.prevalenceByMonth.xScale = d3.scaleTime()
+				this.chartFormats.prevalenceByMonth.xScale 
 					.domain(d3.extent(byMonthSeries[0].values, d => d.xValue));
 				this.prevalenceByMonthData(byMonthSeries);
 			} else {
@@ -378,6 +378,15 @@ define([
 					this.context.loadingDrilldownDone(true);
 					this.context.showLoadingDrilldownModal(false);
 				});
+		}
+
+		prevalenceByMonthFormat(reportData) {
+			const dateFormat = this.chartFormats.prevalenceByMonth;
+			var reportYears = reportData()[0].values[reportData()[0].values.length-1].xValue.getFullYear() - 
+				reportData()[0].values[0].xValue.getFullYear();	
+			return reportYears > 4 ? // if more than 4 years of data, then we don't need to include the month in the tick format
+				this.chartFormats.prevalenceByMonth : 
+				{...this.chartFormats.prevalenceByMonth, tickFormat: d3.timeFormat("%m/%Y")};
 		}
 	}
 
