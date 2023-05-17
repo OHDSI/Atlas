@@ -117,7 +117,11 @@ define(
 
 					if (config.userAuthenticationEnabled) {
 						try {
-							await authApi.loadUserInfo();
+							// Routes to welcome are part of auth flow, loadUserInfo in this case is unnecessary and fails. 
+							// More importantly it can trigger an infinite loop when userAuthenticationForced is enabled.
+							if (!window.location.href.includes("/welcome/")) {
+								await authApi.loadUserInfo();
+							}
 						} catch (e) {
 							reject(e.message);
 						}
