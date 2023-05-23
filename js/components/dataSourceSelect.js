@@ -23,7 +23,6 @@ define([
     class DataSourceSelect extends AutoBind(Component){
         constructor(params) {
             super(params);
-			this.sharedState = sharedState;
             this.tab = params.tab;
             this.conceptSetStore = params.conceptSetStore;
             this.includedConcepts = this.conceptSetStore.includedConcepts;
