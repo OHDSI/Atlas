@@ -88,6 +88,9 @@ define(function(require, exports) {
                 if (err.status === 401) {
                     console.log('User is not authed');
                     subject(null);
+                    if (config.enableSkipLogin) {
+                        signInOpened(true);
+                    }
                     resolve();
                 } else {
                     reject('Cannot retrieve user info');
