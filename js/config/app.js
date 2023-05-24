@@ -11,7 +11,7 @@ define(function () {
     appConfig.pollInterval = 60000;
     appConfig.cohortComparisonResultsEnabled = false;
     appConfig.userAuthenticationEnabled = false;
-    appConfig.skipLoginEnabled = true; // automatically opens login window when user is not authenticated
+    appConfig.enableSkipLogin = true; // automatically opens login window when user is not authenticated
     appConfig.plpResultsEnabled = false;
     appConfig.useExecutionEngine = false;
     appConfig.viewProfileDates = false;
