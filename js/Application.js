@@ -60,6 +60,11 @@ define(
 					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
 				});
 
+				this.toggleBrowserWarning = function(bowser) {
+					const browserInfo = bowser.getParser(navigator.userAgent).getBrowser();
+					const isBrowserSupported = browserInfo.name.toLowerCase() === 'chrome' && parseInt(browserInfo.version) > 63;
+					return !config.disableBrowserCheck && !isBrowserSupported;
+				}
 
 				this.appInitializationStatus = sharedState.appInitializationStatus;
 				this.noSourcesAvailable = ko.pureComputed(() => {
