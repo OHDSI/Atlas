@@ -88,7 +88,7 @@ define(function(require, exports) {
                 if (err.status === 401) {
                     console.log('User is not authed');
                     subject(null);
-                    if (config.userAuthenticationForced) {
+                    if (config.skipLoginEnabled) {
                         signInOpened(true);
                     }
                     resolve();

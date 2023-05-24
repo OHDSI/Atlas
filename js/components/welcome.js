@@ -43,7 +43,7 @@ define([
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
-		self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
+        self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
         self.runAsLogin = ko.observable();
         self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
@@ -112,7 +112,7 @@ define([
 
         self.signin = function (name) {
             const selectedProvider = self.getAuthProvider(name);
-            if(selectedProvider.isUseCredentialsForm){
+            if (selectedProvider.isUseCredentialsForm) {
                 self.authUrl(selectedProvider.url);
                 self.toggleCredentialsForm(selectedProvider);
             } else {
@@ -135,7 +135,7 @@ define([
             }
         };
 
-        if (appConfig.userAuthenticationForced && self.authProviders.length === 1 && !self.isLoggedIn()) {
+        if (self.authProviders.length === 1 && !self.isLoggedIn()) {
             self.signin(self.authProviders[0].name);
         }
         
