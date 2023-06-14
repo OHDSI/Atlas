@@ -13,6 +13,7 @@ define(function () {
     appConfig.userAuthenticationEnabled = false;
     appConfig.enableSkipLogin = false; // automatically opens login window when user is not authenticated
     appConfig.plpResultsEnabled = false;
+    appConfig.useSolrVocabSearch = false;
     appConfig.useExecutionEngine = false;
     appConfig.viewProfileDates = false;
     appConfig.enableCosts = false;

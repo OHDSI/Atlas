@@ -25,6 +25,20 @@
 						</span>
 					</div>
 				</div>
+				<div data-bind="if: $component.config.useSolrVocabSearch" class="configureHeader">
+					<div class="left">
+						<div data-bind="if: $component.isSolrVocabCoreAvailable == true">
+							<div class="serviceStatus serviceAvailable fa fa-check-circle"></div>
+						</div>
+
+						<div data-bind="if: $component.isSolrVocabCoreAvailable == false">
+							<div class="serviceStatus serviceUnavailable fa fa-exclamation-circle"></div>
+						</div>
+
+						<span class="serviceName" data-bind="text:ko.i18n('configuration.solrVocab', 'Solr Vocab')"></span> (
+						<span class="serviceUrl" data-bind="text: $component.solrVocabCoreName"></span>)
+					</div>
+				</div>
 				<div data-bind="if: $component.config.useExecutionEngine" class="configureHeader">
 					<div class="left">
 						<div data-bind="if:isExecutionEngineAvailable()==true">
