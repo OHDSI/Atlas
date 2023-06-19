@@ -17,7 +17,7 @@
 	</head>
 
 	<body class="app">
-	<div id="b-alarm" style="display: none" class="browser-alarm">
+	<div id="b-alarm" style="display: none" class="browser-alarm" data-bind="visible: toggleBrowserWarning(bowser)">
 		<div class="browser-alarm__warning-text" data-bind="text: ko.i18n('commonErrors.browserWarning', 'Note that only Chrome browser newer than v.63 is officially supported')">
 			Note that only Chrome browser newer than v.63 is officially supported
 		</div>
@@ -120,7 +120,6 @@
 
 	<!-- bundled mode -->
 	<!-- <script data-main="js/assets/bundle/bundle" src="js/require.js"></script>-->
-	<script src="js/utils/BrowserDetection.js"></script>
 
 </body>
 

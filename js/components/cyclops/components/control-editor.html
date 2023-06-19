@@ -55,7 +55,7 @@
     </div>
 </div>
 <div>
-    <label data-bind="text: ko.i18n('components.cyclops.controlEditor.umberOfRepetitionsOfData', 'Number of repetitions of data for cross validation:')"></label>
+    <label data-bind="text: ko.i18n('components.cyclops.controlEditor.minDataCrossValidation', 'Minimum amount of data required for cross-validation:')"></label>
     <div class="input-group">
         <span cclass="numericInputField dropdown" data-bind="contenteditableSwitch: isEditPermitted(), htmlValue: $component.control.minCVData, eventType:'blur', ko_autocomplete: { value: $component.control.minCVData, source: $component.options.minCVData, minLength: 0, maxShowItems: 10, scroll: true }" />
     </div>

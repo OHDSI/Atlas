@@ -149,7 +149,7 @@ define([
       }, 1000);
 
       if (this.noPreview) {
-        this.onSubmit();
+        this.onSubmit(this.selectionOptions());
         return;
       }
 
