@@ -106,7 +106,8 @@ define([
     }
 
     function exportConceptSets(id) {
-        return fileService.loadZip(`${config.webAPIRoot}cohort-characterization/${id}/export/conceptset`);
+        return fileService.loadZip(`${config.webAPIRoot}cohort-characterization/${id}/export/conceptset`,
+            `cohort_characterization_${id}_export.zip`);
     }
 	function runDiagnostics(design) {
         return httpService
