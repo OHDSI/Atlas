@@ -16,6 +16,7 @@ require(["./settings"], (settings) => {
 	require([
 		'bootstrap',
 		'ko.sortable',
+		'databindings',
 		'services/PluginRegistry',
 		...Object.values(settings.cssPaths),
 	], function () { // bootstrap must come first
