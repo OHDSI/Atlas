@@ -45,6 +45,7 @@ define([
       this.sourceJobs = new Map();
       this.sources = sharedState.sources;
       this.isSolrVocabEnabled = ko.observable();
+      this.isSolrVocabCoreAvailable = ko.observable();
       this.solrVocabCoreName = ko.observable();
 
       this.priorityOptions = [
@@ -120,7 +121,8 @@ define([
       const info = await buildInfoService.getBuildInfo();
       await sourceApi.initSourcesConfig();
       super.onPageCreated();
-      this.isSolrVocabEnabled = info.configuration.vocabulary.solrEnabled;
+      this.isSolrVocabEnabled = info.configuration.vocabulary.solrEnabled && info.configuration.vocabulary.hasOwnProperty("cores");
+      this.isSolrVocabCoreAvailable = false;
       if (this.isSolrVocabEnabled) {
         this.solrVocabCoreName = this.getSolrVocabCoreName(info);
       }
