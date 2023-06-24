@@ -15,40 +15,22 @@ define(function (require, exports) {
 		return res.data;
 	}
 
-       function grantEntityAccess(entityType, entityId, roleId, perm_type) {
-	   if(perm_type == 'WRITE'){
+       function grantEntityAccess(entityType, entityId, roleId, perm_type = 'WRITE') {
 	   	return httpService.doPost(
 			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
 			{
-				accessType: 'WRITE'
+				accessType: perm_type
 			}
 		);
-	   } else { // Only other option is READ
-	   	return httpService.doPost(
-			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
-			{
-				accessType: 'READ'
-			}
-		);
-	   }
 	}
 
-        function revokeEntityAccess(entityType, entityId, roleId, perm_type) {
-	        if (perm_type == 'WRITE') {
-	            return httpService.doDelete(
+        function revokeEntityAccess(entityType, entityId, roleId, perm_type = 'WRITE') {
+	    return httpService.doDelete(
 			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
 			{
-				accessType: 'WRITE'
+				accessType: perm_type
 			}
 		    );
-		} else {
-		    return httpService.doDelete(
-			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
-			{
-				accessType: 'READ'
-			}
-		    );
-		}
 	}
 
 	function decorateComponent(component, { entityTypeGetter, entityIdGetter, createdByUsernameGetter }) {
