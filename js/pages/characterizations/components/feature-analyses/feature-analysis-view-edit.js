@@ -153,6 +153,10 @@ define([
             });
             this.editorClasses = ko.computed(() => this.classes({ element: 'content', modifiers: this.canEdit() ? '' : 'disabled' }))
 
+	    this.enablePermissionManagement = ko.pureComputed(() => {
+		return config.enablePermissionManagement;
+	    });
+	    
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
               ...params,

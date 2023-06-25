@@ -31,12 +31,15 @@
 						data-bind="visible: !previewVersion(), title: ko.i18n('cohortDefinitions.cohortDefinitionManager.createCopyCohortTitle', 'Create a copy of this cohort definition'), click: copy, enable: canCopy() && !isProcessing()"><i
 							class="fa fa-copy"></i></button>
 					<button class="btn btn-primary"
-						data-bind="visible: !previewVersion(), title: ko.i18n('cohortDefinitions.cohortDefinitionManager.getLinkCohortTitle', 'Get a link to this cohort definition'), enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i
-							class="fa fa-link"></i></button>
+						data-bind="visible: !previewVersion(), title: ko.i18n('cohortDefinitions.cohortDefinitionManager.getLinkCohortTitle', 'Get a link to this cohort definition'), enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
+
+					<!-- ko if: enablePermissionManagement -->
 					<button class="btn btn-primary"
 						data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown())">
 						<i class="fa fa-lock"></i>
 					</button>
+					<!-- /ko -->
+					
 					<!-- ko if: !isRunning() -->
 					<button class="btn btn-danger"
 						data-bind="visible: !previewVersion(), title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
