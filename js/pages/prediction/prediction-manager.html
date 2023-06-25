@@ -26,10 +26,13 @@
               <button class="btn btn-primary"
                       data-bind="title: ko.i18n('common.createACopy', 'Create a copy'), click: copy, enable: canCopy() && !isProcessing()"><i
                       class="fa fa-copy"></i></button>
+	      <!-- ko if: enablePermissionManagement -->
               <button class="btn btn-primary"
                       data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown())">
                   <i class="fa fa-lock"></i>
               </button>
+	      <!-- /ko -->
+	      
               <button class="btn btn-danger"
                       data-bind="title: ko.i18n('common.delete', 'Delete'), click: $component.delete, enable: canDelete() && !isProcessing()"><i
                       class="fa fa-trash-alt"></i></button>
