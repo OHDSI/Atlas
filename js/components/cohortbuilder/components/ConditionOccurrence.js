@@ -154,11 +154,11 @@ define([
       'components.conditionOccurrence.indexDataText',
       'The index date refers to the condition occurrence of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionOccurrence.anyCondition', 'Any Condition')
-        ),
+        )),
       }
     );
   }

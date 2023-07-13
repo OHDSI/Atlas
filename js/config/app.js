@@ -6,10 +6,12 @@ define(function () {
 		name: 'Local',
 		url: 'http://localhost:8080/WebAPI/'
 	};
+	appConfig.disableBrowserCheck = false; // browser check will happen by default
 	appConfig.cacheSources = false;
 	appConfig.pollInterval = 60000;
 	appConfig.cohortComparisonResultsEnabled = false;
 	appConfig.userAuthenticationEnabled = false;
+	appConfig.enableSkipLogin = false; // automatically opens login window when user is not authenticated
 	appConfig.plpResultsEnabled = false;
 	appConfig.useExecutionEngine = false;
 	appConfig.viewProfileDates = false;
