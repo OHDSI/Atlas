@@ -23,10 +23,13 @@ define([
             .then(res => res.data);
     }
 
-    function loadCharacterizationDesign(id) {
-        return httpService
+    async function loadCharacterizationDesign(id) {
+        const result = await httpService
             .doGet(config.webAPIRoot + 'cohort-characterization/' + id + '/design')
             .then(res => res.data);
+        await authApi.refreshToken();
+        return result;
+        
     }
 
     function loadCharacterizationExportDesign(id) {
@@ -35,16 +38,12 @@ define([
             .then(res => res.data);
     }
 
-    function createCharacterization(design) {
-        let promise = httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data);
-        promise.then(authApi.refreshToken)
-        return promise;
+    async function  createCharacterization(design) {
+        return authApi.executeWithRefresh(httpService.doPost(config.webAPIRoot + 'cohort-characterization', design).then(res => res.data));
     }
 
-    function copyCharacterization(id) {
-        let promise = httpService.doPost(config.webAPIRoot + 'cohort-characterization/' + id).then(res => res.data);
-        promise.then(authApi.refreshToken);
-        return promise;
+    async function copyCharacterization(id) {
+        return authApi.executeWithRefresh(httpService.doPost(config.webAPIRoot + 'cohort-characterization/' + id).then(res => res.data));
     }
 
     function updateCharacterization(id, design) {
@@ -81,16 +80,16 @@ define([
             .then(res => res.data);
     }
 
-    function generate(ccId, sourcekey) {
-        return httpService
+    async function generate(ccId, sourcekey) {
+        return authApi.executeWithRefresh(httpService
             .doPost(config.webAPIRoot + 'cohort-characterization/' + ccId + '/generation/' + sourcekey)
-            .then(res => res.data);
+            .then(res => res.data));
     }
 
-    function importCharacterization(design) {
-        return httpService
+    async function importCharacterization(design) {
+        return authApi.executeWithRefresh(httpService
             .doPost(config.webAPIRoot + 'cohort-characterization/import', design)
-            .then(res => res.data);
+            .then(res => res.data));
     }
 
     function getPrevalenceStatsByGeneration(generationId, analysisId, cohortId, covariateId) {
@@ -131,9 +130,9 @@ define([
             .then(res => res.data);
     }
 
-    function copyVersion(id, versionNumber) {
-        return httpService.doPut(`${config.webAPIRoot}cohort-characterization/${id}/version/${versionNumber}/createAsset`)
-            .then(res => res.data);
+    async function copyVersion(id, versionNumber) {
+        return authApi.executeWithRefresh(httpService.doPut(`${config.webAPIRoot}cohort-characterization/${id}/version/${versionNumber}/createAsset`)
+            .then(res => res.data));
     }
 
     function updateVersion(version) {
