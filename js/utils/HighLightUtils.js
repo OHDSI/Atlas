@@ -1,4 +1,4 @@
-define(['prism','prismlanguages/prism-sql'], function () {
+define(['prismlanguages/prism-sql'], function () {
 
 	function highlightJS(code, language) {
 		if (!code) {
