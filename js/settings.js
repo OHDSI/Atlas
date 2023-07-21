@@ -75,9 +75,10 @@ const settingsObject = {
 			]
 		},
 		"prism": {
-			"prism": {
-				"exports": "Prism"
-			}
+			exports: "Prism"
+		},
+		"prismlanguages/prism-sql": {
+			deps: ["prism"]
 		},
 		"xss": {
 			exports: "filterXSS"
