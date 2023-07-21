@@ -9,7 +9,6 @@ define([
 	'atlas-state',
 	'services/AuthAPI',
 	'./sqlExportPanelConfig',
-	'prism',
 	'less!./sqlExportPanel.less',
 ], function (
 	ko,
