@@ -136,7 +136,7 @@ define([
 			this.isLoading(true);
 		        try {
 			    await this.revokeAccessFn(roleId, perm_type);
-			    await this._loadAccessList();
+			    await this.loadAccessList();
 			} catch (ex) {
 				console.log(ex);
 			}
