@@ -89,6 +89,10 @@ define([
 
 			this.selectedTabKey = ko.observable("design");
 
+		        this.enablePermissionManagement = ko.pureComputed(() => {
+			       return config.enablePermissionManagement;
+		        });
+		    
 			this.componentParams = ko.observable({
 				design: this.previewVersion() ? this.previewVersion : this.design,
 				designId: this.designId,

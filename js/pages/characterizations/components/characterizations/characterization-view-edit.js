@@ -71,6 +71,10 @@ define([
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
 
+	    this.enablePermissionManagement = ko.pureComputed(() => {
+		return config.enablePermissionManagement;
+	    });	    
+	    
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
             this.defaultName = ko.unwrap(constants.newEntityNames.characterization);

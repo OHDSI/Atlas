@@ -19,13 +19,20 @@ define([
 
 			this.isModalShown = params.isModalShown;
 			this.isLoading = ko.observable(false);
-			this.accessList = ko.observable([]);
-			this.roleName = ko.observable();
 
-			this.roleSuggestions = ko.observable([]);
-			this.roleOptions = ko.computed(() => this.roleSuggestions().map(r => r.name));
-			this.roleSearch = ko.observable();
-			this.roleSearch.subscribe(str => this.loadRoleSuggestions(str));
+		        this.writeRoleName = ko.observable();
+		        this.writeAccessList = ko.observable([]);		    
+			this.writeRoleSuggestions = ko.observable([]);
+			this.writeRoleOptions = ko.computed(() => this.writeRoleSuggestions().map(r => r.name));
+			this.writeRoleSearch = ko.observable();
+		        this.writeRoleSearch.subscribe(str => this.loadWriteRoleSuggestions(str));
+
+		        this.readAccessList = ko.observable([]);
+		        this.readRoleName = ko.observable();		    
+		        this.readRoleSuggestions = ko.observable([]);
+			this.readRoleOptions = ko.computed(() => this.readRoleSuggestions().map(r => r.name));
+			this.readRoleSearch = ko.observable();
+			this.readRoleSearch.subscribe(str => this.loadReadRoleSuggestions(str));
 
 			this.isOwnerFn = params.isOwnerFn;
 			this.grantAccessFn = params.grantAccessFn;
@@ -33,20 +40,38 @@ define([
 			this.revokeAccessFn = params.revokeAccessFn;
 			this.loadRoleSuggestionsFn = params.loadRoleSuggestionsFn;
 
-			this.columns = [
+			this.readAccessColumns = [
 				{
 					class: this.classes('access-tbl-col-id'),
-					title: ko.i18n('columns.id', 'ID'),
+					title: ko.i18n('readAccessColumns.id', 'ID'),
 					data: 'id'
 				},
 				{
 					class: this.classes('access-tbl-col-name'),
-					title: ko.i18n('columns.name', 'Name'),
+					title: ko.i18n('readAccessColumns.name', 'Name'),
 					data: 'name'
 				},
 				{
 					class: this.classes('access-tbl-col-action'),
-					title: ko.i18n('columns.action', 'Action'),
+					title: ko.i18n('readAccessColumns.action', 'Action'),
+					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${this.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
+				}
+			];
+
+		        this.writeAccessColumns = [
+				{
+					class: this.classes('access-tbl-col-id'),
+					title: ko.i18n('writeAccessColumns.id', 'ID'),
+					data: 'id'
+				},
+				{
+					class: this.classes('access-tbl-col-name'),
+					title: ko.i18n('writeAccessColumns.name', 'Name'),
+					data: 'name'
+				},
+				{
+					class: this.classes('access-tbl-col-action'),
+					title: ko.i18n('writeAccessColumns.action', 'Action'),
 					render: (s, p, d) => !this.isOwnerFn(d.name) ? `<a data-bind="css: '${this.classes('revoke-link')}', click: revoke, text: ko.i18n('common.configureAccessModal.revoke', 'Revoke')"></a>` : '-'
 				}
 			];
@@ -54,45 +79,64 @@ define([
 			this.isModalShown.subscribe(open => !!open && this.loadAccessList());
 		}
 
-		async _loadAccessList() {
-			let accessList = await this.loadAccessListFn();
-			accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id) }));
-			this.accessList(accessList);
+		async _loadReadAccessList() {
+			let accessList = await this.loadAccessListFn('READ');
+		        accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id, 'READ') }));
+			this.readAccessList(accessList);
 		}
 
-		async loadRoleSuggestions() {
-			const res = await this.loadRoleSuggestionsFn(this.roleSearch());
-			this.roleSuggestions(res);
+	        async _loadWriteAccessList() {
+			let accessList = await this.loadAccessListFn('WRITE');
+		        accessList = accessList.map(a => ({ ...a, revoke: () => this.revokeRoleAccess(a.id, 'WRITE') }));
+			this.writeAccessList(accessList);
+		}
+
+		async loadReadRoleSuggestions() {
+			const res = await this.loadRoleSuggestionsFn(this.readRoleSearch());
+			this.readRoleSuggestions(res);
+		}
+
+	    	async loadWriteRoleSuggestions() {
+			const res = await this.loadRoleSuggestionsFn(this.writeRoleSearch());
+			this.writeRoleSuggestions(res);
 		}
 
 		async loadAccessList() {
-			this.isLoading(false);
+			this.isLoading(true);
 			try {
-				await this._loadAccessList();
+			        await this._loadReadAccessList();
+			        await this._loadWriteAccessList();
 			} catch (ex) {
 				console.log(ex);
 			}
 			this.isLoading(false);
 		}
 
-		async grantAccess() {
+		async grantAccess(perm_type) {
 			this.isLoading(true);
 			try {
-				const role = this.roleSuggestions().find(r => r.name === this.roleName());
-				await this.grantAccessFn(role.id);
-				await this._loadAccessList();
-				this.roleName('');
+			       if (perm_type == 'WRITE'){
+				   const role = this.writeRoleSuggestions().find(r => r.name === this.writeRoleName());
+			           await this.grantAccessFn(role.id,'WRITE');
+				   await this._loadWriteAccessList();
+				   this.writeRoleName('');
+  			       } else {
+				   const role = this.readRoleSuggestions().find(r => r.name === this.readRoleName());
+			   	   await this.grantAccessFn(role.id,'READ');
+				   await this._loadReadAccessList();
+				   this.readRoleName('');
+			       }
 			} catch (ex) {
 				console.log(ex);
 			}
 			this.isLoading(false);
 		}
 
-		async revokeRoleAccess(roleId) {
+	        async revokeRoleAccess(roleId, perm_type) {
 			this.isLoading(true);
-			try {
-				await this.revokeAccessFn(roleId);
-				await this._loadAccessList();
+		        try {
+			    await this.revokeAccessFn(roleId, perm_type);
+			    await this.loadAccessList();
 			} catch (ex) {
 				console.log(ex);
 			}
