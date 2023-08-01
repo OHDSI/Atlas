@@ -197,10 +197,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		    
 			this.pollTimeoutId = null;
 			this.authApi = authApi;
-		        this.config = config;
-		        this.enablePermissionManagement = ko.pureComputed(() => {
-			       return config.enablePermissionManagement;
-		        });
+			this.config = config;
+			this.enablePermissionManagement = config.enablePermissionManagement;	    
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.commonUtils = commonUtils;
 			this.isLoading = ko.observable(false);

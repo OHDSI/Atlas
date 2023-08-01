@@ -71,10 +71,8 @@ define([
 			this.cohortMethodAnalysisList = null;
 			this.defaultCovariateSettings = ko.observable();
 			this.options = constants.options;
-		        this.config = config;
-		        this.enablePermissionManagement = ko.pureComputed(() => {
-			       return config.enablePermissionManagement;
-		        });
+			this.config = config;
+			this.enablePermissionManagement = config.enablePermissionManagement;	    
 			this.loading = ko.observable(true);
 			this.isAuthenticated = ko.pureComputed(() => {
 				return authApi.isAuthenticated();

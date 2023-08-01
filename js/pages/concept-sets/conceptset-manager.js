@@ -174,9 +174,7 @@ define([
 			this.canCopy = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
 			});
-		        this.enablePermissionManagement = ko.pureComputed(() => {
-			       return config.enablePermissionManagement;
-		        });
+			this.enablePermissionManagement = config.enablePermissionManagement;	    
 			this.isSaving = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.isOptimizing = ko.observable(false);

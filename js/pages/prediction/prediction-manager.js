@@ -80,10 +80,8 @@ define([
 			});
 
 			this.options = constants.options;
-  		        this.config = config;
-		        this.enablePermissionManagement = ko.pureComputed(() => {
-			       return config.enablePermissionManagement;
-		        });
+			this.config = config;
+			this.enablePermissionManagement = config.enablePermissionManagement;
 			this.loading = ko.observable(true);
 			this.patientLevelPredictionAnalysis = sharedState.predictionAnalysis.current;
 			this.selectedAnalysisId = sharedState.predictionAnalysis.selectedId;

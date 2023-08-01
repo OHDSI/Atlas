@@ -10,13 +10,13 @@ define(function (require, exports) {
 		return res.data;
 	}
 
-       async function loadEntityAccessList(entityType, entityId, perm_type = 'WRITE') {
+	async function loadEntityAccessList(entityType, entityId, perm_type = 'WRITE') {
 		const res = await httpService.doGet(config.webAPIRoot + `permission/access/${entityType}/${entityId}/${perm_type}`);
 		return res.data;
 	}
 
-       function grantEntityAccess(entityType, entityId, roleId, perm_type = 'WRITE') {
-	   	return httpService.doPost(
+	function grantEntityAccess(entityType, entityId, roleId, perm_type = 'WRITE') {
+		return httpService.doPost(
 			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
 			{
 				accessType: perm_type

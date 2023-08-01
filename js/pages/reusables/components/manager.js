@@ -86,13 +86,9 @@ define([
 			this.canDelete = this.isDeletePermittedResolver();
 			this.isNewEntity = this.isNewEntityResolver();
 			this.canCopy = this.canCopyResolver();
-
 			this.selectedTabKey = ko.observable("design");
-
-		        this.enablePermissionManagement = ko.pureComputed(() => {
-			       return config.enablePermissionManagement;
-		        });
-		    
+			this.enablePermissionManagement = config.enablePermissionManagement;	    
+			    
 			this.componentParams = ko.observable({
 				design: this.previewVersion() ? this.previewVersion : this.design,
 				designId: this.designId,
