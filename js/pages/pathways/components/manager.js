@@ -58,6 +58,7 @@ define([
 			this.design = sharedState.CohortPathways.current;
 			this.previewVersion = sharedState.CohortPathways.previewVersion;
 			this.dirtyFlag = sharedState.CohortPathways.dirtyFlag;
+			this.enablePermissionManagement = config.enablePermissionManagement;	 
 			this.executionId = ko.observable(params.router.routerParams().executionId);
 			this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
 			this.analysisId = ko.observable();
