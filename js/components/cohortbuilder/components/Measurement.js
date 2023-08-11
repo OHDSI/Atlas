@@ -189,11 +189,11 @@ define([
       'components.conditionMeasurement.indexDataText',
       'The index date refers to the measurement of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')
-        ),
+        ))
       }
     );
   }

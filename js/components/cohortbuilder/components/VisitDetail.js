@@ -122,7 +122,7 @@ define([
         ...constants.visitDetailAttributes.addPlaceServiceLocation,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfServiceLocation() === null) {
+          if (self.Criteria.PlaceOfServiceLocation() == null) {
             self.Criteria.PlaceOfServiceLocation(ko.observable());
           }
         },
@@ -144,7 +144,7 @@ define([
         ...constants.visitDetailAttributes.addPlaceServiceDistance,
         selected: false,
         action: function () {
-          if (self.Criteria.PlaceOfServiceDistance() === null) {
+          if (self.Criteria.PlaceOfServiceDistance() == null) {
             self.Criteria.PlaceOfServiceDistance(new Range());
           }
         },
@@ -163,11 +163,11 @@ define([
       'components.conditionVisitDetail.indexDataText',
       'The index date refers to the visit detail of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionVisitDetail.anyVisitDetail', 'Any Visit Detail')
-        )
+        ))
       }
     );
   }

@@ -111,11 +111,11 @@ define([
       'components.conditionDrug.indexDataText',
       'The index date refers to the drug era of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionDrug.anyDrug', 'Any Drug')
-        )
+        ))
       }
     );
   }

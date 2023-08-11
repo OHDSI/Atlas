@@ -54,23 +54,27 @@ define([
 		prepareReportData() {
 			const design = this.results.design;
 			const pathwayGroups = this.results.data.pathwayGroups;
-			
 			return({
 				cohorts: design.targetCohorts.filter(c => this.filterList.selectedValues().includes(c.id)).map(c => {
+					
 					const pathwayGroup = pathwayGroups.find(p => p.targetCohortId == c.id);
-					return {
-						id: c.id, 
-						name: c.name, 
-						cohortCount: pathwayGroup.targetCohortCount, 
-						pathwayCount: pathwayGroup.totalPathwaysCount,
-						pathways: pathwayGroup.pathways.map(p => ({ // split pathway paths into paths and counts
-							path : p.path.split('-')
-								.filter(step => step != "end") // remove end markers from pathway
-								.map(p => +p)
-								.concat(Array(MAX_PATH_LENGTH).fill(null)) // pad end of paths to be at least MAX_PATH_LENGTH
-								.slice(0,MAX_PATH_LENGTH), // limit path to MAX_PATH_LENGTH.
-							personCount: p.personCount
-						}))
+					if (pathwayGroup) {
+						return {
+							id: c.id, 
+							name: c.name, 
+							cohortCount: pathwayGroup.targetCohortCount, 
+							pathwayCount: pathwayGroup.totalPathwaysCount,
+							pathways: pathwayGroup.pathways.map(p => ({ // split pathway paths into paths and counts
+								path : p.path.split('-')
+									.filter(step => step != "end") // remove end markers from pathway
+									.map(p => +p)
+									.concat(Array(MAX_PATH_LENGTH).fill(null)) // pad end of paths to be at least MAX_PATH_LENGTH
+									.slice(0,MAX_PATH_LENGTH), // limit path to MAX_PATH_LENGTH.
+								personCount: p.personCount
+							}))
+						}
+					} else {
+						return null;
 					}
 				}),
 				eventCodes: this.results.data.eventCodes
@@ -114,7 +118,7 @@ define([
 					return col;
 				});					
 			let statCols = [columnValueBuilder(ko.i18n('columns.count', 'Count')(), "personCount")];
-			let data = this.getPathwayGroupData(pathwayGroup, pathLength);
+			let data = pathwayGroup ? this.getPathwayGroupData(pathwayGroup, pathLength) : [];
 
 			statCols.push(columnValueBuilder(ko.i18n('columns.pctWithPathway', '% with Pathway')(), "pathwayPercent", percentFormat));
 			statCols.push(columnValueBuilder(ko.i18n('columns.pctOfCohort', '% of Cohort')(), "cohortPercent", percentFormat));
@@ -154,6 +158,8 @@ define([
 		
 		getEventCohortsByRank(pathwayGroup)
 		{
+			if (!pathwayGroup) return []; // default to empty data
+
 			const pathways = pathwayGroup.pathways;
 			const eventCodes = this.reportData().eventCodes;
 			let groups = pathways.reduce((acc,cur) => { // reduce pathways an Array of ranks containing a Map of counts by event cohort
@@ -225,6 +231,7 @@ define([
 		
 		getEventCohortCounts(pathwayGroup)
 		{
+			if (!pathwayGroup) return []; // default to empty data
 			const pathways = pathwayGroup.pathways;
 			const eventCodes = this.reportData().eventCodes;
 			let dataMap = pathways.reduce((acc,cur) => { // reduce pathways an Array of ranks containing a Map of counts by event cohort
@@ -292,6 +299,8 @@ define([
 		
 		getDistinctEventCohortCounts(pathwayGroup)
 		{
+			if (!pathwayGroup) return []; // default to empty data
+
 			const pathways = pathwayGroup.pathways;
 			let dataMap = pathways.reduce((acc,cur) => { // reduce pathways an Array of ranks containing a Map of counts by comboId
 				const visited = new Map();

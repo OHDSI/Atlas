@@ -120,10 +120,11 @@ define([
       'components.conditionDose.indexDataText',
       'The index date refers to the dose era of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
-          ko.i18n('components.conditionDose.anyDoseEra', 'Any Dose Era'))
+          ko.i18n('components.conditionDose.anyDoseEra', 'Any Dose Era')
+        ))
       }
     );
   }

@@ -137,11 +137,11 @@ define([
       'components.conditionProcedureOccurrence.indexDataText',
       'The index date refers to the procedure of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')
-        )
+        ))
       }
     );
   }
