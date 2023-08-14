@@ -10,27 +10,27 @@ define(function (require, exports) {
 		return res.data;
 	}
 
-	async function loadEntityAccessList(entityType, entityId) {
-		const res = await httpService.doGet(config.webAPIRoot + `permission/access/${entityType}/${entityId}`);
+	async function loadEntityAccessList(entityType, entityId, perm_type = 'WRITE') {
+		const res = await httpService.doGet(config.webAPIRoot + `permission/access/${entityType}/${entityId}/${perm_type}`);
 		return res.data;
 	}
 
-	function grantEntityAccess(entityType, entityId, roleId) {
+	function grantEntityAccess(entityType, entityId, roleId, perm_type = 'WRITE') {
 		return httpService.doPost(
 			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
 			{
-				accessType: 'WRITE'
+				accessType: perm_type
 			}
 		);
 	}
 
-	function revokeEntityAccess(entityType, entityId, roleId) {
-		return httpService.doDelete(
+        function revokeEntityAccess(entityType, entityId, roleId, perm_type = 'WRITE') {
+	    return httpService.doDelete(
 			config.webAPIRoot + `permission/access/${entityType}/${entityId}/role/${roleId}`,
 			{
-				accessType: 'WRITE'
+				accessType: perm_type
 			}
-		);
+		    );
 	}
 
 	function decorateComponent(component, { entityTypeGetter, entityIdGetter, createdByUsernameGetter }) {
@@ -43,16 +43,16 @@ define(function (require, exports) {
 
 		component.isOwner = ko.computed(() => config.userAuthenticationEnabled && component.isOwnerFn(authApi.subject()));
 
-		component.loadAccessList = () => {
-			return loadEntityAccessList(entityTypeGetter(), entityIdGetter());
+		component.loadAccessList = (perm_type='WRITE') => {
+ 		        return loadEntityAccessList(entityTypeGetter(), entityIdGetter(), perm_type);
 		};
 
-		component.grantAccess = (roleId) => {
-			return grantEntityAccess(entityTypeGetter(), entityIdGetter(), roleId);
+	        component.grantAccess = (roleId, perm_type='WRITE') => {
+		        return grantEntityAccess(entityTypeGetter(), entityIdGetter(), roleId, perm_type);
 		};
 
-		component.revokeAccess = (roleId) => {
-			return revokeEntityAccess(entityTypeGetter(), entityIdGetter(), roleId);
+	        component.revokeAccess = (roleId, perm_type='WRITE') => {
+		        return revokeEntityAccess(entityTypeGetter(), entityIdGetter(), roleId, perm_type);
 		};
 
 		component.loadAccessRoleSuggestions = (searchStr) => {

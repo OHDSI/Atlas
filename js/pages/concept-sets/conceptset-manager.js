@@ -3,8 +3,8 @@ define([
 	'text!./conceptset-manager.html',
 	'pages/Page',
 	'utils/AutoBind',
-	'utils/CommonUtils',
-	'appConfig',
+        'utils/CommonUtils',
+       	'appConfig',
 	'./const',
 	'const',
 	'components/conceptset/utils',
@@ -46,11 +46,11 @@ define([
 	'components/ac-access-denied',
 	'components/versions/versions'
 ], function (
-	ko,
+        ko,
 	view,
 	Page,
 	AutoBind,
-	commonUtils,
+        commonUtils,
 	config,
 	constants,
 	globalConstants,
@@ -75,7 +75,7 @@ define([
 		constructor(params) {
 			super(params);
 			this.commonUtils = commonUtils;
-			this.conceptSetStore = ConceptSetStore.repository();
+		        this.conceptSetStore = ConceptSetStore.repository();
 			this.selectedSource = ko.observable();
 			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
 			this.previewVersion = sharedState.currentConceptSetPreviewVersion;
@@ -174,6 +174,7 @@ define([
 			this.canCopy = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
 			});
+			this.enablePermissionManagement = config.enablePermissionManagement;	    
 			this.isSaving = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.isOptimizing = ko.observable(false);
@@ -363,7 +364,7 @@ define([
 				}
 			});
 
-			this.conceptSetStore.isEditable(this.canEdit());
+		        this.conceptSetStore.isEditable(this.canEdit());
 			this.subscriptions.push(this.conceptSetStore.observer.subscribe(async () => {
 				// when the conceptSetStore changes (either through a new concept set being loaded or changes to concept set options), the concept set resolves and the view is refreshed.
 				// this must be done within the same subscription due to the asynchronous nature of the AJAX and UI interface (ie: user can switch tabs at any time)

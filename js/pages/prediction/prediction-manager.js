@@ -5,7 +5,7 @@ define([
 	'pages/Router',
 	'utils/CommonUtils',
 	'assets/ohdsi.util',
-    'appConfig',
+        'appConfig',
 	'./const',
 	'const',
 	'atlas-state',
@@ -81,6 +81,7 @@ define([
 
 			this.options = constants.options;
 			this.config = config;
+			this.enablePermissionManagement = config.enablePermissionManagement;
 			this.loading = ko.observable(true);
 			this.patientLevelPredictionAnalysis = sharedState.predictionAnalysis.current;
 			this.selectedAnalysisId = sharedState.predictionAnalysis.selectedId;

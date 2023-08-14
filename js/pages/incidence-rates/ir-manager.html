@@ -22,9 +22,11 @@
 					<!-- ko if: selectedAnalysis().id() != null -->
 					<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: isEditable() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
 					<button class="btn btn-primary" data-bind="visible: !previewVersion(), click: copy, enable: canCopy && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+					<!-- ko if: enablePermissionManagement -->
 					<button class="btn btn-primary" data-bind="visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
 						<i class="fa fa-lock"></i>
 					</button>
+					<!-- /ko -->
 					<!-- ko ifnot: isRunning -->
 					<button class="btn btn-danger" data-bind="visible: !previewVersion(), click: $component.delete, enable: isDeletable, css: { 'disabled': !isDeletable() || isProcessing() }, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
 					<!-- /ko -->

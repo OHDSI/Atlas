@@ -152,7 +152,7 @@ define([
                 return !this.isNewEntity() && this.initialFeatureType() === featureTypes.PRESET;
             });
             this.editorClasses = ko.computed(() => this.classes({ element: 'content', modifiers: this.canEdit() ? '' : 'disabled' }))
-
+            this.enablePermissionManagement = config.enablePermissionManagement;	                
             this.selectedTabKey = ko.observable();
             this.componentParams = ko.observable({
               ...params,

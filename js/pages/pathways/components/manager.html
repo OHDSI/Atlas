@@ -21,7 +21,9 @@
 				<!-- ko ifnot: isNewEntity -->
 				<button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
 				<button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: copyPathway, css: {disabled: !$component.canCopy() || isProcessing()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+				<!-- ko if: enablePermissionManagement -->
 				<button class="btn btn-primary" data-bind="visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')"><i class="fa fa-lock"></i></button>
+				<!-- /ko -->
 				<button type="button" class="btn btn-danger" data-bind="visible: !previewVersion(), click: $component.del, css: {disabled: !canDelete() || isProcessing()}, title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
 				<!-- /ko -->
 			</div>

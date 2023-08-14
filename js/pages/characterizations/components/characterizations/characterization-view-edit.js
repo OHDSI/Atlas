@@ -70,7 +70,7 @@ define([
             this.selectedSourceId = ko.observable(params.router.routerParams().sourceId);
             this.areStratasNamesEmpty = ko.observable();
             this.duplicatedStrataNames = ko.observable([]);
-
+            this.enablePermissionManagement = config.enablePermissionManagement;	        
             this.designDirtyFlag = sharedState.CohortCharacterization.dirtyFlag;
             this.loading = ko.observable(false);
             this.defaultName = ko.unwrap(constants.newEntityNames.characterization);
