@@ -17,9 +17,13 @@
                 <button class="btn btn-primary" data-bind="click: closeAnalysis, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
                 <!-- ko ifnot: isNewEntity -->
                 <button type="button" class="btn btn-primary" data-bind="click: copyFeatureAnalysis, css: {disabled: !canCopy() || isProcessing() }, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+
+		<!-- ko if: enablePermissionManagement -->
                 <button class="btn btn-primary" data-bind="visible: isOwner, enable: !isProcessing(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
+		<!-- /ko -->
+		
                 <button class="btn btn-danger" data-bind="click: deleteFeature, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
                 <!-- /ko -->
             </div>

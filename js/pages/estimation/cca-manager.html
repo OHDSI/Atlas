@@ -15,10 +15,12 @@
             <button class="btn btn-success" title="Save" data-bind="click: save, enable: canSave() && !isProcessing(), title: ko.i18n('common.save', 'Save')"><i class="fa fa-save"></i></button>
             <button class="btn btn-primary" title="Close" data-bind="click: close, enable: !isProcessing(), title: ko.i18n('common.close', 'Close')"><i class="fa fa-times"></i></button>
             <!-- ko ifnot: isNewEntity -->
-                <button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy() && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+            <button class="btn btn-primary" title="Create a copy" data-bind="click: copy, enable: canCopy() && !isProcessing(), css: {'disabled': !canCopy()}, title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+	        <!-- ko if: enablePermissionManagement -->
                 <button class="btn btn-primary" title="Configure access" data-bind="visible: isOwner, click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
+		<!-- /ko -->
                 <button class="btn btn-danger" title="Delete" data-bind="click: $component.delete, enable: canDelete() && !isProcessing(), title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
             <!-- /ko -->
           </div>

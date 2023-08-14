@@ -85,6 +85,7 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.previewVersion = sharedState.IRAnalysis.previewVersion;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
+			this.enablePermissionManagement = config.enablePermissionManagement;	 
 			this.exporting = ko.observable();
 			this.isAuthenticated = ko.pureComputed(() => {
 				return authAPI.isAuthenticated();
