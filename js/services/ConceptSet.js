@@ -10,8 +10,8 @@ define(function (require) {
 	const _ = require('lodash');
 	const hash = require('hash-it').default;
 	
-	function loadConceptSet(id) {
-		return httpService.doGet(config.api.url + 'conceptset/' + id).then(({ data }) => data);
+	async function loadConceptSet(id) {
+		return authApi.executeWithRefresh(httpService.doGet(config.api.url + 'conceptset/' + id).then(({ data }) => data));
 	}
 
 	function loadConceptSetExpression(conceptSetId) {
@@ -56,8 +56,8 @@ define(function (require) {
 			.then(({ data }) => data);
   }
 
-  function saveConceptSet(conceptSet) {
-		let promise = new Promise(r => r());
+  async function saveConceptSet(conceptSet) {
+		let promise;
 		const url = `${config.api.url}conceptset/${conceptSet.id ? conceptSet.id : ''}`;
 		if (conceptSet.id) {
 			promise = httpService.doPut(url, conceptSet);
@@ -110,9 +110,10 @@ define(function (require) {
 		return httpService.doGet(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionNumber}/expression` + (sourceKey ? `/${sourceKey}`: '')).then(({ data }) => data);
 	}
 
-	function copyVersion(conceptSetId, versionId) {
-		return httpService.doPut(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionId}/createAsset`)
-			.then(({ data }) => data);
+	async function copyVersion(conceptSetId, versionId) {
+		return authApi.executeWithRefresh(httpService
+			.doPut(`${config.webAPIRoot}conceptset/${conceptSetId}/version/${versionId}/createAsset`)
+			.then(({ data }) => data));
 	}
 
 	function updateVersion(version) {

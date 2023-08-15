@@ -22,8 +22,8 @@ define(function (require, exports) {
 		return promise;
 	}
 
-	function saveCohortDefinition(definition) {
-		var savePromise = $.ajax({
+	async function saveCohortDefinition(definition) {
+		return authApi.executeWithRefresh($.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (definition.id || ""),
 			method: definition.id ? 'PUT' : 'POST',
 			contentType: 'application/json',
@@ -32,12 +32,11 @@ define(function (require, exports) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			}
-	    });
-		return savePromise;
+	  }));
 	}
 
-	function copyCohortDefinition(id) {
-		var copyPromise = $.ajax({
+	async function copyCohortDefinition(id) {
+		return authApi.executeWithRefresh($.ajax({
 			url: config.webAPIRoot + 'cohortdefinition/' + (id || "") +"/copy",
 			method: 'GET',
 			contentType: 'application/json',
@@ -45,8 +44,7 @@ define(function (require, exports) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			}
-		});
-		return copyPromise;
+		}));
 	}
 
 	function deleteCohortDefinition(id) {
@@ -57,8 +55,8 @@ define(function (require, exports) {
 		return deletePromise;
 	}
 
-	function getCohortDefinition(id) {
-		return httpService
+	async function getCohortDefinition(id) {
+		return authApi.executeWithRefresh(httpService
 			.doGet(config.webAPIRoot + 'cohortdefinition/' + id)
 			.then(res => {
 				const cohortDef = res.data;
@@ -67,7 +65,7 @@ define(function (require, exports) {
 			}).catch(error => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
-			});
+			}));
 	}
 
 	function exists(name, id) {
@@ -173,8 +171,9 @@ define(function (require, exports) {
 	}
 
 	function copyVersion(cohortDefinitionId, versionNumber) {
-		return httpService.doPut(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionNumber}/createAsset`)
-			.then(({ data }) => data);
+		return authApi.executeWithRefresh(httpService
+			.doPut(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/version/${versionNumber}/createAsset`)
+			.then(({ data }) => data));
 	}
 
 	function updateVersion(version) {

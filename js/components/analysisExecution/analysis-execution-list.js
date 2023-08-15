@@ -152,7 +152,7 @@ define([
     startPolling() {
       this.pollId = this.PollService.add({
         callback: silently => this.loadData({ silently }),
-        interval: 10000,
+        interval: config.pollInterval,
         isSilentAfterFirstCall: true,
       });
     }

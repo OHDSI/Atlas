@@ -537,7 +537,7 @@ define([
 			this.currentConceptSet().name(responseWithName.copyName);
 			this.currentConceptSet().id = 0;
 			this.currentConceptSetDirtyFlag().reset();
-			this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
+			await this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
 		}
 
 		async optimize() {

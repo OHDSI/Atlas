@@ -1,11 +1,13 @@
 define([
 	'knockout',
 	'./http',
-    'appConfig',
+  'appConfig',
+	'services/AuthAPI',
 ], function (
 	ko,
 	httpService,
 	config,
+	authApi,
 ) {
 	const servicePath = config.webAPIRoot + 'reusable';
 
@@ -34,7 +36,9 @@ define([
 			initialEventExpression: design.initialEventExpression,
 			censoringEventExpression: design.censoringEventExpression,
 		});
-		return request = httpService.doPost(servicePath, design).then(res => res.data);
+		let promise = httpService.doPost(servicePath, design).then(res => res.data);
+		promise.then(authApi.refreshToken);
+		return promise;
 	}
 
 	function exists(name, id) {
@@ -54,7 +58,9 @@ define([
 	}
 
 	function copy(id) {
-		return httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
+		let promise = httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
+		promise.then(authApi.refreshToken);
+		return promise;
 	}
 
 	function del(id) {

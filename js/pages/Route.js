@@ -11,7 +11,7 @@ define([
 		checkPermission() {
 			if (authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP) {
 				return authApi.loadUserInfo();
-			} else if (appConfig.userAuthenticationEnabled && authApi.token() != null && authApi.tokenExpirationDate() > new Date()) {
+			} else if (appConfig.userAuthenticationEnabled && authApi.token() != null && this.timeToExpire() < appConfig.refreshTokenThreshold) {
 				return authApi.refreshToken();
 			}
 			return Promise.resolve();
@@ -24,6 +24,10 @@ define([
 
 		handler() {
 			throw new Exception('Handler should be overriden');
+		}
+
+		timeToExpire() {
+			return authApi.tokenExpirationDate() - new Date();
 		}
 	}
 

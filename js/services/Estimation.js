@@ -2,35 +2,40 @@ define(function (require, exports) {
 
 	const config = require('appConfig');
 	const authApi = require('services/AuthAPI');
-    const httpService = require('services/http');
-    const estimationEndpoint = "estimation/"
+	const httpService = require('services/http');
+	const estimationEndpoint = "estimation/"
 
 	function getEstimationList() {
 		return httpService.doGet(config.webAPIRoot + estimationEndpoint).catch(authApi.handleAccessDenied);
 	}
 
-	function saveEstimation(analysis) {
+	async function saveEstimation(analysis) {
 		const url = config.webAPIRoot + estimationEndpoint + (analysis.id || "");
-		let promise;
+		let result;
 		if (analysis.id) {
-			promise = httpService.doPut(url, analysis);
+			result = await httpService
+				.doPut(url, analysis)
+				.catch((error) => {
+					console.log("Error: " + error);
+					authApi.handleAccessDenied(error);
+				})
 		} else {
-			promise = httpService.doPost(url, analysis);
+			result = authApi.executeWithRefresh(httpService
+				.doPost(url, analysis)
+				.catch((error) => {
+					console.log("Error: " + error);
+					authApi.handleAccessDenied(error);
+				}))
 		}
-		promise.catch((error) => {
-			console.log("Error: " + error);
-			authApi.handleAccessDenied(error);
-		});
-
-		return promise;
+		return result;
 	}
 
-	function copyEstimation(id) {
-		return httpService.doGet(config.webAPIRoot + estimationEndpoint + (id || "") + "/copy")
+	async function copyEstimation(id) {
+		return authApi.executeWithRefresh(httpService.doGet(config.webAPIRoot + estimationEndpoint + (id || "") + "/copy")
 			.catch((error) => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
-			});
+			}));
 	}
 
 	function deleteEstimation(id) {
@@ -41,12 +46,13 @@ define(function (require, exports) {
 			});
 	}
 
-	function getEstimation(id) {
-		return httpService.doGet(config.webAPIRoot + estimationEndpoint + id)
+	async function getEstimation(id) {
+		return authApi.executeWithRefresh(httpService
+			.doGet(config.webAPIRoot + estimationEndpoint + id)
 			.catch((error) => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
-			});
+			}));
 	}
 
 	function exportEstimation(id) {
@@ -72,11 +78,11 @@ define(function (require, exports) {
 			.catch(error => authApi.handleAccessDenied(error));
 	}
 
-    function importEstimation(specification) {
-        return httpService
-            .doPost(config.webAPIRoot + estimationEndpoint + "import", specification)
-            .then(res => res.data);
-    }
+	function importEstimation(specification) {
+		return authApi.executeWithRefresh(httpService
+					.doPost(config.webAPIRoot + estimationEndpoint + "import", specification)
+					.then(res => res.data));
+	}
 
 	function exists(name, id) {
 		return httpService

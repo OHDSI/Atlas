@@ -515,6 +515,12 @@ define(function(require, exports) {
         });
     };
 
+    const executeWithRefresh = async function(httpPromise) {
+        const result = await httpPromise;
+        await refreshToken();
+        return result;
+    }
+
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
         AUTH_CLIENTS: AUTH_CLIENTS,
@@ -611,6 +617,7 @@ define(function(require, exports) {
         loadUserInfo,
         TOKEN_HEADER,
         runAs,
+        executeWithRefresh,
     };
 
     return api;
