@@ -3,11 +3,11 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
-  "../InputTypes/Text",
+  "../InputTypes/DateAdjustment",
   "../CriteriaGroup",
   "text!./MeasurementTemplate.html",
   "../const"
-], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, CriteriaGroup, template, constants) {
   function MeasurementViewModel(params) {
     var self = this;
 
@@ -48,6 +48,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.measurementAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {

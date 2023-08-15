@@ -4,6 +4,7 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
+  "../InputTypes/DateAdjustment",
   "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./VisitDetailTemplate.html",
@@ -14,6 +15,7 @@ define([
   options,
   utils,
   Range,
+  DateAdjustment,
   ConceptSetSelection,
   CriteriaGroup,
   template,
@@ -67,6 +69,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.visitDetailAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {

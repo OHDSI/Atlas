@@ -3,7 +3,7 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
-  "../InputTypes/Text",
+  "../InputTypes/DateAdjustment",
   "../CriteriaGroup",
   "text!./DeathTemplate.html",
   "../const",
@@ -12,7 +12,7 @@ define([
   options,
   utils,
   Range,
-  Text,
+  DateAdjustment,
   CriteriaGroup,
   template,
   constants
@@ -46,6 +46,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.deathAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {

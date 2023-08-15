@@ -2,11 +2,12 @@ define([
   "knockout",
   "../options",
   "../InputTypes/Range",
+  "../InputTypes/DateAdjustment",
   "../InputTypes/Period",
   "../CriteriaGroup",
   "text!./ObservationPeriodTemplate.html",
   "../const"
-], function (ko, options, Range, Period, CriteriaGroup, template, constants) {
+], function (ko, options, Range, DateAdjustment, Period, CriteriaGroup, template, constants) {
   function ObservationPeriodViewModel(params) {
     var self = this;
 
@@ -68,6 +69,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.observationPeriodAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {

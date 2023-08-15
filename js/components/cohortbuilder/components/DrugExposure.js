@@ -3,6 +3,7 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
+  "../InputTypes/DateAdjustment",
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./DrugExposureTemplate.html",
@@ -12,6 +13,7 @@ define([
   options,
   utils,
   Range,
+  DateAdjustment,
   Text,
   CriteriaGroup,
   template,
@@ -75,6 +77,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.drugexposureAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {

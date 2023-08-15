@@ -3,11 +3,12 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
+  "../InputTypes/DateAdjustment",
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./SpecimenTemplate.html",
   "../const"
-], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, Text, CriteriaGroup, template, constants) {
   function SpecimenViewModel(params) {
     var self = this;
     self.expression = ko.utils.unwrapObservable(params.expression);
@@ -47,6 +48,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.specimenAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {
