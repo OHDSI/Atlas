@@ -55,6 +55,7 @@
             <div class="modal-header" data-bind="text: ko.i18n('components.conceptSetBuilder.selectConceptSet', 'Select Concept Set...')"></div>
             <div class="paddedWrapper">
                 <concept-set-browser params="
+                        showModal: showCsBrowser,
                         repositoryConceptSetTableId: generateCsTableId(),
                         criteriaContext: criteriaContext,
                         cohortConceptSets: ko.observableArray(),

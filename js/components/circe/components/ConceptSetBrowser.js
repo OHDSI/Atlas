@@ -79,6 +79,10 @@ define([
 		self.repositoryConceptSetTableId = params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 
 		self.loading = ko.observable(false);
+		self.showModal = params.showModal;
+		self.isComponentUsedAsModal = ko.pureComputed(function() {
+			return(ko.isObservable(self.showModal))
+		});
 		self.repositoryConceptSets = ko.observableArray();
 		self.isProcessing = ko.observable(false);
 
@@ -125,9 +129,18 @@ define([
 
 		// dispose subscriptions
 
-		// startup actions
-		self.loadConceptSetsFromRepository(self.selectedSource()
-			.url);
+		if (self.isComponentUsedAsModal()) {
+			// Add subscription to load concept set
+			// list when the modal is displayed
+			self.showModal.subscribe(() => {
+				if (self.showModal()){
+					self.loadConceptSetsFromRepository(self.selectedSource().url);
+				}
+			});
+		} else {
+			// startup actions
+			self.loadConceptSetsFromRepository(self.selectedSource().url);
+		}
 
 		this.options = {
 			Facets: [

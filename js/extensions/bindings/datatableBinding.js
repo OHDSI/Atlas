@@ -298,7 +298,7 @@ define([
 			table.clear();
 
 			// Rebuild table from data source specified in binding
-			if (data.length > 0)
+			if (data && data.length > 0)
 				table.rows.add(data);
 
 			// drawing may access observables, which updating we do not want to trigger a redraw to the table
