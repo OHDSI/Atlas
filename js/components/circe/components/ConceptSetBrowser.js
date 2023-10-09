@@ -13,6 +13,7 @@ define([
 ], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
+		var subscriptions = [];
 
 		function defaultRepositoryConceptSetSelected(conceptSet, source) {
 			// Default functionality
@@ -132,11 +133,13 @@ define([
 		if (self.isComponentUsedAsModal()) {
 			// Add subscription to load concept set
 			// list when the modal is displayed
-			self.showModal.subscribe(() => {
-				if (self.showModal()){
-					self.loadConceptSetsFromRepository(self.selectedSource().url);
-				}
-			});
+			subscriptions.push(
+				self.showModal.subscribe(() => {
+					if (self.showModal()){
+						self.loadConceptSetsFromRepository(self.selectedSource().url);
+					}
+				})
+			);
 		} else {
 			// startup actions
 			self.loadConceptSetsFromRepository(self.selectedSource().url);
@@ -188,6 +191,10 @@ define([
 				render: datatableUtils.getCreatedByFormatter(),
 			}
 		]);
+		
+		self.dispose = () => {
+			subscriptions.forEach(sub => sub.dispose());
+		}
 
 		const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
 		this.pageLength = params.pageLength || pageLength;
