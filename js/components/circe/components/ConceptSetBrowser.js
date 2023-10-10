@@ -13,7 +13,6 @@ define([
 ], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
-		var subscriptions = [];
 
 		function defaultRepositoryConceptSetSelected(conceptSet, source) {
 			// Default functionality
@@ -80,10 +79,6 @@ define([
 		self.repositoryConceptSetTableId = params.repositoryConceptSetTableId || "repositoryConceptSetTable";
 
 		self.loading = ko.observable(false);
-		self.showModal = params.showModal;
-		self.isComponentUsedAsModal = ko.pureComputed(function() {
-			return(ko.isObservable(self.showModal))
-		});
 		self.repositoryConceptSets = ko.observableArray();
 		self.isProcessing = ko.observable(false);
 
@@ -130,20 +125,8 @@ define([
 
 		// dispose subscriptions
 
-		if (self.isComponentUsedAsModal()) {
-			// Add subscription to load concept set
-			// list when the modal is displayed
-			subscriptions.push(
-				self.showModal.subscribe(() => {
-					if (self.showModal()){
-						self.loadConceptSetsFromRepository(self.selectedSource().url);
-					}
-				})
-			);
-		} else {
-			// startup actions
-			self.loadConceptSetsFromRepository(self.selectedSource().url);
-		}
+		// startup actions
+		self.loadConceptSetsFromRepository(self.selectedSource().url);
 
 		this.options = {
 			Facets: [
@@ -192,10 +175,6 @@ define([
 			}
 		]);
 		
-		self.dispose = () => {
-			subscriptions.forEach(sub => sub.dispose());
-		}
-
 		const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
 		this.pageLength = params.pageLength || pageLength;
 		this.lengthMenu = params.lengthMenu || lengthMenu;
