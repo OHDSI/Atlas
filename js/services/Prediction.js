@@ -9,28 +9,30 @@ define(function (require, exports) {
 		return httpService.doGet(config.webAPIRoot + predictionEndpoint).catch(authApi.handleAccessDenied);
 	}
 
-	function savePrediction(analysis) {
+	async function savePrediction(analysis) {
 		const url = config.webAPIRoot + predictionEndpoint + (analysis.id || "");
-		let promise;
+		let result;
 		if (analysis.id) {
-			promise = httpService.doPut(url, analysis);
-		} else {
-			promise = httpService.doPost(url, analysis);
-		}
-		promise.catch((error) => {
-			console.log("Error: " + error);
-			authApi.handleAccessDenied(error);
-		});
-
-		return promise;
-	}
-
-	function copyPrediction(id) {
-		return httpService.doGet(config.webAPIRoot + predictionEndpoint + (id || "") + "/copy")
-			.catch((error) => {
+			result = await httpService.doPut(url, analysis).catch((error) => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
 			});
+		} else {
+			result = authApi.executeWithRefresh(httpService.doPost(url, analysis).catch((error) => {
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
+			}));
+		}
+
+		return result;
+	}
+
+	function copyPrediction(id) {
+		return authApi.executeWithRefresh(httpService.doGet(config.webAPIRoot + predictionEndpoint + (id || "") + "/copy")
+			.catch((error) => {
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
+			}));
 	}
 
 	function deletePrediction(id) {
@@ -42,11 +44,11 @@ define(function (require, exports) {
 	}
 
 	function getPrediction(id) {
-		return httpService.doGet(config.webAPIRoot + predictionEndpoint + id)
+		return authApi.executeWithRefresh(httpService.doGet(config.webAPIRoot + predictionEndpoint + id)
 			.catch((error) => {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
-			});
+			}));
 	}
 
 	function exportPrediction(id) {
@@ -72,11 +74,11 @@ define(function (require, exports) {
 				.catch(error => authApi.handleAccessDenied(error));
 	}
 
-    function importPrediction(specification) {
-        return httpService
-            .doPost(config.webAPIRoot + predictionEndpoint + "import", specification)
-            .then(res => res.data);
-    }
+	async function importPrediction(specification) {
+			return authApi.executeWithRefresh(httpService
+					.doPost(config.webAPIRoot + predictionEndpoint + "import", specification)
+					.then(res => res.data));
+	}
 
 	function exists(name, id) {
 		return httpService

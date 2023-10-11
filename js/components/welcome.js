@@ -3,7 +3,7 @@ define([
     'text!./welcome.html',
     'appConfig',
     'services/AuthAPI',
-	  'utils/BemHelper',
+	'utils/BemHelper',
     'atlas-state',
     'services/MomentAPI',
     'less!welcome.less'
@@ -43,7 +43,7 @@ define([
         });
         self.tokenExpired = authApi.tokenExpired;
         self.isLoggedIn = authApi.isAuthenticated;
-			  self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
+        self.isPermittedRunAs = ko.computed(() => self.isLoggedIn() && authApi.isPermittedRunAs());
         self.runAsLogin = ko.observable();
         self.isGoogleIapAuth = ko.computed(() => authApi.authProvider() === authApi.AUTH_PROVIDERS.IAP);
         self.status = ko.computed(function () {
@@ -61,11 +61,17 @@ define([
             return 'Not logged in';
         });
         self.authProviders = appConfig.authProviders;
+        self.loginPlaceholder = ko.observable();
+        self.passwordPlaceholder = ko.observable();
 
         self.getAuthProvider = name => self.authProviders.filter(ap => ap.name === name)[0];
 
-        self.toggleCredentialsForm =function () {
+        self.toggleCredentialsForm = function (provider) {
             self.isDbLoginAtt(!self.isDbLoginAtt());
+            if (self.isDbLoginAtt()) {
+                self.loginPlaceholder(provider ? provider.loginPlaceholder : null);
+                self.passwordPlaceholder(provider ? provider.passwordPlaceholder : null);
+            }
         };
 
         self.getAuthorizationHeader = function() {
@@ -105,31 +111,34 @@ define([
         };
 
         self.signin = function (name) {
-            if(self.getAuthProvider(name).isUseCredentialsForm){
-                self.authUrl(self.getAuthProvider(name).url);
-                self.toggleCredentialsForm();
-            }
-            else {
-                var authProvider = self.getAuthProvider(name);
-                var loginUrl = self.serviceUrl + authProvider.url;
-
-            if (authProvider.ajax == true) {
-                self.isInProgress(true);
-                $.ajax({
-                    url: loginUrl,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    success: self.onLoginSuccessful,
-                    error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.loginFailed', 'Login failed')()),
-                });
+            const selectedProvider = self.getAuthProvider(name);
+            if (selectedProvider.isUseCredentialsForm) {
+                self.authUrl(selectedProvider.url);
+                self.toggleCredentialsForm(selectedProvider);
             } else {
-                const parts = window.location.href.split('#');
-                document.location = parts.length === 2 ? loginUrl + '?redirectUrl=' + parts[1] : loginUrl;
-            }
-         }
-     };
+                const loginUrl = self.serviceUrl + selectedProvider.url;
 
+                if (selectedProvider.ajax == true) {
+                    self.isInProgress(true);
+                    $.ajax({
+                        url: loginUrl,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        success: self.onLoginSuccessful,
+                        error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.loginFailed', 'Login failed')()),
+                    });
+                } else {
+                    const parts = window.location.href.split('#');
+                    document.location = parts.length === 2 ? loginUrl + '?redirectUrl=' + parts[1] : loginUrl;
+                }
+            }
+        };
+
+        if (self.authProviders.length === 1 && !self.isLoggedIn()) {
+            self.signin(self.authProviders[0].name);
+        }
+        
         self.signout = function () {
             self.isInProgress(true);
             if (authApi.authClient() === authApi.AUTH_CLIENTS.SAML) {

@@ -68,6 +68,9 @@ define(function (require, exports) {
 	var dateRange = require('./components/DateRange');
 	ko.components.register('date-range', dateRange);
 	
+	var dateAdjustment = require('./components/DateAdjustment');
+	ko.components.register('date-adjustment', dateAdjustment);
+
 	var windowInput = require('./components/WindowInput');
 	ko.components.register('window-input',windowInput);
 	

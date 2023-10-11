@@ -1,0 +1,61 @@
+.panel-default, .panel-primary {
+    margin: 10px 0;
+  .panel-heading {
+    line-height: 30px;
+    font-size: 14px;
+  }
+  .panel-heading  span:before {
+    font-family: 'Glyphicons Halflings';
+    float: right;
+    transition: all 0.5s;
+  }
+  .panel-heading.active span:before {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  .panel-subheading {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 12px;
+  }
+  .panel-heading-collapsible {
+    cursor: pointer;
+  }
+}
+
+.compare-results-same {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  padding: 20px 0;
+}
+
+.upload-container {
+  display: inline-block;
+  position: relative;
+
+  label {
+    border-radius: 0;
+  }
+}
+
+input[type=file] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  position: absolute;
+  z-index: -10;
+}
+
+.conceptTable .fa-exclamation-triangle {
+  font-size: 12px;
+  cursor: help;
+
+  &.id-not-found {
+    color: red;
+  }
+  &.name-mismatch {
+    color: #dd9900;
+  }
+}

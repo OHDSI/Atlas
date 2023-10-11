@@ -32,48 +32,54 @@ define(function (require, exports) {
 		return promise;
 	}
 	
-	function getAnalysis(id) {
-		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id}`)
+	async function getAnalysis(id) {
+		return authApi.executeWithRefresh(httpService.doGet(`${config.webAPIRoot}ir/${id}`)
 			.then(parse)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
-			});
-
-		return promise;
+			}));
 	}
 		
-	function saveAnalysis(definition) {
+	async function saveAnalysis(definition) {
 		var definitionCopy = JSON.parse(ko.toJSON(definition));
 		
 		if (typeof definitionCopy.expression != 'string')
 			definitionCopy.expression = JSON.stringify(definitionCopy.expression);
 		
 		const url = `${config.webAPIRoot}ir/${definitionCopy.id || ""}`;
-		let promise = new Promise(r => r());
+		let result;
 		if (definitionCopy.id) {
-			promise = httpService.doPut(url, definitionCopy);
+			result = await httpService
+				.doPut(url, definitionCopy)
+				.catch(response => {
+					authApi.handleAccessDenied(response);
+					return response;
+				})
+				.then(parse);
 		} else {
-			promise = httpService.doPost(url, definitionCopy);
+			result = authApi.executeWithRefresh(httpService
+				.doPost(url, definitionCopy)
+				.catch(response => {
+					authApi.handleAccessDenied(response);
+					return response;
+				})
+				.then(parse));
 		}
 
-		return promise
-			.then(parse)
-			.catch(response => {
-				authApi.handleAccessDenied(response);
-				return response;
-			});
+		return result;
+
 	}
 	
-	function copyAnalysis(id) {
+	async function copyAnalysis(id) {
 		const promise = httpService.doGet(`${config.webAPIRoot}ir/${id || ""}/copy`);
 		
-		return promise
+		return authApi.executeWithRefresh(promise
 			.then(parse)
 			.catch(response => {
 				authApi.handleAccessDenied(response);
 				return response;
-			});
+			}));
 	}	
 	
 	function deleteAnalysis(id) {

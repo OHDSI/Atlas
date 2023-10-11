@@ -33,6 +33,13 @@
 				<col style="width:20px" />
 				<col />
 			</colgroup>
+			<tr data-bind="if: DateAdjustment() != null, visible: DateAdjustment() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('DateAdjustment') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<span data-bind="text: ko.i18n('components.conditionDose.attributeText_13', 'with date adjustment:')"></span>
+					<date-adjustment params="DateAdjustment: DateAdjustment"></date-adjustment>
+				</td>
+			</tr>
 			<tr data-bind="if: First() != null, visible: First() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('First') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>

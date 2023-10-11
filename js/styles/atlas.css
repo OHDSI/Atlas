@@ -2036,7 +2036,7 @@ button i.fa.fa-question-circle {
 }
 
 
-div#wrapper_ohdsi {
+div.wrapper_ohdsi {
   background-color: #eee;
   width:175px;
   text-align: center;
@@ -2051,11 +2051,11 @@ div#wrapper_ohdsi {
   flex-grow: 0;
 }
 
-div#wrapper_ohdsi img {
+div.wrapper_ohdsi img {
   width:100px;
 }
 
-div#wrapper_ohdsi a {
+div.wrapper_ohdsi a {
  text-decoration:underline;
  color: #003142;
 }

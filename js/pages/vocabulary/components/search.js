@@ -14,7 +14,6 @@ define([
 	'utils/CommonUtils',
 	'services/Vocabulary',
 	'components/conceptset/ConceptSetStore',
-	'const',
 	'components/tabs',
 	'components/panel',
 	'faceted-datatable',
@@ -38,7 +37,6 @@ define([
 	commonUtils,
 	vocabularyProvider,
 	ConceptSetStore,
-	globalConstants,
 ) {
 	class Search extends AutoBind(Component) {
 		constructor(params) {
@@ -265,14 +263,14 @@ define([
 					});
 			}
 
-			this.currentResultSource = ko.observable();
+			this.currentResultSourceKey = ko.observable();
 			this.resultSources = ko.computed(() => {
 					const resultSources = [];
 					sharedState.sources().forEach((source) => {
 							if (source.hasResults && authApi.isPermittedAccessSource(source.sourceKey)) {
 									resultSources.push(source);
 									if (source.resultsUrl === sharedState.resultsUrl()) {
-											this.currentResultSource(source);
+											this.currentResultSourceKey(source.sourceKey);
 									}
 							}
 					})
@@ -434,7 +432,7 @@ define([
 					this.searchExecuted(true); // signals 'no results found' message
 					return;
 				}
-				await vocabularyProvider.loadDensity(recommendedConcepts, this.currentResultSource().sourceKey,(v)=>parseInt(v,10)); // formatting values as ints
+				await vocabularyProvider.loadDensity(recommendedConcepts, this.currentResultSourceKey(),(v)=>parseInt(v,10)); // formatting values as ints
 				recommendedConcepts.sort((a,b) => b.DESCENDANT_RECORD_COUNT - a.DESCENDANT_RECORD_COUNT); // sort descending order by DRC
 				const conceptSetStore = ConceptSetStore.repository();
 				const items = commonUtils.buildConceptSetItems([recommendedConcepts[0]], {includeDescendants: true});
@@ -470,7 +468,7 @@ define([
 				throw { message: 'No results found', results };
 			}
 
-			const promise = vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
+			const promise = vocabularyProvider.loadDensity(results, this.currentResultSourceKey());
 			promise.then(() => {
 				this.data(this.normalizeSearchResults(results));
 			});
@@ -478,12 +476,8 @@ define([
 			return promise;
 		}
 
-		addConcepts(options, conceptSetStore = ConceptSetStore.repository()) {
-			sharedState.activeConceptSet(conceptSetStore);
-			const concepts = commonUtils.getSelectedConcepts(this.data);
-			const items = commonUtils.buildConceptSetItems(concepts, options);
-			conceptSetUtils.addItemsToConceptSet({items, conceptSetStore});
-			commonUtils.clearConceptsSelectionState(this.data);
+		getSelectedConcepts() {
+			return commonUtils.getSelectedConcepts(this.data)
 		}
 
 		getVocabularies() {
@@ -520,10 +514,12 @@ define([
 				return;
 			}
 
+			this.currentResultSourceKey(event.target.value);
+
 			this.recordCountsRefreshing(true);
 			this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, true));
 			const results = this.data();
-			await vocabularyProvider.loadDensity(results, this.currentResultSource().sourceKey);
+			await vocabularyProvider.loadDensity(results, this.currentResultSourceKey());
 			this.data(results);
 			this.columnHeadersWithIcons.forEach(c => this.toggleCountColumnHeaderSpin(c, false));
 			this.recordCountsRefreshing(false);

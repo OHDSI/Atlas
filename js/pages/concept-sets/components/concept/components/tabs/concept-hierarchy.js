@@ -31,7 +31,6 @@ define([
 			this.currentConceptId = params.currentConceptId;
 			this.hasInfoAccess = params.hasInfoAccess;
 			this.isAuthenticated = params.isAuthenticated;
-			this.addConcepts = params.addConcepts;
 			this.tableOptions = commonUtils.getTableOptions('M');
 			this.hierarchyPillMode = ko.observable('all');
 			this.relatedConcepts = ko.observableArray([]);
@@ -126,6 +125,10 @@ define([
 
 			this.currentConceptArray = ko.observableArray();
 			this.loadHierarchyConcepts();
+		}
+
+		getSelectedConcepts(concepts) {
+			return commonUtils.getSelectedConcepts(concepts);
 		}
 
 		hasRelationship(concept, relationships) {

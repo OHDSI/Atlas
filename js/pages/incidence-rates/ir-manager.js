@@ -85,6 +85,7 @@ define([
 			this.selectedAnalysisId = sharedState.IRAnalysis.selectedId;
 			this.previewVersion = sharedState.IRAnalysis.previewVersion;
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
+			this.enablePermissionManagement = config.enablePermissionManagement;	 
 			this.exporting = ko.observable();
 			this.isAuthenticated = ko.pureComputed(() => {
 				return authAPI.isAuthenticated();
@@ -465,7 +466,7 @@ define([
 			if (!this.pollId) {
 				this.pollId = JobPollService.add({
 					callback: silently => this.pollForInfo({ silently }),
-					interval: 10000,
+					interval: config.pollInterval,
 					isSilentAfterFirstCall: true,
 				});
 			}
@@ -581,7 +582,11 @@ define([
 
 		removeResult(analysisResult) {
 			if (confirm(ko.i18nformat('ir.deleteResultConfirmation', 'Do you really want to remove result of <%=name%>?', {name:analysisResult.source.sourceName})())) {
-				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then(() => {
+				IRAnalysisService.deleteInfo(this.selectedAnalysisId(), analysisResult.source.sourceKey).then((response) => {
+					if (response.status === 403) {
+						alert(ko.i18n('ir.deleteResult403Error', 'Only Moderator role can delete generation results. Please check your role.')());
+						return;
+					}
 					const source = this.sources().find(s => s.source.sourceId === analysisResult.source.sourceId);
 					source.info(null);
 				});

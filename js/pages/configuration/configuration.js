@@ -77,6 +77,7 @@ define([
       });
 
       this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+      this.canManageTags = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedTagsManagement());
       this.canClearServerCache = ko.pureComputed(() => {
         return config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedClearServerCache()
       });
@@ -86,7 +87,7 @@ define([
           this.checkJobs();
           this.checkReindexJob();
         },
-        interval: 5000
+        interval: config.pollInterval
       });
 
       this.searchAvailable = ko.observable(false);

@@ -194,10 +194,11 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			super(params);
 
 			this.previewVersion = sharedState.CohortDefinition.previewVersion;
-
+		    
 			this.pollTimeoutId = null;
 			this.authApi = authApi;
 			this.config = config;
+			this.enablePermissionManagement = config.enablePermissionManagement;	    
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.commonUtils = commonUtils;
 			this.isLoading = ko.observable(false);
@@ -579,13 +580,39 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				]
 			};
 
+
+			this.sourcesTableOptions = commonUtils.getTableOptions('S');
+			this.sourcesColumns = [{
+				title: `<span>${ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name')()}</span>`,
+				data: 'name'
+			}, {
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationStatus', 'Generation Status'),
+				data: 'status'
+			}, {
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.people', 'People'),
+				data: 'personCount'
+			}, {
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.records', 'Records'),
+				data: 'recordCount'
+			}, {
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generated', 'Generated'),
+				data: 'startTime'
+			}, {
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration'),
+				data: 'executionDuration'
+			}, {
+				sortable: false,
+				className: 'generation-buttons-column',
+				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
+			}];
+
 			this.stopping = ko.pureComputed(() => this.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {}));
 			this.isSourceStopping = (source) => this.stopping()[source.sourceKey];
 
 			this.pollForInfoPeriodically = () => {
 				this.pollTimeoutId = PollService.add({
 					callback: () => this.pollForInfo(),
-					interval: 10000,
+					interval: config.pollInterval,
 				});
 			}
 
@@ -654,6 +681,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.currentJob = ko.observable();
 			this.reportingSourceStatusAvailable = ko.observable(false);
 			this.reportingSourceStatusLoading = ko.observable(false);
+			this.showOnlySourcesWithResults = ko.observable(false);
 			this.isGenerated = ko.observable(false);
 			this.reportOptionCaption = ko.pureComputed(() => {
 				return this.reportingSourceStatusLoading()
@@ -890,7 +918,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		startPolling(cd, source) {
 			this.pollId = PollService.add({
 				callback: () => this.queryHeraclesJob(cd, source),
-				interval: 10000,
+				interval: config.pollInterval,
 			});
 		}
 

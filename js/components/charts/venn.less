@@ -1,0 +1,53 @@
+.venn-chart {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	.venn-legend {
+		position: absolute;
+		width: 100%;
+		left: 70%;
+	}
+
+	.container {
+		position:relative;
+		font-size: 10px;
+	}
+
+	.export-button {
+		display:none;
+		position:absolute;
+		top:0px;
+		right:32px;
+	}
+	.exportSvg-button {
+		display:none;
+		position:absolute;
+		top:0px;
+		right:0px;
+	}
+	.container:hover > .export-button, .container:hover > .exportSvg-button {
+		display:block;
+	}
+}
+
+.venntooltip {
+	position: absolute;
+	font-size: 14px;
+	min-width: 120px;
+	min-height: 16px;
+	max-width: 600px;
+	max-height: 500px;
+	background: #333;
+	color: #ddd;
+	border: 0px;
+	border-radius: 8px;
+	padding: 20px;
+	overflow-y: hidden;
+	.title {
+		font-weight: bold;
+		font-size: 16px;
+	}
+}
+#venn {
+	text-align: center;
+}

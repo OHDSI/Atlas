@@ -55,7 +55,7 @@
 	<div class="concept-add-container">
 			<concept-add-box params="{
 				canSelectSource: true,
-				onSubmit: $component.addConcept,
+        		concepts: ko.observableArray([$component.currentConcept()]),
 			}"></concept-add-box>
 	</div>
 	<!-- /ko -->

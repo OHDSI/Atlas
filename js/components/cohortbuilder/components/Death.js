@@ -3,7 +3,7 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
-  "../InputTypes/Text",
+  "../InputTypes/DateAdjustment",
   "../CriteriaGroup",
   "text!./DeathTemplate.html",
   "../const",
@@ -12,7 +12,7 @@ define([
   options,
   utils,
   Range,
-  Text,
+  DateAdjustment,
   CriteriaGroup,
   template,
   constants
@@ -46,6 +46,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.deathAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {
@@ -88,11 +95,11 @@ define([
       'components.conditionDeath.indexDataText',
       'The index date refers to the death event of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionDeath.anyDeath', 'Any Death')
-        )
+        ))
       }
     );
   }

@@ -7,6 +7,7 @@ define([
 	'atlas-state',
 	'./utils',	
 	'components/conceptAddBox/concept-add-box',
+	'components/dataSourceSelect'
 ], function(
 	ko,
 	view,
@@ -23,6 +24,7 @@ define([
 			this.loading = params.loading;
 			this.canEdit = params.canEdit;
 			this.conceptSetStore = params.conceptSetStore;
+			this.selectedSource = params.selectedSource;
 			
 			this.recommendedConcepts = this.conceptSetStore.recommendedConcepts;
 			this.recommendedConceptOptions = ko.pureComputed(() => {
@@ -38,6 +40,10 @@ define([
 			);
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('M');
 			this.canAddConcepts = ko.pureComputed(() => this.recommendedConcepts() && this.recommendedConcepts().some(item => item.isSelected()));
+		}
+
+		getSelectedConcepts() {
+			return commonUtils.getSelectedConcepts(this.recommendedConcepts);
 		}
 
 		addConcepts(options) {

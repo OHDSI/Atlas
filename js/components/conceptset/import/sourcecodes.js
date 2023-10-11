@@ -117,6 +117,10 @@ define([
 			};
 		}
 
+		getSelectedConcepts() {
+			return commonUtils.getSelectedConcepts(this.loadedConcepts);
+		}
+
 		async runImport(options) {
 			this.appendConcepts(this.loadedConcepts().filter(c => c.isSelected()), options);
 		}

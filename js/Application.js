@@ -16,7 +16,6 @@ define(
 		'utils/CommonUtils',
 		'utils/BemHelper',
 		'const',
-		'databindings',
 		'less!app.less',
 	],
 	(
@@ -61,6 +60,11 @@ define(
 					return sharedState.appInitializationStatus() != constants.applicationStatuses.initializing;
 				});
 
+				this.toggleBrowserWarning = function(bowser) {
+					const browserInfo = bowser.getParser(navigator.userAgent).getBrowser();
+					const isBrowserSupported = browserInfo.name.toLowerCase() === 'chrome' && parseInt(browserInfo.version) > 63;
+					return !config.disableBrowserCheck && !isBrowserSupported;
+				}
 
 				this.appInitializationStatus = sharedState.appInitializationStatus;
 				this.noSourcesAvailable = ko.pureComputed(() => {
@@ -89,7 +93,9 @@ define(
 					}
 
 					return pageTitle;
-				})
+				});
+				this.companyInfoTemplate = config.companyInfoCustomHtmlTemplate;
+				this.showCompanyInfo = config.showCompanyInfo;
 			}
 
 			/**
@@ -116,7 +122,11 @@ define(
 
 					if (config.userAuthenticationEnabled) {
 						try {
-							await authApi.loadUserInfo();
+							// Routes to welcome are part of auth flow, loadUserInfo in this case is unnecessary and fails. 
+							// More importantly it can trigger an infinite loop when skipLoginEnabled is enabled.
+							if (!window.location.href.includes("/welcome/")) {
+								await authApi.loadUserInfo();
+							}
 						} catch (e) {
 							reject(e.message);
 						}

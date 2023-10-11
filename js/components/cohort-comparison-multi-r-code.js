@@ -4,7 +4,6 @@ define([
 	'appConfig',
 	'components/cohortcomparison/ComparativeCohortAnalysis',
 	'services/VocabularyProvider',
-	'prism',
 ],
 	function (
 		ko,

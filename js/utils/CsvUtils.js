@@ -1,5 +1,5 @@
 define(
-  ['file-saver'],
+  ['file-saver','papaparse'],
   function() {
     class CsvUtils {
       /**
@@ -81,8 +81,37 @@ define(
         const blob = new Blob([csvText], {type: "text/csv;charset=utf-8"});
         saveAs(blob, fileName || 'data.csv');
       }
-    }
 
+      static csvToJson(file, requiredHeader = null) {
+        const Papa = require('papaparse');
+        const regex = /^([\w|\W])+(csv|application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet|application\/vnd\.ms-excel)$/;//regex for the check valid files
+        if (!regex.test(file.type)) {
+          return alert("Select a valid CSV File.");
+        }
+        const reader = new FileReader();
+
+        const parsedFile = new Promise((resolve, reject) => {
+          reader.onload = function (e) {
+            const file =  Papa.parse(e.target.result, {
+              header: true,
+              skipEmptyLines: true,
+            });
+
+            if (requiredHeader) {
+              const header = requiredHeader.every(head => file.meta.fields.includes(head));
+              if (!header) {
+                alert('Select a valid CSV File with required headers');
+                reject('Select a valid CSV File with required headers');
+              }
+            }
+            resolve(file.data);
+          };
+          reader.readAsText(file);
+        });
+        return parsedFile;
+      }
+
+    }
 
     return CsvUtils;
   }

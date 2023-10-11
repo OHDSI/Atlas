@@ -88,6 +88,9 @@ define(function(require, exports) {
                 if (err.status === 401) {
                     console.log('User is not authed');
                     subject(null);
+                    if (config.enableSkipLogin) {
+                        signInOpened(true);
+                    }
                     resolve();
                 } else {
                     reject('Cannot retrieve user info');
@@ -479,6 +482,10 @@ define(function(require, exports) {
         return isPermitted(`cache:clear:get`);
     };
 
+    const isPermittedTagsManagement = function () {
+        return isPermitted(`tag:management`);
+    };
+
     const isPermittedRunAs = () => isPermitted('user:runas:post');
 
     const isPermittedViewDataSourceReport = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:get`);
@@ -507,6 +514,12 @@ define(function(require, exports) {
           error,
         });
     };
+
+    const executeWithRefresh = async function(httpPromise) {
+        const result = await httpPromise;
+        await refreshToken();
+        return result;
+    }
 
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
@@ -596,6 +609,7 @@ define(function(require, exports) {
         isPermittedImportUsers,
         hasSourceAccess,
         isPermittedRunAs,
+        isPermittedTagsManagement,
         isPermittedClearServerCache,
         isPermittedViewDataSourceReport,
         isPermittedViewDataSourceReportDetails,
@@ -603,6 +617,7 @@ define(function(require, exports) {
         loadUserInfo,
         TOKEN_HEADER,
         runAs,
+        executeWithRefresh,
     };
 
     return api;

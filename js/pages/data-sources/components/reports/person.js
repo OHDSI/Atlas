@@ -5,7 +5,7 @@ define([
     'atlascharts',
     'utils/CommonUtils',
 	'utils/ChartUtils',
-	'pages/data-sources/classes/Report',
+	'components/reports/classes/Report',
 	'components/Component',
 	'components/heading',
 	'components/charts/histogram',

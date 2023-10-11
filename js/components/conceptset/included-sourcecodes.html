@@ -1,5 +1,6 @@
 <loading params="status: ko.i18n('components.conceptSet.loadingIncludedSourcecodes', 'Loading Included Sourcecodes')" data-bind="visible: loading()"></loading>
 <div data-bind="hidden: loading">
+    <datasource-select params="{conceptSetStore: $component.conceptSetStore, selectedSource: $component.selectedSource, tab: 'included-sourcecodes'}"></datasource-select>
     <faceted-datatable params="{
         columns: $component.relatedSourcecodesColumns,
         options: $component.relatedSourcecodesOptions,
@@ -10,6 +11,6 @@
     }"></faceted-datatable>
     <concept-add-box params="{
         isActive: canAddConcepts,
-        onSubmit: addConcepts
+        concepts: getSelectedConcepts,
     }"></concept-add-box>
 </div>

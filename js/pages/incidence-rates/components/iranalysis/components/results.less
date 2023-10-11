@@ -1,5 +1,12 @@
 .ir-analysis-results {
 
+  &__generation-heading {
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: 500;
+    margin: 12px 0 3px 8px;
+  }
+
   &__header {
     align-items: center;
     display: flex;
@@ -7,11 +14,31 @@
     margin: 0.5rem 0.5rem 2rem 0.75rem;
   }
 
+  &__only-results-checkbox {
+    margin-left: 8px;
+  }
+
+  &__sources-table {
+    thead tr th, tbody tr:first-child td {
+      padding: 4px 10px;
+    }
+    tbody tr td {
+      padding: 0 10px 4px;
+    }
+    .generation-buttons-column {
+      text-align: right;
+    }
+    .generation-buttons {
+      white-space: nowrap;
+    }
+  }
+
   &__generate-btn {
     margin-right: 1.5rem;
   }
 
   &__tbl-container {
+    margin-left: 8px;
     &--short {
       max-height: 21rem;
       overflow: auto;

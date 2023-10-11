@@ -4,6 +4,7 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/Text",
+  "../InputTypes/DateAdjustment",
   "../CriteriaGroup",
   "text!./DeviceExposureTemplate.html",
   "../const",
@@ -13,6 +14,7 @@ define([
   utils,
   Range,
   Text,
+  DateAdjustment,
   CriteriaGroup,
   template,
   constants
@@ -76,6 +78,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.deviceAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {
@@ -158,11 +167,11 @@ define([
       'components.conditionDevice.indexDataText',
       'The index date refers to the device exposure of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionDevice.anyDevice', 'Any Device')
-        ),
+        ))
       }
     );
   }

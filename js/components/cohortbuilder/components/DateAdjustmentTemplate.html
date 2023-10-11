@@ -1,0 +1,8 @@
+starting with <select
+  data-bind="options: $component.dateOptions, optionsText: 'name', optionsValue: 'id', value: DateAdjustment().StartWith"></select>
++ <input class="numericInputField" style="width:25px" 
+  data-bind="value: DateAdjustment().StartOffset.numeric(), autoGrowInput: {comfortZone: 8}"></input> days
+and ending with <select
+data-bind="options: $component.dateOptions, optionsText: 'name', optionsValue: 'id', value: DateAdjustment().EndWith"></select>
++ <input class="numericInputField" style="width:25px" 
+  data-bind="value: DateAdjustment().EndOffset.numeric(), autoGrowInput: {comfortZone: 8}"></input> days

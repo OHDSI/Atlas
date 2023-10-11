@@ -1,23 +1,30 @@
 define(function () {
-	var appConfig = {};
+  var appConfig = {};
 
-	// default configuration
-	appConfig.api = {
-		name: 'Local',
-		url: 'http://localhost:8080/WebAPI/'
+  // default configuration
+  appConfig.api = {
+    name: 'Local',
+    url: 'http://localhost:8080/WebAPI/'
   };
+  appConfig.disableBrowserCheck = false; // browser check will happen by default
+  appConfig.enablePermissionManagement = true; // allow UI to assign read/write permissions to entities
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
-	appConfig.cohortComparisonResultsEnabled = false;
-	appConfig.userAuthenticationEnabled = false;
-	appConfig.plpResultsEnabled = false;
-	appConfig.useExecutionEngine = false;
-	appConfig.viewProfileDates = false;
+  appConfig.cohortComparisonResultsEnabled = false;
+  appConfig.userAuthenticationEnabled = false;
+  appConfig.enableSkipLogin = false; // automatically opens login window when user is not authenticated
+  appConfig.plpResultsEnabled = false;
+  appConfig.useExecutionEngine = false;
+  appConfig.viewProfileDates = false;
   appConfig.enableCosts = false;
-	appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
-	appConfig.supportMail = "atlasadmin@your.org";
-	appConfig.defaultLocale = "en";
-	appConfig.authProviders = [
+  appConfig.supportUrl = "https://github.com/ohdsi/atlas/issues";
+  appConfig.supportMail = "atlasadmin@your.org";
+  appConfig.feedbackContacts = 'For access or questions concerning the Atlas application please contact:';
+  appConfig.feedbackCustomHtmlTemplate = '';
+  appConfig.companyInfoCustomHtmlTemplate = '';
+  appConfig.showCompanyInfo = true;
+  appConfig.defaultLocale = "en";
+  appConfig.authProviders = [
     {
       "name": "Windows",
       "url": "user/login/windows",
@@ -59,7 +66,7 @@ define(function () {
       "url": "user/login/db",
       "ajax": true,
       "icon": "fa fa-database",
-      "isUseCredentialsForm":true
+      "isUseCredentialsForm": true
     },
     {
       "name": "LDAP",
@@ -88,7 +95,7 @@ define(function () {
   appConfig.xssOptions = {
     "whiteList": {
       "a": ["href", "class", "data-bind", "data-toggle", "aria-expanded"],
-			"button": ["class", "type", "data-toggle", "aria-expanded"],
+      "button": ["class", "type", "data-toggle", "aria-expanded"],
       "span": ["class", "data-bind"],
       "i": ["class", "id", "aria-hidden"],
       "div": ["class", "style", "id"],
@@ -104,7 +111,7 @@ define(function () {
     "stripIgnoreTagBody": ['script'],
   };
   appConfig.cemOptions = {
-    "evidenceLinkoutSources": ["medline_winnenburg","splicer"],
+    "evidenceLinkoutSources": ["medline_winnenburg", "splicer"],
     "sourceRestEndpoints": {
       "medline_winnenburg": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={@ids}&retmode=json&tool=ohdsi_atlas&email=admin@ohdsi.org",
     },
@@ -114,47 +121,49 @@ define(function () {
     },
   };
   appConfig.enableTermsAndConditions = true;
-	appConfig.webAPIRoot = appConfig.api.url;
-	// todo: move "userAuthenticationEnabled", "plpResultsEnabled", etc into the object
-	appConfig.features = {
-	  locationDistance: false,
-	};
+  appConfig.webAPIRoot = appConfig.api.url;
+  // todo: move "userAuthenticationEnabled", "plpResultsEnabled", etc into the object
+  appConfig.features = {
+    locationDistance: false,
+  };
 
-   appConfig.externalLibraries = [];
+  appConfig.externalLibraries = [];
 
-   appConfig.commonDataTableOptions = {
-     pageLength: {
-       ONLY_5: 5,
-       XS: 5,
-       S: 10,
-       M: 25,
-       L: 50,
-     },
-     lengthMenu: {
-       ONLY_5: [[5], ['5']],
-       XS: [
-         [5, 10],
-         ['5', '10'],
-       ],
-       S: [
+  appConfig.commonDataTableOptions = {
+    pageLength: {
+      ONLY_5: 5,
+      XS: 5,
+      S: 10,
+      M: 25,
+      L: 50,
+    },
+    lengthMenu: {
+      ONLY_5: [[5], ['5']],
+      XS: [
+        [5, 10],
+        ['5', '10'],
+      ],
+      S: [
         [10, 15, 20, 25, 50, -1],
         ['10', '15', '20', '25', '50', 'All'],
-       ],
-       M: [
+      ],
+      M: [
         [10, 25, 50, 100, -1],
         ['10', '25', '50', '100', 'All'],
-       ],
-       L: [
+      ],
+      L: [
         [25, 50, 75, 100, -1],
         ['25', '50', '75', '100', 'All'],
-       ],
-     }
-   };
+      ],
+    }
+  };
 
-   appConfig.enablePersonCount = true;
+  appConfig.enablePersonCount = true;
 
-   // "Tagging" section is hidden by default
-   appConfig.enableTaggingSection = false;
+  // "Tagging" section is hidden by default
+  appConfig.enableTaggingSection = false;
 
-	return appConfig;
+  appConfig.refreshTokenThreshold = 1000 * 60 * 60 * 4; // refresh auth token if it will expire within 4 hours
+
+  return appConfig;
 });

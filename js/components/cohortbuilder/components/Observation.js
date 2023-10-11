@@ -3,11 +3,12 @@ define([
   "../options",
   "../utils",
   "../InputTypes/Range",
+  "../InputTypes/DateAdjustment",
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./ObservationTemplate.html",
   "../const"
-], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, Text, CriteriaGroup, template, constants) {
   function ObservationViewModel(params) {
     var self = this;
     self.addActions = [
@@ -43,6 +44,13 @@ define([
                 Op: "lt",
               })
             );
+        },
+      },
+      {
+        ...constants.observationAttributes.addDateAdjustment,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DateAdjustment() == null) self.Criteria.DateAdjustment(new DateAdjustment());
         },
       },
       {
@@ -149,11 +157,11 @@ define([
       'components.conditionObservation.indexDataText',
       'The index date refers to the observation of <%= conceptSetName %>.',
       {
-        conceptSetName: utils.getConceptSetName(
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
           self.Criteria.CodesetId,
           self.expression.ConceptSets,
           ko.i18n('components.conditionObservation.anyObservation', 'Any Observation')
-        )
+        ))
       }
     );
   }

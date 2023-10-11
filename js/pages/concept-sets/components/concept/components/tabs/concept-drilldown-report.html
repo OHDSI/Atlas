@@ -1,0 +1,19 @@
+<div class="paddedWrapper">
+	<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasInfoAccess"></access-denied>
+	<div class="row">
+		<div class="col-xs-12">
+			<select class="form-control" data-bind="options: sources, optionsText: 'sourceName', value: currentSource"></select>
+		</div>
+	</div>
+	<!-- ko if: currentSource() -->
+	<report-drilldown
+		params="
+		currentReport: currentReport,
+		context: $component,
+		currentConcept: currentConcept,
+		currentSource: currentSource,
+		hideReportName: true,
+		refreshReport: true"
+	></report-drilldown>
+	<!-- /ko -->
+</div>

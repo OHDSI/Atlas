@@ -142,6 +142,8 @@
   &__analysis-results {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
   }
 
   &__table-wrapper, &__chart-wrapper {
@@ -150,8 +152,8 @@
   }
 
   &__table-wrapper {
-    flex-grow: 65;
-
+    flex: 2;
+    width:100%;
     .dt-buttons {
       padding-bottom: 1rem;
       padding-right: 1rem;
@@ -159,7 +161,8 @@
   }
 
   &__chart-wrapper {
-    flex-grow: 35;
+    flex: 1;
+    width: 100%;
     margin-left: 2rem;
     border: 1px solid #ccc;
     padding: 1.5rem 1.5rem 0.45rem 0;
@@ -201,6 +204,21 @@
 
   &__report-table {
     width: 100% !important;
+    height: fit-content;    // needed if pct-cell has more than one-line height (to correctly fill it vertically)
+
+    td.pct-cell {
+      padding: 0 !important;
+      height: 100%;
+    }
+    div.pct-fill {
+      background-color: #afd9ee;
+      height: 100%;
+
+      div {
+        vertical-align: middle;
+        padding: 8px 10px;
+      }
+    }
   }
 
   &__greyed-row {
@@ -233,4 +251,38 @@
   &__action-ico {
     margin-left: 0.5rem;
   }
+}
+
+.characterization-results-boxplot-container {
+  display: flex;
+  width: 50%;
+}
+
+.characterization-results-legend-container {
+  min-width: 300px;
+  flex: 0.5;
+  margin-left: 16px;
+}
+
+.characterization-results-container {
+  display: flex;
+  width: 100%;
+}
+.legend-header {
+  margin-top: 0;
+}
+.swatch {
+  width: 16px;
+  height: 16px;
+  margin: 6px 0;
+}
+
+.color-cell {
+  width: 24px;
+  vertical-align: baseline;
+}
+
+.legend-cohort-name {
+  font-size: 1rem;
+  font-weight: bold;
 }

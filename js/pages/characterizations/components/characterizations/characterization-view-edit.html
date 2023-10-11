@@ -20,10 +20,14 @@
                 <!-- ko ifnot: isNewEntity() -->
                 <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: isEditPermitted() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
                 <button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: copyCc, css: {disabled: !canCopy() || isProcessing() }, title: , title: ko.i18n('common.createACopy', 'Create a copy')"><i class="fa fa-copy"></i></button>
+
+		<!-- ko if: enablePermissionManagement -->
                 <button class="btn btn-primary" data-bind="visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
                     <i class="fa fa-lock"></i>
                 </button>
-                <button type="button" class="btn btn-danger"  data-bind="visible: !previewVersion(), click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-alt"></i></button>
+		<!-- /ko -->
+
+		<button type="button" class="btn btn-danger"  data-bind="visible: !previewVersion(), click: deleteCc, css: {disabled: !$component.isDeletePermitted() || isProcessing() }"><i class="fa fa-trash-alt"></i></button>
                 <!-- /ko -->
             </div>
         </div>

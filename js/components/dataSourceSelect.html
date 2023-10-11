@@ -1,0 +1,13 @@
+<div className="pull-right" style="text-align: right">
+    <i data-bind="attr: { class: recordCountClass }" aria-hidden="true">
+    </i>
+    <span data-bind="text: ko.i18n('search.viewCountMessage', 'View record counts for:')"></span>
+    <select data-bind="
+          options: resultSources,
+          optionsText: 'sourceName',
+          optionsValue: 'sourceId',
+          value: selectedSourceValue,
+          event: { change: refreshRecordCountsHandler }
+        "></select>
+
+</div>
