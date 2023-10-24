@@ -126,8 +126,7 @@ define([
 		// dispose subscriptions
 
 		// startup actions
-		self.loadConceptSetsFromRepository(self.selectedSource()
-			.url);
+		self.loadConceptSetsFromRepository(self.selectedSource().url);
 
 		this.options = {
 			Facets: [
@@ -175,7 +174,7 @@ define([
 				render: datatableUtils.getCreatedByFormatter(),
 			}
 		]);
-
+		
 		const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
 		this.pageLength = params.pageLength || pageLength;
 		this.lengthMenu = params.lengthMenu || lengthMenu;

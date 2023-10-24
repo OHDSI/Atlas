@@ -517,7 +517,9 @@ define(function(require, exports) {
 
     const executeWithRefresh = async function(httpPromise) {
         const result = await httpPromise;
-        await refreshToken();
+        if (config.userAuthenticationEnabled) {
+            await refreshToken();
+        }
         return result;
     }
 

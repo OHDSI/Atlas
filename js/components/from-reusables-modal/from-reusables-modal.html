@@ -50,6 +50,7 @@
 </atlas-modal>
 
 <div data-bind="modal: showCsBrowser" class="modal fade cs-modal" tabindex="-1" role="dialog">
+    <!-- ko if:showCsBrowser-->
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" data-bind="text: ko.i18n('components.conceptSetBuilder.selectConceptSet', 'Select Concept Set...')"></div>
@@ -62,4 +63,5 @@
             </div>
         </div>
     </div>
+    <!-- /ko -->
 </div>
