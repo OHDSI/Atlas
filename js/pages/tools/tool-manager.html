@@ -1,0 +1,70 @@
+<heading-title params="name: ko.i18n('common.tools'), icon: 'toolbox', theme: 'dark'"></heading-title>
+<div data-bind="if: isAdmin">
+<div class="paddedWrapper">
+	<div class="card-tools">
+		<span class="btn btn-sm btn-primary add-btn" data-bind="text: ko.i18n('common.addTools', 'Add Tool'), click: () => { showModalAddTool(true) }"></span>
+		<div class="paddedWrapper card-tool-container " data-bind="hidden: loading, foreach:data_tools">
+				<div class="card-tool flexed">
+					<div class="flex-between">
+						<h3 data-bind="hidden: isEditing, text: name"></h3>
+						<input type="text" data-bind="visible: isEditing, textInput: name, keyupBubble: false"/>
+						<div style="width: 15% !important; align-items: center; display: flex; justify-content: flex-end;">
+							<i class="fas fa-pencil-alt" style="font-size: 21px; color: #2271A5; cursor: pointer;" data-bind="hidden: isEditing, click:() => $component.handleIsEditing(id)"></i>
+							<i class="far fa-trash-alt" style="font-size: 21px; color: #2271A5; cursor: pointer; margin-left: 10px;" data-bind="hidden: isEditing, click:() => $component.handleDelete(id)"></i>
+							<i class="fas fa-check-square" style="font-size: 21px; color: #2271A5; cursor: pointer;" data-bind="visible: isEditing, click:() => $component.handleIsEdited(id)"></i>
+						</div>
+					</div>
+					<p data-bind="hidden: isEditing, text: ko.i18nformat('common.added', 'Added <%=createdDate%>', {createdDate})" style="margin-top: 20px"></p>
+					<input type="text" data-bind="visible: isEditing, textInput: url, keyupBubble: false" style="margin-top: 15px"/>
+					<p data-bind="hidden: isEditing, text: description" style="margin-top: 15px"></p>
+					<textarea rows="3" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 17px; max-width: 100%;"></textarea>
+					<div class="material-switch pull-right" style="margin-top: 10px; margin-left: 5px;" data-bind="visible: isEditing">
+						<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: enabled" style="display: none;"/>
+						<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-witch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
+					</div>
+				</div>
+			</div>
+	</div>
+	<loading data-bind="visible: loading" params="status: ko.i18n('Loading tools', 'Loading tools')"></loading>
+
+	<atlas-modal params="
+		showModal: showModalAddTool,
+		modifiers: ['sm'],
+		title: ko.i18n('common.addTools', 'Add Tool'),
+		data: {
+			handleDataAddTool: $component.handleDataAddTool,
+			newName: $component.newName,
+			newUrl: $component.newUrl,
+			newDescription: $component.newDescription,
+			toolIsVisible: $component.toolIsVisible,
+			toggleVisiableTool: $component.toggleVisiableTool,
+		}">
+		<div class="flexed" style="padding: 8px 20px;">
+			<div class="flex-between" style="justify-content: flex-start;">
+				<label for="toolAddName" data-bind="text: ko.i18n('columns.name', 'Name')" style="width: 30%;"></label>
+				<input type="text" id="toolAddName" data-bind="textInput: newName"/>
+			</div>
+			<div class="flex-between" style="margin-top: 10px; justify-content: flex-start;">
+				<label for="toolAddURL" data-bind="text: ko.i18n('common.url', 'URL')" style="width: 30%;"></label>
+				<input type="text" id="toolAddURL" data-bind="textInput: newUrl, keyupBubble: false" />
+			</div>
+			<div class="flex-between" style="margin-top: 10px; align-items: flex-start; justify-content: flex-start;">
+				<label for="toolAddDescription" data-bind="text: ko.i18n('columns.description', 'Description')" style="width: 30%;"></label>
+				<textarea rows="6" id="toolAddDescription" data-bind=" value: newDescription, keyupBubble: false" style="width: 70%; max-width: 70%;"></textarea>
+			</div>
+			<div class="flex-between" style="margin-top: 18px; align-items: flex-start; justify-content: flex-start;">
+				<label for="toolAddDescription" data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="width: 30%;"></label>
+				<div class="material-switch pull-right" style="margin-left: 8px; width: 70%;">
+					<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: toolIsVisible()" style="display: none;"/>
+					<label for="switchBtnTool" class="label-success" data-bind="css: toolIsVisible() ? 'label-witch-enable' : '', click: toggleVisiableTool"></label>
+				</div>
+			</div>
+			<div class="flex-end" style="margin-top: 13px;">
+				<button type="button" class="btn btn-sm btn-primary" data-bind="text: ko.i18n('common.apply', 'Apply'), click: handleDataAddTool"></button>
+				<button type="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.showModal(false), text: ko.i18n('common.cancel', 'Cancel')" style="margin-left: 8px"></button>
+			</div>
+		</div>
+	</atlas-modal>
+</div>
+</div>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: isAdmin"></access-denied>

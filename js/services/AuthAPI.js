@@ -395,6 +395,10 @@ define(function(require, exports) {
         return isPermitted('cohortdefinition:' + cohortId + ':report:' + sourceKey + ':get');
     }
 
+    var isPermmitedAdmin = function() {
+        return isPermitted('admin');
+    }
+
     var isPermittedReadJobs = function() {
         return isPermitted('job:execution:get');
     }
@@ -615,6 +619,7 @@ define(function(require, exports) {
         isPermittedClearServerCache,
         isPermittedViewDataSourceReport,
         isPermittedViewDataSourceReportDetails,
+        isPermmitedAdmin,
 
         loadUserInfo,
         TOKEN_HEADER,
