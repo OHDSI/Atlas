@@ -29,6 +29,7 @@ define([
 
 			this.getValueUrl = this.getValueUrl.bind(this);
 			this.handleDataAddTool = this.handleDataAddTool.bind(this);
+			this.handleOpenLink = this.handleOpenLink.bind(this);
 
 			this.isAdmin = ko.pureComputed(() => {
 				return authApi.isPermmitedAdmin();
@@ -47,6 +48,12 @@ define([
 				return item
 			})
 			this.data_tools(newData);
+		}
+
+		handleOpenLink(data, event){
+			if(data.isEditing) return;
+			if(["editIcon", "deleteIcon", "completeIcon"].includes(event.target.id)) return;
+			return window.open(data.url, '_blank');
 		}
 
 		async handleIsEdited(id) {
@@ -68,6 +75,7 @@ define([
 				console.log('update tool failed', error)
 			} finally {
 				this.loading(false);
+				return false;
 			}
 		}
 

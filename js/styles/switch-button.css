@@ -36,12 +36,12 @@
     width: 24px;
 }
 
-.material-switch > .label-witch-enable::before {
+.material-switch > .label-switch-enable::before {
     background: inherit;
     opacity: 0.5;
 }
 
-.material-switch > .label-witch-enable::after {
+.material-switch > .label-switch-enable::after {
     background: inherit;
     left: 20px;
 }

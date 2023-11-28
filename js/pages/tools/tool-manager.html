@@ -4,14 +4,14 @@
 	<div class="card-tools">
 		<span class="btn btn-sm btn-primary add-btn" data-bind="text: ko.i18n('common.addTools', 'Add Tool'), click: () => { showModalAddTool(true) }"></span>
 		<div class="paddedWrapper card-tool-container " data-bind="hidden: loading, foreach:data_tools">
-				<div class="card-tool flexed">
+				<div class="card-tool flexed" data-bind="click: $component.handleOpenLink, style:{ 'z-index': 0 }">
 					<div class="flex-between">
-						<h3 data-bind="hidden: isEditing, text: name"></h3>
+						<h3 data-bind="hidden: isEditing, text: name, click: () => window.open(url, '_blank')"></h3>
 						<input type="text" data-bind="visible: isEditing, textInput: name, keyupBubble: false"/>
 						<div style="width: 15% !important; align-items: center; display: flex; justify-content: flex-end;">
-							<i class="fas fa-pencil-alt" style="font-size: 21px; color: #2271A5; cursor: pointer;" data-bind="hidden: isEditing, click:() => $component.handleIsEditing(id)"></i>
-							<i class="far fa-trash-alt" style="font-size: 21px; color: #2271A5; cursor: pointer; margin-left: 10px;" data-bind="hidden: isEditing, click:() => $component.handleDelete(id)"></i>
-							<i class="fas fa-check-square" style="font-size: 21px; color: #2271A5; cursor: pointer;" data-bind="visible: isEditing, click:() => $component.handleIsEdited(id)"></i>
+							<i class="fas fa-edit" id="editIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="hidden: isEditing, click:() => $component.handleIsEditing(id), style:{ 'z-index': 9 }"></i>
+							<i class="far fa-trash-alt" id="deleteIcon" style="font-size: 24px; color: #2271A5; cursor: pointer; margin-left: 10px;" data-bind="hidden: isEditing, click:() => $component.handleDelete(id), style:{ 'z-index': 9 }"></i>
+							<i class="fas fa-check-square" id="completeIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="visible: isEditing, click:() => $component.handleIsEdited(id), style:{ 'z-index': 9 }"></i>
 						</div>
 					</div>
 					<p data-bind="hidden: isEditing, text: ko.i18nformat('common.added', 'Added <%=createdDate%>', {createdDate})" style="margin-top: 20px"></p>
@@ -20,7 +20,7 @@
 					<textarea rows="3" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 17px; max-width: 100%;"></textarea>
 					<div class="material-switch pull-right" style="margin-top: 10px; margin-left: 5px;" data-bind="visible: isEditing">
 						<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: enabled" style="display: none;"/>
-						<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-witch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
+						<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-switch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
 					</div>
 				</div>
 			</div>
@@ -56,7 +56,7 @@
 				<label for="toolAddDescription" data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="width: 30%;"></label>
 				<div class="material-switch pull-right" style="margin-left: 8px; width: 70%;">
 					<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: toolIsVisible()" style="display: none;"/>
-					<label for="switchBtnTool" class="label-success" data-bind="css: toolIsVisible() ? 'label-witch-enable' : '', click: toggleVisiableTool"></label>
+					<label for="switchBtnTool" class="label-success" data-bind="css: toolIsVisible() ? 'label-switch-enable' : '', click: toggleVisiableTool"></label>
 				</div>
 			</div>
 			<div class="flex-end" style="margin-top: 13px;">
