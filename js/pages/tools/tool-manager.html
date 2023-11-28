@@ -33,6 +33,7 @@
 		title: ko.i18n('common.addTools', 'Add Tool'),
 		data: {
 			handleDataAddTool: $component.handleDataAddTool,
+			handleCancelTool: $component.handleCancelTool,
 			newName: $component.newName,
 			newUrl: $component.newUrl,
 			newDescription: $component.newDescription,
@@ -61,7 +62,7 @@
 			</div>
 			<div class="flex-end" style="margin-top: 13px;">
 				<button type="button" class="btn btn-sm btn-primary" data-bind="text: ko.i18n('common.apply', 'Apply'), click: handleDataAddTool"></button>
-				<button type="button" class="btn btn-sm btn-danger" data-bind="click: () => $component.showModal(false), text: ko.i18n('common.cancel', 'Cancel')" style="margin-left: 8px"></button>
+				<button type="button" class="btn btn-sm btn-danger" data-bind="click: handleCancelTool, text: ko.i18n('common.cancel', 'Cancel')" style="margin-left: 8px"></button>
 			</div>
 		</div>
 	</atlas-modal>

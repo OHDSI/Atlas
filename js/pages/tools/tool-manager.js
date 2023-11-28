@@ -30,6 +30,8 @@ define([
 			this.getValueUrl = this.getValueUrl.bind(this);
 			this.handleDataAddTool = this.handleDataAddTool.bind(this);
 			this.handleOpenLink = this.handleOpenLink.bind(this);
+			this.handleCancelTool = this.handleCancelTool.bind(this);
+			this.handleClearData = this.handleClearData.bind(this);
 
 			this.isAdmin = ko.pureComputed(() => {
 				return authApi.isPermmitedAdmin();
@@ -48,6 +50,18 @@ define([
 				return item
 			})
 			this.data_tools(newData);
+		}
+
+		handleClearData(){
+			this.newName(null);
+			this.newDescription(null);
+			this.newUrl(null);
+			this.toolIsVisible(false);
+			this.showModalAddTool(false);
+		}
+
+		handleCancelTool(){
+			this.handleClearData();
 		}
 
 		handleOpenLink(data, event){
@@ -142,6 +156,7 @@ define([
 			}catch(error){
 				console.log('add new tool failed', error)
 			} finally {
+				this.handleClearData();
 				this.loading(false);
 			}
 		}
