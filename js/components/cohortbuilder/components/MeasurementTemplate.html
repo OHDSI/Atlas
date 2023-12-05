@@ -194,6 +194,12 @@
 					<criteria-group params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group>
 				</td>
 			</tr>
+			<tr data-bind="if: MeasurementOperand() != null, visible: MeasurementOperand() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('MeasurementOperand') }, title: ko.i18n('common.remove', 'Remmove')" class="fa fa-times" /></td>
+				<td>
+					<measurement-operand-criteria params="{expression: $component.expression, criteria: ko.unwrap(MeasurementOperand)}" ></measurement-operand-criteria>
+				</td>
+			</tr>
 		</table>
 	</div>
 </div>

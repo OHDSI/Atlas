@@ -1062,7 +1062,12 @@ define(["knockout"], function (ko) {
       descriptionGroup: 'const.eventsList.addLocationRegion.desc_group',
       defaultDescriptionGroup: 'Find patients within geographical area.',
     },
-
+    addMeasurementOperand: {
+        titleMeasurement: 'const.eventsList.addMeasurementOperand.title_measurement',
+        defaultTitleMeasurement: 'Add Calculation',
+        descriptionMeasurement: 'const.eventsList.addMeasurementOperand.desc_measurement',
+        defaultDescriptionMeasurement: 'Add calculated value based on a Measurement',
+    },
   };
 
   function setCriteria(criteria) {
@@ -1235,7 +1240,8 @@ define(["knockout"], function (ko) {
     'addRangeHighRatio',
     'addProviderSpecialty',
     'addSourceConcept',
-    'addNested'
+    'addMeasurementOperand',
+    'addNested',
   ];
   const drugexposureAttributesList = [
     'addDateAdjustment',

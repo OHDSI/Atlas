@@ -103,7 +103,18 @@ define(["knockout"], function (ko) {
 			name: ko.i18n('options.eventEnds', 'event ends'),
 			value: true
 		}]
-	
+
+    options.operatorOptions = [
+      '+', '-', '*', '/'
+    ];
+
+    options.eventsLimit = [{
+      name: ko.i18n('options.earliestEvents', 'earliest event'),
+      id: "First"
+    }, {
+      name: ko.i18n('options.latestEvents', 'latest event'),
+      id: "Last"
+    }];
 	
     return options;
 });

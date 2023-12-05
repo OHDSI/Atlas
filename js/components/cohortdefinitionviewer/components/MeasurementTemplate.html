@@ -87,6 +87,9 @@
 		<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_28', 'visit occurrence is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.unwrap(MeasurementOperand) != null -->
+	<measurement-operand-viewer params="{expression: $component.expression, criteria: ko.unwrap(MeasurementOperand)}"></measurement-operand-viewer>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
 		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
 <!-- /ko -->

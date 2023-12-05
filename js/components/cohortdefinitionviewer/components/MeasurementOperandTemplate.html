@@ -1,0 +1,9 @@
+<!-- ko with: Criteria -->
+<span data-bind="text: Operator"></span> <span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_1', 'a measurement of')"></span>
+<conceptset-reference params="{conceptSetId: $component.CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')}"></conceptset-reference>
+<!-- ko if: SameVisit -->
+<span data-bind="text:ko.i18n('components.conditionMeasurement.conditionMeasurementText_30', 'at the same visit')"></span>
+<!-- /ko -->
+<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_6', 'with value as number')"></span>
+<numeric-range-viewer params="Range: $component.ValueAsNumber"></numeric-range-viewer>
+<!-- /ko -->
