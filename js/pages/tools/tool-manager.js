@@ -36,6 +36,9 @@ define([
 			this.isAdmin = ko.pureComputed(() => {
 				return authApi.isPermmitedAdmin();
 			});
+			this.showModalAddTool.subscribe((isShow) => {
+				if(!isShow) this.handleClearData();
+			})
 		}
 
 
@@ -171,13 +174,11 @@ define([
 				this.data_tools([]);
 				const dataTools = await toolService.getTools();
 				Array.isArray(dataTools) && dataTools.forEach((item, index) => {
-					const splitDate = momentApi.formatDate(item.createdDate, 'LL').split(',');
-					const firstFormat = splitDate[0].split(' ').reverse();
-					const formatDate = ko.i18n(`common.monthsName.${[firstFormat[1].toLowerCase()]}`, firstFormat[1]);
 					this.data_tools.push({
 					...item,
-					createdDate: formatDate,
-					isEditing: false
+					createdDate: momentApi.formatDate(item.createdDate, 'DD/MM/YYYY'),
+					isEditing: false,
+					updatedDate: momentApi.formatDate(item.modifiedDate, 'DD/MM/YYYY')
 				})});
 			} finally {
 				this.loading(false);

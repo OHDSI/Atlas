@@ -2181,16 +2181,15 @@ div.wrapper_ohdsi a {
 }
 
 .card-tools {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1;
-  align-items: flex-end;
+  top: 30px;
+  position: relative;
 }
 
 .add-btn {
+  position: absolute;
   width: 180px;
-  margin-right: 30px;
-  margin-top: 10px;
+  top: 10px;
+  right: 20px;
 }
 
 .bg-add {
@@ -2198,17 +2197,21 @@ div.wrapper_ohdsi a {
 }
 
 .card-tool-container {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto auto;
-  justify-content: space-evenly;
-  row-gap: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  position: absolute;
+  margin-top: 70px;
+  margin-left: 20px;
+  margin-right: 30px;
+  row-gap: 12px;
+  column-gap: 16px;
 }
 
 .card-tool {
-  border: 3px solid #000;
+  border: 2.4px solid #000;
   border-radius: 10px;
   width: 400px;
+  max-width: 410px;
   padding: 20px;
 }
 
@@ -2216,7 +2219,7 @@ div.wrapper_ohdsi a {
   margin-top: 0px;
   margin-bottom: 0px;
   font-weight: 650;
-  color: #228BA5;
+  color: #203D54;
   text-decoration: none;
   cursor: pointer;
   font-size: 26px;

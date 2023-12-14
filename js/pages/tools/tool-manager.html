@@ -3,24 +3,38 @@
 <div class="paddedWrapper">
 	<div class="card-tools">
 		<span class="btn btn-sm btn-primary add-btn" data-bind="text: ko.i18n('common.addTools', 'Add Tool'), click: () => { showModalAddTool(true) }"></span>
-		<div class="paddedWrapper card-tool-container " data-bind="hidden: loading, foreach:data_tools">
+		<div class="card-tool-container " data-bind="hidden: loading, foreach: data_tools" style="margin-top: 5px">
 				<div class="card-tool flexed" data-bind="click: $component.handleOpenLink, style:{ 'z-index': 0 }">
 					<div class="flex-between">
 						<h3 data-bind="hidden: isEditing, text: name, click: () => window.open(url, '_blank')"></h3>
 						<input type="text" data-bind="visible: isEditing, textInput: name, keyupBubble: false"/>
 						<div style="width: 15% !important; align-items: center; display: flex; justify-content: flex-end;">
 							<i class="fas fa-edit" id="editIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="hidden: isEditing, click:() => $component.handleIsEditing(id), style:{ 'z-index': 9 }"></i>
-							<i class="far fa-trash-alt" id="deleteIcon" style="font-size: 24px; color: #2271A5; cursor: pointer; margin-left: 10px;" data-bind="hidden: isEditing, click:() => $component.handleDelete(id), style:{ 'z-index': 9 }"></i>
+							<i class="far fa-trash-alt" id="deleteIcon" style="font-size: 24px; color: #F44; cursor: pointer; margin-left: 10px;" data-bind="hidden: isEditing, click:() => $component.handleDelete(id), style:{ 'z-index': 9 }"></i>
 							<i class="fas fa-check-square" id="completeIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="visible: isEditing, click:() => $component.handleIsEdited(id), style:{ 'z-index': 9 }"></i>
 						</div>
 					</div>
-					<p data-bind="hidden: isEditing, text: ko.i18nformat('common.added', 'Added <%=createdDate%>', {createdDate})" style="margin-top: 20px"></p>
-					<input type="text" data-bind="visible: isEditing, textInput: url, keyupBubble: false" style="margin-top: 15px"/>
-					<p data-bind="hidden: isEditing, text: description" style="margin-top: 15px"></p>
-					<textarea rows="3" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 17px; max-width: 100%;"></textarea>
-					<div class="material-switch pull-right" style="margin-top: 10px; margin-left: 5px;" data-bind="visible: isEditing">
+					<!-- <p data-bind="hidden: isEditing, text: ko.i18nformat('common.added', 'Added <%=createdDate%>', {createdDate})" style="margin-top: 20px; font-size: 12.5px; font-weight: 500; color: #8F9192"></p> -->
+					<input type="text" data-bind="visible: isEditing, textInput: url, keyupBubble: false" style="margin-top: 22px"/>
+					<p data-bind="hidden: isEditing, text: description" style="margin-top: 24px; font-weight: 500; font-size: 13px;"></p>
+					<textarea rows="5" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 28px; max-width: 100%;"></textarea>
+					<div class="material-switch pull-right" style="margin-top: 16px; margin-left: 5px;" data-bind="visible: isEditing">
 						<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: enabled" style="display: none;"/>
 						<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-switch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
+					</div>
+					<div class="flex-between" style="margin-top: 10px; justify-content: flex-start; flex-wrap: wrap; row-gap: 10px">
+						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing">
+							<p data-bind="text: ko.i18n('columns.created', 'Created')" style="font-size: 12.5px; margin-bottom: 5px;"></p>
+							<span data-bind="text: createdDate" style="font-weight: 500; font-size: 13px;"></span>
+						</div>
+						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing && updatedDate">
+							<p data-bind="text: ko.i18n('columns.updated', 'Updated')" style="font-size: 12.5px; margin-bottom: 5px;"></p>
+							<span data-bind="text: updatedDate" style="font-weight: 500; font-size: 13px;"></span>
+						</div>
+						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing">
+							<p data-bind="text: ko.i18n('columns.author', 'Author')" style="font-size: 12.5px; margin-bottom: 5px;"></p>
+							<span data-bind="text: createdBy" style="font-weight: 500; font-size: 13px;"></span>
+						</div>
 					</div>
 				</div>
 			</div>
