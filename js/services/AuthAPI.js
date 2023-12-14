@@ -255,7 +255,7 @@ define(function(require, exports) {
     var refreshToken = function() {
 
         if (!config.userAuthenticationEnabled) {
-            return Promise.resolve(true); // no-op if userAthenticationEnabmed == false
+            return Promise.resolve(true); // no-op if userAuthenticationEnabled == false
         }
 
         if (!isPromisePending(refreshTokenPromise)) {
