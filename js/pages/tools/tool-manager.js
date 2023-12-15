@@ -6,7 +6,9 @@ define([
 	'services/AuthAPI',
 	'services/ToolService',
 	'services/MomentAPI',
+	'./PermissionService',
 	'css!styles/switch-button.css',
+	'less!./tool-management.less',
 ], function (
 	ko,
 	view,
@@ -14,7 +16,8 @@ define([
 	commonUtils,
 	authApi,
 	toolService,
-	momentApi
+	momentApi,
+	PermissionService
 ) {
 	class ToolManage extends Page {
 		constructor(params) {
@@ -36,6 +39,9 @@ define([
 			this.isAdmin = ko.pureComputed(() => {
 				return authApi.isPermmitedAdmin();
 			});
+			this.canReadTools = PermissionService.isPermittedList;
+			this.canCreateTools = PermissionService.isPermittedCreate;
+
 			this.showModalAddTool.subscribe((isShow) => {
 				if(!isShow) this.handleClearData();
 			})
@@ -92,6 +98,7 @@ define([
 				console.log('update tool failed', error)
 			} finally {
 				this.loading(false);
+				this.getToolFromAllPages();
 				return false;
 			}
 		}
@@ -160,6 +167,7 @@ define([
 				console.log('add new tool failed', error)
 			} finally {
 				this.handleClearData();
+				this.getToolFromAllPages();
 				this.loading(false);
 			}
 		}
@@ -178,7 +186,8 @@ define([
 					...item,
 					createdDate: momentApi.formatDate(item.createdDate, 'DD/MM/YYYY'),
 					isEditing: false,
-					updatedDate: momentApi.formatDate(item.modifiedDate, 'DD/MM/YYYY')
+					updatedDate: momentApi.formatDate(item.modifiedDate, 'DD/MM/YYYY'),
+					createdBy: item.createdBy ?? ''
 				})});
 			} finally {
 				this.loading(false);

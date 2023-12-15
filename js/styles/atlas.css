@@ -2203,8 +2203,7 @@ div.wrapper_ohdsi a {
   margin-top: 70px;
   margin-left: 20px;
   margin-right: 30px;
-  row-gap: 12px;
-  column-gap: 16px;
+  gap: 20px;
 }
 
 .card-tool {
@@ -2213,6 +2212,12 @@ div.wrapper_ohdsi a {
   width: 400px;
   max-width: 410px;
   padding: 20px;
+  transition: all 0.2s ease-out;
+}
+
+.card-tool:hover{
+  box-shadow:  2px 5px 12px #bebebe,
+             -2px -5px 12px #bebebe;
 }
 
 .card-tool h3{
