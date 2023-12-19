@@ -13,6 +13,7 @@ define([
   'services/Poll',
   'services/job/jobDetail',
   'services/CacheAPI',
+  'services/ConceptSet',
   'less!./configuration.less',
   'components/heading'
 ], function (
@@ -30,6 +31,7 @@ define([
   {PollService},
   jobDetail,
   cacheApi,
+  conceptSetService
 ) {
 	class Configuration extends AutoBind(Page) {
     constructor(params) {
@@ -42,6 +44,7 @@ define([
       this.jobListing = sharedState.jobListing;
       this.sourceJobs = new Map();
       this.sources = sharedState.sources;
+      this.reindexJob = ko.observable();
 
       this.priorityOptions = [
         {id: 'session', name: ko.i18n('configuration.priorityOptions.session', 'Current Session')},
@@ -80,9 +83,45 @@ define([
       });
 
       this.intervalId = PollService.add({
-        callback: () => this.checkJobs(),
+        callback: () => {
+          this.checkJobs();
+          this.checkReindexJob();
+        },
         interval: config.pollInterval
       });
+
+      this.searchAvailable = ko.observable(false);
+
+      this.checkSearchAvailable();
+    }
+
+    async checkSearchAvailable () {
+        this.loading(true);
+        try {
+            const data = await conceptSetService.checkSearchAvailable();
+            this.searchAvailable(data);
+        } catch(e) {
+            throw new Error(e);
+        } finally {
+            this.loading(false);
+        }
+    }
+
+    async reindexConceptSets() {
+        const confirmAction = confirm(ko.unwrap(ko.i18n('configuration.confirms.reindexSource', 'Reindexing may take a long time. It depends on amount and complexity of concept sets')));
+        if (!confirmAction) {
+            return;
+        }
+        try {
+            const data =await conceptSetService.reindexConceptSets();
+            if (data.status === 'RUNNING') {
+              alert(ko.unwrap(ko.i18n('configuration.alerts.reindexRunning', 'Reindexing of concept sets is currently in progress')));
+            } else { 
+              this.reindexJob(data);
+            }
+        } catch(e) {
+            throw new Error(e);
+        }
     }
 
     dispose() {
@@ -109,6 +148,21 @@ define([
           source.refreshState(job.isComplete() ? sourceApi.buttonCheckState.success : sourceApi.buttonCheckState.failed);
         }
       });
+    }
+
+    async checkReindexJob() {
+      try {
+        let data;
+        if (this.reindexJob()) {
+          data = await conceptSetService.statusReindexConceptSets(this.reindexJob().executionId);
+        } else {
+          data = await conceptSetService.statusReindexConceptSets();
+        }
+        this.reindexJob(data);
+      } catch(e) {
+        this.reindexJob(null);
+        throw new Error(e);
+      }
     }
 
     async onPageCreated() {
@@ -186,6 +240,9 @@ define([
       var selectedSource = sharedState.sources().find((item) => { return item.vocabularyUrl === newVocabUrl; });
       sharedState.priorityScope() === 'application' && sharedState.defaultVocabularyUrl(newVocabUrl);
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
+      if (this.searchAvailable()) {
+          alert(ko.unwrap(ko.i18n('configuration.alerts.changeSource', 'You are changing current source, we recommend you to do reindexing concept sets')));
+      }
       return true;
     };
 
@@ -236,6 +293,36 @@ define([
 
     getCheckButtonStyles(source) {
       return this.getButtonStyles(source.connectionCheck());
+    }
+
+    getReindexButtonStyles() {
+      let iconClass = 'fa-caret-right';
+      let buttonClass = 'btn-primary';
+      let state = sourceApi.buttonCheckState.unknown;
+      if (this.reindexJob()) {
+        switch(this.reindexJob().status) {
+          case 'COMPLETED':
+            state = sourceApi.buttonCheckState.success;
+            break;
+          case 'FAILED':
+            state = sourceApi.buttonCheckState.failed;
+            break;
+          case 'CREATED':
+          case 'RUNNING':
+            state = sourceApi.buttonCheckState.checking;
+            break;
+        }
+      }
+      return this.getButtonStyles(state);
+    }
+
+    getReindexButtonTitle() {
+      if (this.reindexJob() && this.reindexJob().status !== 'UNAVAILABLE') {
+        return ko.unwrap(ko.i18nformat('configuration.buttons.reindexCSStatus', 'Concept Sets Reindex (<%=doneCount%> of <%=maxCount%>)',
+          {doneCount: this.reindexJob().doneCount, maxCount: this.reindexJob().maxCount})());
+      } else {
+        return ko.unwrap(ko.i18n('configuration.buttons.reindexCS', 'Concept Sets Reindex'));
+      }
     }
 
     getButtonStyles(sourceState) {

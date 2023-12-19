@@ -83,7 +83,11 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
 
         const addTagGroupsToFacets = (list, facets) => {
             extractTagGroups(list).sort().reverse().forEach(tg => {
+                if (facets.filter(f => f.isTagGroup && f.caption === tg.name).length > 0) { // do not add facet if it is already there
+                    return;
+                }
                 facets.unshift({
+                    isTagGroup: true,
                     caption: tg.name,
                     binding: (o) => {
                         let tags = o.tags && o.tags.length > 0
@@ -100,7 +104,11 @@ define(['knockout', 'services/MomentAPI', 'xss', 'appConfig', 'services/AuthAPI'
 
         const addTagGroupsToColumns = (list, columns) => {
             extractTagGroups(list).forEach(tg => {
+                if (ko.unwrap(columns).filter(c => c.isTagGroup && c.title === tg.name).length > 0) { // do not add column if it is already there
+                    return;
+                }
                 columns.push({
+                    isTagGroup: true,
                     title: tg.name,
                     width: '100px', // default width
                     visible: !!tg.showGroup,

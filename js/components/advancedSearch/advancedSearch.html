@@ -1,0 +1,61 @@
+<!--search panel-->
+<script type="text/html" id="vocabulary-domain-list">
+    <div class="checkboxListing row">
+        <!-- ko if: loading -->
+        <loading></loading>
+        <!-- /ko -->
+        <!-- ko if: domains().length === 0 && !loading() -->
+        <empty-state params="message: ko.i18n('search.noDomainsAvailable', 'No domains available')"></empty-state>
+        <!-- /ko -->
+        <div class="pull-right">
+            <button class="btn-link" data-bind="click: clearAll">
+                Clear all selected
+            </button>
+        </div>
+        <!-- ko foreach: domains() -->
+        <div class="col-sm-6">
+            <input
+                type="checkbox"
+                data-bind="value: DOMAIN_ID, event: { change: (e) => $parent.selectDomain(DOMAIN_ID) }"
+            > <span data-bind="text: DOMAIN_NAME"></span>
+        </div>
+        <!-- /ko -->
+    </div>
+</script>
+
+<!-- ko if: loading()-->
+<loading></loading>
+<!-- /ko -->
+<!-- ko if: !loading()-->
+<div class="advanced-options">
+    <form data-bind="submit: search">
+        <div class="input-group">
+            <input type="text" data-bind="textInput: querySearch,
+				css: classes({
+					element: 'input',
+					extra: 'form-control'
+				}),
+				placeholder: ko.i18n('cs.browser.searchQueryPlaceholder', 'Search by Concept ID, Concept Code, Concept Name'),
+				disable: loading()" />
+            <div class="input-group-btn">
+                <button type="submit" class="btn btn-primary" data-bind="title: ko.i18n('search.buttonTitle', 'Search'), disable: loading()"><i class="fa fa-search"></i></button>
+                <button class="btn btn-danger" data-bind="click: resetSearchConceptSets, title: ko.i18n('cs.browser.clearSearchCS', 'Clear search concept sets'), disable: loading()"><i class="fa fa-times"></i></button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div data-bind="click: toggleAdvanced, text: ko.i18n('search.advancedOptions', 'Advanced Options')" class="pull-right btn btn-sm btn-link"></div>
+    </div>
+    <div data-bind="visible: showAdvanced">
+        <panel-list
+            params="
+            title: ko.i18n('search.domains', 'Domains'),
+            templateId: 'vocabulary-domain-list',
+            context: $data,
+            clearAll:clearAll,
+            selectElement: selectDomain,
+            panelCollapsable:panelCollapsable">
+        </panel-list>
+    </div>
+</div>
+<!-- /ko -->

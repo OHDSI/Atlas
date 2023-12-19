@@ -29,6 +29,25 @@ define(function (require) {
 				alert(message);
 				self.isLoading(false);
 			});
+	};
+
+	function searchConceptSets(searchParams) {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doPost(`${config.api.url}conceptset/${sourceKey}/search`, searchParams).then(({ data }) => data);
+	}
+
+	function checkSearchAvailable() {
+		return httpService.doGet(config.api.url + 'conceptset/searchAvailable').then(({ data }) => data);
+	}
+
+	function reindexConceptSets() {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doGet(`${config.api.url}conceptset/${sourceKey}/index`).then(({ data }) => data);
+	}
+
+	function statusReindexConceptSets(jobExecutionId) {
+		const sourceKey = sharedState.sourceKeyOfVocabUrl();
+		return httpService.doGet(`${config.api.url}conceptset/${sourceKey}/index/${jobExecutionId || -1}/status`).then(({ data }) => data);
 	}
 
 	function lookupIdentifiers(identifiers) {
@@ -140,7 +159,11 @@ define(function (require) {
 		getVersion,
 		getVersionExpression,
 		updateVersion,
-		copyVersion
+		copyVersion,
+		searchConceptSets,
+		checkSearchAvailable,
+		reindexConceptSets,
+		statusReindexConceptSets
 	};
 
 	return api;
