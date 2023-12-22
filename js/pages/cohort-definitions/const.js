@@ -45,6 +45,8 @@ define(
 
     const paths = {
       details: id => `/cohortdefinition/${id}`,
+      downloadShiny: (id, sourceKey) => `shiny/download/cohort/${id}/${sourceKey}`,
+      publishShiny: (id, sourceKey) => `shiny/publish/cohort/${id}/${sourceKey}`,
     };
 
 		const getPeriodTypeFilter = (chosenPeriods) => ({
