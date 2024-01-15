@@ -1,9 +1,9 @@
 <!-- ko if: strategy()-->
-<div>
+<div data-bind="with: strategy()">
 	<b
 		data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_1', 'Continuous Exposure Persistence:')"></b><br />
 	<span
-		data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_2', 'Specify a concept set that contains one or more drugs.  A drug era will be derived from all drug exposure events for any of the drugs within the concept set, using the specified persistence window as a maximum allowable gap in days between successive exposure events and adding a specified surveillance window to the final exposure event.  If no exposure event end date is provided, then an exposure event end date is inferred to be event start date + days supply in cases when days supply is available or event start date + 1 day otherwise. This event persistence assures that the cohort end date will be no greater than the drug era end date.')"></span>
+		data-bind="text: ko.i18nformat('components.customEraStrategy.customEraStrategyText_20', 'Specify a concept set that contains one or more drugs.  A drug era will be derived from all drug exposure events for any of the drugs within the concept set, using the specified persistence window as a maximum allowable gap in <%=unitFilter%> between successive exposure events and adding a specified surveillance window to the final exposure event.  If no exposure event end date is provided, then an exposure event end date is inferred to be event start date + <%=unitFilter%> supply in cases when <%=unitFilter%> supply is available or event start date + 1 <%=addUnitFilter%> otherwise. This event persistence assures that the cohort end date will be no greater than the drug era end date.', {unitFilter: $component.options.windowTimeOptions.find(option => option.value ===  OffsetUnit())?.name(), addUnitFilter: $component.options.windowTimeOptions.find(option => option.value ===  OffsetUnit())?.lessName()})"></span>
 </div>
 <div style="padding: 5px 0px">
 	<span
@@ -12,26 +12,34 @@
 		params="conceptSetId: strategy().DrugCodesetId, conceptSets: conceptSets, defaultText: ko.i18n('components.customEraStrategy.selectDrugConceptSet', 'Select Drug Concept Set')">
 	</conceptset-selector>
 	<ul>
-		<li>
+		<li data-bind="with: strategy()">
 			<span
 				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_4', 'Persistence window: allow for a maximum of ')"></span>
 			<span contenteditable="true" class="numericInputField dropdown"
-				data-bind="htmlValue: strategy().GapDays.numeric(), eventType:'blur', ko_autocomplete: { value: strategy().GapDays, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"></span>
-			<span
-				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_5', 'days between exposure records when inferring the era of persistence exposure')"></span>
+				data-bind="htmlValue: GapUnitValue, eventType:'blur', ko_autocomplete: { value: GapUnitValue, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"></span>
+			<select data-bind="options: $component.options.windowTimeOptions,
+				optionsText: function(item) { return item.name },
+				optionsValue: 'value',
+				value: GapUnit">
+			</select>	
 		</li>
-		<li>
+		<li data-bind="with: strategy()">
 			<span
 				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_6', 'Surveillance window: add ')"></span>
 			<span contenteditable="true" class="numericInputField dropdown"
-				data-bind="htmlValue: strategy().Offset.numeric(), eventType:'blur', ko_autocomplete: { value: strategy().Offset, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"></span>
+				data-bind="htmlValue: OffsetUnitValue, eventType:'blur', ko_autocomplete: { value: OffsetUnitValue, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }"></span>
+			<select data-bind="options: $component.options.windowTimeOptions,
+				optionsText: function(item) { return item.name },
+				optionsValue: 'value',
+				value: OffsetUnit">
+			</select>
 			<span
-				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_7', 'days to the end of the era of persistence exposure as an additional period of surveillance prior to cohort exit.')"></span>
+				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_21', 'to the end of the era of persistence exposure as an additional period of surveillance prior to cohort exit.')"></span>
 		</li>
 		<!-- ko if: strategy().DaysSupplyOverride() == null -->
-		<li>
+		<li data-bind="with: strategy()">
 			<span
-				data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_8', 'Use days supply and exposure end date for exposure duration. ')"></span>
+				data-bind="text: ko.i18nformat('components.customEraStrategy.customEraStrategyText_22', 'Use <%=unitFilter%> supply and exposure end date for exposure duration. ', {unitFilter: $component.options.windowTimeOptions.find(option => option.value ===  OffsetUnit())?.name()})"></span>
 			<span class="linkish" data-bind="click: $component.addDaysSupplyOverride">
 				<i>
 					<span data-bind="text: ko.i18n('components.customEraStrategy.customEraStrategyText_9', 'change')"></span>
