@@ -61,7 +61,6 @@ function(
 			if (data.Criteria.hasOwnProperty(c)) {
 				const newUnit = (startUnit === 'day') ? (endUnit || startUnit) : startUnit;
 				data.Criteria[c].IntervalUnit = newUnit;
-				console.log("New time unit:", data.Criteria, newUnit);
 			}
 		});
 	}
