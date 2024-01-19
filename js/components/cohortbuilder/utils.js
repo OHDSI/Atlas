@@ -51,11 +51,22 @@ function(
 		var selectedConceptSet = conceptSetList().find(function (item) { return item.id == ko.utils.unwrapObservable(conceptSetId)});
 		return 	ko.utils.unwrapObservable(selectedConceptSet && selectedConceptSet.name) || defaultName;
 	}
+
+	function updateTimeUnit(data, newUnit) {
+		const criteria = ["ConditionOccurrence", "ConditionEra", "Death", "DeviceExposure", "DoseEra", "DrugEra", "DrugExposure", "Measurement", "Observation",
+			"ObservationPeriod", "PayerPlanPeriod", "ProcedureOccurrence", "Specimen", "VisitOccurrence"];
+		criteria.forEach(c => {
+			if (data.hasOwnProperty(c)) {
+				data[c].IntervalUnit = newUnit;
+			}
+		});
+	}
 	
 	return {
 		getCriteriaComponent,
 		formatDropDownOption,
-		getConceptSetName
+		getConceptSetName,
+		updateTimeUnit,
 	};
 
 });

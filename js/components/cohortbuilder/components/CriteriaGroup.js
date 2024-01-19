@@ -30,6 +30,15 @@ define([
 			return optionsArray;
 		});
 
+		const getUpdateTimeUnitFn = c => unit => utils.updateTimeUnit(c.Criteria, unit);
+
+		ko.unwrap(ko.unwrap(self.group).CriteriaList).forEach(c => {
+			const updateTimeUnitFn = getUpdateTimeUnitFn(c);
+			c.StartWindow.Start.TimeUnit.subscribe(updateTimeUnitFn);
+			const endWindow = ko.unwrap(c.EndWindow);
+			endWindow && endWindow.Start.TimeUnit.subscribe(updateTimeUnitFn);
+		});
+
 		self.getCriteriaComponent = utils.getCriteriaComponent;
 
 		self.addActions = [
@@ -255,10 +264,13 @@ define([
 		};
 
 		self.addEndWindow = function (corelatedCriteria) {
-			corelatedCriteria.EndWindow(new Window({UseEventEnd:true}));
+			const window = new Window({UseEventEnd:true});
+			corelatedCriteria.EndWindow(window);
+			window.tuSub = window.Start.TimeUnit.subscribe(getUpdateTimeUnitFn(corelatedCriteria));
 		};
 
 		self.removeEndWindow = function (corelatedCriteria) {
+			corelatedCriteria.EndWindow().tuSub && corelatedCriteria.EndWindow().tuSub.dispose();
 			corelatedCriteria.EndWindow(null);
 		};
 
