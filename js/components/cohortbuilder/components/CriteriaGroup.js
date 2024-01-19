@@ -30,7 +30,7 @@ define([
 			return optionsArray;
 		});
 
-		const getUpdateTimeUnitFn = c => unit => utils.updateTimeUnit(c.Criteria, unit);
+		const getUpdateTimeUnitFn = c => unit => utils.updateTimeUnit(c, unit);
 
 		ko.unwrap(ko.unwrap(self.group).CriteriaList).forEach(c => {
 			const updateTimeUnitFn = getUpdateTimeUnitFn(c);

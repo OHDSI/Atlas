@@ -55,9 +55,13 @@ function(
 	function updateTimeUnit(data, newUnit) {
 		const criteria = ["ConditionOccurrence", "ConditionEra", "Death", "DeviceExposure", "DoseEra", "DrugEra", "DrugExposure", "Measurement", "Observation",
 			"ObservationPeriod", "PayerPlanPeriod", "ProcedureOccurrence", "Specimen", "VisitOccurrence"];
+		const startUnit = ko.unwrap(data.StartWindow.Start.TimeUnit);
+		const endUnit = data.EndWindow() && ko.unwrap(data.EndWindow().Start.TimeUnit);
 		criteria.forEach(c => {
-			if (data.hasOwnProperty(c)) {
-				data[c].IntervalUnit = newUnit;
+			if (data.Criteria.hasOwnProperty(c)) {
+				const newUnit = (startUnit === 'day') ? (endUnit || startUnit) : startUnit;
+				data.Criteria[c].IntervalUnit = newUnit;
+				console.log("New time unit:", data.Criteria, newUnit);
 			}
 		});
 	}
