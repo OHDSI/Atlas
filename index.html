@@ -42,10 +42,12 @@
 
 			<div class="app__menu">
 				<!-- ko foreach: router.pages -->
+				<!-- ko if: ko.unwrap($data.title) && (ko.unwrap($data.title) == 'Home' || ko.unwrap($data.title) == 'Data Sources' || ko.unwrap($data.title) == 'Search' || ko.unwrap($data.title) == 'Concept Sets' || ko.unwrap($data.title) == 'Cohort Definitions') --> 
 				<a data-bind="visible: !$data.hidden, attr: {href: navUrl()}, css: $parent.classes({ element: 'menu-item', modifiers: $parent.router.activeRoute().title === $data.title ? 'selected' : '', extra: statusCss() })">
 					<i data-bind="css: $parent.classes({ element: 'menu-icon', extra: `fa fa-fw fa-${icon}`})" aria-hidden="true"></i>
 					<span data-bind="text: $data.title, css: $parent.classes('menu-title')"></span>
 				</a>
+				<!-- /ko --> 
 				<!-- /ko -->
 			</div>
 
