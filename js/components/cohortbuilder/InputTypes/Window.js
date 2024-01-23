@@ -39,7 +39,6 @@ define(['knockout'], function (ko) {
 		})
 
 		self.End.TimeUnit.subscribe(function (newValue){
-			self.Start.TimeUnit(newValue);
 			self.End.Days(newValue === 'day' ? self.End.TimeUnitValue() : null);
 		})
 		

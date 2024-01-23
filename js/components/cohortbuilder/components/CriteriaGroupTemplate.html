@@ -137,8 +137,8 @@
 										params="{value: StartWindow.UseEventEnd, options: $component.options.EventDateOptions}">
 									</cycle-toggle-input>
 									<span data-bind="text:ko.i18n('components.criteriaGroup.between','between')"></span><br />
-
-									<window-input params="Window: StartWindow"></window-input>
+									
+									<window-input params="Window: StartWindow, isDropdownTimer: $component.isDropdownTimer($data.Criteria)"></window-input>
 									<cycle-toggle-input
 										params="{value: StartWindow.UseIndexEnd, options: $component.options.IndexDateOptions}">
 									</cycle-toggle-input>

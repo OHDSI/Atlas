@@ -301,6 +301,18 @@ define([
 			}
 		}
 
+		self.isDropdownTimer = function (data) {
+			switch (self.getCriteriaComponent(data)) {
+				case "drug-era-criteria":
+				case "dose-era-criteria":
+				case "condition-era-criteria":
+					return false;
+					break;
+				default:
+					return true;
+			}
+		}
+
 		self.getDistinctOptions = function (criteria) {
 			let distinctOptions = [{id: "DOMAIN_CONCEPT", name: "Standard Concept"}, {id: "START_DATE", name: "Start Date"}];
 			if (self.hasVO(criteria)) {
