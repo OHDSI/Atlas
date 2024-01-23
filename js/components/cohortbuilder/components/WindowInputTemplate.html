@@ -1,18 +1,30 @@
-<span contenteditable="true" class="dropdown numericInputField" data-bind="
+<div data-bind="with: Window.Start" style="display: inline-block">
+    <span contenteditable="true" class="dropdown numericInputField" data-bind="
         placeholder: ko.i18n('components.windowInput.windowInputText_1', 'All'),
-        htmlValue: Window.Start.Days.numeric(),
+        htmlValue: TimeUnitValue,
         eventType: 'blur',
-        ko_autocomplete: { value: Window.Start.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
+        ko_autocomplete: { value: TimeUnitValue, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
         selectOnFocus: {events: ['click']},
     " />
-<span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
+<select data-bind="options: $component.options.windowTimeOptions,
+    optionsText: function(item) { return item.name },
+    optionsValue: 'value',
+    value: TimeUnit">
+</select>
+</div>
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.Start.Coeff" />
-<span data-bind="text:ko.i18n('components.windowInput.windowInputText_3', 'and')"></span>
-<span contenteditable="true" class="dropdown numericInputField" data-bind="
-        placeholder: ko.i18n('components.windowInput.windowInputText_1', 'All'),
-        htmlValue: Window.End.Days.numeric(),
-        eventType: 'blur', ko_autocomplete: { value: Window.End.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
-        selectOnFocus: {events: ['click']},
+<span data-bind="text:ko.i18n('components.windowInput.windowInputText_3', 'and'), style: { marginLeft: '13px', marginRight: '13px'}"></span>
+<div data-bind="with: Window.End" style="display: inline-block">
+    <span contenteditable="true" class="dropdown numericInputField" data-bind="
+    placeholder: ko.i18n('components.windowInput.windowInputText_1', 'All'),
+    htmlValue: TimeUnitValue,
+    eventType: 'blur', ko_autocomplete: { value: TimeUnitValue, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
+    selectOnFocus: {events: ['click']},
 " />
-<span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
+<select data-bind="options: $component.options.windowTimeOptions,
+    optionsText: function(item) { return item.name },
+    optionsValue: 'value',
+    value: TimeUnit">
+</select>
+</div>
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.End.Coeff" />

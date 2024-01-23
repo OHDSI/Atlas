@@ -4,6 +4,7 @@ define(["knockout"], function (ko) {
 
     options.dayOptions = ['0', '1', '7', '14', '21', '30', '60', '90', '120', '180', '365', '548', '730', '1095'];
     options.monthOptions = [1, 3, 6, 9, 12, 24, 36];
+    options.timeOptions = ['options.days', 'options.hours', 'options.minutes', 'options.seconds'];
 
     options.ageOptions = new Array();
     for (i = 1; i < 100; i++) {
@@ -35,6 +36,17 @@ define(["knockout"], function (ko) {
         options.windowDayOptions.push({
             label: options.dayOptions[i],
             value: options.dayOptions[i]
+        });
+    }
+
+    options.windowTimeOptions = new Array();
+    for (i = 0; i < options.timeOptions.length; i++) {
+        const currentOption = options.timeOptions[i];
+        const value = currentOption.split('.').slice(-1)[0].slice(0, -1);
+        options.windowTimeOptions.push({
+            name: ko.i18n(currentOption, currentOption.split('.').slice(-1)[0]),
+            value: value,
+            lessName: ko.i18n( `options.${value}`, value)
         });
     }
     options.windowCoeffOptions = [{
