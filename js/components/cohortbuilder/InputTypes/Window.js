@@ -34,12 +34,10 @@ define(['knockout'], function (ko) {
 		})
 			
 		self.Start.TimeUnit.subscribe(function (newValue){
-			self.End.TimeUnit(newValue);
 			self.Start.Days(newValue === 'day' ? self.Start.TimeUnitValue() : null);
 		})
 			
 		self.End.TimeUnit.subscribe(function (newValue){
-			self.Start.TimeUnit(newValue);
 			self.End.Days(newValue === 'day' ? self.End.TimeUnitValue() : null);
 		})
 		
