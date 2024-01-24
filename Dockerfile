@@ -54,4 +54,4 @@ COPY --from=builder /code/js /usr/share/nginx/html/atlas/js
 
 # Load Atlas local config with current user, so it can be modified
 # with env substitution
-# COPY --chown=101 docker/config-local.js /usr/share/nginx/html/atlas/js/config-local.js
+COPY --chown=101 docker/config-local.js /usr/share/nginx/html/atlas/js/config-local.js
