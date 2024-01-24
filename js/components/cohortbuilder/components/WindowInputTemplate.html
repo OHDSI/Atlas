@@ -20,7 +20,7 @@
         ko_autocomplete: { value: Window.Start.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
         selectOnFocus: {events: ['click']},
     " />
-    <span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
+<span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
 </div>
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.Start.Coeff" />
 <span data-bind="text:ko.i18n('components.windowInput.windowInputText_3', 'and'), style: { marginLeft: '13px', marginRight: '13px'}"></span>
@@ -43,7 +43,7 @@
         htmlValue: Window.End.Days.numeric(),
         eventType: 'blur', ko_autocomplete: { value: Window.End.Days, source: $component.options.windowDayOptions, minLength: 0, maxShowItems: 10, scroll: true },
         selectOnFocus: {events: ['click']},
-    " />
-    <span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
+" />
+<span data-bind="text:ko.i18n('components.windowInput.windowInputText_2', 'days')"></span>
 </div>
 <select data-bind="options: $component.options.windowCoeffOptions, optionsText: 'name', optionsValue: 'value', value: Window.End.Coeff" />

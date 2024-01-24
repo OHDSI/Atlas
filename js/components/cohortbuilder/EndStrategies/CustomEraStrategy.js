@@ -21,7 +21,7 @@ define(['knockout'], function (ko) {
 						self.DrugCodesetId(null);
 				}
 			});
-		}, null, "arrayChange");	
+		}, null, "arrayChange");		
 		
 		self.OffsetUnitValue.subscribe(function (newValue){
 			const insertValue = newValue.toString().replace(/[\D\.]/g, '');
