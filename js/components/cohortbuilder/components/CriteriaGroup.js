@@ -32,12 +32,34 @@ define([
 
 		const getUpdateTimeUnitFn = c => unit => utils.updateTimeUnit(c, unit);
 
-		ko.unwrap(ko.unwrap(self.group).CriteriaList).forEach(c => {
-			const updateTimeUnitFn = getUpdateTimeUnitFn(c);
-			c.StartWindow.Start.TimeUnit.subscribe(updateTimeUnitFn);
-			const endWindow = ko.unwrap(c.EndWindow);
-			endWindow && endWindow.Start.TimeUnit.subscribe(updateTimeUnitFn);
-		});
+		const subscribeGroup = group =>
+			ko.unwrap(group.CriteriaList).map(c => {
+				const updateTimeUnitFn = getUpdateTimeUnitFn(c);
+				const startWindow = {
+					start: c.StartWindow.Start.TimeUnit.subscribe(updateTimeUnitFn),
+					end: c.StartWindow.End.TimeUnit.subscribe(updateTimeUnitFn),
+				};
+				const endWindowObject = ko.unwrap(c.EndWindow);
+				const endWindow = endWindowObject && {
+					start: endWindowObject.Start.TimeUnit.subscribe(updateTimeUnitFn),
+					end: endWindowObject.End.TimeUnit.subscribe(updateTimeUnitFn),
+				};
+				return {startWindow, endWindow};
+			});
+
+		const disposeWindow = (w) => {
+			w.start && w.start.dispose();
+			w.end && w.end.dispose();
+		};
+
+		if (self.subscriptions) {
+			self.subscriptions.forEach(sub => {
+				sub.startWindow && disposeWindow(sub.startWindow);
+				sub.endWindow && disposeWindow(sub.endWindow);
+			});
+		}
+		self.subscriptions = self.group.subscribe(g => subscribeGroup(ko.unwrap(g)));
+		subscribeGroup(ko.unwrap(self.group));
 
 		self.getCriteriaComponent = utils.getCriteriaComponent;
 

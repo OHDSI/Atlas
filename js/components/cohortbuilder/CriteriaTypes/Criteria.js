@@ -8,7 +8,7 @@ define(['require', 'knockout', '../InputTypes/Range','conceptpicker/InputTypes/C
 		
 		self.CorrelatedCriteria = ko.observable(data.CorrelatedCriteria && new CriteriaGroup(data.CorrelatedCriteria, conceptSets));
 		self.DateAdjustment = ko.observable(data.DateAdjustment && new DateAdjustment(data.DateAdjustment));
-
+		self.IntervalUnit = data.IntervalUnit;
 	}
 	
 	return Criteria;
