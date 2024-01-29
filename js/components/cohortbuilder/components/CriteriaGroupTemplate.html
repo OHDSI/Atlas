@@ -148,7 +148,7 @@
 										<span data-bind="text:ko.i18n('components.criteriaGroup.and', 'and')"></span>
 										<cycle-toggle-input params="{value: EndWindow().UseEventEnd, options: $component.options.EventDateOptions}"></cycle-toggle-input>
 										<span data-bind="text:ko.i18n('components.criteriaGroup.between', 'between')"></span>
-										<window-input params="Window: EndWindow"></window-input>
+										<window-input params="Window: EndWindow, isDropdownTimer: $component.isDropdownTimer($data.Criteria)"></window-input>
 										<cycle-toggle-input params="{value: EndWindow().UseIndexEnd, options: $component.options.IndexDateOptions}"></cycle-toggle-input>
 									</div>
 									<!-- /ko -->
