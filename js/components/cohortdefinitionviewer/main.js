@@ -86,5 +86,7 @@ define(function (require, exports) {
 
 	var locationRegion = require('./components/LocationRegion');
 	ko.components.register('location-region-viewer', locationRegion);
-	
+
+	var measurementOperand = require("./components/MeasurementOperand");
+	ko.components.register("measurement-operand-viewer", measurementOperand);
 });
