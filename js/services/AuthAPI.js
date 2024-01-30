@@ -254,6 +254,10 @@ define(function(require, exports) {
     }
     var refreshToken = function() {
 
+        if (!config.userAuthenticationEnabled) {
+            return Promise.resolve(true); // no-op if userAuthenticationEnabled == false
+        }
+
         if (!isPromisePending(refreshTokenPromise)) {
           refreshTokenPromise = httpService.doGet(getServiceUrl() + "user/refresh");
           refreshTokenPromise.then(({ data, headers }) => {
@@ -517,9 +521,7 @@ define(function(require, exports) {
 
     const executeWithRefresh = async function(httpPromise) {
         const result = await httpPromise;
-        if (config.userAuthenticationEnabled) {
-            await refreshToken();
-        }
+        await refreshToken();
         return result;
     }
 
