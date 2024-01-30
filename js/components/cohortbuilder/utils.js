@@ -53,7 +53,7 @@ function(
 	}
 
 	function updateTimeUnit(data, newUnit) {
-		console.log("Update Time Unit", newUnit);
+		// console.log("Update Time Unit", newUnit);
 		const criteria = ["ConditionOccurrence", "ConditionEra", "Death", "DeviceExposure", "DoseEra", "DrugEra", "DrugExposure", "Measurement", "Observation",
 			"ObservationPeriod", "PayerPlanPeriod", "ProcedureOccurrence", "Specimen", "VisitOccurrence"];
 		const units = [
@@ -64,7 +64,9 @@ function(
 		];
 		criteria.forEach(c => {
 			if (data.Criteria.hasOwnProperty(c)) {
-				data.Criteria[c].IntervalUnit = units.filter(item => !!item).find(u => u !== 'day') || 'day';
+				const newUnit = units.filter(item => !!item).find(u => u !== 'day') || 'day';
+				// console.log("New Unit", c, newUnit);
+				data.Criteria[c].IntervalUnit = newUnit;
 			}
 		});
 	}
