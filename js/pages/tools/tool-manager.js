@@ -6,7 +6,6 @@ define([
 	'services/AuthAPI',
 	'services/ToolService',
 	'services/MomentAPI',
-	'./PermissionService',
 	'css!styles/switch-button.css',
 	'less!./tool-management.less',
 ], function (
@@ -17,7 +16,6 @@ define([
 	authApi,
 	toolService,
 	momentApi,
-	PermissionService
 ) {
 	class ToolManage extends Page {
 		constructor(params) {
@@ -35,12 +33,11 @@ define([
 			this.handleOpenLink = this.handleOpenLink.bind(this);
 			this.handleCancelTool = this.handleCancelTool.bind(this);
 			this.handleClearData = this.handleClearData.bind(this);
+			this.isAuthenticated = authApi.isAuthenticated;
 
 			this.isAdmin = ko.pureComputed(() => {
 				return authApi.isPermmitedAdmin();
 			});
-			this.canReadTools = PermissionService.isPermittedList;
-			this.canCreateTools = PermissionService.isPermittedCreate;
 
 			this.showModalAddTool.subscribe((isShow) => {
 				if(!isShow) this.handleClearData();
@@ -90,10 +87,7 @@ define([
 					description: dataAdjust.description,
 					enabled: dataAdjust.enabled
 				}
-				const res = await toolService.updateTool(data);
-				if(res.status === 200){
-					this.getToolFromAllPages();
-				}
+				await toolService.updateTool(data);
 			}catch(error){
 				console.log('update tool failed', error)
 			} finally {
@@ -106,10 +100,7 @@ define([
 		async handleDelete(id) {
 			this.loading(true);
 			try {
-				const res = await toolService.deleteTool(id);
-				if(res.status === 200){
-					this.getToolFromAllPages();
-				}
+				await toolService.deleteTool(id);
 			}catch(error){
 				console.log('delete tool failed', error)
 			} finally {
@@ -158,11 +149,7 @@ define([
 					url: data.newUrl(),
 					enabled: data.toolIsVisible()
 				};
-				const res = await toolService.createTool(dataPayload);
-				if(res.status === 200){
-					this.getToolFromAllPages();
-					this.showModalAddTool(false);
-				}
+				await toolService.createTool(dataPayload);
 			}catch(error){
 				console.log('add new tool failed', error)
 			} finally {
