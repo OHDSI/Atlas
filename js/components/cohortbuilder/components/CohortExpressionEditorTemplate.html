@@ -35,6 +35,20 @@
 	</div>
 </atlas-modal>
 
+<div class="panel panel-primary">
+	<div class="panel-heading">Options</div>
+	<div class="panel-body">
+		<div>
+			<input name="useDateTime" type="radio" data-bind="checkedValue: true, checked: useDateTime">
+			<span class="expression-editor__options-label" data-bind="text: 'Evaluate cohort start and end dates with date and time'"></span>
+		</div>
+		<div>
+			<input name="useDateTime" type="radio" data-bind="checkedValue: false, checked: useDateTime">
+			<span class="expression-editor__options-label" data-bind="text: 'Evaluate cohort start and end dates with only date'"></span>
+		</div>
+	</div>
+</div>
+
 <div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
 		<span
