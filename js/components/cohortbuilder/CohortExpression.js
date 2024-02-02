@@ -42,7 +42,7 @@ define(function (require, exports) {
 			self.CollapseSettings.EraPad(newValue === 'day' ? self.CollapseSettings.EraPadUnitValue() : 0);
 		})
 
-		self.useDateTime = ko.observable(!!data.useDateTime);
+		self.UseDatetime = ko.observable(!!data.UseDatetime);
 		
 	}
 	return CohortExpression;

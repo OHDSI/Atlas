@@ -39,7 +39,7 @@ define([
     self.expression = params.expression;
     self.options = options;
 
-    self.useDateTime = self.expression().useDateTime;
+    self.useDateTime = self.expression().UseDatetime;
     // self.useDateTime.subscribe(val => self.expression().useDateTime = val);
     self.showCensorWindow = ko.observable(
       self.expression().CensorWindow().StartDate() ||
