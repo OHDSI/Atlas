@@ -78,7 +78,7 @@ define(function(require, exports) {
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info, textStatus, jqXHR) {
-                permissions(info.permissions.map(p => p.permission));
+                permissions(info.permissionIdx);  // read from permission index of User info
                 subject(info.login);
                 authProvider(jqXHR.getResponseHeader('x-auth-provider'));
                 fullName(info.name ? info.name : info.login);
@@ -210,7 +210,11 @@ define(function(require, exports) {
             return true;
         }
 
-        var etalons = permissions();
+        if (!permissions()) return false;
+
+        firstPerm = permission.split(":")[0];
+
+        var etalons = [...(permissions()["*"] || []),  ...(permissions()[firstPerm]||[])];
         if (!etalons) {
             return false;
         }
@@ -498,7 +502,7 @@ define(function(require, exports) {
 
 	const setAuthParams = (tokenHeader, permissionsStr = '') => {
         !!tokenHeader && token(tokenHeader);
-        !!permissionsStr && permissions(permissionsStr.split('|'));
+        !!permissionsStr && permissions(permissionsStr);
     };
 
     var resetAuthParams = function () {
