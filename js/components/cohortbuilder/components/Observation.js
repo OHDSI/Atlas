@@ -10,57 +10,7 @@ define([
 ], function (ko, options, utils, Range, Text, CriteriaGroup, template, constants) {
   function ObservationViewModel(params) {
     var self = this;
-    self.addActions = [
-      {
-        ...constants.observationAttributes.addFirstDiagnosis,
-        selected: false,
-        action: function () {
-          if (self.Criteria.First() == null) self.Criteria.First(true);
-        },
-      },
-      {
-        ...constants.observationAttributes.addAge,
-        selected: false,
-        action: function () {
-          if (self.Criteria.Age() == null) self.Criteria.Age(new Range());
-        },
-      },
-      {
-        ...constants.observationAttributes.addGender,
-        selected: false,
-        action: function () {
-          if (self.Criteria.Gender() == null)
-            self.Criteria.Gender(ko.observableArray());
-        },
-      },
-      {
-        ...constants.observationAttributes.addDate,
-        selected: false,
-        action: function () {
-          if (self.Criteria.OccurrenceStartDate() == null)
-            self.Criteria.OccurrenceStartDate(
-              new Range({
-                Op: "lt",
-              })
-            );
-        },
-      },
-      {
-        ...constants.observationAttributes.addType,
-        selected: false,
-        action: function () {
-          if (self.Criteria.ObservationType() == null)
-            self.Criteria.ObservationType(ko.observableArray());
-        },
-      },
-      {
-        ...constants.observationAttributes.addVisit,
-        selected: false,
-        action: function () {
-          if (self.Criteria.VisitType() == null)
-            self.Criteria.VisitType(ko.observableArray());
-        },
-      },
+    self.addActions = [ 
       {
         ...constants.observationAttributes.addValue,
         selected: false,
@@ -74,55 +24,11 @@ define([
         },
       },
       {
-        ...constants.observationAttributes.addValueAsString,
-        selected: false,
-        action: function () {
-          if (self.Criteria.ValueAsString() == null)
-            self.Criteria.ValueAsString(
-              new Text({
-                Op: "contains",
-              })
-            );
-        },
-      },
-      {
         ...constants.observationAttributes.addValueAsConcept,
         selected: false,
         action: function () {
           if (self.Criteria.ValueAsConcept() == null)
             self.Criteria.ValueAsConcept(ko.observableArray());
-        },
-      },
-      {
-        ...constants.observationAttributes.addQualifier,
-        selected: false,
-        action: function () {
-          if (self.Criteria.Qualifier() == null)
-            self.Criteria.Qualifier(ko.observableArray());
-        },
-      },
-      {
-        ...constants.observationAttributes.addUnit,
-        selected: false,
-        action: function () {
-          if (self.Criteria.Unit() == null)
-            self.Criteria.Unit(ko.observableArray());
-        },
-      },
-      {
-        ...constants.observationAttributes.addSourceConcept,
-        selected: false,
-        action: function () {
-          if (self.Criteria.ObservationSourceConcept() == null)
-            self.Criteria.ObservationSourceConcept(ko.observable());
-        },
-      },
-      {
-        ...constants.observationAttributes.addProviderSpecialty,
-        selected: false,
-        action: function () {
-          if (self.Criteria.ProviderSpecialty() == null)
-            self.Criteria.ProviderSpecialty(ko.observableArray());
         },
       },
       {
