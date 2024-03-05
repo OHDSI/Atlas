@@ -171,9 +171,9 @@ define([
 				Array.isArray(dataTools) && dataTools.forEach((item, index) => {
 					this.data_tools.push({
 					...item,
-					createdDate: momentApi.formatDate(item.createdDate, 'DD/MM/YYYY'),
+					createdDate: momentApi.formatDate(item.createdDate, 'DD/MM/YYYY HH:mm:ss'),
 					isEditing: false,
-					updatedDate: momentApi.formatDate(item.modifiedDate, 'DD/MM/YYYY'),
+					updatedDate: momentApi.formatDate(item.modifiedDate, 'DD/MM/YYYY HH:mm:ss'),
 					createdBy: item.createdBy ?? ''
 				})});
 			} finally {
