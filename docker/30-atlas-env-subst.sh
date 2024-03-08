@@ -26,7 +26,7 @@ if [ -n "${WEBAPI_URL}" ]; then
   TFILE=`mktemp`
   trap "rm -f $TFILE" 0 1 2 3 15
   # Don't copy but rewrite so that permissions are not changed.
-  envsubst '$WEBAPI_URL' < "$CONFIG_TARGET_PATH" > "$TFILE"
+  envsubst < "$CONFIG_TARGET_PATH" > "$TFILE"
   cat "$TFILE" > "$CONFIG_TARGET_PATH"
   rm -f "$TFILE"
 fi
