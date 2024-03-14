@@ -1,7 +1,7 @@
 define([], function () {
 	var configLocal = {};
 
-	if ("${CLEAR_LOCAL_STORAGE}" == "true") {
+	if ("${ATLAS_CLEAR_LOCAL_STORAGE}" == "true") {
 		localStorage.clear();
 	}
 
@@ -14,118 +14,128 @@ define([], function () {
 
 	// WebAPI
 	configLocal.api = {
-		name: '${APP_NAME}',
+		name: '${ATLAS_INSTANCE_NAME}',
 		url: webapi_url
 	};
 
-	configLocal.cohortComparisonResultsEnabled = ("${COHORT_COMPARISON_RESULTS}" == "true");
-	configLocal.plpResultsEnabled = ("${PLP_RESULTS}" === "true");
-	configLocal.userAuthenticationEnabled = ("${USER_AUTHENTICATION}" === "true");
+	configLocal.cohortComparisonResultsEnabled = ("${ATLAS_COHORT_COMPARISON_RESULTS_ENABLED}" == "true");
+	configLocal.plpResultsEnabled = ("${ATLAS_PLP_RESULTS_ENABLED}" === "true");
+	configLocal.userAuthenticationEnabled = ("${ATLAS_USER_AUTH_ENABLED}" === "true");
 	configLocal.authProviders = [];
-	configLocal.disableBrowserCheck = ("${DISABLE_BROWSER_CHECK}" === "true");
-	configLocal.enablePermissionManagement = ("${ENABLE_PERMISSIONS_MGMT}" === "true");
-	configLocal.cacheSources = ("${CACHE_SOURCES}" === "true");
-	configLocal.enableSkipLogin = ("${SKIP_LOGIN}" === "true"); // automatically opens login window when user is not authenticated
-	configLocal.useExecutionEngine = ("${USE_EXECUTION_ENGINE}" === "true");
-	configLocal.viewProfileDates = ("${VIEW_PROFILE_DATES}" === "true");
-	configLocal.enableCosts = ("${ENABLE_COSTS}" === "true");
-	configLocal.supportUrl = "${SUPPORT_URL}";
-	configLocal.supportMail = "${SUPPORT_MAIL}";
-	configLocal.feedbackContacts = "${FEEDBACK_CONTACTS}";
-	configLocal.feedbackCustomHtmlTemplate = "${FEEDBACK_HTML}";
-	configLocal.companyInfoCustomHtmlTemplate = "${COMPANYINFO_HTML}";
-	configLocal.showCompanyInfo = ("${COMPANYINFO_SHOW}" === "true");
-	configLocal.defaultLocale = "${DEFAULT_LOCALE}";
-	configLocal.pollInterval = parseInt("${POLL_INTERVAL}");
+	configLocal.disableBrowserCheck = ("${ATLAS_DISABLE_BROWSER_CHECK}" === "true");
+	configLocal.enablePermissionManagement = ("${ATLAS_ENABLE_PERMISSIONS_MGMT}" === "true");
+	configLocal.cacheSources = ("${ATLAS_CACHE_SOURCES}" === "true");
+	configLocal.enableSkipLogin = ("${ATLAS_SKIP_LOGIN}" === "true"); // automatically opens login window when user is not authenticated
+	configLocal.useExecutionEngine = ("${ATLAS_USE_EXECUTION_ENGINE}" === "true");
+	configLocal.viewProfileDates = ("${ATLAS_VIEW_PROFILE_DATES}" === "true");
+	configLocal.enableCosts = ("${ATLAS_ENABLE_COSTS}" === "true");
+	configLocal.supportUrl = "${ATLAS_SUPPORT_URL}";
+	configLocal.supportMail = "${ATLAS_SUPPORT_MAIL}";
+	configLocal.feedbackContacts = "${ATLAS_FEEDBACK_CONTACTS}";
+	configLocal.feedbackCustomHtmlTemplate = "${ATLAS_FEEDBACK_HTML}";
+	configLocal.companyInfoCustomHtmlTemplate = "${ATLAS_COMPANYINFO_HTML}";
+	configLocal.showCompanyInfo = ("${ATLAS_COMPANYINFO_SHOW}" === "true");
+	configLocal.defaultLocale = "${ATLAS_DEFAULT_LOCALE}";
+	configLocal.pollInterval = parseInt("${ATLAS_POLL_INTERVAL}");
 
 
-	if ("${WIN_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_WIN_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${WIN_PROVIDER_NAME}",
-			url: "${WIN_PROVIDER_URL}",
-			ajax: ("${WIN_PROVIDER_AJAX}" === "true"),
-			icon: "${WIN_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_WIN_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_WIN_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_WIN_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_WIN_PROVIDER_ICON}",
 		});
 	}
 
-	if ("${KERB_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_KERB_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${KERB_PROVIDER_NAME}",
-			url: "${KERB_PROVIDER_URL}",
-			ajax: ("${KERB_PROVIDER_AJAX}" === "true"),
-			icon: "${KERB_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_KERB_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_KERB_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_KERB_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_KERB_PROVIDER_ICON}",
 		});
 	}
 
-	if ("${OID_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_OID_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${OID_PROVIDER_NAME}",
-			url: "${OID_PROVIDER_URL}",
-			ajax: ("${OID_PROVIDER_AJAX}" === "true"),
-			icon: "${OID_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_OID_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_OID_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_OID_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_OID_PROVIDER_ICON}",
 		});
 	}
 
-	if ("${GGL_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_GGL_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${GGL_PROVIDER_NAME}",
-			url: "${GGL_PROVIDER_URL}",
-			ajax: ("${GGL_PROVIDER_AJAX}" === "true"),
-			icon: "${GGL_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_GGL_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_GGL_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_GGL_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_GGL_PROVIDER_ICON}",
 		});
 	}
 
-	if ("${FB_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_FB_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${FB_PROVIDER_NAME}",
-			url: "${FB_PROVIDER_URL}",
-			ajax: ("${FB_PROVIDER_AJAX}" === "true"),
-			icon: "${FB_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_FB_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_FB_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_FB_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_FB_PROVIDER_ICON}",
 		});
 	}
 
-	if ("${GH_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_GH_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${GH_PROVIDER_NAME}",
-			url: "${GH_PROVIDER_URL}",
-			ajax: ("${GH_PROVIDER_AJAX}" === "true"),
-			icon: "${GH_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_GH_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_GH_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_GH_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_GH_PROVIDER_ICON}",
 		});
 	}
 
-	if ("${DB_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_DB_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${DB_PROVIDER_NAME}",
-			url: "${DB_PROVIDER_URL}",
-			ajax: ("${DB_PROVIDER_AJAX}" === "true"),
-			icon: "${DB_PROVIDER_ICON}",
-			isUseCredentialsForm: ("${DB_PROVIDER_CREDFORM}" === "true")
+			name: "${ATLAS_SECURITY_DB_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_DB_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_DB_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_DB_PROVIDER_ICON}",
+			isUseCredentialsForm: ("${ATLAS_SECURITY_DB_PROVIDER_CREDFORM}" === "true")
 		});
 	}
 
-	if ("${LDAP_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_LDAP_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${LDAP_PROVIDER_NAME}",
-			url: "${LDAP_PROVIDER_URL}",
-			ajax: ("${LDAP_PROVIDER_AJAX}" === "true"),
-			icon: "${LDAP_PROVIDER_ICON}",
-			isUseCredentialsForm: ("${LDAP_PROVIDER_CREDFORM}" === "true")
+			name: "${ATLAS_SECURITY_LDAP_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_LDAP_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_LDAP_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_LDAP_PROVIDER_ICON}",
+			isUseCredentialsForm: ("${ATLAS_SECURITY_LDAP_PROVIDER_CREDFORM}" === "true")
 		});
 	}
 
-	if ("${SAML_PROVIDER_ENABLED}" === "true") {
+	if ("${ATLAS_SECURITY_SAML_PROVIDER_ENABLED}" === "true") {
 		configLocal.authProviders.push(openIdProvider = {
-			name: "${SAML_PROVIDER_NAME}",
-			url: "${SAML_PROVIDER_URL}",
-			ajax: ("${SAML_PROVIDER_AJAX}" === "true"),
-			icon: "${SAML_PROVIDER_ICON}",
+			name: "${ATLAS_SECURITY_SAML_PROVIDER_NAME}",
+			url: "${ATLAS_SECURITY_SAML_PROVIDER_URL}",
+			ajax: ("${ATLAS_SECURITY_SAML_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_SAML_PROVIDER_ICON}",
 		});
 	}
 
-	configLocal.enableTermsAndConditions = ("${ENABLE_TANDCS}" === "true");
-	configLocal.enablePersonCount = ("${ENABLE_PERSONCOUNT}" === "true");
-	configLocal.enableTaggingSection = ("${ENABLE_TAGGING_SECTION}" === "true");
-	configLocal.refreshTokenThreshold = 1000 * 60 * parseInt("${REFRESH_TOKEN_THRESHOLD}");
+	// For existing broadsea implementations
+	if ("${ATLAS_SECURITY_PROVIDER_ENABLED}" === "true") {
+		configLocal.authProviders.push(openIdProvider = {
+			name: "${ATLAS_SECURITY_PROVIDER_NAME}",
+			url: "user/login/${ATLAS_SECURITY_PROVIDER_TYPE}",
+			ajax: ("${ATLAS_SECURITY_PROVIDER_AJAX}" === "true"),
+			icon: "${ATLAS_SECURITY_PROVIDER_ICON}",
+		});
+	}
+
+	configLocal.enableTermsAndConditions = ("${ATLAS_ENABLE_TANDCS}" === "true");
+	configLocal.enablePersonCount = ("${ATLAS_ENABLE_PERSONCOUNT}" === "true");
+	configLocal.enableTaggingSection = ("${ATLAS_ENABLE_TAGGING_SECTION}" === "true");
+	configLocal.refreshTokenThreshold = 1000 * 60 * parseInt("${ATLAS_REFRESH_TOKEN_THRESHOLD}");
 
 	return configLocal;
 });
