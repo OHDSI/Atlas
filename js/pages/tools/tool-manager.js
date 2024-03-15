@@ -6,6 +6,7 @@ define([
 	'services/AuthAPI',
 	'services/ToolService',
 	'services/MomentAPI',
+	'./PermissionService',
 	'css!styles/switch-button.css',
 	'less!./tool-management.less',
 ], function (
@@ -16,6 +17,7 @@ define([
 	authApi,
 	toolService,
 	momentApi,
+	PermissionService
 ) {
 	class ToolManage extends Page {
 		constructor(params) {
@@ -35,9 +37,10 @@ define([
 			this.handleClearData = this.handleClearData.bind(this);
 			this.isAuthenticated = authApi.isAuthenticated;
 
-			this.isAdmin = ko.pureComputed(() => {
-				return authApi.isPermmitedAdmin();
-			});
+			this.canReadTools = PermissionService.isPermittedReadTools;
+			this.canCreateTool = PermissionService.isPermittedCreateTool;
+			this.canUpdateTool = PermissionService.isPermittedUpdateTool;
+			this.canDeleteTool = PermissionService.isPermittedDeleteTool;
 
 			this.showModalAddTool.subscribe((isShow) => {
 				if(!isShow) this.handleClearData();
@@ -160,7 +163,9 @@ define([
 		}
 
 		async onPageCreated() {
-			this.getToolFromAllPages();
+			if(this.canReadTools()){
+				this.getToolFromAllPages();
+			}
 		}
 
 		async getToolFromAllPages() {
