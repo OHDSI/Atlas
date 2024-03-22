@@ -2,19 +2,21 @@
 <div class="paddedWrapper">
 	<div class="card-tools">
 		<button type="button" class="btn btn-primary add-btn"
-		data-bind="visible: $component.isAdmin(),
-					click: () => { showModalAddTool(true) },
-					css: classes('create-button'),
+		data-bind="click: () => { showModalAddTool(true) },
+					css: classes({
+						element: 'create-button',
+						extra: `${canCreateTool() ? '' : 'disabled'}`,
+					}),
 					text: ko.i18n('common.addTools', 'Add Tool')"></button>
 		<div class="card-tool-container" data-bind="hidden: loading, foreach: data_tools">
-				<div class="card-tool flexed" data-bind="visible: $component.isAdmin() || enabled, click: $component.handleOpenLink, style:{ 'z-index': 0 }">
+				<div class="card-tool flexed" data-bind="visible: $component.canReadTools() || enabled, click: $component.handleOpenLink, style:{ 'z-index': 0 }">
 					<label for="toolName" data-bind="visible: isEditing, text: ko.i18n('columns.name', 'Name')"></label>
 					<div class="flex-between">
 						<h3 data-bind="hidden: isEditing, text: name, click: () => window.open(url, '_blank')"></h3>
 						<input type="text" data-bind="visible: isEditing, textInput: name, keyupBubble: false" id="toolName"/>
 						<div style="width: 15% !important; align-items: center; display: flex; justify-content: flex-end;">
-							<i class="fas fa-edit" id="editIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="hidden: (isEditing || !$component.isAdmin()), click:() => $component.handleIsEditing(id), style:{ 'z-index': 9 }"></i>
-							<i class="far fa-trash-alt" id="deleteIcon" style="font-size: 24px; color: #F44; cursor: pointer; margin-left: 10px;" data-bind="hidden: (isEditing || !$component.isAdmin()), click:() => $component.handleDelete(id), style:{ 'z-index': 9 }"></i>
+							<i class="fas fa-edit" id="editIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="hidden: (isEditing || !$component.canUpdateTool()), click:() => $component.handleIsEditing(id), style:{ 'z-index': 9 }"></i>
+							<i class="far fa-trash-alt" id="deleteIcon" style="font-size: 24px; color: #F44; cursor: pointer; margin-left: 10px;" data-bind="hidden: (isEditing || !$component.canDeleteTool()), click:() => $component.handleDelete(id), style:{ 'z-index': 9 }"></i>
 							<i class="fas fa-check-square" id="completeIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="visible: isEditing, click:() => $component.handleIsEdited(id), style:{ 'z-index': 9 }"></i>
 						</div>
 					</div>
@@ -91,4 +93,4 @@
 		</div>
 	</atlas-modal>
 </div>
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: () => true"></access-denied>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canReadTools"></access-denied>
