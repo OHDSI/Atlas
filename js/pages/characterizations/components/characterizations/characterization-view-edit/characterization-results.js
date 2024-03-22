@@ -27,6 +27,7 @@ define([
     'utils/ExceptionUtils',
     'services/file',
     './explore-prevalence',
+    './explore-temporal',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -84,6 +85,7 @@ define([
             this.executionId = params.executionId;
             this.loadedExecutionId = null;
             this.data = ko.observable([]);
+            this.temporal = [];
             this.domains = ko.observableArray();
             this.filterList = ko.observableArray([]);
             this.selectedItems = ko.pureComputed(() => filterUtils.getSelectedFilterValues(this.filterList()));
@@ -111,6 +113,10 @@ define([
             this.downloading = ko.observableArray();
             this.tableOptions = commonUtils.getTableOptions('M');
             this.datatableLanguage = ko.i18n('datatable.language');
+
+            this.isTemporalShown = ko.observable(false);
+            this.exploreTemporalTitle = ko.observable();
+            this.exploreTemporalData = ko.observable();
 
             this.subscriptions.push(this.executionId.subscribe(id => id && this.loadData()));
             this.loadData();
@@ -185,6 +191,12 @@ define([
           this.explorePrevalence({executionId: this.executionId(), analysisId, cohortId, covariateId, cohortName});
           this.explorePrevalenceTitle(ko.i18n('cc.viewEdit.results.exploring', 'Exploring')() + ' ' + covariateName);
           this.isExplorePrevalenceShown(true);
+        }
+
+        exploreTemporal({temporal, temporalAnnual}, title) {
+            this.exploreTemporalTitle(title);
+            this.exploreTemporalData({temporal, temporalAnnual});
+            this.isTemporalShown(true);
         }
 
         async createNewSet(analysis) {

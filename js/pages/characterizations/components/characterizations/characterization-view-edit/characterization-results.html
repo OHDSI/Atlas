@@ -212,4 +212,13 @@
         ">
         <explore-prevalence params="explore: explore"></explore-prevalence>
     </atlas-modal>
+    <atlas-modal params="
+        showModal: $component.isTemporalShown,
+        title: $component.exploreTemporalTitle,
+        data: {
+            temporalData: $component.exploreTemporalData(),
+        }
+        ">
+        <explore-temporal params="temporal: temporalData"></explore-temporal>
+    </atlas-modal>
 </div>

@@ -81,6 +81,9 @@ define([
                 data: ko.pureComputed(() => params.design() && params.design().parameters() || [])
             };
 
+            this.includeAnnual = ko.observable(this.featureAnalyses.data().reduce((a, b) => a || !!b.includeAnnual(), false));
+            this.includeAnnual.subscribe((newVal) => this.featureAnalyses.data().forEach(fa => fa.supportsAnnual && fa.includeAnnual(newVal)));
+
             this.showFeatureAnalysesBrowser = ko.observable(false);
 
             this.isParameterCreateModalShown = ko.observable(false);

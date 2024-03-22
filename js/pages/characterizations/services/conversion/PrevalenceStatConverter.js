@@ -68,7 +68,16 @@ define([
                 title: ko.i18n('columns.covariate', 'Covariate'),
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
-                render: (d, t, { covariateName, faType }) => utils.extractMeaningfulCovName(covariateName, faType),
+                render: (d, t, { covariateName, faType, covariateId, temporal, temporalAnnual }) => {
+                    const meaningfulName = utils.extractMeaningfulCovName(covariateName, faType);
+                    const hasTemporal = Array.isArray(temporal) && temporal.length > 0;
+                    const hasAnnual = Array.isArray(temporalAnnual) && temporalAnnual.length > 0;
+                    if (hasTemporal || hasAnnual) {
+                        return `<a href="#" data-bind="click: () => $component.exploreTemporal($data, '${meaningfulName}')">${meaningfulName}</a>`;
+                    } else {
+                        return meaningfulName;
+                    }
+                },
                 xssSafe:false,
             };
             if (analysis && analysis.rawAnalysisName === 'DemographicsAgeGroup') {
