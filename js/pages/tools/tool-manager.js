@@ -179,7 +179,7 @@ define([
 					createdDate: momentApi.formatDate(item.createdDate, 'DD/MM/YYYY HH:mm:ss'),
 					isEditing: false,
 					updatedDate: momentApi.formatDate(item.modifiedDate, 'DD/MM/YYYY HH:mm:ss'),
-					createdBy: item.createdBy ?? ''
+					createdBy: item.createdByName ?? ''
 				})});
 			} finally {
 				this.loading(false);
