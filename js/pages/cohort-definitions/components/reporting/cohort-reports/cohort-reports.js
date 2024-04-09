@@ -21,7 +21,7 @@ define([
 	PluginRegistry.add(globalConstants.pluginTypes.COHORT_REPORT, {
 		title: ko.i18n('cohortDefinitions.cohortreports.inclusionReport', 'Inclusion Report'),
 		priority: 1,
-		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId }"></cohort-report-inclusion>`
+		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId, isViewDemographic: isViewDemographic }"></cohort-report-inclusion>`
 	});
 
 	class CohortReports extends Component {
@@ -30,10 +30,12 @@ define([
 
 			this.sourceKey = ko.computed(() => params.source() && params.source().sourceKey);
 			this.cohortId = ko.computed(() => params.cohort().id());
+			this.isViewDemographic = ko.computed(() => params.source() && params.source().viewDemographic());
 
 			const componentParams =  {
 				sourceKey: this.sourceKey,
-				cohortId: this.cohortId
+				cohortId: this.cohortId,
+				isViewDemographic: this.isViewDemographic
 			};
 
 			this.tabs = PluginRegistry.findByType(globalConstants.pluginTypes.COHORT_REPORT).map(t => ({ ...t, componentParams }));
@@ -42,6 +44,7 @@ define([
 		dispose() {
 			this.sourceKey.dispose();
 			this.cohortId.dispose();
+			this.isViewDemographic.dispose();
 		}
 	}
 
