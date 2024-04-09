@@ -58,7 +58,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utilities/sql',
 	'components/conceptset/conceptset-list',
 	'components/name-validation',
-	'components/versions/versions'
+	'components/versions/versions',
+	'databindings/tooltipBinding'
 ], function (
 	$,
 	ko,
@@ -602,6 +603,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration'),
 				data: 'executionDuration'
 			}, {
+				title: ko.i18n(
+				  'cohortDefinitions.cohortDefinitionManager.panels.generationDuration3',
+				  'Demographics'
+				),
+				data: 'viewDemographic',
+				sortable: false,
+				tooltip: 'Results with Demographics',
+				render: () =>
+				  `<span data-bind="template: {name: 'generation-checkbox-demographic', data: $data }"></span>`,
+			},{
 				sortable: false,
 				className: 'generation-buttons-column',
 				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
@@ -1115,6 +1126,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				});
 		}
 
+		handleCheckboxDemographic(source) {
+			  const targetSource = this.getSourceKeyInfo(source.sourceKey);
+			  targetSource.viewDemographic(targetSource.viewDemographic());
+			  const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d.sourceKey !== source.sourceKey;
+				}
+			  );
+
+			  this.cohortDefinitionSourceInfo([...restSourceInfos, targetSource])
+		  }
+
 		cancelGenerate (source) {
 			this.stopping()[source.sourceKey](true);
 			cohortDefinitionService.cancelGenerate(this.currentCohortDefinition().id(), source.sourceKey);
@@ -1299,6 +1322,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 				cdsi.createdBy = ko.observable(sourceInfo.createdBy);
+				cdsi.viewDemographic = ko.observable(sourceInfo?.viewDemographic || false);
 			} else {
 				cdsi.isValid = ko.observable(false);
 				cdsi.isCanceled = ko.observable(false);
@@ -1309,6 +1333,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cdsi.recordCount = ko.observable('n/a');
 				cdsi.failMessage = ko.observable(null);
 				cdsi.createdBy = ko.observable(null);
+				cdsi.viewDemographic = ko.observable(false);
 			}
 			return cdsi;
 		}
