@@ -43,6 +43,9 @@
 							<span data-bind="visible: createdBy , text: createdBy" style="font-weight: 500; font-size: 13px;"></span>
 							<span data-bind="visible: !createdBy , text: 'anonymous'" style="font-weight: 500; font-size: 13px;"></span>
 						</div>
+						<div class="flexed material-switch" style="width: 50%" data-bind="visible: ($component.canUpdateTool() || $component.canDeleteTool()) && !isEditing">
+							<label for="switchBtnTool" class="label-success" style="pointer-events: none;" data-bind="css: enabled ? 'label-switch-enable' : ''"></label>
+						</div>
 					</div>
 				</div>
 			</div>
