@@ -44,7 +44,8 @@
 							<span data-bind="visible: !createdBy , text: 'anonymous'" style="font-weight: 500; font-size: 13px;"></span>
 						</div>
 						<div class="flexed material-switch" style="width: 50%" data-bind="visible: ($component.canUpdateTool() || $component.canDeleteTool()) && !isEditing">
-							<label for="switchBtnTool" class="label-success" style="pointer-events: none;" data-bind="css: enabled ? 'label-switch-enable' : ''"></label>
+							<p data-bind="text: 'label for card tool status'" style="visibility: hidden;"></p>
+							<span data-bind="text: enabled ? ko.i18n('tool.toolEnabled', 'Tool enabled') : ko.i18n('tool.toolDisabled', 'Tool disabled')" style="font-weight: 500; font-size: 13px;"></span>
 						</div>
 					</div>
 				</div>
