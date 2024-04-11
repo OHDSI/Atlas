@@ -24,10 +24,13 @@
 					<input type="text" data-bind="visible: isEditing, textInput: url, keyupBubble: false" style="margin-top: 2px" id="toolUrl"/>
 					<p data-bind="hidden: isEditing, text: description" style="margin-top: 24px; font-weight: 500; font-size: 13px;"></p>
 					<label for="toolDescription" data-bind="visible: isEditing, text: ko.i18n('columns.description', 'Description')" style="margin-top: 19px;"></label>
-					<textarea rows="5" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 2px; max-width: 100%;" id="toolDescription"></textarea>
-					<div class="material-switch pull-right" style="margin-top: 16px; margin-left: 5px;" data-bind="visible: isEditing">
-						<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: enabled" style="display: none;"/>
-						<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-switch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
+					<textarea rows="5" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 2px; max-width: 100%;" id="toolDescription"></textarea>			
+					<div class="flex-between" style="margin-top: 18px; align-items: flex-start; justify-content: flex-start;" data-bind="visible: isEditing">
+						<label for="toolAddDescription" data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="width: 10%;"></label>
+						<div class="material-switch pull-right" style=" margin-left: 8px;" data-bind="visible: isEditing">							
+							<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: enabled" style="display: none;"/>
+							<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-switch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
+						</div>
 					</div>
 					<div class="flex-between" style="margin-top: 10px; justify-content: flex-start; flex-wrap: wrap; row-gap: 10px">
 						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing">
@@ -43,9 +46,9 @@
 							<span data-bind="visible: createdBy , text: createdBy" style="font-weight: 500; font-size: 13px;"></span>
 							<span data-bind="visible: !createdBy , text: 'anonymous'" style="font-weight: 500; font-size: 13px;"></span>
 						</div>
-						<div class="flexed material-switch" style="width: 50%" data-bind="visible: ($component.canUpdateTool() || $component.canDeleteTool()) && !isEditing">
-							<p data-bind="text: 'label for card tool status'" style="visibility: hidden;"></p>
-							<span data-bind="text: enabled ? ko.i18n('tool.toolEnabled', 'Tool enabled') : ko.i18n('tool.toolDisabled', 'Tool disabled')" style="font-weight: 500; font-size: 13px;"></span>
+						<div class="flexed material-switch" style="width: 50%" data-bind="visible: ($component.canUpdateTool() || $component.canDeleteTool()) && !isEditing">							
+							<p data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="font-size: 12.5px; padding-bottom:8px;"></p>
+							<label for="switchBtnTool" class="label-success" style="pointer-events: none;" data-bind="css: enabled ? 'label-switch-enable' : ''"></label>
 						</div>
 					</div>
 				</div>
