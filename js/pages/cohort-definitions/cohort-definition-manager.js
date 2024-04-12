@@ -1285,6 +1285,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 				cdsi.createdBy = ko.observable(sourceInfo.createdBy);
 				cdsi.viewDemographic = ko.observable(sourceInfo?.viewDemographic || false);
+				cdsi.tooltipDemographic = ko.observable(sourceInfo?.tooltipDemographic || null);
 			} else {
 				cdsi.isValid = ko.observable(false);
 				cdsi.isCanceled = ko.observable(false);
@@ -1296,6 +1297,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cdsi.failMessage = ko.observable(null);
 				cdsi.createdBy = ko.observable(null);
 				cdsi.viewDemographic = ko.observable(false);
+				cdsi.tooltipDemographic = ko.observable(null);
 			}
 			return cdsi;
 		}
@@ -1341,6 +1343,23 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey, versionNumber) {
 			this.isLoading(true);
+			ko.bindingHandlers.tooltip = {
+				init: function (element, valueAccessor) {
+					const value = ko.utils.unwrapObservable(valueAccessor());
+					$("[aria-label='Demographics']").attr('data-original-title', 'Results with Demographics').bstooltip({
+						html: true,
+						container:'body',
+					});
+					$(element).attr('data-original-title', value).bstooltip({
+						html: true,
+						container:'body'
+					});
+				},
+				update: function (element, valueAccessor) {
+					const value = ko.utils.unwrapObservable(valueAccessor());
+					$(element).attr('data-original-title', value);
+				}
+			}
 			if(parseInt(cohortDefinitionId) === 0) {
 				this.setNewCohortDefinition();
 			} else if (versionNumber) {
@@ -1371,6 +1390,49 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			} catch (err) {
 				console.error(err);
 			}
+		}
+
+		addToolTipDemographic(source){
+			const targetSource = this.getSourceKeyInfo(source?.sourceKey);
+			targetSource?.tooltipDemographic('Results with Demographics');
+			const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d.sourceKey !== source?.sourceKey;
+				}
+			  );
+			this.cohortDefinitionSourceInfo([
+				...restSourceInfos,
+				targetSource
+			])
+		}
+
+		removeToolTipDemographic(source){
+			const targetSource = this.getSourceKeyInfo(source?.sourceKey);
+			targetSource?.tooltipDemographic(null);
+			const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d?.sourceKey !== source?.sourceKey;
+				}
+			  );
+			this.cohortDefinitionSourceInfo([
+				...restSourceInfos,
+				targetSource
+			])
+		}
+
+		handleViewDemographic(source) {
+			const targetSource = this.getSourceKeyInfo(source?.sourceKey);
+			targetSource.viewDemographic(!targetSource.viewDemographic());
+			targetSource?.tooltipDemographic(null);
+			const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d?.sourceKey !== source?.sourceKey;
+				}
+			  );
+			this.cohortDefinitionSourceInfo([
+				...restSourceInfos,
+				targetSource
+			])
 		}
 
 		checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey) {
