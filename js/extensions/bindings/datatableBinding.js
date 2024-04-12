@@ -276,7 +276,6 @@ define([
 		update: function (element, valueAccessor) {
 			var binding = ko.utils.unwrapObservable(valueAccessor());
 			var table = $(element).DataTable();
-			$("[aria-label='Demographics']").attr('title', 'Results with Demographics');
 
 			// assign data to either the binding's data or the actual binding.
 			var data = ko.utils.unwrapObservable(binding.data || binding);

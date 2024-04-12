@@ -794,8 +794,11 @@
 </script>
 
 <script type="text/html" id="generation-checkbox-demographic">
-	<span data-bind="click: $component.handleCheckboxDemographic, attr: { title: 'Results with Demographics'}">
-		<input class="hover-toolbox" type="checkbox" data-bind="checked: viewDemographic"/>
+	<span>
+		<input class="hover-toolbox" type="checkbox" data-bind="attr:{ id: $data.sourceKey } , checked: viewDemographic, tooltip: 'Results with Demographics', eventListener: [ 
+			{event: 'mouseover', selector: 'input', callback: $component.addToolTipDemographic },
+			{event: 'mouseout', selector: 'input', callback: $component.removeToolTipDemographic }, 
+			{event: 'mouseup', selector: 'input', callback: $component.handleViewDemographic }]" data-placement="right"/>
 	</span>
 </script>
 
