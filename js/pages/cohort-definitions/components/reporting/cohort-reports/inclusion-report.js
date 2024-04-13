@@ -4,7 +4,8 @@ define([
 	'./const',
 	'utils/CommonUtils',
 	'text!./inclusion-report.html',
-	'./feasibility-report-viewer-with-header'
+	'./feasibility-report-viewer-with-header',
+	'./demographic-report'
 ], function (
 	ko,
 	Component,
@@ -33,7 +34,7 @@ define([
 						{
 							title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson3', 'Demographics'),
 							componentName: 'feasibility-report-viewer-with-header',
-							componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_PERSON },
+							componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_DEMOGRAPHIC, buttons: null, tableDom: "Blfiprt" },
 						},
 					]
 				}

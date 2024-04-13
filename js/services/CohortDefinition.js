@@ -100,8 +100,8 @@ define(function (require, exports) {
 	}
 
 
-	function generate(cohortDefinitionId, sourceKey, retainCohortCovariates) {
-		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/generate/${sourceKey}?retainCohortCovariates=${retainCohortCovariates}`);
+	function generate(cohortDefinitionId, sourceKey, retainCohortCovariates, widthDemographic) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/generate/${sourceKey}?retainCohortCovariates=${retainCohortCovariates}&demographic=${widthDemographic}`);
 	}
 
 
