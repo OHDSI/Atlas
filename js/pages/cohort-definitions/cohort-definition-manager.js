@@ -1105,7 +1105,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 				this.toggleCohortReport(null);
 			}
-			cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey)
+			cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey, source.viewDemographic())
 				.catch(this.authApi.handleAccessDenied)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
