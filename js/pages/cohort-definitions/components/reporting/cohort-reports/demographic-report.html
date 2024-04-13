@@ -1,0 +1,46 @@
+<div data-bind="visible: !isLoading()">
+    <div data-bind="if: $component.dataDemographic()[0]" style="margin-bottom: 3rem;">
+        <p class="characterization-view-edit-results__analysis-name">
+            <span data-bind="text: 'Demographic'"></span>
+            <span data-bind="text: $component.dataDemographic()[0].name" style="text-transform: capitalize;"></span>
+        </p>
+        <faceted-datatable params="
+            orderColumn: 3,
+            autoWidth: false,
+            reference: $component.dataDemographic()[0].details,
+            columns: columns,
+            options: options,
+            buttons: buttons,
+            dom: tableDom,
+            scrollY: scrollY,
+            selectedData: filteredData,
+            dtApi: dtApi,
+            pageLength: pageLength,
+            lengthMenu: lengthMenu,
+            language: ko.i18n('datatable.language')
+        ">
+        </faceted-datatable>
+    </div>
+    <div data-bind="if: $component.dataDemographic()[1]">
+        <p class="characterization-view-edit-results__analysis-name">
+            <span data-bind="text: 'Demographic'"></span>
+            <span data-bind="text: $component.dataDemographic()[0].name" style="text-transform: capitalize;"></span>
+        </p>
+        <faceted-datatable params="
+            orderColumn: 3,
+            autoWidth: false,
+            reference: $component.dataDemographic()[1].details,
+            columns: columns,
+            options: options,
+            buttons: buttons,
+            dom: tableDom,
+            scrollY: scrollY,
+            selectedData: filteredData,
+            dtApi: dtApi,
+            pageLength: pageLength,
+            lengthMenu: lengthMenu,
+            language: ko.i18n('datatable.language')
+        ">
+        </faceted-datatable>
+    </div>
+</div>
