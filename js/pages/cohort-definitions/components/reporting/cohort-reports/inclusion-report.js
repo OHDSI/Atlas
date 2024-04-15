@@ -33,7 +33,7 @@ define([
 						},
 						{
 							title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson3', 'Demographics'),
-							componentName: 'feasibility-report-viewer-with-header',
+							componentName: 'demographic-report',
 							componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_DEMOGRAPHIC, buttons: null, tableDom: "Blfiprt" },
 						},
 					]

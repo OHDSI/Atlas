@@ -26,42 +26,7 @@ define([
 			});
 			this.cohortId = params.cohortId;
             this.loadReport();
-            this.dataDemographic = ko.observableArray([
-                {
-                    "name": "GENDER",
-                    "details": [
-                        {
-                            "name": "GENDER",
-                            "covariateName": "MALE",
-                            "count": 1000,
-                            "pct": "13.45%"
-                        },
-                        {
-                            "name": "GENDER",
-                            "covariateName": "FEMALE",
-                            "count": 2000,
-                            "pct": "13.45%"
-                        }
-                    ]
-                },
-                {
-                    "name": "AGE",
-                    "details": [
-                        {
-                            "name": "AGE",
-                            "covariateName": ">=30",
-                            "count": 1500,
-                            "pct": "13.45%"
-                        },
-                        {
-                            "name": "AGE",
-                            "covariateName": "<30",
-                            "count": 1500,
-                            "pct": "13.45%"
-                        }
-                    ]
-                }
-            ]);
+            this.dataDemographic = ko.observableArray();
 			this.showModal = params.showModal;
 			this.myDesignsOnly = params.myDesignsOnly || false;
 			const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
