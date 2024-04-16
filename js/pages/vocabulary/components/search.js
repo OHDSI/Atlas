@@ -369,6 +369,15 @@ define([
 		}
 
 		async executeSearch() {
+			const filterObjString = localStorage.getItem('data-filter-concept')
+			let filterObj = filterObjString ? JSON.parse(filterObjString): {}
+
+			filterObj = {
+				...filterObj,
+				searchText: this.currentSearch() 
+			}
+			localStorage.setItem('data-filter-concept', JSON.stringify(filterObj))
+			
 			if (!this.currentSearch() && !this.showAdvanced()) {
 				this.data([]);
 				return;

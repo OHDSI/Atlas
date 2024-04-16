@@ -44,7 +44,8 @@ define([
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',
-	'components/versions/versions'
+	'components/versions/versions',
+	'./components/tabs/conceptset-metadata'
 ], function (
         ko,
 	view,
@@ -314,6 +315,14 @@ define([
 					hidden: () => !!this.previewVersion()
 				},
 				{
+					title: ko.i18n('cs.manager.tabs.metadata', 'Metadata'),
+					key: ViewMode.METADATA,
+					componentName: 'conceptset-metadata',
+					componentParams: {
+						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetMetadata(this.currentConceptSet().id) : []
+					}
+				},
+				{
 					title: ko.i18n('cs.manager.tabs.versions', 'Versions'),
 					key: ViewMode.VERSIONS,
 					componentName: 'versions',
@@ -469,6 +478,33 @@ define([
 			this.conceptSetCaption.dispose();
 		}
 
+		removeDataFilterStorage(){
+			localStorage.removeItem('data-filter-conceptset');
+			localStorage.removeItem('data-remove-selected-concept');
+			localStorage.removeItem('data-filter-concept');
+			localStorage.removeItem('data-add-selected-concept');
+		}
+
+		objectMap(obj) {
+			const newObject = {};
+			Object.keys(obj).forEach((key) => {
+			  if(typeof obj[key] === 'object'){
+				newObject[key] = JSON.stringify(obj[key]);
+			  }else{
+				newObject[key] = obj[key];
+			  }
+			});
+			return newObject;
+		}
+
+		handleConvertDataToString(arr){
+			const newDatas = [];
+			(arr || []).forEach(item => {
+				newDatas.push(this.objectMap(item))
+			})
+			return newDatas;
+		}
+
 		async saveConceptSet(conceptSet, nameElementId) {
 			if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
 				return;
@@ -488,6 +524,8 @@ define([
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
+					await conceptSetService.saveConceptSetMetadata(savedConceptSet.data.id, { newMetadata: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || []), removeMetadata: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
+					this.removeDataFilterStorage();
 
 					const current = this.conceptSetStore.current();
 					current.modifiedBy = savedConceptSet.data.modifiedBy;
