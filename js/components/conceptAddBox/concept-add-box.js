@@ -156,7 +156,25 @@ define([
       const conceptSet = this.activeConceptSet() || ConceptSetStore.repository();
 
       sharedState.activeConceptSet(conceptSet);
+      if(conceptSet?.current().id){
+        const filterConcept = JSON.parse(localStorage?.getItem('data-filter-concept') || null);
+        const filterConceptSet = JSON.parse(localStorage?.getItem('data-filter-conceptset') || null);
+        const datasAdded = JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || [];
+        const dataSearch = { filterConceptSet, filterConcept }
+        const payloadAdd = this.conceptsToAdd().map(item => {
+          return {
+            "searchData": dataSearch,
+            "relatedConcepts": "",
+            "conceptHierarchy": "",
+            "conceptSetData": { id: conceptSet?.current().id, name: conceptSet?.current().name() },
+            "conceptData": item,
+            "conceptId": item.CONCEPT_ID
+          }
+        })
 
+        localStorage.setItem('data-add-selected-concept', JSON.stringify([...datasAdded, ...payloadAdd]))
+      }
+      
       // if concepts were previewed, then they already built and can have individual option flags!
       if (this.previewConcepts().length > 0) {
         if (!conceptSet.current()) {
