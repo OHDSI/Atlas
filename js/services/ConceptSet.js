@@ -84,6 +84,11 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
+	function deleteConceptSetMetadata(id) {
+		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (id || '-1'))
+			.catch(authApi.handleAccessDenied);
+		}
+
 	function getConceptSet(conceptSetId) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
@@ -152,7 +157,8 @@ define(function (require) {
 		updateVersion,
 		copyVersion,
 		saveConceptSetMetadata,
-		getConceptSetMetadata
+		getConceptSetMetadata,
+		deleteConceptSetMetadata
 	};
 
 	return api;

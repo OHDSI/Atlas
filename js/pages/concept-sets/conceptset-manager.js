@@ -319,7 +319,8 @@ define([
 					key: ViewMode.METADATA,
 					componentName: 'conceptset-metadata',
 					componentParams: {
-						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetMetadata(this.currentConceptSet().id) : []
+						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetMetadata(this.currentConceptSet().id) : [],
+						delete: (id) => id ? conceptSetService.deleteConceptSetMetadata(id) : null
 					}
 				},
 				{
