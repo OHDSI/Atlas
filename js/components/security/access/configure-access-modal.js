@@ -33,7 +33,9 @@ define([
 			this.readRoleOptions = ko.computed(() => this.readRoleSuggestions().map(r => r.name));
 			this.readRoleSearch = ko.observable();
 			this.readRoleSearch.subscribe(str => this.loadReadRoleSuggestions(str));
-
+		    
+		        this.shareFlag = ko.observable(true);
+		    
 			this.isOwnerFn = params.isOwnerFn;
 			this.grantAccessFn = params.grantAccessFn;
 			this.loadAccessListFn = params.loadAccessListFn;
@@ -124,7 +126,6 @@ define([
 				   const role = this.readRoleSuggestions().find(r => r.name === this.readRoleName());
 			   	   await this.grantAccessFn(role.id,'READ');
 				   await this._loadReadAccessList();
-				   this.readRoleName('');
 			       }
 			} catch (ex) {
 				console.log(ex);
@@ -141,6 +142,31 @@ define([
 				console.log(ex);
 			}
 			this.isLoading(false);
+		}
+
+
+  	        async grantGlobalReadAccess() {
+		    this.isLoading(true);
+		    try {
+			console.log('grantGlobalReadAccess  function  called to grant read permissions!! shareflag: ' + this.shareFlag());
+			await this.grantAccessFn('1006','READ'); // temporarily 1006 is 'shared artifacts reader'
+			await this._loadReadAccessList();
+		    } catch (ex) {
+			console.log(ex);
+		    }
+		    this.isLoading(false);
+		}
+
+  	        async revokeGlobalReadAccess() {	    
+		    this.isLoading(true);
+		    try {
+			console.log('revokeGlobalReadAccess  function  called to REVOKE read permissions!! shareflag: ' + this.shareFlag());
+			await this.revokeAccessFn('1006','READ'); // temporarily 1006 is 'shared artifacts reader'
+			await this.loadAccessList();
+		    } catch (ex) {
+			console.log(ex);
+		    }
+		    this.isLoading(false);
 		}
 	}
 
