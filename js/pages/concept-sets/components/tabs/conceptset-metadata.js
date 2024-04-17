@@ -19,17 +19,18 @@ define([
           this.isLoading = ko.observable(true);
           this.data = ko.observable();
           this.getList = params.getList;
+          this.delete = params.delete;
 
           const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
           this.pageLength = params.pageLength || pageLength;
           this.lengthMenu = params.lengthMenu || lengthMenu;
           this.columns = ko.observableArray([
             {
-              title: ko.i18n('columns.conceptId', 'Concept Id'),
+              title: ko.i18n('columns.conceptID', 'Concept Id'),
               data: 'conceptId',
             },
             {
-              title: ko.i18n('columns.explore3', 'Search Data'),
+              title: ko.i18n('columns.searchData', 'Search Data'),
               className: this.classes('tbl-col', 'search-data'),
               render: (d, t, r) => {
                   if (r.searchData === null || r.searchData === undefined || !r.searchData) {
@@ -86,6 +87,13 @@ define([
                   }
               },
               sortable: false
+            },
+            {
+              title: ko.i18n('columns.action', 'Action'),
+              sortable: false,
+              render: function() {
+                return `<i class="deleteIcon fa fa-trash" aria-hidden="true"></i>`
+              }
             }
           ])
           this.loadData();
@@ -101,6 +109,19 @@ define([
           }
         });
         return newObject;
+      }
+
+      async onRowClick(d, e){
+        try {
+          const { id } = d;
+          if(e.target.className === 'deleteIcon fa fa-trash') {
+            await this.delete(id);
+          }
+        } catch (ex) {
+          console.log(ex);
+        } finally {
+          this.isLoading(false);
+        }
       }
 
       handleConvertData(arr){
