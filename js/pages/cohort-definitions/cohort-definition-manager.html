@@ -768,6 +768,9 @@
 
 <script type="text/html" id="generation-buttons">
 	<div class="generation-buttons">
+		<span class="generation-span" data-bind="tooltip: 'Save Covariates'">
+			<input type="checkbox" id="generation-checkbox" class="generation-checkbox" data-bind="checked: $component.getRetainCohortCovariates($data)"/>
+		</span>
 		<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate(sourceKey) ? 'Not enough permissions to generate' : null" data-placement="left">
 			<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="left">
 				<button class="btn btn-sm btn-primary"
