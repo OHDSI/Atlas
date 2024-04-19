@@ -1094,7 +1094,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 				this.toggleCohortReport(null);
 			}
-			cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey)
+			cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey, source.retainCohortCovariates)
 				.catch(this.authApi.handleAccessDenied)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
@@ -1410,6 +1410,45 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			getStatusTemplate(item) {
 				return item.status === 'FAILED' ? 'failed-status-tmpl' : 'success-status-tmpl';
+			}
+			
+			getRetainCohortCovariates(info) {
+				if(typeof info.retainCohortCovariates === 'undefined' && info.retainCohortCovariates === undefined ) {
+					info.retainCohortCovariates = true;
+					return true
+				}
+				
+				if (!typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === false) {
+					info.retainCohortCovariates = true;
+					return true
+				}
+				if (typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === true) {
+					info.retainCohortCovariates = false;
+					return false
+				}
+				
+				return info.retainCohortCovariates
+			}
+
+			getRetainCohortCovariates(info) {
+				if(typeof info.retainCohortCovariates === 'undefined' && info.retainCohortCovariates === undefined ) {
+					info.retainCohortCovariates = true;
+
+					return true
+				}
+				
+				if (!typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === false) {
+					info.retainCohortCovariates = true;
+
+					return true
+				}
+				if (typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === true) {
+					info.retainCohortCovariates = false;
+
+					return false
+				}
+				
+				return info.retainCohortCovariates
 			}
 
 			showExitMessage(sourceKey) {
