@@ -330,7 +330,7 @@
 					</tbody>
 				</table>
 				<!-- ko if: selectedReportSource() -->
-				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource"></cohort-reports>
+				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource, infoSelected: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
