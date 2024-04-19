@@ -21,7 +21,7 @@ define([
 	PluginRegistry.add(globalConstants.pluginTypes.COHORT_REPORT, {
 		title: ko.i18n('cohortDefinitions.cohortreports.inclusionReport', 'Inclusion Report'),
 		priority: 1,
-		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId, isViewDemographic: isViewDemographic }"></cohort-report-inclusion>`
+		html: `<cohort-report-inclusion params="{ sourceKey: sourceKey, cohortId: cohortId, isViewDemographic: isViewDemographic, ccGenerateId: ccGenerateId }"></cohort-report-inclusion>`
 	});
 
 	class CohortReports extends Component {
@@ -31,11 +31,13 @@ define([
 			this.sourceKey = ko.computed(() => params.source() && params.source().sourceKey);
 			this.cohortId = ko.computed(() => params.cohort().id());
 			this.isViewDemographic = ko.computed(() => params.source() && params.source().viewDemographic());
-
+			this.ccGenerateId = ko.computed(() => params.infoSelected() && params.infoSelected().ccGenerateId());
+			
 			const componentParams =  {
 				sourceKey: this.sourceKey,
 				cohortId: this.cohortId,
-				isViewDemographic: this.isViewDemographic
+				isViewDemographic: this.isViewDemographic,
+				ccGenerateId: this.ccGenerateId,
 			};
 
 			this.tabs = PluginRegistry.findByType(globalConstants.pluginTypes.COHORT_REPORT).map(t => ({ ...t, componentParams }));
@@ -45,6 +47,7 @@ define([
 			this.sourceKey.dispose();
 			this.cohortId.dispose();
 			this.isViewDemographic.dispose();
+			this.ccGenerateId.dispose();
 		}
 	}
 

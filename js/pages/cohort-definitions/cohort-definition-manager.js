@@ -1324,6 +1324,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cdsi.createdBy = ko.observable(sourceInfo.createdBy);
 				cdsi.viewDemographic = ko.observable(sourceInfo?.viewDemographic || false);
 				cdsi.tooltipDemographic = ko.observable(sourceInfo?.tooltipDemographic || null);
+				cdsi.ccGenerateId = ko.observable(sourceInfo.ccGenerateId);
 			} else {
 				cdsi.isValid = ko.observable(false);
 				cdsi.isCanceled = ko.observable(false);
@@ -1336,6 +1337,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cdsi.createdBy = ko.observable(null);
 				cdsi.viewDemographic = ko.observable(false);
 				cdsi.tooltipDemographic = ko.observable(null);
+				cdsi.ccGenerateId = ko.observable(null);
 			}
 			return cdsi;
 		}
