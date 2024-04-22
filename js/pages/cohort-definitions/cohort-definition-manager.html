@@ -33,7 +33,7 @@
 					<button class="btn btn-primary"
 						data-bind="visible: !previewVersion(), title: ko.i18n('cohortDefinitions.cohortDefinitionManager.getLinkCohortTitle', 'Get a link to this cohort definition'), enable: !dirtyFlag().isDirty() && !isProcessing(), click: function () { $component.cohortLinkModalOpened(true) }"><i class="fa fa-link"></i></button>
 
-					<!-- ko if: enablePermissionManagement -->
+					<!-- ko if: (enablePermissionManagement() === true && userCanShare() === true) -->
 					<button class="btn btn-primary"
 						data-bind="title: ko.i18n('common.configureAccess', 'Configure access'), visible: isOwner() && !previewVersion(), click: () => isAccessModalShown(!isAccessModalShown())">
 						<i class="fa fa-lock"></i>
@@ -76,10 +76,10 @@
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.generation', 'Generation')"></a>
 			</li>
 
-			<li role="presentation"
-				data-bind="visible: !previewVersion(), css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
-				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.samples', 'Samples')"></a>
-			</li>
+			<!-- <li role="presentation"
+			     data-bind="visible: !previewVersion(), css: { active: $component.tabMode() == 'samples' }, click: clickSampleTab">
+			     <a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.samples', 'Samples')"></a>
+			     </li> -->
 
 			<li role="presentation"
 				data-bind="visible: !previewVersion(), css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
