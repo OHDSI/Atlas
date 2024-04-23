@@ -83,7 +83,7 @@ define([
                   if (r.conceptData === null || r.conceptData === undefined) {
                       return 'N/A';
                   } else {
-                      return `<div>${JSON.stringify(r.conceptData)}</div>`
+                      return `<>${JSON.stringify(r.conceptData)}</>`
                   }
               },
               sortable: false
@@ -115,7 +115,10 @@ define([
         try {
           const { id } = d;
           if(e.target.className === 'deleteIcon fa fa-trash') {
-            await this.delete(id);
+            const res = await this.delete(id);
+            if(res){
+              this.loadData();
+            }
           }
         } catch (ex) {
           console.log(ex);
