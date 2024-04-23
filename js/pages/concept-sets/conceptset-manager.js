@@ -8,7 +8,8 @@ define([
 	'./const',
 	'const',
 	'components/conceptset/utils',
-	'services/Vocabulary',
+        'services/Vocabulary',
+    	'services/ShareRoleCheck',
 	'services/Permission',
 	'services/Tags',
 	'components/security/access/const',
@@ -55,7 +56,8 @@ define([
 	constants,
 	globalConstants,
 	utils,
-	vocabularyAPI,
+        vocabularyAPI,
+        shareRoleCheck,
 	GlobalPermissionService,
 	TagsService,
 	{ entityType },
@@ -174,7 +176,25 @@ define([
 			this.canCopy = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
 			});
-			this.enablePermissionManagement = config.enablePermissionManagement;	    
+
+		        this.enablePermissionManagement = ko.observable(false);
+ 		        this.enablePermissionManagement(config.enablePermissionManagement);
+
+		        this.userCanShare = ko.observable(false);
+		        if (config.permissionManagementRoleId === "") {
+			   this.userCanShare(true);
+		        } else {
+			   shareRoleCheck.checkIfRoleCanShare(authApi.subject(), config.permissionManagementRoleId)
+				.then(res=>{
+				    this.userCanShare(res);
+				})
+				.catch(error => {
+				    console.error(error);
+				    alert(ko.i18n('conceptSets.conceptSetManager.shareRoleCheck', 'Error when determining if user can share cohorts')());
+				});
+			}		        
+
+		    
 			this.isSaving = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.isOptimizing = ko.observable(false);

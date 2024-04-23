@@ -1,6 +1,6 @@
 define([
 	'knockout',
-	'text!./configure-access-modal.html',
+        'text!./configure-access-modal.html',
 	'components/Component',
 	'utils/CommonUtils',
 	'utils/AutoBind',
@@ -8,7 +8,7 @@ define([
 	'databindings',
 ], function (
 	ko,
-	view,
+        view,
 	Component,
 	commonUtils,
 	AutoBind
@@ -33,7 +33,7 @@ define([
 			this.readRoleOptions = ko.computed(() => this.readRoleSuggestions().map(r => r.name));
 			this.readRoleSearch = ko.observable();
 			this.readRoleSearch.subscribe(str => this.loadReadRoleSuggestions(str));
-		    
+
 		        this.shareFlag = ko.observable(true);
 		    
 			this.isOwnerFn = params.isOwnerFn;
