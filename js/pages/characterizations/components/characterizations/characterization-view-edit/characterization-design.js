@@ -90,6 +90,8 @@ define([
             this.showConceptSetBrowser = ko.observable(false);
             this.criteriaContext = ko.observable();
             this.tableOptions = commonUtils.getTableOptions('M');
+
+            this.isAnnualPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsAnnual, false));
         }
 
         checkStrataNames(data, event) {
@@ -111,6 +113,10 @@ define([
             return (s, p, d) => {
                 return `<a href='#' data-bind="click: () => $component.params.${action}('${d[identifierField]}'), text: ko.i18n('cc.viewEdit.design.fa.actions.remove', 'Remove')">Remove</a>`;
             }
+        }
+
+        renderSupportsAnnual() {
+            return (s, p, d) => ko.unwrap(d.supportsAnnual ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No'));
         }
 
         showFeatureBrowser() {

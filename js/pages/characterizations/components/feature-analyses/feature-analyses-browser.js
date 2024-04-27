@@ -39,6 +39,10 @@ define([
 				{
 					title: ko.i18n('columns.description', 'Description'),
 					data: 'description'
+				},
+				{
+					title: ko.i18n('columns.supportsAnnual', 'Supports Annual'),
+					render: (s, p, d) => ko.unwrap(d.supportsAnnual ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No')),
 				}
 			];
 		}
