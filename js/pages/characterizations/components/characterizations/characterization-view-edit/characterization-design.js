@@ -81,7 +81,7 @@ define([
                 data: ko.pureComputed(() => params.design() && params.design().parameters() || [])
             };
 
-            this.includeAnnual = ko.observable(this.featureAnalyses.data().reduce((a, b) => a || !!b.includeAnnual(), false));
+            this.includeAnnual = ko.observable(this.featureAnalyses.data().reduce((a, b) => a || !!ko.unwrap(b.includeAnnual), false));
             this.includeAnnual.subscribe((newVal) => this.featureAnalyses.data().forEach(fa => fa.supportsAnnual && fa.includeAnnual(newVal)));
 
             this.showFeatureAnalysesBrowser = ko.observable(false);
@@ -130,7 +130,7 @@ define([
         onSelect(data = []) {
             this.closeFeatureBrowser();
             const ccDesign = this.design();
-            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description']));
+            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description'])).map(item => { return { ...item, includeAnnual: ko.observable(ko.unwrap(this.includeAnnual)) }});
             ccDesign.featureAnalyses(featureAnalyses);
         }
 
