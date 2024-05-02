@@ -83,6 +83,12 @@ define([
 					data: 'description',
 					className: context.classes('col-feature-descr'),
 				},
+				{
+					title: ko.i18n('columns.supportsAnnual', 'Supports annual'),
+					// data: 'supportsAnnual',
+					render: context.renderSupportsAnnual(),
+					className: context.classes('col-supports-annual'),
+				},
 				... context.isEditPermitted() ? [{
 					title: ko.i18n('columns.actions', 'Actions'),
 					render: context.getRemoveCell('removeFeature'),
