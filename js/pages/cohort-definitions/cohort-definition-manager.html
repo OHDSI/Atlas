@@ -768,9 +768,6 @@
 
 <script type="text/html" id="generation-buttons">
 	<div class="generation-buttons">
-		<span class="generation-span" data-bind="tooltip: 'Save Covariates'">
-			<input type="checkbox" id="generation-checkbox" class="generation-checkbox" data-bind="checked: $component.getRetainCohortCovariates($data)"/>
-		</span>
 		<span data-bind="tooltip: $component.isNew() ? 'You must save the current cohort definition before you can perform generation' : !$component.hasAccessToGenerate(sourceKey) ? 'Not enough permissions to generate' : null" data-placement="left">
 			<span data-bind="tooltip: !$component.canGenerate() ? $component.generateDisabledReason() : null" data-placement="left">
 				<button class="btn btn-sm btn-primary"
@@ -794,6 +791,12 @@
 											: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
 		</button>
 	</div>
+</script>
+
+<script type="text/html" id="generation-checkbox-retainCovariate">
+	<span>
+		<input class="hover-toolbox" type="checkbox" data-bind="attr:{ id: $data.sourceKey } , checked: $component.getRetainCohortCovariates($data), tooltip: 'Generate with Retain Covariates'" data-placement="right"/>
+	</span>
 </script>
 
 <!-- /ko -->
