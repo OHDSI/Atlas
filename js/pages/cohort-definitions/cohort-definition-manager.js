@@ -604,6 +604,17 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}, {
 				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration'),
 				data: 'executionDuration'
+			}, {
+				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.retainCovariates', 'Retain Covariates'),
+				data: 'retainCovariate',
+				sortable: false,
+				tooltip: 'Generate with Retain Covariates',
+				render: () =>
+				  `<span data-bind="template: {name: 'generation-checkbox-retainCovariate', data: $data }"></span>`
+			},{
+				sortable: false,
+				className: 'generation-buttons-column',
+				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
 			}];
 
 			this.stopping = ko.pureComputed(() => this.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {}));
@@ -1316,6 +1327,23 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey, versionNumber) {
 			this.isLoading(true);
+			ko.bindingHandlers.tooltip = {
+				init: function (element, valueAccessor) {
+					const value = ko.utils.unwrapObservable(valueAccessor());
+					$("[aria-label='Retain Covariates']").attr('data-original-title', 'Generate with Retain Covariates').bstooltip({
+						html: true,
+						container:'body',
+					});
+					$(element).attr('data-original-title', value).bstooltip({
+						html: true,
+						container:'body'
+					});
+				},
+				update: function (element, valueAccessor) {
+					const value = ko.utils.unwrapObservable(valueAccessor());
+					$(element).attr('data-original-title', value);
+				}
+			}
 			if(parseInt(cohortDefinitionId) === 0) {
 				this.setNewCohortDefinition();
 			} else if (versionNumber) {
@@ -1424,27 +1452,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				if (typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === true) {
 					info.retainCohortCovariates = false;
-					return false
-				}
-				
-				return info.retainCohortCovariates
-			}
-
-			getRetainCohortCovariates(info) {
-				if(typeof info.retainCohortCovariates === 'undefined' && info.retainCohortCovariates === undefined ) {
-					info.retainCohortCovariates = true;
-
-					return true
-				}
-				
-				if (!typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === false) {
-					info.retainCohortCovariates = true;
-
-					return true
-				}
-				if (typeof info.retainCohortCovariates !== 'undefined' && info.retainCohortCovariates === true) {
-					info.retainCohortCovariates = false;
-
 					return false
 				}
 				

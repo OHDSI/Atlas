@@ -120,11 +120,5 @@ table.sources-table tbody td {
 }
 .generation-buttons {
     white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.generation-span {
-    margin-right: 10px;
 }
   
