@@ -190,7 +190,7 @@ define([
 				})
 				.catch(error => {
 				    console.error(error);
-				    alert(ko.i18n('conceptSets.conceptSetManager.shareRoleCheck', 'Error when determining if user can share cohorts')());
+				    alert(ko.i18n('conceptSets.conceptSetManager.shareRoleCheck', 'Error when determining if user can share concept sets')());
 				});
 			}		        
 
