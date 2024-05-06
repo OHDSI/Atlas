@@ -609,6 +609,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				data: 'retainCovariate',
 				sortable: false,
 				tooltip: 'Generate with Retain Covariates',
+				className: 'text-center',
 				render: () =>
 				  `<span data-bind="template: {name: 'generation-checkbox-retainCovariate', data: $data }"></span>`
 			},{
