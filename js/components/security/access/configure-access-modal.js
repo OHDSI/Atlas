@@ -156,7 +156,7 @@ define([
 		    this.isLoading(true);
 		    try {
 			console.log('grantGlobalReadAccess  function  called to grant read permissions!! shareflag: ' + this.shareFlag());
-			await this.grantAccessFn('1','READ'); // 16 is the 'public' role, a SYSTEM role every user should have
+			await this.grantAccessFn('1','READ'); // 1 is the 'public' role, a SYSTEM role every user should have
 			await this.loadAccessList();
 		    } catch (ex) {
 			console.log(ex);
@@ -168,7 +168,7 @@ define([
 		    this.isLoading(true);
 		    try {
 			console.log('revokeGlobalReadAccess  function  called to REVOKE read permissions!! shareflag: ' + this.shareFlag());
-			await this.revokeAccessFn('1','READ'); // 16 is the 'public' role, a SYSTEM role every user should have
+			await this.revokeAccessFn('1','READ'); // 1 is the 'public' role, a SYSTEM role every user should have
 			await this.loadAccessList();
 		    } catch (ex) {
 			console.log(ex);

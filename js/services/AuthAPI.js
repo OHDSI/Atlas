@@ -407,8 +407,18 @@ define(function(require, exports) {
     }
 
     var isPermittedGenerateCohort = function(cohortId, sourceKey) {
-        return isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
-            isPermitted('cohortdefinition:' + cohortId + ':info:get');
+	var v = isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
+		isPermitted('cohortdefinition:' + cohortId + ':info:get');
+
+	// By default, everyone can generate any artifact they have
+	// permission to read. If a permissionManagementRoleId has
+	// been assigned, (non- empty string assignment), the default
+	// generate functionality is not desired. Rather, users will have to
+	// have a role that allows them to update the specific cohort definition. 
+	if (config.permissionManagementRoleId !== ""){
+	    v = v && isPermitted('cohortdefinition:' + cohortId + ':put')
+	}
+        return v
     }
 
     var isPermittedReadCohortReport = function(cohortId, sourceKey) {
