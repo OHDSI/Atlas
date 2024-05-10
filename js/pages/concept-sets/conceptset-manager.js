@@ -184,15 +184,8 @@ define([
 		        if (config.permissionManagementRoleId === "") {
 			   this.userCanShare(true);
 		        } else {
-			   shareRoleCheck.checkIfRoleCanShare(authApi.subject(), config.permissionManagementRoleId)
-				.then(res=>{
-				    this.userCanShare(res);
-				})
-				.catch(error => {
-				    console.error(error);
-				    alert(ko.i18n('conceptSets.conceptSetManager.shareRoleCheck', 'Error when determining if user can share concept sets')());
-				});
-			}		        
+					this.userCanShare(authApi.isPermittedGlobalShareCohort());
+				}
 
 		    
 			this.isSaving = ko.observable(false);

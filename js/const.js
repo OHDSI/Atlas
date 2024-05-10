@@ -192,6 +192,7 @@ define([
 		const apiPaths = {
 			role: (id = '') => `${config.api.url}role/${id}`,
 			roleUsers: roleId => `${config.api.url}role/${roleId}/users`,
+			userRoles: userId => `${config.api.url}user/${userId}/roles`,
 			permissions: () => `${config.api.url}permission`,
 			rolePermissions: roleId => `${config.api.url}role/${roleId}/permissions`,
 			relations: (roleId, relation, ids = []) => `${config.api.url}role/${roleId}/${relation}/${ids.join('+')}`,

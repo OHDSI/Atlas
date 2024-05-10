@@ -208,15 +208,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		        if (config.permissionManagementRoleId === "") {
 			   this.userCanShare(true);
 		        } else {
-			   shareRoleCheck.checkIfRoleCanShare(authApi.subject(), config.permissionManagementRoleId)
-				.then(res=>{
-				    this.userCanShare(res);
-				})
-				.catch(error => {
-				    console.error(error);
-				    alert(ko.i18n('cohortDefinitions.cohortDefinitionManager.shareRoleCheck', 'Error when determining if user can share cohorts')());
-				});
-			}		        
+					this.userCanShare(authApi.isPermittedGlobalShareCohort());
+				}
 		    
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.commonUtils = commonUtils;
