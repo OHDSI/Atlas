@@ -58,7 +58,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'utilities/sql',
 	'components/conceptset/conceptset-list',
 	'components/name-validation',
-	'components/versions/versions'
+	'components/versions/versions',
+	'databindings/tooltipBinding'
 ], function (
 	$,
 	ko,
@@ -602,6 +603,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration'),
 				data: 'executionDuration'
 			}, {
+				title: ko.i18n(
+				  'cohortDefinitions.cohortDefinitionManager.panels.generationDuration3',
+				  'Demographics'
+				),
+				data: 'viewDemographic',
+				sortable: false,
+				tooltip: 'Results with Demographics',
+				render: () =>
+				  `<span data-bind="template: {name: 'generation-checkbox-demographic', data: $data }"></span>`,
+			},{
 				sortable: false,
 				className: 'generation-buttons-column',
 				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
@@ -654,6 +665,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 									source.personCount(commaFormatted(info.personCount));
 									source.recordCount(commaFormatted(info.recordCount));
 									source.failMessage(info.failMessage);
+									source.ccGenerateId(info.ccGenerateId);
+									source.viewDemographic(info.isChooseDemographic);
 								}
 							}
 						});
@@ -1108,12 +1121,24 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			if (this.selectedSource() && this.selectedSource().sourceId === source.sourceId) {
 				this.toggleCohortReport(null);
 			}
-			cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey, source.retainCohortCovariates)
+			cohortDefinitionService.generate(this.currentCohortDefinition().id(), source.sourceKey, source.retainCohortCovariates, source.viewDemographic())
 				.catch(this.authApi.handleAccessDenied)
 				.then(({data}) => {
 					jobDetailsService.createJob(data);
 				});
 		}
+
+		handleCheckboxDemographic(source) {
+			  const targetSource = this.getSourceKeyInfo(source.sourceKey);
+			  targetSource.viewDemographic(targetSource.viewDemographic());
+			  const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d.sourceKey !== source.sourceKey;
+				}
+			  );
+
+			  this.cohortDefinitionSourceInfo([...restSourceInfos, targetSource])
+		  }
 
 		cancelGenerate (source) {
 			this.stopping()[source.sourceKey](true);
@@ -1299,6 +1324,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				}
 				cdsi.failMessage = ko.observable(sourceInfo.failMessage);
 				cdsi.createdBy = ko.observable(sourceInfo.createdBy);
+				cdsi.viewDemographic = ko.observable(sourceInfo?.viewDemographic || sourceInfo.isChooseDemographic || false);
+				cdsi.tooltipDemographic = ko.observable(sourceInfo?.tooltipDemographic || null);
+				cdsi.ccGenerateId = ko.observable(sourceInfo.ccGenerateId);
 			} else {
 				cdsi.isValid = ko.observable(false);
 				cdsi.isCanceled = ko.observable(false);
@@ -1309,6 +1337,9 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				cdsi.recordCount = ko.observable('n/a');
 				cdsi.failMessage = ko.observable(null);
 				cdsi.createdBy = ko.observable(null);
+				cdsi.viewDemographic = ko.observable(false);
+				cdsi.tooltipDemographic = ko.observable(null);
+				cdsi.ccGenerateId = ko.observable(null);
 			}
 			return cdsi;
 		}
@@ -1354,6 +1385,23 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 		async prepareCohortDefinition(cohortDefinitionId, conceptSetId, selectedSourceId, sourceKey, versionNumber) {
 			this.isLoading(true);
+			ko.bindingHandlers.tooltip = {
+				init: function (element, valueAccessor) {
+					const value = ko.utils.unwrapObservable(valueAccessor());
+					$("[aria-label='Demographics']").attr('data-original-title', 'Results with Demographics').bstooltip({
+						html: true,
+						container:'body',
+					});
+					$(element).attr('data-original-title', value).bstooltip({
+						html: true,
+						container:'body'
+					});
+				},
+				update: function (element, valueAccessor) {
+					const value = ko.utils.unwrapObservable(valueAccessor());
+					$(element).attr('data-original-title', value);
+				}
+			}
 			if(parseInt(cohortDefinitionId) === 0) {
 				this.setNewCohortDefinition();
 			} else if (versionNumber) {
@@ -1384,6 +1432,49 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			} catch (err) {
 				console.error(err);
 			}
+		}
+
+		addToolTipDemographic(source){
+			const targetSource = this.getSourceKeyInfo(source?.sourceKey);
+			targetSource?.tooltipDemographic('Results with Demographics');
+			const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d.sourceKey !== source?.sourceKey;
+				}
+			  );
+			this.cohortDefinitionSourceInfo([
+				...restSourceInfos,
+				targetSource
+			])
+		}
+
+		removeToolTipDemographic(source){
+			const targetSource = this.getSourceKeyInfo(source?.sourceKey);
+			targetSource?.tooltipDemographic(null);
+			const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d?.sourceKey !== source?.sourceKey;
+				}
+			  );
+			this.cohortDefinitionSourceInfo([
+				...restSourceInfos,
+				targetSource
+			])
+		}
+
+		handleViewDemographic(source) {
+			const targetSource = this.getSourceKeyInfo(source?.sourceKey);
+			targetSource.viewDemographic(!targetSource.viewDemographic());
+			targetSource?.tooltipDemographic(null);
+			const restSourceInfos = this.cohortDefinitionSourceInfo().filter(
+				(d) => {
+				  return d?.sourceKey !== source?.sourceKey;
+				}
+			  );
+			this.cohortDefinitionSourceInfo([
+				...restSourceInfos,
+				targetSource
+			])
 		}
 
 		checkifDataLoaded(cohortDefinitionId, conceptSetId, sourceKey) {
