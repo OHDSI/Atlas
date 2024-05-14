@@ -8,8 +8,7 @@ define([
 	'./const',
 	'const',
 	'components/conceptset/utils',
-        'services/Vocabulary',
-    	'services/ShareRoleCheck',
+	'services/Vocabulary',
 	'services/Permission',
 	'services/Tags',
 	'components/security/access/const',
@@ -56,8 +55,7 @@ define([
 	constants,
 	globalConstants,
 	utils,
-        vocabularyAPI,
-        shareRoleCheck,
+	vocabularyAPI,
 	GlobalPermissionService,
 	TagsService,
 	{ entityType },
@@ -177,17 +175,15 @@ define([
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
 			});
 
-		        this.enablePermissionManagement = ko.observable(false);
- 		        this.enablePermissionManagement(config.enablePermissionManagement);
+			this.enablePermissionManagement = ko.observable(config.enablePermissionManagement);
+			if (config.enablePermissionManagement) {
+				this.userCanShare = ko.observable(
+						!config.limitedPermissionManagement ||
+						authApi.isPermittedGlobalShareCohort());
+			} else {
+				this.userCanShare = ko.observable(false);
+			}
 
-		        this.userCanShare = ko.observable(false);
-		        if (config.permissionManagementRoleId === "") {
-			   this.userCanShare(true);
-		        } else {
-					this.userCanShare(authApi.isPermittedGlobalShareCohort());
-				}
-
-		    
 			this.isSaving = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.isOptimizing = ko.observable(false);

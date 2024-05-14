@@ -2,7 +2,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'appConfig',
 	'components/cohortbuilder/CohortDefinition',
 	'services/CohortDefinition',
-	'services/ShareRoleCheck',
 	'services/MomentAPI',
 	'services/ConceptSet',
 	'services/Permission',
@@ -66,8 +65,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	view,
 	config,
 	CohortDefinition,
-        cohortDefinitionService,
-        shareRoleCheck,
+	cohortDefinitionService,
 	momentApi,
 	conceptSetService,
 	PermissionService,
@@ -201,15 +199,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.authApi = authApi;
 			this.config = config;
 
-		        this.enablePermissionManagement = ko.observable(false);
- 		        this.enablePermissionManagement(config.enablePermissionManagement);
-
-		        this.userCanShare = ko.observable(false);
-		        if (config.permissionManagementRoleId === "") {
-			   this.userCanShare(true);
-		        } else {
-					this.userCanShare(authApi.isPermittedGlobalShareCohort());
-				}
+			this.enablePermissionManagement = ko.observable(config.enablePermissionManagement);
+			if (config.enablePermissionManagement) {
+				this.userCanShare = ko.observable(
+						!config.limitedPermissionManagement ||
+						authApi.isPermittedGlobalShareCohort());
+			} else {
+				this.userCanShare = ko.observable(false);
+			}
 		    
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.commonUtils = commonUtils;
