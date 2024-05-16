@@ -395,6 +395,12 @@ define(function(require, exports) {
         return isPermitted('cohortdefinition:' + id + ':copy:get');
     }
 
+    var isPermittedGlobalShareCohort = function() {
+        // special * permission (intended for admins) that allows the
+        // user to share any cohort with a "global reader role":
+        return isPermitted('cohortdefinition:global:share:put');
+    }
+
     var isPermittedUpdateCohort = function(id) {
         var permission = 'cohortdefinition:' + id + ':put';
         return isPermitted(permission);
@@ -407,17 +413,17 @@ define(function(require, exports) {
     }
 
     var isPermittedGenerateCohort = function(cohortId, sourceKey) {
-	var v = isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
-		isPermitted('cohortdefinition:' + cohortId + ':info:get');
+        var v = isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
+            isPermitted('cohortdefinition:' + cohortId + ':info:get');
 
-	// By default, everyone can generate any artifact they have
-	// permission to read. If a permissionManagementRoleId has
-	// been assigned, (non- empty string assignment), the default
-	// generate functionality is not desired. Rather, users will have to
-	// have a role that allows them to update the specific cohort definition. 
-	if (config.permissionManagementRoleId !== ""){
-	    v = v && isPermitted('cohortdefinition:' + cohortId + ':put')
-	}
+        // By default, everyone can generate any artifact they have
+        // permission to read. If limitedPermissionManagement has
+        // been set to true, the default
+        // generate functionality is not desired. Rather, users will have to
+        // have a permission that allows them to update the specific cohort definition. 
+        if (config.limitedPermissionManagement){
+            v = v && isPermitted('cohortdefinition:' + cohortId + ':put')
+        }
         return v
     }
 
@@ -586,6 +592,7 @@ define(function(require, exports) {
         isPermittedReadCohort: isPermittedReadCohort,
         isPermittedCreateCohort: isPermittedCreateCohort,
         isPermittedCopyCohort: isPermittedCopyCohort,
+        isPermittedGlobalShareCohort: isPermittedGlobalShareCohort,
         isPermittedUpdateCohort: isPermittedUpdateCohort,
         isPermittedDeleteCohort: isPermittedDeleteCohort,
         isPermittedGenerateCohort: isPermittedGenerateCohort,

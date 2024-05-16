@@ -92,15 +92,14 @@
 		<label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.globalReadStatus', 'Status of global READ access:')"></label>
 		<div/>
 		<div class="btn-group" data-toggle="buttons">
-		    <label data-bind="css: { active: !shareFlag()},
+		    <label data-bind="css: { active: shareFlag()},
 				      click: function () { shareFlag(false); grantGlobalReadAccess();},
 				      clickBubble: false,
 				      text: ko.i18n('common.configureAccessModal.globalReadStatusNotGranted', 'Granted')
 				      "
 			   class="btn btn-primary",		   
 		    />
-		    <label data-bind="css: { 
-				      active: shareFlag()}, 
+		    <label data-bind="css: { active: !shareFlag()}, 
 				      click: function () { shareFlag(true); revokeGlobalReadAccess();},
 				      clickBubble: false,
 				      text: ko.i18n('common.configureAccessModal.globalReadStatusIsGranted', 'Not Granted')
