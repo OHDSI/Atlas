@@ -203,7 +203,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			if (config.enablePermissionManagement) {
 				this.userCanShare = ko.observable(
 						!config.limitedPermissionManagement ||
-						authApi.isPermittedGlobalShareCohort());
+						authApi.isPermittedGlobalShareArtifact());
 			} else {
 				this.userCanShare = ko.observable(false);
 			}
