@@ -5,6 +5,7 @@ define([
     'utils/CommonUtils',
     'utils/AutoBind',
     'numeral',
+    '../utils',
     "less!./temporal.less",
   ],
   function (
@@ -14,6 +15,7 @@ define([
     commonUtils,
     AutoBind,
     numeral,
+    utils,
   ) {
 
     class ExploreTemporal extends AutoBind(Component) {
@@ -23,27 +25,30 @@ define([
           {
             title: 'Start day',
             data: 'startDay',
-            class: 'col-start-day',
+            class: this.classes('col-start-day'),
           },
           {
             title: 'End day',
             data: 'endDay',
-            class: 'col-end-day',
+            class: this.classes('col-end-day'),
           },
           {
             title: 'Count',
-            class: 'col-count',
+            class: this.classes('col-count'),
             render: (s, p, d) => numeral(d.count || 0).format(),
           },
           {
             title: 'Pct',
-            data: 'avg',
-            class: 'col-pct',
+            class: this.classes('col-pct'),
+            render: (s, p, d) => {
+              const pct = utils.formatPct((d.avg * 100) || 0);
+              return `<div class="pct-fill" style="width: ${pct}"><div>${pct}</div></div>`;
+            },
           },
         ];
         this.tableOptions = {...commonUtils.getTableOptions('M'), pageLength: 10};
 
-        this.temporal = params.temporal || [];
+        this.temporal = params.data || [];
         this.data = ko.observableArray(this.temporal);
       }
 

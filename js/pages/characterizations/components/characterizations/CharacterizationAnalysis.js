@@ -14,7 +14,10 @@ define(function(require, exports){
 			this.name = ko.observable(data.name || this.defaultName);
 			this.cohorts = ko.observableArray(data.cohorts);
 			this.featureAnalyses = ko.observableArray(data.featureAnalyses || []);
-			data.featureAnalyses && data.featureAnalyses.forEach(fa => fa["includeAnnual"] = ko.observable(fa.includeAnnual));
+			data.featureAnalyses && data.featureAnalyses.forEach(fa => {
+				fa["includeAnnual"] = ko.observable(fa.includeAnnual);
+				fa['includeTeamporal'] = ko.observable(fa.includeTeamporal);
+			});
 			this.parameters = ko.observableArray(data.parameters);
 			this.strataConceptSets = ko.observableArray((data.strataConceptSets && data.strataConceptSets.map(cs => new ConceptSet(cs))) || []);
 			this.strataOnly = ko.observable(data.strataOnly);
