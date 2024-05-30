@@ -6,6 +6,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/ConceptSet',
 	'services/Permission',
 	'services/Tags',
+	'moment',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
@@ -71,6 +72,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	conceptSetService,
 	PermissionService,
 	TagsService,
+	moment,
 	conceptSetUitls,
 	datatableUtils,
 	CohortExpression,
@@ -1225,7 +1227,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			let formattedDate = (moment(date)).format('YYYY_MM_DD')
 			FileService.loadZip(
 				config.api.url + constants.paths.downloadShiny(this.currentCohortDefinition().id(), source.sourceKey),
-				this.sourceName + "_" + formattedDate + "_" + this.currentCohortDefinition().name() + ".zip"
+				source.sourceKey + "_" + formattedDate + "_" + this.currentCohortDefinition().name() + ".zip"
 			)
 				.catch((e) => console.error("error when downloading: " + e))
 				.finally(() => this.loading(false));
