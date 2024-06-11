@@ -8,8 +8,11 @@ define([
   'services/Source',
   'services/JobDetailsService',
   'services/file',
+  'services/http',
+  'moment',
   'lodash',
   'const',
+  'components/analysisExecution/shiny-const',
   'text!./analysis-execution-list.html',
   'less!./analysis-execution-list.less',
   'components/modal-exit-message',
@@ -23,8 +26,11 @@ define([
   SourceService,
   JobDetailsService,
   FileService,
+  httpService,
+  moment,
   lodash,
   consts,
+  shinyConsts,
 	view
 ) {
   class AnalysisExecutionList extends Component {
@@ -89,6 +95,7 @@ define([
       this.executionResultModes = consts.executionResultModes;
       this.isExecutionDesignShown = ko.observable(false);
       this.executionDesign = ko.observable(null);
+      this.config = config;
 
       this.sourcesColumn = [{
           render: (s, p, d) => {
@@ -147,6 +154,53 @@ define([
       );
 
       this.isViewGenerationsPermitted && this.startPolling();
+      this.shinyOptions = [
+				{
+					action: this.downloadShinyApp,
+					title: 'components.shiny.button.menu.download',
+					defaultTitle: 'Download'
+				},
+				{
+					action: this.publishShinyApp,
+					title: 'components.shiny.button.menu.publish',
+					defaultTitle: 'Publish'
+				}
+			];
+    }
+
+    downloadShinyApp = (source) => {
+      let submission = this.findLatestSubmission(source.sourceKey);
+      let submissionId;
+      if (submission) {
+        submissionId = submission.id;
+      }
+      let currentAnalysisId=this.analysisId();
+      FileService.loadZip(
+        config.api.url + shinyConsts.apiPaths.downloadShiny(submissionId, source.sourceKey),
+        "Characterization_" + currentAnalysisId + "_gv" + submissionId + "_" + source.sourceKey + ".zip"
+      )
+        .catch((e) => console.error("error when downloading: " + e))
+        .finally(() => this.loading(false));
+    }
+
+    publishShinyApp = async (source) => {
+      this.loading = true;
+      let submission = this.findLatestSubmission(source.sourceKey);
+      let submissionId;
+      if (submission) {
+        submissionId = submission.id;
+      }
+      try {
+        await httpService.doGet(config.api.url + shinyConsts.apiPaths.publishShiny(submissionId, source.sourceKey));
+        alert("Cohort Characterization report is published");
+      } catch (e) {
+        console.error('An error has occurred when publishing', e);
+        if (e.status === 403) {
+          alert('Permission denied');
+        } else {
+          alert('Unexpected error occurred when publishing');
+        }
+      }
     }
 
     startPolling() {
