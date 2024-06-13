@@ -27,7 +27,12 @@ define(function (require, exports) {
 		self.CensoringCriteria = ko.observableArray(data.CensoringCriteria && data.CensoringCriteria.map(function (criteria) {
 			return CriteriaTypes.GetCriteriaFromObject(criteria, self.ConceptSets);
 		}));
-		self.CollapseSettings = {CollapseType: ko.observable(data.CollapseSettings && data.CollapseSettings.CollapseType || "ERA"), EraPad: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPad || 0 ), EraPadUnitValue: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPadUnitValue || 0), EraPadUnit: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPadUnit || 'day')}
+		self.CollapseSettings = {
+			CollapseType: ko.observable(data.CollapseSettings && data.CollapseSettings.CollapseType || "ERA"), 
+			EraPad: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPad || 0 ), 
+			EraPadUnitValue: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPadUnitValue || data.CollapseSettings && data.CollapseSettings.EraPad || 0), 
+			EraPadUnit: ko.observable(data.CollapseSettings && data.CollapseSettings.EraPadUnit || 'day')
+		}
 		self.CensorWindow = ko.observable(new Period(data.CensorWindow));
 
 		self.cdmVersionRange = data.cdmVersionRange || null;

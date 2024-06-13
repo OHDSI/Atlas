@@ -54,6 +54,7 @@ define(['knockout'], function (ko) {
 				return value.Days;
 			}
 		}
+		return 'All';
 	}
 
 	return Window;
