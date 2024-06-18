@@ -1223,8 +1223,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		downloadShinyApp(source) {
-			let date = Date.now()
-			let formattedDate = (moment(date)).format('YYYY_MM_DD')
 			FileService.loadZip(
 				config.api.url + constants.paths.downloadShiny(this.currentCohortDefinition().id(), source.sourceKey),
 				"Cohort_" + this.currentCohortDefinition().id() + "_" +  source.sourceKey + ".zip"

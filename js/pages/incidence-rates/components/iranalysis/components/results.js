@@ -167,14 +167,13 @@ define([
 		}
 
 		downloadShinyApp(source) {
-			let date = Date.now();
-			let formattedDate = (moment(date)).format('YYYY_MM_DD');
+			let analysisId = source.info().executionInfo.id.analysisId;
 			FileService.loadZip(
-				config.api.url + constants.apiPaths.downloadShiny(source.info().executionInfo.id.analysisId, source.source.sourceKey),
-				source.source.sourceName + "_" + formattedDate + "_incidenceRates_shinyApp.zip"
+				config.api.url + constants.apiPaths.downloadShiny(analysisId, source.source.sourceKey),
+				"Incidence_" + analysisId + "_" + source.source.sourceKey + ".zip"
 			)
 				.catch((e) => console.error("error when downloading: " + e))
-				.finally(() => this.loading(false));
+				.finally(() => this.isLoading(false));
 		}
 
 		async publishShinyApp(source) {
