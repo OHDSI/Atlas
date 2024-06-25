@@ -174,10 +174,19 @@ define([
       if (submission) {
         submissionId = submission.id;
       }
-      let currentAnalysisId=this.analysisId();
+      let currentAnalysisId = this.analysisId();
+      let resultsPathPrefix = this.resultsPathPrefix;
+      let apiPath = (resultsPathPrefix && resultsPathPrefix.includes('characterizations'))
+        ? shinyConsts.apiPaths.downloadShinyCC(submissionId, source.sourceKey)
+        : shinyConsts.apiPaths.downloadShinyPW(submissionId, source.sourceKey);
+
+      let filePrefix = (resultsPathPrefix && resultsPathPrefix.includes('characterizations'))
+        ? "Characterization_"
+        : "Pathway_";
+
       FileService.loadZip(
-        config.api.url + shinyConsts.apiPaths.downloadShiny(submissionId, source.sourceKey),
-        "Characterization_" + currentAnalysisId + "_gv" + submissionId + "_" + source.sourceKey + ".zip"
+        config.api.url + apiPath,
+        filePrefix + currentAnalysisId + "_gv" + submissionId + "_" + source.sourceKey + ".zip"
       )
         .catch((e) => console.error("error when downloading: " + e))
         .finally(() => this.loading(false));
@@ -190,9 +199,19 @@ define([
       if (submission) {
         submissionId = submission.id;
       }
+
+      let resultsPathPrefix = this.resultsPathPrefix;
+      let apiPath = (resultsPathPrefix && resultsPathPrefix.includes('characterizations'))
+        ? shinyConsts.apiPaths.publishShinyCC(submissionId, source.sourceKey)
+        : shinyConsts.apiPaths.publishShinyPW(submissionId, source.sourceKey);
+
+      let alertPrefix = (resultsPathPrefix && resultsPathPrefix.includes('characterizations'))
+        ? "Characterization"
+        : "Pathway";
+
       try {
-        await httpService.doGet(config.api.url + shinyConsts.apiPaths.publishShiny(submissionId, source.sourceKey));
-        alert("Cohort Characterization report is published");
+        await httpService.doGet(config.api.url + apiPath);
+        alert("Cohort " + alertPrefix + " report is published");
       } catch (e) {
         console.error('An error has occurred when publishing', e);
         if (e.status === 403) {
