@@ -5,14 +5,14 @@ define(['knockout'], function (ko) {
 		data = data || {};
 
 		self.Start = {
-			Days: ko.observable((data.Start && data.Start.Days) === 0 ? 0 : (data.Start && data.Start.Days) || null),
+			Days: ko.observable(setDays(data.Start)),
 			Coeff: ko.observable((data.Start && data.Start.Coeff) === 0 ? 0 : (data.Start && data.Start.Coeff) || -1),
 			TimeUnit: ko.observable((data.Start && data.Start.TimeUnit) || 'day'),
 			TimeUnitValue: ko.observable(setTimeUnitValue(data.Start))
 		};
 		
 		self.End = {
-			Days: ko.observable((data.End && data.End.Days) === 0 ? 0 : (data.End && data.End.Days) || null),
+			Days: ko.observable(setDays(data.End)),
 			Coeff: ko.observable((data.End && data.End.Coeff) === 0 ? 0 : (data.End && data.End.Coeff) || 1),
 			TimeUnit: ko.observable((data.End && data.End.TimeUnit) ||  'day'),
 			TimeUnitValue: ko.observable(setTimeUnitValue(data.End))
@@ -44,14 +44,31 @@ define(['knockout'], function (ko) {
 		
 	}
 
-	function setTimeUnitValue(value) {
-		if (value) {
-			if (value.TimeUnitValue === 0) {
+	function setDays(dateValue) {
+		if (dateValue) {
+			if (dateValue.Days === 0) {
 				return 0;
-			} else if (value.TimeUnitValue) {
-				return value.TimeUnitValue;
-			} else if (value.Days) {
-				return value.Days;
+			} else if (dateValue.Days) {
+				return dateValue.Days;
+			} else if (dateValue.TimeUnitValue === 0) {
+				return 0;
+			}else if (dateValue.TimeUnitValue) {
+				return dateValue.TimeUnitValue;
+			}
+		}
+		return null;
+	}
+
+	function setTimeUnitValue(dateValue) {
+		if (dateValue) {
+			if (dateValue.TimeUnitValue === 0) {
+				return 0;
+			} else if (dateValue.TimeUnitValue) {
+				return dateValue.TimeUnitValue;
+			} else if (dateValue.Days === 0) {
+				return 0;
+			} else if (dateValue.Days) {
+				return dateValue.Days;
 			}
 		}
 		return 'All';
