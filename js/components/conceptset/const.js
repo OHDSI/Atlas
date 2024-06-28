@@ -14,7 +14,7 @@ define([
 		RECOMMEND: 'recommend',
 		EXPORT: 'conceptset-export',
 		IMPORT: 'conceptset-import',
-		METADATA: 'metadata'
+		ANNOTATION: 'annotation'
 	};
 	
 	const ConceptSetSources = {

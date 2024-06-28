@@ -161,6 +161,7 @@ define(function (require, exports) {
           success: function (info) {
             source.version(info.version);
             source.dialect(info.dialect);
+            sharedState.currentVocabularyVersion() || sharedState.defaultVocabularyVersion(info.version);
           },
           error: function (err) {
             source.version('unknown');
@@ -204,6 +205,9 @@ define(function (require, exports) {
   function getResultsUrl(sourceKey) {
       return config.api.url + 'cdmresults/' + sourceKey + '/';
   }
+  function getVocabularyInfo(sourceKey) {
+    return httpService.doGet(config.webAPIRoot + 'vocabulary/' + sourceKey + '/info');
+  }
 
   var api = {
     getSources: getSources,
@@ -217,6 +221,7 @@ define(function (require, exports) {
     buttonCheckState: buttonCheckState,
     setSharedStateSources: setSharedStateSources,
     updateSourceDaimonPriority,
+    getVocabularyInfo
 	};
 
 	return api;

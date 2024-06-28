@@ -74,17 +74,17 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
-	function saveConceptSetMetadata(id, conceptSetItems) {
-		return httpService.doPut(config.api.url + 'conceptset/' + id + '/metadata', conceptSetItems)
+	function saveConceptSetAnnotation(id, conceptSetItems) {
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/annotation', conceptSetItems)
 			.catch(authApi.handleAccessDenied);
 	}
 
-	function getConceptSetMetadata(conceptSetId) {
-		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/metadata')
+	function getConceptSetAnnotation(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/annotation')
 			.catch(authApi.handleAccessDenied);
 	}
 
-	function deleteConceptSetMetadata(id) {
+	function deleteConceptSetAnnotation(id) {
 		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (id || '-1'))
 			.catch(authApi.handleAccessDenied);
 		}
@@ -156,9 +156,9 @@ define(function (require) {
 		getVersionExpression,
 		updateVersion,
 		copyVersion,
-		saveConceptSetMetadata,
-		getConceptSetMetadata,
-		deleteConceptSetMetadata
+		saveConceptSetAnnotation,
+		getConceptSetAnnotation,
+		deleteConceptSetAnnotation
 	};
 
 	return api;

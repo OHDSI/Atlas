@@ -45,7 +45,7 @@ define([
 	'components/name-validation',
 	'components/ac-access-denied',
 	'components/versions/versions',
-	'./components/tabs/conceptset-metadata'
+	'./components/tabs/conceptset-annotation'
 ], function (
         ko,
 	view,
@@ -315,12 +315,12 @@ define([
 					hidden: () => !!this.previewVersion()
 				},
 				{
-					title: ko.i18n('cs.manager.tabs.metadata', 'Metadata'),
-					key: ViewMode.METADATA,
-					componentName: 'conceptset-metadata',
+					title: ko.i18n('cs.manager.tabs.annotation', 'Annotation'),
+					key: ViewMode.ANNOTATION,
+					componentName: 'conceptset-annotation',
 					componentParams: {
-						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetMetadata(this.currentConceptSet().id) : [],
-						delete: (id) => id ? conceptSetService.deleteConceptSetMetadata(id) : null
+						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetAnnotation(this.currentConceptSet().id) : [],
+						delete: (id) => id ? conceptSetService.deleteConceptSetAnnotation(id) : null
 					}
 				},
 				{
@@ -525,7 +525,7 @@ define([
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-					await conceptSetService.saveConceptSetMetadata(savedConceptSet.data.id, { newMetadata: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || []), removeMetadata: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
+					await conceptSetService.saveConceptSetAnnotation(savedConceptSet.data.id, { newAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || []), removeAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
 					this.removeDataFilterStorage();
 
 					const current = this.conceptSetStore.current();

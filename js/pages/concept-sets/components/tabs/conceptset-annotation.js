@@ -1,11 +1,11 @@
 define([
     'knockout',
-    'text!./conceptset-metadata.html',
+    'text!./conceptset-annotation.html',
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
     'faceted-datatable',
-    'less!./conceptset-metadata.less',
+    'less!./conceptset-annotation.less',
   ], function (
     ko,
     view,
@@ -13,7 +13,7 @@ define([
     AutoBind,
     commonUtils,
   ) {
-  class ConceptsetMetadata extends AutoBind(Component) {
+  class ConceptsetAnnotation extends AutoBind(Component) {
       constructor(params) {
           super(params);
           this.isLoading = ko.observable(true);
@@ -42,48 +42,36 @@ define([
               sortable: false
             },
             {
-              title: ko.i18n('columns.relatedConcepts', 'Related Concepts'),
-              data: 'relatedConcepts',
+              title: ko.i18n('columns.vocabularyVersion', 'Vocabulary Version'),
+              data: 'vocabularyVersion',
               render: (d, t, r) => {
-                  if (r.relatedConcepts === null || r.relatedConcepts === undefined || !r.relatedConcepts) {
+                  if (r.vocabularyVersion === null || r.vocabularyVersion === undefined || !r.vocabularyVersion) {
                       return 'N/A';
                   } else {
-                    return `<p>${r.relatedConcepts}</p>`
+                    return `<p>${r.vocabularyVersion}</p>`
                   }
               },
               sortable: false
             },
             {
-              title: ko.i18n('columns.conceptHierarchy', 'Concept Hierarchy'),
-              data: 'conceptHierarchy',
+              title: ko.i18n('columns.createdBy', 'Created By'),
+              data: 'createdBy',
               render: (d, t, r) => {
-                if (r.conceptHierarchy === null || r.conceptHierarchy === undefined || !r.conceptHierarchy) {
+                if (r.createdBy === null || r.createdBy === undefined || !r.createdBy) {
                     return 'N/A';
                 } else {
-                  return `<p>${r.conceptHierarchy}</p>`
+                  return `<p>${r.createdBy}</p>`
                 }
               },
               sortable: false
             },
             {
-              title: ko.i18n('columns.conceptSetData', 'ConceptSet Data'),
+              title: ko.i18n('columns.createdDate', 'Created Date'),
               render: (d, t, r) => {
-                  if (r.conceptSetData === null || r.conceptSetData === undefined) {
+                  if (r.createdDate === null || r.createdDate === undefined) {
                       return 'N/A';
                   } else {
-                      return `<p>${JSON.stringify(r.conceptSetData)}</p>`
-                  }
-              },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.conceptData', 'Concept Data'),
-              className:  this.classes('tbl-col', 'concept-data'),
-              render: (d, t, r) => {
-                  if (r.conceptData === null || r.conceptData === undefined) {
-                      return 'N/A';
-                  } else {
-                      return `<>${JSON.stringify(r.conceptData)}</>`
+                      return `<p>${r.createdDate}</p>`
                   }
               },
               sortable: false
@@ -99,17 +87,18 @@ define([
           this.loadData();
       }
 
-      objectMap(obj) {
-        const newObject = {};
-        Object.keys(obj).forEach((key) => {
-          if(typeof obj[key] === 'string'){
+    objectMap(obj) {
+      const newObject = {};
+      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion'];
+      Object.keys(obj).forEach((key) => {
+        if (typeof obj[key] === 'string' && !keysNotToParse.includes(key)) {
           newObject[key] = JSON.parse(obj[key] || null);
-          }else{
+        } else {
           newObject[key] = obj[key];
-          }
-        });
-        return newObject;
-      }
+        }
+      });
+      return newObject;
+    }
 
       async onRowClick(d, e){
         try {
@@ -148,5 +137,5 @@ define([
       }
 
   }
-    return commonUtils.build('conceptset-metadata', ConceptsetMetadata, view);
+    return commonUtils.build('conceptset-annotation', ConceptsetAnnotation, view);
 });
