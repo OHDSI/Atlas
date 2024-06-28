@@ -35,11 +35,11 @@ define(['knockout'], function (ko) {
 
 		self.Start.TimeUnit.subscribe(function (newValue){
 			self.End.TimeUnit(newValue);
-			self.Start.Days(newValue === 'day' ? self.Start.TimeUnitValue() : null);
+			self.Start.Days(newValue === 'day' ? (self.Start.TimeUnitValue() === 'All' ? null : self.Start.TimeUnitValue()) : null);
 		})
 
 		self.End.TimeUnit.subscribe(function (newValue){
-			self.End.Days(newValue === 'day' ? self.End.TimeUnitValue() : null);
+			self.End.Days(newValue === 'day' ? (self.End.TimeUnitValue() === 'All' ? null : self.End.TimeUnitValue()) : null);
 		})
 		
 	}
@@ -52,7 +52,7 @@ define(['knockout'], function (ko) {
 				return dateValue.Days;
 			} else if (dateValue.TimeUnitValue === 0) {
 				return 0;
-			}else if (dateValue.TimeUnitValue) {
+			} else if (dateValue.TimeUnitValue && dateValue.TimeUnitValue !== 'All') {
 				return dateValue.TimeUnitValue;
 			}
 		}
@@ -63,7 +63,7 @@ define(['knockout'], function (ko) {
 		if (dateValue) {
 			if (dateValue.TimeUnitValue === 0) {
 				return 0;
-			} else if (dateValue.TimeUnitValue) {
+			} else if (dateValue.TimeUnitValue && dateValue.TimeUnitValue !== 'All') {
 				return dateValue.TimeUnitValue;
 			} else if (dateValue.Days === 0) {
 				return 0;
@@ -71,7 +71,7 @@ define(['knockout'], function (ko) {
 				return dateValue.Days;
 			}
 		}
-		return 'All';
+		return null;
 	}
 
 	return Window;
