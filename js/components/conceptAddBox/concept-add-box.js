@@ -164,10 +164,7 @@ define([
         const payloadAdd = this.conceptsToAdd().map(item => {
           return {
             "searchData": dataSearch,
-            "relatedConcepts": "",
-            "conceptHierarchy": "",
-            "conceptSetData": { id: conceptSet?.current().id, name: conceptSet?.current().name() },
-            "conceptData": item,
+            "vocabularyVersion": sharedState.currentVocabularyVersion(),
             "conceptId": item.CONCEPT_ID
           }
         })

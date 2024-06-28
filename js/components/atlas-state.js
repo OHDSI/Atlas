@@ -13,23 +13,28 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 	state.vocabularyUrl = ko.observable(sessionStorage.vocabularyUrl);
 	state.evidenceUrl = ko.observable(sessionStorage.evidenceUrl);
 	state.resultsUrl = ko.observable(sessionStorage.resultsUrl);
+	state.currentVocabularyVersion = ko.observable(sessionStorage.currentVocabularyVersion);
 	state.vocabularyUrl.subscribe(value => updateKey('vocabularyUrl', value));
 	state.evidenceUrl.subscribe(value => updateKey('evidenceUrl', value));
 	state.resultsUrl.subscribe(value => updateKey('resultsUrl', value));
+	state.currentVocabularyVersion.subscribe(value => updateKey('currentVocabularyVersion', value));
 
 	// This default values are stored during initialization
 	// and used to reset after session finished
 	state.defaultVocabularyUrl = ko.observable();
 	state.defaultEvidenceUrl = ko.observable();
 	state.defaultResultsUrl = ko.observable();
+	state.defaultVocabularyVersion = ko.observable();
 	state.defaultVocabularyUrl.subscribe((value) => state.vocabularyUrl(value));
 	state.defaultEvidenceUrl.subscribe((value) => state.evidenceUrl(value));
 	state.defaultResultsUrl.subscribe((value) => state.resultsUrl(value));
+	state.defaultVocabularyVersion.subscribe((value) => state.currentVocabularyVersion(value));
 
 	state.resetCurrentDataSourceScope = function() {
 		state.vocabularyUrl(state.defaultVocabularyUrl());
 		state.evidenceUrl(state.defaultEvidenceUrl());
 		state.resultsUrl(state.defaultResultsUrl());
+		state.currentVocabularyVersion(state.defaultVocabularyVersion());
 	}
 
 	state.sourceKeyOfVocabUrl = ko.computed(() => {
