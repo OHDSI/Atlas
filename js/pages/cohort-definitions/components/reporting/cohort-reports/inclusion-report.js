@@ -19,25 +19,6 @@ define([
 			super();
 
 			this.tabs = ko.computed(() => {
-				if(params.isViewDemographic()){
-					return [
-						{
-							title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson', 'By Person'),
-							componentName: 'feasibility-report-viewer-with-header',
-							componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_PERSON },
-						},
-						{
-							title: ko.i18n('cohortDefinitions.cohortreports.tabs.byEvents', 'By All Events'),
-							componentName: 'feasibility-report-viewer-with-header',
-							componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_EVENT },
-						},
-						{
-							title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson3', 'Demographics'),
-							componentName: 'demographic-report',
-							componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_DEMOGRAPHIC, buttons: null, tableDom: "Blfiprt" },
-						},
-					]
-				}
 				return [{
 					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson', 'By Person'),
 					componentName: 'feasibility-report-viewer-with-header',
@@ -48,7 +29,7 @@ define([
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_EVENT },
 				}]
-				}, params?.isViewDemographic());
+				});
 		}
 	}
 
