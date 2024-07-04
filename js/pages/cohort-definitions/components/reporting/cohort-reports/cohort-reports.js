@@ -41,6 +41,19 @@ define([
 			};
 
 			this.tabs = PluginRegistry.findByType(globalConstants.pluginTypes.COHORT_REPORT).map(t => ({ ...t, componentParams }));
+			
+			if (this.isViewDemographic()) {
+				this.tabs.push({
+					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson3', 'Demographics'),
+					componentName: 'demographic-report',
+					componentParams: {
+						...componentParams,
+						reportType: constants.INCLUSION_REPORT.BY_DEMOGRAPHIC,
+						buttons: null,
+						tableDom: "Blfiprt"
+					}
+				});
+			}		
 		}
 
 		dispose() {
