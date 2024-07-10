@@ -27,7 +27,7 @@ define([
     'utils/ExceptionUtils',
     'services/file',
     './explore-prevalence',
-    './explore-temporal',
+    './explore-temporal-cohort',
     'less!./characterization-results.less',
     'components/visualizations/filter-panel/filter-panel',
     'components/visualizations/line-chart',
@@ -193,9 +193,9 @@ define([
           this.isExplorePrevalenceShown(true);
         }
 
-        exploreTemporal({temporal, temporalAnnual}, title) {
+        exploreTemporal({temporal, temporalAnnual, temporalDataByCohort}, title) {
             this.exploreTemporalTitle(title);
-            this.exploreTemporalData({temporal, temporalAnnual});
+            this.exploreTemporalData({temporal, temporalAnnual, temporalDataByCohort});
             this.isTemporalShown(true);
         }
 
@@ -297,6 +297,7 @@ define([
                 domainIds: domains,
                 thresholdValuePct: this.newThresholdValuePct() / 100,
                 showEmptyResults: !!this.showEmptyResults(),
+                excludeComparativeResults: true
             };
 
             Promise.all([

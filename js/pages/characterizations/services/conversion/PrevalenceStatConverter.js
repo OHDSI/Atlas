@@ -31,6 +31,20 @@ define([
                 const statName = prefix ? prefix + field.charAt(0).toUpperCase() + field.slice(1) : field;
 			    this.setNestedValue(result, field, strataId, cohortId, stat[statName]);
             });
+
+            const temporalInfoByCohort = {
+                cohortName: stat.cohortName,
+                temporalInfo: {
+                    temporal: stat.temporal || [],
+                    temporalAnnual: stat.temporalAnnual || [],
+                }
+            };
+
+            if (!result.temporalDataByCohort) {
+                result.temporalDataByCohort = [];
+            }
+
+            result.temporalDataByCohort.push(temporalInfoByCohort);
 		}
 
         convertCompareFields(result, strataId, stat) {
@@ -68,15 +82,16 @@ define([
                 title: ko.i18n('columns.covariate', 'Covariate'),
                 data: 'covariateName',
                 className: this.classes('col-prev-title'),
-                render: (d, t, { covariateName, faType, covariateId, temporal, temporalAnnual }) => {
-                    const meaningfulName = utils.extractMeaningfulCovName(covariateName, faType);
-                    const hasTemporal = Array.isArray(temporal) && temporal.length > 0;
-                    const hasAnnual = Array.isArray(temporalAnnual) && temporalAnnual.length > 0;
-                    if (hasTemporal || hasAnnual) {
-                        return `<a href="#" data-bind="click: () => $component.exploreTemporal($data, '${meaningfulName}')">${meaningfulName}</a>`;
-                    } else {
-                        return meaningfulName;
-                    }
+                render: (d, t, r) => {
+                    const meaningfulName = utils.extractMeaningfulCovName(r.covariateName, r.faType);
+                    const hasTemporalData = Array.isArray(r.temporalDataByCohort) && r.temporalDataByCohort.length > 0;
+                    if (hasTemporalData) {
+                        const hasTemporal = r.temporalDataByCohort.some(cohort => Array.isArray(cohort.temporalInfo?.temporal) && cohort.temporalInfo.temporal.length > 0);
+                        const hasAnnual = r.temporalDataByCohort.some(cohort => Array.isArray(cohort.temporalInfo?.temporalAnnual) && cohort.temporalInfo.temporalAnnual.length > 0);
+                        if (hasTemporal || hasAnnual) {
+                            return `<a href="#" data-bind="click: () => $component.exploreTemporal($data, '${meaningfulName}')">${meaningfulName}</a>`;
+                        }
+                    } return meaningfulName;
                 },
                 xssSafe:false,
             };
