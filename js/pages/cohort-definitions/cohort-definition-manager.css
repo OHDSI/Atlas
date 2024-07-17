@@ -102,9 +102,6 @@
 table.sources-table td.generation-buttons-column {
     text-align: left;
 }
-.text-center {
-    text-align: center;
-}
 table.sources-table thead th, table.sources-table tbody tr:first-child td {
     padding: 4px 10px;
 }
