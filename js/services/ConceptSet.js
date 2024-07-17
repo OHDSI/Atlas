@@ -74,6 +74,21 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
+	function saveConceptSetAnnotation(id, conceptSetItems) {
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/annotation', conceptSetItems)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getConceptSetAnnotation(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/annotation')
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function deleteConceptSetAnnotation(id) {
+		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (id || '-1'))
+			.catch(authApi.handleAccessDenied);
+		}
+
 	function getConceptSet(conceptSetId) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
@@ -140,7 +155,10 @@ define(function (require) {
 		getVersion,
 		getVersionExpression,
 		updateVersion,
-		copyVersion
+		copyVersion,
+		saveConceptSetAnnotation,
+		getConceptSetAnnotation,
+		deleteConceptSetAnnotation
 	};
 
 	return api;

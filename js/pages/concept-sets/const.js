@@ -10,6 +10,7 @@ define(
       RECOMMEND: conceptSetConstants.ViewMode.RECOMMEND,
       EXPORT: conceptSetConstants.ViewMode.EXPORT,
       IMPORT: conceptSetConstants.ViewMode.IMPORT,
+      ANNOTATION: conceptSetConstants.ViewMode.ANNOTATION,
       EXPLORE: 'explore',
       COMPARE: 'compare',
       VERSIONS: 'versions',

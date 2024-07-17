@@ -68,7 +68,45 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 
 		self.outsideFilters = (params.outsideFilters || ko.observable()).extend({notify: 'always'});
 
+		self.setDataLocalStorage = (data, nameItem) => {
+			const filterArrayString = localStorage.getItem(nameItem)
+			let filterArrayObj = filterArrayString? JSON.parse(filterArrayString): []
+
+			if(!data?.selected()){
+				filterArrayObj.push({title:data.facet.caption(), value:`${data.key} (${data.value})`,key:data.key})
+			}else{
+				filterArrayObj = filterArrayObj.filter((item)=> item.key !== data.key)
+			}
+			localStorage.setItem(nameItem, JSON.stringify(filterArrayObj))
+		}
+
+		self.setDataObjectLocalStorage = (data, nameItem) => {
+			const filterObjString = localStorage.getItem(nameItem)
+			let filterObj = filterObjString ? JSON.parse(filterObjString): {}
+			let newFilterObj = {}
+			
+			if(!data?.selected()){
+				const dataPush = { title: data.facet.caption(), value: `${data.key} (${data.value})`, key: data.key };
+				newFilterObj.filterColumns = filterObj['filterColumns'] ? [...filterObj['filterColumns'], dataPush] : [dataPush]
+				newFilterObj = { ...filterObj, filterColumns : newFilterObj.filterColumns };
+			}else{
+				newFilterObj.filterColumns = filterObj['filterColumns'].filter((item)=> item.key !== data.key);
+				newFilterObj = { ...filterObj, filterColumns : newFilterObj.filterColumns };
+			}
+			localStorage.setItem(nameItem, JSON.stringify(newFilterObj))
+		}
+
 		self.updateFilters = function (data, event) {
+			const currentPath = window.location?.href;
+			if(currentPath?.split('/').slice(-1)[0] === 'conceptsets'){
+				self.setDataLocalStorage(data, 'data-filter-conceptset');
+			}
+			const isAddConcept = currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('search'), false) &&
+								currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('query'), false)
+
+			if(isAddConcept){
+				self.setDataObjectLocalStorage(data, 'data-filter-concept')
+			}
 			var facet = data.facet;
 			data.selected(!data.selected());
 			if (data.selected()) {
