@@ -43,6 +43,10 @@ define([
 				{
 					title: ko.i18n('columns.supportsAnnual', 'Supports Annual'),
 					render: (s, p, d) => ko.unwrap(d.supportsAnnual ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No')),
+				},
+				{
+					title: ko.i18n('columns.supportsTemporal', 'Supports Temporal'),
+					render: (s, p, d) => ko.unwrap(d.supportsTemporal ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No')),
 				}
 			];
 		}

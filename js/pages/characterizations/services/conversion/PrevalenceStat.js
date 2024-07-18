@@ -15,8 +15,7 @@ define([
 			this.cohorts = stat.cohorts || [];
 			this.count = {};
 			this.pct = {};
-			this.temporal = stat.temporal || [];
-			this.temporalAnnual = stat.temporalAnnual || [];
+			this.temporalDataByCohort = stat.temporalDataByCohort || [];
 		}
     }
 

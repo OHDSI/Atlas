@@ -52,20 +52,6 @@ define([
 
         this.temporal = params.data || [];
         this.data = ko.observableArray(this.temporal);
-        this.chartData = ko.observable();
-        this.chartFormat = {
-          xFormat: d3.format('d'),
-          yFormat: d3.format(',.1s'),
-          xLabel: 'Year',
-          yLabel: 'Count',
-        };
-        /*const temporalHist = {
-          INTERVAL_SIZE: 1,
-          DATA: ChartUtils.normalizeArray(this.temporal.map(v => ({INTERVAL_INDEX: v.year, COUNT_VALUE: v.count}))),
-          OFFSET: 0,
-        };
-        temporalHist.INTERVALS = temporalHist.DATA.INTERVAL_INDEX.length;
-        this.chartData(atlascharts.histogram.mapHistogram(temporalHist));*/
       }
 
     }
