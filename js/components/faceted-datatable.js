@@ -98,11 +98,12 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 
 		self.updateFilters = function (data, event) {
 			const currentPath = window.location?.href;
-			if(currentPath?.split('/').slice(-1)[0] === 'conceptsets'){
+			if(currentPath?.includes('/conceptset/')){
 				self.setDataLocalStorage(data, 'data-filter-conceptset');
 			}
 			const isAddConcept = currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('search'), false) &&
-								currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('query'), false)
+								currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('query'), false) ||
+								currentPath?.includes('/concept/')
 
 			if(isAddConcept){
 				self.setDataObjectLocalStorage(data, 'data-filter-concept')
