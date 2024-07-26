@@ -54,6 +54,18 @@ define([
               sortable: false
             },
             {
+              title: ko.i18n('columns.conceptSetVersion', 'Concept Set Version'),
+              data: 'conceptSetVersion',
+              render: (d, t, r) => {
+                  if (r.conceptSetVersion === null || r.conceptSetVersion === undefined || !r.conceptSetVersion) {
+                      return 'N/A';
+                  } else {
+                    return `<p>${r.conceptSetVersion}</p>`
+                  }
+              },
+              sortable: false
+            },
+            {
               title: ko.i18n('columns.createdBy', 'Created By'),
               data: 'createdBy',
               render: (d, t, r) => {
@@ -89,7 +101,7 @@ define([
 
     objectMap(obj) {
       const newObject = {};
-      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion'];
+      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion', 'conceptSetVersion'];
       Object.keys(obj).forEach((key) => {
         if (typeof obj[key] === 'string' && !keysNotToParse.includes(key)) {
           newObject[key] = JSON.parse(obj[key] || null);
