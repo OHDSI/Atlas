@@ -524,8 +524,18 @@ define([
 					this.raiseConceptSetNameProblem(ko.i18n('cs.manager.csAlreadyExistsMessage', 'A concept set with this name already exists. Please choose a different name.')(), nameElementId);
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
+					const savedVersions = await this.versionsParams()?.getList();
+					let latestSavedVersion = 1;
+
+					if (savedVersions && Array.isArray(savedVersions)) {
+						latestSavedVersion = savedVersions.reduce((max, obj) => Math.max(max, obj.version), 1);
+					}
+
+					let annotationDataToAdd = JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || [];
+					const enrichedAnnotationDataToAdd = annotationDataToAdd.map(item => ({...item, "conceptSetVersion": latestSavedVersion}));
+
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-					await conceptSetService.saveConceptSetAnnotation(savedConceptSet.data.id, { newAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || []), removeAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
+					await conceptSetService.saveConceptSetAnnotation(savedConceptSet.data.id, { newAnnotation: this.handleConvertDataToString(enrichedAnnotationDataToAdd), removeAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
 					this.removeDataFilterStorage();
 
 					const current = this.conceptSetStore.current();
