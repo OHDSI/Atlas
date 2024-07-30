@@ -541,6 +541,7 @@ define([
 					const current = this.conceptSetStore.current();
 					current.modifiedBy = savedConceptSet.data.modifiedBy;
 					current.modifiedDate = savedConceptSet.data.modifiedDate;
+					current.id=savedConceptSet.data.id;
 					this.conceptSetStore.current(current);
 
 					this.previewVersion(null);
@@ -582,11 +583,17 @@ define([
 		}
 
 		async copy() {
+			let sourceConceptSetId = this.currentConceptSet().id;
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
 			this.currentConceptSet().name(responseWithName.copyName);
 			this.currentConceptSet().id = 0;
 			this.currentConceptSetDirtyFlag().reset();
 			await this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
+			let copyAnnotationsRequest = {
+				sourceConceptSetId: sourceConceptSetId,
+				targetConceptSetId: this.currentConceptSet().id
+			};
+			await conceptSetService.copyAnnotations(copyAnnotationsRequest);
 		}
 
 		async optimize() {
