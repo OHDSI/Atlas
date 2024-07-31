@@ -36,7 +36,7 @@ define([
                   if (r.searchData === null || r.searchData === undefined || !r.searchData) {
                       return 'N/A';
                   } else {
-                      return `<p>${JSON.stringify(r.searchData)}</p>`
+                      return `<p>${r.searchData}</p>`
                   }
               },
               sortable: false
@@ -101,7 +101,7 @@ define([
 
     objectMap(obj) {
       const newObject = {};
-      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion', 'conceptSetVersion'];
+      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion', 'conceptSetVersion', 'searchData'];
       Object.keys(obj).forEach((key) => {
         if (typeof obj[key] === 'string' && !keysNotToParse.includes(key)) {
           newObject[key] = JSON.parse(obj[key] || null);
