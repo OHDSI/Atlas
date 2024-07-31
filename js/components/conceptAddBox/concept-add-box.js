@@ -157,10 +157,10 @@ define([
 
       sharedState.activeConceptSet(conceptSet);
 
-      const filterConcept = JSON.parse(localStorage?.getItem('data-filter-concept') || null);
-      const filterConceptSet = JSON.parse(localStorage?.getItem('data-filter-conceptset') || null);
+      const filterSource = localStorage?.getItem('filter-source') || null;
+      const filterData = JSON.parse(localStorage?.getItem('filter-data') || null);
       const datasAdded = JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || [];
-      const dataSearch = { filterConceptSet, filterConcept }
+      const dataSearch = { filterData, filterSource }
       const payloadAdd = this.conceptsToAdd().map(item => {
         return {
           "searchData": dataSearch,
