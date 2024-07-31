@@ -98,15 +98,21 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 
 		self.updateFilters = function (data, event) {
 			const currentPath = window.location?.href;
-			if(currentPath?.includes('/conceptset/')){
-				self.setDataLocalStorage(data, 'data-filter-conceptset');
+			if (currentPath?.includes('/conceptset/')) {
+				if (currentPath?.includes('/included-sourcecodes')) {
+					localStorage.setItem('filter-source', 'Included Source Codes');
+				} else if (currentPath?.includes('/included')) {
+					localStorage.setItem('filter-source', 'Included Concepts');
+				}
+				self.setDataLocalStorage(data, 'filter-data');
 			}
 			const isAddConcept = currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('search'), false) &&
-								currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('query'), false) ||
-								currentPath?.includes('/concept/')
+				currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('query'), false) ||
+				currentPath?.includes('/concept/')
 
-			if(isAddConcept){
-				self.setDataObjectLocalStorage(data, 'data-filter-concept')
+			if (isAddConcept) {
+				localStorage.setItem('filter-source', 'Search');
+				self.setDataObjectLocalStorage(data, 'filter-data')
 			}
 			var facet = data.facet;
 			data.selected(!data.selected());

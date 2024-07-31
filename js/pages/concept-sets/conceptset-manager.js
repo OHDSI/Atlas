@@ -480,9 +480,9 @@ define([
 		}
 
 		removeDataFilterStorage(){
-			localStorage.removeItem('data-filter-conceptset');
+			localStorage.removeItem('filter-data');
+			localStorage.removeItem('filter-source');
 			localStorage.removeItem('data-remove-selected-concept');
-			localStorage.removeItem('data-filter-concept');
 			localStorage.removeItem('data-add-selected-concept');
 		}
 
