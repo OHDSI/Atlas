@@ -3,12 +3,14 @@
 	<span data-bind="text: createdText"></span>
 	<span data-bind="visible: createdBy, text: ko.i18nformat('components.authorship.byCreated', 'by <%=createdBy%>', {createdBy: createdBy})"></span>
 	<span data-bind="text: ko.i18n('components.authorship.on', 'on')"></span>
-	<span data-bind="text: createdDate"></span><span data-bind="visible: modifiedDate">,</span>
+	<span data-bind="text: createdDate"></span>
+	<span data-bind="text: ko.i18n('components.authorship.createdEnd', ' ')"></span><span data-bind="visible: modifiedDate">,</span>
 	<span data-bind="visible: modifiedDate">
 		<span data-bind="text: ko.i18n('components.authorship.modified', 'modified')"></span>
 		<span data-bind="visible: createdBy, text: ko.i18nformat('components.authorship.byModified', 'by <%=modifiedBy%>', {modifiedBy: modifiedBy})"></span>
 		<span data-bind="text: ko.i18n('components.authorship.on', 'on')"></span>
 		<span data-bind="text: modifiedDate"></span>
+		<span data-bind="text: ko.i18n('components.authorship.modifiedEnd', ' ')"></span>
 	</span>
 </div>
 <!-- /ko -->
