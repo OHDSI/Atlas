@@ -99,6 +99,12 @@ define(function (require) {
 			.then(({ data }) => data);
 	}
 
+	function copyAnnotations(copyAnnotationsRequest) {
+		return httpService
+			.doPost(`${config.webAPIRoot}conceptset/copy-annotations`, copyAnnotationsRequest)
+			.then(({ data }) => data);
+	}
+
 	function runDiagnostics(conceptSet) {
 		return httpService
 			.doPost(`${config.webAPIRoot}conceptset/check`, conceptSet)
@@ -144,6 +150,7 @@ define(function (require) {
 		lookupIdentifiers,
 		getInclusionCount,
 		getCopyName,
+		copyAnnotations,
 		getConceptSet,
 		getGenerationInfo,
 		deleteConceptSet,

@@ -480,9 +480,9 @@ define([
 		}
 
 		removeDataFilterStorage(){
-			localStorage.removeItem('data-filter-conceptset');
+			localStorage.removeItem('filter-data');
+			localStorage.removeItem('filter-source');
 			localStorage.removeItem('data-remove-selected-concept');
-			localStorage.removeItem('data-filter-concept');
 			localStorage.removeItem('data-add-selected-concept');
 		}
 
@@ -524,13 +524,24 @@ define([
 					this.raiseConceptSetNameProblem(ko.i18n('cs.manager.csAlreadyExistsMessage', 'A concept set with this name already exists. Please choose a different name.')(), nameElementId);
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
+					const savedVersions = await this.versionsParams()?.getList();
+					let latestSavedVersion = 1;
+
+					if (savedVersions && Array.isArray(savedVersions)) {
+						latestSavedVersion = savedVersions.reduce((max, obj) => Math.max(max, obj.version), 1);
+					}
+
+					let annotationDataToAdd = JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || [];
+					const enrichedAnnotationDataToAdd = annotationDataToAdd.map(item => ({...item, "conceptSetVersion": latestSavedVersion}));
+
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
-					await conceptSetService.saveConceptSetAnnotation(savedConceptSet.data.id, { newAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || []), removeAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
+					await conceptSetService.saveConceptSetAnnotation(savedConceptSet.data.id, { newAnnotation: this.handleConvertDataToString(enrichedAnnotationDataToAdd), removeAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
 					this.removeDataFilterStorage();
 
 					const current = this.conceptSetStore.current();
 					current.modifiedBy = savedConceptSet.data.modifiedBy;
 					current.modifiedDate = savedConceptSet.data.modifiedDate;
+					current.id=savedConceptSet.data.id;
 					this.conceptSetStore.current(current);
 
 					this.previewVersion(null);
@@ -572,11 +583,17 @@ define([
 		}
 
 		async copy() {
+			let sourceConceptSetId = this.currentConceptSet().id;
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
 			this.currentConceptSet().name(responseWithName.copyName);
 			this.currentConceptSet().id = 0;
 			this.currentConceptSetDirtyFlag().reset();
 			await this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
+			let copyAnnotationsRequest = {
+				sourceConceptSetId: sourceConceptSetId,
+				targetConceptSetId: this.currentConceptSet().id
+			};
+			await conceptSetService.copyAnnotations(copyAnnotationsRequest);
 		}
 
 		async optimize() {
