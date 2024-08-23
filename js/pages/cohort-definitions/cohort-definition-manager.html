@@ -85,12 +85,6 @@
 				data-bind="visible: !previewVersion(), css: { active: $component.tabMode() == 'reporting' }, click: function() { $component.selectTab('reporting'); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.reporting', 'Reporting')"></a>
 			</li>
-			
-			<li role="presentation"
-				  data-bind="visible: !previewVersion(), css: { active: $component.tabMode() == 'explore' }, click: function() { $component.selectTab('explore'); }">
-			    <a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.explore', 'Explore')"></a>
-			</li>
-			
 			<li role="presentation"
 				data-bind="visible: !previewVersion(), css: { active: $component.tabMode() == 'export' }, click: () => { $component.selectTab('export'); refreshPrintFriendly(); }">
 				<a data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.tabs.export', 'Export')"></a>
