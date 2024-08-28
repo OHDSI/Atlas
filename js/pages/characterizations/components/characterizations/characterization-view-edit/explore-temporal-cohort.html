@@ -1,0 +1,11 @@
+<div class="explore-temporal-cohort">
+    <div class="upper-tabs" data-bind="foreach: tabs">
+        <div data-bind="css: { active: $component.selectedTabKey() === key },
+                      click: $component.selectedTabKey.bind($component, key)">
+            <span data-bind="text: title"></span>
+        </div>
+    </div>
+    <div data-bind="with: $component.tabs.find(t => t.key === $component.selectedTabKey())">
+        <div data-bind="component: { name: 'explore-temporal', params: componentParams }"></div>
+    </div>
+</div>

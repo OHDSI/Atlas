@@ -81,12 +81,20 @@ define([
                 data: ko.pureComputed(() => params.design() && params.design().parameters() || [])
             };
 
+            this.includeAnnual = ko.observable(this.featureAnalyses.data().reduce((a, b) => a || !!ko.unwrap(b.includeAnnual), false));
+            this.includeAnnual.subscribe((newVal) => this.featureAnalyses.data().forEach(fa => fa.supportsAnnual && fa.includeAnnual(newVal)));
+            this.includeTemporal = ko.observable(this.featureAnalyses.data().reduce((a, b) => a || !!ko.unwrap(b.includeTemporal), false));
+            this.includeTemporal.subscribe((newVal) => this.featureAnalyses.data().forEach(fa => fa.supportsTemporal && fa.includeTemporal(newVal)));
+
             this.showFeatureAnalysesBrowser = ko.observable(false);
 
             this.isParameterCreateModalShown = ko.observable(false);
             this.showConceptSetBrowser = ko.observable(false);
             this.criteriaContext = ko.observable();
             this.tableOptions = commonUtils.getTableOptions('M');
+
+            this.isAnnualPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsAnnual, false));
+            this.isTemporalPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsTemporal, false));
         }
 
         checkStrataNames(data, event) {
@@ -110,6 +118,14 @@ define([
             }
         }
 
+        renderSupportsAnnual() {
+            return (s, p, d) => ko.unwrap(d.supportsAnnual ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No'));
+        }
+
+        renderSupportsTemporal() {
+            return (s, p, d) => ko.unwrap(d.supportsTemporal ? ko.i18n('options.yes', 'Yes') : ko.i18n('options.no', 'No'));
+        }
+
         showFeatureBrowser() {
             this.showFeatureAnalysesBrowser(true);
         }
@@ -121,7 +137,8 @@ define([
         onSelect(data = []) {
             this.closeFeatureBrowser();
             const ccDesign = this.design();
-            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description']));
+            const featureAnalyses = data.map(item => lodash.pick(item, ['id', 'name', 'description', 'supportsAnnual', 'supportsTemporal']))
+                .map(item => { return { ...item, includeAnnual: ko.observable(ko.unwrap(this.includeAnnual)), includeTemporal: ko.observable(ko.unwrap(this.includeTemporal)) }});
             ccDesign.featureAnalyses(featureAnalyses);
         }
 

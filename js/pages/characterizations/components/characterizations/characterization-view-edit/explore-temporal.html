@@ -1,0 +1,7 @@
+<div class="explore-temporal">
+    <div data-bind="foreach: tabs">
+        <div data-bind="css: { active: $component.selectedTabKey() === key }">
+            <div data-bind="component: { name: componentName, params: componentParams }"></div>
+        </div>
+    </div>
+</div>
