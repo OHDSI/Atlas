@@ -1,0 +1,103 @@
+<heading-title params="name: ko.i18n('common.tools'), icon: 'toolbox', theme: 'dark'"></heading-title>
+<div class="paddedWrapper">
+	<div class="card-tools">
+		<button type="button" class="btn btn-primary add-btn"
+		data-bind="click: () => { showModalAddTool(true) },
+					css: classes({
+						element: 'create-button',
+						extra: `${canCreateTool() ? '' : 'disabled'}`,
+					}),
+					text: ko.i18n('common.addTools', 'Add Tool')"></button>
+		<div class="card-tool-container" data-bind="hidden: loading, foreach: data_tools">
+				<div class="card-tool flexed" data-bind="visible: $component.canReadTools() || enabled, click: $component.handleOpenLink, style:{ 'z-index': 0 }">
+					<label for="toolName" data-bind="visible: isEditing, text: ko.i18n('columns.name', 'Name')"></label>
+					<div class="flex-between">
+						<h3 data-bind="hidden: isEditing, text: name, click: () => window.open(url, '_blank')"></h3>
+						<input type="text" data-bind="visible: isEditing, textInput: name, keyupBubble: false" id="toolName"/>
+						<div style="width: 15% !important; align-items: center; display: flex; justify-content: flex-end;">
+							<i class="fas fa-edit" id="editIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="hidden: (isEditing || !$component.canUpdateTool()), click:() => $component.handleIsEditing(id), style:{ 'z-index': 9 }"></i>
+							<i class="far fa-trash-alt" id="deleteIcon" style="font-size: 24px; color: #F44; cursor: pointer; margin-left: 10px;" data-bind="hidden: (isEditing || !$component.canDeleteTool()), click:() => $component.handleDelete(id), style:{ 'z-index': 9 }"></i>
+							<i class="fas fa-check-square" id="completeIcon" style="font-size: 24px; color: #2271A5; cursor: pointer;" data-bind="visible: isEditing, click:() => $component.handleIsEdited(id), style:{ 'z-index': 9 }"></i>
+						</div>
+					</div>
+					<label for="toolUrl" data-bind="visible: isEditing, text: ko.i18n('common.url', 'URL')" style="margin-top: 19px"></label>
+					<input type="text" data-bind="visible: isEditing, textInput: url, keyupBubble: false" style="margin-top: 2px" id="toolUrl"/>
+					<p data-bind="hidden: isEditing, text: description" style="margin-top: 24px; font-weight: 500; font-size: 13px;"></p>
+					<label for="toolDescription" data-bind="visible: isEditing, text: ko.i18n('columns.description', 'Description')" style="margin-top: 19px;"></label>
+					<textarea rows="5" data-bind="visible: isEditing, value: description, keyupBubble: false" style="margin-top: 2px; max-width: 100%;" id="toolDescription"></textarea>			
+					<div class="flex-between" style="margin-top: 18px; align-items: flex-start; justify-content: flex-start;" data-bind="visible: isEditing">
+						<label for="toolAddDescription" data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="width: 10%;"></label>
+						<div class="material-switch pull-right" style=" margin-left: 8px;" data-bind="visible: isEditing">							
+							<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: enabled" style="display: none;"/>
+							<label for="switchBtnTool" class="label-success" data-bind="css: enabled ? 'label-switch-enable' : '', click:() => $component.handleCheckVisible(id)"></label>
+						</div>
+					</div>
+					<div class="flex-between" style="margin-top: 10px; justify-content: flex-start; flex-wrap: wrap; row-gap: 10px">
+						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing">
+							<p data-bind="text: ko.i18n('columns.created', 'Created')" style="font-size: 12.5px; margin-bottom: 5px;"></p>
+							<span data-bind="text: createdDate" style="font-weight: 500; font-size: 13px;"></span>
+						</div>
+						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing && updatedDate">
+							<p data-bind="text: ko.i18n('columns.updated', 'Updated')" style="font-size: 12.5px; margin-bottom: 5px;"></p>
+							<span data-bind="text: updatedDate" style="font-weight: 500; font-size: 13px;"></span>
+						</div>
+						<div class="flexed" style="width: 50%" data-bind="visible: !isEditing">
+							<p data-bind="text: ko.i18n('columns.author', 'Author')" style="font-size: 12.5px; margin-bottom: 5px;"></p>
+							<span data-bind="visible: createdBy , text: createdBy" style="font-weight: 500; font-size: 13px;"></span>
+							<span data-bind="visible: !createdBy , text: 'anonymous'" style="font-weight: 500; font-size: 13px;"></span>
+						</div>
+						<div class="flexed material-switch" style="width: 50%" data-bind="visible: ($component.canUpdateTool() || $component.canDeleteTool()) && !isEditing">							
+							<p data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="font-size: 12.5px; padding-bottom:8px;"></p>
+							<label for="switchBtnTool" class="label-success" style="pointer-events: none;" data-bind="css: enabled ? 'label-switch-enable' : ''"></label>
+						</div>
+					</div>
+				</div>
+			</div>
+	</div>
+	<loading data-bind="visible: loading" params="status: ko.i18n('tool.loading', 'Loading tools')"></loading>
+
+	<atlas-modal params="
+		showModal: showModalAddTool,
+		modifiers: ['sm'],
+		title: ko.i18n('common.addTools', 'Add Tool'),
+		data: {
+			handleDataAddTool: $component.handleDataAddTool,
+			handleCancelTool: $component.handleCancelTool,
+			newName: $component.newName,
+			newUrl: $component.newUrl,
+			newDescription: $component.newDescription,
+			toolIsVisible: $component.toolIsVisible,
+			toggleVisiableTool: $component.toggleVisiableTool,
+		}">
+		<div class="flexed" style="padding: 8px 20px;">
+			<div class="form-group" data-bind="css: {'has-error': (newName()?.trim() === '' || !newName()), 'has-success': newName()?.trim()}">
+				<label for="toolAddName" class="control-label" data-bind="text: ko.i18n('tool.name', '* Name')"></label>
+				<input required type="text" id="toolAddName" data-bind="textInput: newName" type="text" class="form-control"/>
+				<span class="help-block" data-bind="visible: (newName()?.trim() === '' || !newName()), text: ko.i18n('tool.nameValidMess', 'Tool name cannot be empty')"></span>
+			</div>
+			<div class="form-group" data-bind="css: {'has-error': (newUrl()?.trim() === '' || !newUrl()), 'has-success': newUrl()?.trim()}">
+				<label for="toolAddURL" class="control-label" data-bind="text: ko.i18n('tool.url', '* URL')"></label>
+				<input required type="text" id="toolAddURL" data-bind="textInput: newUrl" type="text" class="form-control"/>
+				<span class="help-block" data-bind="visible: (newUrl()?.trim() === '' || !newUrl()), text: ko.i18n('tool.urlValidMess', 'Tool url cannot be empty')"></span>
+			</div>
+			<div class="form-group" style="margin-top: 10px; align-items: flex-start; justify-content: flex-start;">
+				<label for="toolAddDescription" data-bind="text: ko.i18n('columns.description', 'Description')" style="width: 30%;"></label>
+				<textarea rows="6" id="toolAddDescription" data-bind=" value: newDescription, keyupBubble: false" class="form-control" style="max-width: 100%;"></textarea>
+			</div>
+			<div class="flex-between" style="margin-top: 18px; align-items: flex-start; justify-content: flex-start;">
+				<label for="toolAddDescription" data-bind="text: ko.i18n('columns.enabled', 'Enabled')" style="width: 10%;"></label>
+				<div class="material-switch pull-right" style="margin-left: 8px; width: 70%;">
+					<input id="switchBtnTool" name="switchBtnTool" data-bind="checked: toolIsVisible()" style="display: none;"/>
+					<label for="switchBtnTool" class="label-success" data-bind="css: toolIsVisible() ? 'label-switch-enable' : '', click: toggleVisiableTool"></label>
+				</div>
+			</div>
+			<div class="modal-footer with-padding">
+				<div class="modal-buttons">
+					<button type="button" class="btn btn-primary" data-bind="text: ko.i18n('common.apply', 'Apply'), click: handleDataAddTool"></button>
+					<button type="button" class="btn btn-danger" data-bind="click: handleCancelTool, text: ko.i18n('common.cancel', 'Cancel')"></button>
+				</div>
+			</div>
+		</div>
+	</atlas-modal>
+</div>
+<access-denied params="isAuthenticated: isAuthenticated, isPermitted: canReadTools"></access-denied>
