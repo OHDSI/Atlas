@@ -168,9 +168,8 @@ define([
 
 		downloadShinyApp(source) {
 			let analysisId = source.info().executionInfo.id.analysisId;
-			FileService.loadZip(
-				config.api.url + constants.apiPaths.downloadShiny(analysisId, source.source.sourceKey),
-				"Incidence_" + analysisId + "_" + source.source.sourceKey + ".zip"
+			FileService.loadZipNoRename(
+				config.api.url + constants.apiPaths.downloadShiny(analysisId, source.source.sourceKey)
 			)
 				.catch((e) => console.error("error when downloading: " + e))
 				.finally(() => this.isLoading(false));

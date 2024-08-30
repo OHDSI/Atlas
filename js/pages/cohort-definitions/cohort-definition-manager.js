@@ -1223,9 +1223,8 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		downloadShinyApp(source) {
-			FileService.loadZip(
-				config.api.url + constants.paths.downloadShiny(this.currentCohortDefinition().id(), source.sourceKey),
-				"Cohort_" + this.currentCohortDefinition().id() + "_" +  source.sourceKey + ".zip"
+			FileService.loadZipNoRename(
+				config.api.url + constants.paths.downloadShiny(this.currentCohortDefinition().id(), source.sourceKey)
 			)
 				.catch((e) => console.error("error when downloading: " + e))
 				.finally(() => this.loading(false));
