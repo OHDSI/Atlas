@@ -170,7 +170,8 @@ const settingsObject = {
 		"jquery.dataTables.colVis.css": "css!styles/jquery.dataTables.colVis.css",
 		"jquery.datatables.tabletools.css": "css!styles/jquery.datatables.tabletools.css",
 		"prism.css": "css!styles/prism.css",
-        "leaflet": "css!../node_modules/leaflet/dist/leaflet.css"
+        "leaflet": "css!../node_modules/leaflet/dist/leaflet.css",
+		"switch-button.css": "css!styles/switch-button.css"
 	},
 	localRefs: {
 		"configuration": "components/configuration",
