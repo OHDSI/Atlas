@@ -174,19 +174,14 @@ define([
       if (submission) {
         submissionId = submission.id;
       }
-      let currentAnalysisId = this.analysisId();
+
       let resultsPathPrefix = this.resultsPathPrefix;
       let apiPath = (resultsPathPrefix && resultsPathPrefix.includes('characterizations'))
         ? shinyConsts.apiPaths.downloadShinyCC(submissionId, source.sourceKey)
         : shinyConsts.apiPaths.downloadShinyPW(submissionId, source.sourceKey);
 
-      let filePrefix = (resultsPathPrefix && resultsPathPrefix.includes('characterizations'))
-        ? "Characterization_"
-        : "Pathway_";
-
-      FileService.loadZip(
-        config.api.url + apiPath,
-        filePrefix + currentAnalysisId + "_gv" + submissionId + "_" + source.sourceKey + ".zip"
+      FileService.loadZipNoRename(
+        config.api.url + apiPath
       )
         .catch((e) => console.error("error when downloading: " + e))
         .finally(() => this.loading(false));
