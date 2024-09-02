@@ -92,7 +92,7 @@ jobs:
           labels: |
             ${{ steps.docker_meta.outputs.labels }}
             maintainer=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
-            org.opencontainers.image.authors=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com
+            org.opencontainers.image.authors=Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com, Shaun Turner <shaun.turner1@nhs.net>
             org.opencontainers.image.vendor=OHDSI
 
       # If the image was pushed, we need to pull it again to inspect it
