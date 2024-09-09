@@ -395,7 +395,7 @@ define(function(require, exports) {
         return isPermitted('cohortdefinition:' + id + ':copy:get');
     }
 
-    var isPermittedGlobalShareCohort = function() {
+    var isPermittedGlobalShareArtifact = function() {
         // special * permission (intended for admins) that allows the
         // user to share any artifact with a "global reader role":
         return isPermitted('artifact:global:share:put');
@@ -592,7 +592,7 @@ define(function(require, exports) {
         isPermittedReadCohort: isPermittedReadCohort,
         isPermittedCreateCohort: isPermittedCreateCohort,
         isPermittedCopyCohort: isPermittedCopyCohort,
-        isPermittedGlobalShareCohort: isPermittedGlobalShareCohort,
+        isPermittedGlobalShareArtifact: isPermittedGlobalShareArtifact,
         isPermittedUpdateCohort: isPermittedUpdateCohort,
         isPermittedDeleteCohort: isPermittedDeleteCohort,
         isPermittedGenerateCohort: isPermittedGenerateCohort,

@@ -179,7 +179,7 @@ define([
 			if (config.enablePermissionManagement) {
 				this.userCanShare = ko.observable(
 						!config.limitedPermissionManagement ||
-						authApi.isPermittedGlobalShareCohort());
+						authApi.isPermittedGlobalShareArtifact());
 			} else {
 				this.userCanShare = ko.observable(false);
 			}
