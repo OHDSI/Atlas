@@ -1,0 +1,23 @@
+<div data-bind="css: classes()">
+    <table data-bind="
+        dataTable: {
+            data: $component.data(),
+            options: {
+                columns: $component.tableColumns,
+                dom: 'Blftipr',
+                pageLength: $component.tableOptions.pageLength,
+                lengthMenu: $component.tableOptions.lengthMenu,
+                language: ko.i18n('datatable.language')
+            }
+        }
+    ">
+        <thead>
+            <tr>
+                <th>Count</th>
+                <th>Avg</th>
+                <th>Start Day</th>
+                <th>End Day</th>
+            </tr>
+        </thead>
+    </table>
+</div>
