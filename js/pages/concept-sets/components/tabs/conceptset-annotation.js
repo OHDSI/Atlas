@@ -89,6 +89,17 @@ define([
               sortable: false
             },
             {
+              title: ko.i18n('columns.originConceptSets', 'Origin Concept Sets'),
+              render: (d, t, r) => {
+                  if (r.copiedFromConceptSetIds === null || r.copiedFromConceptSetIds === undefined) {
+                      return 'N/A';
+                  } else {
+                      return `<p>${r.copiedFromConceptSetIds}</p>`
+                  }
+              },
+              sortable: false
+            },
+            {
               title: ko.i18n('columns.action', 'Action'),
               sortable: false,
               render: function() {
@@ -101,7 +112,7 @@ define([
 
     objectMap(obj) {
       const newObject = {};
-      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion', 'conceptSetVersion', 'searchData'];
+      const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion', 'conceptSetVersion', 'copiedFromConceptSetIds', 'searchData'];
       Object.keys(obj).forEach((key) => {
         if (typeof obj[key] === 'string' && !keysNotToParse.includes(key)) {
           newObject[key] = JSON.parse(obj[key] || null);
