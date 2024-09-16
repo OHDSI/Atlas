@@ -174,7 +174,16 @@ define([
 			this.canCopy = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().id > 0;
 			});
-			this.enablePermissionManagement = config.enablePermissionManagement;	    
+
+			this.enablePermissionManagement = ko.observable(config.enablePermissionManagement);
+			if (config.enablePermissionManagement) {
+				this.userCanShare = ko.observable(
+						!config.limitedPermissionManagement ||
+						authApi.isPermittedGlobalShareArtifact());
+			} else {
+				this.userCanShare = ko.observable(false);
+			}
+
 			this.isSaving = ko.observable(false);
 			this.isDeleting = ko.observable(false);
 			this.isOptimizing = ko.observable(false);
