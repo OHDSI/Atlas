@@ -1,0 +1,123 @@
+<loading params="status: ko.i18n('components.conceptSet.loadingMappings', 'Loading Concept Set Mappings')"
+    data-bind="visible: loading()"></loading>
+
+<div data-bind="hidden: loading">
+    <div data-bind="hidden: loading">
+        <div class="standardConceptsTableHeading">
+            <b
+                data-bind="text: ko.i18n('components.conceptSet.standardConceptsTableHeading', 'Standard Concepts with their non-standard counterparts')"></b>
+        </div>
+        <loading
+            params="status: ko.i18n('components.conceptSet.loadingStandardConceptsWithCounterparts', 'Loading Standard Concepts with their non-standard counterparts')"
+            data-bind="visible: loadingStandardConceptsWithCounterparts()"></loading>
+        <div data-bind="hidden: loadingStandardConceptsWithCounterparts">
+            <faceted-datatable params="{
+            columns: $component.standardConceptsColumns,
+            options: $component.tableOptions,
+            reference: $component.standardConceptsWithCounterparts,
+            pageLength: tableOptions.pageLength,
+            rowClick: $component.standardConceptsWithCounterpartsRowClick,
+            
+        }"></faceted-datatable>
+        </div>
+    </div>
+    <div>
+        <span data-bind="tooltip: buttonTooltip">
+            <button class="btn btn-success btn-sm" data-bind="
+              click: resolveOneToOneMappings,
+              enable: hasSelectedStandardCounterparts,
+              text: ko.i18n('components.conceptSet.resolveOneToOneMappings', 'Resolve one-to-one mappings'),
+            "></button>
+        </span>
+    </div>
+    <div>
+        <div class="resultConceptSetTableHeading">
+            <br />
+            <b
+                data-bind="text: ko.i18n('components.conceptSet.resultConceptSetTableHeading', 'Result Concept Set')"></b>
+        </div>
+        <loading
+            params="status: ko.i18n('components.conceptSet.loadingStandardConceptsWithCounterparts', 'Loading Standard Concepts with their non-standard counterparts')"
+            data-bind="visible: loadingResultConceptSetItems()"></loading>
+        <div data-bind="hidden: loadingResultConceptSetItems">
+            <table class="conceptSetTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+            xssSafe: true,
+            data: resultConceptSetItems(),
+            options: {
+              language: datatableLanguage,
+              dom: 'Clfiprt',
+              colVis: {
+                buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
+                align: 'right',
+                overlayFade: 0,
+                showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+                restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
+              },
+              rowCallback: commonUtils.contextSensitiveLinkColor,
+              pageLength: tableOptions.pageLength,
+              lengthMenu: tableOptions.lengthMenu,
+              orderClasses: false,
+              deferRender: true,
+              autoWidth: false,
+              order: [[3, 'desc']],
+              columns: resultConceptSetColumns,
+            }
+          }">
+                <thead>
+                    <th data-bind="text: ko.i18n('columns.conceptId', 'Concept Id')"></th>
+                    <th data-bind="text: ko.i18n('columns.conceptCode', 'Concept Code')"></th>
+                    <th data-bind="text: ko.i18n('columns.conceptName', 'Concept Name')"></th>
+                    <th data-bind="text: ko.i18n('columns.domain', 'Domain')"></th>
+                    <th data-bind="text: ko.i18n('columns.standardConceptCode', 'Standard Concept Code')"></th>
+                    <th data-bind="text: ko.i18n('columns.standardConceptCaption', 'Standard Concept Caption')"></th>
+                    </th>
+                </thead>
+            </table>
+        </div>
+
+        <concept-legend></concept-legend>
+    </div>
+
+    <div>
+        <span data-bind="tooltip: buttonTooltip">
+            <button class="btn btn-success btn-sm" data-bind="
+              click: resetToInitialState,
+              text: ko.i18n('components.conceptSet.resetToInitialState', 'Reset to initial state'),
+            "></button>
+        </span>
+        <span class="preview-button" data-bind="visible: isPreviewAvailable()">
+            <button class="btn btn-success btn-sm"
+                data-bind="click: handlePreview, text: ko.i18n('components.conceptAddBox.previewButton', 'Preview...')"></button>
+        </span>
+        <atlas-modal params="
+        showModal: showPreviewModal,
+        title: ko.i18n('search.previewModal.title', 'Concept Set Preview'),
+        data: {
+            previewTabsParams: previewTabsParams,
+            showModal: showPreviewModal,
+            apply: () => { handleSubmit(); showPreviewModal(false); }
+        }" class="preview-modal">
+            <div data-bind="component: { name: 'tabs', params: previewTabsParams }"></div>
+            <div class="modal-footer with-isPreviewAvailablepadding">
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-success"
+                        data-bind="click: apply, text: ko.i18n('common.apply', 'Apply')"></button>
+                    <button type="button" class="btn btn-danger"
+                        data-bind="click: () => showModal(false), text: ko.i18n('common.cancel', 'Cancel')"></button>
+                </div>
+            </div>
+        </atlas-modal>
+
+        <atlas-modal params="
+        showModal: showManualMappingModal,
+        title: ko.i18n('search.manualMappingModal.title', 'Manual Mapping Resolution'),
+        data: {
+            manualMappingModalParams: manualMappingModalParams,
+            showModal: showManualMappingModal,            
+        }
+        ">
+            <div data-bind="component: { name: 'manual-mapping', params: manualMappingModalParams }"></div>
+
+        </atlas-modal>
+    </div>
+</div>

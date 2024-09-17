@@ -44,7 +44,8 @@ define([
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',
-	'components/versions/versions'
+	'components/versions/versions',
+	'./components/tabs/resolve-mappings'
 ], function (
         ko,
 	view,
@@ -326,6 +327,18 @@ define([
 					componentParams: this.warningParams,
 					hasBadge: true,
 					preload: true,
+				},
+				{
+					title: ko.i18n('cs.manager.tabs.resolve-mappings', 'Resolve mappings'),
+					key: ViewMode.MAPPINGS,
+					componentName: 'resolve-mappings',
+					componentParams: {
+						...params,
+						canEdit: this.canEdit,
+						conceptSetStore: this.conceptSetStore,
+						selectedSource: this.selectedSource,
+						loading: this.conceptSetStore.loadingIncluded,
+					},
 				},
 			];
 			this.selectedTab = ko.observable(0);

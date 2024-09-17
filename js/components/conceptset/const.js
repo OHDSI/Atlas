@@ -14,6 +14,7 @@ define([
 		RECOMMEND: 'recommend',
 		EXPORT: 'conceptset-export',
 		IMPORT: 'conceptset-import',
+		MAPPINGS: 'resolve-mappings'
 	};
 	
 	const ConceptSetSources = {
