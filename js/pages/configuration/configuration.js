@@ -260,6 +260,24 @@ define([
         buttonClass,
       }
     }
+
+    runDiagnostics() {
+      
+      const startTime = performance.now();
+
+      // get the list of isPermitted functions, except the literal isPermitted
+      for (const key in authApi) {
+        if (typeof authApi[key] === 'function' && key.startsWith('isPermitted') && key != 'isPermitted') {
+          authApi[key](); // Invoke the function
+        }
+      }
+
+      const endTime = performance.now();
+
+      const elapsedTime = endTime - startTime;
+      console.log(`Script execution time: ${elapsedTime} milliseconds`);
+
+    }
   }
 
   return commonUtils.build('ohdsi-configuration', Configuration, view);

@@ -141,6 +141,20 @@ define([
                 },
             },
             {
+                ...constants.censoringEventList.addObservationPeriod,
+                selected: false,
+                action: function () {
+                    var unwrappedExpression = ko.utils.unwrapObservable(self.expression);
+                    unwrappedExpression
+                        .CensoringCriteria.push({
+                        ObservationPeriod: new criteriaTypes.ObservationPeriod(
+                            null,
+                            unwrappedExpression.ConceptSets
+                        ),
+                    });
+                },
+            },
+            {
                 ...constants.censoringEventList.addPayerPlanPeriod,
                 selected: false,
                 action: function () {
