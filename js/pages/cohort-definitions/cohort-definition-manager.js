@@ -6,6 +6,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	'services/ConceptSet',
 	'services/Permission',
 	'services/Tags',
+	'moment',
 	'components/conceptset/utils',
 	'utils/DatatableUtils',
 	'components/cohortbuilder/CohortExpression',
@@ -70,6 +71,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	conceptSetService,
 	PermissionService,
 	TagsService,
+	moment,
 	conceptSetUitls,
 	datatableUtils,
 	CohortExpression,
@@ -213,6 +215,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.reportCohortDefinitionId = ko.observable();
 			this.reportSourceKey = ko.observable();
 			this.reportReportName = ko.observable();
+			this.loading = ko.observable(false);
 			this.loadingReport = ko.observable(false);
 			this.reportTriggerRun = ko.observable(false);
 			this.tabMode = sharedState.CohortDefinition.mode;
@@ -849,6 +852,19 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			}
 
+			this.shinyOptions = [
+				{
+					action: this.downloadShinyApp,
+					title: 'components.shiny.button.menu.download',
+					defaultTitle: 'Download'
+				},
+				{
+					action: this.publishShinyApp,
+					title: 'components.shiny.button.menu.publish',
+					defaultTitle: 'Publish'
+				}
+			];
+
 			PermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.COHORT_DEFINITION,
 				entityIdGetter: () => this.currentCohortDefinition().id(),
@@ -1178,6 +1194,29 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				this.reportReportName(reportName);
 				this.reportSourceKey(sourceKey);
 				this.reportTriggerRun(true);
+			}
+		}
+
+		downloadShinyApp(source) {
+			FileService.loadZipNoRename(
+				config.api.url + constants.paths.downloadShiny(this.currentCohortDefinition().id(), source.sourceKey)
+			)
+				.catch((e) => console.error("error when downloading: " + e))
+				.finally(() => this.loading(false));
+		}
+
+		async publishShinyApp(source) {
+			this.loading = true;
+			try {
+				await httpService.doGet(config.api.url + constants.paths.publishShiny(this.currentCohortDefinition().id(), source.sourceKey));
+				alert("Cohort is published");
+			} catch (e) {
+				console.error('An error has occurred when publishing', e);
+				if (e.status === 403) {
+					alert('Permission denied');
+				} else {
+					alert('Unexpected error occurred when publishing');
+				}
 			}
 		}
 
