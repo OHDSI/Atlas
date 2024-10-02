@@ -1,4 +1,4 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text', '../InputTypes/Calculation'], function (ko, Criteria, Range, Concept, Text, Calculation) {
 
 	function Measurement(data, conceptSets) {
 		var self = this;
@@ -64,6 +64,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
+
+		self.MeasurementOperand = ko.observable(data.MeasurementOperand != null ? new Calculation(data.MeasurementOperand, conceptSets) : null);
 
 	}
 

@@ -98,6 +98,9 @@ define(function (require, exports) {
 	var locationRegion = require('./components/LocationRegion');
 	ko.components.register('location-region-criteria', locationRegion);
 
+	var measurementOperand = require("./components/MeasurementOperand");
+	ko.components.register("measurement-operand-criteria", measurementOperand);
+
 	require('./components/WindowedCriteria');
 	
 });
