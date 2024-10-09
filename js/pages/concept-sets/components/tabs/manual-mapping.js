@@ -8,9 +8,7 @@ define([
 	'const',
 	'utils/Renderers',
 	'services/MomentAPI',
-	'services/ConceptSet',
 	'components/conceptset/utils',
-	'services/http',
 	'services/Vocabulary',
 	'less!./manual-mapping.less',
 	'components/conceptAddBox/concept-add-box',
@@ -30,9 +28,7 @@ define([
 	globalConstants,
 	renderers,
 	momentApi,
-	conceptSetService,
 	conceptSetUtils,
-	httpService,
 	vocabularyService,
 ) {
 
@@ -64,6 +60,17 @@ define([
 					ko.utils.arrayForEach(this.includedSourcecodes(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
 					this.includedSourcecodes.valueHasMutated();
 				});
+
+
+			this.relatedSourcecodesColumns.forEach(column => {
+				if (column.data === 'CONCEPT_NAME') {
+					column.render = (s, p, d) => {
+						var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+						return '<a class="' + valid + '" href=\"#/concept/' + d.CONCEPT_ID + '\">' + d.CONCEPT_NAME + '</a>';
+					};
+				}
+			});
+
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 
 			this.buttonTooltip = conceptSetUtils.getPermissionsText(true, "test");
@@ -88,7 +95,11 @@ define([
 				},
 				{
 					title: ko.i18n('columns.name', 'Name'),
-					data: 'CONCEPT_NAME',
+					render: function (s, p, d) {
+						return p === 'display'
+							? '<div style="color: #a71a19; display: inline;">' + d.CONCEPT_NAME + '</div>'
+							: d.CONCEPT_NAME;
+					}
 				},
 				{
 					title: ko.i18n('columns.class', 'Class'),
@@ -131,17 +142,7 @@ define([
 					this.nonStandardConceptsForCurrentStandard.valueHasMutated();
 				});
 
-
-
-			this.relatedSourcecodesColumns = globalConstants.getRelatedSourcecodesColumns(sharedState, { canEditCurrentConceptSet: this.canEdit },
-				(data, selected) => {
-					const conceptIds = data.map(c => c.CONCEPT_ID);
-					ko.utils.arrayForEach(this.includedSourcecodes(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
-					this.includedSourcecodes.valueHasMutated();
-				});
-
 			this.overrideHandleAddToConceptSet = (selectedItemsToAdd) => { this.overrideAddToConceptSet(selectedItemsToAdd); };
-
 
 			this.loadNonStandardForCurrentStandard();
 			this.loadIncludedSourceCodes();

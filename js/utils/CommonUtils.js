@@ -261,5 +261,6 @@ define([
 		isNameCharactersValid,
 		isNameLengthValid,
 		getTableOptions,
+		getConceptLinkClass,
 	};
 });
