@@ -171,6 +171,13 @@ define([
 				{
 					title: ko.i18n('columns.name', 'Name'),
 					data: 'CONCEPT_NAME',
+					render: function (s, p, d) {
+						var valid = d.INVALID_REASON_CAPTION == 'Invalid' ? 'invalid' : '';
+						if (p === 'display') {
+							return '<a class="' + valid + '" style="color: #007bff; cursor: pointer; text-decoration: none;" onclick="event.preventDefault();">' + d.CONCEPT_NAME + '</a>';
+						}
+						return d.CONCEPT_NAME;
+					}
 				},
 				{
 					title: ko.i18n('columns.class', 'Class'),
@@ -323,33 +330,20 @@ define([
 
 		async loadRelatedStandardConceptsWithMapping(concepts) {
 			const nonStandardConcepts = concepts.filter(c => c.concept.STANDARD_CONCEPT !== 'S' && c.concept.STANDARD_CONCEPT !== 'C');
-			const allRelatedConceptsMap = new Map(); // Using a Map to ensure uniqueness
-			// Fetch standard counterparts for all non-standard concepts
-			for (const concept of nonStandardConcepts) {
-				const { data: relatedConcepts } = await httpService.doGet(sharedState.vocabularyUrl() + 'concept/' + concept.concept.CONCEPT_ID + '/related');
-				if (relatedConcepts && relatedConcepts.length) {
-					relatedConcepts
-						.filter(rc => (rc.STANDARD_CONCEPT === 'S' || rc.STANDARD_CONCEPT === 'C'))
-						.forEach(rc => {
-							let mappedFrom = [];
-							if (allRelatedConceptsMap.has(rc.CONCEPT_ID)) {
-								let standardConceptWithMappingsToNonStandard = allRelatedConceptsMap.get(rc.CONCEPT_ID);
-								mappedFrom = standardConceptWithMappingsToNonStandard.mapped_from;
-							}
-							mappedFrom = [...mappedFrom, concept.concept.CONCEPT_ID];
+			let nonStandardConceptsIds = nonStandardConcepts.map(concept => concept.concept.CONCEPT_ID);
+			const { data: relatedStandardMappedConcepts } = await httpService.doPost(sharedState.vocabularyUrl() + 'related-standard', nonStandardConceptsIds);
 
-							allRelatedConceptsMap.set(rc.CONCEPT_ID, {
-								...rc,
-								mapped_from: mappedFrom,
-								isSelected: ko.observable(false),
-								isExcluded: ko.observable(false),
-								includeDescendants: ko.observable(false),
-								includeMapped: ko.observable(false),
-							});
-						});
+			const relatedStandardMappedConceptsWithFlags = relatedStandardMappedConcepts.map(concept => {
+				return {
+					...concept,
+					isSelected: ko.observable(false),
+					isExcluded: ko.observable(false),
+					includeDescendants: ko.observable(false),
+					includeMapped: ko.observable(false),
 				}
-			}
-			return Array.from(allRelatedConceptsMap.values());
+			});
+
+			return Array.from(relatedStandardMappedConceptsWithFlags);
 		}
 
 		renderCheckbox(field, clickable = true) {
