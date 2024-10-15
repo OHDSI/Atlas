@@ -60,7 +60,7 @@
     "d3-scale-chromatic": "1.5.0",
     "d3-tip": "0.9.1",
     "datatables": "1.10.18",
-    "datatables.net": "1.13.2",
+    "datatables.net": "1.13.11",
     "datatables.net-buttons": "2.3.4",
     "datatables.net-select": "1.6.0",
     "director": "1.2.8",
