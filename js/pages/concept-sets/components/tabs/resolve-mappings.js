@@ -1,5 +1,3 @@
-const { add } = require("lodash");
-
 define([
 	'knockout',
 	'text!./resolve-mappings.html',
