@@ -341,6 +341,7 @@ define([
 			this.selectedTab = ko.observable(0);
 
 			this.activeUtility = ko.observable("");
+			this.newConceptSetIdForCopyAnnotations = ko.observable(0);
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.CONCEPT_SET,
@@ -541,7 +542,7 @@ define([
 					const current = this.conceptSetStore.current();
 					current.modifiedBy = savedConceptSet.data.modifiedBy;
 					current.modifiedDate = savedConceptSet.data.modifiedDate;
-					current.id=savedConceptSet.data.id;
+					this.newConceptSetIdForCopyAnnotations(savedConceptSet.data.id);
 					this.conceptSetStore.current(current);
 
 					this.previewVersion(null);
@@ -591,7 +592,7 @@ define([
 			await this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
 			let copyAnnotationsRequest = {
 				sourceConceptSetId: sourceConceptSetId,
-				targetConceptSetId: this.currentConceptSet().id
+				targetConceptSetId: this.newConceptSetIdForCopyAnnotations(),
 			};
 			await conceptSetService.copyAnnotations(copyAnnotationsRequest);
 		}
