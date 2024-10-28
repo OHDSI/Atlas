@@ -4,6 +4,7 @@ define([
     'components/Component',
     'utils/AutoBind',
     'utils/CommonUtils',
+    'services/AuthAPI',
     'faceted-datatable',
     'less!./conceptset-annotation.less',
   ], function (
@@ -12,6 +13,7 @@ define([
     Component,
     AutoBind,
     commonUtils,
+    authApi,
   ) {
   class ConceptsetAnnotation extends AutoBind(Component) {
       constructor(params) {
@@ -24,89 +26,99 @@ define([
           const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
           this.pageLength = params.pageLength || pageLength;
           this.lengthMenu = params.lengthMenu || lengthMenu;
-          this.columns = ko.observableArray([
-            {
-              title: ko.i18n('columns.conceptID', 'Concept Id'),
-              data: 'conceptId',
-            },
-            {
-              title: ko.i18n('columns.searchData', 'Search Data'),
-              className: this.classes('tbl-col', 'search-data'),
-              render: (d, t, r) => {
-                  if (r.searchData === null || r.searchData === undefined || !r.searchData) {
+
+          this.canDeleteAnnotations = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedConceptSetAnnotationsDelete());
+
+          this.columns = ko.computed(() => {
+            let cols = [
+              {
+                title: ko.i18n('columns.conceptID', 'Concept Id'),
+                data: 'conceptId',
+              },
+              {
+                title: ko.i18n('columns.searchData', 'Search Data'),
+                className: this.classes('tbl-col', 'search-data'),
+                render: (d, t, r) => {
+                    if (r.searchData === null || r.searchData === undefined || !r.searchData) {
+                        return 'N/A';
+                    } else {
+                        return `<p>${r.searchData}</p>`
+                    }
+                },
+                sortable: false
+              },
+              {
+                title: ko.i18n('columns.vocabularyVersion', 'Vocabulary Version'),
+                data: 'vocabularyVersion',
+                render: (d, t, r) => {
+                    if (r.vocabularyVersion === null || r.vocabularyVersion === undefined || !r.vocabularyVersion) {
+                        return 'N/A';
+                    } else {
+                      return `<p>${r.vocabularyVersion}</p>`
+                    }
+                },
+                sortable: false
+              },
+              {
+                title: ko.i18n('columns.conceptSetVersion', 'Concept Set Version'),
+                data: 'conceptSetVersion',
+                render: (d, t, r) => {
+                    if (r.conceptSetVersion === null || r.conceptSetVersion === undefined || !r.conceptSetVersion) {
+                        return 'N/A';
+                    } else {
+                      return `<p>${r.conceptSetVersion}</p>`
+                    }
+                },
+                sortable: false
+              },
+              {
+                title: ko.i18n('columns.createdBy', 'Created By'),
+                data: 'createdBy',
+                render: (d, t, r) => {
+                  if (r.createdBy === null || r.createdBy === undefined || !r.createdBy) {
                       return 'N/A';
                   } else {
-                      return `<p>${r.searchData}</p>`
+                    return `<p>${r.createdBy}</p>`
                   }
+                },
+                sortable: false
               },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.vocabularyVersion', 'Vocabulary Version'),
-              data: 'vocabularyVersion',
-              render: (d, t, r) => {
-                  if (r.vocabularyVersion === null || r.vocabularyVersion === undefined || !r.vocabularyVersion) {
-                      return 'N/A';
-                  } else {
-                    return `<p>${r.vocabularyVersion}</p>`
-                  }
+              {
+                title: ko.i18n('columns.createdDate', 'Created Date'),
+                render: (d, t, r) => {
+                    if (r.createdDate === null || r.createdDate === undefined) {
+                        return 'N/A';
+                    } else {
+                        return `<p>${r.createdDate}</p>`
+                    }
+                },
+                sortable: false
               },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.conceptSetVersion', 'Concept Set Version'),
-              data: 'conceptSetVersion',
-              render: (d, t, r) => {
-                  if (r.conceptSetVersion === null || r.conceptSetVersion === undefined || !r.conceptSetVersion) {
-                      return 'N/A';
-                  } else {
-                    return `<p>${r.conceptSetVersion}</p>`
-                  }
-              },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.createdBy', 'Created By'),
-              data: 'createdBy',
-              render: (d, t, r) => {
-                if (r.createdBy === null || r.createdBy === undefined || !r.createdBy) {
-                    return 'N/A';
-                } else {
-                  return `<p>${r.createdBy}</p>`
-                }
-              },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.createdDate', 'Created Date'),
-              render: (d, t, r) => {
-                  if (r.createdDate === null || r.createdDate === undefined) {
-                      return 'N/A';
-                  } else {
-                      return `<p>${r.createdDate}</p>`
-                  }
-              },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.originConceptSets', 'Origin Concept Sets'),
-              render: (d, t, r) => {
-                  if (r.copiedFromConceptSetIds === null || r.copiedFromConceptSetIds === undefined) {
-                      return 'N/A';
-                  } else {
-                      return `<p>${r.copiedFromConceptSetIds}</p>`
-                  }
-              },
-              sortable: false
-            },
-            {
-              title: ko.i18n('columns.action', 'Action'),
-              sortable: false,
-              render: function() {
-                return `<i class="deleteIcon fa fa-trash" aria-hidden="true"></i>`
+              {
+                title: ko.i18n('columns.originConceptSets', 'Origin Concept Sets'),
+                render: (d, t, r) => {
+                    if (r.copiedFromConceptSetIds === null || r.copiedFromConceptSetIds === undefined) {
+                        return 'N/A';
+                    } else {
+                        return `<p>${r.copiedFromConceptSetIds}</p>`
+                    }
+                },
+                sortable: false
               }
+            ];
+          
+            if (this.canDeleteAnnotations()) {
+              cols.push({
+                title: ko.i18n('columns.action', 'Action'),
+                sortable: false,
+                render: function () {
+                  return `<i class="deleteIcon fa fa-trash" aria-hidden="true"></i>`;
+                }
+              });
             }
-          ])
+            return cols;
+          });
+          
           this.loadData();
       }
 
