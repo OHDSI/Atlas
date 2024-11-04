@@ -18,7 +18,7 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 				return [];
 			}
 		});
-		self.componentLoading = ko.observable(false);
+		self.componentLoading = ko.observable(true);
 		self.facets = ko.observableArray();
 		
 		self.nullFacetLabel = params.nullFacetLabel || 'NULL';
