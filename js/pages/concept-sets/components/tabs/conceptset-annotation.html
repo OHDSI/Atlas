@@ -1,0 +1,15 @@
+<loading data-bind="visible: isLoading()" params="status: ko.i18n('components.annotation.loading', 'Loading annotation...')"></loading>
+<div data-bind="visible: !isLoading()">
+	<faceted-datatable params="
+		order: [],
+		autoWidth: false,
+		reference: data,
+		columns: columns,
+		options:  null,
+		pageLength: pageLength,
+		lengthMenu: lengthMenu,
+		rowClick: onRowClick,
+		language: ko.i18n('datatable.language')
+    ">
+	</faceted-datatable>
+</div>
