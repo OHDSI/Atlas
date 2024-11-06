@@ -1,0 +1,297 @@
+.demographic-report {
+
+  &__header {
+    align-items: center;
+    display: flex;
+  }
+
+  &__title {
+    align-items: center;
+    display: flex;
+    margin: 0;
+    margin-top: 1rem;
+    font-size: 1.8rem;
+  }
+
+  &__title-separator {
+    font-size: 1rem;
+    padding-left: 1rem;
+    padding-right: .75rem;
+  }
+
+  &__toolbar {
+    align-items: center;
+    display: flex;
+    margin-top: 2rem;
+  }
+
+  &__detail-list, &__display-options-list {
+    display: flex;
+    list-style: none;
+    margin-bottom: 0;
+    padding: 0;
+  }
+
+  &__detail, &__display-option {
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+  }
+
+  &__detail {
+    &-label, &-value {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+    &-label {
+      font-weight: 500;
+    }
+    a&-value {
+      cursor: pointer;
+    }
+  }
+
+  &__threshold {
+    margin-left: auto;
+  }
+
+  &__threshold-setter {
+    align-items: center;
+    display: flex;
+  }
+
+  &__threshold-label {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+    white-space: nowrap;
+  }
+
+  &__threshold-input {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+    width: 7rem;
+  }
+
+  &__threshold-submit {
+    margin-left: 0.75rem;
+  }
+
+  &__threshold-result-descr {
+    font-size: 1.1rem;
+    float: right;
+    margin-top: 0.75rem;
+  }
+
+  &__display-options-list {
+    margin-left: auto;
+  }
+
+  &__display-option {
+    font-size: 1.3rem;
+  }
+
+  &__display-option-label {
+    font-weight: 600;
+  }
+
+  &__display-option-link {
+    cursor: pointer;
+  }
+
+  &__filter {
+    margin-top: 2rem;
+  }
+
+  &__report-group {
+    margin-bottom: 3rem;
+  }
+
+  th {
+    vertical-align: middle !important;
+  }
+
+  &__report {
+    margin-top: 2rem;
+
+    &--hidden-cohort-name {
+      .characterization-view-edit-results__cohort-name {
+        display: none;
+      }
+    }
+  }
+
+  &__analysis-name {
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  &__cohort-name {
+    font-size: 1.4rem;
+  }
+
+  &__th-cov-count, &__th-cov-pct, &__th-diff {
+    width: 7.5rem !important;
+  }
+
+  &__th-cohort-name {
+    text-align: center;
+  }
+
+  &__analysis-results {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  &__table-wrapper, &__chart-wrapper, &__table-wrapper-nodata {
+    flex-shrink: 0;
+    flex-basis: 0;
+  }
+
+  &__table-wrapper-nodata {
+    flex: 2;
+    width:100%;
+    .dt-buttons {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+
+  &__table-wrapper {
+    flex: 2;
+    width:100%;
+    .dt-buttons {
+      padding-bottom: 1rem;
+      padding-right: 1rem;
+    }
+  }
+
+  &__chart-wrapper {
+    flex: 1;
+    width: 100%;
+    margin-left: 2rem;
+    border: 1px solid #ccc;
+    padding: 1.5rem 1.5rem 0.45rem 0;
+  }
+
+  &__scatterplot {
+  }
+
+  &__boxplot {
+    svg {
+      padding-left: 1rem;
+    }
+
+    .boxplot .compare {
+      .median, line, rect, circle, .whisker {
+        stroke: #ff9315;
+      }
+      line, rect, circle {
+         stroke-width: 1px;
+      }
+      rect, circle {
+        fill: rgba(255, 147, 21, 0.67);
+      }
+      .whisker {
+        stroke-dasharray: 3, 3;
+      }
+    }
+  }
+  &__execution-design {
+    width: 100%;
+    height: 600px;
+  }
+  &__explore {
+    margin-top: .5rem;
+    &-link {
+      cursor: pointer;
+    }
+  }
+
+  &__report-table {
+    width: 100% !important;
+    height: fit-content;    // needed if pct-cell has more than one-line height (to correctly fill it vertically)
+
+    td.pct-cell {
+      padding: 0 !important;
+      height: 100%;
+    }
+    div.pct-fill {
+      background-color: #afd9ee;
+      height: 100%;
+
+      div {
+        vertical-align: middle;
+        padding: 8px 10px;
+      }
+    }
+  }
+
+  &__greyed-row {
+    color: grey;
+  }
+
+  &__col-explore {
+    width: 5rem !important;
+  }
+
+  &__explore-dropdown {
+    position: relative;
+    text-align: center;
+  }
+
+  &__explore-caret {
+    margin-left: .4rem;
+  }
+
+  &__explore-menu-item {
+    cursor: pointer;
+  }
+
+  &__explore-menu-item-link {
+    max-width: 50rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__action-ico {
+    margin-left: 0.5rem;
+  }
+}
+
+.characterization-results-boxplot-container {
+  display: flex;
+  width: 50%;
+}
+
+.characterization-results-legend-container {
+  min-width: 300px;
+  flex: 0.5;
+  margin-left: 16px;
+}
+
+.characterization-results-container {
+  display: flex;
+  width: 100%;
+}
+.legend-header {
+  margin-top: 0;
+}
+.swatch {
+  width: 16px;
+  height: 16px;
+  margin: 6px 0;
+}
+
+.color-cell {
+  width: 24px;
+  vertical-align: baseline;
+}
+
+.legend-cohort-name {
+  font-size: 1rem;
+  font-weight: bold;
+}

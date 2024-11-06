@@ -100,9 +100,8 @@ define(function (require, exports) {
 	}
 
 
-	function generate(cohortDefinitionId, sourceKey) {
-		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/generate/${sourceKey}`);
-	}
+	function generate(cohortDefinitionId, sourceKey, withDemographic) {
+		return httpService.doGet(`${config.webAPIRoot}cohortdefinition/${cohortDefinitionId}/generate/${sourceKey}?demographic=${withDemographic}`);	}
 
 
 	function cancelGenerate(cohortDefinitionId, sourceKey) {
@@ -123,9 +122,10 @@ define(function (require, exports) {
 		return infoPromise;
 	}
 
-	function getReport(cohortDefinitionId, sourceKey, modeId) {
+	function getReport(cohortDefinitionId, sourceKey, modeId, ccGenerateId) {
+		const urlGetReportDemographic = `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}&ccGenerateId=${ccGenerateId}`
 		var reportPromise = $.ajax({
-			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}`,
+			url: modeId !== 2 ? `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}` : urlGetReportDemographic,
 			error: function (error) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
@@ -183,6 +183,12 @@ define(function (require, exports) {
 		}).then(({ data }) => data);
 	}
 
+	function getPrevalenceStatsByGeneration(generationId, analysisId, cohortId, covariateId) {
+        return httpService
+          .doGet(config.webAPIRoot + `cohort-characterization/generation/${generationId}/explore/prevalence/${analysisId}/${cohortId}/${covariateId}`)
+          .then(res => res.data);
+    }
+
 	var api = {
 		getCohortDefinitionList,
 		saveCohortDefinition,
@@ -203,7 +209,8 @@ define(function (require, exports) {
 		getVersions,
 		getVersion,
 		updateVersion,
-		copyVersion
+		copyVersion,
+		getPrevalenceStatsByGeneration
 	};
 
 	return api;
