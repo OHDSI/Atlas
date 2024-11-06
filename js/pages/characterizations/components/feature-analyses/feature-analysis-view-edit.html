@@ -38,7 +38,7 @@
     </div>
 
     <!-- ko if: selectedTabKey -->
-    <tabs data-bind="css: editorClasses(), visible: !$component.loading()" params="
+    <tabs data-bind="visible: !$component.loading()" params="
             selectedTabKey: $component.selectedTabKey,
         selectTab: $component.selectTab,
         tabs: $component.tabs">
