@@ -89,7 +89,8 @@ define([
                         const hasTemporal = r.temporalDataByCohort.some(cohort => Array.isArray(cohort.temporalInfo?.temporal) && cohort.temporalInfo.temporal.length > 0);
                         const hasAnnual = r.temporalDataByCohort.some(cohort => Array.isArray(cohort.temporalInfo?.temporalAnnual) && cohort.temporalInfo.temporalAnnual.length > 0);
                         if (hasTemporal || hasAnnual) {
-                            return `<a href="#" data-bind="click: () => $component.exploreTemporal($data, '${meaningfulName}')">${meaningfulName}</a>`;
+                            const tooltipText = "Explore temporal trends for " + meaningfulName;
+                            return `<a href="#" title="${tooltipText}" data-bind="click: () => $component.exploreTemporal($data, '${meaningfulName}')">${meaningfulName}</a>`;
                         }
                     } return meaningfulName;
                 },
