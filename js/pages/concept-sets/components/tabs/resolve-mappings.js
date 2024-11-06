@@ -13,6 +13,7 @@ define([
 	'utils/Renderers',
 	'services/MomentAPI',
 	'services/http',
+	'less!./resolve-mappings.less',
 	'./manual-mapping',
 	'components/conceptAddBox/concept-add-box',
 	'components/dataSourceSelect',
@@ -94,14 +95,18 @@ define([
 			this.standardConceptsWithCounterparts = ko.observableArray([]);
 			this.loadingStandardConceptsWithCounterparts = ko.observable(false);
 
+			this.isResolveButtonEnabled = ko.pureComputed(() => {
+				const mappings = this.standardConceptsWithCounterparts();
+				return mappings.some(concept => {
+					return concept.mapped_from && concept.mapped_from.length === 1 && mappings.filter(m => m.mapped_from && m.mapped_from.includes(concept.mapped_from[0])).length === 1;
+				});
+			});
 
 			this.addedSourceCodesViaManualMapping = ko.observableArray([]);
 			this.enrichStandardWithCounterpartsAndResultsWithSourceCodes = this.enrichStandardWithCounterpartsAndResultsWithSourceCodes.bind(this);
 			this.addedSourceCodesViaManualMapping.subscribe((addedSourceCodes) => {
 				this.enrichStandardWithCounterpartsAndResultsWithSourceCodes(addedSourceCodes);
 			});
-
-			this.hasSelectedStandardCounterparts = ko.pureComputed(() => this.standardConceptsWithCounterparts() && this.standardConceptsWithCounterparts().some(item => item.isSelected()));
 
 			/** MANUAL MAPPING VARIABLES */
 			this.showManualMappingModal = ko.observable(false);
@@ -150,16 +155,7 @@ define([
 
 			this.buttonTooltip = conceptSetUtils.getPermissionsText(true, "test");
 
-			const getStandardConceptsWithCounterpartsColumns = (context, commonUtils, selectAllFn) => [
-				{
-					title: '',
-					orderable: false,
-					searchable: false,
-					className: 'text-center',
-					render: () => this.renderCheckbox('isSelected', context.canEditCurrentConceptSet()),
-					renderSelectAll: context.canEditCurrentConceptSet(),
-					selectAll: selectAllFn
-				},
+			this.standardConceptsColumns = [
 				{
 					title: ko.i18n('columns.id', 'Id'),
 					data: 'CONCEPT_ID'
@@ -208,23 +204,34 @@ define([
 					title: ko.i18n('columns.vocabulary', 'Vocabulary'),
 					data: 'VOCABULARY_ID'
 				},
+				{
+					title: ko.i18n('columns.mappedNonStandardCount', 'Mapped Non-Standard Count'),
+					data: function (item) {
+						return ko.computed(() => {
+							return this.countMappedNonStandard(item);
+						}).peek();
+					}.bind(this)
+				},
 			];
 
-			this.standardConceptsColumns = getStandardConceptsWithCounterpartsColumns({
-				canEditCurrentConceptSet: this.canEdit
-			},
-				commonUtils,
-				(data, selected) => {
-					const conceptIds = data.map(c => c.CONCEPT_ID);
-					ko.utils.arrayForEach(this.standardConceptsWithCounterparts(), c => conceptIds.indexOf(c.CONCEPT_ID) > -1 && c.isSelected(selected));
-					this.standardConceptsWithCounterparts.valueHasMutated();
-				});
-
 			this.includedSourcecodes = this.conceptSetStore.includedSourcecodes;
+
+			this.showWarningModal = ko.observable(false);
+			this.warningModalMessage = ko.observable('');
+			this.closeWarningModal = () => {
+				this.showWarningModal(false);
+			};
 
 			this.loadInitialIncludedConcepts();  //detached copy of the initial concept set, used for resetting to the initial state and first fill of resultConceptSetItems
 			this.loadResultConceptSetItems();  //detached copy of the initialIncludedConcepts
 			this.loadStandardWithCounterparts();
+		}
+
+		countMappedNonStandard(concept) {
+			if (concept.mapped_from) {
+				return concept.mapped_from.length;
+			}
+			return 0;
 		}
 
 		deepClone(item) {
@@ -355,21 +362,18 @@ define([
 		}
 
 		resolveOneToOneMappings() {
-			const conceptIdsToRemoveFromStandard = new Set(); // Track which mappings are used
+			const conceptIdsToRemoveFromStandard = new Set();
+			let showWarning = false;
 			const updatedItems = this.resultConceptSetItems().map((item) => {
 				if (item.concept.STANDARD_CONCEPT === 'N') {
-					// Find all standard counterparts for this non-standard concept ID
 					const mappedStandardConcepts = this.standardConceptsWithCounterparts().filter(m => m.mapped_from && m.mapped_from.some(mappedId => mappedId === item.concept.CONCEPT_ID));
-
 					if (mappedStandardConcepts.length > 1) {
-						console.warn("Encountered a non-standard concept which is mapped to multiple standard concepts");
-						//LEAVE standards in the existing list as well as this current non-standard
+						showWarning = true;
 						return item;
 					}
-
 					if (mappedStandardConcepts.length === 1) {
-						if (mappedStandardConcepts[0].isSelected() && mappedStandardConcepts[0].mapped_from.length === 1) {
-							conceptIdsToRemoveFromStandard.add(mappedStandardConcepts[0].CONCEPT_ID); // Add ID to the set to mark for removal later
+						if (mappedStandardConcepts[0].mapped_from.length === 1) {
+							conceptIdsToRemoveFromStandard.add(mappedStandardConcepts[0].CONCEPT_ID);
 							return {
 								...item,
 								concept: mappedStandardConcepts[0],
@@ -377,20 +381,24 @@ define([
 								isExcluded: ko.observable(false),
 								includeDescendants: ko.observable(false),
 								includeMapped: ko.observable(false),
-							}
+							};
 						}
 					}
 				}
-				// Return the item unchanged if it's already standard or has no valid mapping
 				return item;
 			});
 
 			const unmappableStandardConceptsToRetain = this.standardConceptsWithCounterparts().filter(mapping =>
 				!conceptIdsToRemoveFromStandard.has(mapping.CONCEPT_ID)
 			);
-			// Update the observable array after removal
+
 			this.standardConceptsWithCounterparts(unmappableStandardConceptsToRetain);
 			this.resultConceptSetItems(updatedItems);
+
+			if (showWarning) {
+				this.warningModalMessage('Encountered non-standard concepts mapped to multiple standard concepts. Please resolve those mappings manually.');
+				this.showWarningModal(true);
+			}
 		}
 
 		handlePreview() {

@@ -25,7 +25,7 @@
         <span data-bind="tooltip: buttonTooltip">
             <button class="btn btn-success btn-sm" data-bind="
               click: resolveOneToOneMappings,
-              enable: hasSelectedStandardCounterparts,
+              enable: isResolveButtonEnabled(),
               text: ko.i18n('components.conceptSet.resolveOneToOneMappings', 'Resolve one-to-one mappings'),
             "></button>
         </span>
@@ -119,5 +119,12 @@
             <div data-bind="component: { name: 'manual-mapping', params: manualMappingModalParams }"></div>
 
         </atlas-modal>
+    </div>
+    <div data-bind="visible: showWarningModal, click: closeWarningModal">
+        <div class="warning-modal-content" data-bind="click: function (data, event) { event.stopPropagation(); }">
+            <h4>Warning</h4>
+            <p data-bind="text: warningModalMessage"></p>
+            <button data-bind="click: closeWarningModal">Close</button>
+        </div>
     </div>
 </div>
