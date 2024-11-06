@@ -4,15 +4,16 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/Calculation",
   "../CriteriaGroup",
   "text!./MeasurementTemplate.html",
   "../const"
-], function (ko, options, utils, Range, DateAdjustment, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, Calculation, CriteriaGroup, template, constants) {
   function MeasurementViewModel(params) {
     var self = this;
 
     self.expression = ko.utils.unwrapObservable(params.expression);
-    self.Criteria = params.criteria.Measurement;
+    self.Criteria = ko.unwrap(params.criteria).Measurement;
     self.options = options;
 
     self.addActions = [
@@ -159,6 +160,15 @@ define([
           if (self.Criteria.MeasurementSourceConcept() == null)
             self.Criteria.MeasurementSourceConcept(ko.observable());
         },
+      },
+      {
+        ...constants.measurementAttributes.addMeasurementOperand,
+        selected: false,
+        action: () => {
+          if (self.Criteria.MeasurementOperand() == null) {
+            self.Criteria.MeasurementOperand(new Calculation({}, self.expression.ConceptSets));
+          }
+        }
       },
       {
         ...constants.measurementAttributes.addNested,
