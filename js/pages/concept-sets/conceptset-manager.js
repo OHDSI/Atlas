@@ -148,6 +148,14 @@ define([
 				}
 				return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
 			});
+
+			this.canDeleteAnnotations = ko.pureComputed(() => {
+				if (!config.userAuthenticationEnabled) {
+					return true;
+				}
+				return this.conceptSetStore.current() && authApi.isPermittedConceptSetAnnotationsDelete(this.conceptSetStore.current().id);
+			});
+
 			this.canOptimize = ko.computed(() => {
 				return (
 					this.currentConceptSet()
@@ -320,7 +328,8 @@ define([
 					componentName: 'conceptset-annotation',
 					componentParams: {
 						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetAnnotation(this.currentConceptSet().id) : [],
-						delete: (id) => id ? conceptSetService.deleteConceptSetAnnotation(id) : null
+						delete: (annotationId) => annotationId ? conceptSetService.deleteConceptSetAnnotation(this.currentConceptSet().id, annotationId) : null,					
+						canDeleteAnnotations: this.canDeleteAnnotations,
 					}
 				},
 				{

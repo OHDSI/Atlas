@@ -506,8 +506,8 @@ define(function(require, exports) {
         return isPermitted(`tag:management`);
     };
 
-    const isPermittedConceptSetAnnotationsDelete = function () {
-        return isPermitted(`conceptset:annotation:*:delete`);
+    const isPermittedConceptSetAnnotationsDelete = function (conceptSetId) {
+        return isPermitted('conceptset:' + conceptSetId + ':annotation:*:delete');
     };    
 
     const isPermittedRunAs = () => isPermitted('user:runas:post');
