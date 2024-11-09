@@ -84,8 +84,8 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
-	function deleteConceptSetAnnotation(id) {
-		return httpService.doDelete(config.webAPIRoot + 'conceptset/annotation/' + (id || '-1'))
+	function deleteConceptSetAnnotation(conceptSetId, annotationId) {
+		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') +'/annotation/' + (annotationId || '-1'))
 			.catch(authApi.handleAccessDenied);
 		}
 
