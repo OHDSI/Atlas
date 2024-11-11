@@ -5,7 +5,7 @@ define(function(require, exports) {
 	const httpService = require('services/http');
 
 	function clearCache() {
-		return httpService.doGet(config.webAPIRoot + 'cache/clear')
+		return httpService.doGet(config.webAPIRoot + 'cdmresults/clearCache')
 			.then(res => res.data)
 			.catch((error) => {
 				console.log("Error: " + error);
