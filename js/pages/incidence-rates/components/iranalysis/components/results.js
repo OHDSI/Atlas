@@ -116,6 +116,10 @@ define([
 			this.showOnlySourcesWithResults = ko.observable(false);
 			this.sourcesTableOptions = commonUtils.getTableOptions('S');
 			this.sourcesColumns = [{
+				sortable: false,
+				className: 'generation-buttons-column',
+				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
+			}, {
 				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name'),
 				render: (s,p,d) => `${d.source.sourceName}`
 			}, {
@@ -144,10 +148,6 @@ define([
 			}, {
 				title: ko.i18n('ir.results.duration', 'Duration'),
 				render: (s,p,d) => d.info() ? `${this.msToTime(d.info().executionInfo.executionDuration)}` : `n/a`
-			}, {
-				sortable: false,
-				className: 'generation-buttons-column',
-				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
 			}];
 		}
 

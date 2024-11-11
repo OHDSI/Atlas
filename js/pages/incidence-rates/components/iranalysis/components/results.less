@@ -25,8 +25,18 @@
     tbody tr td {
       padding: 0 10px 4px;
     }
+    tr {
+      transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    }
+    tr:hover {
+      background-color: #f2f2f2; 
+    }
+    tr:hover td {
+      border-top: solid 1px #ccc;      
+      border-bottom: solid 1px #ccc;      
+    }
     .generation-buttons-column {
-      text-align: right;
+      text-align: left;
     }
     .generation-buttons {
       white-space: nowrap;
