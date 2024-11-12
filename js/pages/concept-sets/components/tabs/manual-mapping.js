@@ -186,6 +186,11 @@ define([
 			return momentApi.formatDateTimeWithFormat(date, momentApi.ISO_DATE_FORMAT);
 		}
 
+
+		deepClone(obj) {
+			return JSON.parse(JSON.stringify(obj));
+		}
+
 		mapAllSelectedToGivenStandardConcept() {
 
 			if (!this.currentConcept || typeof this.currentConcept.CONCEPT_ID === 'undefined') {
@@ -206,6 +211,14 @@ define([
 			let resultConceptSetItemsWithoutMappedNonStandardConcepts = this.resultConceptSetItems().filter(item => !selectedNonStandardConcepts.some(selectedConcept => selectedConcept.CONCEPT_ID === item.concept.CONCEPT_ID));
 			this.resultConceptSetItems(resultConceptSetItemsWithoutMappedNonStandardConcepts);
 
+			//Remove selected concepts from mapped_from of remaining standard concepts
+			this.standardConceptsWithCounterparts().forEach(standardConcept => {
+				const clonedData = this.deepClone(standardConcept.mapped_from);
+				standardConcept.mapped_from = clonedData.filter(
+					id => !selectedNonStandardConcepts.map(concept => concept.CONCEPT_ID).includes(id)
+				);
+			});
+
 			// Add current standard concept to resultConceptSetItems if not already present
 			if (!this.resultConceptSetItems().some(item => item.concept.CONCEPT_ID === standardConceptId)) {
 				this.resultConceptSetItems().push({
@@ -224,6 +237,7 @@ define([
 			this.showManualMappingModal(false);
 			console.log("Mapping complete: Selected non-standard concepts have been mapped to the current standard concept.");
 		}
+
 
 		async loadIncludedSourceCodes() {
 			this.loadingIncludedSourceCodes(true);

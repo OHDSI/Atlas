@@ -227,9 +227,9 @@ define([
 
 		countMappedNonStandard(concept) {
 			if (concept.mapped_from) {
-				return concept.mapped_from.length;
+				return concept.mapped_from.length.toString();
 			}
-			return 0;
+			return "0";
 		}
 
 		deepClone(item) {
@@ -325,7 +325,7 @@ define([
 				let standardForNonStandardWithMappings = await this.loadRelatedStandardConceptsWithMapping(this.initialIncludedConcepts());
 				// Set the data avoiding duplicates
 				this.standardConceptsWithCounterparts(standardForNonStandardWithMappings);
-				this.initialStandardConceptsWithCounterparts(standardForNonStandardWithMappings);
+				this.initialStandardConceptsWithCounterparts(this.deepClone(standardForNonStandardWithMappings));
 			} catch (err) {
 				console.error("Error loading standard counterparts:", err);
 			} finally {
