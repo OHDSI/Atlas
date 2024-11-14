@@ -22,12 +22,11 @@ define([
           this.data = ko.observable();
           this.getList = params.getList;
           this.delete = params.delete;
+          this.canDeleteAnnotations = params.canDeleteAnnotations;
 
           const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
           this.pageLength = params.pageLength || pageLength;
           this.lengthMenu = params.lengthMenu || lengthMenu;
-
-          this.canDeleteAnnotations = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedConceptSetAnnotationsDelete());
 
           this.columns = ko.computed(() => {
             let cols = [
