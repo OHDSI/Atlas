@@ -38,13 +38,7 @@ define([
 			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
 			this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 			this.hasSourceAccess = authApi.hasSourceAccess;
-			this.generationSources = ko.computed(() => params.sources().map(s => ({
-				...s.source,
-				disabled: this.isInProgress(s) || !this.hasSourceAccess(s.source.sourceKey),
-				disabledReason: this.isInProgress(s)
-					? ko.i18n('ir.results.generationInProgress', 'Generation is in progress')()
-					: !this.hasSourceAccess(s.source.sourceKey) ? ko.i18n('ir.results.accessDenied', 'Access denied')() : null,
-			})));
+
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
 			this.stoppingSources = params.stoppingSources;
@@ -163,6 +157,16 @@ define([
 
 		isInProgress(sourceItem) {
 			return (sourceItem.info() && constants.isInProgress(sourceItem.info().executionInfo.status));
+		}
+
+		isStopping(sourceItem) {
+			return ko.pureComputed(() => {
+				if (sourceItem.info() && Object.keys(this.stoppingSources()).length > 0) {
+					return(this.stoppingSources()[sourceItem.source.sourceKey]);
+				} else {
+					return(false);
+				}
+			});
 		}
 
 		isSummaryLoading(sourceItem) {
