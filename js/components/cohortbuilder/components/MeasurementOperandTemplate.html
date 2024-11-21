@@ -1,0 +1,15 @@
+<div class="criteriaSection">
+    <div class="measurement-operand">
+        <select data-bind="options: $component.options.operatorOptions, value: $component.Operator"></select>
+        <select data-bind="options: $component.options.eventsLimit, optionsText: 'name', optionsValue: 'id', value: $component.Limit"></select>
+        <span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurement_32', 'of')">of</span>
+    </div>
+    <measurement-criteria params="{ criteria: ko.unwrap($component.Measurement), expression: ko.unwrap($component.expression) }"></measurement-criteria>
+    <div class="measurement-operand">
+        <span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_31', 'restricted to the same visit')"></span> <input type="checkbox" data-bind="checked: $component.SameVisit" />
+    </div>
+    <div>
+        <span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_6', 'with calculated value as number')"></span>
+        <numeric-range params="Range: ValueAsNumber"></numeric-range>
+    </div>
+</div>
