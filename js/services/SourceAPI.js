@@ -185,8 +185,13 @@ define(function (require, exports) {
     return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
   }
 
-  function refreshSourceCache(sourceKey) {
-    return httpService.doGet(config.webAPIRoot + 'cdmresults/' + sourceKey + '/refreshCache');
+  async function refreshSourceCache(sourceKey) {
+    await httpService.doPost(
+      config.webAPIRoot + 'cdmresults/' + sourceKey + '/clearCache'
+    );
+    return await httpService.doGet(
+      config.webAPIRoot + 'cdmresults/' + sourceKey + '/refreshCache'
+    );
   }
 
   function updateSourceDaimonPriority(sourceKey, daimonType) {
