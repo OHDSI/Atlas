@@ -8,6 +8,7 @@ define([
     var self = this;
     self.options = options;
     self.Window = ko.utils.unwrapObservable(params.Window); // this will be a Window input type.
+    self.isDropdownTimer = ko.utils.unwrapObservable(params.isDropdownTimer)
   }
 
   // return compoonent definition
