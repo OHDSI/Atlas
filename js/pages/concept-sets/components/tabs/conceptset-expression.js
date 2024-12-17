@@ -36,6 +36,7 @@ define([
       });
 
 			this.datatableLanguage = ko.i18n('datatable.language');
+      this.currentConceptSetId = ko.observable(params.router.routerParams().conceptSetId);
 
 			this.data = ko.pureComputed(() => this.conceptSetItems().map((item, idx) => ({ ...item, idx, isSelected: ko.observable() })));
 
@@ -113,7 +114,34 @@ define([
 
     removeConceptsFromConceptSet() {
 			const idxForRemoval = this.data().filter(concept => concept.isSelected()).map(item => item.idx);
-			this.conceptSetStore.removeItemsByIndex(idxForRemoval);
+
+      const removeItems = this.data().filter(concept => concept.isSelected());
+      const datasAdded = JSON.parse(localStorage.getItem('data-add-selected-concept') || null) || [];
+      const datasDeleted = JSON.parse(localStorage.getItem('data-remove-selected-concept') || null) || [];
+      
+      const datasRemove = [];
+      const payloadRemove = removeItems.map(item => {
+        if((datasAdded.map(item => item.conceptId)).includes(item.concept.CONCEPT_ID)){
+          datasRemove.push(item.concept.CONCEPT_ID);
+          return null;
+        }
+        return {
+          "searchData": "",
+          "relatedConcepts": "",
+          "conceptHierarchy": "",
+          "conceptSetData": { id: this.currentConceptSetId(), name: this.conceptSetStore.current().name()},
+          "conceptData": item,
+          "conceptId": item.concept.CONCEPT_ID
+        }
+      });
+      
+      const dataRemoveSelected = [...datasDeleted, ...payloadRemove].filter((item, i, arr) => item && arr.indexOf(item) === i);
+      localStorage.setItem('data-remove-selected-concept', JSON.stringify(dataRemoveSelected));
+      if(datasRemove?.length){
+        const newAddDatas = datasAdded.filter(data =>  !datasRemove.includes(data.conceptId));
+        localStorage.setItem('data-add-selected-concept', JSON.stringify(newAddDatas));
+      }
+      this.conceptSetStore.removeItemsByIndex(idxForRemoval);
     }
 
     async selectAllConceptSetItems(key, areAllSelected) {
