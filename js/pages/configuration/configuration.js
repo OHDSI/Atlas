@@ -276,14 +276,32 @@ define([
       this.isInProgress(false);
     }
 
+    async updateCurrentVocabularyVersion(sourceKey) {
+      try {
+        const result = await sourceApi.getVocabularyInfo(sourceKey);
+        if (result && result.data && result.data.version != null) {
+          sharedState.currentVocabularyVersion(result.data.version);
+          return result.data.version;
+        } else {
+          throw new Error('Vocabulary info response does not contain version');
+        }
+      } catch (err) {
+        alert(ko.unwrap(ko.i18n('configuration.alerts.failUpdateCurrentVocabVersion', 'Failed to update current vocabulary version')));
+      }
+    }
+
     updateVocabPriority() {
       var newVocabUrl = sharedState.vocabularyUrl();
+      var newCurrentVocabularyVersion = sharedState.currentVocabularyVersion();
       var selectedSource = sharedState.sources().find((item) => {
         return item.vocabularyUrl === newVocabUrl;
       });
       sharedState.priorityScope() === 'application' &&
-        sharedState.defaultVocabularyUrl(newVocabUrl);
+        sharedState.defaultVocabularyUrl(newVocabUrl) &&
+        sharedState.defaultVocabularyVersion(newCurrentVocabularyVersion);
+
       this.updateSourceDaimonPriority(selectedSource.sourceKey, 'Vocabulary');
+      this.updateCurrentVocabularyVersion(selectedSource.sourceKey);
       return true;
     }
 
