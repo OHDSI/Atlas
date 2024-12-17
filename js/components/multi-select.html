@@ -1,8 +1,8 @@
 <div class="multi-select" data-bind="eventListener: [{event: 'hide.bs.dropdown', selector: 'div.dropdown.bootstrap-select', callback: onSelectionComplete}]">
     <!-- ko if: multiple == true -->
-        <select data-bind="selectedOptions: selectedValues, options: optionVals, optionsText: optionsText, multiSelect: { liveSearch: true, selectedTextFormat: selectedTextFormat, noneSelectedText: ko.unwrap(noneSelectedText), noneResultsText: ko.unwrap(noneResultsText), countSelectedText: ko.unwrap(countSelectedText) }" multiple></select>
+        <select data-bind="attr: disabled, selectedOptions: selectedValues, options: optionVals, optionsText: optionsText, multiSelect: { liveSearch: true, selectedTextFormat: selectedTextFormat, noneSelectedText: ko.unwrap(noneSelectedText), noneResultsText: ko.unwrap(noneResultsText), countSelectedText: ko.unwrap(countSelectedText) }" multiple></select>
     <!-- /ko -->
     <!-- ko if: multiple == false -->
-        <select data-bind="options: options, value: selectedValue, optionsText: 'label', optionsValue: 'value', multiSelect: { liveSearch: true, selectedTextFormat: 'count > 2', noneSelectedText: ko.unwrap(noneSelectedText), noneResultsText: ko.unwrap(noneResultsText) }"></select>
+        <select data-bind="attr: disabled, options: options, value: selectedValue, optionsText: 'label', optionsValue: 'value', multiSelect: { liveSearch: true, selectedTextFormat: 'count > 2', noneSelectedText: ko.unwrap(noneSelectedText), noneResultsText: ko.unwrap(noneResultsText) }"></select>
     <!-- /ko -->
 </div>
