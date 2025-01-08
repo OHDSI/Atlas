@@ -44,7 +44,8 @@ define([
 	'components/authorship',
 	'components/name-validation',
 	'components/ac-access-denied',
-	'components/versions/versions'
+	'components/versions/versions',
+	'./components/tabs/conceptset-annotation'
 ], function (
         ko,
 	view,
@@ -147,6 +148,14 @@ define([
 				}
 				return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
 			});
+
+			this.canDeleteAnnotations = ko.pureComputed(() => {
+				if (!config.userAuthenticationEnabled) {
+					return true;
+				}
+				return this.conceptSetStore.current() && authApi.isPermittedConceptSetAnnotationsDelete(this.conceptSetStore.current().id);
+			});
+
 			this.canOptimize = ko.computed(() => {
 				return (
 					this.currentConceptSet()
@@ -314,6 +323,16 @@ define([
 					hidden: () => !!this.previewVersion()
 				},
 				{
+					title: ko.i18n('cs.manager.tabs.annotation', 'Annotation'),
+					key: ViewMode.ANNOTATION,
+					componentName: 'conceptset-annotation',
+					componentParams: {
+						getList: () => this.currentConceptSet().id ? conceptSetService.getConceptSetAnnotation(this.currentConceptSet().id) : [],
+						delete: (annotationId) => annotationId ? conceptSetService.deleteConceptSetAnnotation(this.currentConceptSet().id, annotationId) : null,					
+						canDeleteAnnotations: this.canDeleteAnnotations,
+					}
+				},
+				{
 					title: ko.i18n('cs.manager.tabs.versions', 'Versions'),
 					key: ViewMode.VERSIONS,
 					componentName: 'versions',
@@ -331,6 +350,7 @@ define([
 			this.selectedTab = ko.observable(0);
 
 			this.activeUtility = ko.observable("");
+			this.newConceptSetIdForCopyAnnotations = ko.observable(0);
 
 			GlobalPermissionService.decorateComponent(this, {
 				entityTypeGetter: () => entityType.CONCEPT_SET,
@@ -469,6 +489,33 @@ define([
 			this.conceptSetCaption.dispose();
 		}
 
+		removeDataFilterStorage(){
+			localStorage.removeItem('filter-data');
+			localStorage.removeItem('filter-source');
+			localStorage.removeItem('data-remove-selected-concept');
+			localStorage.removeItem('data-add-selected-concept');
+		}
+
+		objectMap(obj) {
+			const newObject = {};
+			Object.keys(obj).forEach((key) => {
+			  if(typeof obj[key] === 'object'){
+				newObject[key] = JSON.stringify(obj[key]);
+			  }else{
+				newObject[key] = obj[key];
+			  }
+			});
+			return newObject;
+		}
+
+		handleConvertDataToString(arr){
+			const newDatas = [];
+			(arr || []).forEach(item => {
+				newDatas.push(this.objectMap(item))
+			})
+			return newDatas;
+		}
+
 		async saveConceptSet(conceptSet, nameElementId) {
 			if (this.previewVersion() && !confirm(ko.i18n('common.savePreviewWarning', 'Save as current version?')())) {
 				return;
@@ -487,11 +534,24 @@ define([
 					this.raiseConceptSetNameProblem(ko.i18n('cs.manager.csAlreadyExistsMessage', 'A concept set with this name already exists. Please choose a different name.')(), nameElementId);
 				} else {
 					const savedConceptSet = await conceptSetService.saveConceptSet(conceptSet);
+					const savedVersions = await this.versionsParams()?.getList();
+					let latestSavedVersion = 1;
+
+					if (savedVersions && Array.isArray(savedVersions)) {
+						latestSavedVersion = savedVersions.reduce((max, obj) => Math.max(max, obj.version), 1);
+					}
+
+					let annotationDataToAdd = JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || [];
+					const enrichedAnnotationDataToAdd = annotationDataToAdd.map(item => ({...item, "conceptSetVersion": latestSavedVersion}));
+
 					await conceptSetService.saveConceptSetItems(savedConceptSet.data.id, conceptSetItems);
+					await conceptSetService.saveConceptSetAnnotation(savedConceptSet.data.id, { newAnnotation: this.handleConvertDataToString(enrichedAnnotationDataToAdd), removeAnnotation: this.handleConvertDataToString(JSON.parse(localStorage?.getItem('data-remove-selected-concept') || null) || [])});
+					this.removeDataFilterStorage();
 
 					const current = this.conceptSetStore.current();
 					current.modifiedBy = savedConceptSet.data.modifiedBy;
 					current.modifiedDate = savedConceptSet.data.modifiedDate;
+					this.newConceptSetIdForCopyAnnotations(savedConceptSet.data.id);
 					this.conceptSetStore.current(current);
 
 					this.previewVersion(null);
@@ -533,11 +593,17 @@ define([
 		}
 
 		async copy() {
+			let sourceConceptSetId = this.currentConceptSet().id;
 			const responseWithName = await conceptSetService.getCopyName(this.currentConceptSet().id);
 			this.currentConceptSet().name(responseWithName.copyName);
 			this.currentConceptSet().id = 0;
 			this.currentConceptSetDirtyFlag().reset();
 			await this.saveConceptSet(this.currentConceptSet(), "#txtConceptSetName");
+			let copyAnnotationsRequest = {
+				sourceConceptSetId: sourceConceptSetId,
+				targetConceptSetId: this.newConceptSetIdForCopyAnnotations(),
+			};
+			await conceptSetService.copyAnnotations(copyAnnotationsRequest);
 		}
 
 		async optimize() {
