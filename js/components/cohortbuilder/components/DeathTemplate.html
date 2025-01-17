@@ -10,7 +10,7 @@
 					<span
 						data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_1', 'a death occurrence from')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets,
-					                             defaultText: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')">
+						defaultName: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')">
 					</conceptset-selector>
 				</td>
 				<td>
@@ -71,7 +71,7 @@
 
 						<conceptset-selector
 							params="conceptSetId: DeathSourceConcept(), conceptSets: $component.expression.ConceptSets,
-						                             defaultText: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')">
+								defaultName: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')">
 						</conceptset-selector>
 					</div>
 				</td>

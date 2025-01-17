@@ -10,7 +10,7 @@
 					<span
 						data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_1', 'a device exposure of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets,
-					defaultText: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')"></conceptset-selector>
+						defaultName: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
@@ -101,7 +101,7 @@
 						<span
 							data-bind="text: ko.i18n('components.conditionDevice.conditionDeviceText_7', 'Device Source Concept is')"></span>
 						<conceptset-selector
-							params="conceptSetId: DeviceSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')">
+							params="conceptSetId: DeviceSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionDevice.anyDevice', 'Any Device')">
 						</conceptset-selector>
 					</div>
 				</td>

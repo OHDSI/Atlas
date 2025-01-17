@@ -30,6 +30,9 @@ define(function (require, exports) {
 	var observation = require('./components/Observation');
 	ko.components.register('observation-criteria-viewer', observation);
 	
+	var visitDetail = require('./components/VisitDetail');
+	ko.components.register('visit-detail-criteria-viewer', visitDetail);
+
 	var visitOccurrence = require('./components/VisitOccurrence');
 	ko.components.register('visit-occurrence-criteria-viewer', visitOccurrence);
 	
@@ -71,10 +74,13 @@ define(function (require, exports) {
 
 	var conceptList = require('./components/ConceptList');
 	ko.components.register('concept-list-viewer',conceptList);
-	
+
 	var conceptSetReference = require('./components/ConceptSetReference');
 	ko.components.register('conceptset-reference',conceptSetReference);
 	
+	var dateAdjustment = require('./components/DateAdjustment');
+	ko.components.register('date-adjustment-viewer', dateAdjustment);
+
 	var conceptSetViewer = require('./components/ConceptSetViewer');
 	commonUtils.build('conceptset-viewer', conceptSetViewer.viewModel, conceptSetViewer.template);
 

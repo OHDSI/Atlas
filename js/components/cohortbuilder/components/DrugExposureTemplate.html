@@ -10,7 +10,7 @@
 					<span
 						data-bind="text: ko.i18n('components.conditionDrugExposure.conditionDrugExposureText_1', 'a drug exposure of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets,
-					defaultText: ko.i18n('components.conditionDrugExposure.anyDrug', 'Any Drug')"></conceptset-selector>
+						defaultName: ko.i18n('components.conditionDrugExposure.anyDrug', 'Any Drug')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
@@ -163,7 +163,7 @@
 							data-bind="text: ko.i18n('components.conditionDrugExposure.conditionDrugExposureText_13', 'Drug Source Concept is:')"></span>
 
 						<conceptset-selector
-							params="conceptSetId: DrugSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('components.conditionDrugExposure.anyDrug', 'Any Drug')">
+							params="conceptSetId: DrugSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionDrugExposure.anyDrug', 'Any Drug')">
 						</conceptset-selector>
 					</div>
 				</td>

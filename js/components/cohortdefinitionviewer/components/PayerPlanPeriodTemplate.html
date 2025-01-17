@@ -2,6 +2,12 @@
 
 <span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_19', 'a payer plan period')"></span>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionPayerPlanPeriod.conditionPayerPlanText_2', 'limited to the patients first payer plan period')"></span>
