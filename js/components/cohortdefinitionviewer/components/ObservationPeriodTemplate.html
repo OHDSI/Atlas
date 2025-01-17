@@ -1,6 +1,12 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_11', 'an observation period')"></span>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_2', 'limited to the patients first observation period')"></span>

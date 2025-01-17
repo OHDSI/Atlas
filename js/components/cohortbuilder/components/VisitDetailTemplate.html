@@ -10,7 +10,7 @@
 					<span
 						data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_1', 'a visit detail of')"></span>
 
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: ko.i18n('components.conditionVisitDetail.anyVisitDetail', 'Any Visit Detail')"></conceptset-selector>
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionVisitDetail.anyVisitDetail', 'Any Visit Detail')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
@@ -72,7 +72,7 @@
 								data-bind="text: ko.i18n('components.conditionVisitDetail.visitDetailType', 'visit detail type')"></span>
 						<cycle-toggle-input params="{value: VisitDetailTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
 						</cycle-toggle-input>
-						<conceptset-selector params="conceptSetId: VisitDetailTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: VisitDetailTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultName:
 						ko.i18n('components.conditionVisitDetail.anyType', 'Any Visit Detail Type')"></conceptset-selector>
 					</div>
 				</td>
@@ -84,7 +84,7 @@
 						<span
 							data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_5', 'visit detail Source Concept is')"></span>
 
-						<conceptset-selector params="conceptSetId: VisitDetailSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: VisitDetailSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultName:
 						ko.i18n('components.conditionVisitDetail.anySourceConcept', 'Any Visit Detail Source Concept')"></conceptset-selector>
 					</div>
 				</td>
@@ -113,7 +113,7 @@
 						<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_8', 'with a gender ')"></span>
 						<cycle-toggle-input params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
 						</cycle-toggle-input>
-						<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultName:
 						ko.i18n('components.conditionVisitDetail.anyGender', 'Any Gender')"></conceptset-selector>
 					</div>
 				</td>
@@ -126,7 +126,7 @@
 								data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_9', 'with a Provider Specialty ')"></span>
 						<cycle-toggle-input params="{value: ProviderSpecialtyCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
 						</cycle-toggle-input>
-						<conceptset-selector params="conceptSetId: ProviderSpecialtyCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: ProviderSpecialtyCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultName:
 						ko.i18n('components.conditionVisitDetail.anyProviderSpeciality', 'Any Provider Specialty')"></conceptset-selector>
 					</div>
 				</td>
@@ -137,7 +137,7 @@
 					<div>
 						<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_10', 'with a Place of Service ')"></span>
 						<cycle-toggle-input params="{value: PlaceOfServiceCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input>
-						<conceptset-selector params="conceptSetId: PlaceOfServiceCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: PlaceOfServiceCS().CodesetId, conceptSets: $component.expression.ConceptSets, defaultName:
 						ko.i18n('components.conditionVisitDetail.anyPlaceService', 'Any Place of Service')"></conceptset-selector>
 					</div>
 				</td>
@@ -149,7 +149,7 @@
 						<span
 							data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_11', 'with a Place of Service located in:')"></span>
 
-						<conceptset-selector params="conceptSetId: PlaceOfServiceLocation(), conceptSets: $component.expression.ConceptSets, defaultText:
+						<conceptset-selector params="conceptSetId: PlaceOfServiceLocation(), conceptSets: $component.expression.ConceptSets, defaultName:
 						ko.i18n('components.conditionVisitDetail.anyLocation', 'Any Location')"></conceptset-selector>
 					</div>
 				</td>

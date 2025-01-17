@@ -1,4 +1,4 @@
-define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilder/InputTypes/Range', 'text!./ConditionEraTemplate.html'], function (ko, options, Range, template) {
+define(['knockout', 'components/cohortbuilder/options', 'text!./ConditionEraTemplate.html'], function (ko, options, template) {
 
 	function ConditionEraViewModel(params) {
 		
@@ -10,7 +10,7 @@ define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilde
 		self.getCodesetName = function(codesetId, defaultName) {
 			if (codesetId != null)
 			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
+				var selectedConceptSet = self.expression.ConceptSets().find(function (item) { return item.id == codesetId });
 				return ko.utils.unwrapObservable(selectedConceptSet.name);
 			}
 			else

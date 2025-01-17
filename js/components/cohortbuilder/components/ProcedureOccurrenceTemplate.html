@@ -10,7 +10,7 @@
 					<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_1', 'a procedure occurrence of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId,
 												conceptSets: $component.expression.ConceptSets,
-												defaultText: ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')">
+												defaultName: ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')">
 					</conceptset-selector>
 				</td>
 				<td>
@@ -84,8 +84,8 @@
 					<div>
 						<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_6', 'Procedure Source Concept is:')"> </span>
 
-						<conceptset-selector params="conceptSetId: ProcedureSourceConcept(), conceptSets: $component.expression.ConceptSets, defaultText: 
-						ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')"></conceptset-selector>
+						<conceptset-selector params="conceptSetId: ProcedureSourceConcept(), conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>

@@ -44,7 +44,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.GenderCS() == null)
-            self.Criteria.GenderCS(new ConceptSetSelection());
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -83,7 +83,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.VisitDetailTypeCS() == null)
-            self.Criteria.VisitDetailTypeCS(new ConceptSetSelection());
+            self.Criteria.VisitDetailTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -107,7 +107,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.ProviderSpecialtyCS() == null)
-            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection());
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -115,7 +115,7 @@ define([
         selected: false,
         action: function () {
           if (self.Criteria.PlaceOfServiceCS() == null)
-            self.Criteria.PlaceOfServiceCS(new ConceptSetSelection());
+            self.Criteria.PlaceOfServiceCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

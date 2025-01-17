@@ -2,6 +2,12 @@
 <span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_1', 'a condition occurrence of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionOccurrence.anyCondition', 'Any Condition')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_2', 'for the first time in the person\'s history')"></span>

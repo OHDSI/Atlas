@@ -20,6 +20,7 @@ define(['knockout', './Criteria', '../InputTypes/Range', 'conceptpicker/InputTyp
 
 		// Verbatim fields
 		self.CodesetId = ko.observable(data.CodesetId);
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
 		self.EraStartDate = ko.observable(data.EraStartDate && new Range(data.EraStartDate));
 		self.EraEndDate = ko.observable(data.EraEndDate && new Range(data.EraEndDate));

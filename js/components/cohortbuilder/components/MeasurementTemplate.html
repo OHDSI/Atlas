@@ -7,7 +7,7 @@
 			</colgroup>
 			<tr>
 				<td> <span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_1', 'a measurement of')"></span>
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 
 					ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')"></conceptset-selector>
 				</td>
 				<td>
@@ -134,7 +134,7 @@
 
 						<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_14', 'Measurement Source Concept is')"></span>
 						<conceptset-selector params="conceptSetId: MeasurementSourceConcept(), conceptSets: $component.expression.ConceptSets, 
-						defaultText: ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')"></conceptset-selector>
+						defaultName: ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
