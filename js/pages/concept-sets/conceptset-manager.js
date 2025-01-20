@@ -45,7 +45,9 @@ define([
 	'components/name-validation',
 	'components/ac-access-denied',
 	'components/versions/versions',
-	'./components/tabs/conceptset-annotation'
+	'./components/tabs/conceptset-annotation',
+	'./components/tabs/conceptset-lock-history',
+	'./components/modal/snapshot-lock-modal'
 ], function (
         ko,
 	view,
@@ -83,6 +85,10 @@ define([
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
+			this.isSnapshotLockModalShown = ko.observable(false);
+			this.isAllowedSnapshotActions = ko.computed(() => {
+				return authApi.isPermitted('conceptset:*:snapshot:post');
+			})
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
@@ -93,10 +99,11 @@ define([
 					return false;
 				}
 
-				if (this.currentConceptSet() && (this.currentConceptSet()
-						.id !== 0)) {
-					return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
-						.id) || !config.userAuthenticationEnabled;
+				if (this.currentConceptSet() && (this.currentConceptSet().id !== 0)) {
+					if (ko.unwrap(this.currentConceptSet().isLocked)) {
+						return false; // If locked, user cannot edit
+					}
+					return authApi.isPermittedUpdateConceptset(this.currentConceptSet().id) || !config.userAuthenticationEnabled;
 				} else {
 					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 				}
@@ -227,6 +234,31 @@ define([
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 
+			this.lockHistoryParams = ko.observable({
+				currentConceptSet: this.currentConceptSet,
+				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
+			});
+
+			this.isLocked = ko.observable(false);
+			this.currentConceptSetSubscription = this.currentConceptSet.subscribe(currentSet => {
+				if (currentSet) {
+					this.isLocked(ko.unwrap(currentSet.isLocked));
+				}
+			});
+			this.isLockedSubscription = this.isLocked.subscribe(isLockedValue => {
+				const currentSet = this.currentConceptSet();
+				if (currentSet) {
+					currentSet.isLocked = isLockedValue;
+					this.conceptSetStore.current.valueHasMutated();
+				}
+			})
+
+			this.canLock = ko.observable(true);
+			this.canUnlock = ko.observable(true);
+
+			this.currentVocabularyVersion = sharedState.currentVocabularyVersion();
+			this.currentConceptSetId = ko.pureComputed(() => this.currentConceptSet().id);
+
 			this.tabs = [
 				{
 					title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
@@ -346,6 +378,12 @@ define([
 					hasBadge: true,
 					preload: true,
 				},
+				{
+					title: ko.i18n('cs.manager.tabs.lockHistory', 'Snapshot/Lock History'),
+					key: ViewMode.LOCK_HISTORY,
+					componentName: 'conceptset-lock-history',
+					componentParams: this.lockHistoryParams,
+				},
 			];
 			this.selectedTab = ko.observable(0);
 
@@ -401,6 +439,10 @@ define([
 
 			// initially resolve the concept set
 			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
+		}
+
+		lockOrUnlockSnapshot() {
+			this.isSnapshotLockModalShown(true);
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -467,6 +509,13 @@ define([
 					this.previewVersion(null);
 					conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
 					expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+					
+					const isLockedBatchCheckRequest = {
+						conceptSetIds: [conceptSetId]
+					};
+					const lockStatusResponse = await conceptSetService.getLockedStatusesForConceptSets(isLockedBatchCheckRequest);
+					const lockStatusMap = lockStatusResponse.data.lockStatus;
+					conceptSet.isLocked = ko.observable(lockStatusMap[conceptSetId] || false);
 				}
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});

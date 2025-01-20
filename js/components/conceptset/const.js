@@ -14,7 +14,8 @@ define([
 		RECOMMEND: 'recommend',
 		EXPORT: 'conceptset-export',
 		IMPORT: 'conceptset-import',
-		ANNOTATION: 'annotation'
+		ANNOTATION: 'annotation',
+		LOCK_HISTORY: 'lockHistory',
 	};
 	
 	const ConceptSetSources = {

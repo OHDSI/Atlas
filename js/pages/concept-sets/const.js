@@ -11,6 +11,7 @@ define(
       EXPORT: conceptSetConstants.ViewMode.EXPORT,
       IMPORT: conceptSetConstants.ViewMode.IMPORT,
       ANNOTATION: conceptSetConstants.ViewMode.ANNOTATION,
+      LOCK_HISTORY: conceptSetConstants.ViewMode.LOCK_HISTORY,
       EXPLORE: 'explore',
       COMPARE: 'compare',
       VERSIONS: 'versions',
