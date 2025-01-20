@@ -3,7 +3,7 @@
 <!-- /ko -->
 
 <!-- ko if: (currentConceptSet() != null && !loading()) -->
-<heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'),  icon: 'shopping-cart', theme: 'dark', tags: tags"></heading-title>
+<heading-title params="name: conceptSetCaption(), description: description(),  icon: 'shopping-cart', theme: 'dark', tags: tags"></heading-title>
 <!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} -->
 	<!-- /ko -->
@@ -25,6 +25,19 @@
         </button>
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
         <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
+        <button type="button" class="btn btn-primary" data-bind="visible: isAllowedSnapshotActions(), click: lockOrUnlockSnapshot,
+                       css: {
+                            'btn-lock-locked': isLocked(),
+                            'btn-lock-unlocked': !isLocked(),
+                            disabled: !canLock() || isProcessing()
+                       },
+                       attr: { title: isLocked() ? ko.i18n('components.unlock.title', 'Unlock Concept Set') : ko.i18n('components.snapshot.title', 'Concept Set Snapshot/Lock Actions') }">
+          <span class="fa-stack">
+            <i class="fa fa-camera fa-stack-1x"></i>
+            <i class="fa fa-key camera-lock-icon" data-bind="visible: isLocked"></i>
+            <i class="fa camera-lock-icon" data-bind="visible: !isLocked()"></i>
+          </span>
+        </button>
         <button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: optimize, css: { disabled: !canOptimize() || isProcessing() }, text: ko.i18n('cs.manager.optimize', 'Optimize')"></button>
 
 	<!-- ko if: enablePermissionManagement -->
@@ -202,3 +215,12 @@
 	checkAssignPermissionFn: $component.checkAssignPermission,
 	checkUnassignPermissionFn: $component.checkUnassignPermission
 "></tags-modal>
+
+<snapshot-lock-modal params="
+	isModalShown: isSnapshotLockModalShown,
+  isLocked: isLocked,
+  conceptSetStore: conceptSetStore,
+  parentLoading:  loading,
+  currentVocabularyVersion: currentVocabularyVersion,
+  currentConceptSetId: currentConceptSetId,
+"></snapshot-lock-modal>

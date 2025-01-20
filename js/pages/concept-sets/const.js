@@ -12,6 +12,7 @@ define(
       IMPORT: conceptSetConstants.ViewMode.IMPORT,
       ANNOTATION: conceptSetConstants.ViewMode.ANNOTATION,
       MAPPINGS: conceptSetConstants.ViewMode.MAPPINGS,
+      LOCK_HISTORY: conceptSetConstants.ViewMode.LOCK_HISTORY,
       EXPLORE: 'explore',
       COMPARE: 'compare',
       VERSIONS: 'versions',

@@ -7,10 +7,11 @@ define([
 	'services/AuthAPI',
 	'utils/DatatableUtils',
 	'utils/CommonUtils',
+	'services/ConceptSet',
 	'components/ac-access-denied',
 	'databindings',
 	'css!./style.css'
-], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
+], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils, conceptSetService) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -96,17 +97,42 @@ define([
 
 		self.loadConceptSetsFromRepository = function (url) {
 			self.loading(true);
-
+		
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
 					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
 					datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
-					datatableUtils.addTagGroupsToColumns(results, self.columns);
-					self.repositoryConceptSets(results);
-					self.loading(false);
+		
+					// Extract IDs for batch locked status check
+					const conceptSetIds = results.map(cs => cs.id);
+					const isLockedBatchCheckRequest = {
+						conceptSetIds: conceptSetIds
+					};
+					conceptSetService.getLockedStatusesForConceptSets(isLockedBatchCheckRequest).then(response => {
+						const lockStatusMap = response.data.lockStatus;
+						// Apply the locking status to each ConceptSet
+						results.forEach(conceptSet => {
+							conceptSet.isLocked = lockStatusMap[conceptSet.id] || false;
+						});
+						// Update the observable array with locked statuses
+						self.repositoryConceptSets(results);
+						datatableUtils.addTagGroupsToColumns(results, self.columns);
+						self.loading(false);
+					}).catch(error => {
+						console.error('Error while batch-fetching locked statuses for concept sets', error);
+						// Defaulting isLocked to false in case of error
+						results.forEach(conceptSet => {
+							conceptSet.isLocked = false;
+						});
+						self.repositoryConceptSets(results);
+						datatableUtils.addTagGroupsToColumns(results, self.columns);
+						self.loading(false);
+					});
+		
 				})
 				.fail(function (err) {
-					console.log(err);
+					console.log('Error fetching concept sets:', err);
+					self.loading(false);
 				});
 		}
 
@@ -150,6 +176,15 @@ define([
 		};
 
 		this.columns = ko.observableArray([
+			{
+				title: '',
+				data: 'isLocked',
+				sortable: false,
+				render: function (data, type, row) {
+					return data ? '<span class="fa fa-lock" aria-hidden="true"></span>' : '';
+				},
+				width: '20px',  // Fixed width for the lock icon column
+			},
 			{
 				title: ko.i18n('columns.id', 'Id'),
 				data: 'id'
