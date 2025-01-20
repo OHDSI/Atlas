@@ -1,0 +1,45 @@
+<loading data-bind="visible: isLoading()"
+    params="status: ko.i18n('components.snapshots.loading', 'Loading snapshot/lock history...')"></loading>
+<div data-bind="visible: !isLoading()">
+    <div class="button-container">
+        <button class="btn btn-success btn-sm" data-bind="click: loadData">
+            <i class="fa fa-refresh" aria-hidden="true"></i> Refresh
+        </button>
+    </div>
+
+    <faceted-datatable params="
+        order: [],
+        autoWidth: false,
+        reference: snapshotHistory,
+        columns: snapshotHistoryColumns,
+        options:  null,
+        pageLength: pageLength,
+        lengthMenu: lengthMenu,
+        rowClick: onRowClick,
+        language: ko.i18n('datatable.language')
+    ">
+    </faceted-datatable>
+
+    <tabs params="
+        componentParams: $component.componentParams,
+        selectedTab: selectedTab,
+        tabs: $component.tabs
+    "></tabs>
+
+    <!-- Concept Set Expression Items Table -->
+    <div data-bind="visible: selectedTab() === 0">
+        <faceted-datatable
+            params="reference: expressionItems(), columns: expressionItemColumns, options: tableOptions"></faceted-datatable>
+    </div>
+    <!-- Included Concepts Table -->
+    <div data-bind="visible: selectedTab() === 1">
+        <faceted-datatable
+            params="reference: includedConcepts(), columns: conceptColumns, options: tableOptions"></faceted-datatable>
+    </div>
+    <!-- Included Source Codes Table -->
+    <div data-bind="visible: selectedTab() === 2">
+        <faceted-datatable
+            params="reference: includedSourceCodes(), columns: conceptColumns, options: tableOptions"></faceted-datatable>
+    </div>
+
+</div>

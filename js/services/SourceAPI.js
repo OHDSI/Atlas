@@ -45,6 +45,15 @@ define(function (require, exports) {
       }
   }
 
+  function getSourceInfo(sourceKey) {
+	  return ohdsiUtil.cachedAjax({
+      method: 'GET',
+      url: config.api.url + 'source/' + sourceKey,
+      contentType: 'application/json',
+      error: authApi.handleAccessDenied,
+    });
+  }
+
   function getSource(sourceKey) {
 	  return ohdsiUtil.cachedAjax({
       method: 'GET',
@@ -217,6 +226,7 @@ define(function (require, exports) {
   var api = {
     getSources: getSources,
     getSource: getSource,
+    getSourceInfo: getSourceInfo,
     saveSource: saveSource,
     getCacheKey: getCacheKey,
     initSourcesConfig: initSourcesConfig,
