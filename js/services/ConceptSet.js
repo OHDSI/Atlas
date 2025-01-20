@@ -144,6 +144,26 @@ define(function (require) {
 		}).then(({ data }) => data);
 	}
 
+	function listConceptSetSnapshots(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/list-snapshots')
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function lockConceptSet(id, conceptSetLockRequest) {
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/lock', conceptSetLockRequest)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function unlockConceptSet(id, conceptSetLockRequest) {
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/unlock', conceptSetLockRequest)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function isLockedConceptSet(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/is-locked')
+			.catch(authApi.handleAccessDenied);
+	}
+
 	const api = {
 		loadConceptSet,
 		loadConceptSetExpression,
@@ -165,7 +185,11 @@ define(function (require) {
 		copyVersion,
 		saveConceptSetAnnotation,
 		getConceptSetAnnotation,
-		deleteConceptSetAnnotation
+		deleteConceptSetAnnotation,
+		listConceptSetSnapshots,
+		lockConceptSet,
+		unlockConceptSet,
+		isLockedConceptSet,
 	};
 
 	return api;

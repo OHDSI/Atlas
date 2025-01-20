@@ -45,7 +45,8 @@ define([
 	'components/name-validation',
 	'components/ac-access-denied',
 	'components/versions/versions',
-	'./components/tabs/conceptset-annotation'
+	'./components/tabs/conceptset-annotation',
+	'./components/tabs/conceptset-lock-history'
 ], function (
         ko,
 	view,
@@ -227,6 +228,16 @@ define([
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
 
+			this.lockHistoryParams = ko.observable({
+				current: this.currentConceptSet,
+				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
+			});
+
+			this.isLocked = ko.observable(false);
+			this.canLock = ko.observable(true);
+			this.canUnlock = ko.observable(true);
+			
+
 			this.tabs = [
 				{
 					title: ko.i18n('cs.manager.tabs.conceptSetExpression', 'Concept Set Expression'),
@@ -346,6 +357,14 @@ define([
 					hasBadge: true,
 					preload: true,
 				},
+				{
+					title: ko.i18n('cs.manager.tabs.lockHistory', 'Lock History'),
+					key: ViewMode.LOCK_HISTORY,
+					componentName: 'conceptset-lock-history',
+					componentParams: this.lockHistoryParams,
+					// hasBadge: true,
+					// preload: true,
+				},
 			];
 			this.selectedTab = ko.observable(0);
 
@@ -402,6 +421,16 @@ define([
 			// initially resolve the concept set
 			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
 		}
+
+
+		lockSnapshot(){
+			console.log("locking snapshot");
+		}
+
+		unlockSnapshot(){
+			console.log("unlocking snapshot");
+		}
+
 
 		onRouterParamsChanged(params, newParams) {
 			const {conceptSetId, mode, version} = Object.assign({}, params, newParams);
