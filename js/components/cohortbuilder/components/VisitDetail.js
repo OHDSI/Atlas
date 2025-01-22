@@ -40,7 +40,7 @@ define([
         },
       },
       {
-        ...constants.visitDetailAttributes.addGender,
+        ...constants.visitDetailAttributes.addGenderCS,
         selected: false,
         action: function () {
           if (self.Criteria.GenderCS() == null)
@@ -79,7 +79,7 @@ define([
         },
       },
       {
-        ...constants.visitDetailAttributes.addType,
+        ...constants.visitDetailAttributes.addTypeCS,
         selected: false,
         action: function () {
           if (self.Criteria.VisitDetailTypeCS() == null)
@@ -103,7 +103,7 @@ define([
         },
       },
       {
-        ...constants.visitDetailAttributes.addProviderSpecialty,
+        ...constants.visitDetailAttributes.addProviderSpecialtyCS,
         selected: false,
         action: function () {
           if (self.Criteria.ProviderSpecialtyCS() == null)
@@ -111,7 +111,7 @@ define([
         },
       },
       {
-        ...constants.visitDetailAttributes.addPlaceService,
+        ...constants.visitDetailAttributes.addPlaceServiceCS,
         selected: false,
         action: function () {
           if (self.Criteria.PlaceOfServiceCS() == null)

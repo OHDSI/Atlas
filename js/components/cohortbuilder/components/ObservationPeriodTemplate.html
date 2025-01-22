@@ -77,6 +77,18 @@
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: PeriodType()"></concept-list>
 				</td>
 			</tr>
+			<tr data-bind="if: PeriodTypeCS() != null, visible: PeriodTypeCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('PeriodTypeCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.periodTypeCS', 'with a period type concept')"></span>
+						<cycle-toggle-input params="{value: PeriodTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: PeriodTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyPeriodType', 'Any Period Type')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: AgeAtStart() != null, visible: AgeAtStart() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('AgeAtStart') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>

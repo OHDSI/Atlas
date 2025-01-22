@@ -51,8 +51,6 @@
 									</a></li>
 							</ul>
 						</div>
-						<!-- <drop-down-menu
-						params="actions: $component.addCriteriaActions, title: ko.i18n('components.criteriaGroup.addCriteria', 'Add criteria to group...'), formatOption: $component.formatOption"></drop-down-menu> -->
 					</td>
 				</tr>
 			</tbody>
@@ -81,7 +79,7 @@
 										data-bind="text: ko.i18n('components.criteriaGroup.withFollowingCriteria', 'with the following event criteria:')"></span>
 								</div>
 								<div>
-									<demographic-criteria params="criteria: $data"></demographic-criteria>
+									<demographic-criteria params="expression: $component.expression, criteria: $data"></demographic-criteria>
 								</div>
 							</div>
 						</td>

@@ -5,6 +5,7 @@ define([
   "../InputTypes/Range",
   "../InputTypes/Text",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./ConditionOccurrenceTemplate.html",
   "../const",
@@ -16,6 +17,7 @@ define([
   Range,
   Text,
   DateAdjustment,
+  ConceptSetSelection,
   CriteriaGroup,
   template,
   constants
@@ -61,11 +63,27 @@ define([
         },
       },
       {
+        ...constants.occurrenceAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.occurrenceAttributes.addConditionStatus,
         selected: false,
         action: function () {
             if (self.Criteria.ConditionStatus() == null)
                 self.Criteria.ConditionStatus(ko.observableArray());
+        }
+      },
+      {
+        ...constants.occurrenceAttributes.addConditionStatusCS,
+        selected: false,
+        action: function () {
+            if (self.Criteria.ConditionStatusCS() == null)
+                self.Criteria.ConditionStatusCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         }
       },
       {
@@ -108,11 +126,27 @@ define([
         },
       },
       {
+        ...constants.occurrenceAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ConditionTypeCS() == null)
+            self.Criteria.ConditionTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.occurrenceAttributes.addVisit,
         selected: false,
         action: function () {
           if (self.Criteria.VisitType() == null)
             self.Criteria.VisitType(ko.observableArray());
+        },
+      },
+      {
+        ...constants.occurrenceAttributes.addVisitCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.VisitTypeCS() == null)
+            self.Criteria.VisitTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -141,6 +175,14 @@ define([
         action: function () {
           if (self.Criteria.ProviderSpecialty() == null)
             self.Criteria.ProviderSpecialty(ko.observableArray());
+        },
+      },
+      {
+        ...constants.occurrenceAttributes.addProviderSpecialtyCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ProviderSpecialtyCS() == null)
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

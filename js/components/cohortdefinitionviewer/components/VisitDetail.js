@@ -1,10 +1,12 @@
 define([
   "knockout",
   'components/cohortbuilder/options',
+   "components/cohortbuilder/utils",
   "text!./VisitDetailTemplate.html",
 ], function (
   ko,
   options,
+  utils,
   template
 ) {
   function VisitDetailViewModel(params) {

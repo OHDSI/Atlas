@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range', 'text!./ObservationPeriodTemplate.html'], function (ko, options, Range, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/utils', 'text!./ObservationPeriodTemplate.html'
+], function (ko, options, utils, template) {
 
 	function ObservationPeriodViewModel(params) {
 		var self = this;
@@ -6,17 +7,6 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.expression = ko.utils.unwrapObservable(params.expression);
 		self.Criteria = params.criteria.ObservationPeriod;
 		self.options = options;
-		
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
-		
 	}
 
 	// return compoonent definition

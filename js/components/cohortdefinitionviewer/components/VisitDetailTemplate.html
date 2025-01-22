@@ -30,11 +30,11 @@
 	<!-- /ko -->
 	<!-- ko if: VisitDetailTypeCS() != null -->
 	<li>
-		<span data-bind="text: ko.i18n('components.conditionVisitDetail.visitDetailType', 'visit detail type')"></span>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.visitDetailTypeCS', 'with visit detail type concept')"></span>
 		<span data-bind="text: `${VisitDetailTypeCS().IsExclusion() ? 'is not' : 'is'}`"></span>
 		<conceptset-reference params="conceptSetId: VisitDetailTypeCS().CodesetId, 
 			conceptSets: $component.expression.ConceptSets, 
-			defaultName: ko.i18n('components.conditionVisitDetail.anyType', 'Any Visit Detail Type')"></conceptset-reference>
+			defaultName: ko.i18n('components.cohortCriteria.anyVisitDetailType', 'Any Visit Detail Type')"></conceptset-reference>
 	</li>
 	<!-- /ko -->
 	<!-- ko if: VisitDetailSourceConcept() != null -->
@@ -59,29 +59,29 @@
 	<!-- /ko -->	 
 	<!-- ko if: GenderCS() != null -->
 	<li>
-		<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_8', 'with a gender')"></span>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
 		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer>
 		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, 
 			conceptSets: $component.expression.ConceptSets, 
-			defaultName: ko.i18n('components.conditionVisitDetail.anyGender', 'Any Gender')"></conceptset-reference>
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
 	</li>
 	<!-- /ko -->	 
 	<!-- ko if: ProviderSpecialtyCS() != null -->
 	<li>
-		<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_9', 'with a Provider Specialty')"></span>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.providerSpecialtyCS', 'with provider specialty concept')"></span>
 		<cycle-toggle-input-viewer params="{value: ProviderSpecialtyCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer>
 		<conceptset-reference params="conceptSetId: ProviderSpecialtyCS().CodesetId, 
 			conceptSets: $component.expression.ConceptSets, 
-			defaultName: ko.i18n('components.conditionVisitDetail.anyProviderSpeciality', 'Any Provider Specialty')"></conceptset-reference>
+			defaultName: ko.i18n('components.cohortCriteria.anyProviderSpeciality', 'Any Provider Specialty')"></conceptset-reference>
 	</li>
 	<!-- /ko -->	 
 	<!-- ko if: PlaceOfServiceCS() != null -->
 	<li>
-		<span data-bind="text: ko.i18n('components.conditionVisitDetail.conditionVisitDetailText_10', 'with a Place of Service')"></span>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.placeOfServiceCS', 'with a place of service concept')"></span>
 		<cycle-toggle-input-viewer params="{value: PlaceOfServiceCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer>
 		<conceptset-reference params="conceptSetId: PlaceOfServiceCS().CodesetId, 
 			conceptSets: $component.expression.ConceptSets, 
-			defaultName: ko.i18n('components.conditionVisitDetail.anyPlaceService', 'Any Place of Service')"></conceptset-reference>
+			defaultName: ko.i18n('components.cohortCriteria.anyPlaceOfService', 'Any Place of Service')"></conceptset-reference>
 	</li>
 	<!-- /ko -->	 
 	<!-- ko if: PlaceOfServiceLocation() != null -->
@@ -90,6 +90,9 @@
 		<conceptset-reference params="conceptSetId: PlaceOfServiceLocation(), conceptSets: $component.expression.ConceptSets, 
 			defaultName: ko.i18n('components.conditionVisitDetail.anyLocation', 'Any Location')"></conceptset-reference>
 	</li>
-	<!-- /ko -->	 
-	</ul>
+	<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
+	<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group-viewer>	
+<!-- /ko -->
+</ul>
 <!-- /ko -->

@@ -1,4 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/ConceptSetSelection'], 
+	function (ko, Criteria, Range, Concept, ConceptSetSelection) {
 
 	function Death(data, conceptSets) {
 		var self = this;
@@ -28,6 +29,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 		self.DeathTypeExclude = ko.observable(data.DeathTypeExclude || null);
+		self.DeathTypeCS = ko.observable(data.DeathTypeCS && new ConceptSetSelection(data.DeathTypeCS, conceptSets));
+
 		self.DeathSourceConcept = ko.observable(data.DeathSourceConcept != null ? ko.observable(data.DeathSourceConcept) : null);
 		// Derived Fields
 		self.Age = ko.observable(data.Age && new Range(data.Age));
@@ -36,11 +39,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
-	  /* Do we still need prior enroll days inside the individual criteria?
-		self.PriorEnrollDays = ko.observable((typeof data.PriorEnrollDays == "number") ? data.PriorEnrollDays : null);
-		self.AfterEnrollDays = ko.observable((typeof data.AfterEnrollDays == "number") ? data.AfterEnrollDays : null);
-		*/
 	}
 
 	Death.prototype = new Criteria();
