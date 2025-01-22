@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range', 'text!./PayerPlanPeriodTemplate.html'], function (ko, options, Range, template) {
+define(['knockout','components/cohortbuilder/options', 'text!./PayerPlanPeriodTemplate.html'
+], function (ko, options, template) {
 	function PayerPlanPeriodViewModel(params) {
 		var self = this;
 		
@@ -6,15 +7,7 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.Criteria = params.criteria.PayerPlanPeriod;
 		self.options = options;
 		
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-					var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-					return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-					return defaultName;
-		};
+    self.indexMessage = ko.i18n('components.conditionPayerPlanPeriod.indexDataText', 'The index date refers to the payer plan period.');
 	}
 	
 	return {

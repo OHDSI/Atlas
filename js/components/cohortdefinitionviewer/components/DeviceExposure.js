@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range','components/cohortbuilder/InputTypes/Text', 'text!./DeviceExposureTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/utils', 'text!./DeviceExposureTemplate.html'
+], function (ko, options, utils, template) {
 
 	function DeviceExposureViewModel(params) {
 		var self = this;
@@ -7,15 +8,17 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.Criteria = params.criteria.DeviceExposure;
 		self.options = options;
 
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
+    self.indexMessage = ko.i18nformat(
+      'components.conditionDevice.indexDataText',
+      'The index date refers to the device exposure of <%= conceptSetName %>.',
+      {
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionDevice.anyDevice', 'Any Device')
+        ))
+      }
+    );
 		
 	}
 

@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range','components/cohortbuilder/InputTypes/Text', 'text!./ObservationTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilder/utils', 'text!./ObservationTemplate.html'
+], function (ko, options, utils, template) {
 
 	function ObservationViewModel(params) {
 		var self = this;
@@ -7,16 +8,17 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.Criteria = params.criteria.Observation;
 		self.options = options;
 
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
-		
+    self.indexMessage = ko.i18nformat(
+      'components.conditionObservation.indexDataText',
+      'The index date refers to the observation of <%= conceptSetName %>.',
+      {
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionObservation.anyObservation', 'Any Observation')
+        ))
+      }
+    );
 	}
 
 	// return compoonent definition

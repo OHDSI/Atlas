@@ -1,4 +1,4 @@
-define(['knockout', './Criteria', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
+define(['knockout', './Criteria', '../InputTypes/Range', 'conceptpicker/InputTypes/Concept', '../InputTypes/ConceptSetSelection'], function (ko, Criteria, Range, Concept, ConceptSetSelection) {
 
 	function ConditionEra(data, conceptSets) {
 		var self = this;
@@ -20,7 +20,6 @@ define(['knockout', './Criteria', '../InputTypes/Range', 'conceptpicker/InputTyp
 
 		// Verbatim fields
 		self.CodesetId = ko.observable(data.CodesetId);
-		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
 		self.EraStartDate = ko.observable(data.EraStartDate && new Range(data.EraStartDate));
 		self.EraEndDate = ko.observable(data.EraEndDate && new Range(data.EraEndDate));
@@ -36,6 +35,8 @@ define(['knockout', './Criteria', '../InputTypes/Range', 'conceptpicker/InputTyp
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
+
 	}
 
 	ConditionEra.prototype = new Criteria();

@@ -74,6 +74,18 @@
 					</div>
 				</td>
 			</tr>
+			<tr data-bind="if: UnitCS() != null, visible: UnitCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('UnitCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.unitCS', 'with unit concept')"></span>
+						<cycle-toggle-input params="{value: UnitCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: UnitCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyUnit', 'Any Unit')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: DoseValue() != null, visible: DoseValue() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('GapDays') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
@@ -120,7 +132,20 @@
 					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
+		</tr>
+		<tr data-bind="if: GenderCS() != null, visible: GenderCS() != null">
+			<td><i data-bind="click: function() { $component.removeCriterion('GenderCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+			<td>
+				<div>
+					<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+					<cycle-toggle-input params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+					</cycle-toggle-input>
+					<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+						defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-selector>
+				</div>
+			</td>
+		</tr>
+		<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('CorrelatedCriteria') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td style="background-color: white">
 					<criteria-group

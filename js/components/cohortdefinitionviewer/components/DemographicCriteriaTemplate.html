@@ -10,15 +10,42 @@
 		<span data-bind="text: ko.i18n('components.demographicCriteria.demographicCriteriaText_1', 'gender is any of:')"></span>
 	 <concept-list-viewer params="ConceptList: Gender()"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: GenderCS() != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: Race() != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.demographicCriteria.demographicCriteriaText_2', 'race is any of:')"></span>
 	 <concept-list-viewer params="ConceptList: Race()"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: RaceCS() != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.raceCS', 'with race concept')"></span>
+		<cycle-toggle-input-viewer params="{value: RaceCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: RaceCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyRace', 'Any Race')"></conceptset-reference>
+</li>
+<!-- /ko -->
 <!-- ko if: Ethnicity() != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.demographicCriteria.demographicCriteriaText_3', 'ethnicity is any of:')"></span>
 	 <concept-list-viewer params="ConceptList: Ethnicity()"></concept-list-viewer></li>
+<!-- /ko -->	
+<!-- ko if: EthnicityCS() != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.ethnicityCS', 'with ethnicity concept')"></span>
+		<cycle-toggle-input-viewer params="{value: EthnicityCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: EthnicityCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyEthnicity', 'Any Ethnicity')"></conceptset-reference>
+</li>
 <!-- /ko -->	
 <!-- ko if: OccurrenceStartDate() != null -->
 	<li>

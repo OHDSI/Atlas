@@ -25,7 +25,7 @@ define(function (require, exports, module) {
 		
 		if (data.DemographicCriteriaList && data.DemographicCriteriaList.length > 0) {
 			data.DemographicCriteriaList.forEach(function (d) {
-				self.DemographicCriteriaList.push(new DemographicCriteria(d));
+				self.DemographicCriteriaList.push(new DemographicCriteria(d, conceptSets));
 			});
 		}
 

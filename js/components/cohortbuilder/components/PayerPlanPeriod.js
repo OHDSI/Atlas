@@ -3,11 +3,12 @@ define([
   "../options",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../InputTypes/Period",
   "../CriteriaGroup",
   "text!./PayerPlanPeriodTemplate.html",
   "../const"
-], function (ko, options, Range, DateAdjustment, Period, CriteriaGroup, template, constants) {
+], function (ko, options, Range, DateAdjustment, ConceptSetSelection, Period, CriteriaGroup, template, constants) {
   function PayerPlanPeriodViewModel(params) {
     var self = this;
 
@@ -92,6 +93,14 @@ define([
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.payerPlanAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range','components/cohortbuilder/InputTypes/Text', 'text!./SpecimenTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/utils', 'text!./SpecimenTemplate.html'
+], function (ko, options, utils, template) {
 
 	function SpecimenViewModel(params) {
 		var self = this;
@@ -6,15 +7,17 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.Criteria = params.criteria.Specimen;
 		self.options = options;
 		
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
+    self.indexMessage = ko.i18nformat(
+      'components.conditionSpecimen.indexDataText',
+      'The index date refers to the specimen of <%= conceptSetName %>.',
+      {
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionSpecimen.anySpecimen', 'Any Specimen')
+        ))
+      }
+    );
 		
 	}
 

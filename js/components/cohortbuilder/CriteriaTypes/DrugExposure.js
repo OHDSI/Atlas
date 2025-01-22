@@ -1,4 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text','../InputTypes/ConceptSetSelection'
+], function (ko, Criteria, Range, Concept, Text, ConceptSetSelection) {
 
 	function DrugExposure(data, conceptSets) {
 		var self = this;
@@ -29,6 +30,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 		self.DrugTypeExclude = ko.observable(data.DrugTypeExclude || null);		
+		self.DrugTypeCS = ko.observable(data.DrugTypeCS && new ConceptSetSelection(data.DrugTypeCS, conceptSets));
 		self.StopReason = ko.observable(data.StopReason && new Text(data.StopReason));
 		self.Refills = ko.observable(data.Refills && new Range(data.Refills));
 		self.Quantity = ko.observable(data.Quantity && new Range(data.Quantity));
@@ -36,10 +38,12 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.RouteConcept = ko.observable(data.RouteConcept && ko.observableArray(data.RouteConcept.map(function (d) {
 			return new Concept(d);
 		})));
+		self.RouteConceptCS = ko.observable(data.RouteConceptCS && new ConceptSetSelection(data.RouteConceptCS, conceptSets));
 		self.EffectiveDrugDose = ko.observable(data.EffectiveDrugDose && new Range(data.EffectiveDrugDose));
 		self.DoseUnit = ko.observable(data.DoseUnit && ko.observableArray(data.DoseUnit.map(function (d) {
 			return new Concept(d);
 		})));
+		self.DoseUnitCS = ko.observable(data.DoseUnitCS && new ConceptSetSelection(data.DoseUnitCS, conceptSets));
 		self.LotNumber = ko.observable(data.LotNumber && new Text(data.LotNumber));
 		self.DrugSourceConcept = ko.observable(data.DrugSourceConcept != null ? ko.observable(data.DrugSourceConcept) : null);
 
@@ -51,18 +55,17 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
-	  /* Do we still need prior enroll days inside the individual criteria?
-		self.PriorEnrollDays = ko.observable((typeof data.PriorEnrollDays == "number") ? data.PriorEnrollDays : null);
-		self.AfterEnrollDays = ko.observable((typeof data.AfterEnrollDays == "number") ? data.AfterEnrollDays : null);
-		*/
-	 
 		self.ProviderSpecialty = ko.observable(data.ProviderSpecialty && ko.observableArray(data.ProviderSpecialty.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ProviderSpecialtyCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.ProviderSpecialtyCS, conceptSets));
+
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.VisitTypeCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.VisitTypeCS, conceptSets));
 
 	}
 

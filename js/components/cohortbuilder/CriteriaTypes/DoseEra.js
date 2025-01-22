@@ -1,4 +1,4 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Concept) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/ConceptSetSelection'], function (ko, Criteria, Range, Concept, ConceptSetSelection) {
 
 	function DoseEra(data, conceptSets) {
 		var self = this;
@@ -26,6 +26,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Unit = ko.observable(data.Unit && ko.observableArray(data.Unit.map(function (d) {
 			return new Concept(d);
 		}))); 
+		self.UnitCS = ko.observable(data.UnitCS && new ConceptSetSelection(data.UnitCS, conceptSets));
+
 		self.DoseValue = ko.observable(data.DoseValue && new Range(data.DoseValue));
 		self.EraLength = ko.observable(data.EraLength && new Range(data.EraLength));
 
@@ -38,6 +40,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
+		
 	}
 
 	DoseEra.prototype = new Criteria();

@@ -27,7 +27,6 @@ define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/ConceptS
 		self.VisitDetailStartDate = ko.observable(data.VisitDetailStartDate && new Range(data.VisitDetailStartDate));
 		self.VisitDetailEndDate = ko.observable(data.VisitDetailEndDate && new Range(data.VisitDetailEndDate));
 		self.VisitDetailTypeCS = ko.observable(data.VisitDetailTypeCS && new ConceptSetSelection(data.VisitDetailTypeCS, conceptSets));
-		self.VisitDetailTypeExclude = ko.observable(data.VisitDetailTypeExclude || null);
 		self.VisitDetailSourceConcept = ko.observable(data.VisitDetailSourceConcept != null ? ko.observable(data.VisitDetailSourceConcept) : null);
 		self.VisitDetailLength = ko.observable(data.VisitDetailLength && new Range(data.VisitDetailLength));
 

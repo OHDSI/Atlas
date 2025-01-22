@@ -20,7 +20,7 @@
 		<span data-bind="if: ($index() > 0)"><span data-bind="text: $component.group().Type() == 'ALL' ? 'and ' : 'or '"></span></span>
 		<span data-bind="text:ko.i18n('components.criteriaGroup.withFollowingCriteria', 'with the following event criteria:')"></span>
 
-		<demographic-criteria-viewer params="criteria: $data"></demographic-criteria-viewer>
+		<demographic-criteria-viewer params="{criteria: $data, expression: $component.expression}"></demographic-criteria-viewer>
 	</li>
 <!-- /ko -->
 <!-- ko foreach: group().CriteriaList -->
@@ -49,6 +49,7 @@
 			<br/>
 			<b data-bind="text:ko.i18n('components.criteriaGroup.occurringWithinTheSameVisit', 'occurring within the same visit')"></b>
 			<!-- /ko -->
+			<div class="indexMessage"><span class="indexMessage" data-bind="text: $component.indexMessage"></span>
 		</div>	
 	</li>
 <!-- /ko -->
