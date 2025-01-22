@@ -20,6 +20,8 @@ define([
   class ConceptsetLockHistory extends AutoBind(Component) {
       constructor(params) {
           super(params);
+          this.currentConceptSet = params.currentConceptSet();
+        
           this.isLoading = ko.observable(true);
           this.snapshotHistory = ko.observable();
           this.canDeleteSnapshots = ko.observable(false);
@@ -178,7 +180,7 @@ define([
       async loadData() {
         this.isLoading(true);
         try {
-          const data = await conceptSetService.listConceptSetSnapshots();
+          const data = await conceptSetService.listConceptSetSnapshots(this.currentConceptSet.id);
           this.snapshotHistory(data.data);
       //    this.data(this.handleConvertData(data.data));
         } catch (ex) {

@@ -27,7 +27,19 @@
         <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
         <button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: optimize, css: { disabled: !canOptimize() || isProcessing() }, text: ko.i18n('cs.manager.optimize', 'Optimize')"></button>
         <button type="button" class="btn btn-primary" data-bind="visible: !isLocked(), click: lockSnapshot, css: { disabled: !canLock() || isProcessing() }, text: ko.i18n('cs.manager.lockSnapshot', 'Lock')"></button>
-        <button type="button" class="btn btn-primary" data-bind="visible: isLocked(), click: unlockSnapshot, css: { disabled: !canUnlock() || isProcessing() }, text: ko.i18n('cs.manager.unlockSnapshot', 'Unlock')"></button>
+        <button type="button" class="btn btn-primary" data-bind="click: lockOrUnlockSnapshot,
+                           css: {
+                                'btn-lock-locked': isLocked(),
+                                'btn-lock-unlocked': !isLocked(),
+                                disabled: !canLock() || isProcessing()
+                              },
+                           title: ko.i18n('cs.manager.toggleLock', 'Toggle Lock')">
+          <i class="fa" data-bind="css: {
+                             'fa-lock': isLocked(),
+                             'fa-lock-open': !isLocked()
+                          }"></i>
+        </button>
+        <!-- <button type="button" class="btn btn-primary" data-bind="visible: isLocked(), click: unlockSnapshot, css: { disabled: !canUnlock() || isProcessing() }, text: ko.i18n('cs.manager.unlockSnapshot', 'Unlock')"></button> -->
 
 	<!-- ko if: enablePermissionManagement -->
         <button class="btn btn-primary" data-bind="visible: !previewVersion() && isOwner(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
@@ -204,3 +216,11 @@
 	checkAssignPermissionFn: $component.checkAssignPermission,
 	checkUnassignPermissionFn: $component.checkUnassignPermission
 "></tags-modal>
+
+<snapshot-lock-modal params="
+	isModalShown: isSnapshotLockModalShown,
+  isLocked: isLocked,
+  currentVocabularyVersion: currentVocabularyVersion,
+  currentConceptSetId: currentConceptSetId,
+"></snapshot-lock-modal>
+

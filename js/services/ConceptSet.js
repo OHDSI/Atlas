@@ -149,6 +149,11 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
+	function invokeConceptSetSnapshotAction(id, conceptSetSnapshotActionRequest) {
+		return httpService.doPost(config.api.url + 'conceptset/' + id + '/snapshot', conceptSetSnapshotActionRequest)
+			.catch(authApi.handleAccessDenied);
+	}
+
 	function lockConceptSet(id, conceptSetLockRequest) {
 		return httpService.doPut(config.api.url + 'conceptset/' + id + '/lock', conceptSetLockRequest)
 			.catch(authApi.handleAccessDenied);
@@ -187,6 +192,7 @@ define(function (require) {
 		getConceptSetAnnotation,
 		deleteConceptSetAnnotation,
 		listConceptSetSnapshots,
+		invokeConceptSetSnapshotAction,
 		lockConceptSet,
 		unlockConceptSet,
 		isLockedConceptSet,

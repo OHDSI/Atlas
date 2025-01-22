@@ -46,7 +46,8 @@ define([
 	'components/ac-access-denied',
 	'components/versions/versions',
 	'./components/tabs/conceptset-annotation',
-	'./components/tabs/conceptset-lock-history'
+	'./components/tabs/conceptset-lock-history',
+	'./components/modal/snapshot-lock-modal'
 ], function (
         ko,
 	view,
@@ -84,6 +85,7 @@ define([
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
+			this.isSnapshotLockModalShown = ko.observable(false);
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
@@ -229,14 +231,17 @@ define([
 			});
 
 			this.lockHistoryParams = ko.observable({
-				current: this.currentConceptSet,
+				currentConceptSet: this.currentConceptSet,
 				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
 			});
 
 			this.isLocked = ko.observable(false);
 			this.canLock = ko.observable(true);
 			this.canUnlock = ko.observable(true);
-			
+
+			this.currentVocabularyVersion = sharedState.currentVocabularyVersion();
+			//this.currentVocabularySchema = ko.observable('23423234');
+			this.currentConceptSetId = ko.pureComputed(() => this.currentConceptSet().id);
 
 			this.tabs = [
 				{
@@ -358,7 +363,7 @@ define([
 					preload: true,
 				},
 				{
-					title: ko.i18n('cs.manager.tabs.lockHistory', 'Lock History'),
+					title: ko.i18n('cs.manager.tabs.lockHistory', 'Snapshot/Lock History'),
 					key: ViewMode.LOCK_HISTORY,
 					componentName: 'conceptset-lock-history',
 					componentParams: this.lockHistoryParams,
@@ -422,9 +427,20 @@ define([
 			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
 		}
 
+		lockOrUnlockSnapshot() {
+			console.log("locking or unlocking snapshot");
+			// Toggle lock state
+			this.isSnapshotLockModalShown(true);
+
+			
+			// Add actual implementation to handle locking logic in your application
+		}
 
 		lockSnapshot(){
 			console.log("locking snapshot");
+			this.isSnapshotLockModalShown(true);
+			this.isSnapshotLockModalShown.valueHasMutated(); // Notify subscribers to re-evaluate
+
 		}
 
 		unlockSnapshot(){
