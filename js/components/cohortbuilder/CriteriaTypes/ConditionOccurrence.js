@@ -37,7 +37,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.ConditionStatus = ko.observable(data.ConditionStatus && ko.observableArray(data.ConditionStatus.map(function (d) {
 			return new Concept(d);
 		})));
-		self.ConditionStatusCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.ConditionStatusCS, conceptSets));
+		self.ConditionStatusCS = ko.observable(data.ConditionStatusCS && new ConceptSetSelection(data.ConditionStatusCS, conceptSets));
 
 		// Derived Fields
 		self.First = ko.observable(data.First || null);
@@ -52,12 +52,12 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.ProviderSpecialty = ko.observable(data.ProviderSpecialty && ko.observableArray(data.ProviderSpecialty.map(function (d) {
 			return new Concept(d);
 		})));
-		self.ProviderSpecialtyCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.ProviderSpecialtyCS, conceptSets));
+		self.ProviderSpecialtyCS = ko.observable(data.ProviderSpecialtyCS && new ConceptSetSelection(data.ProviderSpecialtyCS, conceptSets));
 
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
-		self.VisitTypeCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.VisitTypeCS, conceptSets));
+		self.VisitTypeCS = ko.observable(data.VisitTypeCS && new ConceptSetSelection(data.VisitTypeCS, conceptSets));
 
 	}
 
