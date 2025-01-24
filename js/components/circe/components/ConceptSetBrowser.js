@@ -7,10 +7,11 @@ define([
 	'services/AuthAPI',
 	'utils/DatatableUtils',
 	'utils/CommonUtils',
+	'services/ConceptSet',
 	'components/ac-access-denied',
 	'databindings',
 	'css!./style.css'
-], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
+], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils, conceptSetService) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -94,21 +95,103 @@ define([
 		  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
 		});
 
+		// self.loadConceptSetsFromRepository = function (url) {
+		// 	self.loading(true);
+
+		// 	VocabularyProvider.getConceptSetList(url)
+		// 		.done(function (results) {
+		// 			datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
+		// 			datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
+		// 			datatableUtils.addTagGroupsToColumns(results, self.columns);
+		// 			self.repositoryConceptSets(results);
+		// 			self.loading(false);
+		// 		})
+		// 		.fail(function (err) {
+		// 			console.log(err);
+		// 		});
+		// }
+
+
 		self.loadConceptSetsFromRepository = function (url) {
 			self.loading(true);
-
+		
 			VocabularyProvider.getConceptSetList(url)
 				.done(function (results) {
 					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
 					datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
-					datatableUtils.addTagGroupsToColumns(results, self.columns);
-					self.repositoryConceptSets(results);
-					self.loading(false);
+		
+					// Extract IDs for batch check
+					const conceptSetIds = results.map(cs => cs.id);
+		
+					// Create DTO for the batch request
+					const isLockedBatchCheckRequest = {
+						conceptSetIds: conceptSetIds
+					};
+		
+					// Perform batch check
+					conceptSetService.getLockedStatusesForConceptSets(isLockedBatchCheckRequest).then(response => {
+						const lockStatusMap = response.data.lockStatus;
+		
+						// Apply the locking status to each ConceptSet
+						results.forEach(conceptSet => {
+							conceptSet.isLocked = ko.observable(lockStatusMap[conceptSet.id] || false);
+						});
+		
+						// Update the observable array with locked statuses
+						self.repositoryConceptSets(results);
+						datatableUtils.addTagGroupsToColumns(results, self.columns);
+						self.loading(false);
+					}).catch(error => {
+						console.error('Error while fetching lock statuses', error);
+						// Defaulting isLocked to false in case of error
+						results.forEach(conceptSet => {
+							conceptSet.isLocked = ko.observable(false);
+						});
+						self.repositoryConceptSets(results);
+						datatableUtils.addTagGroupsToColumns(results, self.columns);
+						self.loading(false);
+					});
+		
 				})
 				.fail(function (err) {
-					console.log(err);
+					console.log('Error fetching concept sets:', err);
+					self.loading(false);
 				});
 		}
+
+
+		// self.loadConceptSetsFromRepository = function (url) {
+		// 	self.loading(true);
+		
+		// 	VocabularyProvider.getConceptSetList(url)
+		// 		.done(function (results) {
+		// 			datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
+		// 			datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
+		
+		// 			const promises = results.map(conceptSet => {
+		// 				return conceptSetService.isLockedConceptSet(conceptSet.id)
+		// 					.then(lockedStatus => {
+		// 						conceptSet.isLocked = ko.observable(lockedStatus);
+		// 						return conceptSet;
+		// 					})
+		// 					.catch(error => {
+		// 						console.error('Error checking locked status for:', conceptSet.id, error);
+		// 						conceptSet.isLocked = ko.observable(false);
+		// 						return conceptSet;
+		// 					});
+		// 			});
+		
+		// 			Promise.all(promises).then(lockedResults => {
+		// 				self.repositoryConceptSets(lockedResults);
+		// 				datatableUtils.addTagGroupsToColumns(lockedResults, self.columns);
+		// 				self.loading(false);
+		// 			});
+		// 		})
+		// 		.fail(function (err) {
+		// 			console.log('Error fetching concept sets:', err);
+		// 			self.loading(false);
+		// 		});
+		// }
 
 		// datatable callbacks:
 
@@ -150,6 +233,15 @@ define([
 		};
 
 		this.columns = ko.observableArray([
+			{
+				title: '',
+				data: 'isLocked',
+				sortable: false,
+				render: function (data, type, row) {
+					return data() ? '<span class="fa fa-lock" aria-hidden="true"></span>' : '';
+				},
+				width: '20px',  // Fixed width for the lock icon column
+			},
 			{
 				title: ko.i18n('columns.id', 'Id'),
 				data: 'id'

@@ -52,7 +52,7 @@ define([
                 sortable: false
               },
               {
-                title: ko.i18n('columns.user', 'User'),
+                title: ko.i18n('columns.createdBy', 'Created By'),
                 data: 'user',
                 render: (d, t, r) => {
                   if (r.user === null || r.user === undefined || !r.user) {
@@ -140,42 +140,10 @@ define([
           this.loadData();
       }
 
-    // objectMap(obj) {
-    //   const newObject = {};
-    //   const keysNotToParse = ['createdBy', 'createdDate', 'vocabularyVersion', 'conceptSetVersion', 'copiedFromConceptSetIds', 'searchData'];
-    //   Object.keys(obj).forEach((key) => {
-    //     if (typeof obj[key] === 'string' && !keysNotToParse.includes(key)) {
-    //       newObject[key] = JSON.parse(obj[key] || null);
-    //     } else {
-    //       newObject[key] = obj[key];
-    //     }
-    //   });
-    //   return newObject;
-    // }
 
       async onRowClick(d, e){
-        // try {
-        //   const { id } = d;
-        //   if(e.target.className === 'deleteIcon fa fa-trash') {
-        //     const res = await this.delete(id);
-        //     if(res){
-        //       this.loadData();
-        //     }
-        //   }
-        // } catch (ex) {
-        //   console.log(ex);
-        // } finally {
-        //   this.isLoading(false);
-        // }
-      }
 
-      // handleConvertData(arr){
-      //   const newDatas = [];
-      //   (arr || []).forEach(item => {
-      //     newDatas.push(this.objectMap(item))
-      //   })
-      //   return newDatas;
-      // }
+      }
 
       async loadData() {
         this.isLoading(true);
@@ -184,7 +152,7 @@ define([
           this.snapshotHistory(data.data);
       //    this.data(this.handleConvertData(data.data));
         } catch (ex) {
-          console.log(ex);
+          console.error(`Error refreshing snapshots: ${ex}`);
         } finally {
           this.isLoading(false);
         }

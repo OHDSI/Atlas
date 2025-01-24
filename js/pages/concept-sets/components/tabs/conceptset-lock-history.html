@@ -1,15 +1,21 @@
-<loading data-bind="visible: isLoading()" params="status: ko.i18n('components.lockhistory.loading', 'Loading lock history...')"></loading>
+<loading data-bind="visible: isLoading()" params="status: ko.i18n('components.snapshots.loading', 'Loading snapshot/lock history...')"></loading>
 <div data-bind="visible: !isLoading()">
-	<faceted-datatable params="
-		order: [],
-		autoWidth: false,
-		reference: snapshotHistory,
-		columns: snapshotHistoryColumns,
-		options:  null,
-		pageLength: pageLength,
-		lengthMenu: lengthMenu,
-		rowClick: onRowClick,
-		language: ko.i18n('datatable.language')
+    <div class="button-container">
+        <button class="btn btn-success btn-sm" data-bind="click: loadData">
+            <i class="fa fa-refresh" aria-hidden="true"></i> Refresh
+        </button>
+    </div>
+
+    <faceted-datatable params="
+        order: [],
+        autoWidth: false,
+        reference: snapshotHistory,
+        columns: snapshotHistoryColumns,
+        options:  null,
+        pageLength: pageLength,
+        lengthMenu: lengthMenu,
+        rowClick: onRowClick,
+        language: ko.i18n('datatable.language')
     ">
-	</faceted-datatable>
+    </faceted-datatable>
 </div>

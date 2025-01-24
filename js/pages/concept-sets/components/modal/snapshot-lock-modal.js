@@ -34,7 +34,6 @@ define([
            // this.unlockConfirmationMessage = ko.observable('');
 
             //this.sourceKey = sharedState.sourceKeyOfVocabUrl();
-            this.user = ko.observable('defaultUser');
             this.vocabularyBundleName = ko.observable('defaultBundleName');
             this.vocabularyBundleSchema = ko.observable('defaultBundleSchema');
             this.vocabularyBundleVersion = ko.observable('defaultBundleVersion');
@@ -53,7 +52,7 @@ define([
                 sourceKey: sharedState.sourceKeyOfVocabUrl(),
                 action: action,
                 snapshotDate: (new Date()).toISOString(), // Assuming snapshot date is now
-                user: this.user(),
+                user: authApi.subject(),
                 vocabularyBundleName: this.vocabularyBundleName(),
                 vocabularyBundleSchema: this.vocabularyBundleSchema(),
                 vocabularyBundleVersion: this.vocabularyBundleVersion(),
