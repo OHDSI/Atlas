@@ -26,7 +26,7 @@
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
         <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
         <button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: optimize, css: { disabled: !canOptimize() || isProcessing() }, text: ko.i18n('cs.manager.optimize', 'Optimize')"></button>
-        <button type="button" class="btn btn-primary" data-bind="visible: !isLocked(), click: lockSnapshot, css: { disabled: !canLock() || isProcessing() }, text: ko.i18n('cs.manager.lockSnapshot', 'Lock')"></button>
+        <!-- <button type="button" class="btn btn-primary" data-bind="visible: !isLocked(), click: lockSnapshot, css: { disabled: !canLock() || isProcessing() }, text: ko.i18n('cs.manager.lockSnapshot', 'Lock')"></button>
         <button type="button" class="btn btn-primary" data-bind="click: lockOrUnlockSnapshot,
                            css: {
                                 'btn-lock-locked': isLocked(),
@@ -35,10 +35,32 @@
                               },
                            title: ko.i18n('cs.manager.toggleLock', 'Toggle Lock')">
           <i class="fa" data-bind="css: {
-                             'fa-lock': isLocked(),
-                             'fa-lock-open': !isLocked()
+                             'fa-fa-camera': isLocked(),
+                             'fa-fa-camera': !isLocked()
                           }"></i>
+        </button> -->
+        <button type="button" class="btn btn-primary" data-bind="click: lockOrUnlockSnapshot,
+                       css: {
+                            'btn-lock-locked': isLocked(),
+                            'btn-lock-unlocked': !isLocked(),
+                            disabled: !canLock() || isProcessing()
+                       },
+                       title: ko.i18n('cs.manager.toggleLock', 'Toggle Lock')">
+          <span class="fa-stack">
+            <i class="fa fa-camera fa-stack-1x"></i>
+            <i class="fa fa-lock camera-lock-icon" data-bind="visible: isLocked"></i>
+            <i class="fa fa-unlock camera-lock-icon" data-bind="visible: !isLocked()"></i>
+          </span>
         </button>
+        <!-- <button type="button" class="btn btn-primary" data-bind="click: lockOrUnlockSnapshot,
+                       css: {disabled: !canLock() || isProcessing()},
+                       title: ko.i18n('cs.manager.toggleLock', 'Toggle Lock')">
+          <span class="fa-stack fa-lg" data-bind="css: {'text-muted': !isLocked()}">
+            <i class="fa fa-camera fa-stack-1x"></i>
+            <i class="fa fa-lock fa-stack-2x" data-bind="visible: isLocked, css: 'camera-lock-icon'"></i>
+            <i class="fa fa-unlock fa-stack-2x" data-bind="visible: !isLocked(), css: 'camera-lock-icon'"></i>
+          </span>
+        </button> -->
         <!-- <button type="button" class="btn btn-primary" data-bind="visible: isLocked(), click: unlockSnapshot, css: { disabled: !canUnlock() || isProcessing() }, text: ko.i18n('cs.manager.unlockSnapshot', 'Unlock')"></button> -->
 
 	<!-- ko if: enablePermissionManagement -->

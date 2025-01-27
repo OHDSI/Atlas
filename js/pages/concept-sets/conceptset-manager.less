@@ -48,3 +48,29 @@
 .btn-lock-unlocked {
     content: "\f3c1"; /* fas fa-lock-open */
 }
+
+.fa-stack {
+    width: 1em; 
+    height: 1em; 
+    line-height: 1em; 
+    position: relative;
+}
+
+.fa-camera {
+    font-size: 1em;
+    color: #ffffff; 
+}
+
+.camera-lock-icon {
+    font-size: 0.25em;
+    color: #363636;
+    position: absolute;
+    top: 1%; 
+    left: 1%; 
+    transform: translate(-50%, -50%);
+}
+
+.btn-lock-locked .fa-unlock,
+.btn-lock-unlocked .fa-lock {
+    display: none;
+}
