@@ -93,8 +93,21 @@ define([
             this.criteriaContext = ko.observable();
             this.tableOptions = commonUtils.getTableOptions('M');
 
-            this.isAnnualPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsAnnual, false));
-            this.isTemporalPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsTemporal, false));
+            this.isAnnualPrevalenceSupported = ko.computed(() => {
+                const design = params.design();
+                if (design && design.featureAnalyses()) {
+                    return design.featureAnalyses().reduce((accumulator, featureAnalysis) => accumulator || featureAnalysis.supportsAnnual, false);
+                }
+                return false;
+            });
+
+            this.isTemporalPrevalenceSupported = ko.computed(() => {
+                const design = params.design();
+                if (design && design.featureAnalyses()) {
+                    return design.featureAnalyses().reduce((accumulator, featureAnalysis) => accumulator || featureAnalysis.supportsTemporal, false);
+                }
+                return false;
+            });
         }
 
         checkStrataNames(data, event) {
