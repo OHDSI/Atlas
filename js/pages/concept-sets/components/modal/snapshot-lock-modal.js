@@ -66,6 +66,7 @@ define([
             conceptSetService.invokeConceptSetSnapshotAction(this.currentConceptSetId(), request)
                 .then(() => {
                     this.isLocked(true);
+                    this.snapshotDescriptionMessage("");
                     this.isModalShown(false);
                     console.log("Concept set locked and snapshot created");
                 })
@@ -76,6 +77,7 @@ define([
             const request = this.createSnapshotActionRequest("SNAPSHOT");
             conceptSetService.invokeConceptSetSnapshotAction(this.currentConceptSetId(), request)
                 .then(() => {
+                    this.snapshotDescriptionMessage("");
                     console.log("Concept set snapshot created");
                     this.isModalShown(false);
                 })
@@ -87,6 +89,7 @@ define([
             conceptSetService.invokeConceptSetSnapshotAction(this.currentConceptSetId(), request)
                 .then(() => {
                     this.isLocked(false);
+                    this.snapshotDescriptionMessage("");
                     this.isModalShown(false);
                     console.log("Concept set unlocked");
                 })

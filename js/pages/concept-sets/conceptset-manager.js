@@ -96,10 +96,11 @@ define([
 					return false;
 				}
 
-				if (this.currentConceptSet() && (this.currentConceptSet()
-						.id !== 0)) {
-					return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
-						.id) || !config.userAuthenticationEnabled;
+				if (this.currentConceptSet() && (this.currentConceptSet().id !== 0)) {
+					if (ko.unwrap(this.currentConceptSet().isLocked)) {
+						return false; // If locked, user cannot edit
+					}
+					return authApi.isPermittedUpdateConceptset(this.currentConceptSet().id) || !config.userAuthenticationEnabled;
 				} else {
 					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 				}
@@ -235,7 +236,19 @@ define([
 				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
 			});
 
-			this.isLocked = ko.observable(false);
+			this.isLocked = ko.computed({
+				read: () => {
+					const currentSet = this.currentConceptSet();
+					return currentSet && currentSet.isLocked && ko.unwrap(currentSet.isLocked);
+				},
+				write: (value) => {
+					const currentSet = this.currentConceptSet();
+					if (currentSet) {
+						currentSet.isLocked(value);
+					}
+				}
+			});
+
 			this.canLock = ko.observable(true);
 			this.canUnlock = ko.observable(true);
 
@@ -512,6 +525,13 @@ define([
 					this.previewVersion(null);
 					conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
 					expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+					
+					const isLockedBatchCheckRequest = {
+						conceptSetIds: [conceptSetId]
+					};
+					const lockStatusResponse = await conceptSetService.getLockedStatusesForConceptSets(isLockedBatchCheckRequest);
+					const lockStatusMap = lockStatusResponse.data.lockStatus;
+					conceptSet.isLocked = ko.observable(lockStatusMap[conceptSetId] || false);
 				}
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
