@@ -6,6 +6,7 @@ define([
     'utils/AutoBind',
     'utils/DatatableUtils',
     'services/AuthAPI',
+    'services/SourceAPI',
     'services/ConceptSet',
     'atlas-state',
     'less!./snapshot-lock-modal.less',
@@ -18,6 +19,7 @@ define([
     AutoBind,
     datatableUtils,
     authApi,
+    sourceApi,
     conceptSetService,
     sharedState,
 ) {
@@ -26,41 +28,46 @@ define([
             super(params);
             this.isModalShown = params.isModalShown;
             this.isLocked = params.isLocked;
-            // this.isLocked = ko.observable(false);
             this.currentConceptSetId = params.currentConceptSetId;
             this.currentVocabularyVersion = params.currentVocabularyVersion;
-            this.currentVocabularySchema = params.currentVocabularySchema;
+            this.currentVocabularySchema = ko.observable();
             this.snapshotDescriptionMessage = ko.observable('');
-           // this.unlockConfirmationMessage = ko.observable('');
-
-            //this.sourceKey = sharedState.sourceKeyOfVocabUrl();
-            this.vocabularyBundleName = ko.observable('defaultBundleName');
-            this.vocabularyBundleSchema = ko.observable('defaultBundleSchema');
-            this.vocabularyBundleVersion = ko.observable('defaultBundleVersion');
-            this.conceptSetVersion = ko.observable('defaultConceptSetVersion');
-
-            // Update the `canExecuteActions` computed to enable buttons only if text is entered
             this.canExecuteActions = ko.pureComputed(() => {
                 const hasSnapshotDesc = this.snapshotDescriptionMessage().trim().length > 0;
-            //    const hasUnlockConfirmation = this.unlockConfirmationMessage().trim().length > 0;
-                return hasSnapshotDesc //|| hasUnlockConfirmation;  // Enable buttons if any field has text
+                return hasSnapshotDesc;
             });
+            this.fetchAndSetVocabularySchema();
         }
+
+        async fetchAndSetVocabularySchema() {
+            try {
+                const source = await sourceApi.getSourceInfo(sharedState.sourceKeyOfVocabUrl());
+                this.processSourceData(source);
+            } catch (error) {
+                console.error(`Error fetching source information: ${error}`);
+                this.currentVocabularySchema(undefined);
+            }
+        }
+
+        processSourceData(source) {
+            if (!source || !source.daimons) {
+                this.currentVocabularySchema(undefined);
+            } else {
+                const vocabularyDaimon = source.daimons.find(daimon => daimon.daimonType === 'Vocabulary');
+                this.currentVocabularySchema(vocabularyDaimon ? vocabularyDaimon.tableQualifier : undefined);
+            }
+        }
+
 
         createSnapshotActionRequest(action) {
             return {
                 sourceKey: sharedState.sourceKeyOfVocabUrl(),
                 action: action,
-                snapshotDate: (new Date()).toISOString(), // Assuming snapshot date is now
                 user: authApi.subject(),
-                vocabularyBundleName: this.vocabularyBundleName(),
-                vocabularyBundleSchema: this.vocabularyBundleSchema(),
-                vocabularyBundleVersion: this.vocabularyBundleVersion(),
-                conceptSetVersion: this.conceptSetVersion(),
-                message: this.snapshotDescriptionMessage() //|| this.unlockConfirmationMessage()
+                message: this.snapshotDescriptionMessage()
             };
         }
-    
+
         snapshotAndLock() {
             const request = this.createSnapshotActionRequest("LOCK");
             conceptSetService.invokeConceptSetSnapshotAction(this.currentConceptSetId(), request)
@@ -72,7 +79,7 @@ define([
                 })
                 .catch(error => console.error(`Error locking concept set: ${error}`));
         }
-    
+
         snapshotOnly() {
             const request = this.createSnapshotActionRequest("SNAPSHOT");
             conceptSetService.invokeConceptSetSnapshotAction(this.currentConceptSetId(), request)
@@ -83,7 +90,7 @@ define([
                 })
                 .catch(error => console.error(`Error creating snapshot: ${error}`));
         }
-    
+
         unlockConceptSet() {
             const request = this.createSnapshotActionRequest("UNLOCK");
             conceptSetService.invokeConceptSetSnapshotAction(this.currentConceptSetId(), request)

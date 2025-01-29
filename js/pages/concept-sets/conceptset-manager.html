@@ -52,16 +52,6 @@
             <i class="fa fa-unlock camera-lock-icon" data-bind="visible: !isLocked()"></i>
           </span>
         </button>
-        <!-- <button type="button" class="btn btn-primary" data-bind="click: lockOrUnlockSnapshot,
-                       css: {disabled: !canLock() || isProcessing()},
-                       title: ko.i18n('cs.manager.toggleLock', 'Toggle Lock')">
-          <span class="fa-stack fa-lg" data-bind="css: {'text-muted': !isLocked()}">
-            <i class="fa fa-camera fa-stack-1x"></i>
-            <i class="fa fa-lock fa-stack-2x" data-bind="visible: isLocked, css: 'camera-lock-icon'"></i>
-            <i class="fa fa-unlock fa-stack-2x" data-bind="visible: !isLocked(), css: 'camera-lock-icon'"></i>
-          </span>
-        </button> -->
-        <!-- <button type="button" class="btn btn-primary" data-bind="visible: isLocked(), click: unlockSnapshot, css: { disabled: !canUnlock() || isProcessing() }, text: ko.i18n('cs.manager.unlockSnapshot', 'Unlock')"></button> -->
 
 	<!-- ko if: enablePermissionManagement -->
         <button class="btn btn-primary" data-bind="visible: !previewVersion() && isOwner(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
@@ -239,10 +229,12 @@
 	checkUnassignPermissionFn: $component.checkUnassignPermission
 "></tags-modal>
 
+
 <snapshot-lock-modal params="
 	isModalShown: isSnapshotLockModalShown,
   isLocked: isLocked,
   currentVocabularyVersion: currentVocabularyVersion,
   currentConceptSetId: currentConceptSetId,
 "></snapshot-lock-modal>
+
 

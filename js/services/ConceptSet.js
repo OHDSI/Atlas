@@ -154,20 +154,10 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
-	// function lockConceptSet(id, conceptSetLockRequest) {
-	// 	return httpService.doPut(config.api.url + 'conceptset/' + id + '/lock', conceptSetLockRequest)
-	// 		.catch(authApi.handleAccessDenied);
-	// }
-
-	// function unlockConceptSet(id, conceptSetLockRequest) {
-	// 	return httpService.doPut(config.api.url + 'conceptset/' + id + '/unlock', conceptSetLockRequest)
-	// 		.catch(authApi.handleAccessDenied);
-	// }
-
-	// function isLockedConceptSet(conceptSetId) {
-	// 	return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/is-locked')
-	// 		.catch(authApi.handleAccessDenied);
-	// }
+	function getConceptSetSnapshotItems(getConceptSetSnapshotItemsRequest) {
+		return httpService.doPost(config.api.url + 'conceptset/get-snapshot-items', getConceptSetSnapshotItemsRequest)
+			.catch(authApi.handleAccessDenied);
+	}
 
 	function getLockedStatusesForConceptSets(isLockedBatchCheckRequest) {
 		return httpService.doPost(config.webAPIRoot + 'conceptset/check-locked', isLockedBatchCheckRequest)
@@ -199,9 +189,7 @@ define(function (require) {
 		listConceptSetSnapshots,
 		invokeConceptSetSnapshotAction,
 		getLockedStatusesForConceptSets,
-		// lockConceptSet,
-		// unlockConceptSet,
-		// isLockedConceptSet,
+		getConceptSetSnapshotItems,
 	};
 
 	return api;
