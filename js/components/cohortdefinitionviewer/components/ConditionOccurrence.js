@@ -1,4 +1,5 @@
-define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilder/InputTypes/Range', 'components/cohortbuilder/InputTypes/Text', 'text!./ConditionOccurrenceTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout', 'components/cohortbuilder/options', "components/cohortbuilder/utils", 'text!./ConditionOccurrenceTemplate.html'
+], function (ko, options, utils, template) {
 
 	function ConditionOccurrenceViewModel(params) {
 
@@ -7,15 +8,17 @@ define(['knockout', 'components/cohortbuilder/options', 'components/cohortbuilde
 		self.Criteria = params.criteria.ConditionOccurrence;
 		self.options = options;
 
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
+    self.indexMessage = ko.i18nformat(
+      'components.conditionOccurrence.indexDataText',
+      'The index date refers to the condition occurrence of <%= conceptSetName %>.',
+      {
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionOccurrence.anyCondition', 'Any Condition')
+        )),
+      }
+    );
 	}
 
 	// return compoonent definition

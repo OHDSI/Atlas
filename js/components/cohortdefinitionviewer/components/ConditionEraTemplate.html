@@ -2,10 +2,15 @@
 <span data-bind="text: ko.i18n('components.conditionEra.criteriaText_1', 'a condition era of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionEra.anyConditionButton', 'Any Condition')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+		<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
-		<span
-						data-bind="text: ko.i18n('components.conditionEra.attributeText_1', 'for the first time in the person\'s history')"></span>
+		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_1', 'for the first time in the person\'s history')"></span>
 	</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(EraStartDate) != null -->
@@ -45,8 +50,17 @@
 		<span data-bind="text: ko.i18n('components.conditionEra.attributeText_8', 'with a gender of:')"></span>
 		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: GenderCS() != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, 
+			conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+	</li>
+<!-- /ko -->	 
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

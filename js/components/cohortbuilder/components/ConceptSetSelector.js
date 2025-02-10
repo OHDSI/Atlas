@@ -13,7 +13,7 @@ define([
   function conceptsetSelector(params) {
     var self = this;
     self.conceptSetId = params.conceptSetId;
-    self.defaultText = params.defaultText;
+    self.defaultName = params.defaultName;
     self.conceptSets = params.conceptSets;
     self.filterText = ko.observable("");
     self.previewVisible = ko.observable(false);
@@ -25,7 +25,7 @@ define([
     self.sortedConceptSets = self.conceptSets.extend({
       sorted: conceptSetSorter,
     });
-    self.filteredConceptSets = ko.computed(function () {
+    self.filteredConceptSets = ko.pureComputed(function () {
       var selectedConceptSet = self.conceptSets().filter(function (item) {
         return item.id == self.conceptSetId();
       });
@@ -41,13 +41,13 @@ define([
           ),
       ];
     });
-    self.conceptSetName = ko.computed(function () {
-      var selectedConceptSet = self.conceptSets().filter(function (item) {
+    self.conceptSetName = ko.pureComputed(function () {
+      var selectedConceptSet = self.conceptSets().find(function (item) {
         return item.id == self.conceptSetId();
       });
       return (
-        (selectedConceptSet.length > 0 && selectedConceptSet[0].name()) ||
-        ko.unwrap(self.defaultText)
+        ((selectedConceptSet && selectedConceptSet.name()) ||
+        ko.unwrap(self.defaultName))
       );
     });
 

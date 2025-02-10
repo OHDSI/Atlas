@@ -1,4 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/ConceptSetSelection'
+], function (ko, Criteria, Range, Concept, ConceptSetSelection) {
 
 	function Measurement(data, conceptSets) {
 		var self = this;
@@ -28,16 +29,20 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 		self.MeasurementTypeExclude = ko.observable(data.MeasurementTypeExclude || null);				
+		self.MeasurementTypeCS = ko.observable(data.MeasurementTypeCS && new ConceptSetSelection(data.MeasurementTypeCS, conceptSets));
 		self.Operator = ko.observable(data.Operator && ko.observableArray(data.Operator.map(function (d) {
 			return new Concept(d);
 		})));
+		self.OperatorCS = ko.observable(data.OperatorCS && new ConceptSetSelection(data.OperatorCS, conceptSets));
 		self.ValueAsNumber = ko.observable(data.ValueAsNumber && new Range(data.ValueAsNumber));
 		self.ValueAsConcept = ko.observable(data.ValueAsConcept && ko.observableArray(data.ValueAsConcept.map(function (d) {
 			return new Concept(d);
 		}))); 
+		self.ValueAsConceptCS = ko.observable(data.ValueAsConceptCS && new ConceptSetSelection(data.ValueAsConceptCS, conceptSets));
 		self.Unit = ko.observable(data.Unit && ko.observableArray(data.Unit.map(function (d) {
 			return new Concept(d);
 		}))); 
+		self.UnitCS = ko.observable(data.UnitCS && new ConceptSetSelection(data.UnitCS, conceptSets));
 		self.RangeLow = ko.observable(data.RangeLow && new Range(data.RangeLow));
 		self.RangeHigh = ko.observable(data.RangeHigh && new Range(data.RangeHigh));
 		self.MeasurementSourceConcept = ko.observable(data.MeasurementSourceConcept != null ? ko.observable(data.MeasurementSourceConcept) : null);
@@ -52,18 +57,17 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
-	  /* Do we still need prior enroll days inside the individual criteria?
-		self.PriorEnrollDays = ko.observable((typeof data.PriorEnrollDays == "number") ? data.PriorEnrollDays : null);
-		self.AfterEnrollDays = ko.observable((typeof data.AfterEnrollDays == "number") ? data.AfterEnrollDays : null);
-		*/
-	 
 		self.ProviderSpecialty = ko.observable(data.ProviderSpecialty && ko.observableArray(data.ProviderSpecialty.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ProviderSpecialtyCS = ko.observable(data.ProviderSpecialtyCS && new ConceptSetSelection(data.ProviderSpecialtyCS, conceptSets));
+
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.VisitTypeCS = ko.observable(data.VisitTypeCS && new ConceptSetSelection(data.VisitTypeCS, conceptSets));
 
 	}
 

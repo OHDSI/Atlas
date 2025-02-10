@@ -2,6 +2,12 @@
 <span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_1', 'a condition occurrence of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionOccurrence.anyCondition', 'Any Condition')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_2', 'for the first time in the person\'s history')"></span>
@@ -20,10 +26,34 @@
 						data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_4', 'occurrence end is:')"></span>
 		<date-range-viewer params="Range: OccurrenceEndDate"></date-range-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ConditionStatus) != null -->
+	<li>
+		with a condition status of:
+		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ConditionStatus)"></concept-list>
+	</li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ConditionStatusCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.conditionStatusCS', 'with condition status concept')"></span>
+		<cycle-toggle-input-viewer params="{value: ConditionStatusCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: ConditionStatusCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyConditionStatus', 'Any Condition Status')"></conceptset-reference>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ConditionType) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionType', 'Condition Type')"></span>
 		<cycle-toggle-input-viewer params="{value: ConditionTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ConditionType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ConditionTypeCS) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.cohortCriteria.conditionTypeCS', 'with condition type concept')"></span>
+	<cycle-toggle-input-viewer params="{value: ConditionTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+	</cycle-toggle-input-viewer>
+	<conceptset-reference params="conceptSetId: ConditionTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+		defaultName: ko.i18n('components.cohortCriteria.anyConditionType', 'Any Condition Type')"></conceptset-reference>
+</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(StopReason) != null -->
 	<li>
@@ -45,18 +75,45 @@
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_11', 'gender is any of:')"></span>
 		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(GenderCS) != null -->
+	<li> 
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_12', 'provider specialty is any of:')"></span>
 		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ProviderSpecialtyCS) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.cohortCriteria.providerSpecialtyCS', 'with provider specialty concept')"></span>
+	<cycle-toggle-input-viewer params="{value: ProviderSpecialtyCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+	</cycle-toggle-input-viewer>
+	<conceptset-reference params="conceptSetId: ProviderSpecialtyCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+		defaultName: ko.i18n('components.cohortCriteria.anyProviderSpecialty', 'Any Provider Ppecialty')"></conceptset-reference>
+</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionOccurrence.conditionOccurrenceText_13', 'visit occurrence is any of:')"></span>
 		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(VisitTypeCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.visitTypeCS', 'with visit type concept')"></span>
+		<cycle-toggle-input-viewer params="{value: VisitTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: VisitTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyVisitType', 'Any Visit Type')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

@@ -4,9 +4,7 @@ function(
 ){
 
 	function getCriteriaComponent(data) {
-		if (data.hasOwnProperty("Person"))
-			return "person-criteria";
-		else if (data.hasOwnProperty("ConditionOccurrence"))
+		if (data.hasOwnProperty("ConditionOccurrence"))
 			return "condition-occurrence-criteria";
 		else if (data.hasOwnProperty("ConditionEra"))
 			return "condition-era-criteria";
