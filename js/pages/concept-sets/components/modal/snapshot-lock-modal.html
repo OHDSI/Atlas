@@ -1,0 +1,69 @@
+<atlas-modal
+    params="data: $component, showModal: $component.isModalShown, title: ko.i18n('components.snapshot.title', 'Snapshot/Lock/Unlock')">
+    <div class="modal-body" data-bind="visible: true">
+        <!-- Unlocked Concept Set Content -->
+        <div data-bind="visible: !isLocked()">
+            <p class="modal-text"><strong>You are about to create a snapshot for this concept set.</strong></p>
+            <p class="modal-text">
+                There are two options: Plain snapshot or a snapshot + lock.
+                <br><strong>Plain snapshot:</strong>
+            <ul>
+                <li>Concept set expression will be saved for this concept set</li>
+                <li>Included concepts and included source codes will be saved</li>
+                <li>Current vocabulary version and schema will be saved</li>
+                <li>Concept set snapshots will not be impacted by future vocabulary updates</li>
+                <li>Current SYSTEM vocabulary version: <strong data-bind="text: currentVocabularyVersion"></strong></li>
+                <li>Current SYSTEM vocabulary schema: <strong data-bind="text: currentVocabularySchema"></strong></li>
+            </ul>
+            <br><strong>Snapshot with Lock (along with the above actions):</strong>
+            <ul>
+                <li>Concept Set will be switched to read-only mode and marked locked</li>
+            </ul>
+            </p>
+            <p class="modal-text" style="margin-top: 20px;"><strong>Snapshot description message<span
+                        style="color: red;">*</span>:</strong></p>
+            <input type="text" rows="4" data-bind="textInput: snapshotDescriptionMessage,
+				css: classes({
+					element: 'input',
+					extra: 'form-control'
+				}),
+				placeholder: ko.i18n('snapshot.description.placeholder', 'Type your snapshot description here')" />
+
+            <div class="center-buttons">
+                <button class="btn btn-success btn-sm"
+                    data-bind="click: snapshotAndLock, enable: canExecuteActions()">Snapshot + Lock</button>
+                <button class="btn btn-success btn-sm"
+                    data-bind="click: snapshotOnly, enable: canExecuteActions()">Snapshot Only</button>
+                <button class="btn btn-danger btn-sm" data-bind="click: () => isModalShown(false)">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Locked Concept Set Content -->
+        <div data-bind="visible: isLocked()">
+            <p class="modal-text">You are about to UNLOCK this concept set.</p>
+            <p class="modal-text">
+                The following will happen:
+            <ul>
+                <li>Concept Set read-only mode will be disabled</li>
+                <li>Optional: Take a snapshot after unlock</li>
+            </ul>
+            </p>
+            <div class="checkbox-container">
+                <input id="snapshotCheckbox" name="snapshotCheckbox" type="checkbox"
+                    data-bind="checked: takeSnapshotWhenUnlocking, enable: true" />
+                <label for="snapshotCheckbox" style="font-size: 13px; align-items: center;">Take snapshot</label>
+            </div>
+            <p class="modal-text" style="margin-top: 20px;"><strong>Unlock confirmation message<span
+                        style="color: red;">*</span>:</strong></p>
+            <textarea class="form-control large-text-input"
+                data-bind="textInput: snapshotDescriptionMessage, enable: true" rows="4"></textarea>
+            <div class="center-buttons">
+                <button class="btn btn-success btn-sm"
+                    data-bind="click: () => unlockConceptSet(takeSnapshotWhenUnlocking()), enable: canExecuteActions()"
+                    style="background-color: green">Confirm</button>
+                <button class="btn btn-primary btn-sm" data-bind="click: () => isModalShown(false)"
+                    style="background-color: blue">Cancel</button>
+            </div>
+        </div>
+    </div>
+</atlas-modal>

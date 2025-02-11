@@ -26,6 +26,19 @@
         <!-- ko if: $component.currentConceptSet().id != null && $component.currentConceptSet().id != 0 -->
         <button type="button" class="btn btn-primary" data-bind="click: () => isTagsModalShown(!isTagsModalShown()), visible: canEdit() && !previewVersion(), css: { disabled: isProcessing() }, title: ko.i18n('common.tags', 'Tags')"><i class="fa fa-tags"></i></button>
         <button type="button" class="btn btn-primary" data-bind="visible: !previewVersion(), click: optimize, css: { disabled: !canOptimize() || isProcessing() }, text: ko.i18n('cs.manager.optimize', 'Optimize')"></button>
+        <button type="button" class="btn btn-primary" data-bind="visible: isAllowedSnapshotActions(), click: lockOrUnlockSnapshot,
+                       css: {
+                            'btn-lock-locked': isLocked(),
+                            'btn-lock-unlocked': !isLocked(),
+                            disabled: !canLock() || isProcessing()
+                       },
+                       title: ko.i18n('cs.manager.toggleLock', 'Toggle Lock')">
+          <span class="fa-stack">
+            <i class="fa fa-camera fa-stack-1x"></i>
+            <i class="fa fa-lock camera-lock-icon" data-bind="visible: isLocked"></i>
+            <i class="fa camera-lock-icon" data-bind="visible: !isLocked()"></i>
+          </span>
+        </button>
 
 	<!-- ko if: enablePermissionManagement -->
         <button class="btn btn-primary" data-bind="visible: !previewVersion() && isOwner(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
@@ -202,3 +215,10 @@
 	checkAssignPermissionFn: $component.checkAssignPermission,
 	checkUnassignPermissionFn: $component.checkUnassignPermission
 "></tags-modal>
+
+<snapshot-lock-modal params="
+	isModalShown: isSnapshotLockModalShown,
+  isLocked: isLocked,
+  currentVocabularyVersion: currentVocabularyVersion,
+  currentConceptSetId: currentConceptSetId,
+"></snapshot-lock-modal>
