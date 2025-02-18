@@ -4,11 +4,12 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./SpecimenTemplate.html",
   "../const"
-], function (ko, options, utils, Range, DateAdjustment, Text, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, ConceptSetSelection, Text, CriteriaGroup, template, constants) {
   function SpecimenViewModel(params) {
     var self = this;
     self.expression = ko.utils.unwrapObservable(params.expression);
@@ -39,6 +40,14 @@ define([
         },
       },
       {
+        ...constants.specimenAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.specimenAttributes.addDate,
         selected: false,
         action: function () {
@@ -66,6 +75,14 @@ define([
         },
       },
       {
+        ...constants.specimenAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.SpecimenTypeCS() == null)
+            self.Criteria.SpecimenTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.specimenAttributes.addQuantity,
         selected: false,
         action: function () {
@@ -86,6 +103,14 @@ define([
         },
       },
       {
+        ...constants.specimenAttributes.addUnitCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.UnitCS() == null)
+            self.Criteria.UnitCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.specimenAttributes.addAnatomicSite,
         selected: false,
         action: function () {
@@ -94,11 +119,27 @@ define([
         },
       },
       {
+        ...constants.specimenAttributes.addAnatomicSiteCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.AnatomicSiteCS() == null)
+            self.Criteria.AnatomicSiteCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.specimenAttributes.addDiseaseStatus,
         selected: false,
         action: function () {
           if (self.Criteria.DiseaseStatus() == null)
             self.Criteria.DiseaseStatus(ko.observableArray());
+        },
+      },
+      {
+        ...constants.specimenAttributes.addDiseaseStatusCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DiseaseStatusCS() == null)
+            self.Criteria.DiseaseStatusCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

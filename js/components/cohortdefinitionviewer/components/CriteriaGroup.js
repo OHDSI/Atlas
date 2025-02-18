@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbuilder/CriteriaGroup','components/cohortbuilder/AdditionalCriteria','components/cohortbuilder/options', 'text!./CriteriaGroupTemplate.html'], function (ko, criteriaTypes, CriteriaGroup, AdditionalCriteria, options, template) {
+define(['knockout','components/cohortbuilder/options', 'text!./CriteriaGroupTemplate.html'
+], function (ko, options, template) {
 
 	function CriteriaGroupViewModel(params) {
 		var self = this;
@@ -7,13 +8,11 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 		self.group = params.group;
 		self.parentGroup = params.parentGroup;
 		self.options = options;
-		self.selectedFragment = params.selectedFragment;
+		self.indexMessage = params.indexMessage;
 
 		self.getCriteriaComponent = function (data) {
 
-			if (data.hasOwnProperty("Person"))
-				return "person-criteria";
-			else if (data.hasOwnProperty("ConditionOccurrence"))
+			if (data.hasOwnProperty("ConditionOccurrence"))
 				return "condition-occurrence-criteria-viewer";
 			else if (data.hasOwnProperty("ConditionEra"))
 				return "condition-era-criteria-viewer";
@@ -29,6 +28,8 @@ define(['knockout','components/cohortbuilder/CriteriaTypes','components/cohortbu
 				return "procedure-occurrence-criteria-viewer";
 			else if (data.hasOwnProperty("VisitOccurrence"))
 				return "visit-occurrence-criteria-viewer";
+			else if (data.hasOwnProperty("VisitDetail"))
+				return "visit-detail-criteria-viewer";
 			else if (data.hasOwnProperty("Observation"))
 				return "observation-criteria-viewer";
 			else if (data.hasOwnProperty("DeviceExposure"))

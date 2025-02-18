@@ -14,6 +14,7 @@ define([
 		RECOMMEND: 'recommend',
 		EXPORT: 'conceptset-export',
 		IMPORT: 'conceptset-import',
+		ANNOTATION: 'annotation',
 		MAPPINGS: 'resolve-mappings'
 	};
 	

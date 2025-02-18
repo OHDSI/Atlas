@@ -2,6 +2,12 @@
 <span data-bind="text: ko.i18n('components.conditionDrug.conditionDrugText_1', 'a drug era of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionDrug.anyDrug', 'Any Drug')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionDrug.conditionDrugText_2', 'for the first time in the person\'s history')"></span>
@@ -47,8 +53,17 @@
 		<span data-bind="text: ko.i18n('components.conditionDrug.conditionDrugText_12', 'gender is any of:')"></span>
 	 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(GenderCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

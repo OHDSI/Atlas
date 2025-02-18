@@ -1,4 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/ConceptSetSelection',
+], function (ko, Criteria, Range, Concept, ConceptSetSelection) {
 
 	function VisitOccurence(data, conceptSets) {
 		var self = this;
@@ -29,6 +30,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 		self.VisitTypeExclude = ko.observable(data.VisitTypeExclude || null);				
+		self.VisitTypeCS = ko.observable(data.VisitTypeCS && new ConceptSetSelection(data.VisitTypeCS, conceptSets));
 		self.VisitSourceConcept = ko.observable(data.VisitSourceConcept != null ? ko.observable(data.VisitSourceConcept) : null);
 		self.VisitLength = ko.observable(data.VisitLength && new Range(data.VisitLength));
 
@@ -40,22 +42,19 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
-	  /* Do we still need prior enroll days inside the individual criteria?
-		self.PriorEnrollDays = ko.observable((typeof data.PriorEnrollDays == "number") ? data.PriorEnrollDays : null);
-		self.AfterEnrollDays = ko.observable((typeof data.AfterEnrollDays == "number") ? data.AfterEnrollDays : null);
-		*/
-	 
 		self.ProviderSpecialty = ko.observable(data.ProviderSpecialty && ko.observableArray(data.ProviderSpecialty.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ProviderSpecialtyCS = ko.observable(data.ProviderSpecialtyCS && new ConceptSetSelection(data.ProviderSpecialtyCS, conceptSets));
 
 		self.PlaceOfService = ko.observable(data.PlaceOfService && ko.observableArray(data.PlaceOfService.map(function (d) {
 			return new Concept(d);
 		})));
+		self.PlaceOfServiceCS = ko.observable(data.PlaceOfServiceCS && new ConceptSetSelection(data.PlaceOfServiceCS, conceptSets));
 
 		self.PlaceOfServiceLocation = ko.observable(data.PlaceOfServiceLocation != null ? ko.observable(data.PlaceOfServiceLocation) : null);
-		self.PlaceOfServiceDistance = ko.observable(data.PlaceOfServiceDistance && new Range(data.PlaceOfServiceDistance));
 	}
 
 	VisitOccurence.prototype = new Criteria();

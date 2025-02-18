@@ -1,4 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period', 'conceptpicker/InputTypes/Concept'], function (ko, Criteria, Range, Period, Concept) {
+define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period', 'conceptpicker/InputTypes/Concept', '../InputTypes/ConceptSetSelection'
+], function (ko, Criteria, Range, Period, Concept, ConceptSetSelection) {
 		function PayerPlanPeriod(data, conceptSets) {
 				var self = this;
 				data = data || {};
@@ -39,6 +40,7 @@ define(['knockout', './Criteria', '../InputTypes/Range', '../InputTypes/Period',
 				self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 						return new Concept(d);
 				})));
+				self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 				self.PayerConcept = ko.observable(data.PayerConcept != null ? ko.observable(data.PayerConcept) : null);
 				self.PlanConcept = ko.observable(data.PlanConcept != null ? ko.observable(data.PlanConcept) : null);
 				self.SponsorConcept = ko.observable(data.SponsorConcept != null ? ko.observable(data.SponsorConcept) : null);

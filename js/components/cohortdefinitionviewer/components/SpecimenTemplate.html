@@ -2,6 +2,12 @@
 <span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_1', 'a specimen of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionSpecimen.anySpecimen', 'Any Specimen')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+		<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_2', 'for the first time in the person\'s history')"></span>
@@ -18,6 +24,15 @@
 		<cycle-toggle-input-viewer params="{value: SpecimenTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> 
 		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(SpecimenType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(SpecimenTypeCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.specimenTypeCS', 'with specimen type concept')"></span>
+		<cycle-toggle-input-viewer params="{value: SpecimenTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: SpecimenTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anySpecimenType', 'Any Specimen Type')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Quantity) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_4', 'with Quantity')"></span>
@@ -28,15 +43,42 @@
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_11', 'unit is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Unit)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(UnitCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.unitCS', 'with unit concept')"></span>
+		<cycle-toggle-input-viewer params="{value: UnitCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: UnitCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyUnit', 'Any Unit')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(AnatomicSite) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_12', 'anatomic site is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(AnatomicSite)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(AnatomicSiteCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.atomicSiteCS', 'with atomic site concept')"></span>
+		<cycle-toggle-input-viewer params="{value: AnatomicSiteCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: AnatomicSiteCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyAnatomicSite', 'Any Anatomic Site')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DiseaseStatus) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_13', 'disease status is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DiseaseStatus)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DiseaseStatusCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.diseaseStatusCS', 'with atomic site concept')"></span>
+		<cycle-toggle-input-viewer params="{value: DiseaseStatusCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: DiseaseStatusCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyDiseaseStatus', 'Any Disease Status')"></conceptset-reference>
+	</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(SourceId) != null -->
 	<li>
@@ -53,8 +95,17 @@
 		<span data-bind="text: ko.i18n('components.conditionSpecimen.conditionSpecimeText_14', 'gender is any of:')"></span>
 		<concept-list-viewer params="ConceptList:ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(GenderCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

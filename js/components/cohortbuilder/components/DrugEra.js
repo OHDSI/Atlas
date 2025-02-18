@@ -4,10 +4,11 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./DrugEraTemplate.html",
   "../const",
-], function (ko, options, utils, Range, DateAdjustment, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, ConceptSetSelection, CriteriaGroup, template, constants) {
   function DrugEraViewModel(params) {
     var self = this;
     self.expression = ko.utils.unwrapObservable(params.expression);
@@ -43,6 +44,14 @@ define([
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.drugAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

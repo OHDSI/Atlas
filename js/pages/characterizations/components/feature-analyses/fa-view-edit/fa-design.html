@@ -16,13 +16,13 @@
             <!-- /ko -->
             <textarea data-bind="
                     css: classes({ element: 'descr', extra: 'form-control' }),
-                    attr: { disabled: $component.canEdit() ? null : true },
+					attr: { disabled: $component.canEdit() ? null : true }
                     textInput: $component.data().descr
                 "></textarea>
         </div>
     </div>
 
-    <div data-bind="css: classes({ element: 'design-panel', extra: 'panel panel-primary' })">
+    <div data-bind="css: classes({ element: 'design-panel', extra: 'panel panel-primary'})">
         <div class="panel-heading" data-bind="text: ko.i18n('cc.fa.design', 'Design')"></div>
         <div data-bind="css: classes({ element: 'design-panel-body' })">
             <div data-bind="css: classes('type-selector')">
@@ -32,6 +32,7 @@
                         data-bind="
                             if: $component.canEdit() || $component.data().type() === $component.featureTypes.PRESET,
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.PRESET ? 'active' : null }),
+							attr: { disabled: $component.canEdit() ? null : true },
                             click: setType.bind(null, $component.featureTypes.PRESET)
                         ">
                         <a data-bind="text: ko.i18n('cc.fa.preset', 'Preset')"></a>
@@ -44,6 +45,7 @@
                         data-bind="
                             if: ($component.canEdit() && !$component.featureId()) || $component.data().type() === $component.featureTypes.CRITERIA_SET,
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CRITERIA_SET ? 'active' : null }),
+							attr: { disabled: $component.canEdit() ? null : true },
                             click: setType.bind(null, $component.featureTypes.CRITERIA_SET)
                         ">
                         <a data-bind="text: ko.i18n('cc.fa.criteria', 'Criteria')"></a>
@@ -52,6 +54,7 @@
                         data-bind="
                             if: ($component.canEdit() && !$component.featureId()) || $component.data().type() === $component.featureTypes.CUSTOM_FE,
                             css: classes({ element: 'nav-pill', extra: $component.data().type() === $component.featureTypes.CUSTOM_FE ? 'active' : null }),
+							attr: { disabled: $component.canEdit() ? null : true },
                             click: setType.bind(null, $component.featureTypes.CUSTOM_FE)
                         ">
                         <a data-bind="text: ko.i18n('cc.fa.custom', 'Custom')"></a>
@@ -63,27 +66,27 @@
                 <span data-bind="css: classes('criteria-descr'), text: ko.i18n('cc.fa.featureExtractionPresetName', 'FeatureExtraction preset name:')"></span>
                 <input data-bind="
                         css: classes({ element: 'preset-input', extra: 'form-control' }),
-                        attr: { disabled: $component.canEdit() ? null : true },
                         textInput: $component.data().design
                     " />
             </div>
             <!-- /ko -->
             <div data-bind="
-                    if: $component.data().type() === $component.featureTypes.CRITERIA_SET, css: classes('design')
+                    if: $component.data().type() === $component.featureTypes.CRITERIA_SET, 
+					css: classes('design')
                 ">
                 <div data-bind="css: classes({extra: 'panel panel-primary'})">
                     <div data-bind="css: classes({ extra: 'panel-heading' }), text: ko.i18n('cc.fa.analysisType', 'Analysis type:')"></div>
                     <div data-bind="css: classes('stat-type-selector')">
                         <multi-select
                                 data-bind="css: classes()"
-                                params="options: $component.statTypeOptions,
+                                params="options: $component.statTypeOptions,  disable: !$component.canEdit(),
                                 selectedValue: $component.data().statType, multiple: false"></multi-select>
                     </div>
                 </div>
                 <span data-bind="if: data().statType() === 'PREVALENCE'">
-                        <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), click: addCriteria, text: ko.i18n('cc.fa.addCriteriaFeature', 'Add Criteria feature')"></button>
+                        <button data-bind="css: classes({ element: 'add-criteria-group', extra: 'btn btn-success' }), attr: { disabled: $component.canEdit() ? null : true }, click: addCriteria, text: ko.i18n('cc.fa.addCriteriaFeature', 'Add Criteria feature')"></button>
                     </span>
-                <span data-bind="if: data().statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed')">
+                <span data-bind="if: data().statType() === 'DISTRIBUTION', css: classes('add-criteria-windowed'), attr: { disabled: $component.canEdit() ? null : true }">
                         <div>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i>
@@ -100,35 +103,37 @@
                         </div>
                     </span>
                 <!-- ko foreach: $component.data().design -->
-                <div data-bind="
-                            css: $component.classes('criteria'),
-                            eventListener: [
-                                { event: 'click', selector: '.conceptset_import', callback: $component.handleConceptSetImport},
-                                { event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
-                            ]
-                        ">
-                    <div data-bind="css: $component.classes('criteria-heading')">
-                        <input
-                                data-bind="css: $component.classes({ element: 'criteria-name', extra: 'form-control' }), textInput: $data.name, placeholder: ko.i18n('cc.fa.criteriaName', 'Criteria name')"
-                        />
-                        <button
-                                type="button"
-                                data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), click: () => $component.removeCriteria($index())"
-                        ><i class="fa fa-trash-alt"></i></button>
-                    </div>
-                    <!-- Aggregate -->
-                    <div data-bind="if: $parent.data().statType() === 'DISTRIBUTION' && $data.criteriaType !== 'DemographicCriteria'">
-                        <aggregate-select params="aggregates: $component.aggregates, currentAggregate: $data.aggregate, domains: $component.domains, criteria: $data"></aggregate-select>
-                    </div>
-                    <div data-bind="if: $data.criteriaType === 'CriteriaGroup'">
-                        <criteria-group params="{ expression: { ConceptSets: $component.data().conceptSets }, group: $data.expression }"></criteria-group>
-                    </div>
-                    <div data-bind="if: $data.criteriaType === 'DemographicCriteria'">
-                        <demographic-criteria params="{ criteria: $data.expression }"></demographic-criteria>
-                    </div>
-                    <div data-bind="if: $data.criteriaType === 'WindowedCriteria'">
-                        <windowed-criteria params="{ expression: { ConceptSets: $component.data().conceptSets }, criteria: $data.expression, disableObservationPeriod: true, defaultObservationPeriod: true }"></windowed-criteria>
-                    </div>
+				<div data-bind="css: $component.canEdit() ? '' : 'feature-analysis-view-edit__content--disabled'">
+					<div data-bind="
+								css: $component.classes('criteria'),
+								eventListener: [
+									{ event: 'click', selector: '.conceptset_import', callback: $component.handleConceptSetImport},
+									{ event: 'click', selector: '.conceptset_edit', callback: $component.handleEditConceptSet }
+								]
+							">
+						<div data-bind="css: $component.classes('criteria-heading')">
+							<input
+									data-bind="css: $component.classes({ element: 'criteria-name', extra: 'form-control' }), textInput: $data.name, placeholder: ko.i18n('cc.fa.criteriaName', 'Criteria name')"
+							/>
+							<button
+									type="button"
+									data-bind="css: $component.classes({ element: 'criteria-delete', extra: 'btn btn-sm btn-danger' }), attr: { disabled: $component.canEdit() ? null : true }, click: () => $component.removeCriteria($index())"
+							><i class="fa fa-trash-alt"></i></button>
+						</div>
+						<!-- Aggregate -->
+						<div data-bind="if: $parent.data().statType() === 'DISTRIBUTION' && $data.criteriaType !== 'DemographicCriteria'">
+							<aggregate-select params="aggregates: $component.aggregates, currentAggregate: $data.aggregate, domains: $component.domains, criteria: $data"></aggregate-select>
+						</div>
+						<div data-bind="if: $data.criteriaType === 'CriteriaGroup'">
+							<criteria-group params="{ expression: { ConceptSets: $component.data().conceptSets }, group: $data.expression}"></criteria-group>
+						</div>
+						<div data-bind="if: $data.criteriaType === 'DemographicCriteria'">
+							<demographic-criteria params="{ criteria: $data.expression }"></demographic-criteria>
+						</div>
+						<div data-bind="if: $data.criteriaType === 'WindowedCriteria'">
+							<windowed-criteria params="{ expression: { ConceptSets: $component.data().conceptSets }, criteria: $data.expression, disableObservationPeriod: true, defaultObservationPeriod: true }"></windowed-criteria>
+						</div>
+					</div>
                 </div>
                 <!-- /ko -->
             </div>
@@ -146,7 +151,7 @@
                     <span data-bind="css: classes('criteria-sql')">SELECT covariate_id, covariate_name, concept_id, sum_value, average_value FROM (</span>
                     <textarea data-bind="
                             css: classes({ element: 'raw-sql-box', extra: 'form-control' }),
-                            attr: { disabled: $component.canEdit() ? null : true, placeholder: demoCustomSqlAnalysisDesign },
+                            attr: { placeholder: demoCustomSqlAnalysisDesign },
                             textInput: $component.data().design
                         "></textarea>
                     <span data-bind="css: classes('criteria-sql')">)</span>

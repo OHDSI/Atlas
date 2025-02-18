@@ -5,6 +5,7 @@ define([
   "../InputTypes/Range",
   "../InputTypes/Text",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./DeviceExposureTemplate.html",
   "../const",
@@ -15,6 +16,7 @@ define([
   Range,
   Text,
   DateAdjustment,
+  ConceptSetSelection,
   CriteriaGroup,
   template,
   constants
@@ -57,6 +59,14 @@ define([
         },
       },
       {
+        ...constants.deviceAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.deviceAttributes.addStartDate,
         selected: false,
         action: function () {
@@ -96,11 +106,27 @@ define([
         },
       },
       {
+        ...constants.deviceAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DeviceTypeCS() == null)
+            self.Criteria.DeviceTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.deviceAttributes.addVisit,
         selected: false,
         action: function () {
           if (self.Criteria.VisitType() == null)
             self.Criteria.VisitType(ko.observableArray());
+        },
+      },
+      {
+        ...constants.deviceAttributes.addVisitCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.VisitTypeCS() == null)
+            self.Criteria.VisitTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -141,6 +167,14 @@ define([
         action: function () {
           if (self.Criteria.ProviderSpecialty() == null)
             self.Criteria.ProviderSpecialty(ko.observableArray());
+        },
+      },
+      {
+        ...constants.deviceAttributes.addProviderSpecialtyCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ProviderSpecialtyCS() == null)
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

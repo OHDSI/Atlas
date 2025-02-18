@@ -583,6 +583,10 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 
 			this.sourcesTableOptions = commonUtils.getTableOptions('S');
 			this.sourcesColumns = [{
+				sortable: false,
+				className: 'generation-buttons-column',
+				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
+			}, {
 				title: `<span>${ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name')()}</span>`,
 				data: 'name'
 			}, {
@@ -600,10 +604,6 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}, {
 				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generationDuration', 'Generation Duration'),
 				data: 'executionDuration'
-			}, {
-				sortable: false,
-				className: 'generation-buttons-column',
-				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
 			}];
 
 			this.stopping = ko.pureComputed(() => this.cohortDefinitionSourceInfo().reduce((acc, target) => ({...acc, [target.sourceKey]: ko.observable(false)}), {}));
