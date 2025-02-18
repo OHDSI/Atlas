@@ -44,6 +44,7 @@ define([
       this.noPreview = params.noPreview || false;
       this.conceptsToAdd = params.concepts;
       this.canSelectSource = params.canSelectSource || false;
+      this.overrideHandleAddToConceptSet = params.overrideHandleAddToConceptSet;
       this.isAdded = ko.observable(false);
       this.defaultSelectionOptions = {
         includeDescendants: ko.observable(false),
@@ -142,6 +143,10 @@ define([
     }
 
     handleSubmit() {
+      if (this.overrideHandleAddToConceptSet) {
+        const items = CommonUtils.buildConceptSetItems(this.conceptsToAdd(), this.selectionOptions());
+        this.overrideHandleAddToConceptSet(items);
+      } else {
       clearTimeout(this.messageTimeout);
       this.isSuccessMessageVisible(true);
       this.messageTimeout = setTimeout(() => {
@@ -186,6 +191,7 @@ define([
       CommonUtils.clearConceptsSelectionState(this.conceptsToAdd());
       this.selectionOptions(this.defaultSelectionOptions);
     }
+    }
 
     toggleSelectionOption(option) {
       const options = this.selectionOptions();
@@ -198,7 +204,6 @@ define([
     setActiveConceptSet(conceptSet) {
       this.activeConceptSet(conceptSet);
     }
-
   }
 
   return CommonUtils.build('concept-add-box', ConceptAddBox, view);
