@@ -4,7 +4,8 @@ define([
 	'./const',
 	'utils/CommonUtils',
 	'text!./inclusion-report.html',
-	'./feasibility-report-viewer-with-header'
+	'./feasibility-report-viewer-with-header',
+	'./demographic-report'
 ], function (
 	ko,
 	Component,
@@ -17,8 +18,8 @@ define([
 		constructor(params) {
 			super();
 
-			this.tabs = [
-				{
+			this.tabs = ko.computed(() => {
+				return [{
 					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byPerson', 'By Person'),
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_PERSON },
@@ -27,8 +28,8 @@ define([
 					title: ko.i18n('cohortDefinitions.cohortreports.tabs.byEvents', 'By All Events'),
 					componentName: 'feasibility-report-viewer-with-header',
 					componentParams: { ...params, reportType: constants.INCLUSION_REPORT.BY_EVENT },
-				}
-			];
+				}]
+				});
 		}
 	}
 
