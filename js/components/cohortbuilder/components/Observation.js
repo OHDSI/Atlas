@@ -4,11 +4,12 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../InputTypes/Text",
   "../CriteriaGroup",
   "text!./ObservationTemplate.html",
   "../const"
-], function (ko, options, utils, Range, DateAdjustment, Text, CriteriaGroup, template, constants) {
+], function (ko, options, utils, Range, DateAdjustment, ConceptSetSelection, Text, CriteriaGroup, template, constants) {
   function ObservationViewModel(params) {
     var self = this;
     self.addActions = [
@@ -32,6 +33,14 @@ define([
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.observationAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -62,11 +71,27 @@ define([
         },
       },
       {
+        ...constants.observationAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ObservationTypeCS() == null)
+            self.Criteria.ObservationTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.observationAttributes.addVisit,
         selected: false,
         action: function () {
           if (self.Criteria.VisitType() == null)
             self.Criteria.VisitType(ko.observableArray());
+        },
+      },
+      {
+        ...constants.observationAttributes.addVisitCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.VisitTypeCS() == null)
+            self.Criteria.VisitTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -102,6 +127,14 @@ define([
         },
       },
       {
+        ...constants.observationAttributes.addValueAsConceptCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ValueAsConceptCS() == null)
+            self.Criteria.ValueAsConceptCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.observationAttributes.addQualifier,
         selected: false,
         action: function () {
@@ -110,11 +143,27 @@ define([
         },
       },
       {
+        ...constants.observationAttributes.addQualifierCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.QualifierCS() == null)
+            self.Criteria.QualifierCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.observationAttributes.addUnit,
         selected: false,
         action: function () {
           if (self.Criteria.Unit() == null)
             self.Criteria.Unit(ko.observableArray());
+        },
+      },
+      {
+        ...constants.observationAttributes.addUnitCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.UnitCS() == null)
+            self.Criteria.UnitCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -131,6 +180,14 @@ define([
         action: function () {
           if (self.Criteria.ProviderSpecialty() == null)
             self.Criteria.ProviderSpecialty(ko.observableArray());
+        },
+      },
+      {
+        ...constants.observationAttributes.addProviderSpecialtyCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ProviderSpecialtyCS() == null)
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

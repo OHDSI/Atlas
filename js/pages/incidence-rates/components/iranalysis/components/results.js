@@ -38,13 +38,7 @@ define([
 			this.selectedSourceId = sharedState.IRAnalysis.selectedSourceId;
 			this.selectedSourceId.subscribe(() => this.expandSelectedSource());
 			this.hasSourceAccess = authApi.hasSourceAccess;
-			this.generationSources = ko.computed(() => params.sources().map(s => ({
-				...s.source,
-				disabled: this.isInProgress(s) || !this.hasSourceAccess(s.source.sourceKey),
-				disabledReason: this.isInProgress(s)
-					? ko.i18n('ir.results.generationInProgress', 'Generation is in progress')()
-					: !this.hasSourceAccess(s.source.sourceKey) ? ko.i18n('ir.results.accessDenied', 'Access denied')() : null,
-			})));
+
 			this.execute = params.execute;
 			this.cancelExecution = params.cancelExecution;
 			this.stoppingSources = params.stoppingSources;
@@ -116,6 +110,10 @@ define([
 			this.showOnlySourcesWithResults = ko.observable(false);
 			this.sourcesTableOptions = commonUtils.getTableOptions('S');
 			this.sourcesColumns = [{
+				sortable: false,
+				className: 'generation-buttons-column',
+				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
+			}, {
 				title: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.sourceName', 'Source Name'),
 				render: (s,p,d) => `${d.source.sourceName}`
 			}, {
@@ -144,10 +142,6 @@ define([
 			}, {
 				title: ko.i18n('ir.results.duration', 'Duration'),
 				render: (s,p,d) => d.info() ? `${this.msToTime(d.info().executionInfo.executionDuration)}` : `n/a`
-			}, {
-				sortable: false,
-				className: 'generation-buttons-column',
-				render: () => `<span data-bind="template: { name: 'generation-buttons', data: $data }"></span>`
 			}];
 		}
 
@@ -163,6 +157,16 @@ define([
 
 		isInProgress(sourceItem) {
 			return (sourceItem.info() && constants.isInProgress(sourceItem.info().executionInfo.status));
+		}
+
+		isStopping(sourceItem) {
+			return ko.pureComputed(() => {
+				if (sourceItem.info() && Object.keys(this.stoppingSources()).length > 0) {
+					return(this.stoppingSources()[sourceItem.source.sourceKey]);
+				} else {
+					return(false);
+				}
+			});
 		}
 
 		isSummaryLoading(sourceItem) {

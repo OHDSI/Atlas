@@ -205,7 +205,7 @@ define([
 							return (_.chain(this.conceptSets())
 								.map(function (ids, conceptSetName) {
 									if (_.includes(ids, d.conceptId))
-										return '<i class="fa fa-shopping-cart"></i> ' + conceptSetName;
+										return conceptSetName + " (Concept Set)";
 								})
 								.compact()
 								.value()

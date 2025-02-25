@@ -4,6 +4,7 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./DeathTemplate.html",
   "../const",
@@ -13,6 +14,7 @@ define([
   utils,
   Range,
   DateAdjustment,
+  ConceptSetSelection,
   CriteriaGroup,
   template,
   constants
@@ -34,6 +36,14 @@ define([
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.occurrenceAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -61,6 +71,14 @@ define([
         action: function () {
           if (self.Criteria.DeathType() == null)
             self.Criteria.DeathType(ko.observableArray());
+        },
+      },
+      {
+        ...constants.deathAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.DeathTypeCS() == null)
+            self.Criteria.DeathTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

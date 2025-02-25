@@ -7,15 +7,17 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.Criteria = params.criteria.DrugEra;
 		self.options = options;
 
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
+    self.indexMessage = ko.i18nformat(
+      'components.conditionDrug.indexDataText',
+      'The index date refers to the drug era of <%= conceptSetName %>.',
+      {
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionDrug.anyDrug', 'Any Drug')
+        ))
+      }
+    );
 		
 	}
 

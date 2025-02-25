@@ -2,16 +2,31 @@
 <span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_1', 'a death occurrence from')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionDeath.anyDeath', 'Any Death')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(OccurrenceStartDate) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_2', 'occurrence start is:')"></span>
 		<date-range-viewer params="Range: OccurrenceStartDate"></date-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DeathType) != null -->
-	<li>
-		<span data-bind="text: ko.i18n('components.conditionDeath.deathType', 'Death Type')"></span>
-		<cycle-toggle-input-viewer params="{value: DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> 
-		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DeathType)"></concept-list-viewer></li>
+<li>
+	<span data-bind="text: ko.i18n('components.conditionDeath.deathType', 'Death Type')"></span>
+	<cycle-toggle-input-viewer params="{value: DeathTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> 
+	<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(DeathType)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(DeathTypeCS) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.cohortCriteria.deathTypeCS', 'with death type concept')"></span>
+	<cycle-toggle-input-viewer params="{value: DeathTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+	</cycle-toggle-input-viewer>
+	<conceptset-reference params="conceptSetId: DeathTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+		defaultName: ko.i18n('components.cohortCriteria.anyDeathType', 'Any Death Type')"></conceptset-reference>
+</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(DeathSourceConcept) != null -->
 	<li>
@@ -28,8 +43,17 @@
 		<span data-bind="text: ko.i18n('components.conditionDeath.conditionDeathText_6', 'gender is any of:')"></span>
 	  <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(GenderCS) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+	<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+	</cycle-toggle-input-viewer>
+	<conceptset-reference params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+		defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage }"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

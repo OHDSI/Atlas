@@ -100,10 +100,20 @@
 .only-results-checkbox {
 }
 table.sources-table td.generation-buttons-column {
-    text-align: right;
+    text-align: left;
 }
 table.sources-table thead th, table.sources-table tbody tr:first-child td {
     padding: 4px 10px;
+}
+table.sources-table tr {
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+table.sources-table tr:hover {
+    background-color: #f2f2f2; 
+}
+table.sources-table tr:hover td {
+    border-top: solid 1px #ccc;      
+    border-bottom: solid 1px #ccc;      
 }
 table.sources-table tbody td {
     padding: 0 10px 4px;

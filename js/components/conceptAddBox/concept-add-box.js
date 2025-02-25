@@ -44,6 +44,7 @@ define([
       this.noPreview = params.noPreview || false;
       this.conceptsToAdd = params.concepts;
       this.canSelectSource = params.canSelectSource || false;
+      this.overrideHandleAddToConceptSet = params.overrideHandleAddToConceptSet;
       this.isAdded = ko.observable(false);
       this.defaultSelectionOptions = {
         includeDescendants: ko.observable(false),
@@ -142,6 +143,10 @@ define([
     }
 
     handleSubmit() {
+      if (this.overrideHandleAddToConceptSet) {
+        const items = CommonUtils.buildConceptSetItems(this.conceptsToAdd(), this.selectionOptions());
+        this.overrideHandleAddToConceptSet(items);
+      } else {
       clearTimeout(this.messageTimeout);
       this.isSuccessMessageVisible(true);
       this.messageTimeout = setTimeout(() => {
@@ -157,6 +162,20 @@ define([
 
       sharedState.activeConceptSet(conceptSet);
 
+      const filterSource = localStorage?.getItem('filter-source') || null;
+      const filterData = JSON.parse(localStorage?.getItem('filter-data') || null);
+      const datasAdded = JSON.parse(localStorage?.getItem('data-add-selected-concept') || null) || [];
+      const dataSearch = { filterData, filterSource }
+      const payloadAdd = this.conceptsToAdd().map(item => {
+        return {
+          "searchData": dataSearch,
+          "vocabularyVersion": sharedState.currentVocabularyVersion(),
+          "conceptId": item.CONCEPT_ID
+        }
+      })
+
+      localStorage.setItem('data-add-selected-concept', JSON.stringify([...datasAdded, ...payloadAdd]))
+      
       // if concepts were previewed, then they already built and can have individual option flags!
       if (this.previewConcepts().length > 0) {
         if (!conceptSet.current()) {
@@ -172,6 +191,7 @@ define([
       CommonUtils.clearConceptsSelectionState(this.conceptsToAdd());
       this.selectionOptions(this.defaultSelectionOptions);
     }
+    }
 
     toggleSelectionOption(option) {
       const options = this.selectionOptions();
@@ -184,7 +204,6 @@ define([
     setActiveConceptSet(conceptSet) {
       this.activeConceptSet(conceptSet);
     }
-
   }
 
   return CommonUtils.build('concept-add-box', ConceptAddBox, view);

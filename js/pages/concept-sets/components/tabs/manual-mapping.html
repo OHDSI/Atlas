@@ -1,0 +1,114 @@
+<div id="manualMappingForm">
+	<div id="conceptDetails" class="configureSourceTable">
+		<table data-bind="with: currentConcept">
+			<thead>
+				<tr>
+					<th data-bind="text: ko.i18n('cs.manager.concept.tabs.details.property', 'Property')"></th>
+					<th data-bind="text: ko.i18n('cs.manager.concept.tabs.details.value', 'Value')"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.conceptName', 'Concept Name')"></td>
+					<td data-bind="text:CONCEPT_NAME"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.domainId', 'Domain Id')"></td>
+					<td data-bind="text:DOMAIN_ID"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.conceptClassId', 'Concept Class Id')">
+					</td>
+					<td data-bind="text:CONCEPT_CLASS_ID"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.vocabularyId', 'Vocabulary Id')"></td>
+					<td data-bind="text:VOCABULARY_ID"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.conceptId', 'Concept Id')"></td>
+					<td data-bind="text:CONCEPT_ID"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.conceptCode', 'Concept Code')"></td>
+					<td data-bind="text:CONCEPT_CODE"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.invalidReason', 'Invalid Reason')">
+					</td>
+					<td data-bind="text:INVALID_REASON_CAPTION, css: { invalid: INVALID_REASON_CAPTION != 'Valid'}">
+					</td>
+				</tr>
+				<tr>
+					<td
+						data-bind="text: ko.i18n('cs.manager.concept.tabs.details.standardConcept', 'Standard Concept')">
+					</td>
+					<td
+						data-bind="text:STANDARD_CONCEPT_CAPTION, css: {classification: STANDARD_CONCEPT=='C', invalid: STANDARD_CONCEPT=='N'}">
+					</td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.validStartDate', 'Valid Start Date')">
+					</td>
+					<td data-bind="text: $component.formatDate(VALID_START_DATE)"></td>
+				</tr>
+				<tr>
+					<td data-bind="text: ko.i18n('cs.manager.concept.tabs.details.validEndDate', 'Valid End Date')">
+					</td>
+					<td data-bind="text: $component.formatDate(VALID_END_DATE)"></td>
+				</tr>
+			</tbody>
+		</table>
+		<div>
+			<br />
+			<b
+				data-bind="text: ko.i18n('components.conceptSet.mapping.nonStandardConceptsFromInitialConceptSetHeader', 'Non-Standard Concepts from the initial Concept Set')"></b>
+			<br />
+		</div>
+		<loading
+			params="status: ko.i18n('components.conceptSet.loadingNonStandardConceptsForCurrentStandard', 'Loading Non-Standard Concepts for the current standard concept')"
+			data-bind="visible: loadingNonStandardConceptsForCurrentStandard()"></loading>
+		<div data-bind="hidden: loadingNonStandardConceptsForCurrentStandard">
+			<faceted-datatable params="{
+            columns: $component.nonStandardConceptsColumns,
+            options: $component.tableOptions,
+            reference: $component.nonStandardConceptsForCurrentStandard,
+            pageLength: tableOptions.pageLength,        
+        }"></faceted-datatable>
+		</div>
+	</div>
+	<div>
+		<span data-bind="tooltip: buttonTooltip">
+			<button class="btn btn-success btn-sm" data-bind="
+              click: mapAllSelectedToGivenStandardConcept,
+              enable: isEnabledMapAllSelectedToGivenStandardConcept,
+              text: ko.i18n('components.conceptSet.mapping.mapAllSelectedToGivenStandardConcept', 'Map all selected to given Standard'),
+            "></button>
+		</span>
+	</div>
+</div>
+<div>
+	<br />
+	<b
+		data-bind="text: ko.i18n('components.conceptSet.mapping.includedSourceCodesHeader', 'Included Source Codes')"></b>
+	<br />
+</div>
+<div>
+	<datasource-select
+		params="{conceptSetStore: $component.conceptSetStore, selectedSource: $component.selectedSource, tab: 'included-sourcecodes'}"></datasource-select>
+	<faceted-datatable params="{
+        columns: $component.relatedSourcecodesColumns,
+        options: $component.relatedSourcecodesOptions,
+        reference: $component.includedSourcecodes,
+        pageLength: tableOptions.pageLength,
+        lengthMenu: tableOptions.lengthMenu,
+        language: ko.i18n('datatable.language')
+    }"></faceted-datatable>
+	<concept-add-box params="{
+        isActive: canAddConcepts,
+        concepts: getSelectedIncludedSourcecodes,
+		overrideHandleAddToConceptSet: overrideHandleAddToConceptSet,
+    }"></concept-add-box>
+</div>
+
+</div>

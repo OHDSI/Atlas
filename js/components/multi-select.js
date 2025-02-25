@@ -14,6 +14,7 @@ define(
 
       self.multiple = params.multiple;
       self.options = params.options;
+	  self.disable = (params.disable || false);
       self.selectedValues = ko.observableArray(params.selectedValues && params.selectedValues());
       self.selectedValue = params.selectedValue;
       self.selectedTextFormat = params.selectedTextFormat || 'count > 2';

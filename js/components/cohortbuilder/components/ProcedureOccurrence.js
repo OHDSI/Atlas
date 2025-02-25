@@ -4,6 +4,7 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./ProcedureOccurrenceTemplate.html",
   "../const",
@@ -13,6 +14,7 @@ define([
   utils,
   Range,
   DateAdjustment,
+  ConceptSetSelection,
   CriteriaGroup,
   template,
   constants
@@ -43,6 +45,14 @@ define([
         },
       },
       {
+        ...constants.occurrenceAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.procedureOccurrenceAttributes.addDate,
         selected: false,
         action: function () {
@@ -70,6 +80,14 @@ define([
         },
       },
       {
+        ...constants.procedureOccurrenceAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ProcedureTypeCS() == null)
+            self.Criteria.ProcedureTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.procedureOccurrenceAttributes.addVisit,
         selected: false,
         action: function () {
@@ -78,11 +96,27 @@ define([
         },
       },
       {
+        ...constants.procedureOccurrenceAttributes.addVisitCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.VisitTypeCS() == null)
+            self.Criteria.VisitTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.procedureOccurrenceAttributes.addModifier,
         selected: false,
         action: function () {
           if (self.Criteria.Modifier() == null)
             self.Criteria.Modifier(ko.observableArray());
+        },
+      },
+      {
+        ...constants.procedureOccurrenceAttributes.addModifierCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ModifierCS() == null)
+            self.Criteria.ModifierCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -111,6 +145,14 @@ define([
         action: function () {
           if (self.Criteria.ProviderSpecialty() == null)
             self.Criteria.ProviderSpecialty(ko.observableArray());
+        },
+      },
+      {
+        ...constants.procedureOccurrenceAttributes.addProviderSpecialtyCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ProviderSpecialtyCS() == null)
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {

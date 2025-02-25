@@ -34,6 +34,18 @@
 					</div>
 				</td>
 			</tr>
+			<tr data-bind="if: GenderCS() != null, visible: GenderCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('GenderCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+						<cycle-toggle-input params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: Race() != null, visible: Race() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Race') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
@@ -43,12 +55,36 @@
 					</div>
 				</td>
 			</tr>
+			<tr data-bind="if: RaceCS() != null, visible: RaceCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('RaceCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.raceCS', 'with race concept')"></span>
+						<cycle-toggle-input params="{value: RaceCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: RaceCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyRace', 'Any Race')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: Ethnicity() != null, visible: Ethnicity() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Ethnicity') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 					<div>
 						<span data-bind="text: ko.i18n('components.demographicCriteria.withEthnicity', 'with a ethnicity of:')"></span>
 						<concept-list params="PickerParams: { DefaultDomain: 'Ethnicity', DefaultQuery: ''}, ConceptList: Ethnicity()"></concept-list>
+					</div>
+				</td>
+			</tr>
+			<tr data-bind="if: EthnicityCS() != null, visible: EthnicityCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('RaceCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.ethnicityCS', 'with ethnicity concept')"></span>
+						<cycle-toggle-input params="{value: EthnicityCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: EthnicityCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyEthnicity', 'Any Ethnicity')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>

@@ -26,7 +26,7 @@ RUN find . -type f "(" \
       | xargs -0 -n 1 gzip -kf
 
 # Production Nginx image
-FROM docker.io/nginxinc/nginx-unprivileged:1.23.3-alpine@sha256:c748ba587e7436aaa8729b64d4e0412410a486f0c592f0eec100fb3804ff9afd
+FROM docker.io/nginxinc/nginx-unprivileged:1.27.2-alpine
 
 LABEL org.opencontainers.image.title="OHDSI-Atlas"
 LABEL org.opencontainers.image.authors="Joris Borgdorff <joris@thehyve.nl>, Lee Evans - www.ltscomputingllc.com, Shaun Turner<shaun.turner1@nhs.net>"

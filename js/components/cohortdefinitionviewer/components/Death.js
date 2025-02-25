@@ -1,4 +1,5 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range','components/cohortbuilder/InputTypes/Text', 'text!./DeathTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/utils', 'text!./DeathTemplate.html'
+], function (ko, options, utils, template) {
 
 	function DeathViewModel(params) {
 		var self = this;
@@ -7,15 +8,17 @@ define(['knockout','components/cohortbuilder/options','components/cohortbuilder/
 		self.Criteria = params.criteria.Death;
 		self.options = options;
 
-		self.getCodesetName = function(codesetId, defaultName) {
-			if (codesetId != null)
-			{
-				var selectedConceptSet = self.expression.ConceptSets().filter(function (item) { return item.id == codesetId })[0];
-				return ko.utils.unwrapObservable(selectedConceptSet.name);
-			}
-			else
-				return defaultName;
-		};
+    self.indexMessage = ko.i18nformat(
+      'components.conditionDeath.indexDataText',
+      'The index date refers to the death event of <%= conceptSetName %>.',
+      {
+        conceptSetName: ko.pureComputed(() => utils.getConceptSetName(
+          self.Criteria.CodesetId,
+          self.expression.ConceptSets,
+          ko.i18n('components.conditionDeath.anyDeath', 'Any Death')
+        ))
+      }
+    );
 
 	}
 

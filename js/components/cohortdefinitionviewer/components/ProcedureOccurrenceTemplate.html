@@ -2,6 +2,12 @@
 <span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_1', 'a procedure occurrence of')"></span>
 <conceptset-reference params="{conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: ko.i18n('components.conditionProcedureOccurrence.anyProcedure', 'Any Procedure')}"></conceptset-reference>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_2', 'for the first time in the person\'s history')"></span>
@@ -17,10 +23,29 @@
 		<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.procedureType', 'Procedure Type')"></span>
 		<cycle-toggle-input-viewer params="{value: ProcedureTypeExclude, options: $component.options.DomainTypeExcludeOptions}"></cycle-toggle-input-viewer> <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProcedureType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ProcedureTypeCS) != null -->
+	<li>
+		<div>
+			<span data-bind="text: ko.i18n('components.cohortCriteria.procedureTypeCS', 'with procedure type concept')"></span>
+			<cycle-toggle-input-viewer params="{value: ProcedureTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+			</cycle-toggle-input-viewer>
+			<conceptset-reference params="conceptSetId: ProcedureTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+				defaultName: ko.i18n('components.cohortCriteria.anyProcedureType', 'Any Procedure Type')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Modifier) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_11', 'modifier is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Modifier)"></concept-list-viewer></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ModifierCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.modifierCS', 'with modifier concept')"></span>
+		<cycle-toggle-input-viewer params="{value: ModifierCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: ModifierCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyModifier', 'Any Modifier')"></conceptset-reference>
+</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(Quantity) != null -->
 	<li>
@@ -42,18 +67,45 @@
 		<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_12', 'gender is any of:')"></span>
 		<concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(Gender)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(GenderCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+		<cycle-toggle-input-viewer params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(ProviderSpecialty) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_13', 'provider specialty is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(ProviderSpecialty)"></concept-list></li>
+<!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(ProviderSpecialtyCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.providerSpecialtyCS', 'with provider specialty concept')"></span>
+		<cycle-toggle-input-viewer params="{value: ProviderSpecialtyCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: ProviderSpecialtyCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyProviderSpecialty', 'Any Provider Ppecialty')"></conceptset-reference>
+	</li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(VisitType) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionProcedureOccurrence.conditionProcedureOccurrenceText_14', 'visit occurrence is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(VisitType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(VisitTypeCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.visitTypeCS', 'with visit type concept')"></span>
+		<cycle-toggle-input-viewer params="{value: VisitTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: VisitTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyVisitType', 'Any Visit Type')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: $component.indexMessage}"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

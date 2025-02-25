@@ -3,12 +3,14 @@ define([
   "../options",
   "../InputTypes/Range",
   "../utils",
+  '../InputTypes/ConceptSetSelection',
   "text!./DemographicCriteriaTemplate.html",
   "../const",
   "./ConceptSetSelector",
-], function (ko, options, Range, utils, template, constants) {
+], function (ko, options, Range, utils, ConceptSetSelection, template, constants, ) {
   function DemographicCriteriaViewModel(params) {
     var self = this;
+    self.expression = ko.utils.unwrapObservable(params.expression);
     self.Criteria = ko.utils.unwrapObservable(params.criteria);
     self.options = options;
     self.formatOption = utils.formatDropDownOption;
@@ -26,6 +28,14 @@ define([
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.demographicAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -61,11 +71,27 @@ define([
         },
       },
       {
+        ...constants.demographicAttributes.addRaceCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.RaceCS() == null)
+            self.Criteria.RaceCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.demographicAttributes.addEthnicity,
         selected: false,
         action: function () {
           if (self.Criteria.Ethnicity() == null)
             self.Criteria.Ethnicity(ko.observableArray());
+        },
+      },
+      {
+        ...constants.demographicAttributes.addEthnicityCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.EthnicityCS() == null)
+            self.Criteria.EthnicityCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
     ];

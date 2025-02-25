@@ -5,6 +5,7 @@ define([
   "../utils",
   "../InputTypes/Range",
   "../InputTypes/DateAdjustment",
+  "../InputTypes/ConceptSetSelection",
   "../CriteriaGroup",
   "text!./VisitOccurrenceTemplate.html",
   "../const",
@@ -15,6 +16,7 @@ define([
   utils,
   Range,
   DateAdjustment,
+  ConceptSetSelection,
   CriteriaGroup,
   template,
   constants
@@ -42,6 +44,14 @@ define([
         action: function () {
           if (self.Criteria.Gender() == null)
             self.Criteria.Gender(ko.observableArray());
+        },
+      },
+      {
+        ...constants.visitAttributes.addGenderCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.GenderCS() == null)
+            self.Criteria.GenderCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
@@ -84,6 +94,14 @@ define([
         },
       },
       {
+        ...constants.visitAttributes.addTypeCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.VisitTypeCS() == null)
+            self.Criteria.VisitTypeCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.visitAttributes.addLength,
         selected: false,
         action: function () {
@@ -108,11 +126,27 @@ define([
         },
       },
       {
+        ...constants.visitAttributes.addProviderSpecialtyCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.ProviderSpecialtyCS() == null)
+            self.Criteria.ProviderSpecialtyCS(new ConceptSetSelection({}, self.expression.ConceptSets));
+        },
+      },
+      {
         ...constants.visitAttributes.addPlaceService,
         selected: false,
         action: function () {
           if (self.Criteria.PlaceOfService() == null)
             self.Criteria.PlaceOfService(ko.observableArray());
+        },
+      },
+      {
+        ...constants.visitAttributes.addPlaceServiceCS,
+        selected: false,
+        action: function () {
+          if (self.Criteria.PlaceOfServiceCS() == null)
+            self.Criteria.PlaceOfServiceCS(new ConceptSetSelection({}, self.expression.ConceptSets));
         },
       },
       {
