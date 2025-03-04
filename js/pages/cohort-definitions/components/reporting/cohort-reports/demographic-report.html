@@ -1,0 +1,195 @@
+<loading data-bind="visible: loading()" params="status: ko.i18n('cc.viewEdit.results.loading', 'Loading demographic results...')"></loading>
+<div data-bind="css: classes(), visible: true">
+    <div data-bind="css: classes('header')">
+        <div>
+            <h2 data-bind="css: classes('title')">
+                <i data-bind="css: classes({ element: 'title-separator', extra: 'fa fa-chevron-right' })" aria-hidden="true"></i>
+                <span data-bind="text: ko.i18nformat('cc.viewEdit.results.title', 'Reports for <%= sourceName %>', {sourceName: $component.source().sourceName})"></span>
+            </h2>
+            <div data-bind="css: classes('toolbar')">
+                <ul data-bind="css: classes('detail-list')">
+                    <!-- <li data-bind="css: classes('detail')">
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.date', 'Date:')"></label>
+                        <span data-bind="css: classes('detail-value'), text: $component.formatDate($component.data().date)"></span>
+                    </li> -->
+                    <!-- <li data-bind="css: classes('detail')">
+                        <label data-bind="css: classes('detail-label'), text: ko.i18n('cc.viewEdit.results.detail.results.label', 'Results:')">:</label>
+                        <span data-bind="css: classes('detail-value'), text: ko.i18nformat('cc.viewEdit.results.detail.results.text', '<%= reports %> reports', { reports: ($component.data().analyses || []).length })"></span>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+        <!-- <div data-bind="css: classes('threshold'), hidden: showEmptyResults">
+            <div data-bind="css: classes('threshold-setter')">
+                <label  data-bind="css: classes('threshold-label'), text: ko.i18n('cc.viewEdit.results.threshold.label', 'Filter results to covariates with prevalence greater than:')"></label>
+                <input type="number" min="1" max="100" class="form-control"
+                       data-bind="css: classes('threshold-input'), textInput: $component.newThresholdValuePct,
+                       attr: { placeholder: ko.i18n('cc.viewEdit.results.threshold.placeholder', 'Threshold value') }">
+                <label>%</label>
+                <button data-bind="
+                    css: classes({ element: 'threshold-submit', extra: 'btn btn-primary btn-sm' }),
+                    text: ko.i18n('cc.viewEdit.results.threshold.apply', 'Apply'),
+                    click: $component.updateThreshold"
+                >
+                </button>
+            </div>
+            <span data-bind="css: classes('threshold-result-descr'), text: $component.resultCountText()"></span>
+        </div> -->
+    </div>
+    <div data-bind="css: classes('report-section')">
+        <!-- ko foreach: analysisList -->
+            <div data-bind="css: $component.classes('report-group')">
+                <h3 data-bind="css: $component.classes('analysis-name')">
+                    <span data-bind="text: $component.analysisTitle($data)"></span>
+                    <i data-bind="visible: $component.isResultDownloading($data.analysisName), css: $component.classes({ element: 'action-ico', extra: ['fa fa-spinner fa-spin']})"></i>
+                </h3>
+                <div data-bind="css: $component.classes('analysis-results')">
+                    <div data-bind="css: $component.getButtonsConfig(type, $data)?.length ? $component.classes('table-wrapper') : $component.classes('table-wrapper-nodata')">
+                        <table style="width:100%" data-bind="
+                            css: $component.classes({ element: 'report-table', extra: ['table', 'table-bordered', 'table-hover'] }),
+                            dataTable:{
+                                data: $data.data,
+                                options: {
+                                    autoWidth: false,
+                                    xssSafe: true,
+                                    deferRender: true,																														 
+                                    columns: $data.columns,
+                                    buttons: $component.getButtonsConfig(type, $data),
+                                    dom: 'Blftipr',
+                                    rowCallback: $component.isRowGreyed,
+                                    order: $data.defaultSort,
+                                    pageLength: $component.tableOptions.pageLength,
+                                    lengthMenu: $component.tableOptions.lengthMenu,
+                                    language: $component.datatableLanguage
+                                }
+                            }
+                        ">
+                            <thead>
+                                <!-- ko if: cohorts.length > 1 -->
+                                <tr>
+                                    <!-- ko foreach: defaultColNames -->
+                                        <th data-bind="attr: { rowspan: $parent.stratified ? 3 : 2 }, text: $data"></th>
+                                    <!-- /ko -->
+                                    <!-- ko foreach: cohorts -->
+                                        <th data-bind="css: $component.classes('th-cohort-name'), text: cohortName, attr: {colspan: Array.from($parent.strataNames).length * $parent.perStrataColNames.length}"></th>
+                                    <!-- /ko -->
+                                    <!-- ko if: !strataOnly && cohorts.length == 2 -->
+                                        <th data-bind="css: $component.classes('th-diff'), attr: { rowspan: stratified ? 3 : 2 }">Std Diff</th>
+                                    <!-- /ko -->
+                                </tr>
+                                <!-- /ko -->
+                                <tr>
+                                    <!-- ko if: cohorts.length <= 1 -->
+                                        <!-- ko foreach: defaultColNames -->
+                                            <th data-bind="attr: { rowspan: $parent.stratified ? 2 : 1 }, text: $data"></th>
+                                        <!-- /ko -->
+                                    <!-- /ko -->
+                                    <!-- ko foreach: cohorts -->
+                                        <!-- ko ifnot: $parent.strataOnly -->
+                                            <!-- ko foreach: $parent.perStrataColNames -->
+                                                <th data-bind="css: $component.classes('th-cov-count'), attr: { rowspan: $parents[1].stratified ? 2 : 1 }, text: $data"></th>
+                                            <!-- /ko -->
+                                        <!-- /ko -->
+                                        <!-- ko foreach: $component.sortedStrataNames($parent.strataNames) -->
+                                                <th colspan="2" data-bind="css: $component.classes('th-cohort-name'), text: $data.name"></th>
+                                        <!-- /ko -->
+                                    <!-- /ko -->
+                                </tr>
+                                <!-- ko if: stratified -->
+                                <tr>
+                                    <!-- ko foreach: cohorts -->
+                                        <!-- ko foreach: $component.sortedStrataNames($parent.strataNames) -->
+                                                <!-- ko foreach: $parents[1].perStrataColNames -->
+                                                    <th data-bind="css: $component.classes('th-cov-count'), text: $data"></th>
+                                                <!-- /ko -->
+                                        <!-- /ko -->
+                                    <!-- /ko -->
+                                </tr>
+                                <!-- /ko -->
+                            </thead>
+                        </table>
+                    </div>
+                    <!-- ko if: type === 'prevalence' && !stratified && cohorts.length === 2 -->
+                        <div data-bind="css: $component.classes('chart-wrapper')">
+                            <scatterplot data-bind="css: $component.classes('scatterplot')" params="
+                                data: () => $component.convertScatterplotData($data),
+                                minHeight: 400,
+                                format: {
+                                    xLabel: cohorts[0].cohortName,
+                                    yLabel: cohorts[1].cohortName,
+                                    circleRadius: 4,
+                                    colors: $component.groupedScatterColorScheme,
+                                    addDiagonal: true,
+                                    xScale: $component.scatterXScale,
+                                    yScale: $component.scatterYScale,
+                                    tooltip: $component.tooltipBuilder
+                                },
+                                chartName: `${$component.analysisTitle($data)}`,
+                                reportName: `characterization_${$component.characterizationId()}_execution_${$component.executionId()}`"
+                            />
+                        </div>
+                    <div class="characterization-results-boxplot-container">
+                        <div data-bind="css: $component.classes('chart-wrapper')">
+                            <split-boxplot data-bind="css: $component.classes('boxplot')" params="
+                                        data: () => $component.convertBoxplotData($data),
+                                        minHeight: 125,
+                                        format: {
+                                            valueFormatter: v => v,
+                                            boxHeight: 40,
+                                        }"
+                            />
+                        </div>
+                    </div>
+                    <div class="characterization-results-container">
+                        <div class="characterization-results-boxplot-container">
+                            <div data-bind="css: $component.classes('chart-wrapper')">
+                                <horizontal-boxplot data-bind="css: $component.classes('boxplot')" params="
+                                                data: () => $component.convertHorizontalBoxplotData($data),
+                                                minHeight: 125,
+                                                format: {
+                                                    valueFormatter: v => v,
+                                                    boxHeight: 40,
+                                                }"
+                                />
+                            </div>
+                        </div>
+                        <div class="characterization-results-legend-container">
+                            <h4 class="legend-header">Cohort Legend</h4>
+                            <div>
+                                <table data-bind="foreach: $component.prepareLegendBoxplotData($data)">
+                                    <tr class="color-row">
+                                        <td class="color-cell"><div data-bind="style: {'background-color' : cohortColor}" class="swatch"></div></td>
+                                        <td> <div data-bind="text: cohortName" class="legend-cohort-name"></div></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        <!-- /ko -->
+    </div>
+    <atlas-modal params="
+        showModal: $component.isExecutionDesignShown,
+        title: 'Design',
+        data: {
+            executionDesign: $component.executionDesign,
+            classes: $component.classes,
+        }
+    ">
+        <div class="loading" data-bind="visible: executionDesign() == null">loading</div>
+        <div data-bind="if: executionDesign() != null">
+            <textarea data-bind="css: classes('execution-design'), text: JSON.stringify(executionDesign(), null, 2)"></textarea>
+        </div>
+    </atlas-modal>
+    <atlas-modal params="
+            showModal: $component.isExplorePrevalenceShown,
+            title: $component.explorePrevalenceTitle,
+            data: {
+                explore: $component.explorePrevalence(),
+            }
+        ">
+        <explore-prevalence-demographic params="explore: explore"></explore-prevalence-demographic>
+    </atlas-modal>
+</div>

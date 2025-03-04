@@ -330,7 +330,7 @@
 					</tbody>
 				</table>
 				<!-- ko if: selectedReportSource() -->
-				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource"></cohort-reports>
+				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource, infoSelected: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
@@ -791,6 +791,15 @@
 											: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
 		</button>
 	</div>
+</script>
+
+<script type="text/html" id="generation-checkbox-demographic">
+	<span>
+		<input class="hover-toolbox" type="checkbox" data-bind="attr:{ id: $data.sourceKey } , checked: viewDemographic, tooltip: 'Results with Demographics', eventListener: [ 
+			{event: 'mouseover', selector: 'input', callback: $component.addToolTipDemographic },
+			{event: 'mouseout', selector: 'input', callback: $component.removeToolTipDemographic }, 
+			{event: 'mouseup', selector: 'input', callback: $component.handleViewDemographic }]" data-placement="right"/>
+	</span>
 </script>
 
 <!-- /ko -->
