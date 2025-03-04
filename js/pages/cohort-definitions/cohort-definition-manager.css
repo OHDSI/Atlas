@@ -111,6 +111,10 @@ table.sources-table tr {
 table.sources-table tr:hover {
     background-color: #f2f2f2; 
 }
+table.sources-table tr td {
+    border-top: solid 1px #FFF;      
+    border-bottom: solid 1px #FFF;      
+}
 table.sources-table tr:hover td {
     border-top: solid 1px #ccc;      
     border-bottom: solid 1px #ccc;      
