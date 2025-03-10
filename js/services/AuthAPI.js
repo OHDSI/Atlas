@@ -253,9 +253,8 @@ define(function(require, exports) {
         return p && typeof p === 'object' && typeof p.status === 'function' && p.status() === 'pending';
     }
     var refreshToken = function() {
-
-        if (!config.userAuthenticationEnabled) {
-            return Promise.resolve(true); // no-op if userAuthenticationEnabled == false
+        if (!config.userAuthenticationEnabled || authProvider() === AUTH_PROVIDERS.IAP) {
+            return Promise.resolve(true); // no-op if userAuthenticationEnabled == false or Google IAP Security is enabled
         }
 
         if (!isPromisePending(refreshTokenPromise)) {
