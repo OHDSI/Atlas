@@ -2,6 +2,10 @@ define([
 	'knockout',
 	'jquery',
 	'text!./results.html',
+	'appConfig',
+	'services/file',
+	'services/http',
+	'moment',
 	'utils/AutoBind',
 	'services/IRAnalysis',
 	'pages/incidence-rates/const',
@@ -19,6 +23,10 @@ define([
 	ko,
 	$,
 	view,
+	config,
+	FileService,
+	httpService,
+	moment,
 	AutoBind,
 	IRAnalysisService,
 	constants,
@@ -27,7 +35,7 @@ define([
 	authApi,
 	Component,
 	commonUtils,
-	sharedState
+	sharedState,
 ) {
 
 	class IRAnalysisResultsViewer extends AutoBind(Component) {
@@ -43,6 +51,7 @@ define([
 			this.cancelExecution = params.cancelExecution;
 			this.stoppingSources = params.stoppingSources;
 			this.criticalCount = params.criticalCount;
+			this.config = config;
 
 			this.dirtyFlag = params.dirtyFlag;
 			this.analysisCohorts = params.analysisCohorts;
@@ -143,6 +152,42 @@ define([
 				title: ko.i18n('ir.results.duration', 'Duration'),
 				render: (s,p,d) => d.info() ? `${this.msToTime(d.info().executionInfo.executionDuration)}` : `n/a`
 			}];
+			this.shinyOptions = [
+				{
+					action: this.downloadShinyApp,
+					title: 'components.shiny.button.menu.download',
+					defaultTitle: 'Download'
+				},
+				{
+					action: this.publishShinyApp,
+					title: 'components.shiny.button.menu.publish',
+					defaultTitle: 'Publish'
+				}
+			];
+		}
+
+		downloadShinyApp(source) {
+			let analysisId = source.info().executionInfo.id.analysisId;
+			FileService.loadZipNoRename(
+				config.api.url + constants.apiPaths.downloadShiny(analysisId, source.source.sourceKey)
+			)
+				.catch((e) => console.error("error when downloading: " + e))
+				.finally(() => this.isLoading(false));
+		}
+
+		async publishShinyApp(source) {
+			this.loading = true;
+			try {
+				await httpService.doGet(config.api.url + constants.apiPaths.publishShiny(source.info().executionInfo.id.analysisId, source.source.sourceKey));
+				alert("Incidence Rate report is published");
+			} catch (e) {
+				console.error('An error has occurred when publishing', e);
+				if (e.status === 403) {
+					alert('Permission denied');
+				} else {
+					alert('Unexpected error occurred when publishing');
+				}
+			}
 		}
 
 		reportDisabledReason(source) {
