@@ -1,9 +1,9 @@
 define([
     'knockout',
     'services/CohortDefinition',
-    'pages/cohort-definitions/components/reporting/cohort-reports/conversion/PrevalenceStatConverter',
-    'pages/cohort-definitions/components/reporting/cohort-reports/conversion/DistributionStatConverter',
-    'pages/cohort-definitions/components/reporting/cohort-reports/conversion/ComparativeDistributionStatConverter',
+    'pages/characterizations/services/conversion/PrevalenceStatConverter',
+    'pages/characterizations/services/conversion/DistributionStatConverter',
+    'pages/characterizations/services/conversion/ComparativeDistributionStatConverter',
 	'pages/characterizations/utils',
     'text!./demographic-report.html',
     'appConfig',
