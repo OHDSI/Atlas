@@ -136,6 +136,23 @@ define(
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
+					// Add user interaction listener that keeps refreshing the token as long
+					// as the user is active (either moving mouse, navigating with keyboard and/or typing):
+					var userInteractionCount = 0;
+					console.log("Adding user interaction listeners...");
+					["mouseover", "keydown", "focusin"].forEach(eventType => {
+						window.addEventListener(eventType, (event) => {
+							userInteractionCount++;
+							if (userInteractionCount % 30 == 0) {
+								console.log(">>> Refreshing user token....");
+								userInteractionCount = 0;
+								// Refresh the Atlas token:
+								if (authApi.isAuthenticated()) {
+									authApi.refreshToken();
+								}
+							}
+						});
+					});
 
 					resolve();
 				});
