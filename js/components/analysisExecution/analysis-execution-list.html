@@ -100,6 +100,23 @@
             <span data-bind="text: ko.i18nformat('components.analysisExecution.buttons.allExecutions', 'All executions (<%=submissions%>)', {submissions: submissions().length})"></span>
           </button>
         </li>
+ 			<!-- ko if: $component.config.shinyEnabled -->
+      <div class="btn-group">
+        <button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown"
+          data-bind="attr: {disabled: !$component.isResultsViewPermitted(sourceKey) || $component.runningExecutionStatuses.includes(status()) || submissions().length < 1}">
+          <i class="fa fa-network-wired"></i>
+          <span data-bind="text: 'Shiny App'"></span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right" data-bind="foreach: $component.shinyOptions">
+          <li>
+            <a data-bind="click: () => $data.action($parent)" href="#">
+              <div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+            </a>
+          </li>
+        </ul>
+      </div>
+			<!-- /ko -->
       </ul>
     </div>
     <ul data-bind="css: classes('result-list')">

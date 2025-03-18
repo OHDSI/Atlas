@@ -159,6 +159,22 @@
 			<button class="btn btn-sm btn-primary" data-bind="attr: {'disabled': $component.isInProgress($data) || !$component.hasSourceAccess($data.source.sourceKey)}, click: () => $component.selectSource($data)">
 				<i class="fa fa-eye"></i> <span data-bind="text: 'View Reports'"></span>
 			</button>
+			<!-- ko if: $component.config.shinyEnabled -->
+			<div class="btn-group">
+				<button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" data-bind="attr: {disabled: !$data.info() || !$data.info().executionInfo.isValid || !$component.hasSourceAccess($data.source.sourceKey) || $component.isInProgress($data)}">
+					<i class="fa fa-network-wired"></i>
+					<span data-bind="text: 'Shiny App'"></span>
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right" data-bind="foreach: $component.shinyOptions">
+					<li>
+						<a data-bind="click: () => $data.action($parent)" href="#">
+							<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /ko -->
 			<button data-bind="attr: {'disabled': $component.isInProgress($data) || !$component.hasSourceAccess($data.source.sourceKey)}, visible: $component.isEditable()" class="btn btn-sm btn-danger removeResult">
 				<i class="fa fa-trash"></i>
 			</button>
