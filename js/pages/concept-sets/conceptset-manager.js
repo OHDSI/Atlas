@@ -46,7 +46,9 @@ define([
 	'components/ac-access-denied',
 	'components/versions/versions',
 	'./components/tabs/conceptset-annotation',
-	'./components/tabs/resolve-mappings'
+	'./components/tabs/resolve-mappings',
+	'./components/tabs/conceptset-lock-history',
+    './components/modal/snapshot-lock-modal',
 ], function (
         ko,
 	view,
@@ -77,31 +79,75 @@ define([
 		constructor(params) {
 			super(params);
 			this.commonUtils = commonUtils;
-		        this.conceptSetStore = ConceptSetStore.repository();
+		    this.conceptSetStore = ConceptSetStore.repository();
 			this.selectedSource = ko.observable();
 			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
 			this.previewVersion = sharedState.currentConceptSetPreviewVersion;
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
+			this.isSnapshotLockModalShown = ko.observable(false);
+			this.isAllowedSnapshotActions = ko.pureComputed(() => {
+				return this.conceptSetStore.current() && authApi.isPermittedUpdateConceptset(this.conceptSetStore.current().id);
+			})
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			this.loading = ko.observable();
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
 
+			this.isLocked = ko.observable();
+			this.lockedDate = ko.observable();
+			this.lockedBy = ko.observable();
+
+			this.currentConceptSetSubscription = this.currentConceptSet.subscribe(currentConceptSet => {
+				if (currentConceptSet) {
+					this.loadLastConceptSetSnapshotAction(this.currentConceptSet().id)
+						.then(data => {
+							let isLockedValue = ("LOCK" === data.data.action);
+							if (isLockedValue) {
+								this.isLocked(true);
+								this.lockedBy(data.data.user);
+								this.lockedDate(commonUtils.formatDateForAuthorship(data.data.snapshotDate));
+							} else {
+								this.isLocked(false);
+								this.lockedBy(undefined);
+								this.lockedDate(undefined);
+							}
+						}).catch(error => {
+							console.error('Error fetching locked details:', error);
+							this.isLocked(undefined);
+							this.lockedBy(undefined);
+							this.lockedDate(undefined);
+						});
+				}
+			})
+			
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
 					return false;
 				}
-
-				if (this.currentConceptSet() && (this.currentConceptSet()
-						.id !== 0)) {
-					return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
-						.id) || !config.userAuthenticationEnabled;
+				if (this.currentConceptSet() && (this.currentConceptSet().id !== 0)) {
+					if (this.isLocked()) {
+						return false;
+					}
+					return authApi.isPermittedUpdateConceptset(this.currentConceptSet().id) || !config.userAuthenticationEnabled;
 				} else {
 					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 				}
 			});
+
+			this.description = ko.pureComputed(() => {
+				if (this.canEdit()) {
+					return '';
+				} else {
+					if (this.isLocked()) {
+						return '(Read only, Locked)';
+					} else {
+						return '(Read only)';
+					}
+				}
+			});
+
 			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name() && this.currentConceptSet().name().trim();
 			});
@@ -227,6 +273,17 @@ define([
 				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
+
+			this.lockHistoryParams = ko.observable({
+				currentConceptSet: this.currentConceptSet,
+				changeFlag: ko.pureComputed(() => this.currentConceptSetDirtyFlag().isChanged()),
+			});
+
+			this.canLock = ko.observable(true);
+			this.canUnlock = ko.observable(true);
+
+			this.currentVocabularyVersion = sharedState.currentVocabularyVersion();
+			this.currentConceptSetId = ko.pureComputed(() => this.currentConceptSet().id);
 
 			this.tabs = [
 				{
@@ -359,6 +416,12 @@ define([
 						loading: this.conceptSetStore.loadingIncluded,
 					},
 				},
+				{
+                	title: ko.i18n('cs.manager.tabs.lockHistory', 'Snapshot/Lock History'),
+                	key: ViewMode.LOCK_HISTORY,
+                	componentName: 'conceptset-lock-history',
+                	componentParams: this.lockHistoryParams,
+                },
 			];
 			this.selectedTab = ko.observable(0);
 
@@ -414,6 +477,11 @@ define([
 
 			// initially resolve the concept set
 			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
+			this.conceptSetStore.current.notifySubscribers();
+		}
+
+		lockOrUnlockSnapshot() {
+			this.isSnapshotLockModalShown(true);
 		}
 
 		onRouterParamsChanged(params, newParams) {
@@ -480,6 +548,13 @@ define([
 					this.previewVersion(null);
 					conceptSet = await conceptSetService.loadConceptSet(conceptSetId);
 					expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
+
+					const isLockedBatchCheckRequest = {
+						conceptSetIds: [conceptSetId]
+					};
+					const lockStatusResponse = await conceptSetService.getLockedStatusesForConceptSets(isLockedBatchCheckRequest);
+					const lockStatusMap = lockStatusResponse.data.lockStatus;
+					conceptSet.isLocked = ko.observable(lockStatusMap[conceptSetId] || false);
 				}
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
 				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
@@ -739,8 +814,20 @@ define([
 				createdDate: createdDate,
 				modifiedBy: modifiedBy,
 				modifiedDate: modifiedDate,
+				lockedBy: this.lockedBy,
+				lockedDate: this.lockedDate,
 			}
 		}
+
+		async loadLastConceptSetSnapshotAction(conceptSetId) {
+				try {
+					return await conceptSetService.getLastConceptSetSnapshotAction(conceptSetId);
+				} catch (ex) {
+					console.error(`Error fetching last snapshot action: ${ex}`);
+					return null;
+				}
+		}
+
 		diagnose() {
 			if (this.currentConceptSet()) {
 				return conceptSetService.runDiagnostics(this.currentConceptSet());
