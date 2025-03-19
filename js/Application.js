@@ -96,6 +96,7 @@ define(
 				});
 				this.companyInfoTemplate = config.companyInfoCustomHtmlTemplate;
 				this.showCompanyInfo = config.showCompanyInfo;
+				this.isLoggedIn = ko.computed(() => authApi.isAuthenticated());
 			}
 
 			/**
