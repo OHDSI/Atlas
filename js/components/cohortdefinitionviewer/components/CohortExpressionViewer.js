@@ -50,6 +50,12 @@ define(['knockout', 'components/cohortbuilder/options', 'text!./CohortExpression
 			else
 				return "unknownCriteriaType";
 		};
+
+    self.showCensorWindow = ko.observable(
+      self.expression().CensorWindow().StartDate() ||
+        self.expression().CensorWindow().EndDate()
+    );
+
 	}
 
 	// return factory
