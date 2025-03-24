@@ -98,6 +98,10 @@ define(
 				this.showCompanyInfo = config.showCompanyInfo;
 			}
 
+			timeToExpire() {
+				return authApi.tokenExpirationDate() - new Date();
+			}
+
 			/**
 			 * Performs initial setup
 			 * @returns Promise
@@ -144,10 +148,11 @@ define(
 						window.addEventListener(eventType, (event) => {
 							userInteractionCount++;
 							if (userInteractionCount % 30 == 0) {
-								console.log(">>> Refreshing user token....");
+								console.log(">>> Checking user token....");
 								userInteractionCount = 0;
-								// Refresh the Atlas token:
-								if (authApi.isAuthenticated()) {
+								// Refresh the Atlas token if it is close to expiring:
+								if (authApi.isAuthenticated() && this.timeToExpire() < config.refreshTokenThreshold) {
+									console.log(">>> Token close to expiring. Refreshing user token....");
 									authApi.refreshToken();
 								}
 							}
