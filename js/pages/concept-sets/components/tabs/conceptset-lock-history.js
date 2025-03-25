@@ -7,6 +7,7 @@ define([
   'services/ConceptSet',
   'utils/Renderers',
   'services/MomentAPI',
+  'colvis',
   'faceted-datatable',
   'less!./conceptset-lock-history.less',
 ], function (
@@ -29,10 +30,7 @@ define([
       this.canDeleteSnapshots = ko.observable(false);
       this.datatableLanguage = ko.i18n('datatable.language');
       this.commonUtils = commonUtils;
-
-      const { pageLength, lengthMenu } = commonUtils.getTableOptions('M');
-      this.pageLength = params.pageLength || pageLength;
-      this.lengthMenu = params.lengthMenu || lengthMenu;
+      this.tableOptions = commonUtils.getTableOptions('M');
 
       this.snapshotHistoryColumns = ko.computed(() => {
         let cols = [
@@ -42,7 +40,7 @@ define([
             sortable: false,
           },
           {
-            title: ko.i18n('columns.snapshotDate', 'Snapshot Date'),
+            title: ko.i18n('columns.snapshotDate', 'Date'),
             data: 'snapshotDate',
             render: (d, t, r) => {
               if (t === 'sort' || t === 'type') {
@@ -57,6 +55,16 @@ define([
             sortable: false
           },
           {
+            title: ko.i18n('columns.snapshotId', 'Snapshot ID'),
+            data: null,
+            render: (d, t, r) => {
+              const snapshotId = r.snapshotId;
+              const isEmptySnapshot = r.emptySnapshot;
+              return isEmptySnapshot ? '' : `<p>${snapshotId}</p>`;
+            },
+            sortable: false,
+          },
+          {
             title: ko.i18n('columns.createdBy', 'Created By'),
             data: 'user',
             render: (d, t, r) => {
@@ -69,32 +77,19 @@ define([
             sortable: false
           },
           {
-            title: ko.i18n('columns.vocabularyBundleName', 'Vocabulary Bundle Name'),
-            data: 'vocabularyBundleName',
+            title: ko.i18n('columns.vocabularyBundle', 'Vocabulary Bundle Name [Schema]'),
+            data: null,
             render: (d, t, r) => {
-              if (r.vocabularyBundleName === null || r.vocabularyBundleName === undefined || !r.vocabularyBundleName) {
-                return 'N/A';
-              } else {
-                return `<p>${r.vocabularyBundleName}</p>`
-              }
-            },
-            sortable: false
-          },
-          {
-            title: ko.i18n('columns.vocabularyBundleSchema', 'Vocabulary Bundle Schema'),
-            data: 'vocabularyBundleSchema',
-            render: (d, t, r) => {
-              if (r.vocabularyBundleSchema === null || r.vocabularyBundleSchema === undefined || !r.vocabularyBundleSchema) {
-                return 'N/A';
-              } else {
-                return `<p>${r.vocabularyBundleSchema}</p>`
-              }
+              const name = r.vocabularyBundleName ? r.vocabularyBundleName : 'N/A';
+              const schema = r.vocabularyBundleSchema ? `[${r.vocabularyBundleSchema}]` : '[N/A]';
+              return `<p>${name} ${schema}</p>`;
             },
             sortable: false
           },
           {
             title: ko.i18n('columns.vocabularyBundleVersion', 'Vocabulary Bundle Version'),
             data: 'vocabularyBundleVersion',
+            visible: false,
             render: (d, t, r) => {
               if (r.vocabularyBundleVersion === null || r.vocabularyBundleVersion === undefined || !r.vocabularyBundleVersion) {
                 return 'N/A';
@@ -140,7 +135,6 @@ define([
         }
         return cols;
       });
-
 
 
       this.selectedSnapshotId = ko.observable();

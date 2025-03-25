@@ -12,14 +12,15 @@
         data: snapshotHistory(),
         options: {
           language: datatableLanguage,
-          dom: 'Clfiprt',
+          dom: 'Blfrtip',
           colVis: {
             buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
             align: 'right',
             overlayFade: 0,
             showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
             restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
-          },        
+          },
+          buttons: ['colvis'],
           pageLength: tableOptions.pageLength,
           lengthMenu: tableOptions.lengthMenu,
           orderClasses: false,
@@ -36,10 +37,10 @@
       }">
         <thead>
             <th data-bind="text: ko.i18n('columns.action', 'Action')"></th>
-            <th data-bind="text: ko.i18n('columns.snapshotDate', 'Snapshot Date')"></th>
+            <th data-bind="text: ko.i18n('columns.snapshotDate', 'Date')"></th>
+            <th data-bind="text: ko.i18n('columns.snapshotId', 'Snapshot ID')"></th>
             <th data-bind="text: ko.i18n('columns.createdBy', 'Created By')"></th>
-            <th data-bind="text: ko.i18n('columns.vocabularyBundleName', 'Vocabulary Bundle Name')"></th>
-            <th data-bind="text: ko.i18n('columns.vocabularyBundleSchema', 'Vocabulary Bundle Schema')"></th>
+            <th data-bind="text: ko.i18n('columns.vocabularyBundleNameSchema', 'Vocabulary Bundle Name [Schema]')"></th>
             <th data-bind="text: ko.i18n('columns.vocabularyBundleVersion', 'Vocabulary Bundle Version')"></th>
             <th data-bind="text: ko.i18n('columns.conceptSetVersion', 'Concept Set Version')"></th>
             <th data-bind="text: ko.i18n('columns.message', 'Message')"></th>

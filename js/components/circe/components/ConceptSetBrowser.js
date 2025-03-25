@@ -181,9 +181,9 @@ define([
 				data: 'isLocked',
 				sortable: false,
 				render: function (data, type, row) {
-					return data ? '<span class="fa fa-lock" aria-hidden="true"></span>' : '';
+					return data ? '<span class="fa fa-key" aria-hidden="true""></span>' : '';
 				},
-				width: '20px',  // Fixed width for the lock icon column
+				width: '20px', 
 			},
 			{
 				title: ko.i18n('columns.id', 'Id'),
