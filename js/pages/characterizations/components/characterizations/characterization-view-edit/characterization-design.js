@@ -93,8 +93,6 @@ define([
             this.criteriaContext = ko.observable();
             this.tableOptions = commonUtils.getTableOptions('M');
 
-            this.isAnnualPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsAnnual, false));
-            this.isTemporalPrevalenceSupported = ko.computed(() => params.design().featureAnalyses().reduce((a, v) => a || v.supportsTemporal, false));
         }
 
         checkStrataNames(data, event) {
