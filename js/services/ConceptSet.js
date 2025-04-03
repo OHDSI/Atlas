@@ -144,6 +144,31 @@ define(function (require) {
 		}).then(({ data }) => data);
 	}
 
+	function listConceptSetSnapshots(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/snapshots')
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getLastConceptSetSnapshotAction(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/snapshot')
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function invokeConceptSetSnapshotAction(id, conceptSetSnapshotActionRequest) {
+		return httpService.doPost(config.api.url + 'conceptset/' + id + '/snapshot', conceptSetSnapshotActionRequest)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getConceptSetSnapshotItems(getConceptSetSnapshotItemsRequest) {
+		return httpService.doPost(config.api.url + 'conceptset/snapshot-items', getConceptSetSnapshotItemsRequest)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getLockedStatusesForConceptSets(isLockedBatchCheckRequest) {
+		return httpService.doPost(config.webAPIRoot + 'conceptset/locked', isLockedBatchCheckRequest)
+			.catch(authApi.handleAccessDenied);
+	}
+
 	const api = {
 		loadConceptSet,
 		loadConceptSetExpression,
@@ -165,7 +190,12 @@ define(function (require) {
 		copyVersion,
 		saveConceptSetAnnotation,
 		getConceptSetAnnotation,
-		deleteConceptSetAnnotation
+		deleteConceptSetAnnotation,
+		listConceptSetSnapshots,
+		getLastConceptSetSnapshotAction,
+		invokeConceptSetSnapshotAction,
+		getLockedStatusesForConceptSets,
+		getConceptSetSnapshotItems,
 	};
 
 	return api;
