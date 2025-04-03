@@ -88,7 +88,7 @@ define([
 			this.isOptimizeModalShown = ko.observable(false);
 			this.isSnapshotLockModalShown = ko.observable(false);
 			this.isAllowedSnapshotActions = ko.pureComputed(() => {
-				return (this.conceptSetStore.current() && authApi.isPermittedUpdateConceptset(this.conceptSetStore.current().id)) || (authApi.isPermitted('conceptset:*:snapshot:post'));
+				return (this.conceptSetStore.current() && authApi.isPermittedUpdateConceptset(this.conceptSetStore.current().id) && authApi.isPermitted('conceptset:'+ this.conceptSetStore.current().id + ':snapshot:post')) || (authApi.isPermitted('conceptset:*:snapshot:post'));
 			})
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
 			this.loading = ko.observable();
