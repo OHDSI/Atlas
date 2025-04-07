@@ -41,7 +41,7 @@
     "esprima": "4.0.1",
     "genversion": "2.2.0",
     "html-document": "0.8.1",
-    "requirejs": "2.3.6",
+    "requirejs": "2.3.7",
     "rimraf": "2.6.2",
     "terser": "5.16.4"
   },
