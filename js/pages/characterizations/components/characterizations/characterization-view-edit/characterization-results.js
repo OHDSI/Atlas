@@ -297,7 +297,6 @@ define([
                 domainIds: domains,
                 thresholdValuePct: this.newThresholdValuePct() / 100,
                 showEmptyResults: !!this.showEmptyResults(),
-                excludeComparativeResults: true
             };
 
             Promise.all([
