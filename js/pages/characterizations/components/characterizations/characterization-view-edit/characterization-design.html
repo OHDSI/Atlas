@@ -17,6 +17,8 @@
             removeFeature: $component.removeFeature,
             isEditPermitted: $component.isEditPermitted
         "></linked-entity-list>
+        <div><input type="checkbox" data-bind="enable: $component.isEditPermitted, checked: $component.includeAnnual"><span data-bind="css: classes('include-annual-option')">Include Prevalence Annual Distribution</span></div>
+        <div><input type="checkbox" data-bind="enable: $component.isEditPermitted, checked: $component.includeTemporal"><span data-bind="css: classes('include-temporal-option')">Include Temporal Distribution</span></div>
     </div>
     <div data-bind="css: {'linked-entities':true, 'edit-disabled': !$component.isEditPermitted()}, eventListener: [
                                 { event: 'click', selector: '.conceptset_import', callback:$component.handleConceptSetImport},
