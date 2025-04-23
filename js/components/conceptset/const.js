@@ -15,7 +15,8 @@ define([
 		EXPORT: 'conceptset-export',
 		IMPORT: 'conceptset-import',
 		ANNOTATION: 'annotation',
-		MAPPINGS: 'resolve-mappings'
+		MAPPINGS: 'resolve-mappings',
+		LOCK_HISTORY: 'lockHistory',
 	};
 	
 	const ConceptSetSources = {

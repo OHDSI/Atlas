@@ -1,0 +1,77 @@
+<loading data-bind="visible: isLoading()"
+    params="status: ko.i18n('components.snapshots.loading', 'Loading snapshot/lock history...')"></loading>
+<div data-bind="visible: !isLoading()">
+    <div class="button-container">
+        <button class="btn btn-success btn-sm" data-bind="click: loadData">
+            <i class="fa fa-refresh" aria-hidden="true"></i> Refresh
+        </button>
+    </div>
+
+    <table class="snapshotHistoryTable stripe compact hover" cellspacing="0" width="100%" data-bind="dataTable:{
+        xssSafe: true,
+        data: snapshotHistory(),
+        options: {
+          language: datatableLanguage,
+          dom: 'Blfrtip',
+          colVis: {
+            buttonText: ko.i18n('datatable.language.buttons.changeColumns', 'Change Columns'),
+            align: 'right',
+            overlayFade: 0,
+            showAll: ko.i18n('datatable.language.buttons.showAllColumns', 'Show All Columns'),
+            restore: ko.i18n('datatable.language.buttons.resetColumns', 'Reset Columns')
+          },
+          buttons: ['colvis'],
+          pageLength: tableOptions.pageLength,
+          lengthMenu: tableOptions.lengthMenu,
+          orderClasses: false,
+          deferRender: true,
+          autoWidth: false,
+          order: [[1, 'desc']],
+          columns: snapshotHistoryColumns,
+          rowCallback: function(row, data, dataIndex) {
+            $(row).unbind('click').on('click', function(event) {
+                $component.onRowClick(data, event);
+            });
+        }
+        }
+      }">
+        <thead>
+            <th data-bind="text: ko.i18n('columns.action', 'Action')"></th>
+            <th data-bind="text: ko.i18n('columns.snapshotDate', 'Date')"></th>
+            <th data-bind="text: ko.i18n('columns.snapshotId', 'Snapshot ID')"></th>
+            <th data-bind="text: ko.i18n('columns.createdBy', 'Created By')"></th>
+            <th data-bind="text: ko.i18n('columns.vocabularyBundleNameSchema', 'Vocabulary Bundle Name [Schema]')"></th>
+            <th data-bind="text: ko.i18n('columns.vocabularyBundleVersion', 'Vocabulary Bundle Version')"></th>
+            <th data-bind="text: ko.i18n('columns.conceptSetVersion', 'Concept Set Version')"></th>
+            <th data-bind="text: ko.i18n('columns.message', 'Message')"></th>
+            </th>
+        </thead>
+    </table>
+
+    <div data-bind="visible: selectedSnapshotId()">
+
+        <tabs params="
+        componentParams: $component.componentParams,
+        selectedTab: selectedTab,
+        tabs: $component.tabs
+    "></tabs>
+
+        <!-- Concept Set Expression Items Table -->
+        <div data-bind="visible: selectedTab() === 0">
+            <faceted-datatable
+                params="reference: expressionItems(), columns: expressionItemColumns, options: tableOptions"></faceted-datatable>
+        </div>
+        <!-- Included Concepts Table -->
+        <div data-bind="visible: selectedTab() === 1">
+            <faceted-datatable
+                params="reference: includedConcepts(), columns: conceptColumns, options: tableOptions"></faceted-datatable>
+        </div>
+        <!-- Included Source Codes Table -->
+        <div data-bind="visible: selectedTab() === 2">
+            <faceted-datatable
+                params="reference: includedSourceCodes(), columns: conceptColumns, options: tableOptions"></faceted-datatable>
+        </div>
+    </div>
+
+
+</div>
