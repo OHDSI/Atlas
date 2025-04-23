@@ -182,9 +182,21 @@ define([
           data: 'concept.CONCEPT_NAME',
         },
         {
+          title: ko.i18n('columns.conceptClassId', 'Class'),
+          sortable: true,
+          data: 'concept.CONCEPT_CLASS_ID',
+          visible: false,
+        },
+        {
           title: ko.i18n('columns.domain', 'Domain'),
           sortable: true,
           data: 'concept.DOMAIN_ID',
+        },
+        {
+          title: ko.i18n('columns.vocabularyId', 'Vocabulary'),
+          sortable: true,
+          data: 'concept.VOCABULARY_ID',
+          visible: false,
         },
         {
           title: ko.i18n('columns.standardConceptCode', 'Standard Concept Code'),
@@ -245,9 +257,19 @@ define([
           data: 'concept.CONCEPT_NAME',
         },
         {
+          title: ko.i18n('columns.conceptClassId', 'Class'),
+          sortable: true,
+          data: 'concept.CONCEPT_CLASS_ID',
+        },
+        {
           title: ko.i18n('columns.domain', 'Domain'),
           sortable: true,
           data: 'concept.DOMAIN_ID',
+        },
+        {
+          title: ko.i18n('columns.vocabularyId', 'Vocabulary'),
+          sortable: true,
+          data: 'concept.VOCABULARY_ID',
         },
         {
           title: ko.i18n('columns.standardConceptCode', 'Standard Concept Code'),

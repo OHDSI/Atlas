@@ -3,23 +3,33 @@
     <div class="modal-body" data-bind="visible: true">
         <!-- Unlocked Concept Set Content -->
         <div data-bind="visible: !isLocked()">
-            <p class="modal-text"><strong>You are about to create a snapshot for this concept set.</strong></p>
+            <p class="modal-text"><strong>You are about to Lock and/or create a snapshot for this concept set.</strong>
+            </p>
+            <br>
+            <p> <i class="fas fa-info-circle"></i><strong>Locking a concept set means that the Concept Set
+                    Expression tab cannot be edited anymore. However, vocabulary updates can still add new codes
+                    that are mapped to the existing codes in the Concept Set Expression.</strong><br>
+                <i class="fas fa-info-circle"></i><strong>A snapshot saves a static version of the Concept Set
+                    Expression, Included Concepts, and Included Source Codes tabs at the time it is created. If the
+                    Concept Set is later modified, the snapshot remains unchanged. Additionally, if the Concept Set
+                    is affected by a vocabulary update, the snapshot will not be altered.</strong>
+            </p><br>
             <p class="modal-text">
-                There are two options: Plain snapshot or a snapshot + lock.
-                <br><strong>Plain snapshot:</strong>
+                There are two options: <strong>Snapshot</strong> or a <strong>Snapshot + Lock</strong>.
+                <br><br><strong>Plain snapshot:</strong>
+            </p>
             <ul>
-                <li>Plain Snapshot does not result in any additional actions over the current Concept Set</li>
-                <li>Plain Snapshot does not impose any restrictions on the current role</li>
-                <li>Concept set expression will be saved for this concept set</li>
-                <li>Included concepts and included source codes will be saved</li>
-                <li>Current vocabulary version and schema will be saved</li>
-                <li>Concept set snapshots will not be impacted by future vocabulary updates</li>
+                <li>Snapshot saves a static version of the concept set but does not prevent modification to the Concept
+                    Set Expression tab.</li>
+                <li>The Snapshot saves the Concept set expression, Included Concepts and Included Source Codes.</li>
+                <li>Snapshot saves current vocabulary version and schema will be saved</li>
+                <li>Snapshots will not be impacted by future vocabulary updates</li>
                 <li>Current SYSTEM vocabulary version: <strong data-bind="text: currentVocabularyVersion"></strong></li>
                 <li>Current SYSTEM vocabulary schema: <strong data-bind="text: currentVocabularySchema"></strong></li>
             </ul>
-            <br><strong>Snapshot with Lock (along with the above actions):</strong>
+            <br><strong>Snapshot with Lock (along with the above actions):</strong><br>
             <ul>
-                <li>Concept Set will be switched to read-only mode and marked locked</li>
+                <li>Concept Set will be switched to read-only mode and marked locked.</li>
             </ul>
             <br>
             <p class="modal-text">This action might take some time and would continue even if this window is closed
