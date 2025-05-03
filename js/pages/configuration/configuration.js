@@ -6,6 +6,7 @@ define([
   'utils/CommonUtils',
   'appConfig',
   'services/AuthAPI',
+  'services/BuildInfoService',
   'services/SourceAPI',
   'atlas-state',
   'const',
@@ -23,6 +24,7 @@ define([
   commonUtils,
   config,
   authApi,
+  buildInfoService,
   sourceApi,
   sharedState,
   constants,
@@ -42,6 +44,9 @@ define([
       this.jobListing = sharedState.jobListing;
       this.sourceJobs = new Map();
       this.sources = sharedState.sources;
+      this.isSolrVocabEnabled = ko.observable();
+      this.isSolrVocabCoreAvailable = ko.observable();
+      this.solrVocabCoreName = ko.observable();
 
       this.priorityOptions = [
         {
@@ -155,9 +160,23 @@ define([
 
     async onPageCreated() {
       this.loading(true);
+      const info = await buildInfoService.getBuildInfo();
       await sourceApi.initSourcesConfig();
       super.onPageCreated();
+      this.isSolrVocabEnabled = info.configuration.vocabulary.solrEnabled && info.configuration.vocabulary.hasOwnProperty("cores");
+      this.isSolrVocabCoreAvailable = false;
+      if (this.isSolrVocabEnabled) {
+        this.solrVocabCoreName = this.getSolrVocabCoreName(info);
+      }
       this.loading(false);
+    }
+
+    getSolrVocabCoreName(info) {
+      if (typeof(info.configuration.vocabulary.cores) != "string") {
+        this.isSolrVocabCoreAvailable = true;
+        return info.configuration.vocabulary.cores[0];
+      }
+      return info.configuration.vocabulary.cores;
     }
 
     canReadSource(source) {
