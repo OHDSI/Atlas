@@ -69,16 +69,42 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 		self.outsideFilters = (params.outsideFilters || ko.observable()).extend({notify: 'always'});
 
 		self.setDataLocalStorage = (data, nameItem) => {
-			const filterArrayString = localStorage.getItem(nameItem)
-			let filterArrayObj = filterArrayString? JSON.parse(filterArrayString): []
+			const filterString = localStorage.getItem(nameItem);
+			let filterObj = filterString ? JSON.parse(filterString) : [];
 
-			if(!data?.selected()){
-				filterArrayObj.push({title:data.facet.caption(), value:`${data.key} (${data.value})`,key:data.key})
-			}else{
-				filterArrayObj = filterArrayObj.filter((item)=> item.key !== data.key)
+			if (Array.isArray(filterObj)) {
+				if (!data?.selected()) {
+					filterObj.push({
+						title: data.facet.caption(),
+						value: `${data.key} (${data.value})`,
+						key: data.key
+					});
+				} else {
+					filterObj = filterObj.filter((item) => item.key !== data.key);
+				}
+			} else if (typeof filterObj === 'object' && filterObj.filterColumns) {
+				if (!data?.selected()) {
+					const dataPush = {
+						title: data.facet.caption(),
+						value: `${data.key} (${data.value})`,
+						key: data.key
+					};
+					filterObj.filterColumns = [...filterObj.filterColumns, dataPush];
+				} else {
+					filterObj.filterColumns = filterObj.filterColumns.filter((item) => item.key !== data.key);
+				}
+			} else {
+				filterObj = [
+					{
+						title: data.facet.caption(),
+						value: `${data.key} (${data.value})`,
+						key: data.key
+					}
+				];
 			}
-			localStorage.setItem(nameItem, JSON.stringify(filterArrayObj))
-		}
+
+			localStorage.setItem(nameItem, JSON.stringify(filterObj));
+		};
 
 		self.setDataObjectLocalStorage = (data, nameItem) => {
 			const filterObjString = localStorage.getItem(nameItem)
