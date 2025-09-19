@@ -45,8 +45,10 @@ define([
 	'components/name-validation',
 	'components/ac-access-denied',
 	'components/versions/versions',
+  './components/modal/validate-comment-modal',
 	'./components/tabs/conceptset-annotation',
-	'./components/tabs/resolve-mappings'
+	'./components/tabs/resolve-mappings',
+	'./components/modal/validate-view-supporting-info-modal',
 ], function (
         ko,
 	view,
@@ -77,11 +79,12 @@ define([
 		constructor(params) {
 			super(params);
 			this.commonUtils = commonUtils;
-		        this.conceptSetStore = ConceptSetStore.repository();
+		    this.conceptSetStore = ConceptSetStore.repository();
 			this.selectedSource = ko.observable();
 			this.currentConceptSet = ko.pureComputed(() => this.conceptSetStore.current());
 			this.previewVersion = sharedState.currentConceptSetPreviewVersion;
 			this.currentConceptSetDirtyFlag = sharedState.RepositoryConceptSet.dirtyFlag;
+			this.showValidateCommentModal = ko.observable(false);
 			this.currentConceptSetMode = sharedState.currentConceptSetMode;
 			this.isOptimizeModalShown = ko.observable(false);
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.conceptSet);
@@ -89,6 +92,23 @@ define([
 			this.optimizeLoading = ko.observable();
 			this.fade = ko.observable(false);
 
+			this.validatedBy = ko.observable();
+			this.validatedDate = ko.observable();
+
+			this.currentConceptSetSubscription = this.currentConceptSet.subscribe(currentConceptSet => {
+				if (currentConceptSet) {
+
+					const currentVersionApproval = currentConceptSet.approvals && currentConceptSet.approvals[currentConceptSet.version];
+					if (currentVersionApproval && currentVersionApproval.type === 'APPROVE') {
+						this.validatedBy(currentVersionApproval.user?.name);
+						this.validatedDate(commonUtils.formatDateForAuthorship(currentVersionApproval.timestamp));
+					} else {
+						this.validatedBy(null);
+						this.validatedDate(null);
+					}
+				}
+			})
+			
 			this.canEdit = ko.pureComputed(() => {
 				if (!authApi.isAuthenticated()) {
 					return false;
@@ -102,6 +122,15 @@ define([
 					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
 				}
 			});
+
+			this.description = ko.pureComputed(() => {
+				if (this.canEdit()) {
+					return '';
+				} else {
+					return '(Read only)';
+				}
+			});
+
 			this.isNameFilled = ko.computed(() => {
 				return this.currentConceptSet() && this.currentConceptSet().name() && this.currentConceptSet().name().trim();
 			});
@@ -125,6 +154,16 @@ define([
 					&& this.isNameCorrect()
 					&& this.canEdit()
 				);
+			});
+			this.canApprove = ko.computed(authApi.isPermittedApproveConceptset);
+
+			this.approved = ko.pureComputed(() => {
+				const cc = this.currentConceptSet();
+				if (!cc || !cc.approvals || cc.version === undefined) return false;
+				
+				// Check if the CURRENT VERSION is approved
+				const currentVersionApproval = cc.approvals[cc.version];
+				return currentVersionApproval && currentVersionApproval.type === 'APPROVE';
 			});
 			this.canCreate = ko.computed(() => {
 				return authApi.isPermittedCreateConceptset();
@@ -197,6 +236,72 @@ define([
 			this.isDiagnosticsRunning = ko.observable(false);
 			this.criticalCount = ko.observable(0);
 
+			this.showSupportingInfoModal = ko.observable(false);
+			this.selectedApprovalInfo = ko.observable(null);
+
+			this.versionsRefreshTrigger = ko.observable(0);
+		
+			this.extraColumns = ko.observableArray([
+				{
+					title: ko.i18n('cs.manager.validate', 'Validated By'),
+					render: (s, p, d) => {
+						const cs = this.currentConceptSet();
+						const version = d.currentVersion ? cs.version : d.version;
+						const approval = cs.approvals && cs.approvals[version];
+						return approval ? approval.user.name : '-';
+					}
+				},
+				{
+					title: ko.i18n('cs.manager.validateRevokeComment', 'Validate/Revoke Comment'),
+					render: (s, p, d) => {
+						const cs = this.currentConceptSet();
+						const version = d.currentVersion ? cs.version : d.version;
+						const approval = cs.approvals && cs.approvals[version];
+						
+						if (!approval) return '';
+						
+						// If revoked and has revokeComment, show revokeComment
+						if ((approval.type === 'REVOKE' || approval.revokeComment) && approval.revokeComment) {
+							return approval.revokeComment;
+						}
+						// Otherwise show regular comment (for approved or revoked without revokeComment)
+						return approval.comment || '';
+					}
+				},
+				{
+					title: ko.i18n('cs.manager.supportingInfo', 'Supporting Info'),
+					render: (s, p, d) => {
+						const cs = this.currentConceptSet();
+						const version = d.currentVersion ? cs.version : d.version;
+						const approval = cs.approvals && cs.approvals[version];
+			
+						if (approval) {
+							d.openInfo = () => this.viewSupportingInfo(approval);
+							return `<a data-bind="css: '${this.classes('action-link')}', click: openInfo, text: ko.i18n('components.versions.viewSupportingInfo', 'view')"></a>`;
+						}
+						return '-';
+					}
+				},
+				{
+					title: ko.i18n('cs.manager.status', 'Approval Status'),
+					render: (s, p, d) => {
+						const cs = this.currentConceptSet();
+						const version = d.currentVersion ? cs.version : d.version;
+						const approval = cs.approvals && cs.approvals[version];
+						
+						if (!approval) return '-';
+						
+						if (approval.type === 'REVOKE' || (approval.revokeComment && approval.revokeComment.trim())) {
+							return '<span class="label label-warning">Revoked</span>';
+						} else if (approval.type === 'APPROVE') {
+							return '<span class="label label-success">Approved</span>';
+						}
+						
+						return '-';
+					}
+				}
+			]);
+	
 			this.versionsParams = ko.observable({
 				versionPreviewUrl: (versionNumber) => `/conceptset/${this.currentConceptSet().id}/version/${versionNumber}`,
 				currentVersion: () => this.currentConceptSet(),
@@ -214,7 +319,45 @@ define([
 					}
 				},
 				isAssetDirty: () => this.currentConceptSetDirtyFlag().isDirty(),
-				canAddComments: () => this.canEdit()
+				canAddComments: () => this.canEdit(),
+				extraColumns: this.extraColumns,
+				refreshTrigger: this.versionsRefreshTrigger,
+				extraFacets: [
+					{
+						caption: ko.i18n('facets.caption.validationStatus', 'Validation Status'),
+						binding: (o) => {
+							const cs = this.currentConceptSet();
+							const version = o.currentVersion ? cs.version : o.version;
+							const approval = cs.approvals && cs.approvals[version];
+							
+							if (!approval) {
+								return ko.i18n('facets.validationStatus.notValidated', 'Not Validated');
+							}
+							
+							if (approval.type === 'REVOKE' || (approval.revokeComment && approval.revokeComment.trim())) {
+								return ko.i18n('facets.validationStatus.revoked', 'Revoked');
+							} else if (approval.type === 'APPROVE') {
+								return ko.i18n('facets.validationStatus.approved', 'Approved');
+							}
+							
+							return ko.i18n('facets.validationStatus.notValidated', 'Not Validated');
+						}
+					},
+					{
+						caption: ko.i18n('facets.caption.reviewer', 'Reviewer'),
+						binding: (o) => {
+							const cs = this.currentConceptSet();
+							const version = o.currentVersion ? cs.version : o.version;
+							const approval = cs.approvals && cs.approvals[version];
+							
+							if (!approval || !approval.user || !approval.user.name) {
+								return ko.i18n('facets.reviewer.none', 'None');
+							}
+							
+							return approval.user.name;
+						}
+					}
+				]
 			});
 
 			this.warningParams = ko.observable({
@@ -227,6 +370,9 @@ define([
 				isDiagnosticsRunning: this.isDiagnosticsRunning,
 				onDiagnoseCallback: this.diagnose.bind(this),
 			});
+
+			this.currentVocabularyVersion = sharedState.currentVocabularyVersion();
+			this.currentConceptSetId = ko.pureComputed(() => this.currentConceptSet().id);
 
 			this.tabs = [
 				{
@@ -416,6 +562,10 @@ define([
 			this.conceptSetStore.resolveConceptSetExpression().then(() => this.conceptSetStore.refresh(this.tabs[this.selectedTab() || 0].key));
 		}
 
+		showValidateModal() {
+			this.showValidateCommentModal(true);
+		}
+
 		onRouterParamsChanged(params, newParams) {
 			const {conceptSetId, mode, version} = Object.assign({}, params, newParams);
 			this.changeMode(conceptSetId, mode, version);
@@ -482,7 +632,28 @@ define([
 					expression = await conceptSetService.loadConceptSetExpression(conceptSetId);
 				}
 				conceptSet.expression = _.isEmpty(expression) ? {items: []} : expression;
-				sharedState.RepositoryConceptSet.current({...conceptSet, ...(new ConceptSet(conceptSet))});
+
+				// Safely fetch approval info with error handling
+				let approvals = {};
+				try {
+					const approvalResponse = await conceptSetService.getApprovalInfo(conceptSetId);
+					approvals = approvalResponse.json || {};
+				} catch (error) {
+					console.error('Error fetching approval info:', error);
+					// Continue with empty approvals object
+				}
+				
+				// Check if THIS SPECIFIC VERSION is approved
+				const currentVersionApproval = approvals[conceptSet.version];
+				const approved = currentVersionApproval && currentVersionApproval.type === 'APPROVE';
+				
+				sharedState.RepositoryConceptSet.current({ 
+					...conceptSet, 
+					...(new ConceptSet(conceptSet)), 
+					approvals: approvals, 
+					approved: approved 
+				});
+			
 				this.conceptSetStore.current(sharedState.RepositoryConceptSet.current());
 				this.conceptSetStore.isEditable(this.canEdit());
 				this.tags(this.currentConceptSet().tags);
@@ -564,6 +735,31 @@ define([
 					const current = this.conceptSetStore.current();
 					current.modifiedBy = savedConceptSet.data.modifiedBy;
 					current.modifiedDate = savedConceptSet.data.modifiedDate;
+
+					if (current && !current.version) {
+						current.version = latestSavedVersion;
+					}
+					current.version=current.version+1;
+
+					// Safely fetch approval info with error handling
+					let approvals = {};
+					try {
+						const approvalResponse = await conceptSetService.getApprovalInfo(current.id);
+						approvals = approvalResponse.json || {};
+					} catch (error) {
+						console.error('Error fetching approval info after save:', error);
+						// Continue with empty approvals object
+					}
+					
+					const lastApproval = this.getLastApprove(approvals);
+					const isNewVersionApproved = lastApproval && 
+												lastApproval.type === 'APPROVE' && 
+												lastApproval.version === current.version;
+					
+					// New versions should not be approved unless explicitly approved
+					current.approved = isNewVersionApproved;
+					current.approvals = approvals;
+
 					this.newConceptSetIdForCopyAnnotations(savedConceptSet.data.id);
 					this.conceptSetStore.current(current);
 
@@ -619,7 +815,77 @@ define([
 			await conceptSetService.copyAnnotations(copyAnnotationsRequest);
 		}
 
-		async optimize() {
+
+		async approve(approvalInfo) {
+			this.isSaving(true);
+			try {
+				const id = this.currentConceptSet().id;
+				const comment = approvalInfo.comment;
+				const approverId = approvalInfo.approverId;
+				const supportingInfo = approvalInfo.supportingInfo;
+
+
+				await conceptSetService.approveConceptSet(id, comment, approverId, supportingInfo);
+				const approvals = (await conceptSetService.getApprovalInfo(id)).json;
+				const conceptSet = this.conceptSetStore.current();
+
+				const lastApproval = this.getLastApprove(approvals);
+				const isApproved = lastApproval && lastApproval.type === 'APPROVE';
+				
+				const updatedConceptSet = {
+					...conceptSet,
+					approved: isApproved,
+					approvals: approvals
+				};
+
+				this.conceptSetStore.current(updatedConceptSet);
+				this.versionsRefreshTrigger(this.versionsRefreshTrigger() + 1);
+			} catch (error) {
+				console.error('Error approving concept set:', error);
+				alert('An error occurred while approving the concept set.');
+			} finally {
+				this.isSaving(false);
+			}
+		}
+
+		async revokeApproval(revokeComment, approvalInfo) {
+			this.isSaving(true);
+			try {
+				const id = this.currentConceptSet().id;
+				const version = approvalInfo.version;
+		
+				await conceptSetService.revokeConceptSetApproval(id, revokeComment, version);
+		
+				// Refresh approvals and concept set state, similar to approve()
+				const approvals = (await conceptSetService.getApprovalInfo(id)).json;
+				const conceptSet = this.conceptSetStore.current();
+
+				const lastApproval = this.getLastApprove(approvals);
+				const isApproved = lastApproval && lastApproval.type === 'APPROVE';
+				
+				const updatedConceptSet = {
+					...conceptSet,
+					approved: isApproved, // This will be false if last action was REVOKE
+					approvals: approvals
+				};
+
+				this.conceptSetStore.current(updatedConceptSet);
+				this.versionsRefreshTrigger(this.versionsRefreshTrigger() + 1);
+			} catch (error) {
+				console.error('Error revoking concept set approval:', error);
+				alert('An error occurred while revoking the concept set approval.');
+			} finally {
+				this.isSaving(false);
+			}
+		}
+	
+		viewSupportingInfo(approvalInfo) {
+			this.selectedApprovalInfo(approvalInfo);
+			this.showSupportingInfoModal(true);
+		}
+
+
+    async optimize() {
 			this.isOptimizing(true);
 			this.activeUtility("optimize");
 			this.optimizeLoading(true);
@@ -709,7 +975,7 @@ define([
 		getAuthorship() {
 			const conceptSet = this.currentConceptSet();
 
-			let createdText, createdBy, createdDate, modifiedBy, modifiedDate;
+			let createdText, createdBy, createdDate, modifiedBy, modifiedDate, validatedDate;
 
 			if (this.previewVersion()) {
 				createdText = ko.i18n('components.authorship.versionCreated', 'version created');
@@ -733,14 +999,44 @@ define([
 				modifiedBy = ko.i18n('common.anonymous', 'anonymous');
 			}
 
+			if (this.validatedDate) {
+				validatedDate = commonUtils.formatDateForAuthorship(this.validatedDate);
+			}
+
 			return {
 				createdText: createdText,
 				createdBy: createdBy,
 				createdDate: createdDate,
 				modifiedBy: modifiedBy,
 				modifiedDate: modifiedDate,
+				validatedBy: this.validatedBy,
+				validatedDate: this.validatedDate,
 			}
 		}
+
+		getLastApprove(approvals) {
+			if (!approvals || typeof approvals !== 'object') {
+				return null;
+			}
+	
+			const keys = Object.keys(approvals)
+				.map(Number)
+				.filter(key => !isNaN(key))
+				.sort((a, b) => b - a);
+	
+			if (keys.length === 0) {
+				return null;
+			}
+	
+			const lastVersionKey = keys[0];
+			const lastApproval = approvals[lastVersionKey];
+	
+			// Return the last approval regardless of type
+			// The caller can check if it's APPROVE or REVOKE
+			return lastApproval || null;
+		}
+
+
 		diagnose() {
 			if (this.currentConceptSet()) {
 				return conceptSetService.runDiagnostics(this.currentConceptSet());

@@ -62,6 +62,7 @@ define(function(require, exports) {
     var subject = ko.observable();
     var permissions = ko.observable();
     var fullName = ko.observable();
+    var id = ko.observable();
     const authProvider = ko.observable();
 
     authProvider.subscribe(provider => {
@@ -82,6 +83,7 @@ define(function(require, exports) {
                 subject(info.login);
                 authProvider(jqXHR.getResponseHeader('x-auth-provider'));
                 fullName(info.name ? info.name : info.login);
+                id(info?.id);
                 resolve();
             },
             error: function (err) {
@@ -285,6 +287,14 @@ define(function(require, exports) {
         }
 
         return refreshTokenPromise;
+    }
+  
+    var isPermittedDelegateApproval = function() {
+      return isPermitted('review:delegate');
+    }
+
+    var isPermittedApproveConceptset = function() {
+      return isPermitted('review:conceptset');
     }
 
     var isPermittedCreateConceptset = function() {
@@ -554,6 +564,7 @@ define(function(require, exports) {
         reloginRequired: reloginRequired,
         subject: subject,
         fullName,
+        id,
         tokenExpirationDate: tokenExpirationDate,
         tokenExpired: tokenExpired,
         authProvider: authProvider,
@@ -571,6 +582,8 @@ define(function(require, exports) {
         isPermittedGetViewedNotifications: isPermittedGetViewedNotifications,
         isPermittedPostViewedNotifications: isPermittedPostViewedNotifications,
 
+        isPermittedDelegateApproval: isPermittedDelegateApproval,
+        isPermittedApproveConceptset: isPermittedApproveConceptset,
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,
         isPermittedDeleteConceptset: isPermittedDeleteConceptset,

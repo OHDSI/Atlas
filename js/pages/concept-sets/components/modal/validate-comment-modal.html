@@ -1,0 +1,36 @@
+<atlas-modal params="data: $component, showModal: $component.isModalShown, title: 'Validate concept set'">
+    <div class="modal-body" data-bind="visible: true">
+        <!-- Delegate Reviewer Section -->
+        <div class="form-group">
+            <label class="modal-label">Reviewer</label>
+            <select class="form-control" data-bind="options: delegateReviewers,
+                       optionsText: 'nameWithLogin',
+                       optionsValue: 'id',
+                       value: selectedApproverId,
+                       valueAllowUnset: true,
+                       enable: !loadingReviewers()">
+            </select>
+            <small class="form-text text-muted">Optional: Select a representative reviewer</small>
+        </div>
+
+        <!-- Validation Comment Section -->
+        <div class="form-group">
+            <label class="modal-label">Validation Comment</label>
+            <textarea class="form-control" data-bind="textInput: validationComment, enable: true" rows="1"
+                placeholder="Enter your validation comment..."></textarea>
+        </div>
+
+        <!-- Supporting Information Section -->
+        <div class="form-group">
+            <label class="modal-label">Supporting Information</label>
+            <textarea class="form-control" data-bind="textInput: supportingInfo, enable: true" rows="10"
+                placeholder="Enter approval supporting information..."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions">
+            <button class="btn btn-success" data-bind="click: () => confirm(), enable: canValidate"> Validate</button>
+            <button class="btn btn-default" data-bind="click: () => cancel()"> Cancel</button>
+        </div>
+    </div>
+</atlas-modal>

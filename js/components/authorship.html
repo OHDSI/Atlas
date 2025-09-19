@@ -7,6 +7,12 @@
     <span data-bind="visible: modifiedDate,
 	    text: ko.i18nformat('components.authorship.modifiedLabel',
 						'modified by <%=modifiedBy%> on <%=modifiedDate%>',
-						{modifiedBy: modifiedBy, modifiedDate: modifiedDate})"></span>
+						{modifiedBy: modifiedBy, modifiedDate: modifiedDate})"></span></span><span data-bind="visible: validatedBy">,</span>
+	<span data-bind="visible: validatedBy">
+		<span data-bind="text: ko.i18n('components.authorship.validated', 'validated')"></span>
+		<span data-bind="visible: validatedBy, text: ko.i18nformat('components.authorship.byValidated', 'by <%=validatedBy%>', {validatedBy: validatedBy})"></span>
+		<span data-bind="text: ko.i18n('components.authorship.on', 'on')"></span>
+		<span data-bind="text: validatedDate"></span>
+	</span>
 </div>
 <!-- /ko -->

@@ -34,8 +34,17 @@ function (
 			this.editVersion = ko.observable();
 			this.comment = ko.observable();
 			this.isCommentModalShown = ko.observable(false);
+			this.extraColumns = params.extraColumns || ko.observableArray([]);
+			
+			if (params.refreshTrigger) {
+				this.subscriptions.push(
+					params.refreshTrigger.subscribe(() => {
+						this.loadData();
+					})
+				);
+			}
 
-			this.columns = [
+			this.columns = ko.pureComputed(() => [
 				{
 					title: ko.i18n('columns.version', 'Version'),
 					data: 'version'
@@ -93,8 +102,9 @@ function (
 						return `<a data-bind="css: '${this.classes('action-link')}', click: copy, text: ko.i18n('components.versions.createACopy', 'Create a copy'), title: ko.i18n('components.versions.createNewAsset', 'Create new asset from this version')"></a>`
 
 					}
-				}
-			];
+				},
+				...ko.unwrap(this.extraColumns())
+			]);
 			this.options = {
 				Facets: [
 					{
@@ -104,7 +114,8 @@ function (
 					{
 						caption: ko.i18n('facets.caption.author', 'Author'),
 						binding: datatableUtils.getFacetForCreatedBy
-					}
+					},
+					...(params.extraFacets || [])
 				],
 			};
 			this.tableOptions = params.tableOptions || commonUtils.getTableOptions('L');
