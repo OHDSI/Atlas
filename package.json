@@ -65,7 +65,7 @@
     "datatables.net-select": "1.6.0",
     "director": "1.2.8",
     "eonasdan-bootstrap-datetimepicker": "4.17.49",
-    "express": "4.18.2",
+    "express": "4.19.2",
     "facets": "0.1.1",
     "file-saver": "1.3.8",
     "hash-it": "4.1.0",
