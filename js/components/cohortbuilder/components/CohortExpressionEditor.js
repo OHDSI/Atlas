@@ -39,6 +39,11 @@ define([
     self.expression = params.expression;
     self.options = options;
 
+    self.useDateTime = ko.observable(self.expression().UseDatetime());
+    self.useDateTime.subscribe(function (newValue) {
+      self.expression().UseDatetime(newValue);
+    });
+
     self.showCensorWindow = ko.observable(
       self.expression().CensorWindow().StartDate() ||
         self.expression().CensorWindow().EndDate()
