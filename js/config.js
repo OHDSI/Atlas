@@ -4,7 +4,7 @@ define([
 	'optional!config-local',
 	'optional!config-gis',
 	'lodash',
-], function (app, termsAndConditions, localConfig, gisConfig, lodash) {
+], function (app, termsAndConditions, localConfig, gisConfig, _) {
 
 	if (JSON.stringify(localConfig) == JSON.stringify({})) {
 		console.warn('Local configuration not found.  Using default values. To use a local configuration and suppress 404 errors, create a file called config-local.js under the /js directory');
