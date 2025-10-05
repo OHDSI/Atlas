@@ -106,8 +106,6 @@ const settingsObject = {
 		"clipboard": "../node_modules/clipboard/dist/clipboard",
 		"knockout": "../node_modules/knockout/build/output/knockout-latest",
 		"ko.sortable": "../node_modules/knockout-sortable/src/knockout-sortable",
-		"knockout-mapping": "../node_modules/knockout-mapping/dist/knockout.mapping",
-		"datatables": "../node_modules/datatables/media/js/jquery.dataTables",
 		"datatables.net": "../node_modules/datatables.net/js/jquery.dataTables",
 		"datatables.net-buttons": "../node_modules/datatables.net-buttons/js/dataTables.buttons",
 		"datatables.net-buttons-html5": "../node_modules/ouanalyse-datatables.net-buttons-html5/js/buttons.html5",
@@ -146,7 +144,6 @@ const settingsObject = {
 		"visibilityjs": "../node_modules/@ohdsi/visibilityjs/lib/visibility.core",
 		"ajv": "../node_modules/ajv/dist/ajv.bundle",
 		"hash-it": "../node_modules/hash-it/dist/hash-it.min",
-		"leaflet": "../node_modules/leaflet/dist/leaflet",
 		"html2canvas": "../node_modules/html2canvas/dist/html2canvas.min",
 		"venn": "../node_modules/venn.js/venn"
 	},
@@ -170,7 +167,6 @@ const settingsObject = {
 		"jquery.dataTables.colVis.css": "css!styles/jquery.dataTables.colVis.css",
 		"jquery.datatables.tabletools.css": "css!styles/jquery.datatables.tabletools.css",
 		"prism.css": "css!styles/prism.css",
-        "leaflet": "css!../node_modules/leaflet/dist/leaflet.css",
 		"switch-button.css": "css!styles/switch-button.css"
 	},
 	localRefs: {
