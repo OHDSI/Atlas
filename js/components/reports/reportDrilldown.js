@@ -234,7 +234,7 @@ define([
 					this.chartFormats.frequencyDistribution.yMax = yScaleMax;
 					this.chartFormats.frequencyDistribution.xLabel = ko.pureComputed(function () {
 						return ko.i18n('dataSources.drilldown.chartFormat.frequencyDistribution.xLabel1', 'Count ("x" or more ')() +
-							report() +
+							report +
 							ko.i18n('dataSources.drilldown.chartFormat.frequencyDistribution.xLabel2', 's)')();
 					});
 					this.chartFormats.frequencyDistribution.ticks = Math.min(5, frequencyHistogram.INTERVALS);

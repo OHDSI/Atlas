@@ -68,7 +68,78 @@ define(['knockout', 'text!./faceted-datatable.html', 'crossfilter', 'utils/Commo
 
 		self.outsideFilters = (params.outsideFilters || ko.observable()).extend({notify: 'always'});
 
+		self.setDataLocalStorage = (data, nameItem) => {
+			const filterString = localStorage.getItem(nameItem);
+			let filterObj = filterString ? JSON.parse(filterString) : [];
+
+			if (Array.isArray(filterObj)) {
+				if (!data?.selected()) {
+					filterObj.push({
+						title: data.facet.caption(),
+						value: `${data.key} (${data.value})`,
+						key: data.key
+					});
+				} else {
+					filterObj = filterObj.filter((item) => item.key !== data.key);
+				}
+			} else if (typeof filterObj === 'object' && filterObj.filterColumns) {
+				if (!data?.selected()) {
+					const dataPush = {
+						title: data.facet.caption(),
+						value: `${data.key} (${data.value})`,
+						key: data.key
+					};
+					filterObj.filterColumns = [...filterObj.filterColumns, dataPush];
+				} else {
+					filterObj.filterColumns = filterObj.filterColumns.filter((item) => item.key !== data.key);
+				}
+			} else {
+				filterObj = [
+					{
+						title: data.facet.caption(),
+						value: `${data.key} (${data.value})`,
+						key: data.key
+					}
+				];
+			}
+
+			localStorage.setItem(nameItem, JSON.stringify(filterObj));
+		};
+
+		self.setDataObjectLocalStorage = (data, nameItem) => {
+			const filterObjString = localStorage.getItem(nameItem)
+			let filterObj = filterObjString ? JSON.parse(filterObjString): {}
+			let newFilterObj = {}
+			
+			if(!data?.selected()){
+				const dataPush = { title: data.facet.caption(), value: `${data.key} (${data.value})`, key: data.key };
+				newFilterObj.filterColumns = filterObj['filterColumns'] ? [...filterObj['filterColumns'], dataPush] : [dataPush]
+				newFilterObj = { ...filterObj, filterColumns : newFilterObj.filterColumns };
+			}else{
+				newFilterObj.filterColumns = filterObj['filterColumns'].filter((item)=> item.key !== data.key);
+				newFilterObj = { ...filterObj, filterColumns : newFilterObj.filterColumns };
+			}
+			localStorage.setItem(nameItem, JSON.stringify(newFilterObj))
+		}
+
 		self.updateFilters = function (data, event) {
+			const currentPath = window.location?.href;
+			if (currentPath?.includes('/conceptset/')) {
+				if (currentPath?.includes('/included-sourcecodes')) {
+					localStorage.setItem('filter-source', 'Included Source Codes');
+				} else if (currentPath?.includes('/included')) {
+					localStorage.setItem('filter-source', 'Included Concepts');
+				}
+				self.setDataLocalStorage(data, 'filter-data');
+			}
+			const isAddConcept = currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('search'), false) &&
+				currentPath?.split('?').reduce((prev, curr) => prev || curr.includes('query'), false) ||
+				currentPath?.includes('/concept/')
+
+			if (isAddConcept) {
+				localStorage.setItem('filter-source', 'Search');
+				self.setDataObjectLocalStorage(data, 'filter-data')
+			}
 			var facet = data.facet;
 			data.selected(!data.selected());
 			if (data.selected()) {

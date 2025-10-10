@@ -1,6 +1,12 @@
 <!-- ko with: Criteria -->
 <span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_11', 'an observation period')"></span>
 <ul>
+<!-- ko if: ko.utils.unwrapObservable(DateAdjustment) != null -->
+<li>
+	<span data-bind="text: ko.i18n('components.dateAdjust.criteriaLabel', 'with date adjustment:')"></span>
+	<date-adjustment-viewer params="DateAdjustment: DateAdjustment"></date-adjustment>
+</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(First) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_2', 'limited to the patients first observation period')"></span>
@@ -26,6 +32,15 @@
 		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_12', 'period type is any of:')"></span>
 		 <concept-list-viewer params="ConceptList: ko.utils.unwrapObservable(PeriodType)"></concept-list-viewer></li>
 <!-- /ko -->
+<!-- ko if: ko.utils.unwrapObservable(PeriodTypeCS) != null -->
+	<li>
+		<span data-bind="text: ko.i18n('components.cohortCriteria.periodTypeCS', 'with a period type concept')"></span>
+		<cycle-toggle-input-viewer params="{value: PeriodTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+		</cycle-toggle-input-viewer>
+		<conceptset-reference params="conceptSetId: PeriodTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+			defaultName: ko.i18n('components.cohortCriteria.anyPeriodType', 'Any Period Type')"></conceptset-reference>
+	</li>
+<!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(PeriodLength) != null -->
 	<li>
 		<span data-bind="text: ko.i18n('components.conditionObservationPeriod.conditionObservationText_9', 'with period duration')"></span>
@@ -42,7 +57,7 @@
 		<numeric-range-viewer params="Range: AgeAtEnd"></numeric-range-viewer></li>
 <!-- /ko -->
 <!-- ko if: ko.utils.unwrapObservable(CorrelatedCriteria) != null -->
-		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria}"></criteria-group-viewer>	
+		<criteria-group-viewer params="{expression: $component.expression, group: CorrelatedCriteria, indexMessage: 'The index date refers to the observation period.}"></criteria-group-viewer>	
 <!-- /ko -->
 </ul>
 <!-- /ko -->

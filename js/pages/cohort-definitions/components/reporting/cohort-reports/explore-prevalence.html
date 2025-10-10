@@ -1,0 +1,45 @@
+<div data-bind="css: classes()">
+    <loading data-bind="visible: loading()" params="status: ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.loadingPrevalenceStats', 'Loading prevalence stats...')"></loading>
+    <div><span data-bind="text: ko.i18n('cc.viewEdit.executions.prevalenceStatConverter.cohort', 'Cohort:')"></span> <span data-bind="text: cohortName"></span></div>
+    <div data-bind="visible: exploring() && !loading()">
+        <div data-bind="css: classes('exploring-pane')">
+            <i title="Reset exploring hierarchy" data-bind="click: resetExploring, css: classes({element: 'reset', extra: 'fa fa-times'})"></i>
+            <span data-bind="text: exploringTitle, css: classes('exploring-title')"></span>
+        </div>
+    </div>
+    <!-- ko ifnot: loading() -->
+    <table data-bind="
+        dataTable: {
+        data: relations().stats,
+        options: {
+            autoWidth: false,
+            order: [1, 'desc'],
+            columns: relations().columns,
+            buttons: $component.getButtonsConfig(),
+            dom: 'Blftipr',
+            pageLength: $component.tableOptions.pageLength,
+            lengthMenu: $component.tableOptions.lengthMenu,
+            language: ko.i18n('datatable.language')
+        }
+    }">
+        <thead>
+            <!-- ko if: relations().stratas.length > 1 -->
+            <tr>
+                <th rowspan="2">Relation</th>
+                <th rowspan="2">Distance</th>
+                <th rowspan="2">Concept name</th>
+                <!-- ko foreach: relations().stratas -->
+                    <th colspan="2" data-bind="text: $data"></th>
+                <!-- /ko -->
+            </tr>
+            <tr>
+                <!-- ko foreach: relations().stratas -->
+                    <th>Count</th>
+                    <th>Pct</th>
+                <!-- /ko -->
+            </tr>
+            <!-- /ko -->
+        </thead>
+    </table>
+    <!-- /ko -->
+</div>

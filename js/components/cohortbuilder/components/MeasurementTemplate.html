@@ -7,7 +7,7 @@
 			</colgroup>
 			<tr>
 				<td> <span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_1', 'a measurement of')"></span>
-					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultText: 
+					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets, defaultName: 
 					ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')"></conceptset-selector>
 				</td>
 				<td>
@@ -57,12 +57,36 @@
 					<concept-list params="PickerParams: { DefaultDomain: 'Type Concept', DefaultQuery: ''}, ConceptList: MeasurementType()"></concept-list>
 				</td>
 			</tr>
+			<tr data-bind="if: MeasurementTypeCS() != null, visible: MeasurementTypeCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('MeasurementTypeCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.measurementTypeCS', 'with measurement type concept')"></span>
+						<cycle-toggle-input params="{value: MeasurementTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: MeasurementTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyMeasurementType', 'Any Measurement Type')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: Operator() != null, visible: Operator() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Operator') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 
 					<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_5', 'Measurement Value Operator is:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Meas Value Operator', DefaultQuery: ''}, ConceptList: Operator()"></concept-list>
+				</td>
+			</tr>
+			<tr data-bind="if: OperatorCS() != null, visible: OperatorCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('OperatorCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.operatorCS', 'with an operator concept')"></span>
+						<cycle-toggle-input params="{value: OperatorCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: OperatorCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyOperator', 'Any Operator')"></conceptset-selector>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: ValueAsNumber() != null, visible: ValueAsNumber() != null">
@@ -80,12 +104,36 @@
 					<concept-list params="PickerParams: { DefaultDomain: 'Meas Value', DefaultQuery: ''}, ConceptList: ValueAsConcept()"></concept-list>
 				</td>
 			</tr>
+			<tr data-bind="if: ValueAsConceptCS() != null, visible: ValueAsConceptCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('ValueAsConceptCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.valueAsConceptCS', 'with value as concept')"></span>
+						<cycle-toggle-input params="{value: ValueAsConceptCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: ValueAsConceptCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyValueAsConcept', 'Any Value As Concept')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: Unit() != null, visible: Unit() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('Unit') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 
 					<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_8', 'Unit is:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Unit', DefaultQuery: ''}, ConceptList: Unit()"></concept-list>
+				</td>
+			</tr>
+			<tr data-bind="if: UnitCS() != null, visible: UnitCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('UnitCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.unitCS', 'with unit concept')"></span>
+						<cycle-toggle-input params="{value: UnitCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: UnitCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyUnit', 'Any Unit')"></conceptset-selector>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: RangeLow() != null, visible: RangeLow() != null">
@@ -134,7 +182,7 @@
 
 						<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_14', 'Measurement Source Concept is')"></span>
 						<conceptset-selector params="conceptSetId: MeasurementSourceConcept(), conceptSets: $component.expression.ConceptSets, 
-						defaultText: ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')"></conceptset-selector>
+						defaultName: ko.i18n('components.conditionMeasurement.anyMeasurement', 'Any Measurement')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>
@@ -156,20 +204,18 @@
 					</div>
 				</td>
 			</tr>
-			<!--
-			<tr data-bind="if: PriorEnrollDays() != null, visible: PriorEnrollDays() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('PriorEnrollDays') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
-				<td>with at least
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: PriorEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation prior to diagnosis
+			<tr data-bind="if: GenderCS() != null, visible: GenderCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('GenderCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+						<cycle-toggle-input params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-selector>
+					</div>
 				</td>
 			</tr>
-			<tr data-bind="if: AfterEnrollDays() != null, visible: AfterEnrollDays() != null">
-				<td><i data-bind="click: function() { $component.removeCriterion('AfterEnrollDays') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
-				<td>with at least
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: AfterEnrollDays.numeric(), ko_autocomplete: { source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />days of observation after diagnosis
-				</td>
-			</tr>
- 			-->
 			<tr data-bind="if: ProviderSpecialty() != null, visible: ProviderSpecialty() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialty') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
@@ -180,12 +226,36 @@
 					</div>
 				</td>
 			</tr>
+			<tr data-bind="if: ProviderSpecialtyCS() != null, visible: ProviderSpecialtyCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('ProviderSpecialtyCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.providerSpecialtyCS', 'with provider specialty concept')"></span>
+						<cycle-toggle-input params="{value: ProviderSpecialtyCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: ProviderSpecialtyCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyProviderSpecialty', 'Any Provider Ppecialty')"></conceptset-selector>
+					</div>
+				</td>
+			</tr>
 			<tr data-bind="if: VisitType() != null, visible: VisitType() != null">
 				<td><i data-bind="click: function() { $component.removeCriterion('VisitType') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
 				<td>
 
 					<span data-bind="text: ko.i18n('components.conditionMeasurement.conditionMeasurementText_18', 'with a Visit of:')"></span>
 					<concept-list params="PickerParams: { DefaultDomain: 'Visit', DefaultQuery: ''}, ConceptList: VisitType()"></concept-list>
+				</td>
+			</tr>
+			<tr data-bind="if: VisitTypeCS() != null, visible: VisitTypeCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('VisitTypeCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.visitTypeCS', 'with visit type concept')"></span>
+						<cycle-toggle-input params="{value: VisitTypeCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: VisitTypeCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyVisitType', 'Any Visit Type')"></conceptset-selector>
+					</div>
 				</td>
 			</tr>
 			<tr data-bind="if: CorrelatedCriteria() != null, visible: CorrelatedCriteria() != null">

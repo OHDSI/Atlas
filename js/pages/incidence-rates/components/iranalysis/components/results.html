@@ -142,15 +142,40 @@
 	<div class="generation-buttons">
 		<span data-bind="tooltip: $component.isExecutionDisabled($data.source)() ? $component.executionDisabledReason() : null" data-placement="left">
 			<button class="btn btn-sm btn-primary"
-					data-bind="attr: {'disabled': $component.isExecutionDisabled($data.source) }, click: (data, event) => $component.runGenerations([$data.source])">
+					data-bind="attr: {'disabled': $component.isExecutionDisabled($data.source) },
+							   visible: !$component.isInProgress($data),
+							   click: (data, event) => $component.runGenerations([$data.source])">
 					<i class="fa fa-play"></i>&nbsp;<span data-bind="text: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.generate', 'Generate')"></span>
 			</button>
+			<a role="button" class="btn btn-sm btn-danger"
+				data-bind="click: (data, event) => $component.cancelExecution($data.source.sourceKey),
+				           visible: $component.isInProgress($data),
+						   attr: {'disabled': $component.isStopping($data)}">
+						   <i class="fa fa-spinner fa-spin"></i> 
+				<span data-bind="text: ko.i18n('common.cancel', 'Cancel')"></span>
+			</a>
 		</span>
 		<span data-bind="tooltip: $component.reportDisabledReason($data.source)">
-			<button class="btn btn-sm btn-primary" data-bind="attr: {'disabled': !$data.info() || !$data.info().executionInfo.isValid || !$component.hasSourceAccess($data.source.sourceKey)}, click: () => $component.selectSource($data)">
+			<button class="btn btn-sm btn-primary" data-bind="attr: {'disabled': $component.isInProgress($data) || !$component.hasSourceAccess($data.source.sourceKey)}, click: () => $component.selectSource($data)">
 				<i class="fa fa-eye"></i> <span data-bind="text: 'View Reports'"></span>
 			</button>
-			<button data-bind="attr: {'disabled': !$data.info() || !$data.info().executionInfo.isValid || !$component.hasSourceAccess($data.source.sourceKey)}, visible: $component.isEditable()" class="btn btn-sm btn-danger removeResult">
+			<!-- ko if: $component.config.shinyEnabled -->
+			<div class="btn-group">
+				<button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" data-bind="attr: {disabled: !$data.info() || !$data.info().executionInfo.isValid || !$component.hasSourceAccess($data.source.sourceKey) || $component.isInProgress($data)}">
+					<i class="fa fa-network-wired"></i>
+					<span data-bind="text: 'Shiny App'"></span>
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right" data-bind="foreach: $component.shinyOptions">
+					<li>
+						<a data-bind="click: () => $data.action($parent)" href="#">
+							<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /ko -->
+			<button data-bind="attr: {'disabled': $component.isInProgress($data) || !$component.hasSourceAccess($data.source.sourceKey)}, visible: $component.isEditable()" class="btn btn-sm btn-danger removeResult">
 				<i class="fa fa-trash"></i>
 			</button>
 		</span>

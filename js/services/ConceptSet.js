@@ -74,6 +74,21 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
+	function saveConceptSetAnnotation(id, conceptSetItems) {
+		return httpService.doPut(config.api.url + 'conceptset/' + id + '/annotation', conceptSetItems)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getConceptSetAnnotation(conceptSetId) {
+		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') + '/annotation')
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function deleteConceptSetAnnotation(conceptSetId, annotationId) {
+		return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1') +'/annotation/' + (annotationId || '-1'))
+			.catch(authApi.handleAccessDenied);
+		}
+
 	function getConceptSet(conceptSetId) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 			.catch(authApi.handleAccessDenied);
@@ -81,6 +96,12 @@ define(function (require) {
 
 	function getCopyName(id) {
 		return httpService.doGet(config.webAPIRoot + 'conceptset/' + (id || "") + "/copy-name")
+			.then(({ data }) => data);
+	}
+
+	function copyAnnotations(copyAnnotationsRequest) {
+		return httpService
+			.doPost(`${config.webAPIRoot}conceptset/copy-annotations`, copyAnnotationsRequest)
 			.then(({ data }) => data);
 	}
 
@@ -129,6 +150,7 @@ define(function (require) {
 		lookupIdentifiers,
 		getInclusionCount,
 		getCopyName,
+		copyAnnotations,
 		getConceptSet,
 		getGenerationInfo,
 		deleteConceptSet,
@@ -140,7 +162,10 @@ define(function (require) {
 		getVersion,
 		getVersionExpression,
 		updateVersion,
-		copyVersion
+		copyVersion,
+		saveConceptSetAnnotation,
+		getConceptSetAnnotation,
+		deleteConceptSetAnnotation
 	};
 
 	return api;

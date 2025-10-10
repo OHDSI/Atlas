@@ -1,4 +1,5 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text', '../InputTypes/ConceptSetSelection'
+], function (ko, Criteria, Range, Concept, Text, ConceptSetSelection) {
 
 	function Specimen(data, conceptSets) {
 		var self = this;
@@ -26,17 +27,21 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.SpecimenType = ko.observable(data.SpecimenType && ko.observableArray(data.SpecimenType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.SpecimenTypeCS = ko.observable(data.SpecimenTypeCS && new ConceptSetSelection(data.SpecimenTypeCS, conceptSets));
 		self.SpecimenTypeExclude = ko.observable(data.SpecimenTypeExclude || null);				
 		self.Quantity = ko.observable(data.Quantity && new Range(data.Quantity));
 		self.Unit = ko.observable(data.Unit && ko.observableArray(data.Unit.map(function (d) {
 			return new Concept(d);
 		})));
+		self.UnitCS = ko.observable(data.UnitCS && new ConceptSetSelection(data.UnitCS, conceptSets));
 		self.AnatomicSite = ko.observable(data.AnatomicSite && ko.observableArray(data.AnatomicSite.map(function (d) {
 			return new Concept(d);
 		})));
+		self.AnatomicSiteCS = ko.observable(data.AnatomicSiteCS && new ConceptSetSelection(data.AnatomicSiteCS, conceptSets));
 		self.DiseaseStatus = ko.observable(data.DiseaseStatus && ko.observableArray(data.DiseaseStatus.map(function (d) {
 			return new Concept(d);
 		})));
+		self.DiseaseStatusCS = ko.observable(data.DiseaseStatusCS && new ConceptSetSelection(data.DiseaseStatusCS, conceptSets));
 		self.SourceId = ko.observable(data.SourceId && new Text(data.SourceId));
 
 		// Derived Fields
@@ -47,6 +52,7 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 	}
 
 	Specimen.prototype = new Criteria();

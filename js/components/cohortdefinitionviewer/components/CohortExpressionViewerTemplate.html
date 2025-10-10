@@ -99,9 +99,19 @@
 	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_13', 'Cohort Collapse Strategy:')"></span>
 	
 </div>
-<span data-bind="with: expression().CollapseSettings">
+<div data-bind="with: expression().CollapseSettings">
 	<span data-bind="text: ko.i18n('components.cohortExpressionViewer.cohortExpressionViewerText_14', 'Collapse cohort by era with a gap size of ')"></span>
 	
 	<span class="numericField" data-bind="text: EraPad" /> 
 	<span data-bind="text: ko.i18n('common.days', 'days')"></span>
-</span>
+</div>
+<div data-bind="if: $component.showCensorWindow">
+	<div>
+		<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')">: </span>
+		<span data-bind="text: (expression().CensorWindow().StartDate() || '') == '' ? ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring') : expression().CensorWindow().StartDate()"></span>
+	</div>
+	<div>
+		<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_3', 'Right censor cohort end dates to')"></span>
+		<span data-bind="text: (expression().CensorWindow().EndDate() || '') == '' ? ko.i18n('components.cohortExpressionEditor.noCensoring', 'No Censoring') : expression().CensorWindow().EndDate()"></span>
+	</div>
+</div>

@@ -8,7 +8,7 @@
 			<tr>
 				<td> <span data-bind="text: ko.i18n('components.conditionDrug.conditionDrugText_1', 'a drug era of')"></span>
 					<conceptset-selector params="conceptSetId: CodesetId, conceptSets: $component.expression.ConceptSets,
-					defaultText: ko.i18n('components.conditionDrug.anyDrug', 'Any Drug')"></conceptset-selector>
+					defaultName: ko.i18n('components.conditionDrug.anyDrug', 'Any Drug')"></conceptset-selector>
 				</td>
 				<td>
 					<div class="btn-group pull-right">
@@ -115,6 +115,18 @@
 
 						<concept-list params="PickerParams: { DefaultDomain: 'Gender', DefaultQuery: ''}, ConceptList: Gender()">
 						</concept-list>
+					</div>
+				</td>
+			</tr>
+			<tr data-bind="if: GenderCS() != null, visible: GenderCS() != null">
+				<td><i data-bind="click: function() { $component.removeCriterion('GenderCS') }, title: ko.i18n('common.remove', 'Remove')" class="fa fa-times" /></td>
+				<td>
+					<div>
+						<span data-bind="text: ko.i18n('components.cohortCriteria.genderCS', 'with gender conept')"></span>
+						<cycle-toggle-input params="{value: GenderCS().IsExclusion, options: $component.options.DomainTypeExcludeOptions}">
+						</cycle-toggle-input>
+						<conceptset-selector params="conceptSetId: GenderCS().CodesetId, conceptSets: $component.expression.ConceptSets, 
+							defaultName: ko.i18n('components.cohortCriteria.anyGender', 'Any Gender')"></conceptset-selector>
 					</div>
 				</td>
 			</tr>

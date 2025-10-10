@@ -161,6 +161,7 @@ define(function (require, exports) {
           success: function (info) {
             source.version(info.version);
             source.dialect(info.dialect);
+            sharedState.currentVocabularyVersion() || sharedState.defaultVocabularyVersion(info.version);
           },
           error: function (err) {
             source.version('unknown');
@@ -185,8 +186,13 @@ define(function (require, exports) {
     return httpService.doGet(config.webAPIRoot + 'source/connection/' + sourceKey)
   }
 
-  function refreshSourceCache(sourceKey) {
-    return httpService.doGet(config.webAPIRoot + 'cdmresults/' + sourceKey + '/refreshCache');
+  async function refreshSourceCache(sourceKey) {
+    await httpService.doPost(
+      config.webAPIRoot + 'cdmresults/' + sourceKey + '/clearCache'
+    );
+    return await httpService.doGet(
+      config.webAPIRoot + 'cdmresults/' + sourceKey + '/refreshCache'
+    );
   }
 
   function updateSourceDaimonPriority(sourceKey, daimonType) {
@@ -204,6 +210,9 @@ define(function (require, exports) {
   function getResultsUrl(sourceKey) {
       return config.api.url + 'cdmresults/' + sourceKey + '/';
   }
+  function getVocabularyInfo(sourceKey) {
+    return httpService.doGet(config.webAPIRoot + 'vocabulary/' + sourceKey + '/info');
+  }
 
   var api = {
     getSources: getSources,
@@ -217,6 +226,7 @@ define(function (require, exports) {
     buttonCheckState: buttonCheckState,
     setSharedStateSources: setSharedStateSources,
     updateSourceDaimonPriority,
+    getVocabularyInfo
 	};
 
 	return api;

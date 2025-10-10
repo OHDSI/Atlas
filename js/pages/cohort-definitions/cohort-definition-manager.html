@@ -324,7 +324,7 @@
 					</tbody>
 				</table>
 				<!-- ko if: selectedReportSource() -->
-				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource"></cohort-reports>
+				<cohort-reports params="cohort: currentCohortDefinition, source: selectedReportSource, infoSelected: selectedReportSource"></cohort-reports>
 				<!-- /ko -->
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.tabMode() == 'reporting' }" class="tab-pane">
@@ -784,7 +784,32 @@
 											? ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.hideReports', 'Hide Reports')
 											: ko.i18n('cohortDefinitions.cohortDefinitionManager.panels.viewReports', 'View Reports'))"></span>
 		</button>
+		<!-- ko if: $component.config.shinyEnabled -->
+		<div class="btn-group">
+			<button class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" data-bind="attr: {disabled: $component.isSourceRunning($data) || !isValid()}">
+				<i class="fa fa-network-wired"></i>
+				<span data-bind="text: 'Shiny App'"></span>
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu dropdown-menu-right" data-bind="foreach: $component.shinyOptions">
+				<li>
+					<a data-bind="click: () => $data.action($parent)" href="#">
+						<div class="optionText" data-bind="text: ko.i18n($data.title, $data.defaultTitle)"></div>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<!-- /ko -->
 	</div>
+</script>
+
+<script type="text/html" id="generation-checkbox-demographic">
+	<span>
+		<input class="hover-toolbox" type="checkbox" data-bind="attr:{ id: $data.sourceKey } , checked: viewDemographic, tooltip: 'Results with Demographics', eventListener: [ 
+			{event: 'mouseover', selector: 'input', callback: $component.addToolTipDemographic },
+			{event: 'mouseout', selector: 'input', callback: $component.removeToolTipDemographic }, 
+			{event: 'mouseup', selector: 'input', callback: $component.handleViewDemographic }]" data-placement="right"/>
+	</span>
 </script>
 
 <!-- /ko -->

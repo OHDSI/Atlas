@@ -1,4 +1,4 @@
-define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text'], function (ko, Criteria, Range, Concept, Text) {
+define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputTypes/Concept', '../InputTypes/Text', '../InputTypes/ConceptSetSelection'], function (ko, Criteria, Range, Concept, Text, ConceptSetSelection) {
 
 	function DeviceOccurence(data, conceptSets) {
 		var self = this;
@@ -29,6 +29,8 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 			return new Concept(d);
 		})));
 		self.DeviceTypeExclude = ko.observable(data.DeviceTypeExclude || null);
+		self.DeviceTypeCS = ko.observable(data.DeviceTypeCS && new ConceptSetSelection(data.DeviceTypeCS, conceptSets));
+		
 		self.UniqueDeviceId = ko.observable(data.UniqueDeviceId && new Text(data.StopReason));
 		self.Quantity = ko.observable(data.Quantity && new Range(data.Quantity));
 		self.DeviceSourceConcept = ko.observable(data.DeviceSourceConcept != null ? ko.observable(data.DeviceSourceConcept) : null);
@@ -41,18 +43,17 @@ define(['knockout', './Criteria', '../InputTypes/Range','conceptpicker/InputType
 		self.Gender = ko.observable(data.Gender && ko.observableArray(data.Gender.map(function (d) {
 			return new Concept(d);
 		})));
+		self.GenderCS = ko.observable(data.GenderCS && new ConceptSetSelection(data.GenderCS, conceptSets));
 
-	  /* Do we still need prior enroll days inside the individual criteria?
-		self.PriorEnrollDays = ko.observable((typeof data.PriorEnrollDays == "number") ? data.PriorEnrollDays : null);
-		self.AfterEnrollDays = ko.observable((typeof data.AfterEnrollDays == "number") ? data.AfterEnrollDays : null);
-		*/
-	 
 		self.ProviderSpecialty = ko.observable(data.ProviderSpecialty && ko.observableArray(data.ProviderSpecialty.map(function (d) {
 			return new Concept(d);
 		})));
+		self.ProviderSpecialtyCS = ko.observable(data.ProviderSpecialtyCS && new ConceptSetSelection(data.ProviderSpecialtyCS, conceptSets));
+
 		self.VisitType = ko.observable(data.VisitType && ko.observableArray(data.VisitType.map(function (d) {
 			return new Concept(d);
 		})));
+		self.VisitTypeCS = ko.observable(data.VisitTypeCS && new ConceptSetSelection(data.VisitTypeCS, conceptSets));
 		
 	}
 
