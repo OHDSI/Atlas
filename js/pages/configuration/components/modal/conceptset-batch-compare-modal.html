@@ -1,0 +1,429 @@
+<atlas-modal
+    params="data: $component, showModal: $component.isModalShown, title: ko.i18n('components.batchCompare.title', 'Run Concept-set diff report for different versions of Vocabularies')">
+    <div class="modal-body padded">
+        <div class="batch-compare-modal">
+            <!-- Vocabulary Selection -->
+            <div class="vocabulary-selection-section">
+                <h4 class="heading" data-bind="text: ko.i18n('components.batchCompare.vocabularies', 'Vocabularies')">
+                </h4>
+
+                <!-- Base Vocabulary Dropdown -->
+                <div class="form-group vocabulary-row">
+                    <label data-bind="text: ko.i18n('components.batchCompare.base', 'Base')"></label>
+                    <div class="btn-group vocabulary-dropdown">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="vocab-text" data-bind="text: selectedBaseVocabularyDisplay, attr: { title: selectedBaseVocabularyDisplay }"></span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" data-bind="foreach: vocabularySources">
+                            <li>
+                                <a href="#"
+                                    data-bind="text: '[' + sourceName + '] ' + version, 
+                                            attr: { title: '[' + sourceName + '] ' + version },
+                                            click: function() { $parent.selectedBaseVocabulary($data); }"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Target Vocabulary Dropdown -->
+                <div class="form-group vocabulary-row">
+                    <label data-bind="text: ko.i18n('components.batchCompare.target', 'Target')"></label>
+                    <div class="btn-group vocabulary-dropdown">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="vocab-text" data-bind="text: selectedTargetVocabularyDisplay, attr: { title: selectedTargetVocabularyDisplay }"></span>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" data-bind="foreach: vocabularySources">
+                            <li>
+                                <a href="#"
+                                    data-bind="text: '[' + sourceName + '] ' + version,
+                                            attr: { title: '[' + sourceName + '] ' + version },
+                                            click: function() { $parent.selectedTargetVocabulary($data); }"></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div data-bind="visible: vocabularySelectionError()" class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    <span
+                        data-bind="text: ko.i18n('components.batchCompare.sameVocabError', 'Base and Target vocabularies must be different')"></span>
+                </div>
+            </div>
+
+            <!-- Filter Concept-sets Section -->
+            <div class="filter-section">
+                <h4 class="heading"
+                    data-bind="text: ko.i18n('components.batchCompare.filterConceptSets', 'Filter Concept-sets')"></h4>
+
+                <!-- Created Date Range -->
+                <div class="form-group date-range-group">
+                    <label data-bind="text: ko.i18n('components.batchCompare.created', 'Created')"></label>
+                    <div class="date-inputs">
+                        <select class="form-control date-operator" data-bind="value: createdDateOperator">
+                            <option value="between">between</option>
+                            <option value="before">before</option>
+                            <option value="after">after</option>
+                        </select>
+                
+                        <!-- From Date - shown for 'between' and 'after' -->
+                        <input type="date" class="form-control date-input" data-bind="value: createdDateFrom, 
+                                                    visible: createdDateOperator() === 'between' || createdDateOperator() === 'after'"
+                            placeholder="From date" />
+                
+                        <!-- Separator - only for 'between' -->
+                        <span class="date-separator" data-bind="visible: createdDateOperator() === 'between', 
+                                                    text: ko.i18n('common.and', 'and')"></span>
+                
+                        <!-- To Date - shown for 'between' and 'before' -->
+                        <input type="date" class="form-control date-input" data-bind="value: createdDateTo, 
+                                                    visible: createdDateOperator() === 'between' || createdDateOperator() === 'before'"
+                            placeholder="To date" />
+                    </div>
+                </div>
+                
+                <!-- Updated Date Range -->
+                <div class="form-group date-range-group">
+                    <label data-bind="text: ko.i18n('components.batchCompare.updated', 'Updated')"></label>
+                    <div class="date-inputs">
+                        <select class="form-control date-operator" data-bind="value: updatedDateOperator">
+                            <option value="between">between</option>
+                            <option value="before">before</option>
+                            <option value="after">after</option>
+                        </select>
+                
+                        <!-- From Date - shown for 'between' and 'after' -->
+                        <input type="date" class="form-control date-input" data-bind="value: updatedDateFrom, 
+                                                    visible: updatedDateOperator() === 'between' || updatedDateOperator() === 'after'"
+                            placeholder="From date" />
+                
+                        <!-- Separator - only for 'between' -->
+                        <span class="date-separator" data-bind="visible: updatedDateOperator() === 'between', 
+                                                    text: ko.i18n('common.and', 'and')"></span>
+                
+                        <!-- To Date - shown for 'between' and 'before' -->
+                        <input type="date" class="form-control date-input" data-bind="value: updatedDateTo, 
+                                                    visible: updatedDateOperator() === 'between' || updatedDateOperator() === 'before'"
+                            placeholder="To date" />
+                    </div>
+                </div>
+
+                <!-- Author Filter -->
+                <div class="form-group selector-group">
+                    <label data-bind="text: ko.i18n('components.batchCompare.authors', 'Authors')"></label>
+                    <button type="button" class="btn btn-primary btn-sm selector-button"
+                        data-bind="click: openAuthorsModal, text: ko.i18n('components.batchCompare.selectAuthors', 'Select authors')">
+                    </button>
+                </div>
+
+                <!-- Selected Authors Display -->
+                <div class="selected-items-container" data-bind="visible: selectedAuthors().length > 0">
+                    <div class="selected-items-list" data-bind="foreach: selectedAuthors">
+                        <span class="item-badge author-badge">
+                            <i class="fa fa-user"></i>
+                            <span
+                                data-bind="text: name || login, attr: { title: name ? name + ' [' + login + ']' : login }"></span>
+                            <a href="#" class="item-remove" data-bind="click: $parent.removeAuthor">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tagged with -->
+                <div class="form-group selector-group">
+                    <label data-bind="text: ko.i18n('components.batchCompare.taggedWith', 'Tagged with')"></label>
+                    <button type="button" class="btn btn-primary btn-sm selector-button"
+                        data-bind="click: openTagsModal, text: ko.i18n('components.batchCompare.selectTags', 'Select tags')">
+                    </button>
+                </div>
+
+                <!-- Selected Tags Display -->
+                <div class="selected-items-container" data-bind="visible: selectedTags().length > 0">
+                    <div class="selected-items-list" data-bind="foreach: selectedTags">
+                        <span class="tag"
+                            data-bind="attr: { style: 'background-color: ' + ($data.color || ($data.groups && $data.groups[0] && $data.groups[0].color) || '#cecece') }">
+                            <i
+                                data-bind="css: $data.icon || ($data.groups && $data.groups[0] && $data.groups[0].icon) || 'fa fa-tag'"></i>
+                            <span data-bind="text: $data.name, attr: { title: $data.name }"></span>
+                            <a href="#" class="tag-remove item-remove" data-bind="click: $parent.removeTag">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Concept Set IDs Filter -->
+                <div class="form-group selector-group">
+                    <label
+                        data-bind="text: ko.i18n('components.batchCompare.conceptSetIds', 'Concept Set IDs')"></label>
+                    <div class="selector-controls">
+                        <button type="button" class="btn btn-primary btn-sm selector-button"
+                            data-bind="click: openConceptSetSelectorModal, 
+                                    disable: isTextModeActive(),
+                                    text: ko.i18n('components.batchCompare.selectConceptSets', 'Select Concept Sets')">
+                        </button>
+                        <!-- Only show text input when selector mode is not active -->
+                        <!-- ko ifnot: isSelectorModeActive() -->
+                        <span class="selector-separator">or</span>
+                        <input type="text" class="form-control inline-text-input" 
+                            data-bind="value: conceptSetIdsText, 
+                                        valueUpdate: 'input',
+                                        attr: { placeholder: ko.i18n('components.batchCompare.conceptSetIdsPlaceholder', 
+                                                'Enter IDs (e.g., 1,2,3)')() }" />
+                        <!-- /ko -->
+                    </div>
+                </div>
+
+                <!-- Concept Set IDs Validation & Display -->
+                <div class="selector-feedback"
+                    data-bind="visible: conceptSetIdsText().trim() || selectedConceptSetIds().length > 0">
+                    <!-- Validation message for text input -->
+                    <div class="help-block text-danger"
+                        data-bind="visible: !conceptSetIdsValid() && conceptSetIdsText().trim()">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <span data-bind="text: conceptSetIdsValidationMessage"></span>
+                    </div>
+
+                    <!-- Success message for text input -->
+                    <div class="help-block text-success"
+                        data-bind="visible: conceptSetIdsValid() && conceptSetIdsText().trim() && conceptSetIdsFromText().length > 0">
+                        <i class="fa fa-check-circle"></i>
+                        <span data-bind="text: conceptSetIdsCountMessage"></span>
+                    </div>
+
+                    <!-- Selected concept sets from selector -->
+                    <div class="selected-items-container"
+                        data-bind="visible: selectedConceptSetIds().length > 0 && !conceptSetIdsText().trim()">
+                        <div class="info-row">
+                            <i class="fa fa-check-circle text-success"></i>
+                            <span data-bind="text: conceptSetIdsCountMessage"></span>
+                        </div>
+                        <div class="selected-items-list" data-bind="foreach: selectedConceptSetIds">
+                            <span class="item-badge conceptset-badge">
+                                <i class="fa fa-list-alt"></i>
+                                <span data-bind="text: $data"></span>
+                                <a href="#" class="item-remove" data-bind="click: $parent.removeSelectedConceptSet">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skip Locked Checkbox -->
+                <div class="checkbox skip-locked-checkbox">
+                    <label>
+                        <input type="checkbox" data-bind="checked: skipLocked" />
+                        <span
+                            data-bind="text: ko.i18n('components.batchCompare.skipLocked', 'Skip Locked/Snapshoted conceptsets')"></span>
+                    </label>
+                </div>
+
+                <!-- Compare Source Codes Checkbox -->
+                <div class="checkbox compare-source-codes-checkbox">
+                    <label>
+                        <input type="checkbox" data-bind="checked: compareSourceCodes" />
+                        <span
+                            data-bind="text: ko.i18n('components.batchCompare.compareSourceCodes', 'Compare Source Codes')"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filter Count Check -->
+            <div class="filter-count-section">
+                <button class="btn btn-info btn-sm" data-bind="click: checkFilterCount, 
+                               enable: !isCheckingCount(),
+                               text: isCheckingCount() 
+                                   ? ko.i18n('components.batchCompare.checking', 'Checking...') 
+                                   : ko.i18n('components.batchCompare.checkCount', 'Check Concept Set Count')">
+                </button>
+
+                <div class="filter-count-result" data-bind="visible: filterCountMessage()">
+                    <i class="fa fa-info-circle" data-bind="visible: filterCount() !== null && filterCount() > 0"></i>
+                    <i class="fa fa-exclamation-triangle" data-bind="visible: filterCount() === 0"></i>
+                    <span data-bind="text: filterCountMessage,
+                                     css: { 'text-warning': filterCount() === 0 }"></span>
+                </div>
+
+                <div class="filter-count-loading" data-bind="visible: isCheckingCount()">
+                    <i class="fa fa-spinner fa-spin"></i>
+                    <span
+                        data-bind="text: ko.i18n('components.batchCompare.checkingCount', 'Checking concept set count...')"></span>
+                </div>
+            </div>
+
+            <!-- Performance Warning -->
+            <div class="performance-warning">
+                <i class="fa fa-exclamation-triangle"></i>
+                <span
+                    data-bind="text: ko.i18n('components.batchCompare.performanceWarning', 
+                                'Warning: This job can intensively load the vocabulary databases if the selected concept sets contain a large number of included concepts or source codes. At least one filter criterion (date, author, tag, or concept set IDs) must be specified')"></span>
+            </div>
+
+            <!-- Action Status -->
+            <div class="action-status alert alert-info" data-bind="visible: actionInProgress, text: actionInProgress">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn btn-default btn-sm"
+                    data-bind="click: cancel, text: ko.i18n('common.cancel', 'Cancel')">
+                </button>
+                <button class="btn btn-success btn-sm"
+                    data-bind="click: runBatchCompare, enable: canExecute() && !isExecuting(), text: ko.i18n('components.batchCompare.run', 'Run')">
+                </button>
+            </div>
+        </div>
+    </div>
+</atlas-modal>
+
+<!-- Author Selection Modal -->
+<atlas-modal params="
+        showModal: showAuthorsModal,
+        title: ko.i18n('components.batchCompare.selectAuthorsTitle', 'Select Authors for Filtering'),
+        data: {
+            availableAuthors: availableAuthors,
+            availableAuthorsColumns: availableAuthorsColumns,
+            showModal: showAuthorsModal,
+            authorsMessage: authorsMessage,
+            applyAuthorsSelection: applyAuthorsSelection,
+            tableOptions: tableOptions,
+            isLoadingAuthors: isLoadingAuthors,
+        }
+    ">
+    <div class="author-modal-content">
+        <!-- ko if: isLoadingAuthors() -->
+        <div class="text-center" style="padding: 20px;">
+            <i class="fa fa-spinner fa-spin fa-2x"></i>
+            <p>Loading authors...</p>
+        </div>
+        <!-- /ko -->
+        <!-- ko ifnot: isLoadingAuthors() -->
+        <table data-bind="
+                    css: { 'table table-bordered table-hover': true },
+                    dataTable:{
+                        data: availableAuthors,
+                        options: {
+                            order: [1, 'asc'],
+                            columns: availableAuthorsColumns,
+                            pageLength: tableOptions.pageLength,
+                            lengthMenu: tableOptions.lengthMenu,
+                            language: ko.i18n('datatable.language')
+                        },
+                    }
+                " style="width: 100%" />
+        <!-- /ko -->
+    </div>
+    <div class="modal-footer">
+        <div class="modal-message" data-bind="visible: authorsMessage()">
+            <i class="fa fa-info"></i>&nbsp;&nbsp;<span data-bind="text: authorsMessage"></span>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary"
+                data-bind="click: applyAuthorsSelection, enable: !isLoadingAuthors()">
+                <span data-bind="text: ko.unwrap(ko.i18n('components.batchCompare.selectButton', 'Apply'))"></span>
+            </button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false)">
+                <span data-bind="text: ko.unwrap(ko.i18n('common.cancel', 'Cancel'))"></span>
+            </button>
+        </div>
+    </div>
+</atlas-modal>
+
+<!-- Concept Set Selector Modal -->
+<atlas-modal params="
+    showModal: showConceptSetSelectorModal,
+    title: ko.i18n('components.batchCompare.selectConceptSetsTitle', 'Select Concept Sets'),
+    data: {
+        availableConceptSets: availableConceptSetsForFilter,
+        availableConceptSetsColumns: availableConceptSetsColumns,
+        showModal: showConceptSetSelectorModal,
+        applySelection: applyConceptSetSelection,
+        conceptSetsMessage: conceptSetsMessage,
+        tableOptions: tableOptions,
+        isLoadingConceptSets: isLoadingConceptSets,
+    }
+">
+    <div class="concept-set-selector-content">
+        <!-- ko if: isLoadingConceptSets() -->
+        <div class="text-center" style="padding: 20px;">
+            <i class="fa fa-spinner fa-spin fa-2x"></i>
+            <p>Loading concept sets...</p>
+        </div>
+        <!-- /ko -->
+        <!-- ko ifnot: isLoadingConceptSets() -->
+        <table data-bind="
+            css: { 'table table-bordered table-hover': true },
+            dataTable: {
+                data: availableConceptSets,
+                options: {
+                    order: [1, 'asc'],
+                    columns: availableConceptSetsColumns,
+                    pageLength: tableOptions.pageLength,
+                    lengthMenu: tableOptions.lengthMenu,
+                    language: ko.i18n('datatable.language')
+                },
+            }
+        " style="width: 100%" />
+        <!-- /ko -->
+    </div>
+    <div class="modal-footer">
+        <div class="modal-message" data-bind="visible: conceptSetsMessage()">
+            <i class="fa fa-info"></i>&nbsp;&nbsp;<span data-bind="text: conceptSetsMessage"></span>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary"
+                data-bind="click: applySelection, enable: !isLoadingConceptSets()">
+                <span data-bind="text: ko.unwrap(ko.i18n('components.batchCompare.selectButton', 'Apply'))"></span>
+            </button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false)">
+                <span data-bind="text: ko.unwrap(ko.i18n('common.cancel', 'Cancel'))"></span>
+            </button>
+        </div>
+    </div>
+</atlas-modal>
+
+<!-- Tag Selection Modal -->
+<atlas-modal params="
+        showModal: showTagsModal,
+        title: ko.i18n('components.batchCompare.selectTagsTitle', 'Select Tags for Filtering'),
+        data: {
+            availableTags: availableTags,
+            availableTagsColumns: availableTagsColumns,
+            showModal: showTagsModal,
+            tagsMessage: tagsMessage,
+            applyTagsSelection: applyTagsSelection,
+            tableOptions: tableOptions,
+        }
+    ">
+    <div class="tag-modal-content">
+        <table data-bind="
+                    css: { 'table table-bordered table-hover': true },
+                    dataTable:{
+                        data: availableTags,
+                        options: {
+                            order: [1, 'asc'],
+                            columns: availableTagsColumns,
+                            pageLength: tableOptions.pageLength,
+                            lengthMenu: tableOptions.lengthMenu,
+                            language: ko.i18n('datatable.language')
+                        },
+                    }
+                " style="width: 100%" />
+    </div>
+    <div class="modal-footer">
+        <div class="modal-message" data-bind="visible: tagsMessage()">
+            <i class="fa fa-info"></i>&nbsp;&nbsp;<span data-bind="text: tagsMessage"></span>
+        </div>
+        <div class="modal-buttons">
+            <button type="button" class="btn btn-primary" data-bind="click: applyTagsSelection">
+                <span data-bind="text: ko.unwrap(ko.i18n('components.batchCompare.selectButton', 'Apply'))"></span>
+            </button>
+            <button type="button" class="btn btn-danger" data-bind="click: () => showModal(false)">
+                <span data-bind="text: ko.unwrap(ko.i18n('common.cancel', 'Cancel'))"></span>
+            </button>
+        </div>
+    </div>
+</atlas-modal>

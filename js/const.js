@@ -209,6 +209,7 @@ define([
 			jobs: () => `${config.api.url}job/execution?comprehensivePage=true`,
 			job: (id) => `${config.api.url}job/${id}`,
 			jobByName: (name,  type) => `${config.api.url}job/type/${type}/name/${name}`,
+			jobArtifact: (executionId) => `${config.api.url}job/${executionId}/artifact`,
 		};
 
 		const applicationStatuses = {

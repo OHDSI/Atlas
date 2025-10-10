@@ -19,10 +19,9 @@ define(
             callback(xhr);
           }
         };
-        xhr.onerror = () => reject({
-          status: xhr.status,
-          statusText: xhr.statusText
-        });
+        xhr.onerror = () => {
+          callback(xhr); // Pass xhr to callback so we can handle it
+        };
         xhr.responseType = "arraybuffer";
         xhr.send(JSON.stringify(params));
       }
@@ -35,7 +34,11 @@ define(
               const blob = new Blob([xhr.response], { type: "octet/stream" });
               saveAs(blob, filename);
             } else {
-              reject({ status: xhr.status, statusText: xhr.statusText });
+              reject({ 
+                status: xhr.status, 
+                statusText: xhr.statusText || this._getDefaultStatusText(xhr.status),
+                url: url
+              });
             }
           });
         });
@@ -45,17 +48,46 @@ define(
         return new Promise((resolve, reject) => {
           this._makeRequest(url, method, params, (xhr) => {
             if (xhr.status === 200) {
-              const filename = xhr.getResponseHeader('Content-Disposition')
-                .split('filename=')[1]
-                .split(';')[0]
-                .replace(/\"/g, ''); // Clean up filename string
+              const contentDisposition = xhr.getResponseHeader('Content-Disposition');
+              
+              if (!contentDisposition) {
+                reject({
+                  status: xhr.status,
+                  statusText: 'Missing Content-Disposition header',
+                  url: url
+                });
+                return;
+              }
+              
+              const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+              const filename = filenameMatch && filenameMatch[1] 
+                ? filenameMatch[1].replace(/['"]/g, '') 
+                : 'download.zip';
+              
               const blob = new Blob([xhr.response], { type: "octet/stream" });
               saveAs(blob, filename);
               resolve();
             } else {
+              // Try to get error message from response
+              let errorMessage = xhr.statusText || this._getDefaultStatusText(xhr.status);
+              
+              // If response is JSON, try to parse error message
+              if (xhr.response && xhr.response.byteLength > 0) {
+                try {
+                  const text = new TextDecoder().decode(xhr.response);
+                  const json = JSON.parse(text);
+                  if (json.message) {
+                    errorMessage = json.message;
+                  }
+                } catch (e) {
+                  // Not JSON, ignore
+                }
+              }
+              
               reject({
                 status: xhr.status,
-                statusText: xhr.statusText
+                statusText: errorMessage,
+                url: url
               });
             }
           });
@@ -65,6 +97,20 @@ define(
       saveAsJson(data) {
         const blob = new Blob([JSON.stringify(data)], { type: "text/json;charset=utf-8" });
         saveAs(blob, 'data.json');
+      }
+
+      _getDefaultStatusText(status) {
+        const statusTexts = {
+          204: 'No Content',
+          400: 'Bad Request',
+          401: 'Unauthorized',
+          403: 'Forbidden',
+          404: 'Not Found',
+          500: 'Internal Server Error',
+          502: 'Bad Gateway',
+          503: 'Service Unavailable'
+        };
+        return statusTexts[status] || 'Unknown Error';
       }
     }
 

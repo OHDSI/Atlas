@@ -1,7 +1,11 @@
 <div class="venn-chart">
     <div class="container">
-        <button title="PNG" class="export-button" data-bind="click: $component.export">PNG</button>
-        <button title="SVG" class="exportSvg-button" data-bind="click: $component.exportSvg">SVG</button>
-        <div id="venn"></div>
+      <div data-bind="attr: { id: diagramId }"></div>
+      <button class="btn btn-xs btn-primary export-button" data-bind="click: exportPng">
+        <i class="fa fa-save" aria-hidden="true"></i> PNG
+      </button>
+      <button class="btn btn-xs btn-primary exportSvg-button" data-bind="click: exportSvg">
+        <i class="fa fa-save" aria-hidden="true"></i> SVG
+      </button>
     </div>
-</div>
+  </div>

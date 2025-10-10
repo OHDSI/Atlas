@@ -508,6 +508,10 @@ define(function(require, exports) {
 
     const isPermittedConceptSetAnnotationsDelete = function (conceptSetId) {
         return isPermitted('conceptset:' + conceptSetId + ':annotation:*:delete');
+    };  
+    
+    const isPermittedBatchCompare = function () {
+        return isPermitted('conceptset:compare-batch:post');
     };    
 
     const isPermittedRunAs = () => isPermitted('user:runas:post');
@@ -639,7 +643,7 @@ define(function(require, exports) {
         isPermittedViewDataSourceReportDetails,
 
         isPermittedConceptSetAnnotationsDelete,
-        
+        isPermittedBatchCompare,
         loadUserInfo,
         TOKEN_HEADER,
         runAs,

@@ -1,0 +1,44 @@
+.id-not-found {
+    color: #ff9900;
+}
+.name-mismatch, .field-mismatch {
+    color: #ff9900;
+    margin-right: 4px;
+}
+.vocab-concept-names, .vocab-field-values {
+    font-size: 0.9em;
+    
+    .vocab-name-row, .vocab-field-row {
+        line-height: 1.6;
+        padding: 2px 0;
+        
+        &:first-child {
+            padding-top: 0;
+        }
+        
+        &:last-child {
+            padding-bottom: 0;
+        }
+        
+        i.field-mismatch {
+            vertical-align: middle;
+        }
+    }
+}
+
+.vocab-source-column {
+    .vocab-source-row {
+        line-height: 1.6;
+        padding: 2px 0;
+        white-space: nowrap;
+        font-size: 0.85em;
+        
+        &:first-child {
+            padding-top: 0;
+        }
+        
+        &:last-child {
+            padding-bottom: 0;
+        }
+    }
+}

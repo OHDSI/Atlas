@@ -15,6 +15,7 @@ define([
   'services/CacheAPI',
   'less!./configuration.less',
   'components/heading',
+  './components/modal/conceptset-batch-compare-modal',
 ], function (
   ko,
   view,
