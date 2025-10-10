@@ -14,13 +14,18 @@
 										    readRoleOptions: readRoleOptions,
 										    readRoleSearch: readRoleSearch,
 		                                                                    writeRoleOptions: writeRoleOptions,
-										    writeRoleSearch: writeRoleSearch
+										    writeRoleSearch: writeRoleSearch,
+                                                                                    shareFlag: shareFlag,
+		                                                                    grantGlobalReadAccess: grantGlobalReadAccess,
+                                                                                    revokeGlobalReadAccess: revokeGlobalReadAccess,
 										 }">
     <loading data-bind="css: classes('loading-panel'), visible: isLoading()" params="status: ko.i18n('common.configureAccessModal.loadingAccessList', 'Loading access list...')"></loading>
+
+    
     <div data-bind="css: classes()">
         <div data-bind="if: !isLoading()">
             <div data-bind="css: classes('new-access')">
-                <label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addWriteAccessToRole', 'Add WRITE access to role:')"></label>
+                <label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addWriteAccessToRole', 'Grant WRITE access to role:')"></label>
                 <div class="input-group"
                      data-bind="css: classes({ element: 'new-access-btn-group', extra: ['new-access-btn-group'] })">
                     <input
@@ -48,8 +53,10 @@
                     </div>
                 </div>
 	    </div>
+
+	    <div>	   	
 	    <div data-bind="css: classes('new-access')">
-		<label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addReadAccessToRole', 'Add READ access to role:')"></label>
+		<label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.addReadAccessToRole', 'Grant READ access to role:')"></label>
                 <div class="input-group"
                      data-bind="css: classes({ element: 'new-access-btn-group', extra: ['new-access-btn-group'] })">
                     <input
@@ -77,6 +84,33 @@
                     </div>
 		</div>
 	    </div>
+
+	    
+	    <div><br></div>
+	    <!-- A BUTTON TO SHARE GLOBALLY -->
+	    <div>
+		<label data-bind="css: classes('new-access-label'), text: ko.i18n('common.configureAccessModal.globalReadStatus', 'Status of global READ access:')"></label>
+		<div/>
+		<div class="btn-group" data-toggle="buttons">
+		    <label data-bind="css: { active: shareFlag()},
+				      click: function () { shareFlag(false); grantGlobalReadAccess();},
+				      clickBubble: false,
+				      text: ko.i18n('common.configureAccessModal.globalReadStatusNotGranted', 'Granted')
+				      "
+			   class="btn btn-primary",		   
+		    />
+		    <label data-bind="css: { active: !shareFlag()}, 
+				      click: function () { shareFlag(true); revokeGlobalReadAccess();},
+				      clickBubble: false,
+				      text: ko.i18n('common.configureAccessModal.globalReadStatusIsGranted', 'Not Granted')
+				      " 
+			   class="btn btn-primary",		   		   
+		    />
+		</div>	
+	    </div>
+
+	    <div><br></div>
+	    
         </div>
     </div>
 </atlas-modal>
