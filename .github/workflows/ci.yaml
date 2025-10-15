@@ -52,7 +52,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-package-lock
 
       - name: Run tests
         run: npm test -- --runInBand
