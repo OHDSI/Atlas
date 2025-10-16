@@ -35,6 +35,16 @@
 	</div>
 </atlas-modal>
 
+<div class="panel panel-primary">
+	<div class="panel-heading">Options</div>
+	<div class="panel-body">
+		<div>
+			<input type="checkbox" data-bind="checked: useDateTime">
+			<span class="expression-editor__options-label" data-bind="text: 'Evaluate cohort start and end dates with date and time'"></span>
+		</div>
+	</div>
+</div>
+
 <div class="panel panel-primary cohort-definition-panel ui-front">
 	<div class="panel-heading">
 		<span
@@ -196,13 +206,19 @@
 		<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasTitle', 'Cohort Eras')"></span>
 	</div>
 	<div class="panel-body">
+		<div data-bind="with: expression().CollapseSettings">
+			<li>
+				<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
+				<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: EraPadUnitValue, eventType: 'blur', ko_autocomplete: { value: EraPadUnitValue, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
+				<select data-bind="options: $component.options.windowTimeOptions,
+					optionsText: function(item) { return item.name },
+					optionsValue: 'value',
+					value: EraPadUnit">
+				</select>
+			</li>
+		</div>
 		<div data-bind="with: expression">
 			<ul>
-				<li>
-					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_1', 'Specify era collapse gap size:')"></span>
-					<span contenteditable="true" class="numericInputField dropdown" data-bind="htmlValue: CollapseSettings.EraPad.numeric(), eventType: 'blur', ko_autocomplete: { value: CollapseSettings.EraPad, source: $component.options.dayOptions, minLength: 0, maxShowItems: 10, scroll: true }" />
-					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.days', 'days')"></span>
-				</li>
 				<!-- ko if: $component.showCensorWindow -->
 				<li>
 					<span data-bind="text: ko.i18n('components.cohortExpressionEditor.cohortErasText_2', 'Left censor cohort start dates to')"></span>

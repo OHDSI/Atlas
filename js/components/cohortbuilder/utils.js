@@ -49,11 +49,31 @@ function(
 		var selectedConceptSet = conceptSetList().find(function (item) { return item.id == ko.utils.unwrapObservable(conceptSetId)});
 		return 	ko.utils.unwrapObservable(selectedConceptSet && selectedConceptSet.name) || defaultName;
 	}
+
+	function updateTimeUnit(data, newUnit) {
+		// console.log("Update Time Unit", newUnit);
+		const criteria = ["ConditionOccurrence", "ConditionEra", "Death", "DeviceExposure", "DoseEra", "DrugEra", "DrugExposure", "Measurement", "Observation",
+			"ObservationPeriod", "PayerPlanPeriod", "ProcedureOccurrence", "Specimen", "VisitOccurrence"];
+		const units = [
+			ko.unwrap(data.StartWindow.Start.TimeUnit),
+			ko.unwrap(data.StartWindow.End.TimeUnit),
+			data.EndWindow() && ko.unwrap(data.EndWindow().Start.TimeUnit),
+			data.EndWindow() && ko.unwrap(data.EndWindow().End.TimeUnit),
+		];
+		criteria.forEach(c => {
+			if (data.Criteria.hasOwnProperty(c)) {
+				const newUnit = units.filter(item => !!item).find(u => u !== 'day') || 'day';
+				// console.log("New Unit", c, newUnit);
+				data.Criteria[c].IntervalUnit = newUnit;
+			}
+		});
+	}
 	
 	return {
 		getCriteriaComponent,
 		formatDropDownOption,
-		getConceptSetName
+		getConceptSetName,
+		updateTimeUnit,
 	};
 
 });
