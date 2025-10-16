@@ -11,3 +11,12 @@
 .conceptset-browser-panel .new-concept-set {
     width: 175px;
 }
+
+.fa-key {
+    color: yellow !important;
+    text-shadow: 
+    -0.5px -0.5px 0 black,
+    0.5px -0.5px 0 black,
+    -0.5px 0.5px 0 black,
+    0.5px 0.5px 0 black;
+}
