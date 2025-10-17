@@ -10,8 +10,8 @@
     "build:dev": "node build/optimize.js && npm run compress",
     "build:docker": "npm run clean && npm run genversion && npm run build:dev && npm prune --production",
     "compress": "terser ./js/assets/bundle/bundle.js -o ./js/assets/bundle/bundle.js -c --source-map",
-    "test": "jest",
-    "genversion": "genversion -s js/version/version.js && r_js -convert js/version js/ && rimraf js/version"
+    "genversion": "genversion -s js/version/version.js && r_js -convert js/version js/ && rimraf js/version",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -76,6 +76,7 @@
     "jquery-ui": "1.13.2",
     "jquery-ui.autocomplete.scroll": "0.1.9",
     "js-cookie": "2.2.0",
+    "papaparse": "5.3.2",
     "jszip": "3.10.1",
     "knockout": "3.5.1",
     "knockout-mapping": "2.6.0",
@@ -88,7 +89,6 @@
     "moment": "2.29.4",
     "numeral": "2.0.6",
     "ouanalyse-datatables.net-buttons-html5": "1.5.3",
-    "papaparse": "5.3.2",
     "prismjs": "1.29.0",
     "qs": "6.11.0",
     "querystring": "0.2.1",
