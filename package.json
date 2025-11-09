@@ -10,7 +10,8 @@
     "build:dev": "node build/optimize.js && npm run compress",
     "build:docker": "npm run clean && npm run genversion && npm run build:dev && npm prune --production",
     "compress": "terser ./js/assets/bundle/bundle.js -o ./js/assets/bundle/bundle.js -c --source-map",
-    "genversion": "genversion -s js/version/version.js && r_js -convert js/version js/ && rimraf js/version"
+    "genversion": "genversion -s js/version/version.js && r_js -convert js/version js/ && rimraf js/version",
+    "test": "jest --runInBand --watchman=false"
   },
   "repository": {
     "type": "git",
@@ -34,12 +35,13 @@
   },
   "homepage": "https://github.com/OHDSI/Atlas#readme",
   "devDependencies": {
-    "@babel/core": "7.21.0",
-    "@babel/plugin-proposal-object-rest-spread": "7.20.7",
+    "@babel/core": "7.24.7",
+    "@babel/plugin-transform-object-rest-spread": "7.24.7",
     "@babel/polyfill": "7.12.1",
-    "@babel/preset-env": "7.20.2",
+    "@babel/preset-env": "7.24.7",
     "genversion": "2.2.0",
     "html-document": "0.8.1",
+    "jest": "29.7.0",
     "requirejs": "2.3.6",
     "rimraf": "2.6.2",
     "terser": "5.16.4"

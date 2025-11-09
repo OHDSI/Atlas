@@ -26,7 +26,7 @@ const settings = {
 	out: bundleName,
 	onBuildRead(moduleName, path, content) {
 		return babel.transform(content, {
-				plugins: [ "@babel/plugin-proposal-object-rest-spread" ],
+				plugins: [ "@babel/plugin-transform-object-rest-spread" ],
 				presets: [ "@babel/preset-env" ],
 			}
 		).code;
