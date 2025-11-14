@@ -102,7 +102,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 	globalConstants,
 	constants,
 	{ entityType },
-	conceptSetUtils,
+        conceptSetUtils,
 ) {
 	const includeKeys = ["UseEventEnd"];
 	function pruneJSON(key, value) {
@@ -201,7 +201,16 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.pollTimeoutId = null;
 			this.authApi = authApi;
 			this.config = config;
-			this.enablePermissionManagement = config.enablePermissionManagement;	    
+
+			this.enablePermissionManagement = ko.observable(config.enablePermissionManagement);
+			if (config.enablePermissionManagement) {
+				this.userCanShare = ko.observable(
+						!config.limitedPermissionManagement ||
+						authApi.isPermittedGlobalShareArtifact());
+			} else {
+				this.userCanShare = ko.observable(false);
+			}
+		    
 			this.relatedSourcecodesOptions = globalConstants.relatedSourcecodesOptions;
 			this.commonUtils = commonUtils;
 			this.isLoading = ko.observable(false);
@@ -943,7 +952,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		// METHODS
-
+	    
 		startPolling(cd, source) {
 			this.pollId = PollService.add({
 				callback: () => this.queryHeraclesJob(cd, source),
