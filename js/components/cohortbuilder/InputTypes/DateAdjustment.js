@@ -8,6 +8,7 @@ define(['knockout'], function (ko) {
 		self.StartOffset = ko.observable(data.StartOffset || 0);
 		self.EndWith = ko.observable(data.EndWith || DateAdjustment.END_DATE);
 		self.EndOffset = ko.observable(data.EndOffset || 0);
+	
 	}
 
     DateAdjustment.START_DATE = "START_DATE";
