@@ -273,9 +273,6 @@ define([
                 }
             ];
 
-            // Skip locked checkbox
-            this.skipLocked = ko.observable(false);
-
             // Compare source codes checkbox
             this.compareSourceCodes = ko.observable(true);
 
@@ -415,7 +412,6 @@ define([
             this.updatedDateTo.subscribe(clearFilterCount);
             this.selectedAuthors.subscribe(clearFilterCount);
             this.selectedTags.subscribe(clearFilterCount);
-            this.skipLocked.subscribe(clearFilterCount);
             this.conceptSetIdsText.subscribe(clearFilterCount);
             this.selectedConceptSetIds.subscribe(clearFilterCount);
         }
@@ -639,7 +635,6 @@ define([
                 updatedDateTo: updatedDates.to,
                 authors: this.selectedAuthors().map(a => a.id),
                 tags: this.selectedTags().map(t => t.id),
-                skipLocked: this.skipLocked()
             };
 
             // Only include vocabulary-related fields if requested and available
@@ -705,7 +700,6 @@ define([
             
             this.selectedAuthors([]);
             this.selectedTags([]);
-            this.skipLocked(false);
             this.compareSourceCodes(false);
 
             // Reset target vocabulary but keep base vocabulary
