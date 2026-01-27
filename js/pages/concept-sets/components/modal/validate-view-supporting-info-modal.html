@@ -1,0 +1,48 @@
+<atlas-modal params="data: $component, showModal: $component.isModalShown, title: 'View Validation Details'">
+  <div class="modal-body" data-bind="visible: true">
+    <!-- Reviewer Section -->
+    <div class="form-group" data-bind="visible: reviewer">
+      <label class="control-label" style="font-weight: bold;" data-bind="text: representativeLabel"></label>
+      <div class="well well-sm" style="font-weight: bold;" data-bind="text: reviewer"></div>
+      <div class="plain-text" data-bind="visible: showRepresentativeNote, html: representativeNote"></div>
+    </div>
+
+    <!-- Validation Comment Section -->
+    <div class="form-group" data-bind="visible: validationComment">
+      <label class="control-label" style="font-weight: bold;">Validation Comment</label>
+      <div class="well well-sm" data-bind="text: validationComment"></div>
+    </div>
+
+    <!-- Supporting Information Section -->
+    <div class="form-group">
+      <label class="control-label" style="font-weight: bold;">Supporting Information</label>
+      <div class="well well-sm supporting-info-container"
+        style="min-height: 100px; max-height: 200px; overflow-y: auto;" data-bind="html: supportingInfo"></div>
+    </div>
+
+    <!-- Revoke Comment Section - Read-only if already revoked -->
+    <div class="form-group" data-bind="visible: isRevoked">
+      <label class="control-label" style="font-weight: bold;">Revoke Comment</label>
+      <div class="well well-sm" data-bind="text: existingRevokeComment"></div>
+    </div>
+
+    <!-- Revoke Comment Input - Editable if not yet revoked -->
+    <div class="form-group" data-bind="visible: !isRevoked() && canShowRevokeInput()">
+      <label class="control-label" style="font-weight: bold;">Revoke Comment</label>
+      <textarea class="form-control" data-bind="textInput: revokeComment, 
+                   enable: true, 
+                   placeholder: 'Enter your revoke comment...'" rows="4">
+      </textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="modal-footer" style="border-top: 1px solid #e5e5e5;">
+      <button class="btn btn-danger" data-bind="click: revoke, 
+                   enable: canRevoke(), 
+                   visible: !isRevoked() && canApprove()">
+        Revoke
+      </button>
+      <button class="btn btn-default" data-bind="click: close">Close</button>
+    </div>
+  </div>
+</atlas-modal>

@@ -3,7 +3,7 @@
 <!-- /ko -->
 
 <!-- ko if: (currentConceptSet() != null && !loading()) -->
-<heading-title params="name: conceptSetCaption(), description: canEdit() ? '' : ko.i18n('common.readOnly', '(Read only)'),  icon: 'shopping-cart', theme: 'dark', tags: tags"></heading-title>
+<heading-title params="name: conceptSetCaption(), description: description(),  icon: 'shopping-cart', theme: 'dark', tags: tags"></heading-title>
 <!-- ko if: !!currentConceptSet() && !!currentConceptSet().id -->
 	<!-- ko component: {name: 'authorship', params: getAuthorship()} -->
 	<!-- /ko -->
@@ -14,6 +14,10 @@
       <input class="form-control" id="txtConceptSetName" type="text"
       data-bind="attr: { disabled: !canEdit() }, textInput: currentConceptSet().name, css: { emptyInput: !isNameFilled() }, placeholder: ko.i18n('const.newEntityNames.conceptSet', 'New Concept Set')"/>
       <div class="input-group-btn">
+        <button type="button" class="btn btn-success" style="color: #ffffff !important; cursor: default; pointer-events: none;"
+          data-bind="visible: approved(), css: { disabled: true }, text: ko.i18n('cs.manager.validate', 'Validated')">
+        </button>
+        <button type="button" class="btn btn-primary" data-bind="visible: canApprove() && !approved() && !previewVersion() && currentConceptSet().id !== 0, click: showValidateModal, text: ko.i18n('cs.manager.validate', 'Validate')"></button>
         <button type="button" class="btn btn-success" data-bind="click: save, css: { disabled: !canSave() || isProcessing() }, title: !previewVersion() ? ko.i18n('common.save', 'Save') : ko.i18n('common.saveAsCurrentVersion', 'Save as current version')"><i class="fa fa-save"></i></button>
         <button class="btn btn-primary"
                 data-bind="visible: previewVersion(), title: ko.i18n('common.backToCurrent', 'Back to current version'), click: backToCurrentVersion">
@@ -192,6 +196,11 @@
 	loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
 "></configure-access-modal>
 
+<validate-comment-modal params="
+	isModalShown: showValidateCommentModal,
+  onConfirm: approve
+"/>
+
 <tags-modal params="
 	isModalShown: $component.isTagsModalShown,
 	tagsList: $component.tagsList,
@@ -202,3 +211,11 @@
 	checkAssignPermissionFn: $component.checkAssignPermission,
 	checkUnassignPermissionFn: $component.checkUnassignPermission
 "></tags-modal>
+
+<validate-view-supporting-info-modal params="
+  isModalShown: showSupportingInfoModal,
+  approvalInfo: selectedApprovalInfo,
+  currentConceptSetId: currentConceptSetId,
+  onRevoke: revokeApproval.bind($data),
+  canApprove: canApprove
+"></validate-view-supporting-info-modal>

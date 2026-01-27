@@ -46,6 +46,33 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
+	function getApprovalInfo(id) {
+		return httpService.doGet(config.webAPIRoot + 'review/conceptset/' + id)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function getApprovalInfoBatch(ids) {
+		return httpService.doPost(config.webAPIRoot + 'review/conceptset/approved', ids)
+			.then(({ data }) => data)
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function approveConceptSet(id, comment, approverId, supportingInfo) {
+		return httpService.doPost(config.webAPIRoot + 'review/conceptset/' + id + "/approve", { comment: comment, approverId: approverId, supportingInfo: supportingInfo })
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function revokeConceptSetApproval(id, revokeComment, version) {
+		return httpService
+			.doPost(`${config.webAPIRoot}review/conceptset/${id}/revoke/${version}`, { comment: revokeComment })
+			.catch(authApi.handleAccessDenied);
+	}
+
+	function listApprovers(assetType) {
+		return httpService.doGet(config.webAPIRoot + 'review/' + assetType + '/approvers')
+			.catch(authApi.handleAccessDenied);
+	}
+
 	function deleteConceptSet(conceptSetId) {
 	return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 		.catch(authApi.handleAccessDenied);
@@ -153,6 +180,11 @@ define(function (require) {
 		copyAnnotations,
 		getConceptSet,
 		getGenerationInfo,
+		getApprovalInfo,
+		getApprovalInfoBatch,
+		approveConceptSet,
+		revokeConceptSetApproval,
+		listApprovers,
 		deleteConceptSet,
 		exists,
 		saveConceptSet,

@@ -20,6 +20,8 @@ define([
 			this.createdDate = params.createdDate;
 			this.modifiedBy = params.modifiedBy;
 			this.modifiedDate = params.modifiedDate;
+			this.validatedBy = params.validatedBy;
+			this.validatedDate = params.validatedDate;
 		}
 	}
 

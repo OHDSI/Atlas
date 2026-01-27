@@ -7,10 +7,11 @@ define([
 	'services/AuthAPI',
 	'utils/DatatableUtils',
 	'utils/CommonUtils',
+	'services/ConceptSet',
 	'components/ac-access-denied',
 	'databindings',
 	'css!./style.css'
-], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils) {
+], function (ko, template, VocabularyProvider, appConfig, ConceptSet, authApi, datatableUtils, commonUtils, conceptSetService) {
 	function CohortConceptSetBrowser(params) {
 		var self = this;
 
@@ -59,13 +60,36 @@ define([
 				});
 		}
 
-
 		function setDisabledConceptSetButton(action) {
 			if (action && action()) {
 				return action()
 			} else {
 				return false;
 			}
+		}
+
+		// Helper function to get the latest version approval for a concept set
+		// approvalsByVersion structure: { version: ReviewActionDTO }
+		function getLatestVersionApproval(approvalsByVersion) {
+			if (!approvalsByVersion || typeof approvalsByVersion !== 'object') {
+				return null;
+			}
+			
+			// Get all version numbers and find the maximum
+			const versions = Object.keys(approvalsByVersion).map(v => parseInt(v));
+			if (versions.length === 0) {
+				return null;
+			}
+			
+			const maxVersion = Math.max(...versions);
+			const latestVersionApproval = approvalsByVersion[maxVersion];
+			
+			if (!latestVersionApproval) {
+				return null;
+			}
+			
+			// Only return if it's an APPROVE type (not REVOKE)
+			return latestVersionApproval.type === 'APPROVE' ? latestVersionApproval : null;
 		}
 
 		self.datatableUtils = datatableUtils;
@@ -101,12 +125,51 @@ define([
 				.done(function (results) {
 					datatableUtils.coalesceField(results, 'modifiedDate', 'createdDate');
 					datatableUtils.addTagGroupsToFacets(results, self.options.Facets);
-					datatableUtils.addTagGroupsToColumns(results, self.columns);
-					self.repositoryConceptSets(results);
-					self.loading(false);
+
+					const conceptSetIds = results.map(cs => cs.id);
+
+						// Enrich with approval status and additional fields for the table
+						conceptSetService.getApprovalInfoBatch(conceptSetIds)
+							.then(approvalMap => {
+								// approvalMap structure: { conceptSetId: { version: ReviewActionDTO } }
+								results.forEach(conceptSet => {
+									try {
+										// Get all approvals for this concept set (by version)
+										const approvalsByVersion = approvalMap[conceptSet.id] || {};
+
+										// Get the approval for the LATEST VERSION
+										const latestVersionApproval = getLatestVersionApproval(approvalsByVersion);
+
+										conceptSet.isApproved = !!latestVersionApproval;
+										conceptSet.approver = latestVersionApproval ? latestVersionApproval.user.name : null;
+										conceptSet.approvalDate = latestVersionApproval ? latestVersionApproval.timestamp : null;
+									} catch (error) {
+										console.error(`Error processing approval info for concept set ${conceptSet.id}:`, error);
+										// Set default values if there's an error
+										conceptSet.isApproved = false;
+										conceptSet.approver = null;
+										conceptSet.approvalDate = null;
+									}
+								});
+
+							self.repositoryConceptSets(results);
+							datatableUtils.addTagGroupsToColumns(results, self.columns);
+							self.loading(false);
+						}).catch(error => {
+							console.error('Error while batch-fetching approval info for concept sets', error);
+							results.forEach(conceptSet => {
+								conceptSet.isApproved = false;
+								conceptSet.approver = null;
+								conceptSet.approvalDate = null;
+							});
+							self.repositoryConceptSets(results);
+							datatableUtils.addTagGroupsToColumns(results, self.columns);
+							self.loading(false);
+						});
 				})
 				.fail(function (err) {
-					console.log(err);
+					console.log('Error fetching concept sets:', err);
+					self.loading(false);
 				});
 		}
 
@@ -146,10 +209,45 @@ define([
 					'caption': ko.i18n('facets.caption.designs', 'Designs'),
 					'binding': datatableUtils.getFacetForDesign,
 				},
+				{
+					'caption': ko.i18n('facets.caption.validated', 'Validated'),
+					'binding': (o) => {
+						return o.isApproved ? ko.i18n('common.yes', 'Yes')() : ko.i18n('common.no', 'No')();
+					}
+				},
+				{
+					'caption': ko.i18n('facets.caption.validatedBy', 'Validated By'),
+					'binding': (o) => {
+						return o.approver || ko.i18n('common.notValidated', 'Not Validated')();
+					}
+				},
+				{
+					'caption': ko.i18n('facets.caption.validatedDate', 'Validated Date'),
+					'binding': (o) => {
+						if (!o.approvalDate) {
+							return ko.i18n('common.notValidated', 'Not Validated')();
+						}
+						return datatableUtils.getFacetForDate(o.approvalDate);
+					}
+				},
 			]
 		};
 
 		this.columns = ko.observableArray([
+			{
+				title: '',
+				data: 'isApproved',
+				sortable: false,
+				defaultContent: '',
+				createdCell: function (td, cellData, rowData, row, col) {
+					if (cellData) {
+						$(td).html('<i class="fa fa-check-circle" style="font-size:15px;color:green" title="Validated"></i>');
+					} else {
+						$(td).html('');
+					}
+				},
+				width: '20px', 
+			},			
 			{
 				title: ko.i18n('columns.id', 'Id'),
 				data: 'id'
@@ -172,6 +270,20 @@ define([
 			{
 				title: ko.i18n('columns.author', 'Author'),
 				render: datatableUtils.getCreatedByFormatter(),
+			},
+			{
+				title: ko.i18n('columns.validatedBy', 'Validated By'),
+				data: 'approver',
+				render: function (data, type, row) {
+					return data || '-';
+				}
+			},
+			{
+				title: ko.i18n('columns.validatedDate', 'Validation Date'),
+				data: 'approvalDate',
+				render: function (data, type, row) {
+					return data ? datatableUtils.getDateFieldFormatter('approvalDate')({approvalDate: data}, type, row) : '-';
+				}
 			}
 		]);
 		
