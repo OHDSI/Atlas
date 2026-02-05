@@ -1,5 +1,5 @@
 .panel-default, .panel-primary {
-    margin: 10px 0;
+  margin: 10px 0;
   .panel-heading {
     line-height: 30px;
     font-size: 14px;
@@ -57,5 +57,67 @@ input[type=file] {
   }
   &.name-mismatch {
     color: #dd9900;
+  }
+  &.field-mismatch {
+    color: #dd9900;
+  }
+}
+
+// Styling for multi-line vocabulary concept names
+.vocab-concept-names {
+  display: inline-block;
+
+  .vocab-name-row {
+    line-height: 1.4;
+    padding: 2px 0;
+    
+    &:first-child {
+      padding-top: 0;
+    }
+    
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+}
+
+// Styling for multi-line vocabulary field values (generic for all fields)
+.vocab-field-values {
+  display: inline-block;
+
+  .vocab-field-row {
+    line-height: 1.4;
+    padding: 2px 0;
+    white-space: nowrap;
+    
+    &:first-child {
+      padding-top: 0;
+    }
+    
+    &:last-child {
+      padding-bottom: 0;
+    }
+    
+    strong {
+      font-weight: 600;
+      margin-right: 4px;
+    }
+  }
+}
+
+// Styling for multi-line vocabulary sources
+.vocab-source-column {
+  .vocab-source-row {
+    line-height: 1.4;
+    padding: 2px 0;
+    white-space: nowrap;
+    
+    &:first-child {
+      padding-top: 0;
+    }
+    
+    &:last-child {
+      padding-bottom: 0;
+    }
   }
 }

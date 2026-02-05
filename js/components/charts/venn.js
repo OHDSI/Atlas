@@ -19,30 +19,58 @@ define([
 
     class Venn extends Component {
 
-        constructor(params,container){
+        constructor(params, container){
             super(params);
             this.firstConceptSet = params.firstConceptSet();
             this.secondConceptSet = params.secondConceptSet();
             this.data = params.data();
             this.container = container;
+            
+            // Use provided diagramId or generate a unique one
+            this.diagramId = params.diagramId || `venn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            
             this.chartName = ko.computed(() => {
-
                 return `${this.firstConceptSet}_${this.secondConceptSet}_venn`.replaceAll(' ', '_')
             });
+            
             this.conceptInBothConceptSets = [];
             this.conceptInFirstConceptSetOnly = [];
             this.conceptInSecondConceptSetOnly = [];
             this.selectOutsideConceptSet = params.lastSelectedMatchFilter.extend({notify: 'always'});
+            this.updateOutsideFilters = params.updateOutsideFilters;
+            
             this.sets = ko.computed(() => {
+                // Clear arrays for recomputation
+                this.conceptInBothConceptSets = [];
+                this.conceptInFirstConceptSetOnly = [];
+                this.conceptInSecondConceptSetOnly = [];
+                
+                // Helper function to get concept name, preferring vocab-specific names
+                const getConceptName = (concept) => {
+                    // For cross-vocabulary comparisons, prefer vocab-specific names
+                    if (concept.vocab1ConceptName && concept.vocab2ConceptName) {
+                        // Both vocabularies have the concept, use vocab1 name (or could combine)
+                        return concept.vocab1ConceptName;
+                    } else if (concept.vocab1ConceptName) {
+                        return concept.vocab1ConceptName;
+                    } else if (concept.vocab2ConceptName) {
+                        return concept.vocab2ConceptName;
+                    }
+                    // Fallback - should not happen in normal cases
+                    return 'Unknown';
+                };
+
                 this.data.forEach(concept => {
-                    if (concept.conceptIn1Only === 1) {
-                        this.conceptInFirstConceptSetOnly.push(concept.conceptName);
+                    const conceptName = getConceptName(concept);
+                    
+                    if (concept.conceptInCS1Only === 1) {
+                        this.conceptInFirstConceptSetOnly.push(conceptName);
                     }
-                    if (concept.conceptIn2Only === 1) {
-                        this.conceptInSecondConceptSetOnly.push(concept.conceptName);
+                    if (concept.conceptInCS2Only === 1) {
+                        this.conceptInSecondConceptSetOnly.push(conceptName);
                     }
-                    if (concept.conceptIn1And2 === 1) {
-                        this.conceptInBothConceptSets.push(concept.conceptName);
+                    if (concept.conceptInCS1AndCS2 === 1) {
+                        this.conceptInBothConceptSets.push(conceptName);
                     }
                 });
 
@@ -65,8 +93,8 @@ define([
                 }
 
                 const conceptSets = [
-                    {sets: ['CS1'], size: lengthFirstConceptSets, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, count: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.firstConceptSet, key: '1 Only' },
-                    {sets: ['CS2'], size: lengthSecondConceptSets, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length,count: this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.secondConceptSet, key: '2 Only'},
+                    {sets: ['CS1'], size: lengthFirstConceptSets, tooltipText: this.conceptInFirstConceptSetOnly, amountOnly:this.conceptInFirstConceptSetOnly.length, count: this.conceptInFirstConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.firstConceptSet, key: 'CS1 Only' },
+                    {sets: ['CS2'], size: lengthSecondConceptSets, tooltipText: this.conceptInSecondConceptSetOnly,amountOnly:this.conceptInSecondConceptSetOnly.length,count: this.conceptInSecondConceptSetOnly.length + this.conceptInBothConceptSets.length, name: this.secondConceptSet, key: 'CS2 Only'},
                 ];
                 if (this.conceptInBothConceptSets.length > 0) {
                     conceptSets.push({
@@ -82,6 +110,26 @@ define([
                 return conceptSets.sort((a,b) => b.size - a.size);
             });
 
+            // Defer rendering until after DOM is ready
+            this.subscriptions = [];
+            
+            // Use setTimeout to ensure DOM element exists
+            setTimeout(() => {
+                this.renderDiagram();
+            }, 100);
+        }
+
+        renderDiagram() {
+            const diagramElement = document.getElementById(this.diagramId);
+            
+            if (!diagramElement) {
+                console.error(`Venn diagram container #${this.diagramId} not found`);
+                return;
+            }
+
+            // Clear any existing content
+            d3.select(`#${this.diagramId}`).selectAll("*").remove();
+
             let chart = venn.VennDiagram();
             chart.wrap(false)
                  .height(450);
@@ -89,8 +137,14 @@ define([
             const textY = [0,0,30];
             const colors = ['#1f77b4','#17becf', '#d62728'];
             const defaultColors = ['#d9edf7','#bdf9ff','#f2dede'];
-            let div = d3.select("#venn").datum(this.sets()).call(chart);
-            div.selectAll("text").attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); }).style("font-size", '12px').style("fill", 'black').style('visibility', function(d) { return d.amountOnly ? 'visible' : 'hidden'});
+            
+            let div = d3.select(`#${this.diagramId}`).datum(this.sets()).call(chart);
+            
+            div.selectAll("text")
+                .attr("y", function(d,i) { return textY[i] + (+d3.select(this).attr("y")); })
+                .style("font-size", '12px')
+                .style("fill", 'black')
+                .style('visibility', function(d) { return d.amountOnly ? 'visible' : 'hidden'});
 
             div.selectAll("path")
                 .style("stroke", function(d,i) { return colors[i]; })
@@ -111,12 +165,15 @@ define([
 
             // add a tooltip
             let tooltip = d3.select("body").append("div")
-                .attr("class", "venntooltip");
+                .attr("class", "venntooltip")
+                .attr("data-diagram-id", this.diagramId); // Track which diagram this tooltip belongs to
+
+            const self = this;
 
             // add listeners to all the groups to display tooltip on mouseover
             div.selectAll("g")
                 .on("click", function(d) {
-                    params.updateOutsideFilters(d.key);
+                    self.updateOutsideFilters(d.key);
                 })
 
                 .on("mouseover", function(d) {
@@ -147,15 +204,13 @@ define([
                         .style("stroke-width", 2);
                 });
 
-            const subscriptions = [];
-            subscriptions.push(
-                this.selectOutsideConceptSet.subscribe(function (newValue) {
+            this.subscriptions.push(
+                this.selectOutsideConceptSet.subscribe((newValue) => {
                     if (this.selectOutsideConceptSet !== "") {
                         div.selectAll("path")
                             .filter(function(d) { return d.key === newValue;})
                             .classed("selected", function() { return !d3.select(this).classed("selected"); })
                             .style('fill', function() {
-
                                 if (d3.select(this).classed("selected")) {
                                     return d3.select(this).attr('color');
                                 } else {
@@ -209,15 +264,34 @@ define([
             return [csLeftCircle,csRightCircle,csCommonCircle];
         }
 
-        export() {
-            const svg = this.container.element.querySelector('svg');
-            ChartUtils.downloadSvgAsPng(svg, this.chartName() || "untitled.png");
+        exportPng() {
+            const svg = document.querySelector(`#${this.diagramId} svg`);
+            if (svg) {
+                ChartUtils.downloadSvgAsPng(svg, this.chartName() || "untitled.png");
+            }
         }
+        
         exportSvg() {
-            const svg = this.container.element.querySelector('svg');
-            ChartUtils.downloadSvg(svg, this.chartName() + ".svg" || "untitled.svg");
+            const svg = document.querySelector(`#${this.diagramId} svg`);
+            if (svg) {
+                ChartUtils.downloadSvg(svg, this.chartName() + ".svg" || "untitled.svg");
+            }
         }
 
+        dispose() {
+            // Clean up subscriptions
+            if (this.subscriptions) {
+                this.subscriptions.forEach(sub => sub.dispose());
+            }
+            
+            // Remove tooltip associated with this diagram
+            d3.selectAll(`.venntooltip[data-diagram-id="${this.diagramId}"]`).remove();
+            
+            // Clear the diagram
+            d3.select(`#${this.diagramId}`).selectAll("*").remove();
+            
+            super.dispose();
+        }
     }
 
     return commonUtils.build('venn-diagram', Venn, view);

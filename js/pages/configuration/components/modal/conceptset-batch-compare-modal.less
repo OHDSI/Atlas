@@ -1,0 +1,488 @@
+.batch-compare-modal {
+  max-height: none;
+
+  .vocabulary-selection-section,
+  .filter-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+
+    .heading {
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+  }
+
+  .vocabulary-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 10px;
+
+    label {
+      width: 80px;
+      margin-bottom: 0;
+      font-weight: bold;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .vocabulary-dropdown {
+      flex: 1;
+      min-width: 250px; // Minimum width for usability
+      max-width: none; // Remove fixed max-width
+
+      .btn {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 12px;
+
+        .vocab-text {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin-right: 8px;
+        }
+
+        .caret {
+          flex-shrink: 0;
+          margin-top: 0;
+        }
+      }
+
+      .dropdown-menu {
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+
+        li a {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          display: block;
+        }
+      }
+    }
+  }
+
+  .alert-warning {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .date-range-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+
+    label {
+      width: 80px;
+      margin-bottom: 0;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .date-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-height: 34px;
+      flex-wrap: wrap; // Allow wrapping on very small screens
+
+      .date-operator {
+        width: 120px;
+        flex-shrink: 0;
+      }
+
+      .date-input {
+        flex: 1;
+        min-width: 150px;
+        max-width: 200px;
+      }
+
+      .date-separator {
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  // Unified selector styling for Authors, Tags, and Concept Sets
+  .form-group.selector-group {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    gap: 10px;
+
+    label {
+      width: 120px;
+      margin-bottom: 0;
+      margin-top: 6px; // Align with button
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .selector-button {
+      width: 170px;
+      flex-shrink: 0;
+
+      &:disabled,
+      &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+    }
+
+    .selector-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0; // Allow flex shrinking
+
+      .selector-separator {
+        font-size: 13px;
+        color: #666;
+        font-style: italic;
+        padding: 0 5px;
+        flex-shrink: 0;
+      }
+
+      .inline-text-input {
+        flex: 1;
+        min-width: 200px; // Minimum width for usability
+        max-width: none; // Remove fixed max-width
+        height: 31px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  // Unified selected items container
+  .selected-items-container {
+    margin-top: 5px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+
+    .info-row {
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: #3c763d;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .selected-items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  // Unified badge styling
+  .item-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 13px;
+
+    i:first-child {
+      margin-right: 6px;
+      font-size: 12px;
+    }
+
+    .item-remove {
+      margin-left: 8px;
+      opacity: 0.6;
+      text-decoration: none;
+
+      &:hover {
+        opacity: 1;
+      }
+
+      i {
+        margin: 0;
+        font-size: 11px;
+      }
+    }
+  }
+
+  // Author-specific styling
+  .author-badge {
+    background-color: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    color: #004085;
+
+    .item-remove {
+      color: #004085;
+    }
+  }
+
+  // Concept Set-specific styling
+  .conceptset-badge {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+
+    .item-remove {
+      color: #856404;
+    }
+  }
+
+  // Tag-specific styling (keep existing tag colors)
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #fff;
+
+    i:first-child {
+      margin-right: 6px;
+      font-size: 12px;
+    }
+
+    .tag-remove {
+      margin-left: 8px;
+      color: #fff;
+      opacity: 0.8;
+      text-decoration: none;
+
+      &:hover {
+        opacity: 1;
+      }
+
+      i {
+        margin: 0;
+        font-size: 11px;
+      }
+    }
+  }
+
+  // Feedback section for concept set IDs
+  .selector-feedback {
+    margin-top: 5px;
+    margin-bottom: 10px;
+
+    .help-block {
+      margin-bottom: 5px;
+      font-size: 13px;
+
+      i {
+        margin-right: 5px;
+      }
+
+      &.text-danger {
+        color: #a94442;
+
+        i {
+          color: #a94442;
+        }
+      }
+
+      &.text-success {
+        color: #3c763d;
+
+        i {
+          color: #3c763d;
+        }
+      }
+    }
+  }
+
+  .compare-source-codes-checkbox {
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      cursor: pointer;
+
+      input[type="checkbox"] {
+        margin-right: 8px;
+        margin-top: 0;
+      }
+
+      span {
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .compare-source-codes-checkbox {
+    margin-top: 10px;
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+
+    .btn {
+      min-width: 110px;
+    }
+  }
+
+  // Responsive adjustments for smaller screens
+  @media (max-width: 768px) {
+
+    .vocabulary-row,
+    .date-range-group,
+    .form-group.selector-group {
+      flex-direction: column;
+      align-items: stretch;
+
+      label {
+        width: auto;
+        margin-bottom: 5px;
+      }
+
+      .vocabulary-dropdown,
+      .date-inputs,
+      .selector-controls {
+        width: 100%;
+      }
+
+      .selector-button {
+        width: 100%;
+      }
+    }
+
+    .date-inputs {
+
+      .date-operator,
+      .date-input {
+        width: 100% !important;
+        max-width: none;
+      }
+    }
+  }
+}
+
+// Fix modal body scrolling
+.modal-body {
+  &.padded {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+  }
+}
+
+// Modal content styling
+.tag-modal-content,
+.author-modal-content,
+.concept-set-selector-content {
+  max-height: 60vh;
+  overflow-y: auto;
+
+  .cell-name,
+  .cell-author-name,
+  .cell-author-login,
+  .cell-tag-name,
+  .cell-tag-description {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.modal-footer {
+  .modal-message {
+    float: left;
+    padding: 5px;
+
+    i {
+      color: #17a2b8;
+    }
+  }
+
+  .modal-buttons {
+    float: right;
+
+    button+button {
+      margin-left: 10px;
+    }
+  }
+
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+.filter-count-section {
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  .filter-count-result {
+    display: inline-block;
+    margin-left: 15px;
+
+    i {
+      margin-right: 5px;
+
+      &.fa-info-circle {
+        color: #17a2b8;
+      }
+
+      &.fa-exclamation-triangle {
+        color: #ffc107;
+      }
+    }
+
+    span {
+      font-size: 14px;
+
+      &.text-warning {
+        color: #856404;
+      }
+    }
+  }
+
+  .filter-count-loading {
+    display: inline-block;
+    margin-left: 15px;
+
+    .fa-spinner {
+      margin-right: 5px;
+      color: #17a2b8;
+    }
+
+    span {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}
+
+.performance-warning {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 3px;
+  font-size: 13px;
+  line-height: 1.5;
+
+  i.fa-exclamation-triangle {
+    margin-right: 6px;
+    color: #721c24;
+  }
+}

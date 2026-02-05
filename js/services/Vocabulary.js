@@ -177,31 +177,46 @@ define(function (require, exports) {
 	}
 
 	function compareConceptSet(compareTargets, url, sourceKey) {
-		const vocabUrl = getVocabUrl(url, sourceKey);
-
-		var getComparedConceptSetPromise = $.ajax({
-			url: vocabUrl + 'compare',
-			data: JSON.stringify(compareTargets),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-		});
-
-		return getComparedConceptSetPromise;
+		// Use the same vocabulary for both if sourceKey provided
+		return compareConceptSetsOverDiffVocabularies(sourceKey, sourceKey, 
+			{ items: compareTargets[0] }, 
+			{ items: compareTargets[1] }, 
+			true);
 	}
-
-	function compareConceptSetCsv(compareTargets,types, url, sourceKey) {
-		const vocabUrl = getVocabUrl(url, sourceKey);
-
-		var getComparedConceptSetPromise = $.ajax({
-			url: vocabUrl + 'compare-arbitrary',
-			data:  JSON.stringify({compareTargets: compareTargets, types:types}),
-			method: 'POST',
-			contentType: 'application/json',
-			error: authAPI.handleAccessDenied,
-		});
-
-		return getComparedConceptSetPromise;
+	
+	function compareConceptSetCsv(compareTargets, types, url, sourceKey) {
+		// Use the same vocabulary for both if sourceKey provided
+		return compareConceptSetsCsvOverDiffVocabularies(sourceKey, sourceKey,
+			{ items: compareTargets[0] },
+			{ items: compareTargets[1] },
+			types[0],
+			types[1]);
+	}
+	
+	function compareConceptSetsOverDiffVocabularies(source1Key, source2Key, expression1, expression2, compareSourceCodes) {
+		const vocabUrl = config.webAPIRoot + 'vocabulary/';
+		const compareConceptSetsRequest = {
+			source1Key: source1Key,
+			source2Key: source2Key,
+			expression1: expression1,
+			expression2: expression2,
+			compareSourceCodes: compareSourceCodes || false,
+		}
+		return httpService.doPost(vocabUrl + 'compare-diff-vocab', compareConceptSetsRequest).then(({ data }) => data);
+	}
+	
+	function compareConceptSetsCsvOverDiffVocabularies(source1Key, source2Key, expression1, expression2, expressionType1, expressionType2) {
+		const vocabUrl = config.webAPIRoot + 'vocabulary/';
+		const compareConceptSetsRequest = {
+			source1Key: source1Key,
+			source2Key: source2Key,
+			expression1: expression1,
+			expression2: expression2,
+			expressionType1: expressionType1,
+			expressionType2: expressionType2,
+			compareSourceCodes: false, // CSV comparison doesn't support source codes by default
+		}
+		return httpService.doPost(vocabUrl + 'compare-arbitrary-diff-vocab', compareConceptSetsRequest).then(({ data }) => data);
 	}
 	
 	async function loadAncestors(ancestors, descendants, url, sourceKey) {
@@ -225,6 +240,8 @@ define(function (require, exports) {
 		optimizeConceptSet: optimizeConceptSet,
 		compareConceptSet: compareConceptSet,
 		compareConceptSetCsv: compareConceptSetCsv,
+		compareConceptSetsOverDiffVocabularies,
+		compareConceptSetsCsvOverDiffVocabularies,
 		loadDensity: loadDensity,
 		loadAncestors,
 	}

@@ -46,15 +46,24 @@ define(function (require) {
 			.catch(authApi.handleAccessDenied);
 	}
 
+	function runCohortCompareBatchJob(requestPayload) {
+		return httpService.doPost(config.webAPIRoot + 'conceptset/compare-batch', requestPayload)
+			.catch(authApi.handleAccessDenied);
+	}
+
 	function deleteConceptSet(conceptSetId) {
 	return httpService.doDelete(config.webAPIRoot + 'conceptset/' + (conceptSetId || '-1'))
 		.catch(authApi.handleAccessDenied);
 	}
 
-  function exists(name, id) {
+	function exists(name, id) {
 		return httpService.doGet(`${config.webAPIRoot}conceptset/${id}/exists?name=${name}`)
 			.then(({ data }) => data);
-  }
+	}
+
+	function checkConceptSetFilterCount(filterRequest) {
+		return httpService.doPost(config.webAPIRoot + 'conceptset/check-filter-count', filterRequest);
+	}
 
   async function saveConceptSet(conceptSet) {
 		let promise;
@@ -158,6 +167,7 @@ define(function (require) {
 		saveConceptSet,
 		saveConceptSetItems,
 		runDiagnostics,
+		runCohortCompareBatchJob,
 		getVersions,
 		getVersion,
 		getVersionExpression,
@@ -165,7 +175,8 @@ define(function (require) {
 		copyVersion,
 		saveConceptSetAnnotation,
 		getConceptSetAnnotation,
-		deleteConceptSetAnnotation
+		deleteConceptSetAnnotation,
+		checkConceptSetFilterCount,
 	};
 
 	return api;
