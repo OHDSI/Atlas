@@ -136,9 +136,23 @@ define([
         {
           title: ko.i18n('columns.code', 'Code'),
           render: (s, p, d) => {
-            if (d.vocab1ConceptCode !== null || d.vocab2ConceptCode !== null) {
-              return this.renderFieldComparison(d.vocab1ConceptCode, d.vocab2ConceptCode, d.conceptCodeMismatch);
+            // Check if this is a cross-vocabulary comparison
+            const isCrossVocab = d.vocab1ConceptCode !== null || d.vocab2ConceptCode !== null;
+            
+            if (isCrossVocab) {
+              // Use the vocab-specific values, falling back to the merged value
+              const code1 = d.vocab1ConceptCode;
+              const code2 = d.vocab2ConceptCode;
+              
+              // If both exist and there's a mismatch, or if only one exists
+              if (d.conceptCodeMismatch || (code1 === null || code2 === null)) {
+                return this.renderFieldComparison(code1, code2, d.conceptCodeMismatch, d.conceptCode);
+              } else {
+                // Both exist and are the same
+                return this.escapeHtml(code1 || code2 || d.conceptCode || '');
+              }
             } else {
+              // Not a cross-vocab comparison, use the fallback value
               return this.escapeHtml(d.conceptCode || '');
             }
           },
@@ -152,24 +166,41 @@ define([
               INVALID_REASON_CAPTION: d.invalidReason,
               STANDARD_CONCEPT: d.standardConcept,
             });
-    
-            const isCrossVocab = d.vocab1ConceptName !== null && d.vocab2ConceptName !== null;
-    
+        
+            const isCrossVocab = d.vocab1ConceptName !== null || d.vocab2ConceptName !== null;
+        
             if (isCrossVocab) {
-              if (d.nameMismatch) {
-                const link1 = commonUtils.renderLink(d.vocab1ConceptName, p, buildConceptForLink(d.vocab1ConceptName));
-                const link2 = commonUtils.renderLink(d.vocab2ConceptName, p, buildConceptForLink(d.vocab2ConceptName));
-    
+              const name1 = d.vocab1ConceptName;
+              const name2 = d.vocab2ConceptName;
+              
+              if (d.nameMismatch || (name1 === null || name2 === null)) {
+                // There's a mismatch or only one vocabulary has this concept
+                const link1 = name1 ? commonUtils.renderLink(name1, p, buildConceptForLink(name1)) : '';
+                const link2 = name2 ? commonUtils.renderLink(name2, p, buildConceptForLink(name2)) : '';
+        
                 let html = '<div class="vocab-concept-names">';
-                html += `<div class="vocab-name-row">${link1}</div>`;
-                html += `<div class="vocab-name-row">${link2}</div>`;
+                if (name1) {
+                  html += `<div class="vocab-name-row">`;
+                  if (d.nameMismatch) {
+                    html += `<i class="fa fa-exclamation-triangle name-mismatch"></i> `;
+                  }
+                  html += `${link1}</div>`;
+                }
+                if (name2) {
+                  html += `<div class="vocab-name-row">`;
+                  if (d.nameMismatch) {
+                    html += `<i class="fa fa-exclamation-triangle name-mismatch"></i> `;
+                  }
+                  html += `${link2}</div>`;
+                }
                 html += '</div>';
                 return html;
               } else {
-                return commonUtils.renderLink(d.vocab1ConceptName, p, buildConceptForLink(d.vocab1ConceptName));
+                // Both exist and are the same
+                return commonUtils.renderLink(name1, p, buildConceptForLink(name1));
               }
             } else {
-              const conceptName = d.vocab1ConceptName || d.vocab2ConceptName || d.conceptName;
+              const conceptName = d.conceptName;
               if (!conceptName) return '';
               return commonUtils.renderLink(conceptName, p, buildConceptForLink(conceptName));
             }
@@ -318,20 +349,37 @@ define([
     }
 
     renderFieldComparison(value1, value2, hasMismatch, fallbackValue) {
-      const isCrossVocab = value1 !== null && value2 !== null;
-    
-      if (isCrossVocab) {
-        if (hasMismatch) {
-          let html = '<div class="vocab-field-values">';
-          html += `<div class="vocab-field-row"><i class="fa fa-exclamation-triangle field-mismatch"></i> ${this.escapeHtml(value1 || '')}</div>`;
-          html += `<div class="vocab-field-row"><i class="fa fa-exclamation-triangle field-mismatch"></i> ${this.escapeHtml(value2 || '')}</div>`;
-          html += '</div>';
-          return html;
-        } else {
-          return this.escapeHtml(value1 || value2 || '');
-        }
-      } else {
+      const hasValue1 = value1 !== null && value1 !== undefined;
+      const hasValue2 = value2 !== null && value2 !== undefined;
+      
+      // If neither vocabulary has a value, use fallback
+      if (!hasValue1 && !hasValue2) {
         return this.escapeHtml(fallbackValue || '');
+      }
+      
+      // If only one vocabulary has a value (CS1 Only or CS2 Only case)
+      if (!hasValue1 || !hasValue2) {
+        let html = '<div class="vocab-field-values">';
+        if (hasValue1) {
+          html += `<div class="vocab-field-row">${this.escapeHtml(value1)}</div>`;
+        }
+        if (hasValue2) {
+          html += `<div class="vocab-field-row">${this.escapeHtml(value2)}</div>`;
+        }
+        html += '</div>';
+        return html;
+      }
+      
+      // Both vocabularies have values
+      if (hasMismatch) {
+        let html = '<div class="vocab-field-values">';
+        html += `<div class="vocab-field-row"><i class="fa fa-exclamation-triangle field-mismatch"></i> ${this.escapeHtml(value1)}</div>`;
+        html += `<div class="vocab-field-row"><i class="fa fa-exclamation-triangle field-mismatch"></i> ${this.escapeHtml(value2)}</div>`;
+        html += '</div>';
+        return html;
+      } else {
+        // Same value in both
+        return this.escapeHtml(value1);
       }
     }
 
