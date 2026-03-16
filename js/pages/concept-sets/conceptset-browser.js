@@ -22,9 +22,6 @@ define([
 		constructor(params) {
 			super(params);
 			this.componentParams = params;
-
-			this.isAuthenticated = authAPI.isAuthenticated;
-			this.hasAccess = authAPI.isPermittedReadConceptsets;
 		}
 	}
 

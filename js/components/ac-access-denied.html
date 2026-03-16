@@ -1,4 +1,5 @@
 <div data-bind="css: classes(), visible: !isAuthenticated || !isPermitted()">
+    <!-- ko if: message --><span data-bind="text: message"></span> <!-- /ko -->
     <!-- ko if: isAuthenticated && !isPermitted() -->
         <forbidden />
     <!-- /ko -->

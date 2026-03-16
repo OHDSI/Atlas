@@ -166,7 +166,7 @@ define(function () {
   // "Tagging" section is hidden by default
   appConfig.enableTaggingSection = false;
 
-  appConfig.refreshTokenThreshold = 1000 * 60 * 60 * 4; // refresh auth token if it will expire within 4 hours
+  appConfig.refreshTokenThreshold = 1000 * 60 * 15; // refresh auth token if it will expire within 15 minutes.
 
   return appConfig;
 });

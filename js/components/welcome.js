@@ -80,7 +80,7 @@ define([
 
         self.onLoginSuccessful = function(data, textStatus, jqXHR) {
             sharedState.resetCurrentDataSourceScope();
-            self.setAuthParams(jqXHR.getResponseHeader(authApi.TOKEN_HEADER), data.permissions);
+            self.setAuthParams(data.jwt);
             self.loadUserInfo().then(() => {
                 self.errorMsg(null);
                 self.isBadCredentials(null);
@@ -98,12 +98,15 @@ define([
 
         self.signinWithLoginPass = function(data) {
             self.isInProgress(true);
+            const username = data.elements.lg_username.value;
+            const password = data.elements.lg_password.value;
+            const authHeader = 'Basic ' + btoa(username + ':' + password);
+
             $.ajax({
-                method: 'POST',
+                method: 'GET',
                 url: appConfig.webAPIRoot + self.authUrl(),
-                data: {
-                    login: data.elements.lg_username.value,
-                    password: data.elements.lg_password.value
+                headers: {
+                    'Authorization': authHeader
                 },
                 success: self.onLoginSuccessful,
                 error: (jqXHR, textStatus, errorThrown) => self.onLoginFailed(jqXHR, ko.i18n('components.welcome.messages.badCredentials', 'Bad credentials')()),

@@ -1,15 +1,15 @@
 define([
     'services/AuthAPI',
-	'atlas-state',
+		'atlas-state',
 ], function (
 	AuthAPI,
 	sharedState,
 ) {
 	const isPermittedSearch = () => {
-		return sharedState.vocabularyUrl() !== undefined && AuthAPI.isPermitted(`vocabulary:${sharedState.sourceKeyOfVocabUrl()}:search:*:get`);
-		};
+		return sharedState.vocabularyUrl() !== undefined && AuthAPI.hasSourceAccess(sharedState.sourceKeyOfVocabUrl());
+	};
 		
-    return {
-    	isPermittedSearch,
-    }
+	return {
+		isPermittedSearch,
+	}
 });

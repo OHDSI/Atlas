@@ -1,6 +1,6 @@
 <heading-title params="name: ko.i18n('cs.browser.caption', 'Concept Sets'), icon: 'shopping-cart', theme: 'dark'"></heading-title>
 
-<div data-bind="css: classes({ extra: 'flexed' }), if: isAuthenticated() && hasAccess()">
+<div data-bind="css: classes({ extra: 'flexed' })">
     <tabs params="
         componentParams: $component.componentParams,
         tabs: [
@@ -16,5 +16,3 @@
             }
     ]"></tabs>
 </div>
-
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>

@@ -7,6 +7,8 @@ define(function(require, exports) {
     var TOKEN_HEADER = 'Bearer';
     var LOCAL_STORAGE_PERMISSIONS_KEY = "permissions";
     const httpService = require('services/http');
+    const NONE_ENTITY_GRANT = {accessTypes: [], isOwner: false};
+    const sharedState = require('atlas-state');
 
     const AUTH_PROVIDERS = {
         IAP: 'AtlasGoogleSecurity',
@@ -78,10 +80,10 @@ define(function(require, exports) {
             url: config.api.url + 'user/me',
             method: 'GET',
             success: function (info, textStatus, jqXHR) {
-                permissions(info.permissionIdx);  // read from permission index of User info
-                subject(info.login);
+                permissions(info.authz);  // Store user authroizations in permissions observable
+                subject(info.user.login);
                 authProvider(jqXHR.getResponseHeader('x-auth-provider'));
-                fullName(info.name ? info.name : info.login);
+                fullName(info.user.name ? info.user.name : info.user.login);
                 resolve();
             },
             error: function (err) {
@@ -158,11 +160,7 @@ define(function(require, exports) {
     });
 
     var isAuthenticated = ko.computed(() => {
-        if (!config.userAuthenticationEnabled) {
-            return true;
-        }
-
-        return !!subject();
+        return !!token();
     });
 
     var handleAccessDenied = function(xhr) {
@@ -218,27 +216,19 @@ define(function(require, exports) {
     };
 
     var isPermitted = function (permission) {
-        if (!config.userAuthenticationEnabled) {
-            return true;
-        }
-
-        if (!permissions()) return false;
-
-        firstPerm = permission.split(":")[0];
-
-        var etalons = [...(permissions()["*"] || []),  ...(permissions()[firstPerm]||[])];
-        if (!etalons) {
-            return false;
-        }
-
-        for (var i = 0; i < etalons.length; i++) {
-            if (checkPermission(permission, etalons[i])) {
-                return true;
-            }
-        }
-
-        return false;
+        // TODO: we have a more complex object now: UserAuthorizations containing permissions and AccessGrants
+        // TODO: so maybe replace references to permissions() with authz()
+        var etalons = permissions() && permissions().permissions || [];
+        return etalons.some(e => checkPermission(permission, e));
     };
+
+    // this function will handle 'write implies read' when checking an access type against a set of granted access
+    var checkAccess = function (check, granted) {
+        if (check == "READ") {
+            return (["READ", "WRITE"]).some(c => granted.includes(c));
+        }
+        return granted.includes(check);  
+    }
 
     function base64urldecode(arg) {
         var s = arg;
@@ -269,15 +259,10 @@ define(function(require, exports) {
         return p && typeof p === 'object' && typeof p.status === 'function' && p.status() === 'pending';
     }
     var refreshToken = function() {
-
-        if (!config.userAuthenticationEnabled) {
-            return Promise.resolve(true); // no-op if userAuthenticationEnabled == false
-        }
-
         if (!isPromisePending(refreshTokenPromise)) {
           refreshTokenPromise = httpService.doGet(getServiceUrl() + "user/refresh");
-          refreshTokenPromise.then(({ data, headers }) => {
-            setAuthParams(headers.get(TOKEN_HEADER), data.permissions);
+          refreshTokenPromise.then(({data}) => {
+            setAuthParams(data.jwt);
           });
           refreshTokenPromise.catch(() => {
             resetAuthParams();
@@ -287,84 +272,48 @@ define(function(require, exports) {
         return refreshTokenPromise;
     }
 
-    var isPermittedCreateConceptset = function() {
-        return isPermitted('conceptset:post');
+    var isPermittedReadConceptset = function(conceptsetId) {
+        var id = +conceptsetId; // force to numeric
+        var authz = permissions().conceptSetAccess;
+        var grant = authz[id] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+        return  grant.isOwner ||
+            isPermitted("read:conceptset") ||
+            isPermitted("write:conceptset") ||
+            checkAccess("READ", grant.accessTypes);
     }
 
-    var isPermittedReadConceptsets = function () {
-        return isPermitted('conceptset:get');
-    };
+    var isPermittedCreateConceptset = function() {
+        return isPermitted('create:conceptset');
+    }
 
     var isPermittedUpdateConceptset = function(conceptsetId) {
-        return (isPermitted('conceptset:' + conceptsetId + ':put') && isPermitted('conceptset:' + conceptsetId + ':items:put')) || (isPermitted('conceptset:*:put') && isPermitted('conceptset:*:items:put'));
+        var id = +conceptsetId; // force to numeric
+        var authz = permissions().conceptSetAccess;
+        var grant = authz[id] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+        return  grant.isOwner ||
+            isPermitted("write:conceptset") ||
+            checkAccess("WRITE", grant.accessTypes);    
     };
 
     var isPermittedDeleteConceptset = function(id) {
-        return isPermitted('conceptset:' + id + ':delete');
+        return isPermittedUpdateConceptset(id);
     };
 
+    // TODO: we don't need perms to list incidence rates
     var isPermittedReadIRs = function () {
-      return isPermitted('ir:get');
-    };
-
-    var isPermittedEditIR = function (id) {
-      return isPermitted('ir:' + id + ':put');
+      return true;
     };
 
     var isPermittedCreateIR = function () {
-      return isPermitted('ir:post');
-    };
-
-    var isPermittedDeleteIR = function(id) {
-        return isPermitted('ir:' + id + ':delete');
+      return isPermitted('create:incidence');
     };
 
     var isPermittedCopyIR = function(id) {
-        return isPermitted('ir:' + id + ':copy:get');
-    };
-
-    var isPermittedReadEstimations = function () {
-      return isPermitted('comparativecohortanalysis:get');
+        return isPermittedCreateIR();
     };
 
     var isPermittedEditSourcePriortiy = function() {
-      return isPermitted('source:*:daimons:*:set-priority:post')
-    };
-
-    var isPermittedReadEstimation = function (id) {
-      return isPermitted('comparativecohortanalysis:' + id + ':get');
-    };
-
-    var isPermittedCreateEstimation = function() {
-        return isPermitted('comparativecohortanalysis:post');
-    };
-
-    const isPermittedDeleteEstimation = function(id) {
-        return isPermitted(`comparativecohortanalysis:${id}:delete`);
-    }
-
-    var isPermittedReadPlps = function() {
-        return isPermitted('plp:get');
-    };
-
-    var isPermittedCreatePlp = function () {
-      return isPermitted('plp:post');
-    };
-
-    var isPermittedReadPlp = function(id) {
-        return isPermitted('plp:' + id + ':get');
-    };
-
-    var isPermittedDeletePlp = function(id) {
-        return isPermitted('plp:' + id + ':delete');
-    };
-
-    var isPermittedCopyPlp = function(id) {
-        return isPermitted(`plp:${id}:copy:get`);
-    }
-
-    var isPermittedSearch = function() {
-      return isPermitted('vocabulary:*:search:*:get');
+      return isPermitted('admin:source')
     };
 
     var isPermittedViewCdmResults = function () {
@@ -379,60 +328,67 @@ define(function(require, exports) {
       return isPermitted('*:person:*:get:dates');
     };
 
-    var isPermittedReadCohort = function(id) {
-        return isPermitted('cohortdefinition:' + id + ':get') && isPermitted('cohortdefinition:sql:post');
-    }
-
     var isPermittedReadCohorts = function() {
-        return isPermitted('cohortdefinition:get');
+        return true; // TODO: remove list perm checks
+    }
+    
+    var isPermittedReadCohort = function(id) {
+        var cohortId = +id; // force to numeric
+        var authz = permissions().cohortDefinitionAccess;
+        var grant = authz[cohortId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+        return  grant.isOwner ||
+            isPermitted("read:cohort") ||
+            isPermitted("write:cohort") ||
+            checkAccess("READ", grant.accessTypes);
     }
 
     var isPermittedCreateCohort = function() {
-        return isPermitted('cohortdefinition:post');
+        return isPermitted('create:cohort-definition');
     }
 
     var isPermittedCopyCohort = function(id) {
-        return isPermitted('cohortdefinition:' + id + ':copy:get');
+        return isPermittedCreateCohort();
     }
 
     var isPermittedUpdateCohort = function(id) {
-        var permission = 'cohortdefinition:' + id + ':put';
-        return isPermitted(permission);
+        var cohortId = +id; // force to numeric
+        var authz = permissions().cohortDefinitionAccess;
+        var grant = authz[cohortId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+        return  grant.isOwner ||
+            isPermitted("write:cohort") ||
+            checkAccess("WRITE", grant.accessTypes);
     }
 
     var isPermittedDeleteCohort = function(id) {
-        var permission = 'cohortdefinition:' + id + ':delete';
-        var allPermissions = 'cohortdefinition:delete';
-        return isPermitted(permission) || isPermitted(allPermissions);
+       return isPermittedUpdateCohort(id);
     }
 
     var isPermittedGenerateCohort = function(cohortId, sourceKey) {
-        return isPermitted('cohortdefinition:' + cohortId + ':generate:' + sourceKey + ':get') &&
-            isPermitted('cohortdefinition:' + cohortId + ':info:get');
+        return true; // TODO: check source canWrite()
     }
 
     var isPermittedReadCohortReport = function(cohortId, sourceKey) {
-        return isPermitted('cohortdefinition:' + cohortId + ':report:' + sourceKey + ':get');
+        return true; // TODO: check source canRead || canWrite
     }
 
     var isPermittedReadJobs = function() {
-        return isPermitted('job:execution:get');
+        return true;
     }
 
     var isPermittedEditConfiguration = function() {
-        return isPermitted('configuration:edit:ui')
+        return isPermitted('admin'); //TODO: everyone can view config, just need specific perms to make specific changes.
     }
 
     var isPermittedCreateSource = function() {
-        return isPermitted('source:post');
+        return isPermitted('admin:source');
     }
 
     var isPermittedAccessSource = function(key) {
-        return isPermitted('source:' + key + ':access');
+        return true; // TODO: check source canRead || canWrite;
     }
 
     var isPermittedReadSource = function(key) {
-        return isPermitted('source:' + key + ':get');
+        return true; // TODO: check source canRead
     }
 
     var isPermittedCheckSourceConnection = function(key) {
@@ -440,15 +396,15 @@ define(function(require, exports) {
     }
 
     var isPermittedEditSource = function(key) {
-        return isPermitted('source:' + key + ':put');
+        return isPermitted('admin:source');
     }
 
     var isPermittedDeleteSource = function(key) {
-        return isPermitted('source:' + key + ':delete');
+        return isPermitted('admin:source');
     }
 
     var isPermittedReadRoles = function() {
-        return isPermitted('role:get');
+        return true; // TODO: anyone should be able to list roles
     }
     var isPermittedReadRole = function (roleId) {
         var permitted =
@@ -469,7 +425,7 @@ define(function(require, exports) {
         return isPermitted('role:' + roleId + ':delete');
     }
     var isPermittedEditRoleUsers = function(roleId) {
-        return isPermitted('role:' + roleId + ':users:*:put') && isPermitted('role:' + roleId + ':users:*:delete');
+        return isPermitted('admin:security') && isPermitted('role:' + roleId + ':users:*:delete');
     }
     var isPermittedEditRolePermissions = function(roleId) {
         return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
@@ -487,15 +443,28 @@ define(function(require, exports) {
         return isPermitted('executionservice:*:get');
     };
     const isPermittedGetSourceDaimonPriority = function() {
-        return isPermitted('source:daimon:priority:get');
+        return true; // isPermitted('source:daimon:priority:get');  //TODO: shouldn't everyone be able to lookup source daimon priority? 
     };
 
-		const isPermittedImportUsers = function() {
-			return isPermitted('user:import:post') && isPermitted('user:import:*:post');
-		}
+    const isPermittedImportUsers = function() {
+        return isPermitted('user:import:post') && isPermitted('user:import:*:post');
+    }
 
-    const hasSourceAccess = function (sourceKey) {
-        return isPermitted(`source:${sourceKey}:access`) || /* For 2.5.* and below */ isPermitted(`cohortdefinition:*:generate:${sourceKey}:get`);
+    const hasSourceAccess = function (sourceKey, accessType = "READ") {
+        var sourceKey = sharedState.sourceKeyOfVocabUrl();
+        var sourceId = (sharedState.sources().find(s => s.sourceKey == sourceKey) || {}).sourceId;
+        
+        if (!sourceId) return false; // source not found
+
+        var authz = permissions().sourceAccess;
+        var accessTypes = authz[sourceId] || []; // default to no access
+        if (accessType == "READ") {
+            return isPermitted("read:source") || isPermitted("write:source") || checkAccess("READ", accessTypes);
+        } else if (accessType == "WRITE") {
+            return isPermitted("write:source") || checkAccess("WRITE", accessTypes);
+        }
+
+        return false;
     }
 
     const isPermittedClearServerCache = function (sourceKey) {
@@ -503,7 +472,7 @@ define(function(require, exports) {
     };
 
     const isPermittedTagsManagement = function () {
-        return isPermitted(`tag:management`);
+        return isPermitted("admin:tags");
     };
 
     const isPermittedConceptSetAnnotationsDelete = function (conceptSetId) {
@@ -516,9 +485,8 @@ define(function(require, exports) {
 
     const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`);
 
-	const setAuthParams = (tokenHeader, permissionsStr = '') => {
-        !!tokenHeader && token(tokenHeader);
-        !!permissionsStr && permissions(permissionsStr);
+	const setAuthParams = (jwt) => {
+        !!jwt && token(jwt);
     };
 
     var resetAuthParams = function () {
@@ -572,9 +540,9 @@ define(function(require, exports) {
         isPermittedPostViewedNotifications: isPermittedPostViewedNotifications,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
+        isPermittedReadConceptset: isPermittedReadConceptset,
         isPermittedUpdateConceptset: isPermittedUpdateConceptset,
         isPermittedDeleteConceptset: isPermittedDeleteConceptset,
-        isPermittedReadConceptsets: isPermittedReadConceptsets,
 
         isPermittedReadCohorts: isPermittedReadCohorts,
         isPermittedReadCohort: isPermittedReadCohort,
@@ -600,22 +568,8 @@ define(function(require, exports) {
 
         isPermittedReadIRs: isPermittedReadIRs,
         isPermittedCreateIR: isPermittedCreateIR,
-        isPermittedEditIR: isPermittedEditIR,
-        isPermittedDeleteIR: isPermittedDeleteIR,
         isPermittedCopyIR,
 
-        isPermittedReadEstimations: isPermittedReadEstimations,
-        isPermittedReadEstimation: isPermittedReadEstimation,
-        isPermittedCreateEstimation: isPermittedCreateEstimation,
-        isPermittedDeleteEstimation,
-
-        isPermittedReadPlps: isPermittedReadPlps,
-        isPermittedReadPlp: isPermittedReadPlp,
-        isPermittedCreatePlp: isPermittedCreatePlp,
-        isPermittedDeletePlp: isPermittedDeletePlp,
-        isPermittedCopyPlp: isPermittedCopyPlp,
-
-        isPermittedSearch: isPermittedSearch,
         isPermittedViewCdmResults: isPermittedViewCdmResults,
         isPermittedViewProfiles: isPermittedViewProfiles,
         isPermittedViewProfileDates: isPermittedViewProfileDates,

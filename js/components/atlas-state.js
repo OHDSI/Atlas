@@ -37,7 +37,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		state.currentVocabularyVersion(state.defaultVocabularyVersion());
 	}
 
-	state.sourceKeyOfVocabUrl = ko.computed(() => {
+	state.sourceKeyOfVocabUrl = ko.pureComputed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
 	});
 
