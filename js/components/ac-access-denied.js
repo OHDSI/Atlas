@@ -16,7 +16,6 @@ define([
 		constructor(params) {
 			super(params);
 			this.message = params.message;
-			this.isAuthenticated = params.isAuthenticated;
 			this.isPermitted = params.isPermitted || (() => false);
 		}
 	}

@@ -337,8 +337,8 @@ define(function(require, exports) {
         var authz = permissions().cohortDefinitionAccess;
         var grant = authz[cohortId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
         return  grant.isOwner ||
-            isPermitted("read:cohort") ||
-            isPermitted("write:cohort") ||
+            isPermitted("read:cohort-definition") ||
+            isPermitted("write:cohort-definition") ||
             checkAccess("READ", grant.accessTypes);
     }
 
@@ -355,7 +355,7 @@ define(function(require, exports) {
         var authz = permissions().cohortDefinitionAccess;
         var grant = authz[cohortId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
         return  grant.isOwner ||
-            isPermitted("write:cohort") ||
+            isPermitted("write:cohort-definition") ||
             checkAccess("WRITE", grant.accessTypes);
     }
 
@@ -509,7 +509,7 @@ define(function(require, exports) {
 
     const executeWithRefresh = async function(httpPromise) {
         const result = await httpPromise;
-        await refreshToken();
+        await loadUserInfo();
         return result;
     }
 

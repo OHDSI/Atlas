@@ -365,23 +365,14 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			this.isNameCorrect = ko.pureComputed(() => {
 				return this.isNameFilled() && !this.isDefaultName() && this.isNameCharactersValid() && this.isNameLengthValid();
 			});
-			this.isAuthenticated = ko.pureComputed(() => {
-				return this.authApi.isAuthenticated();
-			});
 			this.isNew = ko.pureComputed(() => {
 				return !this.currentCohortDefinition() || (this.currentCohortDefinition().id() === 0);
 			});
 			this.canEdit = ko.pureComputed(() => {
-				if (!authApi.isAuthenticated()) {
-					return false;
-				}
-
-				if (this.currentCohortDefinition() && (this.currentCohortDefinition()
-						.id() != 0)) {
-					return authApi.isPermittedUpdateCohort(this.currentCohortDefinition()
-						.id()) || !config.userAuthenticationEnabled;
+				if (this.currentCohortDefinition() && (this.currentCohortDefinition().id() != 0)) {
+					return authApi.isPermittedUpdateCohort(this.currentCohortDefinition().id());
 				} else {
-					return authApi.isPermittedCreateCohort() || !config.userAuthenticationEnabled;
+					return authApi.isPermittedCreateCohort();
 				}
 			});
 			this.isSaving = ko.observable(false);
@@ -391,28 +382,18 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			    return this.isSaving() || this.isCopying() || this.isDeleting();
 			});
 			this.canCopy = ko.pureComputed(() => {
-				return !this.dirtyFlag().isDirty() && !this.isNew() &&
-					(this.isAuthenticated() && this.authApi.isPermittedCopyCohort(this.currentCohortDefinition().id()) || !config.userAuthenticationEnabled);
+				return !this.dirtyFlag().isDirty() 
+					&& !this.isNew() 
+					&& this.authApi.isPermittedCopyCohort(this.currentCohortDefinition().id());
 			});
 			this.canDelete = ko.pureComputed(() => {
 				if (this.isNew()) {
 					return false;
 				}
-				return ((this.isAuthenticated() && this.authApi.isPermittedDeleteCohort(this.currentCohortDefinition().id()) || !config.userAuthenticationEnabled));
+				return (this.authApi.isPermittedDeleteCohort(this.currentCohortDefinition().id()));
 			});
 			this.hasAccess = ko.pureComputed(() => {
-				if (!config.userAuthenticationEnabled) {
-					return true;
-				}
-				if (!this.isAuthenticated()) {
-					return false;
-				}
-				if (this.currentCohortDefinition() && this.isNew()) {
-					return this.authApi.isPermittedCreateCohort();
-				}
-
-				return this.authApi.isPermittedReadCohorts() ||
-					(this.currentCohortDefinition() && this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id()));
+				return this.isNew() || (this.currentCohortDefinition() && this.authApi.isPermittedReadCohort(this.currentCohortDefinition().id()));
 			});
 
 			this.hasAccessToGenerate = (sourceKey) => {
@@ -423,7 +404,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 				return this.authApi.isPermittedGenerateCohort(this.currentCohortDefinition().id(), sourceKey);
 			}
 			this.hasAccessToReadCohortReport = (sourceKey) => {
-				return this.isAuthenticated() && this.authApi.isPermittedReadCohortReport(this.currentCohortDefinition().id(), sourceKey);
+				return this.authApi.isPermittedReadCohortReport(this.currentCohortDefinition().id(), sourceKey);
 			}
 
 			this.renderCountColumn = datatableUtils.renderCountColumn;

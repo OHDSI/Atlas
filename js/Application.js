@@ -198,39 +198,15 @@ define(
 			initServiceInformation() {
 				console.info('Initializing service information');
 				return new Promise((resolve, reject) => {
-					const serviceCacheKey = 'ATLAS|' + config.api.url;
-					const cachedService = lscache.get(serviceCacheKey);
-
-					if (cachedService && cachedService.sources) {
-						console.info('cached service');
-						config.api.sources = cachedService;
-						sourceApi.setSharedStateSources(cachedService.sources);
-						resolve();
-					} else {
-						sharedState.sources([]);
-
-						if (config.userAuthenticationEnabled && !authApi.isAuthenticated()) {
-							this.authSubscription = authApi.isAuthenticated.subscribe(async (isAuthed) => {
-								if (isAuthed) {
-									sharedState.appInitializationStatus(await sourceApi.initSourcesConfig());
-									this.authSubscription.dispose();
-									console.info('Re-initialized service information');
-								}
-							});
-							sharedState.appInitializationStatus(constants.applicationStatuses.running);
+					sourceApi.initSourcesConfig()
+						.then(function (appStatus) {
+							sharedState.appInitializationStatus(appStatus);
+							console.info('Init sources from server');
 							resolve();
-							return;
-						} else {
-							sourceApi.initSourcesConfig()
-								.then(function (appStatus) {
-									sharedState.appInitializationStatus(appStatus);
-									console.info('Init sources from server');
-									resolve();
-								});
-						}
-					}
+						});
 				});
 			}
+
 			checkOAuthError() {
 				let hash = window.location.hash;
 				if (hash && hash.includes("oauth_error_email")) {

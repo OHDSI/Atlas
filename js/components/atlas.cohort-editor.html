@@ -1,4 +1,4 @@
-<div class="paddedWrapper">
+<div class="paddedWrapper" data-bind="if: $component.currentCohortDefinition">
 	<!-- contenteditableSwitch must be placed AFTER contentEditable to override 'contenteditable' attribute -->
 	<div class="divtext cohort-description" data-bind="contentEditable: currentCohortDefinition().description, contenteditableSwitch: canEdit(), placeholder: ko.i18n('components.atlasCohortEditor.enterCohortPlaceholder', 'Enter the cohort definition description here')"></div>
 	<div data-bind="eventListener: [

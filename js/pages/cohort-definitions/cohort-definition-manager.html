@@ -1,5 +1,5 @@
 <loading data-bind="visible: $component.isLoading()"></loading>
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: hasAccess"></access-denied>
+<access-denied params="isPermitted: hasAccess"></access-denied>
 
 <!-- ko if: hasAccess -->
 <div data-bind="if: currentCohortDefinition() && $root.router.currentView() == 'cohort-definition-manager' && !$component.isLoading()" class="flexed">
