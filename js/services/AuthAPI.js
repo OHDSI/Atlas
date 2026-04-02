@@ -230,6 +230,18 @@ define(function(require, exports) {
         return granted.includes(check);  
     }
 
+    var getCCGrant = function(id) {
+        var ccId = +id; // force to numeric
+        var authz = permissions().cohortCharacterizationAccess;
+        return authz[ccId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }
+
+    var getFAGrant = function(id) {
+        var faId = +id; // force to numeric
+        var authz = permissions().feAnalysisAccess;
+        return authz[faId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }    
+
     function base64urldecode(arg) {
         var s = arg;
         s = s.replace(/-/g, '+'); // 62nd char of encoding
@@ -451,7 +463,6 @@ define(function(require, exports) {
     }
 
     const hasSourceAccess = function (sourceKey, accessType = "READ") {
-        var sourceKey = sharedState.sourceKeyOfVocabUrl();
         var sourceId = (sharedState.sources().find(s => s.sourceKey == sourceKey) || {}).sourceId;
         
         if (!sourceId) return false; // source not found
@@ -516,6 +527,7 @@ define(function(require, exports) {
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,
         AUTH_CLIENTS: AUTH_CLIENTS,
+        NONE_ENTITY_GRANT: NONE_ENTITY_GRANT,
 
         token: token,
         authClient: authClient,
@@ -534,10 +546,15 @@ define(function(require, exports) {
         isAuthenticated: isAuthenticated,
 		signInOpened: signInOpened,
         isPermitted: isPermitted,
+        checkAccess: checkAccess,
 
         isPermittedGetAllNotifications: isPermittedGetAllNotifications,
         isPermittedGetViewedNotifications: isPermittedGetViewedNotifications,
         isPermittedPostViewedNotifications: isPermittedPostViewedNotifications,
+
+        // will add the various get{entity} grants here
+        getCCGrant: getCCGrant,
+        getFAGrant: getFAGrant,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedReadConceptset: isPermittedReadConceptset,
