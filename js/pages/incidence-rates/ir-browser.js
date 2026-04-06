@@ -3,7 +3,7 @@ define([
   'text!./ir-browser.html',
   'appConfig',
   'services/IRAnalysis',
-  'services/AuthAPI',
+  './PermissionService',
   'pages/Page',
   'utils/CommonUtils',
 	'utils/DatatableUtils',
@@ -17,7 +17,7 @@ define([
   view,
   config,
   IRAnalysisService,
-  authApi,
+  PermissionService,
   Page,
   commonUtils,
   datatableUtils,
@@ -29,12 +29,9 @@ define([
       this.loading = ko.observable(false);
       this.config = config;
       this.analysisList = ko.observableArray();
-      this.isAuthenticated = authApi.isAuthenticated;
-      this.canReadIRs = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadIRs()) || !config.userAuthenticationEnabled;
-      });
+      this.canReadIRs = ko.pureComputed(() => true); // TODO: list operations should be unrestricted?
       this.canCreateIR = ko.pureComputed(() => {
-        return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateIR()) || !config.userAuthenticationEnabled;
+        return PermissionService.isPermittedCreateIR();
       });
       this.tableOptions = commonUtils.getTableOptions('L');
 
@@ -86,9 +83,7 @@ define([
       ]);
 
       // startup actions
-      if (this.isAuthenticated() && this.canReadIRs()) {
-        this.refresh();
-      }
+      this.refresh();
     }
 
     refresh() {

@@ -242,6 +242,12 @@ define(function(require, exports) {
         return authz[faId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
     }    
 
+    var getIRGrant = function(id) {
+        var irId = +id; // force to numeric
+        var authz = permissions().incidenceRateAccess;
+        return authz[irId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }
+
     function base64urldecode(arg) {
         var s = arg;
         s = s.replace(/-/g, '+'); // 62nd char of encoding
@@ -309,19 +315,6 @@ define(function(require, exports) {
 
     var isPermittedDeleteConceptset = function(id) {
         return isPermittedUpdateConceptset(id);
-    };
-
-    // TODO: we don't need perms to list incidence rates
-    var isPermittedReadIRs = function () {
-      return true;
-    };
-
-    var isPermittedCreateIR = function () {
-      return isPermitted('create:incidence');
-    };
-
-    var isPermittedCopyIR = function(id) {
-        return isPermittedCreateIR();
     };
 
     var isPermittedEditSourcePriortiy = function() {
@@ -555,6 +548,7 @@ define(function(require, exports) {
         // will add the various get{entity} grants here
         getCCGrant: getCCGrant,
         getFAGrant: getFAGrant,
+        getIRGrant: getIRGrant,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedReadConceptset: isPermittedReadConceptset,
@@ -582,10 +576,6 @@ define(function(require, exports) {
         isPermittedDeleteRole: isPermittedDeleteRole,
         isPermittedEditRoleUsers: isPermittedEditRoleUsers,
         isPermittedEditRolePermissions: isPermittedEditRolePermissions,
-
-        isPermittedReadIRs: isPermittedReadIRs,
-        isPermittedCreateIR: isPermittedCreateIR,
-        isPermittedCopyIR,
 
         isPermittedViewCdmResults: isPermittedViewCdmResults,
         isPermittedViewProfiles: isPermittedViewProfiles,

@@ -58,7 +58,7 @@ define([
 	authAPI,
 	FileService,
 	JobPollService,
-	{ isPermittedExportSQL },
+	PermissionService,
 	GlobalPermissionService,
 	TagsService,
 	{ entityType },
@@ -87,54 +87,27 @@ define([
 			this.dirtyFlag = sharedState.IRAnalysis.dirtyFlag;
 			this.enablePermissionManagement = config.enablePermissionManagement;	 
 			this.exporting = ko.observable();
-			this.isAuthenticated = ko.pureComputed(() => {
-				return authAPI.isAuthenticated();
-			});
 			this.defaultName = ko.unwrap(globalConstants.newEntityNames.incidenceRate);
 			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().incidenceRates);
 			this.isViewPermitted = ko.pureComputed(() => {
-				return !config.userAuthenticationEnabled
-					|| (
-						config.userAuthenticationEnabled
-						&& authAPI.isPermittedReadIRs()
-					)
+				return PermissionService.isPermittedReadIR(this.selectedAnalysisId());
 			});
 			this.canCreate = ko.pureComputed(() => {
-				return !config.userAuthenticationEnabled
-				|| (
-					config.userAuthenticationEnabled
-					&& authAPI.isPermittedCreateIR()
-				)
-			});
-			this.isDeletable = ko.pureComputed(() => {
-				return !config.userAuthenticationEnabled
-					|| (
-						config.userAuthenticationEnabled
-						&& authAPI.isPermittedDeleteIR(this.selectedAnalysisId())
-					)
+				return PermissionService.isPermittedCreateIR();
 			});
 			this.isEditable = ko.pureComputed(() => {
-				return this.selectedAnalysisId() === null || this.selectedAnalysisId() === 0
-					|| !config.userAuthenticationEnabled
-					|| (
-						config.userAuthenticationEnabled
-						&& authAPI.isPermittedEditIR(this.selectedAnalysisId())
-					)
+				return this.selectedAnalysisId() === null 
+					|| this.selectedAnalysisId() === 0
+					|| PermissionService.isPermittedEditIR(this.selectedAnalysisId())
 			});
+			this.isDeletable = this.isEditable; // if you can edit, you can delete
 			this.canCopy = ko.pureComputed(() => {
-				return !config.userAuthenticationEnabled
-					|| (
-						config.userAuthenticationEnabled
-						&& authAPI.isPermittedCopyIR(this.selectedAnalysisId())
-						&& !this.dirtyFlag().isDirty()
-					)
+				return PermissionService.isPermittedCopyIR(this.selectedAnalysisId())
+							&& !this.dirtyFlag().isDirty();
 			});
-			this.isPermittedExportSQL = isPermittedExportSQL;
-			this.selectedAnalysisId.subscribe((id) => {
-				if (config.userAuthenticationEnabled && authAPI.isAuthenticated) {
-					authAPI.loadUserInfo();
-				}
-			});
+			this.isPermittedImport = PermissionService.isPermittedImport;
+			this.isPermittedExport = PermissionService.isPermittedExport;
+			this.isPermittedExportSQL = PermissionService.isPermittedExportSQL;
 
 			this.isRunning = ko.observable(false);
 			this.activeTab = ko.observable(params.activeTab || this.tabs.DEFINITION);
@@ -155,6 +128,7 @@ define([
 				}
 				return analysisCohorts;
 			});
+
 			this.showConceptSetBrowser = ko.observable(false);
 			this.criteriaContext = ko.observable();
 			this.generateActionsSettings = {
@@ -298,14 +272,6 @@ define([
 
 			// startup actions
 			this.init();
-		}
-
-		isPermittedImport() {
-			return authAPI.isPermitted(`ir:design:post`);
-		}
-
-		isPermittedExport(id) {
-			return authAPI.isPermitted(`ir:${id}:design:get`);
 		}
 
 		diagnose() {
