@@ -248,6 +248,11 @@ define(function(require, exports) {
         return authz[irId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
     }
 
+    var getPathwayGrant = function(id) {
+        var pathwayId = +id; // force to numeric
+        var authz = permissions().pathwayAccess;
+        return authz[pathwayId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }
     function base64urldecode(arg) {
         var s = arg;
         s = s.replace(/-/g, '+'); // 62nd char of encoding
@@ -322,7 +327,7 @@ define(function(require, exports) {
     };
 
     var isPermittedViewCdmResults = function () {
-        return isPermitted('cdmresults:*:get');
+        return true; // TODO: Do we need general view permission + source??
     };
 
     var isPermittedViewProfiles = function (sourceKey) {
@@ -485,9 +490,9 @@ define(function(require, exports) {
 
     const isPermittedRunAs = () => isPermitted('user:runas:post');
 
-    const isPermittedViewDataSourceReport = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:get`);
+    const isPermittedViewDataSourceReport = sourceKey => hasSourceAccess(sourceKey);
 
-    const isPermittedViewDataSourceReportDetails = sourceKey => isPermitted(`cdmresults:${sourceKey}:*:*:get`);
+    const isPermittedViewDataSourceReportDetails = sourceKey => hasSourceAccess(sourceKey);
 
 	const setAuthParams = (jwt) => {
         !!jwt && token(jwt);
@@ -549,6 +554,7 @@ define(function(require, exports) {
         getCCGrant: getCCGrant,
         getFAGrant: getFAGrant,
         getIRGrant: getIRGrant,
+        getPathwayGrant: getPathwayGrant,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedReadConceptset: isPermittedReadConceptset,

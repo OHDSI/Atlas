@@ -119,7 +119,7 @@ define([
 
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.canViewCdmResults = ko.pureComputed(() => {
-				return (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedViewCdmResults()) || !config.userAuthenticationEnabled;
+				return authApi.isPermittedViewCdmResults();
 			});
 
 			this.showSelectionArea = params.showSelectionArea == undefined ? true : params.showSelectionArea;
