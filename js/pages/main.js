@@ -9,8 +9,6 @@ define(
 		const incidenceRates = require('./incidence-rates/index');
 		const profiles = require('./profiles/index');
 		const pathways = require('./pathways/index');
-		const estimation = require('./estimation/index');
-		const prediction = require('./prediction/index');
 		const reusables = require('./reusables/index');
 		const tagging = require('./tagging/index');
 		const jobs = require('./jobs/index');
@@ -29,8 +27,6 @@ define(
 			pathways,
 			incidenceRates,
 			profiles,
-			estimation,
-			prediction,
 			reusables,
 			tagging,
 			jobs,

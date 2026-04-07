@@ -63,17 +63,6 @@ define(['knockout', 'appConfig', 'services/job/jobDetail', 'atlas-state', 'servi
 				}
 			case "cohortAnalysisJob":
 				return 'cohortdefinition/' + n.jobParameters.cohortDefinitionIds + '/reporting?sourceKey=' + n.jobParameters.sourceKey;
-			case 'executionEngine':
-				switch (n.jobParameters.scriptType) {
-					case "CCA":
-						return 'estimation/' + n.jobParameters.cohortId;
-					case 'PLP':
-						return 'plp/' + n.jobParameters.cohortId;
-				}				
-			case "generateEstimationAnalysis":
-				return 'estimation/cca/' + n.jobParameters.estimation_analysis_id + '/executions/' + n.jobParameters.source_id;
-			case "generatePredictionAnalysis":
-				return 'prediction/' + n.jobParameters.prediction_analysis_id + '/executions/' + n.jobParameters.source_id;
 			case 'warmCacheByUser':
 				return 'configure';
 			}

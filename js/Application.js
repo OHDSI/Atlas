@@ -51,8 +51,6 @@ define(
 						|| sharedState.CohortDefinition.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
-						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
-						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
 					);
 				});

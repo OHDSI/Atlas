@@ -11,8 +11,6 @@ define(function (require) {
         COHORT_CHARACTERIZATION: 'cohort-characterization',
         PATHWAY_ANALYSIS: 'pathway-analysis',
         INCIDENCE_RATE: 'ir',
-        ESTIMATION: 'ple',
-        PREDICTION: 'plp',
         REUSABLE: 'reusable'
     };
 
