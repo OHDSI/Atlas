@@ -111,7 +111,7 @@ define([
           try  {
             yield await this.createRole(roles[i]);
           } catch(er) {
-            alert(`Couldn't create role ${roles[i].role}`);
+            alert(`Couldn't create role ${roles[i].name}`);
             break;
           }
         }

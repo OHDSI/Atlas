@@ -55,24 +55,13 @@ define(function(require, exports) {
     }
 
     static async updateRoles() {
-      if (authApi.isPermittedReadRoles()){
-        if (!config.userAuthenticationEnabled)
-            return true;
-
-        console.info('Updating roles');
-        if (!authApi.isAuthenticated()) {
-          console.warn('Roles are not updated');
-          return Promise.resolve();
-        }
-
-        try {
-          const roles = await this.getList();
-          console.info('Roles updated');
-          sharedState.roles(roles);
-          return roles;
-        } catch (err) {
-          console.error(err);
-        }
+      try {
+        const roles = await this.getList();
+        console.info('Roles updated');
+        sharedState.roles(roles);
+        return roles;
+      } catch (err) {
+        console.error(err);
       }
     }
   }

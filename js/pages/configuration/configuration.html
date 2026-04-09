@@ -21,7 +21,7 @@
 							<div class="priority-label" data-bind="text:ko.i18n('configuration.changeSourcePriorities', 'Change source priorities in:')"></div>
 							<select class="form-control configuration__source-select" data-bind="options: $component.priorityOptions, optionsText:'name', optionsValue:'id', value: $component.sharedState.priorityScope" />
 						</div>
-						<span class="btn btn-sm btn-primary" data-bind="text:ko.i18n('configuration.newSource', 'New Source'), click: $component.newSource, visible: $component.config.userAuthenticationEnabled, css: {disabled: !$component.canCreateSource()}">
+						<span class="btn btn-sm btn-primary" data-bind="text:ko.i18n('configuration.newSource', 'New Source'), click: $component.newSource, css: {disabled: !$component.canCreateSource()}">
 						</span>
 					</div>
 				</div>
@@ -39,7 +39,7 @@
 					</div>
 				</div>
 				<div data-bind="if:available==false">
-					<div class="error" data-bind="text:xhr.statusText"></div>
+					<div class="error">Application Not Available</div>
 				</div>
 				<table data-bind="if:$component.sources().length > 0" class="configureSourceTable">
 					<thead>
@@ -115,17 +115,17 @@
 					<div class="configuration__padded">
 						<a href="#" class="btn btn-sm btn-primary" data-bind="click: clearLocalStorageCache, text:ko.i18n('configuration.buttons.clearConfigurationCache', 'Clear Configuration Cache')"></a>
 					</div>
-					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.hasPageAccess">
+					<div class="configuration__padded" data-bind="if: $component.hasPageAccess">
 						<a href="#/roles" class="btn btn-sm btn-primary configuration__manage-btn" data-bind="css: { disabled: !canReadRoles() }">
 							<span data-bind="text:ko.i18n('configuration.buttons.managePermissions', 'Manage Permissions')"></span>
 						</a>
 					</div>
-					<div class="configuration__padded" data-bind="if: config.userAuthenticationEnabled && $component.canImport">
+					<div class="configuration__padded" data-bind="if: $component.canImport">
 						<a href="#/import" class="btn btn-sm btn-primary configuration__import-btn">
 							<span data-bind="text:ko.i18n('configuration.buttons.importUsers', 'Import Users from LDAP/AD')"></span>
 						</a>
 					</div>
-					<div class="configuration__padded" data-bind="if: !config.userAuthenticationEnabled || $component.canManageTags">
+					<div class="configuration__padded" data-bind="if: $component.canManageTags">
 						<a href="#/tag-management" class="btn btn-sm btn-primary">
 							<span data-bind="text:ko.i18n('configuration.buttons.tagManagement', 'Tag Management')"></span>
 						</a>
@@ -145,5 +145,5 @@
 		</div>
 </div>
 
-<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.hasPageAccess"></access-denied>
+<access-denied params="isPermitted: $component.hasPageAccess"></access-denied>
 

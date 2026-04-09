@@ -27,8 +27,8 @@ define([
             this.loading = ko.observable();
             this.tableOptions = commonUtils.getTableOptions('L');
             this.isAuthenticated = authApi.isAuthenticated;
-            this.canRead = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedReadRoles(); });
-            this.canCreate = ko.pureComputed(() => { return this.isAuthenticated() && authApi.isPermittedCreateRole(); });
+            this.canRead = ko.pureComputed(() => { return authApi.isPermittedReadRoles(); });
+            this.canCreate = ko.pureComputed(() => { return authApi.isPermittedCreateRole(); });
         }
 
         onPageCreated() {

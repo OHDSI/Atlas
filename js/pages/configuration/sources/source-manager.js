@@ -100,11 +100,7 @@ define([
       this.appInitializationStatus = sharedState.appInitializationStatus;
 
       this.hasAccess = ko.pureComputed(() => {
-        if (!config.userAuthenticationEnabled) {
-          return false;
-        } else {
-          return this.isAuthenticated() && authApi.isPermittedEditConfiguration();
-        }
+        return authApi.isPermittedEditConfiguration();
       });
 
       this.canReadSource = ko.pureComputed(() => {

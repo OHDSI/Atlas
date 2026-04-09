@@ -119,7 +119,8 @@ define([
             }
             const roleForImport = parseJsonResult.roles[0];
 
-            if (!this.canEditRole() && this.roleName() !== roleForImport.role) {
+            const importedRoleName = roleForImport.name;
+            if (!this.canEditRole() && this.roleName() !== importedRoleName) {
                 this.validationErrors("You don't have enough privileges to change role name.");
                 this.isJSONValid(false);
                 return;
@@ -155,7 +156,7 @@ define([
             if (jsonString.length > 0 && this.isJSONValid()) {
                 const role = JSON.parse(jsonString);
 
-                this.roleName(role.role);
+                this.roleName(role.name);
                 this.userItems().forEach(userItem => {
                     const isUserPartOfTheRole = role.users.some(user => user.id === userItem.login);
                     userItem.isRoleUser(isUserPartOfTheRole);

@@ -31,7 +31,7 @@ define([
 	}
 
 	function isPermittedList() {
-		return AuthAPI.isPermitted('read:pathway');
+		return true; // anyone can list
 	}
 
 	function isPermittedLoad(id) {

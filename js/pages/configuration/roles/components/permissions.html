@@ -14,7 +14,7 @@
                         ],
                         columns: [
                                 { title: ko.i18n('columns.included', 'Included'), class:'text-center', render: function() { return renderCheckbox('isRolePermission', $component.canEditRolePermissions()); } },
-                                { title: ko.i18n('columns.permission', 'Permission'), data: 'permission' },
+                                { title: ko.i18n('columns.permission', 'Permission'), data: 'value' },
                                 { title: ko.i18n('columns.description', 'Description'), data: 'description' }
                         ],
                         language: ko.i18n('datatable.language')

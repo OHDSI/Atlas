@@ -56,7 +56,7 @@ define(['knockout',
 				this.loading = ko.observable();
 				this.providers = ko.observable();
 				this.isAuthenticated = authApi.isAuthenticated;
-				this.canImport = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedImportUsers());
+				this.canImport = ko.pureComputed(() => authApi.isPermittedImportUsers());
 				this.hasMultipleProviders = ko.pureComputed(() => this.providers() && !!this.providers().ldapUrl && !!this.providers().adUrl);
 				this.hasMultipleProviders.subscribe((newValue) => {
 					this.wizardStep(newValue ? this.WIZARD_STEPS.PROVIDERS : this.WIZARD_STEPS.MAPPING);
@@ -199,7 +199,7 @@ define(['knockout',
 					roleGroups: this.rolesMapping().map(m => ({
 						role: {
 							id: m.id,
-							role: m.role,
+							name: m.name,
 						},
 						groups: m.groups,
 					})),
@@ -244,8 +244,8 @@ define(['knockout',
 				this.selectedUser(data);
 				this.selectedRoles(this.roles().filter(role => !role.defaultImported).map(r => ({
 					...r,
-					selected: ko.observable(data.roles().find(role => role.role === r.role)),
-				})));
+					selected: ko.observable(data.roles().find(role => role.name === r.name)),
+				}))); 
 				this.isAtlasRolesDialog(true);
 			}
 
@@ -254,7 +254,7 @@ define(['knockout',
 			}
 
 			renderRoles(data, type, row) {
-				const label = (row && row.roles && row.roles().length > 0) ? row.roles().map(role => role.role).sort().join(", ") : 'No roles';
+				const label = (row && row.roles && row.roles().length > 0) ? row.roles().map(role => role.name).sort().join(", ") : 'No roles';
 				return '<span data-bind="click: function(d){ $component.onUsersRowClick(d) }, css: $component.linkClasses">' + label + '</span>';
 			}
 
@@ -301,9 +301,9 @@ define(['knockout',
 			setRoles() {
 				if (this.selectedUser()) {
 					this.selectedUser().roles(this.selectedRoles().filter(r => r.selected()).map(r => ({
-						role: r.role,
+						role: r.name,
 						id: r.id,
-					})));
+					}))); 
 					this.usersList.valueHasMutated();
 				}
 				this.closeRolesModal();

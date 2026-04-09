@@ -19,9 +19,9 @@ define([
 		const PERMISSION_ID_REGEX = /:[0-9]+:/;
 		const roleJSONSchema = {
 			"type": "object",
-			"required": ["role"],
+			"required": ["name"],
 			"properties": {
-				"role": {
+				"name": {
 					"type": "string",
 				},
 				"users": {
@@ -92,8 +92,8 @@ define([
 		}
 
 		const parseRole = function (existingRoles, role, userItems, permissionItems) {
-			if (existingRoles.find(erole => erole.role === role.role)) {
-				throw new Error(`Role "${role.role}" already exists`);
+			if (existingRoles.find(erole => erole.name === role.name)) {
+				throw new Error(`Role "${role.name}" already exists`);
 			}
 
 			const users = this.reduceArray(role.users, 'id', userItems);
@@ -122,8 +122,8 @@ define([
 		}
 
 		const fixRole = function fixRole(roles, role, type) {
-			const r = roles.find(r => r.role === role.role);
-			const newRole = { role: r.role };
+			const r = roles.find(r => r.name === role.name);
+			const newRole = { name: r.name };
 			if (type === 'jsonIssues') {
 				Object.assign(newRole, {
 					users: r.users.available.map(u => ({ id: u.login })),

@@ -253,6 +253,13 @@ define(function(require, exports) {
         var authz = permissions().pathwayAccess;
         return authz[pathwayId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
     }
+
+    var getSourceGrant = function(id) {
+        var sourceId = +id; // force to numeric
+        var authz = permissions().sourceAccess;
+        return authz[sourceId] || []; // source grants only have access types in their grant.
+    }
+
     function base64urldecode(arg) {
         var s = arg;
         s = s.replace(/-/g, '+'); // 62nd char of encoding
@@ -374,11 +381,11 @@ define(function(require, exports) {
     }
 
     var isPermittedGenerateCohort = function(cohortId, sourceKey) {
-        return true; // TODO: check source canWrite()
+        return hasSourceAccess(sourceKey, "WRITE");
     }
 
     var isPermittedReadCohortReport = function(cohortId, sourceKey) {
-        return true; // TODO: check source canRead || canWrite
+        return hasSourceAccess(sourceKey);
     }
 
     var isPermittedReadJobs = function() {
@@ -386,7 +393,7 @@ define(function(require, exports) {
     }
 
     var isPermittedEditConfiguration = function() {
-        return isPermitted('admin'); //TODO: everyone can view config, just need specific perms to make specific changes.
+        return true; // everyone can view config, just need specific perms to make specific changes.
     }
 
     var isPermittedCreateSource = function() {
@@ -394,15 +401,15 @@ define(function(require, exports) {
     }
 
     var isPermittedAccessSource = function(key) {
-        return true; // TODO: check source canRead || canWrite;
+        return hasSourceAccess(key); 
     }
 
     var isPermittedReadSource = function(key) {
-        return true; // TODO: check source canRead
+        return hasSourceAccess(key);
     }
 
     var isPermittedCheckSourceConnection = function(key) {
-      return isPermitted('source:connection:' + key + ':get');
+      return hasSourceAccess(key) || isPermitted('admin:source');
     }
 
     var isPermittedEditSource = function(key) {
@@ -414,31 +421,25 @@ define(function(require, exports) {
     }
 
     var isPermittedReadRoles = function() {
-        return true; // TODO: anyone should be able to list roles
+        return true; // anyone should be able to list roles
     }
     var isPermittedReadRole = function (roleId) {
-        var permitted =
-                isPermitted('role:' + roleId + ':get') &&
-                isPermitted('permission:get') &&
-                isPermitted('role:' + roleId + ':permissions:get') &&
-                isPermitted('user:get') &&
-                isPermitted('role:' + roleId + ':users:get');
-        return permitted;
+        return isPermitted('admin:security');
     }
     var isPermittedEditRole = function(roleId) {
-        return isPermitted('role:' + roleId + ':put');
+        return isPermitted('admin:security');
     }
     var isPermittedCreateRole = function() {
-        return isPermitted('role:post');
+        return isPermitted('admin:security');
     }
     var isPermittedDeleteRole = function(roleId) {
-        return isPermitted('role:' + roleId + ':delete');
+        return isPermitted('admin:security');
     }
     var isPermittedEditRoleUsers = function(roleId) {
-        return isPermitted('admin:security') && isPermitted('role:' + roleId + ':users:*:delete');
+        return isPermitted('admin:security');
     }
     var isPermittedEditRolePermissions = function(roleId) {
-        return isPermitted('role:' + roleId + ':permissions:*:put') && isPermitted('role:' + roleId + ':permissions:*:delete');
+        return isPermitted('admin:security');
     }
     const isPermittedGetAllNotifications = function() {
         return isPermitted('notifications:get');
@@ -457,7 +458,7 @@ define(function(require, exports) {
     };
 
     const isPermittedImportUsers = function() {
-        return isPermitted('user:import:post') && isPermitted('user:import:*:post');
+        return isPermitted('admin:security');
     }
 
     const hasSourceAccess = function (sourceKey, accessType = "READ") {
@@ -477,7 +478,7 @@ define(function(require, exports) {
     }
 
     const isPermittedClearServerCache = function (sourceKey) {
-        return isPermitted(`cache:clear:get`);
+        return isPermitted('admin:cache');
     };
 
     const isPermittedTagsManagement = function () {
@@ -485,7 +486,7 @@ define(function(require, exports) {
     };
 
     const isPermittedConceptSetAnnotationsDelete = function (conceptSetId) {
-        return isPermitted('conceptset:' + conceptSetId + ':annotation:*:delete');
+        return isPermittedUpdateConceptset(conceptSetId);
     };    
 
     const isPermittedRunAs = () => isPermitted('user:runas:post');
@@ -555,6 +556,7 @@ define(function(require, exports) {
         getFAGrant: getFAGrant,
         getIRGrant: getIRGrant,
         getPathwayGrant: getPathwayGrant,
+        getSourceGrant: getSourceGrant,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
         isPermittedReadConceptset: isPermittedReadConceptset,

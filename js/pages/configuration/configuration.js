@@ -70,51 +70,26 @@ define([
       );
       this.hasSourceAccess = authApi.hasSourceAccess;
       this.hasPageAccess = ko.pureComputed(() => {
-        return (
-          (config.userAuthenticationEnabled &&
-            this.isAuthenticated() &&
-            authApi.isPermittedEditConfiguration()) ||
-          !config.userAuthenticationEnabled
-        );
+        return (authApi.isPermittedEditConfiguration());
       });
       this.canReadRoles = ko.pureComputed(() => {
-        return this.isAuthenticated() && authApi.isPermittedReadRoles();
+        return authApi.isPermittedReadRoles();
       });
       this.canCreateSource = ko.pureComputed(() => {
-        if (!config.userAuthenticationEnabled) {
-          return false;
-        } else {
-          return (
-            config.userAuthenticationEnabled &&
-            this.isAuthenticated() &&
-            authApi.isPermittedCreateSource()
-          );
-        }
+        return authApi.isPermittedCreateSource();
       });
       this.canChangePriority = ko.pureComputed(() => {
-        if (!config.userAuthenticationEnabled) {
-          return false;
-        } else {
-          return (
-            config.userAuthenticationEnabled &&
-            this.isAuthenticated() &&
-            authApi.isPermittedEditSourcePriority()
-          );
-        }
+        authApi.isPermittedEditSourcePriority()
       });
 
       this.canImport = ko.pureComputed(
-        () => this.isAuthenticated() && authApi.isPermittedImportUsers()
+        () => authApi.isPermittedImportUsers()
       );
       this.canManageTags = ko.pureComputed(
-        () => this.isAuthenticated() && authApi.isPermittedTagsManagement()
+        () => authApi.isPermittedTagsManagement()
       );
       this.canClearServerCache = ko.pureComputed(() => {
-        return (
-          config.userAuthenticationEnabled &&
-          this.isAuthenticated() &&
-          authApi.isPermittedClearServerCache()
-        );
+        return authApi.isPermittedClearServerCache()
       });
 
       this.intervalId = PollService.add({
@@ -161,41 +136,17 @@ define([
     }
 
     canReadSource(source) {
-      if (!config.userAuthenticationEnabled) {
-        return false;
-      } else {
-        return (
-          config.userAuthenticationEnabled &&
-          this.isAuthenticated() &&
-          authApi.isPermittedReadSource(source.sourceKey)
-        );
-      }
+      return authApi.isPermittedReadSource(source.sourceKey);
     }
 
     canCheckConnection(source) {
-      if (!config.userAuthenticationEnabled) {
-        return false;
-      } else {
-        return (
-          config.userAuthenticationEnabled &&
-          this.isAuthenticated() &&
-          authApi.isPermittedCheckSourceConnection(source.sourceKey)
-        );
-      }
+      return authApi.isPermittedCheckSourceConnection(source.sourceKey);
     }
 
     canRefreshSourceCache(source) {
-      if (!config.userAuthenticationEnabled) {
-        return false;
-      } else {
-        return (
-          config.userAuthenticationEnabled &&
-          this.isAuthenticated() &&
-          authApi.hasSourceAccess(source.sourceKey) &&
-          source.hasResults &&
-          (source.hasVocabulary || source.hasCDM)
-        );
-      }
+      return authApi.hasSourceAccess(source.sourceKey) &&
+        source.hasResults &&
+        (source.hasVocabulary || source.hasCDM);
     }
 
     clearLocalStorageCache() {
