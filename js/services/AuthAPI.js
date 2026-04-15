@@ -329,20 +329,16 @@ define(function(require, exports) {
         return isPermittedUpdateConceptset(id);
     };
 
-    var isPermittedEditSourcePriortiy = function() {
-      return isPermitted('admin:source')
-    };
-
     var isPermittedViewCdmResults = function () {
         return true; // TODO: Do we need general view permission + source??
     };
 
     var isPermittedViewProfiles = function (sourceKey) {
-      return isPermitted(`${sourceKey}:person:*:get`);
+      return hasSourceAccess(sourceKey);
     };
 
     var isPermittedViewProfileDates = function() {
-      return isPermitted('*:person:*:get:dates');
+      return hasSourceAccess(sourceKey);
     };
 
     var isPermittedReadCohorts = function() {
@@ -393,7 +389,7 @@ define(function(require, exports) {
     }
 
     var isPermittedEditConfiguration = function() {
-        return true; // everyone can view config, just need specific perms to make specific changes.
+        return isPermitted('admin:source'); // everyone can view config, just need specific perms to make specific changes.
     }
 
     var isPermittedCreateSource = function() {
@@ -489,7 +485,7 @@ define(function(require, exports) {
         return isPermittedUpdateConceptset(conceptSetId);
     };    
 
-    const isPermittedRunAs = () => isPermitted('user:runas:post');
+    const isPermittedRunAs = () => isPermitted('admin:run-as');
 
     const isPermittedViewDataSourceReport = sourceKey => hasSourceAccess(sourceKey);
 
@@ -575,7 +571,6 @@ define(function(require, exports) {
         isPermittedReadJobs: isPermittedReadJobs,
 
         isPermittedEditConfiguration: isPermittedEditConfiguration,
-        isPermittedEditSourcePriority: isPermittedEditSourcePriortiy,
 
         isPermittedReadRoles: isPermittedReadRoles,
         isPermittedReadRole: isPermittedReadRole,

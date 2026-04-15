@@ -116,24 +116,18 @@ define(
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
 
+					const exp = authApi.tokenExpirationDate();
+					const now = new Date();
+
+					if (!exp || exp <= now) { authApi.resetAuthParams(); }
+
 					try{
+						await authApi.loadUserInfo();
 						await i18nService.getAvailableLocales();
 					} catch (e) {
 						reject(e.message);
 					}
 
-					if (config.userAuthenticationEnabled) {
-						try {
-							// Routes to welcome are part of auth flow, loadUserInfo in this case is unnecessary and fails. 
-							// More importantly it can trigger an infinite loop when skipLoginEnabled is enabled.
-							if (!window.location.href.includes("/welcome/")) {
-								await authApi.loadUserInfo();
-							}
-						} catch (e) {
-							reject(e.message);
-						}
-
-					}
 					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());

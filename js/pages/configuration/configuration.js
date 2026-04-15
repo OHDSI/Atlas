@@ -70,7 +70,7 @@ define([
       );
       this.hasSourceAccess = authApi.hasSourceAccess;
       this.hasPageAccess = ko.pureComputed(() => {
-        return (authApi.isPermittedEditConfiguration());
+        return true;
       });
       this.canReadRoles = ko.pureComputed(() => {
         return authApi.isPermittedReadRoles();
@@ -79,7 +79,7 @@ define([
         return authApi.isPermittedCreateSource();
       });
       this.canChangePriority = ko.pureComputed(() => {
-        authApi.isPermittedEditSourcePriority()
+        return authApi.isPermittedEditConfiguration();
       });
 
       this.canImport = ko.pureComputed(
@@ -135,8 +135,8 @@ define([
       this.loading(false);
     }
 
-    canReadSource(source) {
-      return authApi.isPermittedReadSource(source.sourceKey);
+    canEditSource(source) {
+      return authApi.isPermittedEditSource(source.sourceKey);
     }
 
     canCheckConnection(source) {

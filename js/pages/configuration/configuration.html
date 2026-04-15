@@ -62,8 +62,8 @@
 								<span data-bind="text:error"></span>
 							</td>
 							<td>
-								<div data-bind="if:$component.canReadSource($data)"><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></div>
-								<div data-bind="ifnot:$component.canReadSource($data)"><span data-bind="text:sourceName + ' [' + sourceKey + ']'"></span></div>
+								<div data-bind="if:$component.canEditSource($data)"><a href="#" data-bind="text:sourceName + ' [' + sourceKey + ']', click: $component.selectSource"></a></div>
+								<div data-bind="ifnot:$component.canEditSource($data)"><span data-bind="text:sourceName + ' [' + sourceKey + ']'"></span></div>
 							</td>
 							<td>
 								<div data-bind="foreach:daimons">

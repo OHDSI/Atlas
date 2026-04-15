@@ -35,7 +35,6 @@ define([
   ) {
 
 
-  //todo yar should we translate daimons?
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -100,11 +99,7 @@ define([
       this.appInitializationStatus = sharedState.appInitializationStatus;
 
       this.hasAccess = ko.pureComputed(() => {
-        return authApi.isPermittedEditConfiguration();
-      });
-
-      this.canReadSource = ko.pureComputed(() => {
-        return authApi.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId();
+        return true;
       });
 
       this.isDeletePermitted = ko.pureComputed(() => {
@@ -112,7 +107,7 @@ define([
       });
 
       this.canEdit = ko.pureComputed(() => {
-        return authApi.isPermittedEditSource(this.selectedSourceId());
+        return authApi.isPermittedEditSource(this.selectedSource() && this.selectedSource().key());
       });
 
       this.isNameCorrect = ko.computed(() => {

@@ -3,7 +3,7 @@
 	<loading data-bind="visible:loading()"></loading>
 	<div data-bind="visible: !loading()">
 			<!-- ko if: selectedSource() != null -->
-			<div data-bind="if:$component.canReadSource">
+			<div data-bind="if:$component.canEdit">
 					<div class="asset-heading">
 						<div class="input-group">
 							<input type="text" class="form-control"
@@ -193,7 +193,7 @@
 					</div>
 			</div>
 
-			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canReadSource"></access-denied>
+			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canEdit"></access-denied>
 			<!-- /ko -->
 	</div>
 </div>
