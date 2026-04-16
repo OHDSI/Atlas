@@ -36,9 +36,7 @@ define([
 			initialEventExpression: design.initialEventExpression,
 			censoringEventExpression: design.censoringEventExpression,
 		});
-		let promise = httpService.doPost(servicePath, design).then(res => res.data);
-		promise.then(authApi.refreshToken);
-		return promise;
+		return authApi.executeWithRefresh(httpService.doPost(servicePath, design).then(res => res.data));
 	}
 
 	function exists(name, id) {
@@ -58,15 +56,11 @@ define([
 	}
 
 	function copy(id) {
-		let promise = httpService.doPost(`${servicePath}/${id}`).then(res => res.data);
-		promise.then(authApi.refreshToken);
-		return promise;
+		return authApi.executeWithRefresh(httpService.doPost(`${servicePath}/${id}`).then(res => res.data));
 	}
 
 	function del(id) {
-		return httpService
-			.doDelete(`${servicePath}/${id}`)
-			.then(res => res.data);
+		return authApi.executeWithRefresh(httpService.doDelete(`${servicePath}/${id}`).then(res => res.data));
 	}
 
 	function getVersions(id) {

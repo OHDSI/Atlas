@@ -254,6 +254,12 @@ define(function(require, exports) {
         return authz[pathwayId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
     }
 
+    var getReusableGrant = function(id) {
+        var reusaableId = +id; // force to numeric
+        var authz = permissions().reusableAccess;
+        return authz[reusaableId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }    
+
     var getSourceGrant = function(id) {
         var sourceId = +id; // force to numeric
         var authz = permissions().sourceAccess;
@@ -552,6 +558,7 @@ define(function(require, exports) {
         getFAGrant: getFAGrant,
         getIRGrant: getIRGrant,
         getPathwayGrant: getPathwayGrant,
+        getReusableGrant: getReusableGrant,
         getSourceGrant: getSourceGrant,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
