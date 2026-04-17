@@ -65,11 +65,73 @@ define(function (require) {
     }
 
     function checkPermissionForAssignProtectedTag(assetType, assetId) {
-        return authService.isPermitted(`${assetType}:${assetId}:protectedtag:post`);
+        var grant = authService.NONE_ENTITY_GRANT;
+        var perm = null;
+        switch (assetType) {
+            case ASSET_TYPE.COHORT_DEFINITION:
+                grant = authService.getCohortGrant(assetId);
+                perm = 'write:cohort-definition';
+                break;
+            case ASSET_TYPE.CONCEPT_SET:
+                grant = authService.getConceptSetGrant(assetId);
+                perm = 'write:conceptset';
+                break;
+            case ASSET_TYPE.COHORT_CHARACTERIZATION:
+                grant = authService.getCCGrant(assetId);
+                perm = 'write:cohort-characterization';
+                break;
+            case ASSET_TYPE.PATHWAY_ANALYSIS:
+                grant = authService.getPathwayGrant(assetId);
+                perm = 'write:pathway';
+                break;
+            case ASSET_TYPE.INCIDENCE_RATE:
+                grant = authService.getIRGrant(assetId);
+                perm = 'write:incidence';
+                break;
+            case ASSET_TYPE.REUSABLE:
+                grant = authService.getReusableGrant(assetId);
+                perm = 'write:reusable';
+                break;
+            default:
+                return false;
+        }
+
+        return (grant.isOwner || authService.isPermitted(perm) || authService.checkAccess('WRITE', grant.accessTypes)) && authService.isPermitted("admin:tags");
     }
 
     function checkPermissionForUnassignProtectedTag(assetType, assetId, tagId) {
-        return authService.isPermitted(`${assetType}:${assetId}:protectedtag:${tagId}:delete`);
+        var grant = authService.NONE_ENTITY_GRANT;
+        var perm = null;
+        switch (assetType) {
+            case ASSET_TYPE.COHORT_DEFINITION:
+                grant = authService.getCohortGrant(assetId);
+                perm = 'write:cohort-definition';
+                break;
+            case ASSET_TYPE.CONCEPT_SET:
+                grant = authService.getConceptSetGrant(assetId);
+                perm = 'write:conceptset';
+                break;
+            case ASSET_TYPE.COHORT_CHARACTERIZATION:
+                grant = authService.getCCGrant(assetId);
+                perm = 'write:cohort-characterization';
+                break;
+            case ASSET_TYPE.PATHWAY_ANALYSIS:
+                grant = authService.getPathwayGrant(assetId);
+                perm = 'write:pathway';
+                break;
+            case ASSET_TYPE.INCIDENCE_RATE:
+                grant = authService.getIRGrant(assetId);
+                perm = 'write:incidence';
+                break;
+            case ASSET_TYPE.REUSABLE:
+                grant = authService.getReusableGrant(assetId);
+                perm = 'write:reusable';
+                break;
+            default:
+                return false;
+        }
+
+        return (grant.isOwner || authService.isPermitted(perm) || authService.checkAccess('WRITE', grant.accessTypes)) && authService.isPermitted("admin:tags");
     }
 
     async function getAssignmentPermissions() {

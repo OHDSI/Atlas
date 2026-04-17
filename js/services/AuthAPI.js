@@ -260,6 +260,18 @@ define(function(require, exports) {
         return authz[reusaableId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
     }    
 
+    var getCohortGrant = function(id) {
+        var cohortId = +id; // force to numeric
+        var authz = permissions().cohortDefinitionAccess;
+        return authz[cohortId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }
+
+    var getConceptSetGrant = function(id) {
+        var csId = +id; // force to numeric
+        var authz = permissions().conceptSetAccess;
+        return authz[csId] || NONE_ENTITY_GRANT; // assign a falsy entity grant if not found
+    }
+
     var getSourceGrant = function(id) {
         var sourceId = +id; // force to numeric
         var authz = permissions().sourceAccess;
@@ -444,16 +456,16 @@ define(function(require, exports) {
         return isPermitted('admin:security');
     }
     const isPermittedGetAllNotifications = function() {
-        return isPermitted('notifications:get');
+        return isAuthenticated();
     };
     const isPermittedGetViewedNotifications = function() {
-        return isPermitted('notifications:viewed:get');
+        return isAuthenticated();
     };
     const isPermittedPostViewedNotifications = function() {
-        return isPermitted('notifications:viewed:post');
+        return isAuthenticated();
     };
     const isPermittedGetExecutionService = function() {
-        return isPermitted('executionservice:*:get');
+        return true;
     };
     const isPermittedGetSourceDaimonPriority = function() {
         return true; // isPermitted('source:daimon:priority:get');  //TODO: shouldn't everyone be able to lookup source daimon priority? 
@@ -559,6 +571,8 @@ define(function(require, exports) {
         getIRGrant: getIRGrant,
         getPathwayGrant: getPathwayGrant,
         getReusableGrant: getReusableGrant,
+        getCohortGrant: getCohortGrant,
+        getConceptSetGrant: getConceptSetGrant,
         getSourceGrant: getSourceGrant,
 
         isPermittedCreateConceptset: isPermittedCreateConceptset,
