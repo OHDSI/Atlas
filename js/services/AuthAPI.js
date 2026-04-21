@@ -169,7 +169,7 @@ define(function(require, exports) {
             resetAuthParams();
             break;
         case 403:
-            refreshToken();
+            loadUserInfo();
             break;
         }
     }
@@ -535,7 +535,16 @@ define(function(require, exports) {
         const result = await httpPromise;
         await loadUserInfo();
         return result;
-    }
+    };
+
+    // Start periodic permissions polling on module load
+    // Polls regardless of auth status (anonymous users have context too)
+    (function() {
+        const interval = (config && config.permissionsRefreshInterval) || 60000; // ms, default 60s
+        setInterval(() => {
+            loadUserInfo().catch(err => console.warn('Permissions refresh failed:', err));
+        }, interval);
+    })();
 
     var api = {
         AUTH_PROVIDERS: AUTH_PROVIDERS,

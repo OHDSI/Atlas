@@ -13,6 +13,7 @@ define(function () {
   appConfig.enablePermissionManagement = true; // allow UI to assign read/write permissions to entities
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
+  appConfig.permissionsRefreshInterval = 60000; // poll for permission updates every 60 seconds
   appConfig.cohortComparisonResultsEnabled = false;
   appConfig.userAuthenticationEnabled = false;
   appConfig.enableSkipLogin = false; // automatically opens login window when user is not authenticated
