@@ -122,10 +122,20 @@ define(function (require, exports) {
 		return infoPromise;
 	}
 
-	function getReport(cohortDefinitionId, sourceKey, modeId, ccGenerateId) {
-		const urlGetReportDemographic = `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}&ccGenerateId=${ccGenerateId}`
+	function getInclusionReport(cohortDefinitionId, sourceKey) {
 		var reportPromise = $.ajax({
-			url: modeId !== 2 ? `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}?mode=${modeId || 0}` : urlGetReportDemographic,
+			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}/inclusion`,
+			error: function (error) {
+				console.log("Error: " + error);
+				authApi.handleAccessDenied(error);
+			}
+		});
+		return reportPromise;
+	}
+
+	function getDemographicReport(cohortDefinitionId, sourceKey, ccGenerateId) {
+		var reportPromise = $.ajax({
+			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}/demographics?ccGenerateId=${ccGenerateId}`,
 			error: function (error) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);
@@ -199,7 +209,8 @@ define(function (require, exports) {
 		translateSql,
 		generate,
 		getInfo,
-		getReport,
+		getInclusionReport,
+		getDemographicReport,
 		runDiagnostics,
 		cancelGenerate,
 		getCohortCount,

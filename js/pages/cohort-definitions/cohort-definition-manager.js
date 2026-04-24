@@ -1057,6 +1057,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			if (source) {
 				switch (source.status()) {
 					case 'COMPLETE':
+					case 'ERROR':
 						return false;
 						break;
 					case 'n/a':
@@ -1071,7 +1072,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 		}
 
 		isCancelDisabled(source) {
-			return this.isSourceStopping(source)() || (config.userAuthenticationEnabled ? this.isProcessingByAnother(source) : false);
+			return this.isSourceStopping(source)() || (this.isProcessingByAnother(source));
 		}
 
 		isProcessingByAnother(source) {
