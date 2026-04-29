@@ -1,0 +1,23 @@
+js/services/AuthAPI.js
+  341eacc9b13272bc 273-277
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "76401a2906cf75c28e133431997eb754565d78f0",
+  "prompts": {
+    "341eacc9b13272bc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d063384c-002e-436d-aece-82884843b0e5",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "User",
+      "messages": [],
+      "total_additions": 5,
+      "total_deletions": 2,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}
