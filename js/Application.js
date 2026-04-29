@@ -119,7 +119,7 @@ define(
 					const exp = authApi.tokenExpirationDate();
 					const now = new Date();
 
-					if (!exp || exp <= now) { authApi.resetAuthParams(); }
+					if (!exp || exp <= now) { authApi.resetAuthParams(); } else { await authApi.refreshToken(); }
 
 					try{
 						await authApi.loadUserInfo();
@@ -132,23 +132,10 @@ define(
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
-					// Add user interaction listener that keeps refreshing the token as long
-					// as the user is active (either moving mouse, navigating with keyboard and/or typing):
-					var userInteractionCount = 0;
-					console.log("Adding user interaction listeners...");
+					// Add user interaction listeners to reset idle timeout
+					// (throttled inside resetIdleTimeout to at most once per minute)
 					["mouseover", "keydown", "focusin"].forEach(eventType => {
-						window.addEventListener(eventType, (event) => {
-							userInteractionCount++;
-							if (userInteractionCount % 30 == 0) {
-								console.log(">>> Checking user token....");
-								userInteractionCount = 0;
-								// Refresh the Atlas token if it is close to expiring:
-								if (authApi.isAuthenticated() && this.timeToExpire() < config.refreshTokenThreshold) {
-									console.log(">>> Token close to expiring. Refreshing user token....");
-									authApi.refreshToken();
-								}
-							}
-						});
+						window.addEventListener(eventType, () => authApi.resetIdleTimeout());
 					});
 
 					resolve();

@@ -168,6 +168,7 @@ define(function () {
   appConfig.enableTaggingSection = false;
 
   appConfig.refreshTokenThreshold = 1000 * 60 * 15; // refresh auth token if it will expire within 15 minutes.
+  appConfig.idleTimeout = 1000 * 60 * 5; // refresh auth token after 5 minutes of user inactivity
 
   return appConfig;
 });

@@ -33,7 +33,7 @@ define([
 			this.conceptSetStore = ConceptSetStore.getStore(ConceptSetStore.sourceKeys().repository);
 			this.currentConceptSet = this.conceptSetStore.current;
 			this.canCreateConceptSet = ko.pureComputed(function () {
-				return ((authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+				return authApi.isPermittedCreateConceptset();
 			});
 			this.tableOptions = commonUtils.getTableOptions('L');
 		}

@@ -37,7 +37,7 @@ define([
       super(params);
       this.activeConceptSet = params.activeConceptSet || sharedState.activeConceptSet;
       this.canCreateConceptSet = ko.pureComputed(function () {
-				return ((AuthAPI.isAuthenticated() && AuthAPI.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+				return AuthAPI.isPermittedCreateConceptset();
 			});
       this.isActive = params.isActive || ko.observable(true);
       this.onSubmit = params.onSubmit;

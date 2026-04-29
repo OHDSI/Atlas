@@ -38,7 +38,7 @@ define(['knockout', 'appConfig', 'services/AuthAPI', 'services/ConceptSet', 'com
         );
         this.isNameUnique = ko.observable(false);
 
-        this.canCreate = ko.pureComputed(() => (authApi.isAuthenticated() && authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+        this.canCreate = ko.pureComputed(() => authApi.isPermittedCreateConceptset());
         this.canSave = ko.pureComputed(() => this.canCreate() && this.conceptSetName() && this.conceptSetName().length > 0 && this.isNameUnique());
       }
 

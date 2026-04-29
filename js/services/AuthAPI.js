@@ -159,7 +159,7 @@ define(function(require, exports) {
         cookie.setField("bearerToken", newValue);
     });
 
-    var isAuthenticated = ko.computed(() => {
+    var isAuthenticated = ko.pureComputed(() => {
         return !!token();
     });
 
@@ -320,6 +320,88 @@ define(function(require, exports) {
         return refreshTokenPromise;
     }
 
+    // Token refresh timer management
+    var tokenRefreshTimeoutId = null;
+    var idleTimeoutId = null;
+    var lastIdleReset = 0;
+
+    /**
+     * Schedules a token refresh to occur at (tokenExpiration - refreshTokenThreshold).
+     * If already within the threshold (but not expired), refreshes immediately.
+     * If token is expired, does nothing (resetAuthParams handles that case).
+     */
+    var scheduleTokenRefresh = function() {
+        if (tokenRefreshTimeoutId) {
+            clearTimeout(tokenRefreshTimeoutId);
+            tokenRefreshTimeoutId = null;
+        }
+
+        if (!isAuthenticated()) {
+            return;
+        }
+
+        var timeToExpire = tokenExpirationDate() - new Date();
+        var delay = timeToExpire - config.refreshTokenThreshold;
+
+        if (delay > 0) {
+            // Schedule refresh for when we enter the threshold window
+            tokenRefreshTimeoutId = setTimeout(function() {
+                refreshToken();
+            }, delay);
+            console.log('Token refresh scheduled in ' + Math.round(delay / 1000 / 60) + ' minutes');
+        } else if (timeToExpire > 0) {
+            // Within threshold but not expired - refresh immediately
+            console.log('Token within refresh threshold, refreshing now');
+            refreshToken();
+        }
+        // If timeToExpire <= 0, token is expired - do nothing, resetAuthParams will handle it
+    };
+
+    /**
+     * Resets the idle timeout timer. When the idle timeout fires, the token is refreshed.
+     * Throttled to only reset at most once per minute unless force=true.
+     * @param {boolean} force - If true, bypasses the throttle check
+     */
+    var resetIdleTimeout = function(force) {
+        var now = Date.now();
+
+        // Throttle: only reset if more than 1 minute since last reset (unless forced)
+        if (!force && (now - lastIdleReset < 60000)) {
+            return;
+        }
+
+        lastIdleReset = now;
+
+        if (idleTimeoutId) {
+            clearTimeout(idleTimeoutId);
+            idleTimeoutId = null;
+        }
+
+        if (!isAuthenticated()) {
+            return;
+        }
+
+        idleTimeoutId = setTimeout(function() {
+            console.log('User idle timeout reached, refreshing token');
+            refreshToken();
+        }, config.idleTimeout);
+    };
+
+    /**
+     * Clears all refresh timers. Called when user logs out.
+     */
+    var clearAllRefreshTimers = function() {
+        if (tokenRefreshTimeoutId) {
+            clearTimeout(tokenRefreshTimeoutId);
+            tokenRefreshTimeoutId = null;
+        }
+        if (idleTimeoutId) {
+            clearTimeout(idleTimeoutId);
+            idleTimeoutId = null;
+        }
+        lastIdleReset = 0;
+    };
+
     var isPermittedReadConceptset = function(conceptsetId) {
         var id = +conceptsetId; // force to numeric
         var authz = permissions().conceptSetAccess;
@@ -478,7 +560,7 @@ define(function(require, exports) {
     const hasSourceAccess = function (sourceKey, accessType = "READ") {
         var sourceId = (sharedState.sources().find(s => s.sourceKey == sourceKey) || {}).sourceId;
         
-        if (!sourceId) return false; // source not found
+        if (!sourceId || !permissions()) return false; // source not found
 
         var authz = permissions().sourceAccess;
         var accessTypes = authz[sourceId] || []; // default to no access
@@ -511,9 +593,13 @@ define(function(require, exports) {
 
 	const setAuthParams = (jwt) => {
         !!jwt && token(jwt);
+        // Start refresh timers when token is set
+        scheduleTokenRefresh();
+        resetIdleTimeout(true); // force=true to bypass throttle on auth
     };
 
     var resetAuthParams = function () {
+        clearAllRefreshTimers();
         token(null);
         subject(null);
         permissions(null);
@@ -564,6 +650,7 @@ define(function(require, exports) {
         getAuthorizationHeader: getAuthorizationHeader,
         handleAccessDenied: handleAccessDenied,
         refreshToken: refreshToken,
+        resetIdleTimeout: resetIdleTimeout,
 
         isAuthenticated: isAuthenticated,
 		signInOpened: signInOpened,

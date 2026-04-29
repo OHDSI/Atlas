@@ -41,7 +41,7 @@ define([
 			this.loading = params.loading;
 			this.authApi = authApi;
 			this.canCreateConceptSet = ko.computed( () => {
-				return ((this.authApi.isAuthenticated() && this.authApi.isPermittedCreateConceptset()) || !config.userAuthenticationEnabled);
+				return this.authApi.isPermittedCreateConceptset();
 			});
 			this.newConceptSetName = ko.observable();
 			this.saveConceptSetShow = ko.observable();
