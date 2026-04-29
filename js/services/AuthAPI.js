@@ -270,8 +270,11 @@ define(function(require, exports) {
     }
     var refreshToken = function() {
 
-        if (!config.userAuthenticationEnabled) {
-            return Promise.resolve(true); // no-op if userAuthenticationEnabled == false
+        if (!config.userAuthenticationEnabled || authProvider() === AUTH_PROVIDERS.IAP) {
+            // No-op when auth is disabled, or when WebAPI is behind Google IAP
+            // (IAP session is kept alive by the hidden /_gcp_iap/session_refresher iframe;
+            // WebAPI's AtlasGoogleSecurity does not expose /user/refresh).
+            return Promise.resolve(true);
         }
 
         if (!isPromisePending(refreshTokenPromise)) {
