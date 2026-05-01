@@ -122,9 +122,9 @@ define(function (require, exports) {
 		return infoPromise;
 	}
 
-	function getInclusionReport(cohortDefinitionId, sourceKey) {
+	function getInclusionReport(cohortDefinitionId, sourceKey, modeId) {
 		var reportPromise = $.ajax({
-			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}/inclusion`,
+			url: `${config.webAPIRoot}cohortdefinition/${(cohortDefinitionId || '-1')}/report/${sourceKey}/inclusion?mode=${modeId || 0}`,
 			error: function (error) {
 				console.log("Error: " + error);
 				authApi.handleAccessDenied(error);

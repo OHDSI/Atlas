@@ -41,7 +41,7 @@ define([
 
 		async loadReport() {
 			this.isLoading(true);
-			const report = await CohortDefinitionService.getInclusionReport(this.cohortId(), this.source().sourceKey);
+			const report = await CohortDefinitionService.getInclusionReport(this.cohortId(), this.source().sourceKey, this.reportType);
 			this.report(report);
 			this.isLoading(false);
 		}
