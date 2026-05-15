@@ -658,9 +658,7 @@ define(['jquery', 'knockout', 'text!./cohort-definition-manager.html',
 			}
 
 			this.isRunning = ko.pureComputed(() => {
-				return this.cohortDefinitionSourceInfo().filter( (info) => {
-					return !(info.status() == "COMPLETE" || info.status() == "n/a");
-				}).length > 0;
+				return this.cohortDefinitionSourceInfo().some((info) => ["PENDING", "RUNNING"].includes(info.status()));
 			});
 
 			this.cohortDefinitionLink = ko.pureComputed(() => {
