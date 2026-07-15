@@ -2,6 +2,7 @@ define(
 	(require, factory) => {
     const { Route } = require('pages/Route');
     const authApi = require('services/AuthAPI');
+    const appConfig = require('appConfig');
 
     function routes(router) {
       return {
@@ -27,6 +28,35 @@ define(
           require([], function () {
             setAuth(token, authClient, false, decodeURIComponent(url));
           });
+        }),
+        '/otc': new Route(() => {
+          const params = router.qs();
+          const otcCode = params.code;
+
+          if (otcCode) {
+            $.ajax({
+              method: 'GET',
+              url: appConfig.webAPIRoot + 'user/login/otc?code=' + encodeURIComponent(otcCode),
+              success: function(data, textStatus, jqXHR) {
+                if (data.jwt) {
+                  authApi.setAuthParams(data.jwt);
+                  authApi.loadUserInfo().then(() => {
+                    document.location = '#/home';
+                  }).catch(err => {
+                    console.error('Failed to load user info:', err);
+                    document.location = '#/home';
+                  });
+                }
+              },
+              error: function(jqXHR, textStatus, errorThrown) {
+                console.error('OAuth token exchange failed:', errorThrown);
+                authApi.signInOpened(true);
+                document.location = '#/home';
+              }
+            });
+          } else {
+            document.location = '#/home';
+          }
         }),
       };
     }
