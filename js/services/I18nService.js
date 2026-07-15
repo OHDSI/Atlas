@@ -20,9 +20,8 @@ define(function(require, exports){
 	}
 
 	function getLocale(locale) {
-
-		return http.doGet(`${config.webAPIRoot}i18n?lang=${locale}`)
-			.then(({data}) => sharedState.localeSettings(data));
+		// Stub: translations will come from UI layer (local resources), not WebAPI
+		return Promise.resolve();
 	}
 
 	async function changeLocale(locale) {
@@ -31,15 +30,19 @@ define(function(require, exports){
 	}
 
 	function getAvailableLocales() {
-
-		return http.doGet(`${config.webAPIRoot}i18n/locales`)
-			.then(({data}) => {
-				sharedState.availableLocales(data);
-				const locale = getCurrentLocale();
-				sharedState.locale(locale);
-				changeLocale(locale);
-				sharedState.locale.subscribe(l => changeLocale(l));
-			});
+		// Return hard-coded English locale instead of fetching from WebAPI
+		// Future: migrate to local i18n resources for Atlas 2.x
+		return Promise.resolve([{
+			code: "en",
+			name: "English",
+			default: true
+		}]).then((data) => {
+			sharedState.availableLocales(data);
+			const locale = getCurrentLocale();
+			sharedState.locale(locale);
+			changeLocale(locale);
+			sharedState.locale.subscribe(l => changeLocale(l));
+		});
 	}
 
 	return {
