@@ -1,4 +1,4 @@
-define(['knockout','components/cohortbuilder/options','components/cohortbuilder/InputTypes/Range','components/cohortbuilder/InputTypes/Text', 'text!./DrugExposureTemplate.html'], function (ko, options, Range, Text, template) {
+define(['knockout','components/cohortbuilder/options','components/cohortbuilder/utils','components/cohortbuilder/InputTypes/Range','components/cohortbuilder/InputTypes/Text', 'text!./DrugExposureTemplate.html'], function (ko, options, utils, Range, Text, template) {
 
 	function DrugExposureViewModel(params) {
 		var self = this;
