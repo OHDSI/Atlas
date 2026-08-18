@@ -19,6 +19,10 @@
 											<i class="fa fa-save"></i></button>
 									<button class="btn btn-primary"  data-bind="click: close, title: ko.i18n('common.close', 'Close')"><i
 													class="fa fa-times"></i></button>
+										<button class="btn btn-primary"
+												data-bind="visible: canEdit() && !isNew(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
+											<i class="fa fa-lock"></i>
+										</button>
 									<button class="btn btn-danger"
 											data-bind="click: $component.delete, enable: canDelete(),
 													   title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
@@ -192,6 +196,15 @@
 							</div>
 					</div>
 			</div>
+
+				<configure-access-modal params="
+					isModalShown: $component.isAccessModalShown,
+					isOwnerFn: $component.isSourceAccessProtectedRole,
+					loadAccessListFn: $component.loadAccessList,
+					grantAccessFn: $component.grantAccess,
+					revokeAccessFn: $component.revokeAccess,
+					loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+				"></configure-access-modal>
 
 			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canEdit"></access-denied>
 			<!-- /ko -->

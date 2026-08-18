@@ -8,12 +8,15 @@ define([
   'services/Vocabulary',
   'assets/ohdsi.util',
   'services/SourceAPI',
+  'services/Permission',
   'services/role',
   'lodash',
   'services/AuthAPI',
   'atlas-state',
   'pages/configuration/const',
+  'components/security/access/const',
   'components/ac-access-denied',
+  'components/security/access/configure-access-modal',
   'less!./source-manager.less',
   'components/heading',
 ],
@@ -27,11 +30,13 @@ define([
     vocabularyProvider,
     ohdsiUtil,
     sourceApi,
+    PermissionService,
     roleService,
     lodash,
     authApi,
     sharedState,
-    constants
+    constants,
+    { entityType }
   ) {
 
 
@@ -97,10 +102,51 @@ define([
       this.isAuthenticated = authApi.isAuthenticated;
       this.roles = sharedState.roles;
       this.appInitializationStatus = sharedState.appInitializationStatus;
+      this.isAccessModalShown = ko.observable(false);
+      this.sourceAccessEntityType = entityType.SOURCE;
 
       this.hasAccess = ko.pureComputed(() => {
         return true;
       });
+
+      this.sourceAccessRoleName = ko.pureComputed(() => {
+        const source = this.selectedSource();
+        const sourceKey = source && source.key && source.key();
+        return sourceKey ? `Source user (${sourceKey})` : null;
+      });
+
+      this.isSourceAccessProtectedRole = (roleName) => {
+        return roleName === this.sourceAccessRoleName();
+      };
+
+      this.canConfigureAccess = ko.pureComputed(() => {
+        return this.canEdit() && !this.isNew() && !!this.selectedSource();
+      });
+
+      this.loadAccessList = (permType = 'WRITE') => {
+        const source = this.selectedSource();
+        const sourceId = source && source.sourceId && source.sourceId();
+        if (!sourceId) {
+          return Promise.resolve([]);
+        }
+        return PermissionService.loadEntityAccessList(this.sourceAccessEntityType, sourceId, permType);
+      };
+
+      this.grantAccess = (roleId, permType = 'WRITE') => {
+        const source = this.selectedSource();
+        const sourceId = source && source.sourceId && source.sourceId();
+        return PermissionService.grantEntityAccess(this.sourceAccessEntityType, sourceId, roleId, permType);
+      };
+
+      this.revokeAccess = (roleId, permType = 'WRITE') => {
+        const source = this.selectedSource();
+        const sourceId = source && source.sourceId && source.sourceId();
+        return PermissionService.revokeEntityAccess(this.sourceAccessEntityType, sourceId, roleId, permType);
+      };
+
+      this.loadAccessRoleSuggestions = (searchStr) => {
+        return PermissionService.loadRoleSuggestions(searchStr);
+      };
 
       this.isDeletePermitted = ko.pureComputed(() => {
         return authApi.isPermittedDeleteSource(this.selectedSource() && this.selectedSource().key());
@@ -135,8 +181,6 @@ define([
       };
 
       this.canEditKey = ko.pureComputed(this.isNew);
-
-
 
       this.options.dialectOptions = [
         { id: 'postgresql', name: ko.i18n('configuration.viewEdit.dialect.options.postgresql', 'PostgreSQL') },
@@ -332,6 +376,7 @@ define([
     goToConfigure() {
       this.selectedSource(null);
       this.selectedSourceId(null);
+      this.isAccessModalShown(false);
       this.dirtyFlag().reset();
       commonUtils.routeTo('/configure');
     }
