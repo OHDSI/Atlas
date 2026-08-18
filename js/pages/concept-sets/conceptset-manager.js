@@ -90,16 +90,11 @@ define([
 			this.fade = ko.observable(false);
 
 			this.canEdit = ko.pureComputed(() => {
-				if (!authApi.isAuthenticated()) {
-					return false;
-				}
-
 				if (this.currentConceptSet() && (this.currentConceptSet()
 						.id !== 0)) {
-					return authApi.isPermittedUpdateConceptset(this.currentConceptSet()
-						.id) || !config.userAuthenticationEnabled;
+					return authApi.isPermittedUpdateConceptset(this.currentConceptSet().id);
 				} else {
-					return authApi.isPermittedCreateConceptset() || !config.userAuthenticationEnabled;
+					return authApi.isPermittedCreateConceptset();
 				}
 			});
 			this.isNameFilled = ko.computed(() => {
@@ -129,7 +124,11 @@ define([
 			this.canCreate = ko.computed(() => {
 				return authApi.isPermittedCreateConceptset();
 			});
-			this.hasAccess = authApi.isPermittedReadConceptsets;
+			this.hasAccess = () => {
+				return this.currentConceptSet() && 
+				this.currentConceptSet().id !== 0 &&
+				authApi.isPermittedReadConceptset(this.currentConceptSet().id);
+			};
 			this.hasPrioritySourceAccess = ko.observable(true);
 			this.isAuthenticated = authApi.isAuthenticated;
 			this.conceptSetCaption = ko.computed(() => {
@@ -144,9 +143,6 @@ define([
 				}
 			});
 			this.canDelete = ko.pureComputed(() => {
-				if (!config.userAuthenticationEnabled) {
-					return true;
-				}
 				return this.conceptSetStore.current() && authApi.isPermittedDeleteConceptset(this.conceptSetStore.current().id);
 			});
 
@@ -182,7 +178,7 @@ define([
 			});
 			this.saveConceptSetShow = ko.observable(false);
 			this.canCopy = ko.computed(() => {
-				return this.currentConceptSet() && this.currentConceptSet().id > 0;
+				return this.currentConceptSet() && this.currentConceptSet().id > 0 && this.canCreate();
 			});
 			this.enablePermissionManagement = config.enablePermissionManagement;	    
 			this.isSaving = ko.observable(false);

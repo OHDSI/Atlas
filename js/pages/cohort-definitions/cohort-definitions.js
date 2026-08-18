@@ -42,8 +42,8 @@ define([
 			});
 
 			this.isAuthenticated 	= authApi.isAuthenticated;
-			this.canReadCohorts 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled);
-			this.canCreateCohort 	= ko.pureComputed(() => (config.userAuthenticationEnabled && this.isAuthenticated() && authApi.isPermittedCreateCohort()) || !config.userAuthenticationEnabled);
+			this.canReadCohorts 	= ko.pureComputed(() => authApi.isPermittedReadCohorts());
+			this.canCreateCohort 	= ko.pureComputed(() => authApi.isPermittedCreateCohort());
 			this.tableOptions = commonUtils.getTableOptions('L');
 		}
 

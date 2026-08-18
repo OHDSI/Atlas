@@ -50,7 +50,7 @@ define([
 
 			this.isLoading = ko.observable(false);
 			this.isAuthenticated = authApi.isAuthenticated;
-			this.hasInfoAccess = ko.computed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
+			this.hasInfoAccess = ko.pureComputed(() => PermissionService.isPermittedGetInfo(sharedState.sourceKeyOfVocabUrl(), this.currentConceptId()));
 
 			this.tabParams = ko.observable({
 				currentConcept: this.currentConcept,

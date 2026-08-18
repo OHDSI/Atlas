@@ -8,12 +8,15 @@ define([
   'services/Vocabulary',
   'assets/ohdsi.util',
   'services/SourceAPI',
+  'services/Permission',
   'services/role',
   'lodash',
   'services/AuthAPI',
   'atlas-state',
   'pages/configuration/const',
+  'components/security/access/const',
   'components/ac-access-denied',
+  'components/security/access/configure-access-modal',
   'less!./source-manager.less',
   'components/heading',
 ],
@@ -27,15 +30,16 @@ define([
     vocabularyProvider,
     ohdsiUtil,
     sourceApi,
+    PermissionService,
     roleService,
     lodash,
     authApi,
     sharedState,
-    constants
+    constants,
+    { entityType }
   ) {
 
 
-  //todo yar should we translate daimons?
   var defaultDaimons = {
     CDM: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
     Vocabulary: { tableQualifier: '', enabled: false, priority: 0, sourceDaimonId: null },
@@ -98,25 +102,58 @@ define([
       this.isAuthenticated = authApi.isAuthenticated;
       this.roles = sharedState.roles;
       this.appInitializationStatus = sharedState.appInitializationStatus;
+      this.isAccessModalShown = ko.observable(false);
+      this.sourceAccessEntityType = entityType.SOURCE;
 
       this.hasAccess = ko.pureComputed(() => {
-        if (!config.userAuthenticationEnabled) {
-          return false;
-        } else {
-          return this.isAuthenticated() && authApi.isPermittedEditConfiguration();
-        }
+        return true;
       });
 
-      this.canReadSource = ko.pureComputed(() => {
-        return authApi.isPermittedReadSource(this.selectedSourceId()) || !this.selectedSourceId();
+      this.sourceAccessRoleName = ko.pureComputed(() => {
+        const source = this.selectedSource();
+        const sourceKey = source && source.key && source.key();
+        return sourceKey ? `Source user (${sourceKey})` : null;
       });
+
+      this.isSourceAccessProtectedRole = (roleName) => {
+        return roleName === this.sourceAccessRoleName();
+      };
+
+      this.canConfigureAccess = ko.pureComputed(() => {
+        return this.canEdit() && !this.isNew() && !!this.selectedSource();
+      });
+
+      this.loadAccessList = (permType = 'WRITE') => {
+        const source = this.selectedSource();
+        const sourceId = source && source.sourceId && source.sourceId();
+        if (!sourceId) {
+          return Promise.resolve([]);
+        }
+        return PermissionService.loadEntityAccessList(this.sourceAccessEntityType, sourceId, permType);
+      };
+
+      this.grantAccess = (roleId, permType = 'WRITE') => {
+        const source = this.selectedSource();
+        const sourceId = source && source.sourceId && source.sourceId();
+        return PermissionService.grantEntityAccess(this.sourceAccessEntityType, sourceId, roleId, permType);
+      };
+
+      this.revokeAccess = (roleId, permType = 'WRITE') => {
+        const source = this.selectedSource();
+        const sourceId = source && source.sourceId && source.sourceId();
+        return PermissionService.revokeEntityAccess(this.sourceAccessEntityType, sourceId, roleId, permType);
+      };
+
+      this.loadAccessRoleSuggestions = (searchStr) => {
+        return PermissionService.loadRoleSuggestions(searchStr);
+      };
 
       this.isDeletePermitted = ko.pureComputed(() => {
         return authApi.isPermittedDeleteSource(this.selectedSource() && this.selectedSource().key());
       });
 
       this.canEdit = ko.pureComputed(() => {
-        return authApi.isPermittedEditSource(this.selectedSourceId());
+        return authApi.isPermittedEditSource(this.selectedSource() && this.selectedSource().key());
       });
 
       this.isNameCorrect = ko.computed(() => {
@@ -144,8 +181,6 @@ define([
       };
 
       this.canEditKey = ko.pureComputed(this.isNew);
-
-
 
       this.options.dialectOptions = [
         { id: 'postgresql', name: ko.i18n('configuration.viewEdit.dialect.options.postgresql', 'PostgreSQL') },
@@ -319,25 +354,7 @@ define([
       this.goToConfigure();
     }
 
-    hasSelectedPriotirizableDaimons() {
-		const otherSources = sharedState.sources().filter(s => s.sourceId !== this.selectedSource().sourceId);
-		const otherPriotirizableDaimons = lodash.flatten(
-			otherSources.map(s => s.daimons.filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId))
-		);
-		const currenPriotirizableDaimons = this.selectedSource().daimons().filter(d => constants.priotirizableDaimonTypes.includes(d.daimonType) && d.sourceDaimonId);
-		const notSelectedCurrentDaimons = currenPriotirizableDaimons.filter(currentDaimon => {
-			// Daimon of the type with higher priority exists
-			return  otherPriotirizableDaimons.find(otherDaimon => currentDaimon.daimonType === otherDaimon.daimonType && currentDaimon.priority < otherDaimon.priority);
-		});
-		return notSelectedCurrentDaimons.length !== currenPriotirizableDaimons.length;
-    }
-
     async delete() {
-      if (this.hasSelectedPriotirizableDaimons()) {
-        alert(ko.unwrap(ko.i18n('configuration.viewEdit.source.alerts.delete.hasSelectedPriotirizableDaimons', 'Some daimons of this source were given highest priority and are in use by application. Select new top-priority diamons to delete the source.')));
-        return;
-      }
-
       if (!confirm(ko.unwrap(ko.i18n('configuration.viewEdit.source.confirms.delete', 'Delete source? Warning: deletion can not be undone!')))) {
         return;
       }
@@ -359,6 +376,7 @@ define([
     goToConfigure() {
       this.selectedSource(null);
       this.selectedSourceId(null);
+      this.isAccessModalShown(false);
       this.dirtyFlag().reset();
       commonUtils.routeTo('/configure');
     }

@@ -64,21 +64,19 @@ define([
             this.roleCaption = ko.computed(() => this.isNewRole() ? ko.i18n('const.newEntityNames.role', 'New Role')() : ko.i18nformat('configuration.roles.roleTitle', 'Role #<%=id%>', {id: this.roleId()}));
 
             this.isAuthenticated = authApi.isAuthenticated;
-            this.canReadRoles = ko.pureComputed(() => this.isAuthenticated() && authApi.isPermittedReadRoles());
+            this.canReadRoles = ko.pureComputed(() => authApi.isPermittedReadRoles());
             this.canReadRole = ko.pureComputed(() =>
-                this.isAuthenticated() &&
                 this.isNewRole()
                     ? authApi.isPermittedCreateRole()
                     : authApi.isPermittedReadRole(this.roleId()));
             this.canEditRole = ko.pureComputed(() =>
-                this.isAuthenticated() &&
                 this.isNewRole()
                     ? authApi.isPermittedCreateRole()
                     : authApi.isPermittedEditRole(this.roleId()));
-            this.canEditRoleUsers = ko.pureComputed(() => this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRoleUsers(this.roleId())));
-            this.canEditRolePermissions = ko.pureComputed(() => this.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())));
+            this.canEditRoleUsers = ko.pureComputed(() => (this.isNewRole() || authApi.isPermittedEditRoleUsers(this.roleId())));
+            this.canEditRolePermissions = ko.pureComputed(() => (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())));
             this.hasAccess = ko.pureComputed(() => this.canReadRole());
-            this.canDelete = ko.pureComputed(() => this.isAuthenticated() && this.roleId() && authApi.isPermittedDeleteRole(this.roleId()));
+            this.canDelete = ko.pureComputed(() => this.roleId() && authApi.isPermittedDeleteRole(this.roleId()));
             this.canSave = ko.pureComputed(() => (this.canEditRole() || this.canEditRoleUsers() || this.canEditRolePermissions()) && this.roleName());
             this.canCreate = authApi.isPermittedCreateRole;
 
@@ -88,12 +86,12 @@ define([
 
             this.loading = ko.observable();
             this.dirtyFlag = ko.observable(new ohdsiUtils.dirtyFlag({
-                role: this.roleName,
+                name: this.roleName,
                 users: this.userItems,
                 permissions: this.permissionItems
             }));
             this.roleDirtyFlag = ko.observable(new ohdsiUtils.dirtyFlag({
-                role: this.roleName
+                name: this.roleName
             }));
 
             this.initializeParamsForTabs(params);
@@ -154,7 +152,7 @@ define([
                 if (this.canEditRolePermissions() || isRolePermission) {
                     permissionItems.push({
                         id: permission.id,
-                        permission: ko.observable(permission.permission),
+                        value: ko.observable(permission.value),
                         description: ko.observable(permission.description),
                         isRolePermission: ko.observable(isRolePermission)
                     });
@@ -178,8 +176,8 @@ define([
 
         exportJson() {
             return {
-                role: this.roleName(),
-                permissions: this.getPermissionsList().map(p => ({ id: p.permission() })),
+                name: this.roleName(),
+                permissions: this.getPermissionsList().map(p => ({ id: p.value() })),
                 users: this.getUsersList().map(u => ({ id: u.login })),
             };
         }
@@ -195,7 +193,7 @@ define([
         async getRole() {
             const role = await roleService.load(this.roleId());
             this.currentRole = role;
-            this.roleName(role.role);
+            this.roleName(role.name);
         }
 
         async getRoleUsers() {
@@ -277,7 +275,7 @@ define([
 
             const data = {
                 id: this.roleId(),
-                role: this.roleName()
+                name: this.roleName()
             };
             let role;
 
@@ -327,19 +325,19 @@ define([
             if (newRole) {
                 roles.push({
                     id: this.roleId(),
-                    role: this.roleName()
+                    name: this.roleName()
                 });
             } else {
                 const updatedRole = roles.find((role) => {
                     return role.id == this.roleId();
                 });
-                updatedRole.role = this.roleName();
+                updatedRole.name = this.roleName();
             }
             this.roles(roles);
 
-            await authApi.loadUserInfo();
             await this.saveUsers();
             await this.savePermissions();
+            await authApi.loadUserInfo();
             this.roleDirtyFlag().reset();
             this.dirtyFlag().reset();
             commonUtils.routeTo('/role/' + this.roleId());
@@ -365,7 +363,7 @@ define([
             if (this.roles()
                 .filter((role) => {
                     return (role.id != this.roleId()
-                        && role.role == this.roleName());
+                        && role.name == this.roleName());
                 }).length > 0) {
                 alert("Role already exists!")
                 return false;
@@ -376,7 +374,7 @@ define([
         async copy() {
             let id;
             try {
-                const response = await roleService.create({role: `${this.roleName()} copy`});
+                const response = await roleService.create({name: `${this.roleName()} copy`});
                 id = response.id;
                 await roleService.addRelations(id, 'users', this.roleUserIds);
                 await roleService.addRelations(id, 'permissions', this.rolePermissionIds);

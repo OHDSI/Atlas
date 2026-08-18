@@ -61,10 +61,10 @@ define([
 					componentParams: this.userJobParams,
 				});
 				this.selectedTabKey(constants.jobTypes.USER_JOB.title);
-				this.jobNotificationsPending = ko.computed(() => this.userJobParams.jobListing().filter(j => !j.viewed()).length);
+				this.jobNotificationsPending = ko.pureComputed(() => this.userJobParams.jobListing().filter(j => !j.viewed()).length);
 			} else {
 				this.selectedTabKey(constants.jobTypes.ALL_JOB.title);
-				this.jobNotificationsPending = ko.computed(() => this.allJobParams.jobListing().filter(j => !j.viewed()).length);
+				this.jobNotificationsPending = ko.pureComputed(() => this.allJobParams.jobListing().filter(j => !j.viewed()).length);
 				this.allJobParams.jobNameClick = this.jobNameClick.bind(this);
 			}
 			this.tabs.push({
@@ -73,7 +73,7 @@ define([
 				componentName: 'user-bar-jobs',
 				componentParams: this.allJobParams,
 			});
-			this.jobsCount = ko.computed(() => {
+			this.jobsCount = ko.pureComputed(() => {
 				if (this.selectedTabKey() === constants.jobTypes.USER_JOB.title) {
 					return this.userJobParams.jobListing().length;
 				}

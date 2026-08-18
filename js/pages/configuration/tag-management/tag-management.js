@@ -35,11 +35,7 @@ define([
             this.isAuthenticated = authApi.isAuthenticated;
 
             this.hasAccess = ko.pureComputed(() => {
-                if (!config.userAuthenticationEnabled) {
-                    return true;
-                } else {
-                    return this.isAuthenticated() && authApi.isPermittedTagsManagement();
-                }
+                return authApi.isPermittedTagsManagement();
             });
 
             this.allTags = ko.observableArray();

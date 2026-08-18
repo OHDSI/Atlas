@@ -152,7 +152,12 @@ define(function (require, exports) {
           source.vocabularyUrl = getVocabularyUrl(source.sourceKey);
       }
 
-      if (source.hasVocabulary && authApi.hasSourceAccess(source.sourceKey)) {
+      const sourceGrant = authApi.getSourceGrant(source.sourceId);
+      const hasSourceAccess = authApi.isPermitted("read:source") ||
+            authApi.isPermitted("write:source") ||
+            authApi.checkAccess("READ", sourceGrant);
+
+      if (source.hasVocabulary && hasSourceAccess) {
         $.ajax({
           url: config.api.url + 'vocabulary/' + source.sourceKey + '/info',
           timeout: 20000,

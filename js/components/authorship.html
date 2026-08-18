@@ -2,7 +2,7 @@
 <div data-bind="css: classes('container')">
 	<span data-bind="visible: createdBy,
 	    text: ko.i18nformat('components.authorship.createdLabel',
-						'created by <%=createdBy%> on <%=cratedDate%>',
+						'created by <%=createdBy%> on <%=createdDate%>',
 						{createdBy: createdBy, createdDate: createdDate})"></span><span data-bind="visible: modifiedDate">,</span>
     <span data-bind="visible: modifiedDate,
 	    text: ko.i18nformat('components.authorship.modifiedLabel',

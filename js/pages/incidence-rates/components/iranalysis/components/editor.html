@@ -1,4 +1,4 @@
-<div data-bind="css: {tabcontent: true, 'tab-disabled':!isEditable()}">
+<div data-bind="if: analysis, css: {tabcontent: true, 'tab-disabled':!isEditable()}">
 	<div class="divtext" data-bind="contentEditable: analysisDescription, contenteditableSwitch: isEditable(), placeholder: ko.i18n('ir.editor.descriptionPlaceholder', 'Enter the analysis description here')"></div>
 	<div class="criteriaGroup">
 		<div class="criteriaHeading">

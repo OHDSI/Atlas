@@ -51,8 +51,6 @@ define(
 						|| sharedState.CohortDefinition.dirtyFlag().isDirty()
 						|| sharedState.IRAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortPathways.dirtyFlag().isDirty()
-						|| sharedState.estimationAnalysis.dirtyFlag().isDirty()
-						|| sharedState.predictionAnalysis.dirtyFlag().isDirty()
 						|| sharedState.CohortCharacterization.dirtyFlag().isDirty()
 					);
 				});
@@ -118,45 +116,26 @@ define(
 					httpService.setUnauthorizedHandler(() => authApi.resetAuthParams());
 					httpService.setUserTokenGetter(() => authApi.getAuthorizationHeader());
 
+					const exp = authApi.tokenExpirationDate();
+					const now = new Date();
+
+					if (!exp || exp <= now) { authApi.resetAuthParams(); } else { await authApi.refreshToken(); }
+
 					try{
+						await authApi.loadUserInfo();
 						await i18nService.getAvailableLocales();
 					} catch (e) {
 						reject(e.message);
 					}
 
-					if (config.userAuthenticationEnabled) {
-						try {
-							// Routes to welcome are part of auth flow, loadUserInfo in this case is unnecessary and fails. 
-							// More importantly it can trigger an infinite loop when skipLoginEnabled is enabled.
-							if (!window.location.href.includes("/welcome/")) {
-								await authApi.loadUserInfo();
-							}
-						} catch (e) {
-							reject(e.message);
-						}
-
-					}
 					authApi.isAuthenticated.subscribe(executionService.checkExecutionEngineStatus);
 					this.attachGlobalEventListeners();
 					await executionService.checkExecutionEngineStatus(authApi.isAuthenticated());
 
-					// Add user interaction listener that keeps refreshing the token as long
-					// as the user is active (either moving mouse, navigating with keyboard and/or typing):
-					var userInteractionCount = 0;
-					console.log("Adding user interaction listeners...");
+					// Add user interaction listeners to reset idle timeout
+					// (throttled inside resetIdleTimeout to at most once per minute)
 					["mouseover", "keydown", "focusin"].forEach(eventType => {
-						window.addEventListener(eventType, (event) => {
-							userInteractionCount++;
-							if (userInteractionCount % 30 == 0) {
-								console.log(">>> Checking user token....");
-								userInteractionCount = 0;
-								// Refresh the Atlas token if it is close to expiring:
-								if (authApi.isAuthenticated() && this.timeToExpire() < config.refreshTokenThreshold) {
-									console.log(">>> Token close to expiring. Refreshing user token....");
-									authApi.refreshToken();
-								}
-							}
-						});
+						window.addEventListener(eventType, () => authApi.resetIdleTimeout());
 					});
 
 					resolve();
@@ -198,39 +177,15 @@ define(
 			initServiceInformation() {
 				console.info('Initializing service information');
 				return new Promise((resolve, reject) => {
-					const serviceCacheKey = 'ATLAS|' + config.api.url;
-					const cachedService = lscache.get(serviceCacheKey);
-
-					if (cachedService && cachedService.sources) {
-						console.info('cached service');
-						config.api.sources = cachedService;
-						sourceApi.setSharedStateSources(cachedService.sources);
-						resolve();
-					} else {
-						sharedState.sources([]);
-
-						if (config.userAuthenticationEnabled && !authApi.isAuthenticated()) {
-							this.authSubscription = authApi.isAuthenticated.subscribe(async (isAuthed) => {
-								if (isAuthed) {
-									sharedState.appInitializationStatus(await sourceApi.initSourcesConfig());
-									this.authSubscription.dispose();
-									console.info('Re-initialized service information');
-								}
-							});
-							sharedState.appInitializationStatus(constants.applicationStatuses.running);
+					sourceApi.initSourcesConfig()
+						.then(function (appStatus) {
+							sharedState.appInitializationStatus(appStatus);
+							console.info('Init sources from server');
 							resolve();
-							return;
-						} else {
-							sourceApi.initSourcesConfig()
-								.then(function (appStatus) {
-									sharedState.appInitializationStatus(appStatus);
-									console.info('Init sources from server');
-									resolve();
-								});
-						}
-					}
+						});
 				});
 			}
+
 			checkOAuthError() {
 				let hash = window.location.hash;
 				if (hash && hash.includes("oauth_error_email")) {

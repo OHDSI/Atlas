@@ -88,10 +88,10 @@ define([
 
 		self.isAuthenticated = authApi.isAuthenticated;
 		self.canReadConceptsets = ko.pureComputed(function () {
-		  return (appConfig.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadConceptsets()) || !appConfig.userAuthenticationEnabled;
+		  return true; // TODO: do not need permission to list entities
 		});
 		self.canReadCohorts = ko.pureComputed(function () {
-		  return (config.userAuthenticationEnabled && self.isAuthenticated() && authApi.isPermittedReadCohorts()) || !config.userAuthenticationEnabled;
+		  return true; // TODO: do not need permissions to list entities
 		});
 
 		self.loadConceptSetsFromRepository = function (url) {

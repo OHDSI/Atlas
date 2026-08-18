@@ -223,16 +223,16 @@ define([
             this.loading(true);
 
             Promise.all([
-                CohortDefinitionService.getReport(this.cohortId(), this.source().sourceKey, this.reportType, this.ccGenerateId())
+                CohortDefinitionService.getDemographicReport(this.cohortId(), this.source().sourceKey, this.ccGenerateId())
             ]).then(([
                 generationResults
             ]) => {
-                const count = generationResults?.demographicsStats?.length ?  (generationResults.demographicsStats.reduce((prev, curr) => [...prev, ...curr.items],[]) || []).length : 0;
-                this.thresholdValuePct((generationResults.prevalenceThreshold || 0.01) * 100);
+                const count = generationResults?.length ?  (generationResults.reduce((prev, curr) => [...prev, ...curr.items],[]) || []).length : 0;
+                this.thresholdValuePct((0.01) * 100);
                 this.newThresholdValuePct(this.thresholdValuePct());
-                this.showEmptyResults(generationResults.showEmptyResults || null);
-                this.resultsCountFiltered(generationResults.count || count);
-                this.getData(generationResults?.demographicsStats); 
+                this.showEmptyResults(false);
+                this.resultsCountFiltered(count);
+                this.getData(generationResults); 
                 this.loading(false);
             });
         }

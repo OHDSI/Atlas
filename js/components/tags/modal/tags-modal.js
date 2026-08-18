@@ -205,7 +205,7 @@ define([
                 await this.assignTagFn(tag);
                 tag.assigned = true;
                 this.assignedTagsList.unshift(tag);
-                if (tag.groups.filter(tg => tg.id === this.currentTagGroup().id).length > 0) {
+                if (this.currentTagGroup() && tag.groups.filter(tg => tg.id === this.currentTagGroup().id).length > 0) {
                     this.tagsInGroupList.valueHasMutated();
                 }
             } catch (ex) {
@@ -245,7 +245,7 @@ define([
                 const savedTag = savedTagRes.data;
                 await this.assignTag(savedTag);
                 this.allTagsList().unshift(savedTag);
-                if (this.newCustomTagGroup() === this.currentTagGroup().id) {
+                if (this.currentTagGroup() && this.newCustomTagGroup() === this.currentTagGroup().id) {
                     this.tagsInGroupList().unshift(savedTag);
                     this.sortByAssigned(this.tagsInGroupList);
                     this.tagsInGroupList.valueHasMutated();

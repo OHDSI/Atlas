@@ -2,7 +2,7 @@
 
 <access-denied params="isAuthenticated: isAuthenticated, isPermitted: canImport"></access-denied>
 
-<div data-bind="css: classes({extra: ['paddedWrapper']}), if: config.userAuthenticationEnabled && canImport">
+<div data-bind="css: classes({extra: ['paddedWrapper']}), if: canImport">
     <div data-bind="css: classes({extra: ['panel', 'panel-primary']})">
         <div data-bind="css: classes({extra: ['panel-heading', 'padded']}), text: ko.i18n('configuration.userImport.wizard.title', 'Importing users')"></div>
         <div data-bind="css: classes({extra: ['panel-body']})">

@@ -32,7 +32,7 @@ define([
             this.roleId = params.roleId;
             this.permissionItems = params.permissionItems;
             this.tableOptions = commonUtils.getTableOptions('L');
-            this.canEditRolePermissions = ko.pureComputed(() => { return authApi.isAuthenticated() && (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())); });
+            this.canEditRolePermissions = ko.pureComputed(() => { return (this.isNewRole() || authApi.isPermittedEditRolePermissions(this.roleId())); });
         }
 
         renderCheckbox(field, editable) {

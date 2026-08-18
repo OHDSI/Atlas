@@ -8,15 +8,15 @@ define([
 	return class PermissionService {
 
 		static isPermittedGetInfo(sourceKey, conceptId) {
-			return AuthAPI.isPermitted(`vocabulary:${sourceKey}:concept:${conceptId}:get`);
+			return AuthAPI.hasSourceAccess(sourceKey);
 		}
 
 		static isPermittedGetRC(sourceKey) {
-			return AuthAPI.isPermitted(`cdmresults:${sourceKey}:conceptRecordCount:post`);
+			return AuthAPI.hasSourceAccess(sourceKey);
 		}
 
 		static isPermittedLookupIds() {
-			return this.isVocabularyUrlExists && AuthAPI.isPermitted(`vocabulary:${sharedState.sourceKeyOfVocabUrl()}:lookup:identifiers:post`);
+			return this.isVocabularyUrlExists && AuthAPI.hasSourceAccess(sharedState.sourceKeyOfVocabUrl());
 		}
 
 		static get isVocabularyUrlExists() {
@@ -24,7 +24,7 @@ define([
 		}
 
 		static isPermittedLookupCodes() {
-			return this.isVocabularyUrlExists && AuthAPI.isPermitted(`vocabulary:${sharedState.sourceKeyOfVocabUrl()}:lookup:sourcecodes:post`);
+			return this.isVocabularyUrlExists && AuthAPI.hasSourceAccess(sharedState.sourceKeyOfVocabUrl());
 		}
 	}
 });

@@ -6,19 +6,19 @@ define([
 	return class PermissionService {
 
 		static isPermittedReadTools() {
-			return AuthAPI.isPermitted('tool:get');
+			return AuthAPI.isPermitted('admin:tools');
 		}
 
 		static isPermittedCreateTool() {
-			return AuthAPI.isPermitted('tool:post');
+			return AuthAPI.isPermitted('admin:tools');
 		}
 
 		static isPermittedUpdateTool() {
-			return AuthAPI.isPermitted('tool:put');
+			return AuthAPI.isPermitted('admin:tools');
 		}
 
 		static isPermittedDeleteTool() {
-			return AuthAPI.isPermitted('tool:*:delete');
+			return AuthAPI.isPermitted('admin:tools');
 		}
 	}
 });

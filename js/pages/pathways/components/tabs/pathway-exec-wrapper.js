@@ -27,11 +27,10 @@ define([
             this.criticalCount = params.criticalCount;
             this.dirtyFlag = params.dirtyFlag;
 
-            const extraExecutionPermissions = ko.computed(() => !this.dirtyFlag().isDirty() 
-                && params.isEditPermitted()
+            const extraExecutionPermissions = ko.pureComputed(() => !this.dirtyFlag().isDirty()
                 && this.criticalCount() <= 0);       
                 
-            const generationDisableReason = ko.computed(() => {
+            const generationDisableReason = ko.pureComputed(() => {
                 if (this.dirtyFlag().isDirty()) return ko.unwrap(consts.disabledReasons.DIRTY);
                 if (this.criticalCount() > 0) return ko.unwrap(consts.disabledReasons.INVALID_DESIGN);
                 return ko.unwrap(consts.disabledReasons.ACCESS_DENIED);

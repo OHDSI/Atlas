@@ -5,78 +5,91 @@ define([
 ) {
 
     function isPermittedCreateCC() {
-        return AuthAPI.isPermitted(`cohort-characterization:post`);
+        return AuthAPI.isPermitted(`create:cohort-characterization`);
     }
 
     function isPermittedImportCC() {
-        return AuthAPI.isPermitted(`cohort-characterization:import:post`);
+        return AuthAPI.isPermitted(`create:cohort-characterization`);
     }
 
     function isPermittedGetCCList() {
-        return AuthAPI.isPermitted(`cohort-characterization:get`);
+        return true; // we do not need to restrict list opertions
     }
 
-    function isPermittedGetCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:get`);
+    var isPermittedGetCC = function(id) {
+        var grant = AuthAPI.getCCGrant(id);
+        return  grant.isOwner ||
+            AuthAPI.isPermitted("read:cohort-characterization") ||
+            AuthAPI.isPermitted("write:cohort-characterization") ||
+            AuthAPI.checkAccess("READ", grant.accessTypes);
     }
 
-    function isPermittedUpdateCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:put`);
-    }
+    var isPermittedUpdateCC = function(id) {
+        var grant = AuthAPI.getCCGrant(id);
+        return  grant.isOwner ||
+            AuthAPI.isPermitted("write:cohort-characterization") ||
+            AuthAPI.checkAccess("WRITE", grant.accessTypes);
+    }    
 
     function isPermittedDeleteCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:delete`);
+        return isPermittedUpdateCC(id);
     }
 
     function isPermittedListGenerations(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:get`);
+        return true; // TODO: do we need to restrict listing generations?
     }
 
     function isPermittedGenerate(id, sourceKey) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:generation:${sourceKey}:post`);
+        return AuthAPI.hasSourceAccess(sourceKey, "WRITE"); // TODO: Do we need read/write checks on the design?
     }
 
     function isPermittedResults(sourceKey) {
-        return (AuthAPI.isPermitted(`cohort-characterization:generation:*:result:post`))
-            && AuthAPI.isPermitted(`source:${sourceKey}:access`);
+        return AuthAPI.hasSourceAccess(sourceKey, "READ");
     }
 
     function isPermittedExportGenerationDesign(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:generation:${id}:design:get`);
+        return isPermittedGetCC(id);
     }
 
     function isPermittedExportCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:export:get`);
+        return isPermittedGetCC(id);
     }
 
     function isPermittedCopyCC(id) {
-        return AuthAPI.isPermitted(`cohort-characterization:${id}:post`);
+        return isPermittedGetCC(id) && isPermittedCreateCC();
     }
 
-    //
+    // FA Permissions
 
     function isPermittedGetFaList() {
-        return AuthAPI.isPermitted(`feature-analysis:get`);
+        return true; // TODO: do we need perms to list assets?
     }
 
     function isPermittedCreateFa() {
-        return AuthAPI.isPermitted(`feature-analysis:post`);
+        return AuthAPI.isPermitted(`create:feature-analysis`);
     }
 
     function isPermittedGetFa(id) {
-        return AuthAPI.isPermitted(`feature-analysis:${id}:get`);
+        var grant = AuthAPI.getFAGrant(id);
+        return  grant.isOwner ||
+            AuthAPI.isPermitted("read:feature-analysis") ||
+            AuthAPI.isPermitted("write:feature-analysis") ||
+            AuthAPI.checkAccess("READ", grant.accessTypes);
     }
 
     function isPermittedUpdateFa(id) {
-        return AuthAPI.isPermitted(`feature-analysis:${id}:put`);
+        var grant = AuthAPI.getFAGrant(id);
+        return  grant.isOwner ||
+            AuthAPI.isPermitted("write:feature-analysis") ||
+            AuthAPI.checkAccess("WRITE", grant.accessTypes);
     }
 
     function isPermittedDeleteFa(id) {
-        return AuthAPI.isPermitted(`feature-analysis:${id}:delete`);
+        return isPermittedUpdateFa(id);
     }
 
     function isPermittedCopyFa(id) {
-        return AuthAPI.isPermitted(`feature-analysis:${id}:copy:get`);
+        return isPermittedGetFa(id) && isPermittedCreateFa();
     }
 
     return {

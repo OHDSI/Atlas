@@ -3,7 +3,7 @@
 	<loading data-bind="visible:loading()"></loading>
 	<div data-bind="visible: !loading()">
 			<!-- ko if: selectedSource() != null -->
-			<div data-bind="if:$component.canReadSource">
+			<div data-bind="if:$component.canEdit">
 					<div class="asset-heading">
 						<div class="input-group">
 							<input type="text" class="form-control"
@@ -19,6 +19,10 @@
 											<i class="fa fa-save"></i></button>
 									<button class="btn btn-primary"  data-bind="click: close, title: ko.i18n('common.close', 'Close')"><i
 													class="fa fa-times"></i></button>
+										<button class="btn btn-primary"
+												data-bind="visible: canEdit() && !isNew(), click: () => isAccessModalShown(!isAccessModalShown()), title: ko.i18n('common.configureAccess', 'Configure access')">
+											<i class="fa fa-lock"></i>
+										</button>
 									<button class="btn btn-danger"
 											data-bind="click: $component.delete, enable: canDelete(),
 													   title: ko.i18n('common.delete', 'Delete')"><i class="fa fa-trash-alt"></i></button>
@@ -193,7 +197,16 @@
 					</div>
 			</div>
 
-			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canReadSource"></access-denied>
+				<configure-access-modal params="
+					isModalShown: $component.isAccessModalShown,
+					isOwnerFn: $component.isSourceAccessProtectedRole,
+					loadAccessListFn: $component.loadAccessList,
+					grantAccessFn: $component.grantAccess,
+					revokeAccessFn: $component.revokeAccess,
+					loadRoleSuggestionsFn: $component.loadAccessRoleSuggestions
+				"></configure-access-modal>
+
+			<access-denied params="isAuthenticated: isAuthenticated, isPermitted: $component.canEdit"></access-denied>
 			<!-- /ko -->
 	</div>
 </div>

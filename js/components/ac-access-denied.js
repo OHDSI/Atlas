@@ -15,7 +15,7 @@ define([
 	class AccessDenied extends Component {
 		constructor(params) {
 			super(params);
-			this.isAuthenticated = params.isAuthenticated;
+			this.message = params.message;
 			this.isPermitted = params.isPermitted || (() => false);
 		}
 	}

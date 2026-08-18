@@ -13,6 +13,7 @@ define(function () {
   appConfig.enablePermissionManagement = true; // allow UI to assign read/write permissions to entities
   appConfig.cacheSources = false;
   appConfig.pollInterval = 60000;
+  appConfig.permissionsRefreshInterval = 60000; // poll for permission updates every 60 seconds
   appConfig.cohortComparisonResultsEnabled = false;
   appConfig.userAuthenticationEnabled = false;
   appConfig.enableSkipLogin = false; // automatically opens login window when user is not authenticated
@@ -166,7 +167,8 @@ define(function () {
   // "Tagging" section is hidden by default
   appConfig.enableTaggingSection = false;
 
-  appConfig.refreshTokenThreshold = 1000 * 60 * 60 * 4; // refresh auth token if it will expire within 4 hours
+  appConfig.refreshTokenThreshold = 1000 * 60 * 15; // refresh auth token if it will expire within 15 minutes.
+  appConfig.idleTimeout = 1000 * 60 * 5; // refresh auth token after 5 minutes of user inactivity
 
   return appConfig;
 });

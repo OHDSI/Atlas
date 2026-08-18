@@ -38,17 +38,6 @@
 					<span data-bind="text:ko.i18n('components.conceptSetSelector.clearConceptSet','Clear Concept Set')"></span>
 				</a></li>
 		</ul>
-		<ul>
-			<!-- ko if: previewVisible -->
-			<div onclick="event.stopPropagation();" class="undraggable"
-				style="border: solid 1px black;padding:5px; z-index: 999; background-color:white; position: absolute; max-height:200px; overflow-y:auto"
-				data-bind="style: { top: `${previewTop()}px`, left: `${previewLeft()}px`}">
-				<div style="background-color:#aaa; font-weight: bold" data-bind="text: previewConceptSet().name"></div>
-				<conceptset-quickview params="conceptSet: previewConceptSet"></conceptset-quickview>
-			</div>
-			<!-- /ko -->
-		</ul>
-
 	</div>
 
 </div>

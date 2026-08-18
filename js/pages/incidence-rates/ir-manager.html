@@ -7,7 +7,7 @@
         <!-- ko component: {name: 'authorship', params: getAuthorship()} --> <!-- /ko -->
     <!-- /ko -->
 <div data-bind="visible:!loading()">
-	<!-- ko if: selectedAnalysis() -->
+	<!-- ko if: selectedAnalysis -->
 	<div>
 		<div class="asset-heading">
 			<div class="input-group ir-header">
@@ -71,7 +71,7 @@
 		<div class="tab-content">
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.DEFINITION }" class="tab-pane">
 				<div data-bind="eventListener: [{ event: 'click', selector: '.conceptset_import', callback: handleConceptSetImport}, { event: 'click', selector: '.conceptset_edit', callback: handleEditConceptSet}]">
-					<ir-analysis-editor params="analysis: selectedAnalysis().expression,description: selectedAnalysis().description, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
+					<ir-analysis-editor params="analysis: selectedAnalysis()?.expression,description: selectedAnalysis()?.description, analysisCohorts: analysisCohorts, isEditable: isEditable"></ir-analysis-editor>
 				</div>
 			</div>
 			<div role="tabpanel" data-bind="css: { active: $component.activeTab() == tabs.CONCEPT_SETS }" class="tab-pane">
@@ -80,7 +80,7 @@
 					<button type="button" style="display: none" class="btn btn-sm btn-success pull-right" data-bind="click:function() { exportConceptSetsCSV(); }, css: {'disabled': dirtyFlag().isDirty, 'btn-success': !dirtyFlag().isDirty()}"><i class="fa fa-download" aria-hidden="true"></i> Export All Concept Sets To CSV</button>
 				</div>
 				<incidence-rates-conceptset params="{
-					data: $component.selectedAnalysis().expression().ConceptSets,
+					data: $component.selectedAnalysis()?.expression().ConceptSets,
 					canEdit: $component.isEditable,
 					conceptSetStore: $component.conceptSetStore
 				}"></incidence-rates-conceptset>
@@ -158,7 +158,7 @@
 			<div class="modal-content">
 				<div class="modal-header" data-bind="text: ko.i18n('ir.cs.modalTitle', 'Select Concept Set...')"></div>
 				<div class="paddedWrapper">
-					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis().expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
+					<concept-set-browser params="criteriaContext: criteriaContext, cohortConceptSets: selectedAnalysis()?.expression().ConceptSets, onActionComplete: onConceptSetSelectAction"></concept-set-browser>
 				</div>
 			</div>
 		</div>

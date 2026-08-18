@@ -37,7 +37,7 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		state.currentVocabularyVersion(state.defaultVocabularyVersion());
 	}
 
-	state.sourceKeyOfVocabUrl = ko.computed(() => {
+	state.sourceKeyOfVocabUrl = ko.pureComputed(() => {
 		return state.vocabularyUrl() ? state.vocabularyUrl().replace(/\/$/, '').split('/').pop() : null;
 	});
 
@@ -83,24 +83,6 @@ define(['knockout', 'lscache', 'services/job/jobDetail', 'assets/ohdsi.util', 'c
 		previewVersion: ko.observable(null)
 	};
 	state.CohortPathways.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.CohortPathways.current()));
-
-
-	state.estimationAnalysis = {
-		current: ko.observable(null),
-		analysisPath: null,
-		selectedId: ko.observable(null),
-		comparisons: ko.observableArray(),
-	}
-	state.estimationAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.estimationAnalysis.current()));
-
-	state.predictionAnalysis = {
-		current: ko.observable(null),
-		analysisPath: null,
-		selectedId: ko.observable(null),
-		targetCohorts: ko.observableArray(),
-		outcomeCohorts: ko.observableArray(),
-	}
-	state.predictionAnalysis.dirtyFlag = ko.observable(new ohdsiUtil.dirtyFlag(state.predictionAnalysis.current()));
 
 	state.availableLocales = ko.observableArray();
 	state.locale = ko.observable();

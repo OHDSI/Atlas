@@ -50,13 +50,13 @@ define(function (require, exports) {
 		const url = `${config.webAPIRoot}ir/${definitionCopy.id || ""}`;
 		let result;
 		if (definitionCopy.id) {
-			result = await httpService
+			result = authApi.executeWithRefresh(httpService
 				.doPut(url, definitionCopy)
 				.catch(response => {
 					authApi.handleAccessDenied(response);
 					return response;
 				})
-				.then(parse);
+				.then(parse));
 		} else {
 			result = authApi.executeWithRefresh(httpService
 				.doPost(url, definitionCopy)

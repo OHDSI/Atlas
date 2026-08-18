@@ -127,6 +127,9 @@ define(
 					this.routerParams(routerParams);
 				}
 				this.currentView(view);
+
+				// Refresh permissions when user navigates to a new route
+				authApi.loadUserInfo().catch(err => console.warn('Permissions refresh on navigation failed:', err));
       }
     }
     return new AtlasRouter();

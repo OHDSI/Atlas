@@ -41,7 +41,7 @@ define([
 	function mapRoleGroups(rolesList) {
 
 		return rolesList.map(item => ({
-			role: { id: item.id, role: item.role },
+			role: { id: item.id, name: item.name },
 			groups: item.groups,
 		}));
 	}
